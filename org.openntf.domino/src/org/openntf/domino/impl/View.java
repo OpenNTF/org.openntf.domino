@@ -2490,6 +2490,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getColumnMap()
+	 */
 	@Override
 	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
 		if (columnMap_ == null) {
@@ -2657,12 +2660,18 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return retVal_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isTimeSensitive()
+	 */
 	@Override
 	public boolean isTimeSensitive() {
 		Document doc = getDocument();
 		return doc.hasItem("$FormulaTV");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getIndexType()
+	 */
 	@Override
 	public IndexType getIndexType() {
 		IndexType result = IndexType.SHARED;
@@ -2712,36 +2721,67 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
 	public static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isDisableAutoUpdate()
+	 */
 	@Override
 	public boolean isDisableAutoUpdate() {
 		String index = getIndexOptions();
 		return index.contains("/L");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isHideEmptyCategories()
+	 */
 	@Override
 	public boolean isHideEmptyCategories() {
 		String index = getIndexOptions();
 		return index.contains("/C");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isDiscardIndex()
+	 */
 	@Override
 	public boolean isDiscardIndex() {
 		String index = getIndexOptions();
 		return index.contains("/T");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isManualRefresh()
+	 */
 	@Override
 	public boolean isManualRefresh() {
 		String index = getIndexOptions();
 		return index.contains("/M");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isAutoAfterFirstUse()
+	 */
+	@Override
+	public boolean isAutoRefreshAfterFirstUse() {
+		String index = getIndexOptions();
+		if (index.contains("/M") || index.contains("/O") || index.contains("/R")) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isAutomaticRefresh()
+	 */
 	@Override
 	public boolean isAutomaticRefresh() {
 		String index = getIndexOptions();
 		return index.contains("/O");
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getAutoRefreshSeconds()
+	 */
 	@Override
 	public int getAutoRefreshSeconds() {
 		int result = 0;
