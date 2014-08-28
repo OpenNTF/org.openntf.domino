@@ -197,6 +197,7 @@ public class DocumentScanner extends Observable {
 	private Map<CharSequence, Map<CharSequence, Set<CharSequence>>> nameLocationMap_;
 
 	private boolean trackFieldValues_ = true;
+	@SuppressWarnings("rawtypes")
 	private Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
 
@@ -406,6 +407,7 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Map<CharSequence, NavigableSet<Comparable>> getFieldValueMap() {
 		if (fieldValueMap_ == null) {
 			fieldValueMap_ = new HashMap<CharSequence, NavigableSet<Comparable>>();
@@ -473,15 +475,20 @@ public class DocumentScanner extends Observable {
 	}
 
 	public void complete() {
+		//		System.out.println("COMPLETING.");
+		setChanged();
 		notifyObservers(ScanStatus.COMPLETE);
 	}
 
 	private org.openntf.domino.DocumentCollection collection_;
 
 	public void processCollection() {
+		//		System.out.println("DEBUG: Scanning a collection of " + collection_.getCount());
 		for (Document doc : collection_) {
 			if (docCount_ < docLimit_) {
 				processDocument(doc);
+			} else {
+				break;
 			}
 		}
 		complete();
@@ -726,9 +733,10 @@ public class DocumentScanner extends Observable {
 		fieldTokenMap_ = fieldTokenMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setFieldTokenMap(final Object value) {
 		if (validateFieldTokenMap(value)) {
-			fieldTokenMap_ = (Map) value;
+			fieldTokenMap_ = (Map<CharSequence, NavigableSet<CharSequence>>) value;
 		}
 	}
 
@@ -737,6 +745,7 @@ public class DocumentScanner extends Observable {
 		tokenLocationMap_ = value;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setTokenLocationMap(final Object value) {
 		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
 
@@ -747,13 +756,15 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setFieldValueMap(final Map<CharSequence, NavigableSet<Comparable>> fieldValueMap) {
 		fieldValueMap_ = fieldValueMap;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setFieldValueMap(final Object value) {
 		if (DocumentScanner.validateFieldValueMap(value)) {
-			fieldValueMap_ = (Map) value;
+			fieldValueMap_ = (Map<CharSequence, NavigableSet<Comparable>>) value;
 		}
 	}
 
@@ -761,9 +772,10 @@ public class DocumentScanner extends Observable {
 		fieldTypeMap_ = fieldTypeMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setFieldTypeMap(final Object value) {
 		if (DocumentScanner.validateFieldTypeMap(value)) {
-			fieldTypeMap_ = (Map) value;
+			fieldTypeMap_ = (Map<CharSequence, Integer>) value;
 		}
 	}
 
@@ -771,9 +783,10 @@ public class DocumentScanner extends Observable {
 		tokenFreqMap_ = tokenFreqMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setTokenFreqMap(final Object value) {
 		if (DocumentScanner.validateTokenFreqMap(value)) {
-			tokenFreqMap_ = (NavigableMap) value;
+			tokenFreqMap_ = (NavigableMap<CharSequence, Integer>) value;
 		}
 	}
 

@@ -8,4 +8,8 @@ package org.openntf.domino.ext;
  */
 public interface EmbeddedObject {
 
+	/**
+	 * Sets the underlying document dirty.
+	 */
+	public void markDirty();
 }

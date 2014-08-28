@@ -5,6 +5,7 @@ package org.openntf.domino.ext;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,7 +103,7 @@ public interface Database extends Base {
 	 * @return An IDominoEvent which will be passed to {@link org.openntf.domino.ext.Base.fireListener}
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
+	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base<?> source, Object payload);
 
 	/**
 	 * NOT YET FULLY IMPLEMENTED. If memory serves me correctly, there were problems creating a blank DocumentCollection and merging other
@@ -315,7 +316,7 @@ public interface Database extends Base {
 	 * @return The Document corresponding to the key, or null if no matching document exists.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(final Serializable key);
+	public Document getDocumentWithKey(final Serializable key);
 
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
@@ -331,7 +332,7 @@ public interface Database extends Base {
 	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(final Serializable key, final boolean createOnFail);
+	public Document getDocumentWithKey(final Serializable key, final boolean createOnFail);
 
 	// TODO: Combine the 
 	/**
@@ -538,6 +539,16 @@ public interface Database extends Base {
 	 */
 	public DatabaseTransaction getTransaction();
 
+	public String getUNID(String noteid);
+
+	public String getUNID(int noteid);
+
+	public Document getDocumentByUNID(String unid, boolean deferDelegate);
+
+	public Document getDocumentByID(String noteid, boolean deferDelegate);
+
+	public Document getDocumentByID(int noteid, boolean deferDelegate);
+
 	/**
 	 * Passes a DatabaseTransaction to a Database object. This allows a single Transaction to be used to process activity across multiple
 	 * databases
@@ -639,5 +650,10 @@ public interface Database extends Base {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setAutoMime(AutoMime autoMime);
+
+	/**
+	 * @return the Locale stored in the Notes database
+	 */
+	public Locale getLocale();
 
 }

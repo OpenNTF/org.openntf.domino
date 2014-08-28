@@ -44,7 +44,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 public enum TypeUtils {
 	;
 
-	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base context)
+	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base<?> context)
 			throws IllegalArgumentException {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
 		synchronized (rawMap) {
@@ -56,6 +56,7 @@ public enum TypeUtils {
 		return Collections.unmodifiableMap(result);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<?> T) {
 		String noteid = doc.getNoteID();
 		boolean hasItem = doc.hasItem(itemName);
@@ -113,7 +114,7 @@ public enum TypeUtils {
 		if (rawObject == null || rawObject instanceof String)
 			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
 		if (rawObject instanceof Collection) {
-			for (Object obj : (Collection) rawObject) {
+			for (Object obj : (Collection<?>) rawObject) {
 				if (!isNumerical(obj)) {
 					result = false;
 					break;
@@ -135,7 +136,7 @@ public enum TypeUtils {
 		if (rawObject == null || rawObject instanceof String)
 			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
 		if (rawObject instanceof Collection) {
-			for (Object obj : (Collection) rawObject) {
+			for (Object obj : (Collection<?>) rawObject) {
 				if (!isCalendrical(obj)) {
 					result = false;
 					break;
@@ -155,7 +156,7 @@ public enum TypeUtils {
 		if (rawObject == null)
 			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
 		if (rawObject instanceof Collection) {
-			for (Object obj : (Collection) rawObject) {
+			for (Object obj : (Collection<?>) rawObject) {
 				if (!isNameish(obj)) {
 					result = false;
 					break;
@@ -169,6 +170,18 @@ public enum TypeUtils {
 			}
 		}
 		return result;
+	}
+
+	public static <T> T objectToClass(final Object o, final Class<?> T, final Session session) {
+		if (o == null) {
+			return null;
+		}
+		if (o instanceof Vector) {
+			return vectorToClass((Vector<?>) o, T, session);
+		}
+		Vector<Object> v = new Vector<Object>();
+		v.add(o);
+		return vectorToClass(v, T, session);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -278,12 +291,21 @@ public enum TypeUtils {
 			} else if (T == Date.class) {
 				result = toDate(v);
 			} else if (T == org.openntf.domino.DateTime.class) {
-				result = session.createDateTime(toDate(v));
-			} else if (T == org.openntf.domino.Name.class) {
-				if (v.isEmpty()) {
-					result = session.createName("");
+				if (session != null) {
+					result = session.createDateTime(toDate(v));
 				} else {
-					result = session.createName(String.valueOf(v.get(0)));
+					throw new IllegalArgumentException("Cannont convert a Vector to DateTime without a valid Session object");
+				}
+			} else if (T == org.openntf.domino.Name.class) {
+				if (session != null) {
+					if (v.isEmpty()) {
+						result = session.createName("");
+					} else {
+						result = session.createName(String.valueOf(v.get(0)));
+					}
+				} else {
+					throw new IllegalArgumentException("Cannont convert a Vector to Name without a valid Session object");
+
 				}
 			} else if (T == Boolean.class) {
 				if (v.isEmpty()) {
@@ -310,6 +332,7 @@ public enum TypeUtils {
 
 	private static final Logger log_ = Logger.getLogger(TypeUtils.class.getName());
 
+	@SuppressWarnings("unchecked")
 	public static <T> T toNumberArray(final Vector<Object> value, final Class<?> T) {
 		int size = value.size();
 		Object[] result = (Object[]) Array.newInstance(T, size);
@@ -319,16 +342,17 @@ public enum TypeUtils {
 		return (T) result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T toNumber(final Object value, final Class<?> T) throws DataNotCompatibleException {
 		// System.out.println("Starting toNumber to get type " + T.getName() + " from a value of type " + value.getClass().getName());
 		if (value == null)
 			return null;
-		if (value instanceof Vector && (((Vector) value).isEmpty()))
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
 			return null;
 		T result = null;
 		Object localValue = value;
 		if (value instanceof Collection) {
-			localValue = ((Collection) value).iterator().next();
+			localValue = ((Collection<?>) value).iterator().next();
 		}
 		// System.out.println("LocalValue is type " + localValue.getClass().getName() + ": " + String.valueOf(localValue));
 
@@ -615,10 +639,10 @@ public enum TypeUtils {
 	public static Date toDate(Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
-		if (value instanceof Vector && (((Vector) value).isEmpty()))
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
 			return null;
 		if (value instanceof Vector) {
-			value = ((Vector) value).get(0);
+			value = ((Vector<?>) value).get(0);
 		}
 		if (value instanceof Long) {
 			return new Date(((Long) value).longValue());
@@ -658,11 +682,15 @@ public enum TypeUtils {
 			return new org.openntf.domino.DateTime[0];
 
 		org.openntf.domino.DateTime[] result = new org.openntf.domino.DateTime[vector.size()];
-		int i = 0;
-		for (Object o : vector) {
-			result[i++] = session.createDateTime(toDate(o));
+		if (session != null) {
+			int i = 0;
+			for (Object o : vector) {
+				result[i++] = session.createDateTime(toDate(o));
+			}
+			return result;
+		} else {
+			throw new IllegalArgumentException("Cannont convert to DateTime without a valid Session object");
 		}
-		return result;
 	}
 
 	public static org.openntf.domino.Name[] toNames(final Collection<Object> vector, final org.openntf.domino.Session session)
@@ -671,11 +699,15 @@ public enum TypeUtils {
 			return new org.openntf.domino.Name[0];
 
 		org.openntf.domino.Name[] result = new org.openntf.domino.Name[vector.size()];
-		int i = 0;
-		for (Object o : vector) {
-			result[i++] = session.createName(String.valueOf(o));
+		if (session != null) {
+			int i = 0;
+			for (Object o : vector) {
+				result[i++] = session.createName(String.valueOf(o));
+			}
+			return result;
+		} else {
+			throw new IllegalArgumentException("Cannont convert to Name without a valid Session object");
 		}
-		return result;
 	}
 
 	public static String[] toStrings(final Collection<Object> vector) throws DataNotCompatibleException {
@@ -747,7 +779,7 @@ public enum TypeUtils {
 		//		System.out.println("Enum coercion requested from value " + String.valueOf(value));
 		if (value == null)
 			return null;
-		if (value instanceof Vector && (((Vector) value).isEmpty()))
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
 			return null;
 		Enum<?> result = null;
 		String en = String.valueOf(value);
@@ -770,8 +802,8 @@ public enum TypeUtils {
 						//					StringBuilder typenames = new StringBuilder();
 						for (Object obj : objs) {
 							if (obj instanceof Enum) {
-								if (((Enum) obj).name().equals(ename)) {
-									result = (Enum) obj;
+								if (((Enum<?>) obj).name().equals(ename)) {
+									result = (Enum<?>) obj;
 									//								System.out.println("Found a match between " + result.name() + " and " + ename + "!");
 									return result;
 								} else {
@@ -815,8 +847,8 @@ public enum TypeUtils {
 				Class<?> cls = Class.forName(cn, false, cl);
 				for (Object obj : cls.getEnumConstants()) {
 					if (obj instanceof Enum) {
-						if (((Enum) obj).name().equals(ename)) {
-							classes[pos] = (Enum) obj;
+						if (((Enum<?>) obj).name().equals(ename)) {
+							classes[pos] = (Enum<?>) obj;
 						}
 					}
 				}

@@ -23,6 +23,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class ItemVector extends Vector<Item> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ItemVector.class.getName());
 	private static final long serialVersionUID = 1L;
 	private Document doc_;
@@ -144,7 +145,7 @@ public class ItemVector extends Vector<Item> {
 		if (arg0 instanceof Item) {
 			return itemNames_.contains(((Item) arg0).getName());
 		} else if (arg0 instanceof String) {
-			return itemNames_.contains((String) arg0);
+			return itemNames_.contains(arg0);
 		}
 		return false;
 	}
@@ -207,7 +208,7 @@ public class ItemVector extends Vector<Item> {
 		if (arg0 instanceof Item) {
 			return itemNames_.indexOf(((Item) arg0).getName());
 		} else if (arg0 instanceof String) {
-			return itemNames_.indexOf((String) arg0);
+			return itemNames_.indexOf(arg0);
 		}
 		return -1;
 	}
@@ -270,7 +271,7 @@ public class ItemVector extends Vector<Item> {
 		if (arg0 instanceof Item) {
 			return itemNames_.lastIndexOf(((Item) arg0).getName());
 		} else if (arg0 instanceof String) {
-			return itemNames_.lastIndexOf((String) arg0);
+			return itemNames_.lastIndexOf(arg0);
 		}
 		return -1;
 	}
@@ -297,7 +298,7 @@ public class ItemVector extends Vector<Item> {
 			String name = ((Item) arg0).getName();
 			return itemNames_.remove(name);
 		} else if (arg0 instanceof String) {
-			return itemNames_.remove((String) arg0);
+			return itemNames_.remove(arg0);
 		}
 		return itemNames_.remove(arg0);
 	}

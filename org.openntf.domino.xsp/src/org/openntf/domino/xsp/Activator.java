@@ -6,6 +6,7 @@ import java.net.URL;
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
+import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.readers.LogReader;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -280,28 +281,14 @@ public class Activator extends Plugin {
 	}
 
 	/**
-	 * Gets an Xsp property or notes.ini variable, based on the value passed
+	 * Gets an Xsp property or notes.ini variable for PLUGIN_ID (="org.openntf.domino.xsp")
 	 * 
-	 * @return String value for the property
+	 * @return String value for the PLUGIN_ID property
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public static String getEnvironmentStringsAsString() {
-		String result = "";
-		try {
-			result = Platform.getInstance().getProperty(PLUGIN_ID); // $NON-NLS-1$
-			if (StringUtil.isEmpty(result)) {
-				result = System.getProperty(PLUGIN_ID); // $NON-NLS-1$
-				if (StringUtil.isEmpty(result)) {
-					result = com.ibm.xsp.model.domino.DominoUtils.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
-				}
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-		return result;
+		return getEnvironmentStringsAsString(PLUGIN_ID);
 	}
-
-	private Bundle bundle_;
 
 	/*
 	 * (non-Javadoc)
@@ -311,7 +298,6 @@ public class Activator extends Plugin {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		bundle_ = bundleContext.getBundle();
 	}
 
 	/*
@@ -321,6 +307,7 @@ public class Activator extends Plugin {
 	 */
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception {
+		XotsDaemon.stop();
 		Activator.context = null;
 	}
 

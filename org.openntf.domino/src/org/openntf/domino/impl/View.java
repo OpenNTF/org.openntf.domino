@@ -25,6 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lotus.domino.NotesException;
 
@@ -50,11 +52,12 @@ import org.openntf.domino.utils.Factory;
 public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
+	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
+	private Map<String, DominoColumnInfo> columnInfoMap_;
 	private static Method iGetEntryByKeyMethod;
 	static {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@SuppressWarnings("unused")
 				@Override
 				public Object run() throws Exception {
 					// There is no relation between method position in the two classes:
@@ -136,6 +139,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 
 	private String notesUrl_;
 	private String name_;
+	private String flags_;
 
 	private void initialize(final lotus.domino.View delegate) {
 		try {
@@ -330,7 +334,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
 			final boolean variants, final boolean fuzzy) {
@@ -351,7 +355,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int FTSearchSorted(final Vector query, final int maxDocs, final String column) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
@@ -370,7 +374,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
 			final boolean variants, final boolean fuzzy) {
@@ -409,7 +413,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final int sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -426,7 +430,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final int sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -443,7 +447,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final String sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -460,7 +464,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final String sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -476,9 +480,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn) {
 		try {
-			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.SCHEMA,
-					this);
-			columnMap_ = null;
+			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn)), ViewColumn.SCHEMA, this);
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -494,9 +497,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex) {
 		try {
-			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
-					ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn), destinationIndex), ViewColumn.SCHEMA, this);
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -513,7 +515,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn() {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -530,7 +532,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -547,7 +549,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position, final String columnTitle) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -564,7 +566,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position, final String columnTitle, final String formula) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -706,7 +708,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * @return
 	 * @throws NotesException
 	 */
-	ViewEntry iGetEntryByKey(final Vector paramVector, final boolean paramBoolean, final int paramInt) {
+	ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
 		if (paramVector == null && paramInt == 42) {
 			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
 		}
@@ -865,7 +867,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getAliases() {
 		try {
-			return (Vector<String>) getDelegate().getAliases();
+			return getDelegate().getAliases();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -977,7 +979,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys) {
 		return getAllDocumentsByKey((Object) keys, false);
@@ -988,7 +990,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys, final boolean exact) {
 		return getAllDocumentsByKey((Object) keys, exact);
@@ -1031,7 +1033,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			Object domKey = toDominoFriendly(key, this, recycleThis);
 			lotus.domino.ViewEntryCollection rawColl;
 			if (domKey instanceof java.util.Vector) {
-				rawColl = getDelegate().getAllEntriesByKey((Vector) domKey, exact);
+				rawColl = getDelegate().getAllEntriesByKey((Vector<?>) domKey, exact);
 			} else {
 				rawColl = getDelegate().getAllEntriesByKey(domKey, exact);
 			}
@@ -1047,7 +1049,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Vector keys) {
 		return getAllEntriesByKey((Object) keys, false);
@@ -1058,7 +1060,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Vector keys, final boolean exact) {
 		return getAllEntriesByKey((Object) keys, exact);
@@ -1193,7 +1195,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public java.util.Vector<String> getColumnNames() {
 		try {
-			return (Vector<String>) getDelegate().getColumnNames();
+			return getDelegate().getColumnNames();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1224,34 +1226,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
-			Vector columns = null;
 			try {
-				columns = getDelegate().getColumns();
+				return fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
 				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
 						+ getAncestorDatabase().getApiPath(), e);
 			}
-			return fromLotusAsVector(columns, org.openntf.domino.ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
-	}
-
-	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
-
-	@Override
-	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
-		if (columnMap_ == null) {
-			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
-			Vector<ViewColumn> columns = getColumns();
-			if (columns != null && !columns.isEmpty()) {
-				for (ViewColumn column : columns) {
-					columnMap_.put(column.getItemName(), column);
-				}
-			}
-		}
-		return columnMap_;
 	}
 
 	/*
@@ -1308,7 +1292,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Document getDocumentByKey(final java.util.Vector keys) {
 		return getDocumentByKey((Object) keys, false);
@@ -1319,9 +1303,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public Document getDocumentByKey(final java.util.Vector keys, final boolean exact) {
+	public Document getDocumentByKey(final Vector keys, final boolean exact) {
 		return getDocumentByKey((Object) keys, exact);
 	}
 
@@ -1346,7 +1330,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		try {
 			Object domKey = toDominoFriendly(key, this, recycleThis);
 			if (domKey instanceof java.util.Vector) {
-				return fromLotus(getDelegate().getEntryByKey((java.util.Vector) domKey, exact), ViewEntry.SCHEMA, this);
+				return fromLotus(getDelegate().getEntryByKey((Vector<?>) domKey, exact), ViewEntry.SCHEMA, this);
 			} else {
 				return fromLotus(getDelegate().getEntryByKey(domKey, exact), ViewEntry.SCHEMA, this);
 
@@ -1364,9 +1348,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public ViewEntry getEntryByKey(final java.util.Vector keys) {
+	public ViewEntry getEntryByKey(final Vector keys) {
 		return getEntryByKey((Object) keys, false);
 	}
 
@@ -1375,9 +1359,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public ViewEntry getEntryByKey(final java.util.Vector keys, final boolean exact) {
+	public ViewEntry getEntryByKey(final Vector keys, final boolean exact) {
 		return getEntryByKey((Object) keys, exact);
 	}
 
@@ -1480,7 +1464,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getLockHolders() {
 		try {
-			return (Vector<String>) getDelegate().getLockHolders();
+			return getDelegate().getLockHolders();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1638,7 +1622,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getReaders() {
 		try {
-			return (Vector<String>) getDelegate().getReaders();
+			return getDelegate().getReaders();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1795,12 +1779,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isCalendar() {
-		try {
-			return getDelegate().isCalendar();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+		return getFlags().contains("c");
 	}
 
 	/*
@@ -1825,6 +1804,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isConflict() {
+		if (!isCalendar())
+			return false;	//NTF conflict checking only applies to calendar views
 		try {
 			return getDelegate().isConflict();
 		} catch (NotesException e) {
@@ -1870,12 +1851,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isFolder() {
-		try {
-			return getDelegate().isFolder();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+		return getFlags().contains("F");
 	}
 
 	/*
@@ -1915,11 +1891,13 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isPrivate() {
-		try {
-			return getDelegate().isPrivate();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
+		IndexType type = getIndexType();
+		if (type == IndexType.PRIVATE)
+			return true;
+		if (type == IndexType.SHAREDPRIVATEONDESKTOP)
+			return true;
+		if (type == IndexType.SHAREDPRIVATEONSERVER)
+			return true;
 		return false;
 	}
 
@@ -2033,9 +2011,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean lock(final java.util.Vector names) {
+	public boolean lock(final Vector names) {
 		try {
 			return getDelegate().lock(names);
 		} catch (NotesException e) {
@@ -2049,9 +2027,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean lock(final java.util.Vector names, final boolean provisionalOk) {
+	public boolean lock(final Vector names, final boolean provisionalOk) {
 		try {
 			return getDelegate().lock(names, provisionalOk);
 		} catch (NotesException e) {
@@ -2095,9 +2073,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean lockProvisional(final java.util.Vector names) {
+	public boolean lockProvisional(final Vector names) {
 		try {
 			return getDelegate().lockProvisional(names);
 		} catch (NotesException e) {
@@ -2199,7 +2177,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn() {
 		try {
 			getDelegate().removeColumn();
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2214,7 +2192,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final int column) {
 		try {
 			getDelegate().removeColumn(column);
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2229,7 +2207,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final String column) {
 		try {
 			getDelegate().removeColumn(column);
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2296,9 +2274,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#setAliases(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void setAliases(final java.util.Vector aliases) {
+	public void setAliases(final Vector aliases) {
 		try {
 			getDelegate().setAliases(aliases);
 		} catch (NotesException e) {
@@ -2342,6 +2320,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public void setDefaultView(final boolean flag) {
 		try {
+			flags_ = null;
 			getDelegate().setDefaultView(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2384,6 +2363,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public void setProhibitDesignRefresh(final boolean flag) {
 		try {
+			flags_ = null;
 			getDelegate().setProhibitDesignRefresh(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2409,9 +2389,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#setReaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void setReaders(final java.util.Vector readers) {
+	public void setReaders(final Vector readers) {
 		try {
 			getDelegate().setReaders(readers);
 		} catch (NotesException e) {
@@ -2510,7 +2490,26 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
-	protected List<DominoColumnInfo> getColumnInfo() {
+	@Override
+	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
+		if (columnMap_ == null) {
+			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
+			Vector<ViewColumn> columns = getColumns();
+			if (columns != null && !columns.isEmpty()) {
+				for (ViewColumn column : columns) {
+					columnMap_.put(column.getItemName(), column);
+				}
+			}
+		}
+		return columnMap_;
+	}
+
+	/**
+	 * Used by the viewEntry to determine the correct columnValue
+	 * 
+	 * @return
+	 */
+	protected List<DominoColumnInfo> getColumnInfos() {
 		if (columnInfo_ == null) {
 			List<org.openntf.domino.ViewColumn> columns = getColumns();
 			List<DominoColumnInfo> result = new ArrayList<DominoColumnInfo>(columns.size());
@@ -2523,13 +2522,31 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	}
 
 	/**
+	 * Used by the viewEntry to determine the correct columnValue
+	 * 
+	 * @return
+	 */
+	protected Map<String, DominoColumnInfo> getColumnInfoMap() {
+		if (columnInfoMap_ == null) {
+			columnInfoMap_ = new LinkedHashMap<String, DominoColumnInfo>();
+			for (DominoColumnInfo columnInfo : getColumnInfos()) {
+				columnInfoMap_.put(columnInfo.getItemName(), columnInfo);
+			}
+
+		}
+		return columnInfoMap_;
+	}
+
+	/**
 	 * Metadata about a ViewColumn, comprising the programmatic column name and the column index
 	 * 
 	 * @since org.openntf.domino 3.0.0
 	 */
 	public static class DominoColumnInfo implements Serializable {
+		private static final long serialVersionUID = 1L;
 		private final String itemName_;
 		private final int columnValuesIndex_;
+		private final Object constantValue_;
 
 		/**
 		 * Constructor, passing the ViewColumn object
@@ -2540,7 +2557,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		 */
 		public DominoColumnInfo(final org.openntf.domino.ViewColumn column) {
 			itemName_ = column.getItemName();
-			columnValuesIndex_ = column.getColumnValuesIndex();
+			columnValuesIndex_ = column.getColumnValuesIndex(false);
+
+			if (columnValuesIndex_ == 65535) {
+				// resolve the constant values (with the openntf session, to get proper dateTime values!)
+				Vector v = column.getAncestorSession().evaluate(column.getFormula());
+				constantValue_ = v.get(0);
+			} else {
+				constantValue_ = null;
+			}
+
 		}
 
 		/**
@@ -2562,11 +2588,20 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		public int getColumnValuesIndex() {
 			return columnValuesIndex_;
 		}
+
+		/**
+		 * If this is a constant
+		 * 
+		 * @return the constant value of this column
+		 */
+		public Object getConstantValue() {
+			return constantValue_;
+		}
 	}
 
 	@Override
 	public boolean isIndexed() {
-		return getDocument().hasItem("$Collation");
+		return getDocument().hasItem("$Collection");
 	}
 
 	/*
@@ -2591,6 +2626,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			lotus.domino.Database d = toLotus(db);
 			lotus.domino.View view = d.getView(name_);
 			setDelegate(view, 0);
+			Factory.recacheLotus(d, this, parent_);
 			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
 			view.setAutoUpdate(false);
 			//			}
@@ -2620,4 +2656,162 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		}
 		return retVal_;
 	}
+
+	@Override
+	public boolean isTimeSensitive() {
+		Document doc = getDocument();
+		return doc.hasItem("$FormulaTV");
+	}
+
+	@Override
+	public IndexType getIndexType() {
+		IndexType result = IndexType.SHARED;
+		String flags = getFlags();
+		if (flags.contains("P") && flags.contains("Y")) {
+			if (flags.contains("p")) {
+				result = IndexType.SHAREDPRIVATEONSERVER;
+				if (flags.contains("o")) {
+					result = IndexType.SHAREDPRIVATEONDESKTOP;
+				}
+			} else if (flags.contains("V")) {
+				result = IndexType.PRIVATE;
+			} else if (flags.contains("l")) {
+				result = IndexType.SHAREDINCLUDESDELETES;
+			} else if (flags.contains("a")) {
+				result = IndexType.SHAREDNOTINFOLDERS;
+			}
+		}
+		return result;
+	}
+
+	protected String getFlags() {
+		if (flags_ == null) {
+			flags_ = getDocument().getItemValueString("$Flags");
+		}
+		return flags_;
+	}
+
+	private String indexOptions_;
+
+	protected String getIndexOptions() {
+		if (indexOptions_ == null) {
+			indexOptions_ = getDocument().getItemValueString("$Index");
+		}
+		return indexOptions_;
+	}
+
+	/*
+	'/P=' + the number of hours until discarding of the view index. 
+	'/T' Discard view index after each use. 
+	'/M' Manual refresh. 
+	'/O' Automatic refresh. 
+	'/R=' + the number of seconds between automatically refresh of view.
+	'/C' Don't show empty categories
+	'/L' Disable auto-update
+	 */
+	public static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+	public static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+
+	@Override
+	public boolean isDisableAutoUpdate() {
+		String index = getIndexOptions();
+		return index.contains("/L");
+	}
+
+	@Override
+	public boolean isHideEmptyCategories() {
+		String index = getIndexOptions();
+		return index.contains("/C");
+	}
+
+	@Override
+	public boolean isDiscardIndex() {
+		String index = getIndexOptions();
+		return index.contains("/T");
+	}
+
+	@Override
+	public boolean isManualRefresh() {
+		String index = getIndexOptions();
+		return index.contains("/M");
+	}
+
+	@Override
+	public boolean isAutomaticRefresh() {
+		String index = getIndexOptions();
+		return index.contains("/O");
+	}
+
+	@Override
+	public int getAutoRefreshSeconds() {
+		int result = 0;
+		String index = getIndexOptions();
+		if (index.contains("/R")) {
+			Matcher matcher = R_MATCH.matcher(index);
+			if (matcher.matches()) {
+				result = Integer.parseInt(matcher.group(1));
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int getDiscardHours() {
+		int result = 0;
+		String index = getIndexOptions();
+		if (index.contains("/P")) {
+			Matcher matcher = P_MATCH.matcher(index);
+			if (matcher.matches()) {
+				result = Integer.parseInt(matcher.group(1));
+			}
+		}
+		return result;
+	}
+
+	protected void flushCaches() {
+		columnInfo_ = null;
+		columnInfoMap_ = null;
+		columnMap_ = null;
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Object key) {
+		return this.getDocumentByKey(key);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Object key, final boolean exact) {
+		return this.getDocumentByKey(key, exact);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Vector keys) {
+		return this.getDocumentByKey(keys);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Vector keys, final boolean exact) {
+		return this.getDocumentByKey(keys, exact);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Object key) {
+		return this.getEntryByKey(key);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Object key, final boolean exact) {
+		return this.getEntryByKey(key, exact);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Vector keys) {
+		return this.getEntryByKey(keys);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact) {
+		return this.getEntryByKey(keys, exact);
+	}
+
 }

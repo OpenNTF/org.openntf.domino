@@ -10,16 +10,17 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
 //import javax.annotation.Nonnull;
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * @author nfreeman
  * 
  */
 public class AbstractEdgeHelper implements IEdgeHelper {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractEdgeHelper.class.getName());
 
 	public static class EdgeHelperException extends RuntimeException {
@@ -77,6 +78,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return outType_;
 	}
 
+	@Override
 	public boolean isUnique() {
 		return unique_;
 	}
@@ -85,6 +87,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return sameTypes_;
 	}
 
+	@Override
 	public Class<? extends Vertex> getOtherType(final Class<? extends Vertex> type) {
 		if (getInType().equals(type)) {
 			return getOutType();
@@ -99,10 +102,12 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		throw new EdgeHelperException(type.getName() + " is not a participating type in edge " + getLabel());
 	}
 
+	@Override
 	public Class<? extends Vertex> getOtherType(final Vertex vertex) {
 		return getOtherType(vertex.getClass());
 	}
 
+	@Override
 	public int getEdgeCount(final Vertex vertex) {
 		if (vertex instanceof DominoVertex) {
 			if (getInType().equals(vertex.getClass())) {
@@ -123,6 +128,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
+	@Override
 	public Set<? extends Edge> getEdges(final Vertex vertex) {
 		if (getInType().equals(vertex.getClass())) {
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
@@ -140,6 +146,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 	}
 
+	@Override
 	public Set<? extends Edge> getFilteredEdges(final Vertex vertex, final Map<String, Object> filterMap) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		Set<? extends Edge> rawset = getEdges(vertex);
@@ -156,6 +163,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return Collections.unmodifiableSet(result);
 	}
 
+	@Override
 	public SortedSet<? extends Edge> getSortedEdges(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Edge> rawSet = getEdges(vertex);
@@ -170,6 +178,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
+	@Override
 	public Set<? extends Vertex> getOtherVertexes(final Vertex vertex) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
 		Class<?> vclass = vertex.getClass();
@@ -193,6 +202,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
+	@Override
 	public Vertex getOtherVertex(final Edge edge, final Vertex vertex) {
 		if (edge instanceof IDominoEdge) {
 			return ((IDominoEdge) edge).getOtherVertex(vertex);
@@ -205,6 +215,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
+	@Override
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Vertex> rawSet = getOtherVertexes(vertex);
@@ -214,6 +225,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
+	@Override
 	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
 		Class<?> vclass = vertex.getClass();
@@ -237,6 +249,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
+	@Override
 	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
 		if (defaultOut == null || defaultIn == null) {
 			throw new RuntimeException("Cannot create an edge of type " + getLabel() + " where a vertex is null!");
@@ -339,6 +352,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return result;
 	}
 
+	@Override
 	public Edge findEdge(final/*@Nonnull*/Vertex defaultOut, final/*@Nonnull*/Vertex defaultIn) {
 		Edge result = null;
 		Vertex inVert = null;

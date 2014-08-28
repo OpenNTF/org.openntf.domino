@@ -69,7 +69,8 @@ public enum Documents {
 	//	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	public static enum Flags {
-		HasAttachments, HasEmbedded, IsDeleted, IsEncrypted, IsEncryptOnSend, IsNewNote, IsProfile, IsResponse, IsSaveMessageOnSend, IsSentByAgent, IsSignOnSend, IsValid;
+		HasAttachments, HasEmbedded, IsDeleted, IsEncrypted, IsEncryptOnSend, IsNewNote, IsProfile, IsResponse, IsSaveMessageOnSend,
+		IsSentByAgent, IsSignOnSend, IsValid;
 
 		@Override
 		public String toString() {
@@ -110,11 +111,11 @@ public enum Documents {
 		MIMEHeader header = entity.getNthHeader("X-Java-Class");
 		if (header != null) {
 			String className = header.getHeaderVal();
-			chkClass = DominoUtils.getClass(className);
-			if (chkClass == null) {
-				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-						+ " so object deserialization is likely to fail...");
-			}
+			//			chkClass = DominoUtils.getClass(className);
+			//			if (chkClass == null) {
+			//				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
+			//						+ " so object deserialization is likely to fail...");
+			//			}
 		}
 
 		entity.getContentAsBytes(mimeStream);
@@ -453,7 +454,6 @@ public enum Documents {
 				session.setConvertMIME(false);
 			}
 
-			Object result = null;
 			if (entity == null) {
 				entity = document.getMIMEEntity(itemname);
 				mustClose = true;
@@ -511,7 +511,7 @@ public enum Documents {
 	public static boolean isSet(final Document document, final String fieldName) {
 		if (!document.hasItem(fieldName))
 			return false;
-		Vector value = document.getItemValue(fieldName);
+		Vector<Object> value = document.getItemValue(fieldName);
 		if (value == null)
 			return false;
 		if (value.size() == 0)

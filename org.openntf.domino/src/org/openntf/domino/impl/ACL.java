@@ -26,6 +26,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -467,6 +468,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 			lotus.domino.Database db = toLotus(getParent());
 			lotus.domino.ACL d = db.getACL();
 			setDelegate(d, 0);
+			Factory.recacheLotus(d, this, parent_);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

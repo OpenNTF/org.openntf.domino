@@ -15,15 +15,20 @@
  */
 package org.openntf.domino.thread;
 
-import org.openntf.domino.utils.Factory;
+import lotus.domino.NotesThread;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DominoThread.
  */
-public class DominoThread extends Thread {
-	private long starttime_ = 0l;
-	private Runnable runnable_;
+public class DominoThread extends NotesThread {
+	private transient Runnable runnable_;
+	protected Status status_ = Status.NONE;
+	protected int nativeId_;
+
+	public enum Status {
+		NONE, INITIALIZED, RUNNING, TERMINATED
+	}
 
 	/**
 	 * Instantiates a new domino thread.
@@ -39,7 +44,7 @@ public class DominoThread extends Thread {
 	 *            the runnable
 	 */
 	public DominoThread(final Runnable runnable) {
-		super(runnable);
+		super();
 		runnable_ = runnable;
 	}
 
@@ -50,12 +55,12 @@ public class DominoThread extends Thread {
 	 *            the runnable
 	 */
 	public DominoThread(final Runnable runnable, final String name) {
-		super(runnable, name);
+		super(name);
 		runnable_ = runnable;
 	}
 
 	public DominoThread(final AbstractDominoRunnable runnable) {
-		super(runnable);
+		super();
 		runnable_ = runnable;
 	}
 
@@ -68,16 +73,16 @@ public class DominoThread extends Thread {
 	 *            the thread name
 	 */
 	public DominoThread(final AbstractDominoRunnable runnable, final String threadName) {
-		super(runnable, threadName);
+		super(threadName);
 		runnable_ = runnable;
-	}
-
-	public long getStartTime() {
-		return starttime_;
 	}
 
 	public Runnable getRunnable() {
 		return runnable_;
+	}
+
+	public Status getStatus() {
+		return status_;
 	}
 
 	/*
@@ -86,39 +91,46 @@ public class DominoThread extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
-	public void run() {
+	public void runNotes() {
 		try {
-			lotus.domino.NotesThread.sinitThread();
-			Factory.setClassLoader(this.getContextClassLoader());
-			super.run();
+			getRunnable().run();	//NTF: we're already inside the NotesThread.run();
+			//Note: if the runnable is a ThreadPoolExecutor.Worker, then this process will not end
+			//until the Executor is shutdown or the keep alive expires.
 		} catch (Throwable t) {
-			throw new RuntimeException(t);
-		} finally {
-			Factory.terminate();
-			lotus.domino.NotesThread.stermThread();
-			//						clean();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#start()
-	 */
-	@Override
-	public synchronized void start() {
-		super.start();
-
-		starttime_ = System.currentTimeMillis();
-	}
-
-	public synchronized void start(final ClassLoader loader) {
-		setContextClassLoader(loader);
-		start();
+			t.printStackTrace();
+		}/* finally {
+			termThread();
+			}*/
 	}
 
 	@Override
-	public void setContextClassLoader(final ClassLoader loader) {
-		super.setContextClassLoader(loader);
+	public void interrupt() {
+		//		System.out.println("ALERT! Thread interrupted!");
+		//		termThread();
+		super.interrupt();
 	}
+
+	@Override
+	public void initThread() {
+		super.initThread();
+		//		System.out.println("DEBUG: Initialized a " + toString());
+	}
+
+	@Override
+	public void termThread() {
+		System.out.println("DEBUG: Terminating a " + toString());
+		super.termThread();
+	}
+
+	@Override
+	public String toString() {
+		return (getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this) + ") native: " + this
+				.getNativeThreadID());
+	}
+
+	//	public synchronized void start(final ClassLoader loader) {
+	//		setContextClassLoader(loader);
+	//		start();
+	//	}
+
 }

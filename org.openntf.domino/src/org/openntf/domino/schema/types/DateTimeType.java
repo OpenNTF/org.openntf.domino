@@ -12,8 +12,8 @@ import org.openntf.domino.schema.exceptions.ItemException;
  * 
  */
 public class DateTimeType extends AbstractDominoType {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DateTimeType.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	DateTimeType() {
 	}

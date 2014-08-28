@@ -31,8 +31,9 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class RichTextNavigator.
  */
 public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
-		org.openntf.domino.RichTextNavigator {
+org.openntf.domino.RichTextNavigator {
 
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(RichTextNavigator.class.getName());
 
 	/**

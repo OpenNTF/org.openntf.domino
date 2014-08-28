@@ -16,6 +16,15 @@
  */
 package org.openntf.formula.impl;
 
+import static com.ibm.icu.util.Calendar.DAY_OF_MONTH;
+import static com.ibm.icu.util.Calendar.HOUR;
+import static com.ibm.icu.util.Calendar.HOUR_OF_DAY;
+import static com.ibm.icu.util.Calendar.MINUTE;
+import static com.ibm.icu.util.Calendar.MONTH;
+import static com.ibm.icu.util.Calendar.SECOND;
+import static com.ibm.icu.util.Calendar.YEAR;
+import static com.ibm.icu.util.Calendar.getInstance;
+
 import java.text.ParsePosition;
 import java.util.Date;
 import java.util.Locale;
@@ -79,7 +88,7 @@ public class FormatterImpl implements Formatter {
 	/*----------------------------------------------------------------------------*/
 	public Calendar parseDateToCal(String image, final boolean[] noDT, final boolean parseLenient) {
 		image = image.trim();
-		Calendar ret = Calendar.getInstance(iLocale);
+		Calendar ret = getInstance(iLocale);
 		// Should an empty string lead to a DateTime with noDate=noTime=true?
 		// (Lotus doesn't accept empty strings here.)
 		char spec = 0;
@@ -92,9 +101,9 @@ public class FormatterImpl implements Formatter {
 		if (spec != 0) {
 			ret.setTime(new Date());
 			if (spec == 'M')
-				ret.add(Calendar.DAY_OF_MONTH, 1);
+				ret.add(DAY_OF_MONTH, 1);
 			else if (spec == 'G')
-				ret.add(Calendar.DAY_OF_MONTH, -1);
+				ret.add(DAY_OF_MONTH, -1);
 			noDT[0] = false;
 			noDT[1] = true;
 			return ret;
@@ -111,19 +120,19 @@ public class FormatterImpl implements Formatter {
 			df.parse(image, ret, p);
 			if (p.getErrorIndex() < 0)
 				break;
-			if (!ret.isSet(Calendar.DAY_OF_MONTH) || !ret.isSet(Calendar.MONTH)) {
+			if (!ret.isSet(DAY_OF_MONTH) || !ret.isSet(MONTH)) {
 				//Try with SHORT format			
 				ret.clear();
 				df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, iLocale);
 				p.setIndex(0);
 				p.setErrorIndex(-1);
 				df.parse(image, ret, p);
-				if (!ret.isSet(Calendar.DAY_OF_MONTH) || !ret.isSet(Calendar.MONTH)) {	// Give up with date
+				if (!ret.isSet(DAY_OF_MONTH) || !ret.isSet(MONTH)) {	// Give up with date
 					ret.clear();
 					p.setErrorIndex(0);
 				}
 			}
-			if (ret.isSet(Calendar.MINUTE))
+			if (ret.isSet(MINUTE))
 				break;
 			/*
 			 * If no time found yet (i.e. at least hour+minute like Lotus), try to fish it
@@ -132,11 +141,11 @@ public class FormatterImpl implements Formatter {
 			p.setErrorIndex(-1);
 			df = DateFormat.getTimeInstance(DateFormat.MEDIUM, iLocale);
 			df.parse(image, ret, p);
-			if (ret.isSet(Calendar.MINUTE))
+			if (ret.isSet(MINUTE))
 				break;
-			if (ret.isSet(Calendar.DAY_OF_MONTH)) { // Set back possible hour (in accordance with Lotus)
-				ret.clear(Calendar.HOUR);
-				ret.clear(Calendar.HOUR_OF_DAY);
+			if (ret.isSet(DAY_OF_MONTH)) { // Set back possible hour (in accordance with Lotus)
+				ret.clear(HOUR);
+				ret.clear(HOUR_OF_DAY);
 				break;
 			}
 			/*
@@ -153,24 +162,24 @@ public class FormatterImpl implements Formatter {
 		}
 		if (illegalDateString)
 			throw new IllegalArgumentException("Illegal date string '" + image + "'");
-		boolean contDate = ret.isSet(Calendar.DAY_OF_MONTH);
-		boolean contTime = ret.isSet(Calendar.MINUTE);
-		if (ret.isSet(Calendar.YEAR)) {
+		boolean contDate = ret.isSet(DAY_OF_MONTH);
+		boolean contTime = ret.isSet(MINUTE);
+		if (ret.isSet(YEAR)) {
 			if (!contTime)
-				ret.set(Calendar.HOUR_OF_DAY, 0);
+				ret.set(HOUR_OF_DAY, 0);
 		} else {
-			Calendar now = Calendar.getInstance(iLocale);
+			Calendar now = getInstance(iLocale);
 			now.setTime(new Date());
-			ret.set(Calendar.YEAR, now.get(Calendar.YEAR));
+			ret.set(YEAR, now.get(YEAR));
 			if (!contDate) {
-				ret.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-				ret.set(Calendar.MONTH, now.get(Calendar.MONTH));
+				ret.set(DAY_OF_MONTH, now.get(DAY_OF_MONTH));
+				ret.set(MONTH, now.get(MONTH));
 			}
 		}
-		if (!ret.isSet(Calendar.MINUTE))
-			ret.set(Calendar.MINUTE, 0);
-		if (!ret.isSet(Calendar.SECOND))
-			ret.set(Calendar.SECOND, 0);
+		if (!ret.isSet(MINUTE))
+			ret.set(MINUTE, 0);
+		if (!ret.isSet(SECOND))
+			ret.set(SECOND, 0);
 		try {
 			ret.getTime();
 		} catch (IllegalArgumentException e) {
@@ -183,15 +192,14 @@ public class FormatterImpl implements Formatter {
 
 	/*----------------------------------------------------------------------------*/
 	public Calendar parseDateToCalWithFormat(final String image, final String format, final boolean[] noDT, final boolean parseLenient) {
-		Calendar ret = Calendar.getInstance(iLocale);
+		Calendar ret = getInstance(iLocale);
 		ret.setLenient(false);
 		ParsePosition p = new ParsePosition(0);
 		ret.clear();
 		SimpleDateFormat sdf = new SimpleDateFormat(format, iLocale);
 		sdf.parse(image, ret, p);
-		boolean contDate = ret.isSet(Calendar.YEAR) || ret.isSet(Calendar.MONTH) || ret.isSet(Calendar.DAY_OF_MONTH);
-		boolean contTime = ret.isSet(Calendar.HOUR_OF_DAY) || ret.isSet(Calendar.HOUR) || ret.isSet(Calendar.MINUTE)
-				|| ret.isSet(Calendar.SECOND);
+		boolean contDate = ret.isSet(YEAR) || ret.isSet(MONTH) || ret.isSet(DAY_OF_MONTH);
+		boolean contTime = ret.isSet(HOUR_OF_DAY) || ret.isSet(HOUR) || ret.isSet(MINUTE) || ret.isSet(SECOND);
 		boolean illegalDateString = !contDate && !contTime;
 		if (!illegalDateString && !parseLenient) {
 			int lh = image.length();
@@ -200,20 +208,20 @@ public class FormatterImpl implements Formatter {
 		}
 		if (illegalDateString)
 			throw new IllegalArgumentException("Illegal date string '" + image + "' for format '" + format + "'");
-		//		System.out.println("Y=" + ret.isSet(Calendar.YEAR) + " M=" + ret.isSet(Calendar.MONTH) + " D=" + ret.isSet(Calendar.DAY_OF_MONTH)
-		//				+ " H=" + ret.isSet(Calendar.HOUR_OF_DAY) + "m=" + ret.isSet(Calendar.MINUTE) + " S=" + ret.isSet(Calendar.SECOND));
-		if (!ret.isSet(Calendar.YEAR))
-			ret.set(Calendar.YEAR, 1970);
-		if (!ret.isSet(Calendar.MONTH))
-			ret.set(Calendar.MONTH, 0);
-		if (!ret.isSet(Calendar.DAY_OF_MONTH))
-			ret.set(Calendar.DAY_OF_MONTH, 1);
-		if (!ret.isSet(Calendar.HOUR_OF_DAY) && !ret.isSet(Calendar.HOUR))
-			ret.set(Calendar.HOUR_OF_DAY, 0);
-		if (!ret.isSet(Calendar.MINUTE))
-			ret.set(Calendar.MINUTE, 0);
-		if (!ret.isSet(Calendar.SECOND))
-			ret.set(Calendar.SECOND, 1);
+		//		System.out.println("Y=" + ret.isSet(YEAR) + " M=" + ret.isSet(MONTH) + " D=" + ret.isSet(DAY_OF_MONTH)
+		//				+ " H=" + ret.isSet(HOUR_OF_DAY) + "m=" + ret.isSet(MINUTE) + " S=" + ret.isSet(SECOND));
+		if (!ret.isSet(YEAR))
+			ret.set(YEAR, 1970);
+		if (!ret.isSet(MONTH))
+			ret.set(MONTH, 0);
+		if (!ret.isSet(DAY_OF_MONTH))
+			ret.set(DAY_OF_MONTH, 1);
+		if (!ret.isSet(HOUR_OF_DAY) && !ret.isSet(HOUR))
+			ret.set(HOUR_OF_DAY, 0);
+		if (!ret.isSet(MINUTE))
+			ret.set(MINUTE, 0);
+		if (!ret.isSet(SECOND))
+			ret.set(SECOND, 0);
 		try {
 			ret.getTime();
 		} catch (IllegalArgumentException e) {
@@ -233,13 +241,16 @@ public class FormatterImpl implements Formatter {
 	public Number parseNumber(String image, final boolean lenient) {
 		image = image.trim();
 		if (!image.isEmpty()) {
+			String toParse = image;
+			if (toParse.length() > 1 && toParse.charAt(0) == '+')
+				toParse = toParse.substring(1);
 			NumberFormat nf = NumberFormat.getNumberInstance(iLocale);
 			ParsePosition p = new ParsePosition(0);
-			Number ret = nf.parse(image, p);
+			Number ret = nf.parse(toParse, p);
 			int errIndex = p.getErrorIndex();
 			//System.out.println("Ind=" + index + " ErrInd=" + errIndex);
 			if (errIndex == -1) {
-				if (p.getIndex() >= image.length() || lenient)
+				if (p.getIndex() >= toParse.length() || lenient)
 					return ret;
 			} else if (errIndex != 0 && lenient)
 				return ret;
@@ -315,14 +326,14 @@ public class FormatterImpl implements Formatter {
 		if (sdt.isAnyDate() || sdt.isAnyTime()) {
 			Calendar calCopy = (Calendar) cal.clone();
 			if (sdt.isAnyDate()) {
-				calCopy.set(Calendar.YEAR, 1970);
-				calCopy.set(Calendar.MONTH, 0);
-				calCopy.set(Calendar.DAY_OF_MONTH, 1);
+				calCopy.set(YEAR, 1970);
+				calCopy.set(MONTH, 0);
+				calCopy.set(DAY_OF_MONTH, 1);
 			}
 			if (sdt.isAnyTime()) {
-				calCopy.set(Calendar.HOUR_OF_DAY, 0);
-				calCopy.set(Calendar.MINUTE, 0);
-				calCopy.set(Calendar.SECOND, 0);
+				calCopy.set(HOUR_OF_DAY, 0);
+				calCopy.set(MINUTE, 0);
+				calCopy.set(SECOND, 0);
 			}
 			cal = calCopy;
 		}

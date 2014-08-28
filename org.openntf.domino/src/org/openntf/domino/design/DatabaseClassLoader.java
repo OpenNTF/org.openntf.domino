@@ -9,4 +9,9 @@ public abstract class DatabaseClassLoader extends ClassLoader {
 	}
 
 	public abstract Set<Class<?>> getClassesWithAnnotation(Class<? extends Annotation> annotationClass);
+
+	public abstract <T> Set<Class<? extends T>> getClassesExtending(final Class<T> superClass);
+
+	public abstract DatabaseDesign getParentDesign();
+
 }

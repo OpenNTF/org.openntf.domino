@@ -57,7 +57,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Generic database utilities
+	 * 
+	 * @Deprecated RPr: As far as I know, this was only used in the DbDirectory
 	 */
+	@Deprecated
 	public enum Utils {
 		;
 		/**
@@ -69,10 +72,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		 * @since org.openntf.domino 4.5.0
 		 */
 		public static boolean isTemplate(final Database db) {
-			boolean result = false;
-			if (db.getFilePath().toLowerCase().endsWith("ntf"))
-				result = true;
-			return result;
+			return db.getFilePath().toLowerCase().endsWith(".ntf");
 		}
 
 		/**
@@ -84,11 +84,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		 * @since org.openntf.domino 4.5.0
 		 */
 		public static boolean isDatabase(final Database db) {
-			boolean result = false;
 			String path = db.getFilePath().toLowerCase();
-			if (path.endsWith("nsf") || path.endsWith("nsh") || path.endsWith("nsg"))
-				result = true;
-			return result;
+			return (path.endsWith(".nsf") || path.endsWith(".nsh") || path.endsWith(".nsg"));
 		}
 
 		/**
@@ -124,8 +121,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to allow easy checking whether two databases have the same filepath (e.g. on different servers)
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> FILEPATH_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -136,8 +135,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to alow easy checking whether database A was modified before/after database B
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> LASTMOD_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -148,8 +149,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to allow easy checking whether two databases have the same title
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> TITLE_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -160,8 +163,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to allow easy checking whether two databases have the same API path (server!!filepath)
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> APIPATH_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {

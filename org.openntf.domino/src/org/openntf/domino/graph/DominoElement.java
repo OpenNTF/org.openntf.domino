@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,60 +14,73 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.CaseInsensitiveHashSet;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Null;
-import org.openntf.domino.utils.Strings;
+import org.openntf.domino.utils.BeanUtils;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
+
+import com.tinkerpop.blueprints.Element;
 
 public abstract class DominoElement implements IDominoElement, Serializable {
-	private static Map<Class<?>, Map<String, Method>> PROP_REFLECT_MAP = new ConcurrentHashMap<Class<?>, Map<String, Method>>();
+
+	public static boolean setReflectiveProperty(final IDominoElement element, final String prop, final Object value) {
+		if (prop == null || prop.isEmpty())
+			throw new IllegalArgumentException("Cannot set a null or empty property on a DominoElement");
+		boolean result = false;
+		Object localValues = value;
+		Class<? extends Element> elemClass = element.getClass();
+		IDominoProperties domProp = IDominoProperties.Reflect.findMappedProperty(elemClass, prop);
+		if (domProp != null) {
+			localValues = TypeUtils.objectToClass(value, domProp.getType(), null);
+		}
+		//TODO NTF - first see if it's a mapped property and if so, find out the type and coerce the value to the proper type
+		Method setter = BeanUtils.findSetter(elemClass, prop, BeanUtils.toParameterType(localValues));
+		if (setter != null) {
+			try {
+				setter.invoke(element, localValues);
+				result = true;
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				System.out.println("Unable to invoke " + setter.getName() + " on a " + element.getClass() + " for property: " + prop
+						+ " with a value of " + String.valueOf(value));
+			}
+		} else {
+			if (domProp != null) {
+				element.setProperty(domProp, localValues);
+				result = true;
+			} else {
+				element.setProperty(prop, localValues);
+				result = true;
+			}
+		}
+		return result;
+	}
 
 	public static Object getReflectiveProperty(final IDominoElement element, final String prop) {
 		if (prop == null || prop.isEmpty())
-			return null;
-		if (element.hasProperty(prop)) {
-			//			System.out.println("Directory property found: " + prop);
-			return element.getProperty(prop);
+			throw new IllegalArgumentException("Cannot set a null or empty property on a DominoElement");
+		Object result = false;
+		Class<? extends Element> elemClass = element.getClass();
+		Method getter = BeanUtils.findGetter(elemClass, prop);
+		if (getter != null) {
+			try {
+				result = getter.invoke(element, (Object[]) null);
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				System.out.println("Unable to invoke " + getter.getName() + " on a " + element.getClass() + " for property: " + prop);
+			}
 		} else {
-			Class<?> cls = element.getClass();
-			Map<String, Method> clsMap = PROP_REFLECT_MAP.get(cls);
-			if (clsMap == null) {
-				clsMap = new ConcurrentHashMap<String, Method>();
-				synchronized (DominoElement.class) {
-					PROP_REFLECT_MAP.put(cls, clsMap);
-				}
-			}
-			Method crystal = clsMap.get(prop);
-			if (crystal == null) {
-				String getKey = "get" + Strings.toProperCase(prop);
-				try {
-					crystal = cls.getMethod(getKey, null);
-				} catch (Exception e) {
-					try {
-						String isKey = "is" + Strings.toProperCase(prop);
-						crystal = cls.getMethod(isKey, null);
-					} catch (Exception e1) {
-						//this is actually okay. It just happens we don't have a method for this thing.
-					}
-				}
-				if (crystal != null) {
-					synchronized (clsMap) {
-						clsMap.put(prop, crystal);
-						//						System.out.print("Caching method for " + crystal.getName());
-					}
-				}
-			}
-			if (crystal != null) {
-				try {
-					return crystal.invoke(element, null);
-				} catch (Throwable t) {
-					//TODO NTF should really replace the map with some kind of method reference that returns null in the future...
-					System.out.println("Unable to discover a property " + prop + " through invoking a method called " + crystal.getName()
-							+ " due to " + t.getMessage());
-				}
+			IDominoProperties domProp = IDominoProperties.Reflect.findMappedProperty(elemClass, prop);
+			if (domProp != null) {
+				result = element.getProperty(domProp);
+			} else {
+				result = element.getProperty(prop);
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public static Object getReflectiveProperty(final IDominoElement element, final IDominoProperties prop) {
@@ -212,6 +226,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getId().hashCode();
 	}
 
+	@Override
 	public Document getRawDocument() {
 		return getDocument();
 	}
@@ -221,6 +236,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return prefix + ": " + getRawDocument().getNoteID();
 	}
 
+	@Override
 	public int incrementProperty(final String propertyName) {
 		Integer result = getProperty(propertyName, Integer.class);
 		if (result == null)
@@ -229,6 +245,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return result;
 	}
 
+	@Override
 	public int decrementProperty(final String propertyName) {
 		Integer result = getProperty(propertyName, Integer.class);
 		if (result == null)
@@ -266,6 +283,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return parent_;
 	}
 
+	@Override
 	public boolean hasProperty(final String key) {
 		return getPropertyKeys().contains(key);
 	}
@@ -275,22 +293,27 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getProperty(key, java.lang.Object.class);
 	}
 
+	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
+		CharSequence key = new CaseInsensitiveString(propertyName);
 		Map<CharSequence, Serializable> props = getProps();
 		// synchronized (props) {
-		result = props.get(propertyName);
+		result = props.get(key);
 		if (result == null) {
+			//			if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+			//				System.out.println("DEBUG: " + propertyName + " getting from Document");
+			//			}
 			try {
 				Document doc = getRawDocument();
 				result = doc.getItemValue(propertyName, T);
 				if (result == null) {
 					synchronized (props) {
-						props.put(propertyName, Null.INSTANCE);
+						props.put(key, Null.INSTANCE);
 					}
 				} else if (result instanceof Serializable) {
 					synchronized (props) {
-						props.put(propertyName, (Serializable) result);
+						props.put(key, (Serializable) result);
 					}
 				} else {
 					log_.log(Level.WARNING, "Got a value from the document but it's not Serializable. It's a "
@@ -304,34 +327,46 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 		} else {
 			if (result != null && !T.isAssignableFrom(result.getClass())) {
+				//				if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+				//					System.out.println("DEBUG: " + propertyName + " result is a " + result.getClass().getSimpleName());
+				//				}
 				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
 				try {
 					Document doc = getRawDocument();
 					result = doc.getItemValue(propertyName, T);
 					if (result == null) {
 						synchronized (props) {
-							props.put(propertyName, Null.INSTANCE);
+							props.put(key, Null.INSTANCE);
 						}
 					} else if (result instanceof Serializable) {
 						synchronized (props) {
-							props.put(propertyName, (Serializable) result);
+							props.put(key, (Serializable) result);
 						}
 					}
 				} catch (Exception e) {
 					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 							+ " but we have a value in the cache.", e);
 				}
+			} else {
+				//				if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+				//					System.out.println("DEBUG: " + propertyName + " result is a " + result.getClass().getSimpleName());
+				//				}
 			}
 		}
 		// }
 		//		if (result != null && !T.isAssignableFrom(result.getClass())) {
 		//			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
 		//		}
-		if (result == Null.INSTANCE)
+		if (result == Null.INSTANCE) {
 			result = null;
+		}
+		//		if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+		//			System.out.println("DEBUG: " + propertyName + " result is a " + (result == null ? "null" : result.getClass().getSimpleName()));
+		//		}
 		return (T) result;
 	}
 
+	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T, final boolean allowNull) {
 		T result = getProperty(propertyName, T);
 		if (allowNull) {
@@ -371,12 +406,14 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public Set<String> getPropertyKeys() {
+
 		return getPropertyKeys(true);
 	}
 
-	private final Set<String> propKeys_ = new CaseInsensitiveHashSet();	//TODO MAKE THREAD SAFE!!;
+	private final Set<String> propKeys_ = Collections.synchronizedSet(new CaseInsensitiveHashSet());	//TODO MAKE THREAD SAFE!!;
 
-	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
+	@Override
+	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {	//TODO NTF fix?
 		if (propKeys_.isEmpty()) {
 			propKeys_.addAll(getRawDocument().keySet());
 		}
@@ -406,7 +443,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		getRawDocument().removePermanently(true);
 	}
 
-	private final Set<String> removedProperties_ = new CaseInsensitiveHashSet();
+	private final Set<String> removedProperties_ = Collections.synchronizedSet(new CaseInsensitiveHashSet());
 
 	@Override
 	public <T> T removeProperty(final String key) {
@@ -433,6 +470,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	// getRawDocument().save();
 	// }
 
+	@Override
 	public void setRawDocument(final org.openntf.domino.Document doc) {
 		unid_ = doc.getUniversalID().toUpperCase();
 	}
@@ -445,6 +483,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
+		//		if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+		//			System.out.println("DEBUG Setting " + propertyName);
+		//		}
 		boolean isEdgeCollection = false;
 		boolean isEqual = false;
 		CharSequence key = new CaseInsensitiveString(propertyName);
@@ -452,6 +493,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
+
 				synchronized (propKeys_) {
 					propKeys_.add(propertyName);
 				}
@@ -472,8 +514,13 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				}
 				boolean changeMade = false;
 				synchronized (props) {
+
 					if (value instanceof Serializable) {
 						if (current == null || Null.INSTANCE.equals(current)) {
+							//							if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+							//								System.out.println("DEBUG: " + propertyName + " checking FROM NULL values from " + String.valueOf(current)
+							//										+ " to " + String.valueOf(value));
+							//							}
 							getParent().startTransaction(this);
 							old = props.put(key, (Serializable) value);
 							synchronized (changedProperties_) {
@@ -485,6 +532,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
+						} else {
+							//							if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+							//								System.out.println("DEBUG: " + propertyName + " equal?? values match from " + String.valueOf(current)
+							//										+ " to " + String.valueOf(value));
+							//							}
 						}
 					} else if (value == null) {
 						if (!current.equals(Null.INSTANCE)) {
@@ -495,6 +547,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 							}
 						}
 					} else {
+						//						if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+						//							System.out.println("DEBUG: " + propertyName + " values from " + String.valueOf(current) + " to "
+						//									+ String.valueOf(value));
+						//						}
 						log_.log(Level.WARNING, "Attempted to set property " + propertyName + " to a non-serializable value: "
 								+ value.getClass().getName());
 					}
@@ -542,14 +598,17 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
+	@Override
 	public int incrementProperty(final IDominoProperties prop) {
 		return incrementProperty(prop.getName());
 	}
 
+	@Override
 	public int decrementProperty(final IDominoProperties prop) {
 		return decrementProperty(prop.getName());
 	}
 
+	@Override
 	public <T> T getProperty(final IDominoProperties prop) {
 		if (prop == null) {
 			log_.log(Level.WARNING, "getProperty was called with a null argument, therefore it's impossible to return a property.");
@@ -566,6 +625,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@Override
 	public <T> T getProperty(final IDominoProperties prop, final boolean allowNull) {
 		Class<?> type = prop.getType();
 		Object result = getProperty(prop.getName(), type, allowNull);
@@ -578,6 +638,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@Override
 	public void setProperty(final IDominoProperties prop, final java.lang.Object value) {
 		Object current = getProperty(prop, true);
 		if (current == null || !current.equals(value)) {
@@ -585,19 +646,84 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
-	public Map<String, Object> toMap(final IDominoProperties[] props) {
+	public static Object fromMapValue(final String key, final Object value) {
+		Object result = value;
+
+		return result;
+	}
+
+	public static Object toMapValue(final Object value) {
+		Object result = value;
+		if (EnumSet.class.isAssignableFrom(value.getClass())) {
+			System.out.println("DEBUG: Mapping an EnumSet");
+			if (!((EnumSet) value).isEmpty()) {
+				StringBuilder eListing = new StringBuilder();
+				eListing.append('[');
+				for (Object rawEnum : (EnumSet) value) {
+					if (Enum.class.isAssignableFrom(rawEnum.getClass())) {
+						eListing.append(((Enum) rawEnum).name());
+					} else {
+						eListing.append("ERROR: expected Enum was a " + rawEnum.getClass().getName());
+					}
+					eListing.append(',');
+				}
+				eListing.deleteCharAt(eListing.length() - 1);
+				eListing.append(']');
+				result = eListing.toString();
+			} else {
+				result = "";
+			}
+		} else if (Enum.class.isAssignableFrom(value.getClass())) {
+			result = ((Enum) value).name();
+		} else if (CharSequence.class.isAssignableFrom(value.getClass())) {
+			result = ((CharSequence) value).toString();
+		} else if (BigString.class.isAssignableFrom(value.getClass())) {
+			result = ((BigString) value).toString();
+		} else {
+			result = value;
+		}
+		return result;
+	}
+
+	public Map<String, Object> toMap(final IDominoProperties[] props, final byte keyStyle) {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
 		for (IDominoProperties prop : props) {
+			String mapKey = prop.getName();
+			if (keyStyle == Character.LOWERCASE_LETTER) {
+				mapKey = mapKey.toLowerCase();
+			} else if (keyStyle == Character.UPPERCASE_LETTER) {
+				mapKey = mapKey.toUpperCase();
+			}
 			Object value = getProperty(prop, true);
 			if (value != null) {
-				result.put(prop.getName(), value);
+				result.put(mapKey, toMapValue(value));
 			}
 		}
 		return result;
 	}
 
+	@Override
+	public Map<String, Object> toMap(final IDominoProperties[] props) {
+		return toMap(props, (byte) 0);
+	}
+
+	public Map<String, Object> toMap(final Set<IDominoProperties> props, final byte keyStyle) {
+		return toMap(props.toArray(new IDominoProperties[props.size()]), keyStyle);
+	}
+
+	@Override
 	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
-		return toMap(props.toArray(new IDominoProperties[props.size()]));
+		return toMap(props, (byte) 0);
+	}
+
+	public boolean fromMap(final Map<String, Object> map) {
+		boolean result = true;
+		for (String key : map.keySet()) {
+			boolean success = DominoElement.setReflectiveProperty(this, key, map.get(key));
+			if (!success)
+				result = false;
+		}
+		return result;
 	}
 
 }

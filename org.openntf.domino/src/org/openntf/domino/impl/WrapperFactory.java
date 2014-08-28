@@ -57,7 +57,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	/** this is the holder for all other object that needs to be recycled **/
 	private DominoReferenceCache referenceCache = new DominoReferenceCache();
 
-	private void clearCaches() {
+	private long clearCaches() {
+		long result = 0;
 		// call gc once before processing the queues
 		System.gc();
 		try {
@@ -69,8 +70,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		referenceCache.processQueue(null);
+		result = referenceCache.processQueue(null);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
+		return result;
 	}
 
 	/** The Constant log_. */
@@ -92,6 +94,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	//	}
 
 	// -- Factory methods
+	@Override
 	@SuppressWarnings("rawtypes")
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
 			final P parent) {
@@ -128,6 +131,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -143,6 +147,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -161,8 +166,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	/**
 	 * determines all containing Cpp-Ids in the lotusColl
 	 * 
-	 * @param lotusColl
-	 * @return
+	 * @param obj
+	 *            The collection of objects.
+	 * @return An array of the CPP IDs for the contained objects.
 	 */
 	public long[] getContainingCppIds(final Object obj) {
 		List<lotus.domino.Base> lst = new ArrayList<lotus.domino.Base>();
@@ -202,12 +208,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		} else if (currentSession != null) {
 			lotus.domino.Session rawSession = org.openntf.domino.impl.Base.toLotus(currentSession);
 			if (org.openntf.domino.impl.Base.isDead(rawSession)) {
-				Factory.loadEnvironment(newSession);
+				//				Factory.loadEnvironment(newSession);
 				// System.out.println("Resetting default local session because we got an exception");
 				Factory.setSession(newSession);
 			}
 		} else {
-			Factory.loadEnvironment(newSession);
+			//			Factory.loadEnvironment(newSession);
 			// System.out.println("Resetting default local session because it was null");
 			Factory.setSession(newSession);
 		}
@@ -255,14 +261,41 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 				// these are never recycled by default. If you create your own session, you have to recycle it after use
 				// or setNoRecycle to "false"
 				cache.setNoRecycle(cpp_key, true);
+				//				System.out.println("DEBUG: Wrapping a new Session with object id: " + System.identityHashCode(lotus));
 			}
 		}
 		return result;
 	}
 
 	@Override
+	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+		boolean returnVal = false;
+		long[] prevent_recycling = new long[2];
+		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(lotus);
+		prevent_recycling[1] = org.openntf.domino.impl.Base.getLotusId(parent);
+		Base<?> result = referenceCache.get(cpp_key, Base.class);
+
+		if (result == null) {
+			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
+			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
+			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
+
+			result = wrapper;
+
+			referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
+
+			referenceCache.put(cpp_key, result, lotus);
+			returnVal = true;
+		} else {	//NTF not sure what to do in this case. Don't even know what this means...
+			System.out.println("PANIC! Why are we recaching a lotus object " + lotus.getClass().getSimpleName()
+					+ " that we already have!???!");
+		}
+		return returnVal;
+	}
+
+	@Override
 	public void setNoRecycle(final Base<?> base, final boolean value) {
-		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base) base).GetCppObj(), value);
+		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base<?, ?, ?>) base).GetCppObj(), value);
 	}
 
 	/**
@@ -277,7 +310,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 * @return
 	 */
 
-	protected Base wrapLotusObject(final lotus.domino.Base lotus, final Base parent, final long cpp) {
+	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
 		// TODO Auto-generated method stub
 
 		if (lotus instanceof lotus.domino.Name) {
@@ -456,14 +489,17 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		//		return null;
 	}
 
-	public void terminate() {
-		clearCaches();
+	@Override
+	public long terminate() {
+		return clearCaches();
 	}
 
+	@Override
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
 		return wrapColumnValues(values, session, null);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Vector<Object> wrapColumnValues(final Collection<?> values, final Session session, final long[] prevent_recycling) {
 		if (values == null) {
 			return null;
@@ -510,6 +546,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends lotus.domino.Base> T toLotus(final T base) {
 		return (T) org.openntf.domino.impl.Base.getDelegate(base);
 	}

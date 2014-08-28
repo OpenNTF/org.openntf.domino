@@ -139,8 +139,8 @@ public class DominoReferenceCache {
 	 * Removes all garbage collected values with their keys from the map.
 	 * 
 	 */
-	public void processQueue(final long[] prevent_recycling) {
-
+	public long processQueue(final long[] prevent_recycling) {
+		long result = 0;
 		int counter = cache_counter.incrementAndGet();
 		if (counter % 1024 == 0) {
 			// We have to run GC from time to time, otherwise objects will die very late :(
@@ -180,8 +180,10 @@ public class DominoReferenceCache {
 					}
 				}
 			}
-			ref.recycle();
+			if (ref.recycle())
+				result++;
 		}
+		return result;
 	}
 
 	/**

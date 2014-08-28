@@ -165,10 +165,12 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 	}
 
+	@Override
 	public void setSession(final Session session) {
 		parent_ = session;
 	}
 
+	@Override
 	public String getExpression() {
 		return expression_;
 	}
@@ -264,6 +266,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue()
 	 */
+	@Override
 	public Vector<Object> getValue(final Session session) {
 		if (expression_ == null)
 			throw new NoFormulaSetException();
@@ -276,6 +279,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue(java.lang.Class)
 	 */
+	@Override
 	public <T> T getValue(final Session session, final Class<?> T) {
 		Vector<Object> v = getValue(session);
 		return TypeUtils.vectorToClass(v, T, session);
@@ -326,6 +330,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	}
 
 	public static class ParserException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
 		private final String expression_;
 
 		public ParserException(final String message, final String expression) {
@@ -451,7 +456,6 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			String result = parseNextStatement(line);	//we expect this to immediately lead to a literal and then be done
 			char[] chars = result.toCharArray();
 			int pos = 0;
-			StringBuilder buffer = new StringBuilder();
 			for (char c : chars) {
 				pos++;
 				if (c == ' ' || c == ';') {
@@ -570,7 +574,6 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(startingDigit);
-			String result = null;
 			for (char c : chars) {
 				pos++;
 				if (Character.isDigit(c)) {
@@ -608,7 +611,6 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			char[] chars = statement.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
-			String result = null;
 			for (char c : chars) {
 				pos++;
 				if (c == '(') {
@@ -648,7 +650,6 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(startingChar);
-			String result = null;
 			for (char c : chars) {
 				pos++;
 				if (c == ';') {
@@ -704,7 +705,6 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				return "";
 			char[] chars = segment.toCharArray();
 			int pos = 0;
-			StringBuilder buffer = new StringBuilder();
 			String result = "";
 			for (char c : chars) {
 				pos++;

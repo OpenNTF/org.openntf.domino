@@ -15,7 +15,7 @@ import org.openntf.domino.annotations.Incomplete;
  */
 @Incomplete
 public class DominoFutureTask<V> extends FutureTask<V> {
-	protected AbstractDominoRunnable runnable_;
+	protected Runnable runnable_;
 
 	/**
 	 * @param paramCallable
@@ -26,9 +26,9 @@ public class DominoFutureTask<V> extends FutureTask<V> {
 
 	public DominoFutureTask(final Runnable runnable, final V result) {
 		super(runnable, result);
-		if (runnable instanceof AbstractDominoRunnable) {
-			runnable_ = (AbstractDominoRunnable) runnable;
-		}
+
+		runnable_ = runnable;
+
 	}
 
 	/* (non-Javadoc)
@@ -53,11 +53,17 @@ public class DominoFutureTask<V> extends FutureTask<V> {
 	@Override
 	protected void done() {
 		if (runnable_ != null) {
-			runnable_.clean();
+			if (runnable_ instanceof AbstractDominoRunnable) {
+				((AbstractDominoRunnable) runnable_).clean();
+			}
 		}
 		super.done();
 	}
 
+	public Runnable getRunnable() {
+		return runnable_;
+	}
+
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFutureTask.class.getName());
-	private static final long serialVersionUID = 1L;
 }

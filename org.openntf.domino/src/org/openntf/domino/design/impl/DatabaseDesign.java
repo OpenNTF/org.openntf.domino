@@ -38,7 +38,7 @@ import com.ibm.commons.util.io.StreamUtil;
  * @author jgallagher
  * 
  */
-public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign, org.openntf.domino.types.DatabaseDescendant {
+public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseDesign.class.getName());
 
@@ -430,7 +430,11 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 
 	@Override
 	public IconNote getIconNote() {
-		return new IconNote(database_.getDocumentByID(ICON_NOTE));
+		Document iconNote = database_.getDocumentByID(ICON_NOTE);
+		if (iconNote != null) {
+			return new IconNote(iconNote);
+		}
+		return null;
 	}
 
 	@Override
