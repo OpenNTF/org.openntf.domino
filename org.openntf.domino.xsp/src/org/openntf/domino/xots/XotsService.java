@@ -24,6 +24,13 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XotsService extends NSFService {
 
+	@Override
+	public void destroyService() {
+		System.out.println("DEBUG: Destroying XotsService...");
+		XotsDaemon.stop();
+		super.destroyService();
+	}
+
 	public static XotsService getInstance() {
 		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
 			if (service instanceof XotsService) {
