@@ -39,6 +39,10 @@ public class FRAMESETLENGTH extends AbstractStruct {
 		addFixedUnsigned("Value", Short.class);
 	}
 
+	public FRAMESETLENGTH() {
+		super();
+	}
+
 	public FRAMESETLENGTH(final ByteBuffer data) {
 		super(data);
 	}

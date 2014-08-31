@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure stores the style name for a Paragraph Attributes Block (PAB). (editods.h)
@@ -21,6 +22,12 @@ public class CDSTYLENAME extends CDRecord {
 		//		/* If STYLE_FLAG_PERMANENT, the structure is followed by:	*/
 		//		/*		WORD	nameLen			Length of user name	*/
 		//		/*		BYTE	userName [nameLen]	User name			*/
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDSTYLENAME(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDSTYLENAME(final SIG signature, final ByteBuffer data) {

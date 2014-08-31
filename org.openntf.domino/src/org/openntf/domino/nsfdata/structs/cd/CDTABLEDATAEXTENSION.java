@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This record was added because the Pre Table Begin Record can not be expanded and R6 required more data to be stored. (editods.h)
@@ -41,6 +42,12 @@ public class CDTABLEDATAEXTENSION extends CDRecord {
 		addVariableData("Available11", "getAvailableLength11");
 		addVariableData("Available12", "getAvailableLength12");
 		addVariableData("Extension2", "getExtension2Length");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDTABLEDATAEXTENSION(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDTABLEDATAEXTENSION(final SIG signature, final ByteBuffer data) {

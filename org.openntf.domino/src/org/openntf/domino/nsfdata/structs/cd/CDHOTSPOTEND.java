@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the end of a hot region in a rich text field. There are special cases for Release 4.x and Release 5.x hotspot
@@ -12,6 +13,12 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDHOTSPOTEND extends CDRecord {
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDHOTSPOTEND(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
 
 	public CDHOTSPOTEND(final SIG signature, final ByteBuffer data) {
 		super(signature, data);

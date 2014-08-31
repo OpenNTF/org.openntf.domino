@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Contains additional event information for Notes/Domino 6. (editods.h)
@@ -12,15 +13,23 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDEVENTENTRY extends CDRecord {
 
+	public static final int SIZE;
+
 	static {
 		addFixed("wPlatform", Short.class);
 		addFixed("wEventId", Short.class);
 		addFixed("wActionType", Short.class);
 		addFixed("wReserved", Short.class);
 		addFixed("dwReserved", Integer.class);
+
+		SIZE = getFixedStructSize();
 	}
 
-	protected CDEVENTENTRY(final SIG signature, final ByteBuffer data) {
+	public CDEVENTENTRY(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDEVENTENTRY(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

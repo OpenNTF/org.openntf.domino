@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The definition for a layout region on a form is stored as CD records in the $Body item of the form note. The layout region begins with a
@@ -75,6 +76,12 @@ public class CDLAYOUT extends CDRecord {
 		addFixed("Flags", Integer.class);
 		addFixedUnsigned("wGridSize", Short.class);
 		addFixedArray("Reserved", Byte.class, 14);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLAYOUT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDLAYOUT(final SIG signature, final ByteBuffer data) {

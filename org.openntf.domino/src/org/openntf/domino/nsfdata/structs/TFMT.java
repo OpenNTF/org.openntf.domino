@@ -17,6 +17,10 @@ public class TFMT extends AbstractStruct {
 		addFixed("Structure", Byte.class);
 	}
 
+	public TFMT() {
+		super();
+	}
+
 	public TFMT(final ByteBuffer data) {
 		super(data);
 	}

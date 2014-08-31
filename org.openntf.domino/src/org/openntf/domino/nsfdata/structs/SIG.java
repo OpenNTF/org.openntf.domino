@@ -23,7 +23,13 @@ public abstract class SIG implements Serializable {
 		return length_;
 	}
 
+	public void setDataLength(final int length) {
+		length_ = getSigLength() + length;
+	}
+
 	public abstract int getSigLength();
+
+	public abstract byte[] getBytes();
 
 	@Override
 	public String toString() {

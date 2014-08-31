@@ -17,6 +17,10 @@ public class NFMT extends AbstractStruct {
 		addFixed("Unused", Byte.class);
 	}
 
+	public NFMT() {
+		super();
+	}
+
 	public NFMT(final ByteBuffer data) {
 		super(data);
 	}

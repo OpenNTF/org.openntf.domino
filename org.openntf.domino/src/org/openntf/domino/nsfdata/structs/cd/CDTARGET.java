@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The CDTARGET structure specifies the target (ie: the frame) where a resource link hotspot is to be displayed. It is followed by variable
@@ -21,6 +22,12 @@ public class CDTARGET extends CDRecord {
 		addFixed("Reserved", Integer.class);
 
 		addVariableString("Target", "TargetLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDTARGET(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDTARGET(final SIG signature, final ByteBuffer data) {

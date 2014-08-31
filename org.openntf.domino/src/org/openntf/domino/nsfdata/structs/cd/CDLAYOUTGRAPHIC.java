@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A graphical element in a layout region of a form is defined by a CDLAYOUTGRAPHIC record. This record must be between a CDLAYOUT record
@@ -51,6 +52,12 @@ public class CDLAYOUTGRAPHIC extends CDRecord {
 		addFixed("ElementHeader", ELEMENTHEADER.class);
 		addFixed("Flags", Integer.class);
 		addFixedArray("Reserved", Byte.class, 16);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLAYOUTGRAPHIC(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDLAYOUTGRAPHIC(final SIG signature, final ByteBuffer data) {

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 import org.openntf.domino.nsfdata.structs.cd.CDHOTSPOTBEGIN.Type;
 
 /**
@@ -120,6 +121,12 @@ public class CDPLACEHOLDER extends CDRecord {
 		addFixed("ColorRGB", COLOR_VALUE.class);
 		addFixed("SpareWord", Short.class);
 		addFixedArray("Spare", Integer.class, 3);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPLACEHOLDER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDPLACEHOLDER(final SIG signature, final ByteBuffer data) {

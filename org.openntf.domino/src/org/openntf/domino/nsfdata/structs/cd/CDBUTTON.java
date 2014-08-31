@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the appearance of a button in a rich text field. (editods.h)
@@ -102,6 +103,8 @@ public class CDBUTTON extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
 	static {
 		addFixed("Flags", Short.class);
 		addFixedUnsigned("Width", Short.class);
@@ -110,6 +113,12 @@ public class CDBUTTON extends CDRecord {
 		addFixed("FontID", FONTID.class);
 
 		addVariableString("Text", "getTextLen");
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDBUTTON(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDBUTTON(final SIG signature, final ByteBuffer data) {

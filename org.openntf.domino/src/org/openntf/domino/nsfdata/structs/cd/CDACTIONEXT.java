@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Notes/Domino 6. To preserve compatibility with existing applications, the new attributes have
@@ -57,6 +58,12 @@ public class CDACTIONEXT extends CDRecord {
 		addVariableData("ParentLabelFormula", "wParentLabelFormulaLen");
 		addVariableString("CompActionID", "wCompActionIDLen");
 		addVariableString("ProgrammaticUseTxt", "wProgrammaticUseTxtLen");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDACTIONEXT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDACTIONEXT(final SIG signature, final ByteBuffer data) {

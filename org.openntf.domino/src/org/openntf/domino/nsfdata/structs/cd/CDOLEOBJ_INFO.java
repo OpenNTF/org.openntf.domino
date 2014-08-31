@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.OLE_GUID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies a connection to an OLE object. (oleods.h)
@@ -131,6 +132,12 @@ public class CDOLEOBJ_INFO extends CDRecord {
 		addVariableAsciiString("TextIndexObjName", "getTextIndexObjNameLength");
 		addVariableData("HTMLData", "getHTMLDataLength");
 		addVariableData("AssociatedFILEs", "getAssociatedFILEsLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDOLEOBJ_INFO(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDOLEOBJ_INFO(final SIG signature, final ByteBuffer data) {

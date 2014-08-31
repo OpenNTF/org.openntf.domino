@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record gives information pertaining to shared resources and/or shared code in a form. A CDINLINE record may be preceded by a
@@ -50,6 +51,12 @@ public class CDINLINE extends CDRecord {
 		addFixedUnsigned("wDataLength", Short.class);
 		addFixed("dwFlags", Integer.class);
 		addFixedArray("dwReserved", Integer.class, 4);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDINLINE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDINLINE(final SIG signature, final ByteBuffer data) {

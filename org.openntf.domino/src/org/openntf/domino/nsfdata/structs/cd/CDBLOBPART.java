@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record is used in conjunction with CD record CDEVENT. If a CDEVENT record has an ActionType of ACTION_TYPE_JAVASCRIPT then
@@ -12,6 +13,8 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDBLOBPART extends CDRecord {
 
+	public static final int SIZE;
+
 	static {
 		addFixed("OwnerSig", Short.class);
 		addFixedUnsigned("Length", Short.class);
@@ -19,6 +22,12 @@ public class CDBLOBPART extends CDRecord {
 		addFixedArray("Reserved", Byte.class, 8);
 
 		addVariableData("BlobData", "getLength");
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDBLOBPART(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDBLOBPART(final SIG signature, final ByteBuffer data) {

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A text element in a layout region of a form is defined by a CDLAYOUTTEXT record. This record must be between a CDLAYOUT record and a
@@ -92,6 +93,12 @@ public class CDLAYOUTTEXT extends CDRecord {
 		addFixedArray("Reserved", Byte.class, 16);
 
 		addVariableString("Text", "getTextSize");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLAYOUTTEXT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDLAYOUTTEXT(final SIG signature, final ByteBuffer data) {

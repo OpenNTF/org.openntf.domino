@@ -26,6 +26,10 @@ public class FONTID extends AbstractStruct {
 		addFixedUnsigned("PointSize", Byte.class);
 	}
 
+	public FONTID() {
+		super();
+	}
+
 	public FONTID(final ByteBuffer data) {
 		super(data);
 	}
@@ -39,16 +43,32 @@ public class FONTID extends AbstractStruct {
 		return (Byte) getStructElement("Face");
 	}
 
+	public void setFace(final byte face) {
+		setStructElement("Face", face);
+	}
+
 	public byte getAttrib() {
 		return (Byte) getStructElement("Attrib");
+	}
+
+	public void setAttrib(final byte attrib) {
+		setStructElement("Attrib", attrib);
 	}
 
 	public byte getColor() {
 		return (Byte) getStructElement("Color");
 	}
 
+	public void setColor(final byte color) {
+		setStructElement("Color", color);
+	}
+
 	public short getPointSize() {
 		return (Short) getStructElement("PointSize");
+	}
+
+	public void setPointSize(final short size) {
+		setStructElement("PointSize", size);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.openntf.domino.nsfdata.structs.AbstractStruct;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines part of the structure of a font table item in a note. A font table item in a note allows rich text in the note to be
@@ -118,6 +119,12 @@ public class CDFONTTABLE extends CDRecord {
 		addFixedUnsigned("Fonts", Short.class);
 
 		addVariableArray("FontFaces", "getFontCount", CDFACE.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDFONTTABLE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDFONTTABLE(final SIG signature, final ByteBuffer data) {

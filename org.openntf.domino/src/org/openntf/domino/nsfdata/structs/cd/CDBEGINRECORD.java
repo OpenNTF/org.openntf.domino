@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the beginning of a series of CD Records. Not all CD records are enclosed within a CDBEGINRECORD/CDENDRECORD
@@ -18,7 +19,13 @@ public class CDBEGINRECORD extends CDRecord {
 		addFixed("Signature", Short.class);
 	}
 
-	protected CDBEGINRECORD(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDBEGINRECORD(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDBEGINRECORD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

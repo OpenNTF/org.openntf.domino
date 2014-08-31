@@ -20,4 +20,11 @@ public class BSIG extends SIG {
 	public int getSigLength() {
 		return SIZE;	// length is the high-order byte
 	}
+
+	@Override
+	public byte[] getBytes() {
+		byte[] result = getSignature().getBytes();
+		result[1] = (byte) getLength();
+		return result;
+	}
 }

@@ -8,6 +8,7 @@ import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.NOTES_COLOR;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the appearance of the bar used with collapsible sections.
@@ -168,6 +169,12 @@ public class CDBAR extends CDRecord {
 	static {
 		addFixed("Flags", Integer.class);
 		addFixed("FontID", FONTID.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDBAR(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDBAR(final SIG signature, final ByteBuffer data) {

@@ -1,5 +1,8 @@
 package org.openntf.domino.nsfdata.structs;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import org.openntf.domino.nsfdata.structs.cd.CDSignature;
 
 /**
@@ -19,5 +22,14 @@ public class LSIG extends SIG {
 	@Override
 	public int getSigLength() {
 		return SIZE;
+	}
+
+	@Override
+	public byte[] getBytes() {
+		byte[] result = getSignature().getBytes();
+		ByteBuffer buffer = ByteBuffer.wrap(result).order(ByteOrder.LITTLE_ENDIAN);
+		buffer.position(2);
+		buffer.putInt((int) getLength());
+		return result;
 	}
 }

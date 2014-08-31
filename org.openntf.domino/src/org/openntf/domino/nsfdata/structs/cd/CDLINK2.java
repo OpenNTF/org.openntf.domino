@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure implements a document link in a rich text field. It contains an index into a Doc Link Reference List. A Doc Link Reference
@@ -19,7 +20,13 @@ public class CDLINK2 extends CDRecord {
 		// TODO add null-terminated-string support
 	}
 
-	protected CDLINK2(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLINK2(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDLINK2(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

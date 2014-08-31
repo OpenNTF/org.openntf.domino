@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD structure defines simple actions, formulas or LotusScript within a given image map. (editods.h)
@@ -100,6 +101,12 @@ public class CDEVENT extends CDRecord {
 
 		addVariableData("Action", "getActionLength");
 		addVariableData("Signature", "getSignatureLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEVENT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDEVENT(final SIG signature, final ByteBuffer data) {

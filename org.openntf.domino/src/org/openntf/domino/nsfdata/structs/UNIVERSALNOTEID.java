@@ -92,6 +92,10 @@ public class UNIVERSALNOTEID extends AbstractStruct {
 		return new UNIVERSALNOTEID(data);
 	}
 
+	public UNIVERSALNOTEID() {
+		super();
+	}
+
 	public UNIVERSALNOTEID(final ByteBuffer data) {
 		super(data);
 	}

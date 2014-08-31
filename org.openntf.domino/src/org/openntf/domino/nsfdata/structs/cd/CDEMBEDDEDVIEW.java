@@ -7,6 +7,7 @@ import java.util.Set;
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record describes a view as an embedded element. A CDEMBEDDEDVIEW record will be preceded by a CDPLACEHOLDER record. Further
@@ -86,6 +87,12 @@ public class CDEMBEDDEDVIEW extends CDRecord {
 
 		addVariableData("RestrictFormula", "RestrictFormulaLength");
 		addVariableString("Name", "NameLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEMBEDDEDVIEW(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDEMBEDDEDVIEW(final SIG signature, final ByteBuffer data) {

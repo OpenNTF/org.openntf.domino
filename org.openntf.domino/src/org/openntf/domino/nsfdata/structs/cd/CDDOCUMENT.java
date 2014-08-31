@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines the structure of the document information field in a form note. A document information field is an item with name $INFO
@@ -28,7 +29,13 @@ public class CDDOCUMENT extends CDRecord {
 		addVariableString("FieldName", "getFieldNameLength");
 	}
 
-	protected CDDOCUMENT(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDDOCUMENT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDDOCUMENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

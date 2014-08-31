@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies a format for paragraphs in a rich-text field. There may be more than one paragraph using the same paragraph
@@ -29,7 +30,13 @@ public class CDPABDEFINITION extends CDRecord {
 		addFixed("Flags2", Short.class);
 	}
 
-	protected CDPABDEFINITION(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPABDEFINITION(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDPABDEFINITION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
