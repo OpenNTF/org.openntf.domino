@@ -27,4 +27,8 @@ public class LIST extends AbstractStruct {
 	public int getListEntries() {
 		return (Integer) getStructElement("ListEntries");
 	}
+
+	public void setListEntries(final int entryCount) {
+		setStructElement("ListEntries", (short) entryCount);
+	}
 }

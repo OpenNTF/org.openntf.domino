@@ -29,6 +29,14 @@ public abstract class AbstractStruct implements Externalizable {
 		return data_;
 	}
 
+	protected void setData(final byte[] data) {
+		data_ = ByteBuffer.wrap(data);
+	}
+
+	protected void setData(final ByteBuffer data) {
+		data_ = data.duplicate().order(ByteOrder.LITTLE_ENDIAN);
+	}
+
 	public abstract long getStructSize();
 
 	@Override
@@ -333,6 +341,52 @@ public abstract class AbstractStruct implements Externalizable {
 		}
 
 		return null;
+	}
+
+	protected void setStructElement(final String name, final Object value) {
+		// TODO allow null to zero out all data
+		if (value == null) {
+			throw new IllegalArgumentException("Value cannot be null.");
+		}
+
+		int preceding = 0;
+
+		// Look through the fixed elements first, building up the preceding byte count while we're at it
+		for (FixedElement element : fixedElements_.get(getClass().getName())) {
+			int size = _getSize(element.sizeClass);
+			if (StringUtil.equals(name, element.name)) {
+				// First, make sure the value is correct
+				// TODO handle upgraded values
+				// TODO handle arrays
+				if (!value.getClass().equals(element.sizeClass)) {
+					throw new IllegalArgumentException("Value class '" + value.getClass().getName() + "' does not match expected class '"
+							+ element.sizeClass.getName() + "'");
+				}
+				ByteBuffer data = getData().duplicate().order(ByteOrder.LITTLE_ENDIAN);
+				data.position(data.position() + preceding + (size * 0));
+				if (Byte.class.equals(element.sizeClass)) {
+					data.put((Byte) value);
+				} else if (Short.class.equals(element.sizeClass)) {
+					data.putShort((Short) value);
+				} else if (Integer.class.equals(element.sizeClass)) {
+					data.putInt((Integer) value);
+				} else if (Long.class.equals(element.sizeClass)) {
+					data.putLong((Long) value);
+				} else if (Float.class.equals(element.sizeClass)) {
+					data.putFloat((Float) value);
+				} else if (Double.class.equals(element.sizeClass)) {
+					data.putDouble((Double) value);
+				} else {
+					ByteBuffer structData = ((AbstractStruct) value).getData().duplicate();
+					data.put(structData);
+				}
+
+			} else {
+				preceding += size * element.count;
+			}
+		}
+
+		// TODO: Add variable elements
 	}
 
 	private int _getSize(final Class<?> sizeClass) {
