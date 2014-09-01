@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+	<xp:this.resources>
+		<xp:dojoModule name="extlib.dijit.Loading"></xp:dojoModule>
+	</xp:this.resources>
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:mainArea xp:key="facet_1" title="Simple Email Helper">
+				<xp:this.facets>
+					<xp:div xp:key="javaButton" id="javaArea" rendered="#{javascript:@True()}">
+						<xp:button value="Run Java Tests" id="button3">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="JavaDiv"
+								action="#{javascript:openNTFHelperBean.sendSimpleEmail()}">
+								<xp:this.script><![CDATA[XSP.animateLoading('#{id:javaArea}')]]></xp:this.script>
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xp:text escape="false">
+							<xp:this.value><![CDATA[DominoEmail myEmail = new DominoEmail();<br/>
+		myEmail.createSimpleEmail("pwithers@intec.co.uk", "", "", "OpenNTF Domino API Email",
+				"this is an email from the OpenNTF Domino API", "");]]></xp:this.value>
+						</xp:text>
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

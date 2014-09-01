@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view name='AllThreadsByAuthor' xmlns='http://www.lotus.com/dxl' version='9.0'
+ maintenanceversion='1.2' replicaid='80257B32007947B2' showinmenu='false'
+ publicaccess='false' designerversion='8.5.3' unreadmarks='none' onopengoto='lastopened'
+ onrefresh='displayindicator' headers='beveled' opencollapsed='false' showresponsehierarchy='true'
+ showmargin='true' shrinkrows='false' extendlastcolumn='false' showhierarchies='false'
+ unreadcolor='black' rowlinecount='1' headerlinecount='1' rowspacing='1' bgcolor='white'
+ totalscolor='black' headerbgcolor='white' boldunreadrows='false' evaluateactions='false'
+ allownewdocuments='false' allowcustomizations='true' hidemarginborder='false'
+ marginwidth='0px' marginbgcolor='white' uniquekeys='false' indexrefresh='automatic'
+ indexdiscard='inactivebyinterval' indexdiscardinterval='168' initialbuildrestricted='false'
+ noemptycategories='true'>
+<noteinfo noteid='eae' unid='3D1DB4B42904843080257B420041B072' sequence='16'>
+<created><datetime dst='true'>20130403T125730,10+01</datetime></created>
+<modified><datetime dst='true'>20140828T170404,58+01</datetime></modified>
+<revised><datetime dst='true'>20140828T170404,57+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20140828T170404,58+01</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130403T125730,28+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
+<wassignedby><name>CN=Paul Withers/O=Intec</name></wassignedby><code event='selection'><formula
+>SELECT ((Form = "Discussion"))</formula></code>
+<column sort='ascending' hidedetailrows='false' itemname='Author' width='18.7500'
+ resizable='true' separatemultiplevalues='true' sortnoaccent='false' sortnocase='true'
+ showaslinks='false' categorized='true'><columnheader title='Author'><font
+ size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='Title' width='43.6250' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='Title'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='Abstract' width='30' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='Abstract'><font size='9pt' style='bold'/></columnheader></column>
+<item name='$SelQuery' sign='true'>
+<rawitemdata type='f'>
+gQYAAAAAif8WAAAAAAABAAoARGlzY3Vzc2lvbg==
+</rawitemdata></item></view>
+

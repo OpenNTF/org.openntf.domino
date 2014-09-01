@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftView xp:key="LeftColumn"></xc:LeftView>
+			<xc:mainArea xp:key="facet_1" title="Index Flags"
+				description="The method checks the index flags assigned in all views">
+				<xp:this.facets>
+					<xp:button value="Run SSJS Tests" id="button1"
+						xp:key="SSJSButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="SSJSDiv">
+							<xp:this.action><![CDATA[#{javascript:try {
+	var checkView:NotesView = database.getView("Reeducation");
+	if (checkView.isTimeSensitive()) {
+		sb.append("View has time sensitive formula!");
+	} else {
+		sb.append("View is fine");
+	}
+	viewScope.put("SSJSTest",sb.toString());
+} catch(e) {
+	openLogBean.addError(e,this.getParent());
+}}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Java Tests" id="button3"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv">
+							<xp:this.action><![CDATA[#{javascript:openNTFViewBean.checkViewsIndexFlags()}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftView xp:key="LeftColumn"></xc:LeftView>
+			<xc:mainArea xp:key="facet_1" title="Is Unique"
+				description="Pass in a Document and key. The method checks whether another Document exists in the view with the same key.">
+				<xp:this.facets>
+					<xp:button value="Run SSJS Tests" id="button1"
+						xp:key="SSJSButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="SSJSDiv">
+							<xp:this.action><![CDATA[#{javascript:try {
+	var doc:org.openntf.domino.Document = database.createDocument({FirstName: "Aaron",LastName: "Monroe"});
+	var checkView = database.getView("AllContacts")
+	var sb = new java.lang.StringBuilder();
+	var key:java.util.ArrayList = new java.util.ArrayList();
+	key.add("Aaron");
+	key.add("Monroe");
+	if (checkView.isUnique(doc, key)) {
+		sb.append("No document yet exists with name Aaron Monroe");
+	} else {
+		sb.append("Document already exists with name Aaron Monroe");
+	}
+	viewScope.put("SSJSTest",sb.toString());
+} catch(e) {
+	openLogBean.addError(e,this.getParent());
+}}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Java Tests" id="button3"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv"
+							action="#{javascript:openNTFViewBean.checkIsUnique()}">
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

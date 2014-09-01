@@ -1,0 +1,176 @@
+package org.openntf.dominoTests;
+
+/*
+ 	Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+	(the "License"); you may not use this file except in compliance with the
+	License. You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+	or agreed to in writing, software distributed under the License is distributed
+	on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+	express or implied. See the License for the specific language governing
+	permissions and limitations under the License
+	
+*/
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.Document;
+import org.openntf.domino.Item;
+import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.ViewEntry;
+import org.openntf.domino.utils.Factory;
+
+import com.ibm.xsp.extlib.util.ExtLibUtil;
+
+public class NewDocumentBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public NewDocumentBean() {
+
+	}
+
+	public void doGetPut() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		Utils.addAllListeners(currDb);
+		View threads = currDb.getView("AllContacts");
+		Document doc = threads.getFirstDocument();
+		if (!doc.hasItem("documentToggle")) {
+			doc.put("documentToggle", true);
+		} else {
+			doc.put("documentToggle", null);
+		}
+		doc.save(true, false);
+		ExtLibUtil.getViewScope().put("javaTest", doc.get("documentToggle"));
+	}
+
+	public void containsCheckItems() {
+		StringBuilder sb = new StringBuilder();
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		ArrayList<String> items = new ArrayList<String>();
+		items.add("FirstName");
+		items.add("LastName");
+		items.add("City");
+		int count = 0;
+		for (ViewEntry ent : contacts.getAllEntries()) {
+			if (ent.getDocument().containsValue("Aurora", items)) {
+				count += 1;
+			}
+		}
+		sb.append(Integer.toString(count) + " documents contained a value 'Aurora'");
+		sb.append("..............");
+		Document testDoc = contacts.getFirstDocument();
+		if (testDoc.containsKey("Form")) {
+			sb.append("First doc contains key Form");
+		} else {
+			sb.append("First doc does not contain key Form");
+		}
+		ExtLibUtil.getViewScope().put("javaTest", sb.toString());
+	}
+
+	public void getCreated() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		Document doc = contacts.getFirstDocument();
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		String formatted = format.format(doc.getCreatedDate());
+		ExtLibUtil.getViewScope().put("javaTest", formatted);
+	}
+
+	public void getCreatedOld() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		Document doc = contacts.getFirstDocument();
+		DateTime created = doc.getCreated();
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		String formatted = format.format(created.toJavaDate());
+		ExtLibUtil.getViewScope().put("javaTest", formatted);
+	}
+
+	public void getOtherDates() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		Document doc = contacts.getFirstDocument();
+		StringBuilder sb = new StringBuilder();
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		sb.append("Created: " + format.format(doc.getCreatedDate()));
+		sb.append("....");
+		sb.append("First modified: " + format.format(doc.getInitiallyModifiedDate()));
+		sb.append("....");
+		sb.append("Last modified: " + format.format(doc.getLastModifiedDate()));
+		sb.append("....");
+		sb.append("Last accessed: " + format.format(doc.getLastAccessedDate()));
+		ExtLibUtil.getViewScope().put("javaTest", sb.toString());
+	}
+
+	public void getFormName() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		Document doc = contacts.getFirstDocument();
+		ExtLibUtil.getViewScope().put("javaTest", doc.getFormName());
+	}
+
+	public void getForm() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		Document doc = contacts.getFirstDocument();
+		ExtLibUtil.getViewScope().put("javaTest", doc.getForm().getNoteID());
+	}
+
+	public void replaceItemValueSummary() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		View contacts = currDb.getView("AllContacts");
+		Utils.addAllListeners(currDb);
+		Document doc = contacts.getFirstDocument();
+		StringBuilder sb = new StringBuilder();
+		sb.append("Here is a value");
+		Item itm = (Item) doc.replaceItemValue("summaryField", sb, true);
+		doc.save(true, false);
+		ExtLibUtil.getViewScope().put("javaTest", doc.get("summaryField") + " " + Boolean.toString(itm.isSummary()));
+	}
+
+	public void createNathan() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		Utils.addAllListeners(currDb);
+		Document contact = currDb.createDocument("Form", "Contact", "FirstName", "Nathan", "LastName", "Freeman",
+				"Email", "godOfAwesome@worldOfAwesome.net", "City", "Washington", "State", "WA");
+		contact.save();
+		ExtLibUtil.getViewScope().put("javaTest", contact.getNoteID());
+	}
+
+	public void createPaul() {
+		Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();
+		Utils.addAllListeners(currDb);
+		HashMap<String, Object> fieldsMap = new HashMap<String, Object>();
+		fieldsMap.put("Form", "Contact");
+		fieldsMap.put("FirstName", "Paul");
+		fieldsMap.put("LastName", "Withers");
+		fieldsMap.put("Email", "lordOfPrettyGood@worldOfAwesome.net");
+		fieldsMap.put("City", "Washington");
+		fieldsMap.put("State", "WA");
+		Document contact = currDb.createDocument(fieldsMap);
+		contact.save();
+		ExtLibUtil.getViewScope().put("javaTest", contact.getNoteID());
+	}
+}
