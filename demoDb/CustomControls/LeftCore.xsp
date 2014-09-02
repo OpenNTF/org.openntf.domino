@@ -26,10 +26,14 @@
 			</xe:pageTreeNode>
 			<xe:pageTreeNode label="Document" page="/Document_CreatedDateOld.xsp">
 			</xe:pageTreeNode>
-			<!-- TODO: Complete ColorObject examples wiith getHex() and setHex -->
+			<!-- TODO: Complete ColorObject examples wiith getHex() and setHex
 			<xe:pageTreeNode label="Color Object" page="/ColorObject.xsp">
+			</xe:pageTreeNode>-->
+			<xe:pageTreeNode label="Names" page="/Name_GetGroups.xsp">
 			</xe:pageTreeNode>
 			<xe:pageTreeNode label="Helpers / Misc" page="/Misc_SyncHelper.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Xots" page="/Xots.xsp">
 			</xe:pageTreeNode>
 		</xe:this.treeNodes>
 	</xe:navigator>

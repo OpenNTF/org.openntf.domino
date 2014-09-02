@@ -28,7 +28,7 @@
 		<xp:callback facetName="facet_1" id="callback1"></xp:callback>
 		<xe:this.configuration>
 			<xe:oneuiApplication legal="false"
-				titleBarName="org.openntf.domino Demo Database - jar version ${javascript:importPackage(org.openntf.dominoTests);Utils.getVersion();}"
+				titleBarName="org.openntf.domino Demo Database - ${javascript:importPackage(org.openntf.dominoTests);Utils.getVersion();}"
 				placeBar="false" footer="false">
 			</xe:oneuiApplication>
 		</xe:this.configuration>

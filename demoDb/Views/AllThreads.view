@@ -12,10 +12,9 @@
 <created><datetime dst='true'>20130403T125730,09+01</datetime></created>
 <modified><datetime dst='true'>20140828T170338,46+01</datetime></modified>
 <revised><datetime dst='true'>20140828T170338,45+01</datetime></revised>
-<lastaccessed><datetime dst='true'>20140828T170338,46+01</datetime></lastaccessed>
+<lastaccessed><datetime dst='true'>20140902T211637,57+01</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20130403T125730,26+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
-<wassignedby><name>CN=Paul Withers/O=Intec</name></wassignedby><code event='selection'><formula
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
 >SELECT ((Form = "Discussion"))</formula></code>
 <column hidedetailrows='false' itemname='$0' width='10' resizable='true' separatemultiplevalues='false'
  sortnoaccent='true' sortnocase='true' showaslinks='false'><columnheader title='#'><font

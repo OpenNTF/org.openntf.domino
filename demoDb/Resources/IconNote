@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='9.0'
  maintenanceversion='1.2' replicaid='80257B32007947B2'>
-<noteinfo noteid='122' unid='E728BA1B457C3F8080257B21006F80CE' sequence='38'>
+<noteinfo noteid='122' unid='E728BA1B457C3F8080257B21006F80CE' sequence='248'>
 <created><datetime>20130301T201754,70+00</datetime></created>
-<modified><datetime>20140105T232405,19+00</datetime></modified>
-<revised><datetime>20140105T232405,18+00</datetime></revised>
-<lastaccessed><datetime>20140105T232405,19+00</datetime></lastaccessed>
+<modified><datetime dst='true'>20140902T231146,14+01</datetime></modified>
+<revised><datetime dst='true'>20140902T231146,13+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20140902T231146,14+01</datetime></lastaccessed>
 <addedtofile><datetime>20130318T220442,34+00</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=admin/O=Intec-PW</name><name>CN=Paul Withers/O=Intec</name><name
->CN=admin/O=Intec-PW</name></updatedby>
+<updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
+<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
 <item name='IconBitmap' summary='true'>
 <rawitemdata type='6'>
 AiAgAQAA///////wD///4Af//8AD//4AAH/8AAA/+AAAH/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAA
@@ -30,5 +30,8 @@ AAAAUEECICABAAD/////+A4DgA==
 #1org.openntf.domino</text></item>
 <item name='$Flags'><text>J</text></item>
 <item name='$LaunchXPageRunOnServer'><text>0</text></item>
-<item name='$FlagsNoRefresh'><text>rv</text></item></note>
+<item name='$FlagsNoRefresh'><text>rv</text></item>
+<item name='$Xots'><textlist><text>org.openntf.domino.xotsTests.XotsBasic;true</text><text
+>org.openntf.domino.xots.JSR223Tasklet;true</text><text>org.openntf.domino.xotsTests.XotsScheduledBasic;true</text><text
+>org.openntf.domino.xots.builtin.XotsNsfScanner;true</text></textlist></item></note>
 

@@ -38,9 +38,11 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.RichTextStyle.BoldStyle;
 import org.openntf.domino.email.DominoEmail;
 import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xotsTests.XotsBasic;
 import org.openntf.domino.xsp.XspOpenLogUtil;
 import org.openntf.domino.xsp.helpers.XspUtils;
 
@@ -173,7 +175,7 @@ public class Utils {
 			}
 			sb.append("Starting update with " + selVal);
 			View view = db.getView("allStates");
-			Document state = view.getDocumentByKey(selVal, true);
+			Document state = view.getFirstDocumentByKey(selVal, true);
 			state.replaceItemValue("txnTest", new Date());
 			sb.append("...Updated State pending committal, value is " + state.get("txnTest").toString());
 			View contacts = db.getView("AllContactsByState");
@@ -229,13 +231,11 @@ public class Utils {
 	public static void XSPUtilsTest(DominoDocument doc) {
 		Document beDoc = XspUtils.getBEDoc(doc);
 		String unid = beDoc.getUniversalID();
-		//String viewNoteId = XspUtils.getBEView(view).getNoteID();
-		String viewNoteId = unid;
-		ExtLibUtil.getViewScope().put("javaTest", "Document UNID is " + unid + "<br/>View NoteID is " + viewNoteId);
+		ExtLibUtil.getViewScope().put("javaTest", "Document UNID is " + unid);
 	}
 
 	public static String getVersion() {
-		return Factory.getVersion();
+		return "";
 	}
 
 	public static void demoJavadoc() {
@@ -284,6 +284,13 @@ public class Utils {
 			count++;
 		}
 		return val;
+
+	}
+
+	public static void runXotsTasklet() {
+		XotsBasic testRun = new org.openntf.domino.xotsTests.XotsBasic();
+		testRun.setSessionType(DominoSessionType.NATIVE);
+		testRun.queue();
 
 	}
 }

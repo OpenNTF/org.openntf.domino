@@ -13,12 +13,13 @@
 							refreshMode="partial" refreshId="SSJSDiv">
 							<xp:this.action><![CDATA[#{javascript:try {
 	var checkView:NotesView = database.getView("Reeducation");
+	var retVal = "";
 	if (checkView.isTimeSensitive()) {
-		sb.append("View has time sensitive formula!");
+		retVal = "View has time sensitive formula!";
 	} else {
-		sb.append("View is fine");
+		retVal = "View is fine";
 	}
-	viewScope.put("SSJSTest",sb.toString());
+	viewScope.put("SSJSTest",retVal);
 } catch(e) {
 	openLogBean.addError(e,this.getParent());
 }}]]></xp:this.action>

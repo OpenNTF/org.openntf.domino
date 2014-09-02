@@ -13,10 +13,9 @@
 <created><datetime dst='true'>20130403T125730,11+01</datetime></created>
 <modified><datetime dst='true'>20140828T170929,70+01</datetime></modified>
 <revised><datetime dst='true'>20140828T170929,69+01</datetime></revised>
-<lastaccessed><datetime dst='true'>20140828T170929,70+01</datetime></lastaccessed>
+<lastaccessed><datetime dst='true'>20140902T211631,72+01</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20130403T125730,30+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
-<wassignedby><name>CN=Paul Withers/O=Intec</name></wassignedby><code event='selection'><formula
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
 >SELECT ((Form = "Discussion"))</formula></code>
 <column sort='descending' hidedetailrows='false' itemname='Date' width='18.7500'
  resizable='true' separatemultiplevalues='true' sortnoaccent='false' sortnocase='true'

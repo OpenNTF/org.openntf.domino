@@ -12,12 +12,23 @@
 						<xp:eventHandler event="onclick" submit="true"
 							refreshMode="partial" refreshId="SSJSDiv">
 							<xp:this.action><![CDATA[#{javascript:try {
-	var checkView:NotesView = database.getView("Reeducation");
-	if (checkView.isTimeSensitive()) {
-		sb.append("View has time sensitive formula!");
+	var sb = new java.lang.StringBuilder();
+	var vw:NotesView = database.getView("Reeducation");
+	sb.append("View " + vw.getName() + ": ");
+	sb.append("Index type - " + vw.getIndexType() + ", ");
+	sb.append("isDisableAutoUpdate - " + vw.isDisableAutoUpdate() + ", ");
+	sb.append("isHideEmptyCategories - " + vw.isHideEmptyCategories() + ", ");
+	sb.append("isDiscardIndex - " + vw.isDiscardIndex() + ", ");
+	sb.append("is auto refresh after first use - " + vw.isAutoRefreshAfterFirstUse() + ", ");
+	sb.append("isManualRefresh - " + vw.isManualRefresh() + ", ");
+	sb.append("isAutomaticRefresh - " + vw.isAutomaticRefresh() + ", ");
+	if (vw.getAutoRefreshSeconds() > 0) {
+		sb.append("auto refresh interval - auto refresh, at most every "
+				+ java.lang.Integer.toString(vw.getAutoRefreshSeconds()) + " seconds, ");
 	} else {
-		sb.append("View is fine");
+		sb.append("auto refresh interval - 0 seconds, ");
 	}
+	sb.append("index discarded in - " + java.lang.Integer.toString(vw.getDiscardHours()) + " hours, ");
 	viewScope.put("SSJSTest",sb.toString());
 } catch(e) {
 	openLogBean.addError(e,this.getParent());

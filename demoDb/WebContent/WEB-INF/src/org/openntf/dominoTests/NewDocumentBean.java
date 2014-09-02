@@ -211,6 +211,13 @@ public class NewDocumentBean implements Serializable {
 		DocumentCollection dc = contactsByState.getAllDocumentsByKey("CA", true);
 		doc.put("javaDCField", dc);
 		doc.save(true, false);
+		DocumentCollection srcDc = doc.getItemValue("javaDCField", DocumentCollection.class);
+		StringBuilder sb = new StringBuilder();
+		for (Document savedDoc : srcDc) {
+			sb.append(savedDoc.getNoteID());
+			sb.append(", ");
+		}
+		ExtLibUtil.getViewScope().put("javaTest", sb.toString());
 	}
 
 	public void setMapField() {

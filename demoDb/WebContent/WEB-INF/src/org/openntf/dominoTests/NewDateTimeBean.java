@@ -40,7 +40,7 @@ public class NewDateTimeBean implements Serializable {
 	}
 
 	public void runDateTimes() {
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Date d = new Date();
 		DateTime dt = s.createDateTime(d);
 		DateTime dt2 = s.createDateTime(d);
@@ -60,7 +60,7 @@ public class NewDateTimeBean implements Serializable {
 
 	public void dateTimeIsBeforeTest() {
 		StringBuilder sb = new StringBuilder();
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Database currDb = s.getCurrentDatabase();
 		View threadsByDate = currDb.getView("AllThreadsByDate");
 		ViewNavigator vNav = threadsByDate.createViewNav();
@@ -102,7 +102,7 @@ public class NewDateTimeBean implements Serializable {
 
 	public void dateTimeIsAfterTest() {
 		StringBuilder sb = new StringBuilder();
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Database currDb = s.getCurrentDatabase();
 		View threadsByDate = currDb.getView("AllThreadsByDate");
 		ViewNavigator vNav = threadsByDate.createViewNav();
@@ -144,7 +144,7 @@ public class NewDateTimeBean implements Serializable {
 
 	public void dateTimeEqualsTest() {
 		StringBuilder sb = new StringBuilder();
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Database currDb = s.getCurrentDatabase();
 		View threads = currDb.getView("AllThreads");
 		Random randomGenerator = new Random();
@@ -168,7 +168,7 @@ public class NewDateTimeBean implements Serializable {
 
 	public void dateTimeEqualsIgnoreDateTest() {
 		StringBuilder sb = new StringBuilder();
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Database currDb = s.getCurrentDatabase();
 		View threads = currDb.getView("AllThreads");
 		Random randomGenerator = new Random();
@@ -192,7 +192,7 @@ public class NewDateTimeBean implements Serializable {
 
 	public void dateTimeEqualsIgnoreTimeTest() {
 		StringBuilder sb = new StringBuilder();
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Database currDb = s.getCurrentDatabase();
 		View threads = currDb.getView("AllThreads");
 		Random randomGenerator = new Random();
@@ -215,7 +215,7 @@ public class NewDateTimeBean implements Serializable {
 	}
 
 	public void getProcessedDate() {
-		Session s = Factory.fromLotus(ExtLibUtil.getCurrentSession(), org.openntf.domino.Session.class, null);
+		Session s = Factory.getSession();
 		Database currDb = s.getCurrentDatabase();
 		Utils.addAllListeners(currDb);
 		View threads = currDb.getView("AllContacts");

@@ -2,14 +2,6 @@
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core"
 	xmlns:xc="http://www.ibm.com/xsp/custom"
 	xmlns:xe="http://www.ibm.com/xsp/coreex">
-	<xp:this.data>
-		<xp:dominoDocument var="document1" formName="Contact"
-			action="openDocument">
-			<xp:this.documentId><![CDATA[${javascript:contacts = database.getView("AllContacts");
-var doc = contacts.getFirstDocument();
-return doc.getUniversalID();}]]></xp:this.documentId>
-		</xp:dominoDocument>
-	</xp:this.data>
 	
 	<xc:ccLayoutOneUI>
 		<xp:this.facets>
@@ -23,24 +15,11 @@ return doc.getUniversalID();}]]></xp:this.documentId>
 								<xp:this.action><![CDATA[#{javascript:openNTFDocumentBean.setDocumentCollectionField()}]]></xp:this.action>
 							</xp:eventHandler>
 						</xp:button>
-						<xe:dumpObject id="dumpObject1"
-							value="#{doc.javaDCField}">
-						</xe:dumpObject>
 					</xp:div>
-					<xp:button value="Add Date" id="button1"
-						xp:key="SSJSButton">
-						<xp:eventHandler event="onclick" submit="true"
-							refreshMode="complete">
-							<xp:this.action><![CDATA[#{javascript:contacts = database.getView("AllContacts");
-var doc = contacts.getFirstDocument();
-var dt = new java.util.Date();
-doc.replaceItemValue("SSJSFieldDate",dt);
-doc.save(true,false);
-viewScope.put("SSJSTest", doc.get("SSJSFieldDate"));}]]></xp:this.action>
-						</xp:eventHandler>
-					</xp:button>
 				</xp:this.facets>
-				<xc:this.description><![CDATA[This demonstrates writing a Notes DocumentCollection to a field. The relevant document's UNIDs are stored.]]></xc:this.description>
+				<xc:this.description><![CDATA[This demonstrates writing a Notes DocumentCollection to a field. The actual DocumentCollection is stored in a field.<br/>
+				**WARNING** This is not recommended, in case DocumentCollection class changes in the future, in which case you'll get a ClassCastException. 
+				But it shows you can throw ANYTHING into a field. (Consequently, it's only been put on the Java tab)]]></xc:this.description>
 			</xc:mainArea>
 		</xp:this.facets>
 	</xc:ccLayoutOneUI>

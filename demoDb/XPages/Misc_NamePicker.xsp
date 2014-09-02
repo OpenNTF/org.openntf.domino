@@ -6,8 +6,7 @@
 		<xp:this.facets>
 			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
 			<xc:mainArea xp:key="facet_1" title="Name Picker">
-				<xc:this.description><![CDATA[Shows use of OpenNTF Name Picker. <b>WARNING: SEARCHING IF IT USES THE STANDARD NAME PICKER WILL CRASH YOUR SERVER!!</b>
-				<br/><br/>This appears to be something to do with an unsupported method that may return a Vector instead of a ViewEntry when searching the View]]></xc:this.description>
+				<xc:this.description><![CDATA[Shows use of OpenNTF Name Picker including option to store name in canonical format. The Java has no content.]]></xc:this.description>
 				<xp:this.facets>
 					<xp:div xp:key="javaButton">
 						<xp:text escape="true" id="computedField1">
@@ -16,7 +15,7 @@
 					</xp:div>
 					<xp:div xp:key="SSJSButton">
 						<xp:label for="inputText1"
-							value="DO NOT USE THE SEARCH IN THIS PICKER UNLESS YOU WANT TO CRASH THE SERVER!!">
+							value="This doesn't work">
 						</xp:label>
 						<xp:inputText id="inputText1" value="#{viewScope.name1}">
 						</xp:inputText>

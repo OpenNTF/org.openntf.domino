@@ -56,7 +56,7 @@ return val;}]]></on:this.collection>
 
 						<xp:br></xp:br>
 						<xp:label for="inputText3"
-							value="Value Picker picking from Enum - TODO">
+							value="Value Picker picking from Enum">
 						</xp:label>
 						<xp:br></xp:br>
 						<xp:inputText id="inputText3"
@@ -108,18 +108,6 @@ return val;}]]></on:this.collection>
 							</xe:this.dataProvider>
 						</xe:valuePicker>
 
-						<xp:br></xp:br>
-						<xp:label for="inputText3"
-							value="Value Picker picking from Enum - TODO">
-						</xp:label>
-						<xp:br></xp:br>
-						<xp:inputText id="inputText6"
-							value="#{viewScope.value3}">
-						</xp:inputText>
-						<xe:valuePicker id="valuePicker6" for="inputText3">
-							<xe:this.dataProvider>
-							</xe:this.dataProvider>
-						</xe:valuePicker>
 					</xp:div>
 				</xp:this.facets>
 			</xc:mainArea>

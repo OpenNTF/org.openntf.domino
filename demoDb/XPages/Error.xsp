@@ -26,21 +26,7 @@
 				</p>
 				<xp:div styleClass="lotusInfoBox">
 					If you are yet to use the database, have you completed the required setup steps?<br/>
-					You must either:
-					<ol><li>Install org.openntf.domino on your server and Designer client. This is the preferred
-					option because the library will then be available for all applications on the server.
-					To do this:
-					<!-- TODO: Create this agent -->
-					<ul><li>Sign the application and run the "Copy org.openntf.domino jar" agent with administrative
-					access to add the jar to your Designer client's and Domino server's jvm/lib/ext</li>
-					<li>Build the application, ensuring you no longer get any errors</li>
-					<li>Install the update site project in a valid Update Site database on the server you are
-					running the application on. This will allow the jar to be used in XPages.</li>
-					<li>Run the console command <i>restart task http</i> to *fully* reload the HTTP task</li></ul></li>
-					<li>Add the org.openntf.domino jar file to the WebContent\WEB-INF\lib folder of this
-					application. Right-click and add to the Build Path, then rebuild the application.</li></ol>
-					Note, with option two the library will not be accessible for any other NSF on the server
-					and Java tests will not run.
+					You must install org.openntf.domino update site on your server and Designer client and load documents
 				</xp:div>
 				<button class="mainBtn" type="button" onclick="window.location.reload()">Reload Page</button>
 				<br />

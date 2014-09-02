@@ -45,8 +45,8 @@ public class NewHelperBean implements Serializable {
 
 	public void sendSimpleEmail() {
 		DominoEmail myEmail = new DominoEmail();
-		myEmail.createSimpleEmail("CN=Intec TestUser2/O=Intec-PW", "", "", "OpenNTF Domino API Email",
-				"this is an email from the OpenNTF Domino API", "");
+		myEmail.createSimpleEmail(Factory.getSession().getEffectiveUserName(), "", "", "OpenNTF Domino API Email",
+				"this is an email from Java in the OpenNTF Domino API", "");
 	}
 
 	public void sendComplexEmail() {
@@ -84,6 +84,7 @@ public class NewHelperBean implements Serializable {
 		ExtLibUtil.getViewScope().put("javaTest", currName.getGroups(currSess.getServerName()));
 	}
 
+	@SuppressWarnings("unchecked")
 	public DocumentCollection getSortedCollection() {
 		String sSearch = "FIELD Author contains \"Aline Winters\"";
 		org.openntf.domino.DocumentCollection dc = Factory.getSession().getCurrentDatabase().FTSearch(sSearch, 500);

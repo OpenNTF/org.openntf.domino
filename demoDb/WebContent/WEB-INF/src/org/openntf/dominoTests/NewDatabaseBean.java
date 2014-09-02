@@ -3,9 +3,6 @@ package org.openntf.dominoTests;
 import java.io.Serializable;
 
 import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.xsp.extlib.util.ExtLibUtil;
@@ -41,17 +38,6 @@ public class NewDatabaseBean implements Serializable {
 		Database currDb = Factory.getSession().getDatabase(apiPath);
 		if (null != currDb) {
 			ExtLibUtil.getViewScope().put("javaTest", "Database found at " + db.getApiPath());
-		}
-	}
-
-	public void searchLoop() {
-		Session session = Factory.getSession();
-		Database db = session.getCurrentDatabase();
-		DocumentCollection col = db.search("Form = \"Contact\"");
-
-		// Trouble start here, while the for statement call iterator() mothod of the collection.
-		for (Document curDoc : col) {
-			System.out.println(curDoc.getUniversalID());
 		}
 	}
 }

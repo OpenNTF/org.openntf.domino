@@ -4,8 +4,9 @@
 	<xc:ccLayoutOneUI>
 		<xp:this.facets>
 			<xc:LeftView xp:key="LeftColumn"></xc:LeftView>
-			<xc:mainArea xp:key="facet_1" title="Is Unique"
-				description="Pass in a Document and key. The method checks whether another Document exists in the view with the same key.">
+			<xc:mainArea xp:key="facet_1" title="Is Unique">
+				<xc:this.description><![CDATA[Pass in a Document and key. The method checks whether another Document exists in the view with the same key. 
+<br/>**SSJS not working at the moment**]]></xc:this.description>
 				<xp:this.facets>
 					<xp:button value="Run SSJS Tests" id="button1"
 						xp:key="SSJSButton">
@@ -15,7 +16,7 @@
 	var doc:org.openntf.domino.Document = database.createDocument({FirstName: "Aaron",LastName: "Monroe"});
 	var checkView = database.getView("AllContacts")
 	var sb = new java.lang.StringBuilder();
-	var key:java.util.ArrayList = new java.util.ArrayList();
+	var key:java.util.Vector = new java.util.Vector();
 	key.add("Aaron");
 	key.add("Monroe");
 	if (checkView.isUnique(doc, key)) {

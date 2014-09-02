@@ -2,7 +2,7 @@
 <xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xe="http://www.ibm.com/xsp/coreex">
 
 	<!--
-		Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+		Copyright 2014 Paul Withers Licensed under the Apache License, Version 2.0
 		(the "License"); you may not use this file except in compliance with the
 		License. You may obtain a copy of the License at
 
@@ -12,18 +12,16 @@
 		express or implied. See the License for the specific language governing
 		permissions and limitations under the License
 	-->
-
 	<xe:navigator id="navigator1">
 		<xe:this.treeNodes>
 			<xe:pageTreeNode label="Home" page="/Home.xsp">
 			</xe:pageTreeNode>
 
 			<xe:separatorTreeNode></xe:separatorTreeNode>
-			<xe:pageTreeNode label="Get API Path" page="/Database_ApiPath.xsp">
+			<xe:pageTreeNode label="Get Groups" page="/Name_GetGroups.xsp">
 			</xe:pageTreeNode>
-			<xe:pageTreeNode label="Get Database By API Path" page="/Database_GetByApiPath.xsp">
-			</xe:pageTreeNode>
-			
+
 		</xe:this.treeNodes>
 	</xe:navigator>
+
 </xp:view>
