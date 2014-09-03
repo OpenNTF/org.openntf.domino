@@ -44,7 +44,7 @@ public class OpenNTFNotesException extends RuntimeException {
 			exceptionDetails_ = ed;
 			return;
 		}
-		if (moreExceptionDetails_ != null) {
+		if (moreExceptionDetails_ == null) {
 			moreExceptionDetails_ = new ArrayList<ExceptionDetails>();
 		}
 		moreExceptionDetails_.add(ed);

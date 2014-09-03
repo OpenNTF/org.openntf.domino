@@ -74,7 +74,7 @@ public class Logging {
 		if (_activeConfig == null)	// Necessary only if starting up
 			if (!getCfgPropFileNumbers())
 				return false;
-		activateFilterHandler(logCfg);
+		activateFilterHandlers(logCfg);
 		_activeConfig = logCfg;
 		return true;
 	}
@@ -117,7 +117,7 @@ public class Logging {
 	private boolean createFilterHandlers(final LogConfig logCfg) {
 		try {
 			for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values())
-				LogFilterHandler.getInitializedInstance(llfh);
+				LogFilterHandler.getInitializedInstance(llfh, _activeConfig);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -130,7 +130,7 @@ public class Logging {
 		}
 	}
 
-	private void activateFilterHandler(final LogConfig logCfg) {
+	private void activateFilterHandlers(final LogConfig logCfg) {
 		int sz = (_activeConfig == null) ? 0 : _activeConfig._logFilterHandlers.size();
 		LogFilterHandler[] oldLFHs = new LogFilterHandler[sz];
 		if (_activeConfig != null) {

@@ -3,19 +3,45 @@ package org.openntf.domino.logging;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-public class LogHandlerConsole extends ConsoleHandler {
+public class LogHandlerConsole extends ConsoleHandler implements LogHandlerUpdateIF {
 
-	public static Object configFromProps(final String props) {
-		return Boolean.FALSE;
+	private static class LHCConfig implements LogHandlerConfigIF {
+		private static LHCConfig _theLHC = new LHCConfig();
+
+		@Override
+		public boolean isEqual(final LogHandlerConfigIF other) {
+			return other instanceof LHCConfig;
+		}
 	}
 
-	public static LogHandlerConsole getInstance(final Object config, final boolean useDefaultFormatter) {
+	public static LogHandlerConfigIF configFromProps(final String props) {
+		return LHCConfig._theLHC;
+	}
+
+	public static LogHandlerConsole getInstance(final LogHandlerConfigIF config, final boolean useDefaultFormatter) {
+		if (!(config instanceof LHCConfig))
+			throw new IllegalArgumentException("Invalid call to LogHandlerConsole.getInstance");
 		LogHandlerConsole ret = new LogHandlerConsole();
 		if (useDefaultFormatter)
 			ret.setFormatter(new LogFormatterConsoleDefault());
 		return ret;
+	}
+
+	@Override
+	public boolean mayUpdateYourself(final LogHandlerConfigIF newHandlerConfig, final LogHandlerConfigIF oldHandlerConfig) {
+		return newHandlerConfig.isEqual(oldHandlerConfig);
+	}
+
+	@Override
+	public void doUpdateYourself(final LogHandlerConfigIF newhandlerConfig, final LogHandlerConfigIF oldHandlerConfig,
+			final boolean useDefaultFormatter, final Formatter newFormatter) {
+		if (newFormatter != null)
+			setFormatter(newFormatter);
+		else if (useDefaultFormatter && !(getFormatter() instanceof LogFormatterConsoleDefault))
+			setFormatter(new LogFormatterConsoleDefault());
 	}
 
 	/**
