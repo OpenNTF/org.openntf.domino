@@ -17,31 +17,40 @@ public class ProfilerTransformer implements ClassFileTransformer {
 	public byte[] transform(final ClassLoader loader, final String className, final Class classBeingRedefined,
 			final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
 		byte[] byteCode = classfileBuffer;
-		if (className.startsWith("org/openntf/domino/impl")) {
-			System.out.println("Injecting code in class " + className + " for profiling");
+		if (className.startsWith("org/openntf/domino") && !className.contains("Profiler")) {
+
 			try {
-				// dump the result for further analysis
-				if (DEBUG_DIR != null) {
-					FileOutputStream fos = new FileOutputStream(new File(DEBUG_DIR + className.replace('/', '.') + "-old.class"));
-					fos.write(byteCode, 0, byteCode.length);
-					fos.close();
-				}
+				System.out.println("Injecting code in class " + className + " for profiling");
+				// Check if profiler is visible from this classloader
+				loader.loadClass("org.openntf.domino.instrument.Profiler");
 
-				ClassReader reader = new ClassReader(byteCode);
-				ClassWriter writer = new ClassWriter(reader, 0);
-				// The visitor will traverse the parsed bytecode
-				ClassVisitor visitor = new ProfilerClassVisitor(writer);
-				reader.accept(visitor, 0);
-				byteCode = writer.toByteArray();
+				try {
+					// dump the result for further analysis
+					if (DEBUG_DIR != null) {
+						FileOutputStream fos = new FileOutputStream(new File(DEBUG_DIR + className.replace('/', '.') + "-old.class"));
+						fos.write(byteCode, 0, byteCode.length);
+						fos.close();
+					}
 
-				if (DEBUG_DIR != null) {
-					FileOutputStream fos = new FileOutputStream(new File("d:/daten/dump/" + className.replace('/', '.') + "-new.class"));
-					fos.write(byteCode, 0, byteCode.length);
-					fos.close();
+					ClassReader reader = new ClassReader(byteCode);
+					ClassWriter writer = new ClassWriter(reader, 0);
+					// The visitor will traverse the parsed bytecode
+					ClassVisitor visitor = new ProfilerClassVisitor(writer);
+					reader.accept(visitor, 0);
+					byteCode = writer.toByteArray();
+
+					if (DEBUG_DIR != null) {
+						FileOutputStream fos = new FileOutputStream(new File("d:/daten/dump/" + className.replace('/', '.') + "-new.class"));
+						fos.write(byteCode, 0, byteCode.length);
+						fos.close();
+					}
+				} catch (Throwable ex) {
+					System.out.println("Exception: " + ex);
+					ex.printStackTrace();
 				}
-			} catch (Throwable ex) {
-				System.out.println("Exception: " + ex);
-				ex.printStackTrace();
+			} catch (Throwable t) {
+				System.out.println("Cannot inject code in " + className + " because Profiler class is not visible from its class loader"
+						+ t);
 			}
 		}
 
