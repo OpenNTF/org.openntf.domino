@@ -16,8 +16,6 @@ package org.openntf.dominoTests;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.faces.context.FacesContext;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
@@ -25,6 +23,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
@@ -37,7 +36,7 @@ public class NewViewBean implements Serializable {
 
 	public void processView() {
 		StringBuilder sb = new StringBuilder();
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		View view = db.getView("allStates");
 		for (ViewEntry currentEntry : view.getAllEntries()) {
 			sb.append(currentEntry.getNoteID() + "..."); // Do whatever it is you actually want to get done
@@ -47,7 +46,7 @@ public class NewViewBean implements Serializable {
 
 	public void getAllEntriesByKey() {
 		StringBuilder sb = new StringBuilder();
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		View view = db.getView("allContactsByState");
 		ArrayList<String> key = new ArrayList<String>();
 		key.add("CA");
@@ -60,7 +59,7 @@ public class NewViewBean implements Serializable {
 
 	public void getAllDocumentsByKey() {
 		StringBuilder sb = new StringBuilder();
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		View view = db.getView("allContactsByState");
 		ArrayList<String> key = new ArrayList<String>();
 		key.add("CA");
@@ -73,7 +72,7 @@ public class NewViewBean implements Serializable {
 
 	public void getAllDocumentsByKeyNoMatch() {
 		StringBuilder sb = new StringBuilder();
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		View view = db.getView("allContactsByState");
 		ArrayList<String> key = new ArrayList<String>();
 		key.add("CX");
@@ -88,7 +87,7 @@ public class NewViewBean implements Serializable {
 
 	public void getAllEntriesByKeyNoMatch() {
 		StringBuilder sb = new StringBuilder();
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		View view = db.getView("allContactsByState");
 		ArrayList<String> key = new ArrayList<String>();
 		key.add("CX");
@@ -104,7 +103,7 @@ public class NewViewBean implements Serializable {
 	public void checkIsUnique() {
 		try {
 			StringBuilder sb = new StringBuilder();
-			Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+			Database db = Factory.getSession().getCurrentDatabase();
 			Document doc = db.createDocument();
 			doc.put("FirstName", "Aaron");
 			doc.put("LastName", "Monroe");

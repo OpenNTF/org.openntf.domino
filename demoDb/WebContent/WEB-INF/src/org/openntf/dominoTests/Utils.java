@@ -126,8 +126,8 @@ public class Utils {
 			retVal += "<br/>Finished standard version..." + date.toString();
 			date = new Date();
 			retVal += "<br/>Starting OpenNTF version..." + date.toString();
-			Session currSess = (Session) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "session");
-			Database currDb = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+			Session currSess = Factory.getSession();
+			Database currDb = currSess.getCurrentDatabase();
 			Utils.addAllListeners(currDb);
 			View contactsView = currDb.getView("AllContacts");
 			for (ViewEntry ent : contactsView.getAllEntries()) {
@@ -162,7 +162,7 @@ public class Utils {
 
 	public static void transactionTest(boolean successOrFail) {
 		StringBuilder sb = new StringBuilder();
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		Utils.addAllListeners(db);
 		DatabaseTransaction txn = db.startTransaction();
 		try {
@@ -206,7 +206,7 @@ public class Utils {
 		DocumentScanner scanner = new DocumentScanner();
 		scanner.setIgnoreDollar(true);
 
-		Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+		Database db = Factory.getSession().getCurrentDatabase();
 		View contacts = db.getView("AllContacts");
 		for (ViewEntry ent : contacts.getAllEntries()) {
 			scanner.processDocument(ent.getDocument());

@@ -21,8 +21,6 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Vector;
 
-import javax.faces.context.FacesContext;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
 import org.openntf.domino.DateTime;
@@ -31,9 +29,9 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.xsp.extlib.util.ExtLibUtil;
 
 public class DataInitializerOpenNTF {
 
@@ -65,7 +63,7 @@ public class DataInitializerOpenNTF {
 
 	public void run() throws IOException {
 		try {
-			Database db = (Database) ExtLibUtil.resolveVariable(FacesContext.getCurrentInstance(), "database");
+			Database db = Factory.getSession().getCurrentDatabase();
 			if (deleteAllDoc) {
 				deleteAllDocuments(db);
 			}
@@ -404,7 +402,7 @@ public class DataInitializerOpenNTF {
 
 	protected DateRange createDateTimeRange(Session session, int year, int month, int day, int hour, int minute,
 			int second) {
-		DateRange r = (DateRange) session.createDateRange(new Date(), new Date());
+		DateRange r = session.createDateRange(new Date(), new Date());
 		r.setStartDateTime(session.createDateTime(createDateTime(year, month, day, hour, minute, second)));
 		r.setEndDateTime(session.createDateTime(createDateTime(year + 1, month, day, hour + 1, minute, second)));
 		return r;
