@@ -2647,7 +2647,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		try {
 			DocumentCollection dc = this.getAllDocumentsByKey(key, true);
 			for (Document checkDoc : dc) {
-				if (null != srcDoc) {
+				if (null == srcDoc) {
+					return false;
+				} else {
 					if (!checkDoc.getUniversalID().equals(srcDoc.getUniversalID())) {
 						return retVal_;
 					}
