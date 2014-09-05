@@ -629,6 +629,19 @@ public enum DominoUtils {
 	}
 
 	/**
+	 * Checks if is replica id.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return true, if is replica id
+	 */
+	public static boolean isReplicaId(final String value) {
+		if (value.length() != 16)
+			return false;
+		return DominoUtils.isHex(value);
+	}
+
+	/**
 	 * Md5.
 	 * 
 	 * @param object
