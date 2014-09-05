@@ -664,7 +664,7 @@ public interface Database extends Base {
 	 * Gets the meta replica ID, an ID in the format serverName!!replicaId, first portion of metaversal ID
 	 * 
 	 * @return the meta replica id
-	 * @since org.openntf.domino 6.0.0
+	 * @since org.openntf.domino 5.0.0
 	 */
 	public String getMetaReplicaID();
 
