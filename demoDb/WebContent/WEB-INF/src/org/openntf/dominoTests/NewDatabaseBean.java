@@ -40,4 +40,18 @@ public class NewDatabaseBean implements Serializable {
 			ExtLibUtil.getViewScope().put("javaTest", "Database found at " + db.getApiPath());
 		}
 	}
+
+	public void getMetaReplicaID() {
+		Database db = Factory.getSession().getCurrentDatabase();
+		ExtLibUtil.getViewScope().put("javaTest", db.getMetaReplicaID());
+	}
+
+	public void getByMetaReplicaID() {
+		Database db = Factory.getSession().getCurrentDatabase();
+		String metaReplicaID = db.getMetaReplicaID();
+		Database currDb = Factory.getSession().getDatabase(metaReplicaID);
+		if (null != currDb) {
+			ExtLibUtil.getViewScope().put("javaTest", "Database found at " + db.getMetaReplicaID());
+		}
+	}
 }

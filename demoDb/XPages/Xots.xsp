@@ -15,8 +15,8 @@
 	<xc:ccLayoutOneUI>
 		<xp:this.facets>
 			<xc:LeftXots xp:key="LeftColumn"></xc:LeftXots>
-			<xc:mainArea xp:key="facet_1" title="Xots"
-				description="This page shows examples of Xots triggered task. SSJS assumes a user named Admin on your server. You will need to refresh the page to get the updated message. Java overrides the constructor to run as server. The message will show on the SSJS tab.">
+			<xc:mainArea xp:key="facet_1" title="XOTS"
+				description="This page shows examples of XOTS triggered task. SSJS assumes a user named Admin on your server. You will need to refresh the page to get the updated message. Java overrides the constructor to run as server. The message will show on the SSJS tab.">
 				<xp:this.facets>
 					<xp:panel xp:key="SSJSButton" id="divArea">
 						<xp:button id="button1" value="Run SSJS Test">

@@ -23,6 +23,10 @@
 			</xe:pageTreeNode>
 			<xe:pageTreeNode label="Get Database By API Path" page="/Database_GetByApiPath.xsp">
 			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get Meta Replica ID" page="/Database_MetaReplicaID.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get Database By Meta Replica ID" page="/Database_GetByMetaReplicaID.xsp">
+			</xe:pageTreeNode>
 			
 		</xe:this.treeNodes>
 	</xe:navigator>

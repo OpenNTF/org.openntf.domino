@@ -10,7 +10,7 @@
 				<xp:this.facets>
 					<xp:div xp:key="javaButton">
 						<xp:text escape="true" id="computedField1">
-							<xp:this.value><![CDATA[#{javascript:openNTFNameBean.getGroups();}]]></xp:this.value>
+							<xp:this.value><![CDATA[#{javascript:openNTFNameBean.getNameParts();}]]></xp:this.value>
 						</xp:text>
 					</xp:div>
 					<xp:div xp:key="SSJSButton">
@@ -18,7 +18,7 @@
 							<xp:eventHandler event="onclick" submit="true"
 								refreshMode="complete">
 								<xp:this.action><![CDATA[#{javascript:var selName:org.openntf.domino.Name=session.createName(session.getEffectiveUserName());
-viewScope.put("SSJSTest", selName.getGroups(session.getServerName()));}]]></xp:this.action>
+viewScope.put("SSJSTest", selName.getNamePart(org.openntf.arpa.NamePartsMap.Key.Canonical));}]]></xp:this.action>
 							</xp:eventHandler></xp:button>
 						</xp:div>
 				</xp:this.facets>

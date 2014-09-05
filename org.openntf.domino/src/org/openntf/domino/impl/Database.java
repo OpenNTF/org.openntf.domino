@@ -1655,6 +1655,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return replid_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getMetaReplicaId()
+	 */
+	@Override
+	public String getMetaReplicaID() {
+		if (server_.length() > 0)
+			return server_ + "!!" + replid_;
+		return replid_;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

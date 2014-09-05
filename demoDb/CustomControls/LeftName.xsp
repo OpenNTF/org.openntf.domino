@@ -20,6 +20,8 @@
 			<xe:separatorTreeNode></xe:separatorTreeNode>
 			<xe:pageTreeNode label="Get Groups" page="/Name_GetGroups.xsp">
 			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get Name Parts" page="/Name_GetNameParts.xsp">
+			</xe:pageTreeNode>
 
 		</xe:this.treeNodes>
 	</xe:navigator>

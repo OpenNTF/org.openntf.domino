@@ -33,7 +33,7 @@
 			</xe:pageTreeNode>
 			<xe:pageTreeNode label="Helpers / Misc" page="/Misc_SyncHelper.xsp">
 			</xe:pageTreeNode>
-			<xe:pageTreeNode label="Xots" page="/Xots.xsp">
+			<xe:pageTreeNode label="XOTS" page="/Xots.xsp">
 			</xe:pageTreeNode>
 		</xe:this.treeNodes>
 	</xe:navigator>

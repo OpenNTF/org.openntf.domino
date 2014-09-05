@@ -64,7 +64,8 @@ public interface Database extends Base {
 	 * 
 	 */
 	public static enum Events implements EnumEvent {
-		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT, AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
+		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT,
+		AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
 	}
 
 	/**
@@ -652,8 +653,19 @@ public interface Database extends Base {
 	public void setAutoMime(AutoMime autoMime);
 
 	/**
+	 * Gets the $DefaultLanguage stored in the icon note and converts it to a locale
+	 * 
 	 * @return the Locale stored in the Notes database
+	 * @since org.openntf.domino 5.0.0
 	 */
 	public Locale getLocale();
+
+	/**
+	 * Gets the meta replica ID, an ID in the format serverName!!replicaId, first portion of metaversal ID
+	 * 
+	 * @return the meta replica id
+	 * @since org.openntf.domino 6.0.0
+	 */
+	public String getMetaReplicaID();
 
 }

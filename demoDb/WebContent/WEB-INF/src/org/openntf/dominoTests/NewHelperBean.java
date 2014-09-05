@@ -6,13 +6,17 @@ import java.util.List;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.email.DominoEmail;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.helpers.DocumentSyncHelper;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xsp.XspOpenLogUtil;
+import org.openntf.domino.xsp.helpers.NSA;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Formulas;
 
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
@@ -78,12 +82,6 @@ public class NewHelperBean implements Serializable {
 		myEmail.send();
 	}
 
-	public void getGroups() {
-		Session currSess = Factory.getSession();
-		Name currName = currSess.createName(currSess.getEffectiveUserName());
-		ExtLibUtil.getViewScope().put("javaTest", currName.getGroups(currSess.getServerName()));
-	}
-
 	@SuppressWarnings("unchecked")
 	public DocumentCollection getSortedCollection() {
 		String sSearch = "FIELD Author contains \"Aline Winters\"";
@@ -94,5 +92,23 @@ public class NewHelperBean implements Serializable {
 		DocumentCollection results = sorter.sort();
 		ExtLibUtil.getViewScope().put("javaTest", results.getCount());
 		return results;
+	}
+
+	public void processFormula() {
+		try {
+			String passedFormula = (String) ExtLibUtil.getViewScope().get("javaFormula");
+			ASTNode ast = null;
+
+			ast = Formulas.getParser().parse(passedFormula);
+			FormulaContext ctx1 = Formulas.createContext(null, Formulas.getParser());
+			List<Object> result = ast.solve(ctx1);
+			ExtLibUtil.getViewScope().put("javaTest", result);
+		} catch (Throwable t) {
+			XspOpenLogUtil.logError(t);
+		}
+	}
+
+	public void getNSAApps() {
+		ExtLibUtil.getViewScope().put("javaTest", NSA.INSTANCE.getReport());
 	}
 }
