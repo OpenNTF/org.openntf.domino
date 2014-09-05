@@ -637,6 +637,16 @@ public class DatabaseMetaData implements Serializable {
 			return getDatabase().getDocumentWithKey(key, createOnFail);
 		}
 
+		@Override
+		public Document getDocumentByKey(final Serializable key) {
+			return getDocumentWithKey(key);
+		}
+
+		@Override
+		public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
+			return getDocumentWithKey(key, createOnFail);
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * @see org.openntf.domino.ext.Database#getModifiedDocuments(lotus.domino.DateTime, org.openntf.domino.Database.ModifiedDocClass)

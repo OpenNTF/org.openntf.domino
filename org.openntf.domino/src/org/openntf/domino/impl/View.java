@@ -2619,6 +2619,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			view.getHttpURL();
 		} catch (NotesException e) {
 			resurrect();
+		} catch (NullPointerException npe) {
+			resurrect();
 		}
 		return super.getDelegate();
 	}

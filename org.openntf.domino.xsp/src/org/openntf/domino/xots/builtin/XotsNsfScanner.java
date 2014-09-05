@@ -76,7 +76,7 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 		DatabaseDesign design = db.getDesign();
 		IconNote icon = design.getIconNote();
 		Document iconDoc = icon.getDocument();
-		if (iconDoc.hasItem("$Xots")) {
+		if (iconDoc != null && iconDoc.hasItem("$Xots")) {
 			String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
 			getXotsService().getComponentModule("/" + db.getFilePath());
 			getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);

@@ -434,6 +434,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		if (iconNote != null) {
 			return new IconNote(iconNote);
 		}
+		log_.fine("No icon note found for database " + getAncestorDatabase().getApiPath());
 		return null;
 	}
 
