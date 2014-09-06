@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
-import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
@@ -76,9 +75,8 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 
 		DatabaseDesign design = db.getDesign();
 		IconNote icon = design.getIconNote();
-		Document iconDoc = icon.getDocument();
-		if (iconDoc != null && iconDoc.hasItem("$Xots")) {
-			String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
+		if (icon != null) {
+			String[] xotsClassNames = icon.getXotsClassNames();
 			if (xotsClassNames != null && xotsClassNames.length > 0) {
 				if (TRACE) {
 					System.out.println("TRACE: Adding Xots Tasklets for database " + db.getApiPath());
@@ -87,6 +85,5 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 				getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
 			}
 		}
-
 	}
 }

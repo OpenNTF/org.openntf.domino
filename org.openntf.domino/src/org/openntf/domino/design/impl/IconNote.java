@@ -30,10 +30,6 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IconNote.class.getName());
 
-	public static enum DASMode {
-		NONE, VIEWS, VIEWSANDDOCUMENTS;
-	}
-
 	/**
 	 * @param document
 	 */
@@ -71,6 +67,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 		getDxlNode("/note/item[@name='$TITLE']/text").setTextContent(name);
 	}
 
+	@Override
 	public void setDASMode(final DASMode mode) {
 		XMLNode node = getDxlNode("/note/item[@name='$AllowRESTDbAPI']");
 		if (node == null) {
@@ -91,6 +88,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 		}
 	}
 
+	@Override
 	public DASMode getDASMode() {
 		XMLNode node = getDxlNode("/note/item[name='$AllowRESTDbAPI']/number");
 		if (node == null) {
@@ -104,5 +102,17 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 				return DASMode.NONE;
 			}
 		}
+	}
+
+	@Override
+	public String[] getXotsClassNames() {
+		Document iconDoc = getDocument();
+		if (iconDoc != null && iconDoc.hasItem("$Xots")) {
+			String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
+			if (xotsClassNames != null) {
+				return xotsClassNames;
+			}
+		}
+		return new String[] {};
 	}
 }
