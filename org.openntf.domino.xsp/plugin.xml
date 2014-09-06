@@ -58,6 +58,10 @@
             class="org.openntf.domino.i18n.RawMessageProviderImpl"
             type="org.openntf.domino.i18n.RawMessageProvider">
       </service>
-   </extension>   
+   </extension>
+   
+	<extension point="com.ibm.commons.Extension">
+		<service class="org.openntf.domino.xots.builtin.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
+	</extension>
 
 </plugin>
