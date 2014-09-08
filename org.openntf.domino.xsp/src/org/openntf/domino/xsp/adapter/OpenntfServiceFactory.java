@@ -3,7 +3,6 @@
  */
 package org.openntf.domino.xsp.adapter;
 
-import org.openntf.domino.instrument.ProfilerAgent;
 import org.openntf.domino.xots.XotsDaemon;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
@@ -24,7 +23,7 @@ public class OpenntfServiceFactory implements IServiceFactory {
 		// unfortunately the whole lotus.domino package is alredy loaded. 
 		// (so you will need to use the -javaagent option if you want to instrument these)
 
-		ProfilerAgent.attach();
+		// ProfilerAgent.attach();
 	}
 	private static XotsDaemon DAEMON = XotsDaemon.getInstance();
 
