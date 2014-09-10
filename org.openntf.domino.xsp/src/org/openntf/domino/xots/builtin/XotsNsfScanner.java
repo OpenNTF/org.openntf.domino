@@ -24,7 +24,7 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private final boolean TRACE = true;
+	private final boolean TRACE = false;
 	private final String serverName_;
 
 	public XotsNsfScanner(final String serverName) {

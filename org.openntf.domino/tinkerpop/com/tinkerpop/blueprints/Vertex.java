@@ -4,7 +4,7 @@ package com.tinkerpop.blueprints;
  * A vertex maintains pointers to both a set of incoming and outgoing edges.
  * The outgoing edges are those edges for which the vertex is the tail.
  * The incoming edges are those edges for which the vertex is the head.
- * Diagrammatically, ---inEdges---> vertex ---outEdges--->.
+ * Diagrammatically, ---inEdges---&gt; vertex ---outEdges---&gt;.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @author Matthias Brocheler (http://matthiasb.com)
@@ -40,9 +40,9 @@ public interface Vertex extends Element {
     /**
      * Add a new outgoing edge from this vertex to the parameter vertex with provided edge label.
      *
-     * @param label  the label of the edge
-     * @param vertex the vertex to connect to
+     * @param label    the label of the edge
+     * @param inVertex the vertex to connect to with an incoming edge
      * @return the newly created edge
      */
-    public Edge addEdge(String label, Vertex vertex);
+    public Edge addEdge(String label, Vertex inVertex);
 }

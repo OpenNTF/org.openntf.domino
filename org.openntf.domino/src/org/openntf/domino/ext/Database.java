@@ -64,7 +64,8 @@ public interface Database extends Base {
 	 * 
 	 */
 	public static enum Events implements EnumEvent {
-		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT, AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
+		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT,
+		AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
 	}
 
 	/**
@@ -178,7 +179,7 @@ public interface Database extends Base {
 	 * 
 	 * @see org.openntf.domino.Database.FTIndexOption
 	 * @param options
-	 *            Set<FTIndexOption> full text index options that can be applied
+	 *            Set&lt;FTIndexOption&gt; full text index options that can be applied
 	 * @param recreate
 	 *            boolean whether or not the full text index should be recreated
 	 * @since org.openntf.domino 2.5.0

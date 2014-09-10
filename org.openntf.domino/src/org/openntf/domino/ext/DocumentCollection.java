@@ -46,7 +46,7 @@ public interface DocumentCollection {
 	 * Filters a DocumentCollection returning a collection of only those Documents that contain the specified value
 	 * 
 	 * @param value
-	 *            Object to search for in the Documents using {@link org.openntf.domino.Document#containsValue()}
+	 *            Object to search for in the Documents using {@link java.util.Map#containsValue()}
 	 * @return DocumentCollection filtered on the value
 	 * @since org.openntf.domino 3.0.0
 	 */
@@ -57,7 +57,7 @@ public interface DocumentCollection {
 	 * Item names
 	 * 
 	 * @param value
-	 *            Object to search for in the Documents using {@link org.openntf.domino.Document#containsValue()}
+	 *            Object to search for in the Documents using {@link java.util.Map#containsValue()}
 	 * @param itemnames
 	 *            String[] of Item names to restrict the search to
 	 * @return DocumentCollection filtered on the value
@@ -70,7 +70,7 @@ public interface DocumentCollection {
 	 * Item names
 	 * 
 	 * @param value
-	 *            Object to search for in the Documents using {@link org.openntf.domino.Document#containsValue()}
+	 *            Object to search for in the Documents using {@link java.util.Map#containsValue()}
 	 * @param itemnames
 	 *            Collection<String> of Item names to restrict the search to
 	 * @return DocumentCollection filtered on the value
@@ -84,8 +84,7 @@ public interface DocumentCollection {
 	 * @see org.openntf.domino.Document#containsValues(Map) for more information on how this Map filter works
 	 * 
 	 * @param value
-	 *            Map<String, Object> of items and values to search for in the Documents using
-	 *            {@link org.openntf.domino.Document#containsValues(Map)}
+	 *            Map<String, Object> of items and values to search for in the Documents using {@link java.util.Map#containsValues(Map)}
 	 * @return DocumentCollection filtered on the value
 	 * @since org.openntf.domino 3.0.0
 	 */

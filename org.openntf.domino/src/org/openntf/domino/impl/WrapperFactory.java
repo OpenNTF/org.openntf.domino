@@ -287,8 +287,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			referenceCache.put(cpp_key, result, lotus);
 			returnVal = true;
 		} else {	//NTF not sure what to do in this case. Don't even know what this means...
-			System.out.println("PANIC! Why are we recaching a lotus object " + lotus.getClass().getSimpleName()
-					+ " that we already have!???!");
+			log_.log(Level.FINE, "Re-wrapping a lotus object " + lotus.getClass().getName()
+					+ " that is already in the queue. This may indicate a logic problem.");
 		}
 		return returnVal;
 	}
