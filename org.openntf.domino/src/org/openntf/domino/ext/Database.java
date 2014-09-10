@@ -322,7 +322,7 @@ public interface Database extends Base {
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
 	 * <p>
-	 * The key is hased using MD5 and treated as a UNID.
+	 * The key is hashed using MD5 and treated as a UNID.
 	 * </p>
 	 * 
 	 * @param key
@@ -653,8 +653,19 @@ public interface Database extends Base {
 	public void setAutoMime(AutoMime autoMime);
 
 	/**
+	 * Gets the $DefaultLanguage stored in the icon note and converts it to a locale
+	 * 
 	 * @return the Locale stored in the Notes database
+	 * @since org.openntf.domino 5.0.0
 	 */
 	public Locale getLocale();
+
+	/**
+	 * Gets the meta replica ID, an ID in the format serverName!!replicaId, first portion of metaversal ID
+	 * 
+	 * @return the meta replica id
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public String getMetaReplicaID();
 
 }

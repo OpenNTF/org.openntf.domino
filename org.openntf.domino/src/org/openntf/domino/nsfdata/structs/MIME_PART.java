@@ -2,13 +2,33 @@ package org.openntf.domino.nsfdata.structs;
 
 import java.nio.ByteBuffer;
 
+/**
+ * The MIME_PART structure stores the mime parts for items of TYPE_MIME_PART. (mimeods.h)
+ * 
+ * @since Lotus Notes/Domino 5.0.7
+ *
+ */
 public class MIME_PART extends AbstractStruct {
+
+	public static final int SIZE = 20;
 
 	public static final int MIME_PART_HAS_BOUNDARY = 0x00000001;
 	public static final int MIME_PART_HAS_HEADERS = 0x00000002;
 	public static final int MIME_PART_BODY_IN_DBOBJECT = 0x00000004;
 	public static final int MIME_PART_SHARED_DBOBJECT = 0x00000008;
 	public static final int MIME_PART_SKIP_FOR_CONVERSION = 0x00000010;
+
+	static {
+		addFixed("wVersion", Short.class);
+		addFixed("dwFlags", Integer.class);
+		addFixed("cPartType", Byte.class);
+		addFixed("cSpare", Byte.class);
+		addFixedUnsigned("wByteCount", Short.class);
+		addFixedUnsigned("wBoundaryLen", Short.class);
+		addFixedUnsigned("wHeadersLen", Short.class);
+		addFixed("wSpare", Short.class);
+		addFixed("dwSpare", Integer.class);
+	}
 
 	// TODO add support for following MIME data
 	public MIME_PART(final ByteBuffer data) {
@@ -19,12 +39,12 @@ public class MIME_PART extends AbstractStruct {
 	 * @return MIME_PART Version
 	 */
 	public short getVersion() {
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("wVersion");
 	}
 
 	public int getFlags() {
 		// TODO create enum
-		return getData().getInt(getData().position() + 2);
+		return (Integer) getStructElement("dwFlags");
 	}
 
 	/**
@@ -32,40 +52,40 @@ public class MIME_PART extends AbstractStruct {
 	 */
 	public byte getPartType() {
 		// TODO create enum
-		return getData().get(getData().position() + 6);
+		return (Byte) getStructElement("cPartType");
 	}
 
 	public byte getSpare() {
-		return getData().get(getData().position() + 7);
+		return (Byte) getStructElement("cSpare");
 	}
 
 	/**
 	 * @return Bytes of variable length part data NOT including data in DB object
 	 */
-	public short getByteCount() {
-		return getData().getShort(getData().position() + 8);
+	public int getByteCount() {
+		return (Integer) getStructElement("wByteCount");
 	}
 
 	/**
 	 * @return Length of the boundary string
 	 */
-	public short getBoundaryLen() {
-		return getData().getShort(getData().position() + 10);
+	public int getBoundaryLen() {
+		return (Integer) getStructElement("wBoundaryLen");
 	}
 
 	/**
 	 * @return Length of the headers
 	 */
-	public short getHeadersLen() {
-		return getData().getShort(getData().position() + 12);
+	public int getHeadersLen() {
+		return (Integer) getStructElement("wHeadersLen");
 	}
 
 	public short getSpare2() {
-		return getData().getShort(getData().position() + 14);
+		return (Short) getStructElement("wSpare");
 	}
 
 	public int getSpare3() {
-		return getData().getInt(getData().position() + 16);
+		return (Integer) getStructElement("dwSpare");
 	}
 
 	public boolean hasBoundary() {
@@ -85,7 +105,7 @@ public class MIME_PART extends AbstractStruct {
 	}
 
 	@Override
-	public int getStructSize() {
-		return 20;
+	public long getStructSize() {
+		return SIZE;
 	}
 }

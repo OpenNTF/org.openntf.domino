@@ -2,7 +2,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
+import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -15,6 +15,62 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDEXT2FIELD extends CDRecord {
 
+	static {
+		addFixed("NumSymPref", Byte.class);
+		addFixed("NumSymFlags", Byte.class);
+		addFixedUnsigned("DecimalSymLength", Integer.class);
+		addFixedUnsigned("MilliSepSymLength", Integer.class);
+		addFixedUnsigned("NegativeSymLength", Integer.class);
+		addFixedUnsigned("MilliGroupSize", Short.class);
+		addFixedUnsigned("VerticalSpacing", Short.class);
+		addFixedUnsigned("HorizontalSpacing", Short.class);
+		addFixed("Unused2", Short.class);
+		addFixed("FirstFieldLimitType", Short.class);
+		addFixed("CurrencyPref", Byte.class);
+		addFixed("CurrencyType", Byte.class);
+		addFixed("CurrencyFlags", Byte.class);
+		addFixedUnsigned("CurrencySymLength", Integer.class);
+		addFixed("ISOCountry", Integer.class);
+		addFixedUnsigned("ThumbnailImageWidth", Short.class);
+		addFixedUnsigned("ThumbnailImageHeight", Short.class);
+		addFixedUnsigned("wThumbnailImageFileNameLength", Short.class);
+		addFixedUnsigned("wIMOnlineNameFormulaLen", Short.class);
+		addFixed("DTPref", Byte.class);
+		addFixed("DTFlags", Integer.class);
+		addFixed("DTFlags2", Integer.class);
+		addFixed("DTDOWFmt", Byte.class);
+		addFixed("DTYearFmt", Byte.class);
+		addFixed("DTMonthFmt", Byte.class);
+		addFixed("DTDayFmt", Byte.class);
+		addFixedUnsigned("DTDsep1Len", Byte.class);
+		addFixedUnsigned("DTDsep2Len", Byte.class);
+		addFixedUnsigned("DTDsep3Len", Byte.class);
+		addFixedUnsigned("DTTsepLen", Byte.class);
+		addFixed("DTDShow", Byte.class);
+		addFixed("DTDSpecial", Byte.class);
+		addFixed("DTTShow", Byte.class);
+		addFixed("DTTZone", Byte.class);
+		addFixed("Unused5", Integer.class);
+		addFixed("ECFlags", Byte.class);
+		addFixed("Unused612", Byte.class);
+		addFixedUnsigned("wCharacters", Short.class);
+		addFixedUnsigned("wInputEnabledLen", Short.class);
+		addFixedUnsigned("wIMGroupFormulaLen", Short.class);
+
+		addVariableString("DecimalSymbol", "getDecimalSymLength");
+		addVariableString("MilliSepSymbol", "getMilliSepSymLength");
+		addVariableString("NegativeSymbol", "getNegativeSymLength");
+		addVariableString("CurrencySymbol", "getCurrencySymLength");
+		addVariableString("ThumbnailImageFileName", "getThumbnailImageFileNameLength");
+		addVariableData("IMOnlineNameFormula", "getIMOnlineNameFormulaLength");
+		addVariableString("DTDsep1", "getDTDSep1Len");
+		addVariableString("DTDsep2", "getDTDSep2Len");
+		addVariableString("DTDsep3", "getDTDSep3Len");
+		addVariableString("DTTsep", "getDTTSepLen");
+		addVariableData("InputEnabled", "getInputEnabledLen");
+		addVariableData("IMGroupFormula", "getIMGroupFormulaLen");
+	}
+
 	public CDEXT2FIELD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -24,7 +80,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getNumSymPref() {
 		// TODO create enum
-		return getData().get(getData().position() + 0);
+		return (Byte) getStructElement("NumSymPref");
 	}
 
 	/**
@@ -32,45 +88,46 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getNumSymFlags() {
 		// TODO create enum
-		return getData().get(getData().position() + 1);
+		return (Byte) getStructElement("NumSymFlags");
 	}
 
 	public int getDecimalSymLength() {
-		return getData().getInt(getData().position() + 2);
+		return ((Long) getStructElement("DecimalSymLength")).intValue();
 	}
 
 	public int getMilliSepSymLength() {
-		return getData().getInt(getData().position() + 6);
+		return ((Long) getStructElement("MilliSepSymLength")).intValue();
 	}
 
 	public int getNegativeSymLength() {
-		return getData().getInt(getData().position() + 10);
+		return ((Long) getStructElement("NegativeSymLength")).intValue();
 	}
 
-	public short getMilliGroupSize() {
-		return getData().getShort(getData().position() + 14);
+	public int getMilliGroupSize() {
+		return (Integer) getStructElement("MilliGroupSize");
 	}
 
 	/**
 	 * @return Extra vertical spacing (%)
 	 */
-	public short getVerticalSpacing() {
-		return getData().getShort(getData().position() + 16);
+	public int getVerticalSpacing() {
+		return (Integer) getStructElement("VerticalSpacing");
 	}
 
 	/**
 	 * @return Extra horizontal spacing (%)
 	 */
-	public short getHorizontalSpacing() {
-		return getData().getShort(getData().position() + 18);
+	public int getHorizontalSpacing() {
+		return (Integer) getStructElement("HorizontalSpacing");
 	}
 
 	public short getUnused2() {
-		return getData().getShort(getData().position() + 20);
+		return (Short) getStructElement("Unused2");
 	}
 
 	public short getFirstFieldLimitType() {
-		return getData().getShort(getData().position() + 22);
+		// TODO make enum
+		return (Short) getStructElement("FirstFieldLimitType");
 	}
 
 	/**
@@ -78,7 +135,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getCurrencyPref() {
 		// TODO create enum
-		return getData().get(getData().position() + 24);
+		return (Byte) getStructElement("CurrencyPref");
 	}
 
 	/**
@@ -86,7 +143,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getCurrencyType() {
 		// TODO create enum
-		return getData().get(getData().position() + 25);
+		return (Byte) getStructElement("CurrencyType");
 	}
 
 	/**
@@ -94,40 +151,40 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getCurrencyFlags() {
 		// TODO create enum
-		return getData().get(getData().position() + 26);
+		return (Byte) getStructElement("CurrencyFlags");
 	}
 
 	public int getCurrencySymLength() {
-		return getData().getInt(getData().position() + 27);
+		return ((Long) getStructElement("CurrencySymLength")).intValue();
 	}
 
 	public int getISOCountry() {
-		return getData().getInt(getData().position() + 31);
+		return (Integer) getStructElement("ISOCountry");
 	}
 
 	/**
 	 * @since IBM Lotus Notes/Domino 8.0
 	 */
-	public short getThumbnailImageWidth() {
-		return getData().getShort(getData().position() + 35);
+	public int getThumbnailImageWidth() {
+		return (Integer) getStructElement("ThumbnailImageWidth");
 	}
 
 	/**
 	 * @since IBM Lotus Notes/Domino 8.0
 	 */
-	public short getThumbnailImageHeight() {
-		return getData().getShort(getData().position() + 37);
+	public int getThumbnailImageHeight() {
+		return (Integer) getStructElement("ThumbnailImageHeight");
 	}
 
 	/**
 	 * @since IBM Lotus Notes/Domino 8.0
 	 */
-	public short getThumbnailImageFileNameLength() {
-		return getData().getShort(getData().position() + 39);
+	public int getThumbnailImageFileNameLength() {
+		return (Integer) getStructElement("wThumbnailImageFileNameLength");
 	}
 
-	public short getIMOnlineNameFormulaLength() {
-		return getData().getShort(getData().position() + 41);
+	public int getIMOnlineNameFormulaLength() {
+		return (Integer) getStructElement("wIMOnlineNameFormulaLen");
 	}
 
 	/**
@@ -135,7 +192,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTPref() {
 		// TODO create enum, shared with above
-		return getData().get(getData().position() + 43);
+		return (Byte) getStructElement("DTPref");
 	}
 
 	/**
@@ -143,7 +200,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public int getDTFlags() {
 		// TODO create enum
-		return getData().getInt(getData().position() + 44);
+		return (Integer) getStructElement("DTFlags");
 	}
 
 	/**
@@ -151,7 +208,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public int getDTFlags2() {
 		// TODO create enum, shared with above
-		return getData().getInt(getData().position() + 44);
+		return (Integer) getStructElement("DTFlags2");
 	}
 
 	/**
@@ -159,7 +216,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTDOWFmt() {
 		// TODO create enum
-		return getData().get(getData().position() + 48);
+		return (Byte) getStructElement("DTDOWFmt");
 	}
 
 	/**
@@ -167,7 +224,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTYearFmt() {
 		// TODO create enum
-		return getData().get(getData().position() + 49);
+		return (Byte) getStructElement("DTYearFmt");
 	}
 
 	/**
@@ -175,7 +232,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTMonthFmt() {
 		// TODO create enum
-		return getData().get(getData().position() + 50);
+		return (Byte) getStructElement("DTMonthFmt");
 	}
 
 	/**
@@ -183,23 +240,23 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTDayFmt() {
 		// TODO create enum
-		return getData().get(getData().position() + 51);
+		return (Byte) getStructElement("DTDayFmt");
 	}
 
-	public byte getDTDSep1Len() {
-		return getData().get(getData().position() + 52);
+	public int getDTDSep1Len() {
+		return (Short) getStructElement("DTDsep1Len");
 	}
 
-	public byte getDTDSep2Len() {
-		return getData().get(getData().position() + 53);
+	public int getDTDSep2Len() {
+		return (Short) getStructElement("DTDsep2Len");
 	}
 
-	public byte getDTDSep3Len() {
-		return getData().get(getData().position() + 54);
+	public int getDTDSep3Len() {
+		return (Short) getStructElement("DTDsep3Len");
 	}
 
-	public byte getDTTSepLen() {
-		return getData().get(getData().position() + 55);
+	public int getDTTSepLen() {
+		return (Short) getStructElement("DTTsepLen");
 	}
 
 	/**
@@ -207,7 +264,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTDShow() {
 		// TODO create enum
-		return getData().get(getData().position() + 56);
+		return (Byte) getStructElement("DTDShow");
 	}
 
 	/**
@@ -215,7 +272,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTDSpecial() {
 		// TODO create enum
-		return getData().get(getData().position() + 57);
+		return (Byte) getStructElement("DTDSpecial");
 	}
 
 	/**
@@ -223,7 +280,7 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTTShow() {
 		// TODO create enum
-		return getData().get(getData().position() + 58);
+		return (Byte) getStructElement("DTTShow");
 	}
 
 	/**
@@ -231,148 +288,81 @@ public class CDEXT2FIELD extends CDRecord {
 	 */
 	public byte getDTTZone() {
 		// TODO create enum
-		return getData().get(getData().position() + 59);
+		return (Byte) getStructElement("DTTZone");
 	}
 
 	public int getUnused5() {
-		return getData().getInt(getData().position() + 60);
+		return (Integer) getStructElement("Unused5");
 	}
 
 	public byte getECFlags() {
-		return getData().get(getData().position() + 64);
+		return (Byte) getStructElement("ECFlags");
 	}
 
 	public byte getUnused612() {
-		return getData().get(getData().position() + 65);
+		return (Byte) getStructElement("Unused612");
 	}
 
 	/**
 	 * @return Number of characters if proportional width
 	 */
-	public short getCharacters() {
-		return getData().getShort(getData().position() + 66);
+	public int getCharacters() {
+		return (Integer) getStructElement("wCharacters");
 	}
 
-	public short getInputEnabledLen() {
-		return getData().getShort(getData().position() + 68);
+	public int getInputEnabledLen() {
+		return (Integer) getStructElement("wInputEnabledLen");
 	}
 
-	public short getIMGroupFormulaLen() {
-		return getData().getShort(getData().position() + 70);
+	public int getIMGroupFormulaLen() {
+		return (Integer) getStructElement("wIMGroupFormulaLen");
 	}
 
 	public String getDecimalSymbol() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72);
-		data.limit(data.position() + getDecimalSymLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DecimalSymbol");
 	}
 
 	public String getMilliSepSymbol() {
-		int preceding = getDecimalSymLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getMilliSepSymLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("MilliSepSymbol");
 	}
 
 	public String getNegativeSymbol() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getNegativeSymLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("NegativeSymbol");
 	}
 
 	public String getCurrencySymbol() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getCurrencySymLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("CurrencySymbol");
 	}
 
 	public String getThumbnailImageFileName() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getThumbnailImageFileNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("ThumbnailImageFileName");
 	}
 
-	public String getIMOnlineNameFormula() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getThumbnailImageFileNameLength());
-		return ODSUtils.fromLMBCS(data);
+	public NSFCompiledFormula getIMOnlineNameFormula() {
+		return new NSFCompiledFormula((byte[]) getStructElement("IMOnlineNameFormula"));
 	}
 
 	public String getDTDSep1() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength() + getIMOnlineNameFormulaLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getDTDSep1Len());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DTDsep1");
 	}
 
 	public String getDTDSep2() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength() + getIMOnlineNameFormulaLength() + getDTDSep1Len();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getDTDSep2Len());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DTDsep2");
 	}
 
 	public String getDTDSep3() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength() + getIMOnlineNameFormulaLength() + getDTDSep1Len() + getDTDSep2Len();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getDTDSep3Len());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DTDsep3");
 	}
 
 	public String getDTTSep() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength() + getIMOnlineNameFormulaLength() + getDTDSep1Len() + getDTDSep2Len() + getDTDSep3Len();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getDTTSepLen());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DTTsep");
 	}
 
-	public String getInputEnabledFormula() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength() + getIMOnlineNameFormulaLength() + getDTDSep1Len() + getDTDSep2Len() + getDTDSep3Len()
-				+ getDTTSepLen();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getInputEnabledLen());
-		return ODSUtils.fromLMBCS(data);
+	public NSFCompiledFormula getInputEnabledFormula() {
+		return new NSFCompiledFormula((byte[]) getStructElement("InputEnabled"));
 	}
 
-	public String getIMGroupFormula() {
-		int preceding = getDecimalSymLength() + getMilliSepSymLength() + getNegativeSymLength() + getCurrencySymLength()
-				+ getThumbnailImageFileNameLength() + getIMOnlineNameFormulaLength() + getDTDSep1Len() + getDTDSep2Len() + getDTDSep3Len()
-				+ getDTTSepLen() + getInputEnabledLen();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 72 + preceding);
-		data.limit(data.position() + getIMGroupFormulaLen());
-		return ODSUtils.fromLMBCS(data);
+	public NSFCompiledFormula getIMGroupFormula() {
+		return new NSFCompiledFormula((byte[]) getStructElement("IMGroupFormula"));
 	}
 }

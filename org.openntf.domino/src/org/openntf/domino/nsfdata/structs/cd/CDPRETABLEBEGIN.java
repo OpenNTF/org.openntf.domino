@@ -1,5 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
+import java.awt.Color;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
@@ -14,79 +15,99 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPRETABLEBEGIN extends CDRecord {
 
+	static {
+		addFixed("Flags", Integer.class);
+		addFixedUnsigned("Rows", Byte.class);
+		addFixedUnsigned("Columns", Byte.class);
+		addFixed("ColumnSizingBits1", Integer.class);
+		addFixed("ColumnSizingBits2", Integer.class);
+		addFixed("ViewerType", Byte.class);
+		addFixed("Spare", Byte.class);
+		addFixedUnsigned("MinRowHeight", Short.class);
+		addFixed("Spares", Short.class);
+		addFixed("StyleColor1", Integer.class);
+		addFixed("StyleColor2", Integer.class);
+		addFixed("InnerBorderColor", COLOR_VALUE.class);
+		addFixedUnsigned("NameLength", Short.class);
+		addFixed("ImagePacketLength", Short.class);
+		addFixed("RowLabelDataLength", Short.class);
+
+		addVariableString("Name", "getNameLength");
+	}
+
 	public CDPRETABLEBEGIN(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public int getFlags() {
 		// TODO create enum
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("Flags");
 	}
 
-	public byte getRows() {
-		return getData().get(getData().position() + 4);
+	public short getRows() {
+		return (Short) getStructElement("Rows");
 	}
 
-	public byte getColumns() {
-		return getData().get(getData().position() + 5);
+	public short getColumns() {
+		return (Short) getStructElement("Columns");
 	}
 
 	public int getColumnSizingBits1() {
-		return getData().getInt(getData().position() + 10);
+		return (Integer) getStructElement("ColumnSizingBits1");
 	}
 
 	public int getColumnSizingBits2() {
-		return getData().getInt(getData().position() + 14);
+		return (Integer) getStructElement("ColumnSizingBits2");
 	}
 
 	public byte getViewerType() {
 		// TODO create enum
-		return getData().get(getData().position() + 20);
+		return (Byte) getStructElement("ViewerType");
 	}
 
 	public byte getSpare() {
-		return getData().get(getData().position() + 21);
+		return (Byte) getStructElement("Spare");
 	}
 
-	public short getMinRowHeight() {
-		return getData().getShort(getData().position() + 22);
+	public int getMinRowHeight() {
+		return (Integer) getStructElement("MinRowHeight");
 	}
 
 	public short getSpare2() {
-		return getData().getShort(getData().position() + 24);
+		return (Short) getStructElement("");
 	}
 
-	// TODO determine if there's a reason the docs call this DWORD instead of COLOR_VALUE
-	public COLOR_VALUE getStyleColor1() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 26);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+	public Color getStyleColor1() {
+		int red = getData().get(getData().position() + 20) & 0xFF;
+		int green = getData().get(getData().position() + 21) & 0xFF;
+		int blue = getData().get(getData().position() + 22) & 0xFF;
+		return new Color(red, green, blue);
 	}
 
-	public COLOR_VALUE getStyleColor2() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 32);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+	public Color getStyleColor2() {
+		int red = getData().get(getData().position() + 24) & 0xFF;
+		int green = getData().get(getData().position() + 25) & 0xFF;
+		int blue = getData().get(getData().position() + 26) & 0xFF;
+		return new Color(red, green, blue);
 	}
 
 	public COLOR_VALUE getInnerBorderColor() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 38);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("InnerBorderColor");
 	}
 
-	public short getNameLength() {
-		return getData().getShort(getData().position() + 44);
+	public int getNameLength() {
+		return (Integer) getStructElement("NameLength");
 	}
 
 	public short getImagePacketLength() {
-		return getData().getShort(getData().position() + 46);
+		return (Short) getStructElement("ImagePacketLength");
 	}
 
 	public short getRowLabelDataLength() {
-		return getData().getShort(getData().position() + 48);
+		return (Short) getStructElement("RowLabelDataLength");
+	}
+
+	public String getName() {
+		return (String) getStructElement("Name");
 	}
 }

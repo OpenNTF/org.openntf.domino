@@ -12,13 +12,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDCOLOR extends CDRecord {
 
+	static {
+		addFixed("Color", COLOR_VALUE.class);
+	}
+
 	public CDCOLOR(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public COLOR_VALUE getColor() {
-		ByteBuffer data = getData().duplicate();
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("Color");
 	}
 }

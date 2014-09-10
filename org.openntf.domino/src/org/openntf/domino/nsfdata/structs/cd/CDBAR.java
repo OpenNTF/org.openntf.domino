@@ -165,22 +165,24 @@ public class CDBAR extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Integer.class);
+		addFixed("FontID", FONTID.class);
+	}
+
 	public CDBAR(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 0));
+		return Flag.valuesOf((Integer) getStructElement("Integer"));
 	}
 
 	/**
 	 * Specifies the font, size, and color of the bar title.
 	 */
-	public FONTID getFontID() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 4);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+	public FONTID getFontId() {
+		return (FONTID) getStructElement("FONTID");
 	}
 
 	/**
@@ -196,18 +198,13 @@ public class CDBAR extends CDRecord {
 	}
 
 	public String getCaption() {
+		// Note: this can't use the standard methods because of the bizarre Color value above
 		int preceding = getFlags().contains(Flag.HAS_COLOR) ? 2 : 0;
 
-		int length = getDataLength() - 4 - FONTID.SIZE - preceding;
+		int length = (int) (getDataLength() - 4 - FONTID.SIZE - preceding);
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + FONTID.SIZE + 4 + preceding);
 		data.limit(data.position() + length);
 		return ODSUtils.fromLMBCS(data);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", FontID=" + getFontID() + ", Color=" + getColor()
-				+ ", Caption=" + getCaption() + "]";
 	}
 }

@@ -12,7 +12,7 @@ public class DXLItemRaw extends AbstractDXLItem {
 		int typeCode = Integer.parseInt(rawitemdata.getAttribute("type"), 16);
 		Type type = Type.valueOf(typeCode);
 
-		switch(type) {
+		switch (type) {
 		case COMPOSITE:
 			return new DXLItemComposite(node, dupItemId);
 		default:

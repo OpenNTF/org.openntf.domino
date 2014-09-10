@@ -12,6 +12,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTABLEBEGIN extends CDRecord {
 
+	static {
+		addFixedUnsigned("LeftMargin", Short.class);
+		addFixedUnsigned("HorizInterCellSpace", Short.class);
+		addFixedUnsigned("VertInterCellSpace", Short.class);
+		addFixedUnsigned("V4HorizInterCellSpace", Short.class);
+		addFixedUnsigned("V4VertInterCellSpace", Short.class);
+		addFixed("Flags", Short.class);
+	}
+
 	public CDTABLEBEGIN(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -19,37 +28,36 @@ public class CDTABLEBEGIN extends CDRecord {
 	/**
 	 * @return TWIPS
 	 */
-	public short getLeftMargin() {
-		// TODO add TWIPS conversion
-		return getData().getShort(getData().position() + 0);
+	public int getLeftMargin() {
+		return (Integer) getStructElement("LeftMargin");
 	}
 
 	/**
 	 * @return TWIPS
 	 */
-	public short getHorizInterCellSpace() {
-		return getData().getShort(getData().position() + 2);
+	public int getHorizInterCellSpace() {
+		return (Integer) getStructElement("HorizInterCellSpace");
 	}
 
 	/**
 	 * @return TWIPS
 	 */
-	public short getVertInterCellSpace() {
-		return getData().getShort(getData().position() + 4);
+	public int getVertInterCellSpace() {
+		return (Integer) getStructElement("VertInterCellSpace");
 	}
 
 	/**
 	 * @return TWIPS -- field was spare in V3
 	 */
-	public short getV4HorizInterCellSpace() {
-		return getData().getShort(getData().position() + 6);
+	public int getV4HorizInterCellSpace() {
+		return (Integer) getStructElement("V4HorizInterCellSpace");
 	}
 
 	/**
 	 * @return TWIPS -- field was spare in V3
 	 */
-	public short getV4VertInterCellSpace() {
-		return getData().getShort(getData().position() + 8);
+	public int getV4VertInterCellSpace() {
+		return (Integer) getStructElement("V4VertInterCellSpace");
 	}
 
 	/**
@@ -57,6 +65,6 @@ public class CDTABLEBEGIN extends CDRecord {
 	 */
 	public short getFlags() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 10);
+		return (Short) getStructElement("Flags");
 	}
 }

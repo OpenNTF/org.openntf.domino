@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -177,7 +176,9 @@ public class CDRESOURCE extends CDRecord {
 		 * An old (4.6) or new style portfolio. Which gets incorporated into the bookmark bar as a tab, rather than getting opened as a
 		 * database
 		 */
-		PORTFOLIO((short) 21), OUTLINE((short) 22);
+		PORTFOLIO((short) 21), OUTLINE((short) 22),
+
+		NOTFOUND((short) -1);
 
 		private final short value_;
 
@@ -195,8 +196,23 @@ public class CDRESOURCE extends CDRecord {
 					return type;
 				}
 			}
-			throw new IllegalArgumentException("No matching ResourceClass found for type code " + typeCode);
+			return NOTFOUND;
+			//			throw new IllegalArgumentException("No matching ResourceClass found for type code " + typeCode);
 		}
+	}
+
+	static {
+		addFixed("Flags", Integer.class);
+		addFixed("Type", Short.class);
+		addFixed("ResourceClass", Short.class);
+		addFixedUnsigned("Length1", Short.class);
+		addFixedUnsigned("ServerHintLength", Short.class);
+		addFixedUnsigned("FileHintLength", Short.class);
+		addFixedArray("Reserved", Byte.class, 8);
+
+		addVariableString("ServerHint", "getServerHintLength");
+		addVariableString("FileHint", "getFileHintLength");
+		addVariableData("Data1", "getLength1");
 	}
 
 	public CDRESOURCE(final SIG signature, final ByteBuffer data) {
@@ -204,61 +220,55 @@ public class CDRESOURCE extends CDRecord {
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 0));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	public Type getType() {
-		return Type.valueOf(getData().getShort(getData().position() + 4));
+		return Type.valueOf((Short) getStructElement("Type"));
 	}
 
 	public ResourceClass getResourceClass() {
-		return ResourceClass.valueOf(getData().getShort(getData().position() + 6));
+		return ResourceClass.valueOf((Short) getStructElement("ResourceClass"));
 	}
 
 	/**
 	 * meaning depends on Type
 	 */
 	public int getLength1() {
-		return getData().getShort(getData().position() + 8) & 0xFFFF;
+		return (Integer) getStructElement("Length1");
 	}
 
 	/**
 	 * @return length of the server hint
 	 */
 	public int getServerHintLength() {
-		return getData().getShort(getData().position() + 10) & 0xFFFF;
+		return (Integer) getStructElement("ServerHintLength");
 	}
 
 	/**
 	 * @return length of the file hint
 	 */
 	public int getFileHintLength() {
-		return getData().getShort(getData().position() + 12) & 0xFFFF;
+		return (Integer) getStructElement("FileHintLength");
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[8];
-		for (int i = 0; i < 8; i++) {
-			result[i] = getData().get(getData().position() + 14 + i);
-		}
-		return result;
+		return (byte[]) getStructElement("Reserved");
 	}
 
 	public String getServerHint() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 24);
-		data.limit(data.position() + getServerHintLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("ServerHint");
 	}
 
 	public String getFileHint() {
-		int preceding = getServerHintLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 24 + preceding);
-		data.limit(data.position() + getFileHintLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("FileHint");
 	}
+
+	public byte[] getData1() {
+		return (byte[]) getStructElement("Data1");
+	}
+
+	// TODO add remaining data
 
 	@Override
 	public String toString() {

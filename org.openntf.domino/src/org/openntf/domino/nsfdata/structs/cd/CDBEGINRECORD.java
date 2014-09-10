@@ -13,12 +13,18 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDBEGINRECORD extends CDRecord {
 
+	static {
+		addFixed("Version", Short.class);
+		addFixed("Signature", Short.class);
+	}
+
 	protected CDBEGINRECORD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public short getVersion() {
-		return getData().getShort(getData().position() + 0);
+		// TODO map to weird table in docs
+		return (Short) getStructElement("Version");
 	}
 
 	/**
@@ -26,6 +32,6 @@ public class CDBEGINRECORD extends CDRecord {
 	 */
 	public short getBeginSignature() {
 		// TODO implement mapping method to CDSignature
-		return getData().getShort(getData().position() + 2);
+		return (Short) getStructElement("Signature");
 	}
 }

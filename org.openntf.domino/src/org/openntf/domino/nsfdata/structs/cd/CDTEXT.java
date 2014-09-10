@@ -2,7 +2,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -11,23 +11,26 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTEXT extends CDRecord {
 
+	static {
+		addFixed("FontID", FONTID.class);
+
+		addVariableString("Text", "getTextLength");
+	}
+
 	public CDTEXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public int getFontId() {
-		return getData().getInt(getData().position() + 0);
+	public FONTID getFontId() {
+		return (FONTID) getStructElement("FontID");
 	}
 
 	public String getText() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 4);
-		data.limit(data.position() + getTextLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("Text");
 	}
 
 	public int getTextLength() {
-		return getDataLength() - 4;
+		return (int) (getDataLength() - 4);
 	}
 
 	@Override

@@ -4,34 +4,47 @@ import java.nio.ByteBuffer;
 
 /**
  * Specifies a cropping rectangle for display of graphical data. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CROPRECT extends AbstractStruct {
+
+	public static final int SIZE = 8;
+
+	static {
+		addFixedUnsigned("left", Short.class);
+		addFixedUnsigned("top", Short.class);
+		addFixedUnsigned("right", Short.class);
+		addFixedUnsigned("bottom", Short.class);
+	}
 
 	public CROPRECT(final ByteBuffer data) {
 		super(data);
 	}
 
-	public short getLeft() {
-		return getData().getShort(getData().position() + 0);
+	public int getLeft() {
+		return (Integer) getStructElement("left");
 	}
 
-	public short getTop() {
-		return getData().getShort(getData().position() + 2);
+	public int getTop() {
+		return (Integer) getStructElement("top");
 	}
 
-	public short getRight() {
-		return getData().getShort(getData().position() + 4);
+	public int getRight() {
+		return (Integer) getStructElement("right");
 	}
 
-	public short getBottom() {
-		return getData().getShort(getData().position() + 6);
+	public int getBottom() {
+		return (Integer) getStructElement("bottom");
 	}
 
 	@Override
-	public int getStructSize() {
-		return 8;
+	public long getStructSize() {
+		return SIZE;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Left=" + getLeft() + ", Top=" + getTop() + ", Right=" + getRight() + ", Bottom="
+				+ getBottom() + "]";
 	}
 }

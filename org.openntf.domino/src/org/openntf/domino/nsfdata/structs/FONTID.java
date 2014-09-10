@@ -12,35 +12,43 @@ import java.nio.ByteBuffer;
  * 
  * To resolve a non standard font face, the note must contain a font table. A font table is an item with name $FONT (ITEM_NAME_FONTS) and
  * data type TYPE_COMPOSITE. A font table consists of a CDFONTTABLE structure followed by any number of CDFACE structures. If the Face
- * member value is greater than or equal to STATIC_FONT_FACES, then it must identify one of the CDFACE entries in the font table.
+ * member value is greater than or equal to STATIC_FONT_FACES, then it must identify one of the CDFACE entries in the font table. (global.h)
+ * (fontid.h)
  *
  */
 public class FONTID extends AbstractStruct {
 	public static final int SIZE = 4;
+
+	static {
+		addFixed("Face", Byte.class);
+		addFixed("Attrib", Byte.class);
+		addFixed("Color", Byte.class);
+		addFixedUnsigned("PointSize", Byte.class);
+	}
 
 	public FONTID(final ByteBuffer data) {
 		super(data);
 	}
 
 	@Override
-	public int getStructSize() {
+	public long getStructSize() {
 		return SIZE;
 	}
 
 	public byte getFace() {
-		return getData().get(getData().position() + 0);
+		return (Byte) getStructElement("Face");
 	}
 
 	public byte getAttrib() {
-		return getData().get(getData().position() + 1);
+		return (Byte) getStructElement("Attrib");
 	}
 
 	public byte getColor() {
-		return getData().get(getData().position() + 2);
+		return (Byte) getStructElement("Color");
 	}
 
 	public short getPointSize() {
-		return (short) (getData().get(getData().position() + 3) & 0xFF);
+		return (Short) getStructElement("PointSize");
 	}
 
 	@Override

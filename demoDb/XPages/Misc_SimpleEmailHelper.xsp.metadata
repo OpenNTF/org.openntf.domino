@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="9b9e" sequence="32" unid="C43D0F5B9424193B80257C01007A8647">
+<created><datetime dst="true">20131011T231817,67+01</datetime></created>
+<modified><datetime>20140127T144944,94-05</datetime></modified>
+<revised><datetime>20140127T144944,93-05</datetime></revised>
+<lastaccessed><datetime>20140127T144944,94-05</datetime></lastaccessed>
+<addedtofile><datetime>20131121T135615,79+00</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=admin/O=Intec-PW</name><name>CN=Paul Withers/O=Intec</name></updatedby>
+<wassignedby><name>CN=Paul Withers/O=Intec</name></wassignedby>
+<item name="$Flags"><text>gC~4K</text></item>
+<item name="$TITLE"><text>Misc_SimpleEmailHelper.xsp</text></item>
+
+
+
+
+
+<item name="$FileNames" sign="true"><text>Misc_SimpleEmailHelper.xsp</text></item>
+<item name="$DesignerVersion"><text>8.5.1</text></item>
+
+</note>

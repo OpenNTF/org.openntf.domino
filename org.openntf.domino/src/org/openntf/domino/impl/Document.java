@@ -3890,7 +3890,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			jw.outStringProperty("@unid", getUniversalID());
 			Set<String> keys = keySet();
 			for (String key : keys) {
-				jw.outProperty(key, DominoUtils.toSerializable(getItemValue(key)));
+				Item currItem = getFirstItem(key);
+				if (currItem.getMIMEEntity() == null) {
+					jw.outProperty(key, currItem.getText());
+				} else {
+					String abstractedText = currItem.abstractText(0, false, false);
+					if (null == abstractedText) {
+						jw.outProperty(key, "**MIME ITEM, VALUE CANNOT BE DECODED TO JSON**");
+					} else {
+						jw.outProperty(key, abstractedText);
+					}
+				}
 			}
 			jw.endObject();
 			jw.flush();

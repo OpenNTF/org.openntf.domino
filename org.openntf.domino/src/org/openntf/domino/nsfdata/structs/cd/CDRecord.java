@@ -40,7 +40,7 @@ public abstract class CDRecord extends AbstractStruct {
 	/**
 	 * @return The length (in bytes) of the data portion of this record
 	 */
-	public int getDataLength() {
+	public long getDataLength() {
 		return signature_.getLength() - signature_.getSigLength();
 	}
 
@@ -48,17 +48,12 @@ public abstract class CDRecord extends AbstractStruct {
 	 * @return Any additional byte at the end of the record used for word alignment
 	 */
 	public int getExtraLength() {
-		return getDataLength() % 2;
+		return (int) (getDataLength() % 2);
 	}
 
 	@Override
-	public int getStructSize() {
+	public long getStructSize() {
 		return signature_.getLength();
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Signature: " + getSignature() + "]";
 	}
 
 	@Override

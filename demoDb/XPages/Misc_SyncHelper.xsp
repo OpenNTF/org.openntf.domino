@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<!--
+		Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xp:this.resources>
+		<xp:dojoModule name="extlib.dijit.Loading"></xp:dojoModule>
+	</xp:this.resources>
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+			<xc:mainArea xp:key="facet_1" title="Helper" id="mainArea">
+				<xc:this.description><![CDATA[Demonstrates syncDatabases Helper method.<br/><br/>It gets all Contacts by State and writes the State name onto them, looking on State abbreviation]]></xc:this.description>
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton" id="SSJSArea">
+						<xp:button value="Run SSJS Tests" id="button1">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="complete">
+								<xp:this.action><![CDATA[#{javascript:try {
+		var syncMap:java.util.HashMap = new java.util.HashMap();
+		syncMap.put("Key", "State");
+		syncMap.put("Name", "StateName");
+		syncMap.put("@Now", "LastSync");
+		var helper:org.openntf.domino.helpers.DocumentSyncHelper = new org.openntf.domino.helpers.DocumentSyncHelper();
+		helper.setStrategy(org.openntf.domino.helpers.DocumentSyncHelper.Strategy.CREATE_AND_REPLACE);
+		helper.setTargetServer(database.getServer());
+		helper.setTargetFilepath(database.getFilePath());
+		helper.setTargetLookupView("AllContactsByState");
+		helper.setSourceKeyFormula("Key");
+		helper.setSyncMap(syncMap);
+		var states = database.getView("AllStates");
+		var sourceCollection = states.getAllDocuments();
+		helper.process(sourceCollection);
+		viewScope.put("SSJSTest","Done");
+} catch(e) {
+	@ErrorMessage(e.toString());
+}}]]></xp:this.action>
+								<xp:this.script><![CDATA[XSP.animateLoading('#{id:SSJSArea}')]]></xp:this.script>
+							</xp:eventHandler>
+						</xp:button>
+					</xp:div>
+					<xp:div xp:key="javaButton" id="javaArea">
+						<xp:button value="Run Java Tests" id="button3">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="JavaDiv"
+								action="#{javascript:openNTFHelperBean.syncDatabases()}">
+								<xp:this.script><![CDATA[XSP.animateLoading('#{id:javaArea}')]]></xp:this.script>
+							</xp:eventHandler>
+						</xp:button>
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

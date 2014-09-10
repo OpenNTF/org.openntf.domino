@@ -13,6 +13,12 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDLINK2 extends CDRecord {
 
+	static {
+		addFixed("LinkID", Short.class);
+
+		// TODO add null-terminated-string support
+	}
+
 	protected CDLINK2(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -21,7 +27,7 @@ public class CDLINK2 extends CDRecord {
 	 * @return ID of the link
 	 */
 	public short getLinkId() {
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("LinkID");
 	}
 
 	/**
@@ -121,7 +127,7 @@ public class CDLINK2 extends CDRecord {
 
 	@Override
 	public int getExtraLength() {
-		return getDataLength() % 2;
+		return (int) (getDataLength() % 2);
 	}
 
 	@Override

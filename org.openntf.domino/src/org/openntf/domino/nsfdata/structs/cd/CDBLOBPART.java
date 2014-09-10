@@ -12,6 +12,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDBLOBPART extends CDRecord {
 
+	static {
+		addFixed("OwnerSig", Short.class);
+		addFixedUnsigned("Length", Short.class);
+		addFixedUnsigned("BlobMax", Short.class);
+		addFixedArray("Reserved", Byte.class, 8);
+
+		addVariableData("BlobData", "getLength");
+	}
+
 	public CDBLOBPART(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -20,34 +29,29 @@ public class CDBLOBPART extends CDRecord {
 	 * @return Sig of the owner of this data
 	 */
 	public short getOwnerSig() {
-		return getData().getShort(getData().position() + 0);
+		// TODO convert to signature
+		return (Short) getStructElement("OwnerSig");
 	}
 
 	/**
 	 * @return Length of the data that follows
 	 */
 	public int getLength() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("Length");
 	}
 
 	/**
 	 * @return Block size used by the writer of this blob
 	 */
 	public int getBlobMax() {
-		return getData().getShort(getData().position() + 4) & 0xFFFF;
+		return (Integer) getStructElement("BlobMax");
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[8];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = getData().get(getData().position() + 6 + i);
-		}
-		return result;
+		return (byte[]) getStructElement("Reserved");
 	}
 
-	public ByteBuffer getBlobData() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 14);
-		return data;
+	public byte[] getBlobData() {
+		return (byte[]) getStructElement("BlobData");
 	}
 }
