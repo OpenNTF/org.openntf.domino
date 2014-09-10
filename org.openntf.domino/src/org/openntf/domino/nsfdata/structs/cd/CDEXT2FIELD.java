@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Release 5.0 of Domino. To preserve compatibility with existing applications, the new attributes
@@ -69,6 +70,12 @@ public class CDEXT2FIELD extends CDRecord {
 		addVariableString("DTTsep", "getDTTSepLen");
 		addVariableData("InputEnabled", "getInputEnabledLen");
 		addVariableData("IMGroupFormula", "getIMGroupFormulaLen");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEXT2FIELD(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDEXT2FIELD(final SIG signature, final ByteBuffer data) {

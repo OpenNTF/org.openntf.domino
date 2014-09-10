@@ -30,6 +30,10 @@ public class MIME_PART extends AbstractStruct {
 		addFixed("dwSpare", Integer.class);
 	}
 
+	public MIME_PART() {
+		super();
+	}
+
 	// TODO add support for following MIME data
 	public MIME_PART(final ByteBuffer data) {
 		super(data);

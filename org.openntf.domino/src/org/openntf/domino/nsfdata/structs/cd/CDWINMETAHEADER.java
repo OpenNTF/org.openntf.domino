@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Identifies a Windows Graphics Device Interface (GDI) metafile embedded in a rich text field. This record must be preceded by a CDGRAPHIC
@@ -20,6 +21,12 @@ public class CDWINMETAHEADER extends CDRecord {
 		addFixed("OriginalDisplaySize", RECTSIZE.class);
 		addFixedUnsigned("MetafileSize", Integer.class);
 		addFixedUnsigned("SegCount", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDWINMETAHEADER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDWINMETAHEADER(final SIG signature, final ByteBuffer data) {

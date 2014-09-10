@@ -10,6 +10,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A pattern table is one of the optional records following a CDBITMAPHEADER record. The pattern table is used to compress repetitive bitmap
@@ -17,6 +18,13 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDPATTERNTABLE extends CDRecord {
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPATTERNTABLE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
 	public CDPATTERNTABLE(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}

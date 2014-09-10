@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The designer of a form or view may define custom actions for that form or view. The attributes for the button bar are stored in the
@@ -182,6 +183,8 @@ public class CDACTIONBAR extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
 	static {
 		addFixed("BackColor", Short.class);
 		addFixed("LineColor", Short.class);
@@ -193,6 +196,12 @@ public class CDACTIONBAR extends CDRecord {
 		addFixed("FontID", FONTID.class);
 		addFixedUnsigned("BtnHeight", Short.class);
 		addFixedUnsigned("HeightSpc", Short.class);
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDACTIONBAR(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDACTIONBAR(final SIG signature, final ByteBuffer data) {

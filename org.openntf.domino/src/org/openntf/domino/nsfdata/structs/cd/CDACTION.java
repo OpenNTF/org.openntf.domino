@@ -7,6 +7,7 @@ import java.util.Set;
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The designer of a form or view may define custom actions associated with that form or view. Actions may be presented to the user as
@@ -170,6 +171,8 @@ public class CDACTION extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
 	static {
 		addFixed("Type", Short.class);
 		addFixedUnsigned("IconIndex", Short.class);
@@ -181,9 +184,15 @@ public class CDACTION extends CDRecord {
 		addVariableString("Title", "TitleLen");
 		addVariableData("ActionData", "getActionDataLen");
 		addVariableData("Formula", "FormulaLen");
+
+		SIZE = getFixedStructSize();
 	}
 
-	protected CDACTION(final SIG signature, final ByteBuffer data) {
+	public CDACTION(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDACTION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

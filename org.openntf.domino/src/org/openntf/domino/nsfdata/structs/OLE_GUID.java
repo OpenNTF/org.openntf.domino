@@ -1,6 +1,7 @@
 package org.openntf.domino.nsfdata.structs;
 
 import java.nio.ByteBuffer;
+import java.util.UUID;
 
 /**
  * This is taken directly from OLE's compobj.h. The reason it's copied rather than included here is to eliminate inclusion of the OLE2
@@ -18,6 +19,10 @@ public class OLE_GUID extends AbstractStruct {
 		addFixedUnsigned("Data2", Short.class);
 		addFixedUnsigned("Data3", Short.class);
 		addFixedArray("Data4", Byte.class, 8);
+	}
+
+	public OLE_GUID() {
+		super();
 	}
 
 	public OLE_GUID(final ByteBuffer data) {
@@ -43,6 +48,10 @@ public class OLE_GUID extends AbstractStruct {
 
 	public byte[] getData4() {
 		return (byte[]) getStructElement("Data4");
+	}
+
+	public UUID getUUID() {
+		return UUID.nameUUIDFromBytes(getBytes());
 	}
 
 	@Override

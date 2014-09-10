@@ -319,6 +319,12 @@ public interface Database extends Base {
 	 */
 	public Document getDocumentWithKey(final Serializable key);
 
+	@Deprecated
+	public Document getDocumentByKey(Serializable key);
+
+	@Deprecated
+	public Document getDocumentByKey(Serializable key, boolean createOnFail);
+
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
 	 * <p>

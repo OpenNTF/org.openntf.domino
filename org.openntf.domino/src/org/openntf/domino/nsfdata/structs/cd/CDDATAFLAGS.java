@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Contains collapsible section, button type, style sheet or field limit information for Notes/Domino 6. A CD record (CDBAR, CDBUTTON,
@@ -40,6 +41,12 @@ public class CDDATAFLAGS extends CDRecord {
 		addFixed("dwReserved", Integer.class);
 
 		addVariableArray("Flags", "getNumFlags", Integer.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDDATAFLAGS(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDDATAFLAGS(final SIG signature, final ByteBuffer data) {

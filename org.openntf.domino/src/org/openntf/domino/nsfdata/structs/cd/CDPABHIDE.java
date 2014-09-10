@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This record contains the "Hide When" formula for a paragraph attributes block. (editods.h)
@@ -18,6 +19,12 @@ public class CDPABHIDE extends CDRecord {
 		addFixedArray("Reserved", Byte.class, 8);
 
 		addVariableData("Formula", "getFormulaLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPABHIDE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDPABHIDE(final SIG signature, final ByteBuffer data) {

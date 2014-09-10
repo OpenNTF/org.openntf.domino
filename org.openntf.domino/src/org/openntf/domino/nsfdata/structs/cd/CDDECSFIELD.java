@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record gives information pertaining to data connection resource information in a field or form. (editods.h)
@@ -46,6 +47,12 @@ public class CDDECSFIELD extends CDRecord {
 		addVariableString("ExternalName", "getExternalNameLength");
 		addVariableString("MetadataName", "getMetadataNameLength");
 		addVariableString("DCRName", "getDCRNameLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDDECSFIELD(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDDECSFIELD(final SIG signature, final ByteBuffer data) {

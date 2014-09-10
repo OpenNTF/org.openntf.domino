@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record is used within mail templates. (editods.h)
@@ -20,6 +21,12 @@ public class CDREGIONBEGIN extends CDRecord {
 		addFixed("Flags", Short.class);
 		addFixed("RegionNum", Short.class);
 		addFixedArray("RegionName", Byte.class, MAXREGIONNAME + 1);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDREGIONBEGIN(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDREGIONBEGIN(final SIG signature, final ByteBuffer data) {

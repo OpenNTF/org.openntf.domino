@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines a resource within a database. There may be many resources defined within a particular database. A resource can be
@@ -213,6 +214,12 @@ public class CDRESOURCE extends CDRecord {
 		addVariableString("ServerHint", "getServerHintLength");
 		addVariableString("FileHint", "getFileHintLength");
 		addVariableData("Data1", "getLength1");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDRESOURCE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDRESOURCE(final SIG signature, final ByteBuffer data) {

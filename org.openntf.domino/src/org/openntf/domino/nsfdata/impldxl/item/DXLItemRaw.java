@@ -15,6 +15,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 		switch (type) {
 		case COMPOSITE:
 			return new DXLItemComposite(node, dupItemId);
+		case NOTEREF_LIST:
+			return new DXLItemRefList(node, dupItemId);
 		default:
 			return new DXLItemRaw(node, dupItemId);
 		}
@@ -22,7 +24,7 @@ public class DXLItemRaw extends AbstractDXLItem {
 	}
 
 	private final Type type_;
-	private final byte[] data_;
+	private byte[] data_;
 
 	protected DXLItemRaw(final XMLNode node, final int dupItemId) {
 		super(node, dupItemId);
@@ -43,6 +45,10 @@ public class DXLItemRaw extends AbstractDXLItem {
 	@Override
 	public byte[] getBytes() {
 		return data_;
+	}
+
+	protected void setBytes(final byte[] data) {
+		data_ = data;
 	}
 
 	@Override

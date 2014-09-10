@@ -9,6 +9,7 @@ import java.util.Set;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record defines the attributes of an embedded outline. It is preceded by a CDHOTSPOTBEGIN and a CDPLACEHOLDER. The CD record,
@@ -186,6 +187,12 @@ public class CDEMBEDDEDOUTLINE extends CDRecord {
 		addFixedUnsigned("wColWidth", Short.class);
 		addFixed("SpareWord", Short.class);
 		addFixedArray("Spare", Integer.class, 4);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEMBEDDEDOUTLINE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDEMBEDDEDOUTLINE(final SIG signature, final ByteBuffer data) {

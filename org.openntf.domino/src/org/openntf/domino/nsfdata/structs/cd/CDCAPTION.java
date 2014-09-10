@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the properties of a caption for a grapic [sic] record. The actual caption text follows the fixed part of the
@@ -37,6 +38,8 @@ public class CDCAPTION extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
 	static {
 		addFixedUnsigned("wLength", Short.class);
 		addFixed("Position", Byte.class);
@@ -45,6 +48,12 @@ public class CDCAPTION extends CDRecord {
 		addFixedArray("Reserved", Byte.class, 11);
 
 		addVariableAsciiString("Caption", "getCaptionLength");
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDCAPTION(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDCAPTION(final SIG signature, final ByteBuffer data) {

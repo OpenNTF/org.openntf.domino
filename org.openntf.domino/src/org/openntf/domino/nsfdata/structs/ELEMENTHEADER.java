@@ -22,6 +22,10 @@ public class ELEMENTHEADER extends AbstractStruct {
 		addFixed("BackgroundColor", COLOR_VALUE.class);
 	}
 
+	public ELEMENTHEADER() {
+		super();
+	}
+
 	public ELEMENTHEADER(final ByteBuffer data) {
 		super(data);
 	}

@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the start of an OLE Object. (editods.h)
@@ -111,6 +112,12 @@ public class CDOLEBEGIN extends CDRecord {
 		addVariableString("AttachName", "getAttachNameLength");
 		addVariableString("ClassName", "getClassNameLength");
 		addVariableString("TemplateName", "getTemplateNameLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDOLEBEGIN(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDOLEBEGIN(final SIG signature, final ByteBuffer data) {

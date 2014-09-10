@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record provides additional table properties, expanding the information provided in CDTABLEBEGIN. It will only be recognized in
@@ -33,6 +34,12 @@ public class CDPRETABLEBEGIN extends CDRecord {
 		addFixed("RowLabelDataLength", Short.class);
 
 		addVariableString("Name", "getNameLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPRETABLEBEGIN(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDPRETABLEBEGIN(final SIG signature, final ByteBuffer data) {

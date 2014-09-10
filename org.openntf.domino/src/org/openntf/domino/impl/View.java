@@ -1222,7 +1222,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getColumns()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
@@ -2618,6 +2617,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		try {
 			view.getHttpURL();
 		} catch (NotesException e) {
+			resurrect();
+		} catch (NullPointerException npe) {
 			resurrect();
 		}
 		return super.getDelegate();

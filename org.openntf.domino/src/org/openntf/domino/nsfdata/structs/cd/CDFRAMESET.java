@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FRAMESETLENGTH;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A FRAMESETLENGTH structure will follow depending on the value found in either RowQty or ColQty. There could be multiple FRAMESETLENGTH
@@ -36,8 +37,14 @@ public class CDFRAMESET extends CDRecord {
 		addFixed("ThemeSetting", Byte.class);
 		addFixed("Reserved7", Byte.class);
 
-		addVariableArray("Rows", "getRowQty", FRAMESETLENGTH.class);
-		addVariableArray("Cols", "getColQty", FRAMESETLENGTH.class);
+		addVariableArray("Rows", "RowQty", FRAMESETLENGTH.class);
+		addVariableArray("Cols", "ColQty", FRAMESETLENGTH.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDFRAMESET(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDFRAMESET(final SIG signature, final ByteBuffer data) {

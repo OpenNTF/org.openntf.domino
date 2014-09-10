@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record contains position information for a layer box. (editods.h)
@@ -46,6 +47,12 @@ public class CDPOSITIONING extends CDRecord {
 		addFixed("Right", LENGTH_VALUE.class);
 		addFixed("BrowserLeftOffset", Double.class);
 		addFixed("BrowserRightOffset", Double.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPOSITIONING(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDPOSITIONING(final SIG signature, final ByteBuffer data) {

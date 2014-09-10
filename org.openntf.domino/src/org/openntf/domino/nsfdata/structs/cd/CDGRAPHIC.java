@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import org.openntf.domino.nsfdata.structs.CROPRECT;
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The CDGRAPHIC record contains information used to control display of graphic objects in a document. This record marks the beginning of a
@@ -23,7 +24,13 @@ public class CDGRAPHIC extends CDRecord {
 		addFixed("wReserved", Short.class);
 	}
 
-	protected CDGRAPHIC(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDGRAPHIC(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDGRAPHIC(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

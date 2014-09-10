@@ -17,6 +17,10 @@ public class CROPRECT extends AbstractStruct {
 		addFixedUnsigned("bottom", Short.class);
 	}
 
+	public CROPRECT() {
+		super();
+	}
+
 	public CROPRECT(final ByteBuffer data) {
 		super(data);
 	}

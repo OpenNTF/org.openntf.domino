@@ -16,7 +16,7 @@ public class DXLItemTextList extends AbstractDXLItem {
 
 		XMLNodeList dataNodes = node.selectNodes("./textlist/text");
 		value_ = new String[dataNodes.size()];
-		for(int i = 0; i < dataNodes.size(); i++) {
+		for (int i = 0; i < dataNodes.size(); i++) {
 			value_[i] = dataNodes.get(i).getText();
 		}
 	}
@@ -36,4 +36,8 @@ public class DXLItemTextList extends AbstractDXLItem {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": " + getValue() + "]";
+	}
 }

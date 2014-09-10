@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Frame Name String and Target Name string follow the fixed portion of this CD Record. The strings are not null terminated. (fsods.h)
@@ -32,6 +33,12 @@ public class CDFRAME extends CDRecord {
 		addVariableString("FrameTarget", "getFrameTargetLength");
 
 		// TODO add DataFlags extra data
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDFRAME(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDFRAME(final SIG signature, final ByteBuffer data) {

@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record may further define attributes within a CDFIELD such as tab order.
@@ -22,6 +23,11 @@ public class CDEMBEDDEDCTL extends CDRecord {
 		addFixedUnsigned("MaxLines", Short.class);
 		addFixedUnsigned("Percentage", Short.class);
 		addFixedArray("Spare", Integer.class, 3);
+	}
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEMBEDDEDCTL(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDEMBEDDEDCTL(final SIG signature, final ByteBuffer data) {
