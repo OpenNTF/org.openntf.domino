@@ -62,7 +62,22 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 		/** The template candidate. */
 		TEMPLATE_CANDIDATE(DbDirectory.TEMPLATE_CANDIDATE);
 
+		/**
+		 * @Deprecated better use valueOf
+		 */
+		@Deprecated
 		public static Type getType(final int value) {
+			return valueOf(value);
+		}
+
+		/**
+		 * Return the {@link DbDirectory.Type} of a numeric value
+		 * 
+		 * @param value
+		 *            the numeric value
+		 * @return a {@link DbDirectory.Type} Object
+		 */
+		public static Type valueOf(final int value) {
 			for (Type type : Type.values()) {
 				if (type.getValue() == value) {
 					return type;

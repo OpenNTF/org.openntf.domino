@@ -576,6 +576,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			return value_;
 		}
 
+		/**
+		 * Return the {@link Database.Type} of a numeric value
+		 * 
+		 * @param value
+		 *            the numeric value
+		 * @return a {@link Database.Type} Object
+		 */
 		public static Type valueOf(final int value) {
 			for (Type opt : values()) {
 				if (opt.getValue() == value) {
@@ -1349,8 +1356,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.Database#getType()
+	 * @Deprecated, better use getTypeEx
 	 */
 	@Override
+	@Deprecated
 	public int getType();
 
 	/*

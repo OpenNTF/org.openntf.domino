@@ -33,6 +33,7 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.MIMEEntity;
+import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -50,7 +51,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
 	private String name_;
-	private int nativeDataType_;
+	private Type itemType;
 	private EnumSet<Flags> flagSet_;
 
 	/**
@@ -444,15 +445,34 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 * @see org.openntf.domino.Item#getType()
 	 */
 	@Override
+	@Deprecated
 	public int getType() {
+		return getTypeEx().getValue();
+	}
+
+	@Override
+	public Type getTypeEx() {
 		try {
-			if (nativeDataType_ == 0) {
-				nativeDataType_ = getDelegate().getType();
+			if (itemType == null) {
+				itemType = Type.valueOf(getDelegate().getType());
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
-		return nativeDataType_;
+
+		if (itemType == Type.MIME_PART) {
+			MIMEEntity entity = getMIMEEntity();
+			if (entity != null) {
+				MIMEHeader contentType = entity.getNthHeader("Content-Type");
+				String headerval = contentType.getHeaderVal();
+				if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {
+					itemType = Type.MIME_BEAN;
+				}
+				getParent().closeMIMEEntities(false, getName());
+			}
+		}
+
+		return itemType;
 	}
 
 	/*
@@ -726,11 +746,11 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
-				if (getType() == AUTHORS) {
+				if (getTypeEx() == Type.AUTHORS) {
 					return;
 				}
 				if (!isReadersNamesAuthors()) {
-					if (getType() != TEXT) {
+					if (getTypeEx() != Type.TEXT) {
 						throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
 					}
 				}
@@ -790,7 +810,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 					return;
 				}
 				if (!isReadersNamesAuthors()) {
-					if (getType() != TEXT) {
+					if (getTypeEx() != Type.TEXT) {
 						throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
 					}
 				}
@@ -827,11 +847,11 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
-				if (getType() == READERS) {
+				if (getTypeEx() == Type.READERS) {
 					return;
 				}
 				if (!isReadersNamesAuthors()) {
-					if (getType() != TEXT) {
+					if (getTypeEx() != Type.TEXT) {
 						throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
 					}
 				}
@@ -1016,6 +1036,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 
 	@Override
 	public void markDirty() {
+		itemType = null; // RPr: not sure if the datatype has changed. So to be sure, we set it to zero
 		getAncestorDocument().markDirty();
 	}
 

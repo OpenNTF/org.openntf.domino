@@ -1629,6 +1629,7 @@ public class DatabaseMetaData implements Serializable {
 		 * @see org.openntf.domino.Database#getType()
 		 */
 		@Override
+		@Deprecated
 		public int getType() {
 			return getDatabase().getType();
 		}
@@ -2279,6 +2280,11 @@ public class DatabaseMetaData implements Serializable {
 				result.add(new ExceptionDetails.Entry(this, getApiPath()));
 			}
 
+		}
+
+		@Override
+		public Type getTypeEx() {
+			return getDatabase().getTypeEx();
 		}
 
 	}

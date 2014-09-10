@@ -105,4 +105,29 @@ public class OpenntfDominoDocument extends DominoDocument implements AsDocMap {
 		}
 		return mapAdapter;
 	}
+
+	/**
+	 * Fix the ability to read MIME beans properly.
+	 * 
+	 * The problem is that, DominoDocument.getValue(...) tries to wrap EVERY MIME-Item into a DominoRichtextItem. A quick hack was, not to
+	 * return Type 25 for MIME-Beans
+	 */
+	//	@Override
+	//	public Object getValue(final Object paramObject) {
+	//
+	//		Document doc = this.getDocument();
+	//		org.openntf.domino.impl.Document openDoc = null;
+	//		if (doc instanceof org.openntf.domino.impl.Document) {
+	//			openDoc = (org.openntf.domino.impl.Document) doc;
+	//			openDoc.beginXspRead(paramObject);
+	//		}
+	//		try {
+	//			return super.getValue(paramObject);
+	//		} finally {
+	//			if (openDoc != null) {
+	//				openDoc.endXspRead(paramObject);
+	//			}
+	//		}
+	//	}
+
 }

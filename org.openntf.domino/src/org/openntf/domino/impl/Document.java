@@ -770,7 +770,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				Item chk = getFirstItem(itemName);
 				if (chk != null) {
 					log_.log(Level.WARNING,
-							"Already found an item for " + itemName + " that is type: " + (chk == null ? "null" : chk.getType()));
+							"Already found an item for " + itemName + " that is type: " + (chk == null ? "null" : chk.getTypeEx()));
 					removeItem(itemName);
 				} else {
 					MIMEEntity me = getMIMEEntity(itemName);
@@ -1077,23 +1077,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				closeMIMEEntities(false, name);
 			}
 		}
-
-		//		MIMEEntity testEntity = null;
-		//		if (this.useMimeBeans()) {
-		//			testEntity = testMIMEEntity(name);
-		//		}
-		//		boolean hasMime = testEntity != null;
-		//
-		//		if (!hasMime) {
-		//			Item item = getFirstItem(name);
-		//			if (item != null && item.getType() == Item.MIME_PART) {
-		//				return (T) Documents.getItemValueMIME(this, name);
-		//			}
-		//			Object result = TypeUtils.itemValueToClass(this, name, T);
-		//			return (T) result;
-		//		} else {
-		//			return (T) Documents.getItemValueMIME(this, name);
-		//		}
 	}
 
 	/*
@@ -2901,7 +2884,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// TODO NTF make this optional
 		if (itemInfo_ == null) {
 			if (this.hasItem("$$ItemInfo")) {
-				if (this.getFirstItem("$$ItemInfo", true).getType() == Item.MIME_PART) {
+				if (this.getFirstItem("$$ItemInfo", true).getTypeEx() == Item.Type.MIME_PART) {
 					// Then use the existing value
 					try {
 						itemInfo_ = (Map<String, Map<String, Serializable>>) Documents.restoreState(this, "$$ItemInfo");
@@ -3920,7 +3903,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public List<Item> getItems(final Type type) {
 		List<Item> result = new ArrayList<Item>();
 		for (Item item : getItems()) {
-			if (item.getType() == type.getValue()) {
+			if (item.getTypeEx() == type) {
 				result.add(item);
 			}
 		}
@@ -3962,4 +3945,5 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		result.add(new ExceptionDetails.Entry(this, myDetail));
 	}
+
 }
