@@ -202,7 +202,7 @@ public class DocumentScanner extends Observable {
 	//Map<FIELDNAME, Set<VALUE>>
 
 	private boolean trackFieldTypes_ = true;
-	private Map<CharSequence, Integer> fieldTypeMap_;
+	private Map<CharSequence, Item.Type> fieldTypeMap_;
 	//Map<FIELDNAME, ITEMTYPE>
 
 	private Set<CharSequence> stopTokenList_;
@@ -415,9 +415,9 @@ public class DocumentScanner extends Observable {
 		return fieldValueMap_;
 	}
 
-	public Map<CharSequence, Integer> getFieldTypeMap() {
+	public Map<CharSequence, Item.Type> getFieldTypeMap() {
 		if (fieldTypeMap_ == null) {
-			fieldTypeMap_ = new HashMap<CharSequence, Integer>();
+			fieldTypeMap_ = new HashMap<CharSequence, Item.Type>();
 		}
 		return fieldTypeMap_;
 	}
@@ -535,7 +535,7 @@ public class DocumentScanner extends Observable {
 		if (doc != null) {
 			docCount_++;
 			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
-			Map<CharSequence, Integer> typeMap = getFieldTypeMap();
+			Map<CharSequence, Item.Type> typeMap = getFieldTypeMap();
 			Vector<Item> items = doc.getItems();
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
@@ -546,15 +546,15 @@ public class DocumentScanner extends Observable {
 						String value = null;
 						Vector<Object> values = null;
 
-						switch (item.getType()) {
-						case Item.AUTHORS:
-						case Item.READERS:
-						case Item.NAMES:
-						case Item.TEXT:
+						switch (item.getTypeEx()) {
+						case AUTHORS:
+						case READERS:
+						case NAMES:
+						case TEXT:
 							value = item.getValueString();
 							values = item.getValues();
 							break;
-						case Item.RICHTEXT:
+						case RICHTEXT:
 							value = ((RichTextItem) item).getUnformattedText();
 							break;
 						default:
@@ -602,11 +602,11 @@ public class DocumentScanner extends Observable {
 
 						if (isTrackFieldTypes()) {
 							if (!typeMap.containsKey(name)) {
-								typeMap.put(name, item.getType());
+								typeMap.put(name, item.getTypeEx());
 							}
 						}
 						if (isTrackFieldValues()) {
-							if (typeMap.get(name).equals(item.getType())) {
+							if (typeMap.get(name).equals(item.getTypeEx())) {
 								Vector<Object> vals = null;
 								vals = item.getValues();
 								if (vals != null && !vals.isEmpty()) {
@@ -768,14 +768,14 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
-	public void setFieldTypeMap(final Map<CharSequence, Integer> fieldTypeMap) {
+	public void setFieldTypeMap(final Map<CharSequence, Item.Type> fieldTypeMap) {
 		fieldTypeMap_ = fieldTypeMap;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setFieldTypeMap(final Object value) {
 		if (DocumentScanner.validateFieldTypeMap(value)) {
-			fieldTypeMap_ = (Map<CharSequence, Integer>) value;
+			fieldTypeMap_ = (Map<CharSequence, Item.Type>) value;
 		}
 	}
 

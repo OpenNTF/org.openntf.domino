@@ -18,14 +18,8 @@
  */
 package org.openntf.arpa;
 
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.openntf.domino.logging.LogUtils;
 
 /**
  * @author dolson
@@ -203,15 +197,10 @@ public enum ISO {
 	 * $ match the preceding match instructions against the end of the string.
 	 */
 	public static Pattern PatternRFC822 = Pattern.compile("^.*<.*>.*$");
-	public static final Pattern PatternAlpha2 = Pattern.compile("^[A-Z]+[A-Z]$");
-	public static final Pattern PatternAlpha3 = Pattern.compile("^[A-Z]+[A-Z]+[A-Z]$");
 	public static final Pattern PatternHexadecimal = Pattern.compile("^[A-Fa-f0-9]+$");
 
 	/** The Constant log_. */
-	private static final Logger log_ = Logger.getLogger("org.openntf.arpa");
-
-	/** The Constant logBackup_. */
-	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
+	private static final Logger log_ = Logger.getLogger(ISO.class.getName());
 
 	/**
 	 * Gets the ISO3166 enum for the specified code
@@ -222,33 +211,25 @@ public enum ISO {
 	 * @return ISO2166 enum for the specified code, if found. Null otherwise
 	 */
 	public static ISO3166 getISO3166(final String code) {
-		if (null != code) {
-			final int length = code.length();
-			switch (length) {
-			case 2: {
-				final Matcher matcher = ISO.PatternAlpha2.matcher(code);
-				for (final ISO3166 result : ISO3166.values()) {
-					if (code.equals(result.getCode2())) {
-						return result;
-					}
-				}
-				break;
-			}
-			case 3: {
-				final Matcher matcher = ISO.PatternAlpha3.matcher(code);
-				for (final ISO3166 result : ISO3166.values()) {
-					if (code.equals(result.getCode3())) {
-						return result;
-					}
-				}
-				break;
-			}
-			default:
+		if (code == null)
+			return null;
+		int length = code.length();
+		if (length != 2 && length != 3)
+			return null;
+		for (int i = 0; i < length; i++) {
+			char c = code.charAt(i);
+			if (c < 'A' || c > 'Z')
 				return null;
-			} // switch 
-
 		}
-
+		if (length == 2) {
+			for (final ISO3166 result : ISO3166.values())
+				if (code.equals(result.getCode2()))
+					return result;
+			return null;
+		}
+		for (final ISO3166 result : ISO3166.values())
+			if (code.equals(result.getCode3()))
+				return result;
 		return null;
 	}
 
@@ -338,78 +319,10 @@ public enum ISO {
 	 * ******************************************************************
 	 * ******************************************************************
 	 * 
-	 * EXCEPTION HANDLING based on code in org.openntf.domino.utils.DominoUtils
+	 * EXCEPTION HANDLING deleted (was duplicated code)
 	 * 
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-	/**
-	 * Handle exception.
-	 * 
-	 * @param t
-	 *            the t
-	 * @return the throwable
-	 */
-	public static Throwable handleException(final Throwable t) {
-		return (ISO.handleException(t, null));
-	}
-
-	public static Throwable handleException(final Throwable t, final String details) {
-		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				public Object run() throws Exception {
-					if (ISO.log_.getLevel() == null) {
-						LogUtils.loadLoggerConfig(false, "");
-					}
-					if (ISO.log_.getLevel() == null) {
-						ISO.log_.setLevel(Level.WARNING);
-					}
-					return null;
-				}
-			});
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				public Object run() throws Exception {
-					if (LogUtils.hasAccessException(ISO.log_)) {
-						ISO.logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
-						if (!ISO.isBlankString(details)) {
-							ISO.logBackup_.log(Level.SEVERE, "DETAILS: " + details);
-						}
-					} else {
-						ISO.log_.log(Level.WARNING, t.getLocalizedMessage(), t);
-						if (!ISO.isBlankString(details)) {
-							ISO.log_.log(Level.WARNING, "DETAILS: " + details);
-						}
-					}
-					return null;
-				}
-			});
-
-		} catch (final Throwable e) {
-			e.printStackTrace();
-		}
-
-		if (ISO.getBubbleExceptions()) {
-			throw new RuntimeException(t);
-		}
-		return t;
-	}
-
-	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
-		@Override
-		protected Boolean initialValue() {
-			return Boolean.FALSE;
-		}
-	};
-
-	public static Boolean getBubbleExceptions() {
-		if (ISO.bubbleExceptions_.get() == null) {
-			ISO.setBubbleExceptions(Boolean.FALSE);
-		}
-		return ISO.bubbleExceptions_.get();
-	}
-
-	public static void setBubbleExceptions(final Boolean value) {
-		ISO.bubbleExceptions_.set(value);
-	}
 
 }

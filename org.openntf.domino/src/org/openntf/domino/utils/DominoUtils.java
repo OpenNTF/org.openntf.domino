@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Item;
 import org.openntf.domino.Name;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
@@ -264,12 +265,25 @@ public enum DominoUtils {
 	 * @return the throwable
 	 */
 	public static Throwable handleException(final Throwable t) {
-		return (handleException(t, null));
+		return (handleException(t, null, null));
+	}
+
+	public static Throwable handleException(final Throwable t, final ExceptionDetails hed) {
+		return handleException(t, hed, null);
 	}
 
 	public static Throwable handleException(final Throwable t, final String details) {
-		if (t instanceof OpenNTFNotesException)
-			throw (OpenNTFNotesException) t;
+		return handleException(t, null, details);
+	}
+
+	public static Throwable handleException(final Throwable t, final ExceptionDetails hed, final String details) {
+		if (t instanceof OpenNTFNotesException) {
+			OpenNTFNotesException ne = (OpenNTFNotesException) t;
+			ne.addExceptionDetails(hed);
+			throw ne;
+		}
+		if (getBubbleExceptions())
+			throw new OpenNTFNotesException(details, t, hed);
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
@@ -296,10 +310,6 @@ public enum DominoUtils {
 			});
 		} catch (Throwable e) {
 			e.printStackTrace();
-		}
-
-		if (getBubbleExceptions()) {
-			throw new OpenNTFNotesException(t);
 		}
 		return t;
 	}
@@ -346,7 +356,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes", "restriction" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {
@@ -798,7 +808,7 @@ public enum DominoUtils {
 			switch (fileType) {
 			case 1:
 				// Properties file in this package
-				DominoUtils.class.getResourceAsStream(fileLoc);
+				returnStream = DominoUtils.class.getResourceAsStream(fileLoc);
 				break;
 			case 2:
 				// File in file system at literal path

@@ -645,7 +645,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		comparator_ = (Comparator<DatabaseMetaData>) in.readObject();
 		isHonorOpenDialog_ = in.readBoolean();
-		type_ = Type.getType(in.readInt());
+		type_ = Type.valueOf(in.readInt());
 		name_ = in.readUTF();
 		clusterName_ = in.readUTF();
 		// CHECKME should we really 

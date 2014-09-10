@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.openntf.domino.AsDocMap;
 import org.openntf.domino.utils.DominoUtils;
 
 /*
@@ -37,7 +38,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
  * 
  */
 @SuppressWarnings("unchecked")
-public class OpenntfDominoDocument extends DominoDocument {
+public class OpenntfDominoDocument extends DominoDocument implements AsDocMap {
 	// private static final Logger log_ = Logger.getLogger(FocDominoDocument.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -97,10 +98,36 @@ public class OpenntfDominoDocument extends DominoDocument {
 		}
 	}
 
-	public Map<String, Object> asMap() {
+	@Override
+	public Map<String, Object> asDocMap() {
 		if (mapAdapter == null) {
 			mapAdapter = new DominoDocumentMapAdapter(this);
 		}
 		return mapAdapter;
 	}
+
+	/**
+	 * Fix the ability to read MIME beans properly.
+	 * 
+	 * The problem is that, DominoDocument.getValue(...) tries to wrap EVERY MIME-Item into a DominoRichtextItem. A quick hack was, not to
+	 * return Type 25 for MIME-Beans
+	 */
+	//	@Override
+	//	public Object getValue(final Object paramObject) {
+	//
+	//		Document doc = this.getDocument();
+	//		org.openntf.domino.impl.Document openDoc = null;
+	//		if (doc instanceof org.openntf.domino.impl.Document) {
+	//			openDoc = (org.openntf.domino.impl.Document) doc;
+	//			openDoc.beginXspRead(paramObject);
+	//		}
+	//		try {
+	//			return super.getValue(paramObject);
+	//		} finally {
+	//			if (openDoc != null) {
+	//				openDoc.endXspRead(paramObject);
+	//			}
+	//		}
+	//	}
+
 }

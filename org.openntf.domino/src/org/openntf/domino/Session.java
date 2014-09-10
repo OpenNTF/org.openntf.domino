@@ -28,7 +28,7 @@ import org.openntf.domino.utils.DominoFormatter;
  * The Interface Session is the root of the Domino Objects containment hierarchy, providing access to the other Domino objects, and
  * represents the Domino environment of the current program.
  */
-public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session> {
+public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session>, ExceptionDetails {
 	public static enum Permissions {
 		READ_CURRENT_NSF, WRITE_CURRENT_NSF, DESIGN_CURRENT_NSF, READ_LOCAL_NSF, WRITE_LOCAL_NSF, DESIGN_LOCAL_NSF, READ_REMOTE_NSF,
 		WRITE_REMOTE_NSF, DESIGN_REMOTE_NSF, SEND_MAIL, SEND_COMMANDS, READ_DIRECTORY, WRITE_DIRECTORY, IMPORT_DXL, EXPORT_DXL;
