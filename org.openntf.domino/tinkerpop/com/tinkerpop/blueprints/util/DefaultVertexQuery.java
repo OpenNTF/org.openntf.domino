@@ -1,10 +1,11 @@
 package com.tinkerpop.blueprints.util;
 
+import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.VertexQuery;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.VertexQuery;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,25 +20,49 @@ import java.util.NoSuchElementException;
  */
 public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
 
-    private final Vertex vertex;
+    protected final Vertex vertex;
 
     public DefaultVertexQuery(final Vertex vertex) {
         this.vertex = vertex;
     }
 
+    public VertexQuery has(final String key) {
+        super.has(key);
+        return this;
+    }
+
+    public VertexQuery hasNot(final String key) {
+        super.hasNot(key);
+        return this;
+    }
+
     public VertexQuery has(final String key, final Object value) {
-        this.hasContainers.add(new HasContainer(key, value, Compare.EQUAL));
+        super.has(key, value);
+        return this;
+    }
+
+    public VertexQuery hasNot(final String key, final Object value) {
+        super.hasNot(key, value);
+        return this;
+    }
+
+    public VertexQuery has(final String key, final Predicate predicate, final Object value) {
+        super.has(key, predicate, value);
         return this;
     }
 
     public <T extends Comparable<T>> VertexQuery has(final String key, final T value, final Compare compare) {
-        this.hasContainers.add(new HasContainer(key, value, compare));
+        super.has(key, compare, value);
         return this;
     }
 
-    public <T extends Comparable<T>> VertexQuery interval(final String key, final T startValue, final T endValue) {
-        this.hasContainers.add(new HasContainer(key, startValue, Compare.GREATER_THAN_EQUAL));
-        this.hasContainers.add(new HasContainer(key, endValue, Compare.LESS_THAN));
+    public <T extends Comparable<?>> VertexQuery interval(final String key, final T startValue, final T endValue) {
+        super.interval(key, startValue, endValue);
+        return this;
+    }
+
+    public VertexQuery limit(final int limit) {
+        super.limit(limit);
         return this;
     }
 
@@ -48,11 +73,6 @@ public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
 
     public VertexQuery labels(final String... labels) {
         this.labels = labels;
-        return this;
-    }
-
-    public VertexQuery limit(final long max) {
-        this.limit = max;
         return this;
     }
 
@@ -138,7 +158,8 @@ public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
 
                 private boolean loadNext() {
                     this.nextEdge = null;
-                    if (count >= limit) return false;
+                    if (this.count > limit) return false;
+
                     while (this.itty.hasNext()) {
                         final Edge edge = this.itty.next();
                         boolean filter = false;
@@ -148,10 +169,12 @@ public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
                                 break;
                             }
                         }
+
                         if (!filter) {
-                            this.nextEdge = edge;
-                            this.count++;
-                            return true;
+                            if (++this.count <= limit) {
+                                this.nextEdge = edge;
+                                return true;
+                            }
                         }
                     }
                     return false;

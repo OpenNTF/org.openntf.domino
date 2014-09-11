@@ -1,5 +1,6 @@
 package com.tinkerpop.blueprints.util;
 
+import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
@@ -19,30 +20,49 @@ import java.util.Set;
  */
 public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
 
-    private final Graph graph;
+    protected final Graph graph;
 
     public DefaultGraphQuery(final Graph graph) {
         this.graph = graph;
     }
 
+    public GraphQuery has(final String key) {
+        super.has(key);
+        return this;
+    }
+
+    public GraphQuery hasNot(final String key) {
+        super.hasNot(key);
+        return this;
+    }
+
     public GraphQuery has(final String key, final Object value) {
-        this.hasContainers.add(new HasContainer(key, value, Compare.EQUAL));
+        super.has(key, value);
+        return this;
+    }
+
+    public GraphQuery hasNot(final String key, final Object value) {
+        super.hasNot(key, value);
+        return this;
+    }
+
+    public GraphQuery has(final String key, final Predicate predicate, final Object value) {
+        super.has(key, predicate, value);
         return this;
     }
 
     public <T extends Comparable<T>> GraphQuery has(final String key, final T value, final Compare compare) {
-        this.hasContainers.add(new HasContainer(key, value, compare));
+        super.has(key, compare, value);
         return this;
     }
 
-    public <T extends Comparable<T>> GraphQuery interval(final String key, final T startValue, final T endValue) {
-        this.hasContainers.add(new HasContainer(key, startValue, Compare.GREATER_THAN_EQUAL));
-        this.hasContainers.add(new HasContainer(key, endValue, Compare.LESS_THAN));
+    public <T extends Comparable<?>> GraphQuery interval(final String key, final T startValue, final T endValue) {
+        super.interval(key, startValue, endValue);
         return this;
     }
 
-    public GraphQuery limit(final long max) {
-        this.limit = max;
+    public GraphQuery limit(final int limit) {
+        super.limit(limit);
         return this;
     }
 
@@ -54,7 +74,7 @@ public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
         return new DefaultGraphQueryIterable<Vertex>(true);
     }
 
-    private class DefaultGraphQueryIterable<T extends Element> implements Iterable<T> {
+    protected class DefaultGraphQueryIterable<T extends Element> implements Iterable<T> {
 
         private Iterable<T> iterable = null;
 
@@ -95,7 +115,7 @@ public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
 
                 private boolean loadNext() {
                     this.nextElement = null;
-                    if (count >= limit) return false;
+                    if (this.count > limit) return false;
                     while (this.itty.hasNext()) {
                         final T element = this.itty.next();
                         boolean filter = false;
@@ -108,35 +128,33 @@ public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
                         }
 
                         if (!filter) {
-                            this.nextElement = element;
-                            this.count++;
-                            return true;
+                            if (++this.count <= limit) {
+                                this.nextElement = element;
+                                return true;
+                            }
                         }
+
                     }
                     return false;
                 }
             };
         }
 
-        private Iterable<?> getElementIterable(Class<? extends Element> elementClass) {
+        private Iterable<?> getElementIterable(final Class<? extends Element> elementClass) {
             if (graph instanceof KeyIndexableGraph) {
-                final Set<String> keys = ((KeyIndexableGraph) graph).getIndexedKeys(elementClass);
-                for (HasContainer hasContainer : hasContainers) {
-                    if (hasContainer.compare.equals(Compare.EQUAL) && hasContainer.value != null && keys.contains(hasContainer.key)) {
-                        if (Vertex.class.isAssignableFrom(elementClass))
-                            return graph.getVertices(hasContainer.key, hasContainer.value);
-                        else
-                            return graph.getEdges(hasContainer.key, hasContainer.value);
+                final Set<String> keys = getIndexedKeys(elementClass);
+                HasContainer container = null;
+                for (final HasContainer hasContainer : hasContainers) {
+                    if (hasContainer.predicate.equals(com.tinkerpop.blueprints.Compare.EQUAL) && keys.contains(hasContainer.key)) {
+                        container = hasContainer;
+                        break;
                     }
                 }
-            }
-
-            for (final HasContainer hasContainer : hasContainers) {
-                if (hasContainer.compare.equals(Compare.EQUAL)) {
+                if (container != null) {
                     if (Vertex.class.isAssignableFrom(elementClass))
-                        return graph.getVertices(hasContainer.key, hasContainer.value);
+                        return graph.getVertices(container.key, container.value);
                     else
-                        return graph.getEdges(hasContainer.key, hasContainer.value);
+                        return graph.getEdges(container.key, container.value);
                 }
             }
 
@@ -146,16 +164,10 @@ public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
                 return graph.getEdges();
         }
 
-        /*private boolean containsLabel(final String label, final String[] labels) {
-            if (labels.length == 0)
-                return true;
-
-            for (final String temp : labels) {
-                if (temp.equals(label))
-                    return true;
-            }
-            return false;
-        }*/
+        protected Set<String> getIndexedKeys(final Class<? extends Element> elementClass) {
+          return ((KeyIndexableGraph) graph).getIndexedKeys(elementClass);
+        }
+        
     }
 
 }

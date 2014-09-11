@@ -1,23 +1,24 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the Action Bar attributes. It is an extension of the CDACTIONBAR record. It is found within a $V5ACTIONS item and
  * is preceded by a CDACTIONBAR record. (actods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  */
 public class CDACTIONBAREXT extends CDRecord {
 	public static enum BackgroundRepeat {
+		DEFAULT((short) 0),
 		/**
 		 * Image repeats once in upper left of action bar
 		 */
@@ -151,110 +152,114 @@ public class CDACTIONBAREXT extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("BackColor", COLOR_VALUE.class);
+		addFixed("LineColor", COLOR_VALUE.class);
+		addFixed("FontColor", COLOR_VALUE.class);
+		addFixed("ButtonColor", COLOR_VALUE.class);
+		addFixed("BtnBorderDisplay", Short.class);
+		addFixedUnsigned("wAppletHeight", Short.class);
+		addFixed("wBarBackgroundRepeat", Short.class);
+		addFixed("BtnWidthStyle", Byte.class);
+		addFixed("BtnTextJustify", Byte.class);
+		addFixedUnsigned("wBtnWidthAbsolute", Short.class);
+		addFixedUnsigned("wBtnInternalMargin", Short.class);
+		addFixed("dwFlags", Integer.class);
+		addFixed("barFontID", FONTID.class);
+		addFixed("barHeight", LENGTH_VALUE.class);
+		addFixedArray("Spare", Integer.class, 12);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDACTIONBAREXT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
 	public CDACTIONBAREXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public COLOR_VALUE getBackColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 0);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("BackColor");
 	}
 
 	public COLOR_VALUE getLineColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 6);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("LineColor");
 	}
 
 	public COLOR_VALUE getFontColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 12);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("FontColor");
 	}
 
 	public COLOR_VALUE getButtonColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 18);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("ButtonColor");
 	}
 
 	public short getBtnBorderDisplay() {
-		return getData().getShort(getData().position() + 24);
+		return (Short) getStructElement("BtnBorderDisplay");
 	}
 
 	/**
 	 * This is always recalculated on save
 	 */
-	public short getAppletHeight() {
-		return getData().getShort(getData().position() + 26);
+	public int getAppletHeight() {
+		return (Integer) getStructElement("wAppletHeight");
 	}
 
 	public BackgroundRepeat getBarBackgroundRepeat() {
-		return BackgroundRepeat.valueOf(getData().getShort(getData().position() + 28));
+		return BackgroundRepeat.valueOf((Short) getStructElement("wBarBackgroundRepeat"));
 	}
 
 	public ButtonWidth getBtnWidthStyle() {
-		return ButtonWidth.valueOf(getData().get(getData().position() + 30));
+		return ButtonWidth.valueOf((Byte) getStructElement("BtnWidthStyle"));
 	}
 
 	public Justify getBtnTextJustify() {
-		return Justify.valueOf(getData().get(getData().position() + 31));
+		return Justify.valueOf((Byte) getStructElement("BtnTextJustify"));
 	}
 
 	/**
 	 * Valid only if BtnWidthStyle is ACTIONBAR_BUTTON_WIDTH_ABSOLUTE
 	 */
-	public short getBtnWidthAbsolute() {
-		return getData().getShort(getData().position() + 32);
+	public int getBtnWidthAbsolute() {
+		return (Integer) getStructElement("wBtnWidthAbsolute");
 	}
 
 	/**
 	 * @return Extra margin on the inside right and left edges of a button to space image and text away from the right and left edges
 	 */
-	public short getBtnInternalMargin() {
-		return getData().getShort(getData().position() + 34);
+	public int getBtnInternalMargin() {
+		return (Integer) getStructElement("wBtnInternalMargin");
 	}
 
 	/**
 	 * @return See ACTIONBAREXT_xxx flags
 	 */
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 36));
+		return Flag.valuesOf((Integer) getStructElement("dwFlags"));
 	}
 
 	/**
 	 * @return Used in conjunction with barHeight
 	 */
-	public int getBarFontId() {
-		// TODO map to font
-		return getData().getInt(getData().position() + 40);
+	public FONTID getBarFontId() {
+		return (FONTID) getStructElement("barFontID");
 	}
 
 	public LENGTH_VALUE getBarHeight() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 44);
-		data.limit(data.position() + 12);
-		return new LENGTH_VALUE(data);
+		return (LENGTH_VALUE) getStructElement("barHeight");
 	}
 
 	/**
 	 * @return Leaving many spares for future mouse down/ mouse over colors and whatever else we want
 	 */
 	public int[] getSpare() {
-		int[] result = new int[12];
-		for (int i = 0; i < 12; i++) {
-			result[i] = getData().getInt(getData().position() + 56 + (i * 4));
-		}
-		return result;
+		return (int[]) getStructElement("Spare");
+	}
+
+	@Override
+	public String toString() {
+		return buildDebugString();
 	}
 }

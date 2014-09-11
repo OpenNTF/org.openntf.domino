@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="9c9e" sequence="41" unid="CE754DE355A440A580257C8C004AACB3">
+<created><datetime>20140227T133538,75+00</datetime></created>
+<modified><datetime>20140310T124924,41+00</datetime></modified>
+<revised><datetime>20140310T124924,40+00</datetime></revised>
+<lastaccessed><datetime>20140310T124924,41+00</datetime></lastaccessed>
+<addedtofile><datetime>20140227T133538,76+00</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
+<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
+<item name="$Flags"><text>gC~4K</text></item>
+<item name="$TITLE"><text>Misc_NamePicker.xsp</text></item>
+
+<item name="$DesignerVersion"><text>8.5</text></item>
+
+
+
+
+<item name="$FileNames" sign="true"><text>Misc_NamePicker.xsp</text></item>
+
+</note>

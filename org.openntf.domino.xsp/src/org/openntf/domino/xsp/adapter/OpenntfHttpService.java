@@ -79,6 +79,7 @@ public class OpenntfHttpService extends HttpService {
 
 		try {
 			// TODO - NSA: This is a optimal place where you can put your code to sniff the whole unencrypted HTTP-traffic
+			// FIXME - NSA: Go get a real job and mind your own business
 			// System.out.println("ContexPath: " + contextPath);
 			// System.out.println("Path: " + path);
 
@@ -96,7 +97,7 @@ public class OpenntfHttpService extends HttpService {
 			return false;
 		} finally {
 			doServiceEntered.set(Boolean.FALSE);
-			lotus.domino.Session session = Factory.terminate();
+			Factory.terminate();
 
 			// System.out.println("DEBUG: terminating a Session with object id: " + System.identityHashCode(session)
 			// + " after an http request");

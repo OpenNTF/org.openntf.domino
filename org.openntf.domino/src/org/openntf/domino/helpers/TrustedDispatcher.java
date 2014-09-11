@@ -9,6 +9,7 @@ import java.security.Permission;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -229,6 +230,12 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
 			System.out.println("DEBUG: Creating a new TrustedFutureTask for a " + runnable.getClass().getName());
 			return new TrustedFutureTask(runnable, value, dispatcher_);
+		}
+
+		@Override
+		public ScheduledFuture<?> schedule(final Runnable command, final long delay, final TimeUnit unit) {
+			System.out.println("DEBUG: Scheduling a " + command.getClass().getName() + " for " + delay + " " + unit.name());
+			return super.schedule(command, delay, unit);
 		}
 
 		/* (non-Javadoc)

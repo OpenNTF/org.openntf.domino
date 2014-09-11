@@ -2,12 +2,78 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant(TM) version 1.8.4 compiled on May 22 2012
 Created-By: JDK 1.7.0_51 (Oracle Corporation)
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenNTF Domino API
-Bundle-SymbolicName: org.openntf.domino;singleton:=true
-Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: OpenNTF.org
+Bundle-Name: OpenNTF Domino API Designer Version
+Bundle-SymbolicName: org.openntf.domino.source;singleton:=true
+Bundle-Version: 1.5.0.qualifier
+Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openntf.arpa,
+Export-Package: com.google.common.annotations,
+ com.google.common.base,
+ com.google.common.base.internal,
+ com.google.common.cache,
+ com.google.common.collect,
+ com.google.common.escape,
+ com.google.common.eventbus,
+ com.google.common.hash,
+ com.google.common.html,
+ com.google.common.io,
+ com.google.common.math,
+ com.google.common.net,
+ com.google.common.primitives,
+ com.google.common.reflect,
+ com.google.common.util.concurrent,
+ com.google.common.xml,
+ com.google.thirdparty.publicsuffix,
+ com.tinkerpop.blueprints,
+ com.tinkerpop.blueprints.util,
+ com.tinkerpop.blueprints.util.io,
+ com.tinkerpop.blueprints.util.wrappers,
+ com.tinkerpop.blueprints.util.wrappers.event,
+ com.tinkerpop.blueprints.util.wrappers.event.listener,
+ com.tinkerpop.blueprints.util.wrappers.id,
+ com.tinkerpop.blueprints.util.wrappers.partition,
+ com.tinkerpop.blueprints.util.wrappers.readonly,
+ com.tinkerpop.blueprints.util.wrappers.wrapped,
+ com.tinkerpop.frames,
+ com.tinkerpop.frames.annotations,
+ com.tinkerpop.frames.annotations.gremlin,
+ com.tinkerpop.frames.core,
+ com.tinkerpop.frames.modules,
+ com.tinkerpop.frames.modules.javahandler,
+ com.tinkerpop.frames.modules.typedgraph,
+ com.tinkerpop.frames.structures,
+ com.tinkerpop.frames.util,
+ com.tinkerpop.gremlin,
+ com.tinkerpop.gremlin.java,
+ com.tinkerpop.pipes,
+ com.tinkerpop.pipes.branch,
+ com.tinkerpop.pipes.filter,
+ com.tinkerpop.pipes.sideeffect,
+ com.tinkerpop.pipes.transform,
+ com.tinkerpop.pipes.util,
+ com.tinkerpop.pipes.util.iterators,
+ com.tinkerpop.pipes.util.structures,
+ javassist,
+ javassist.bytecode,
+ javassist.bytecode.analysis,
+ javassist.bytecode.annotation,
+ javassist.bytecode.stackmap,
+ javassist.compiler,
+ javassist.compiler.ast,
+ javassist.convert,
+ javassist.expr,
+ javassist.runtime,
+ javassist.scopedpool,
+ javassist.tools,
+ javassist.tools.reflect,
+ javassist.tools.rmi,
+ javassist.tools.web,
+ javassist.util.proxy,
+ javax.annotation,
+ javax.annotation.concurrent,
+ javax.annotation.meta,
+ org.openntf.arpa,
+ org.openntf.calendars,
  org.openntf.domino,
  org.openntf.domino.annotations,
  org.openntf.domino.big,
@@ -24,32 +90,60 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.helpers,
  org.openntf.domino.i18n,
  org.openntf.domino.impl,
- org.openntf.domino.instrument,
  org.openntf.domino.iterators,
  org.openntf.domino.logging,
+ org.openntf.domino.napi,
+ org.openntf.domino.nsfdata,
+ org.openntf.domino.nsfdata.impldxl,
+ org.openntf.domino.nsfdata.impldxl.item,
+ org.openntf.domino.nsfdata.structs,
+ org.openntf.domino.nsfdata.structs.cd,
  org.openntf.domino.schema,
  org.openntf.domino.schema.exceptions,
  org.openntf.domino.schema.impl,
  org.openntf.domino.schema.types,
+ org.openntf.domino.tests.eknori,
+ org.openntf.domino.tests.jpg,
+ org.openntf.domino.tests.ntf,
+ org.openntf.domino.tests.paul,
+ org.openntf.domino.tests.rpr,
+ org.openntf.domino.tests.rpr.formula,
+ org.openntf.domino.tests.xmage,
  org.openntf.domino.thread,
+ org.openntf.domino.thread.deprecated,
  org.openntf.domino.thread.model,
  org.openntf.domino.transactions,
  org.openntf.domino.types,
  org.openntf.domino.utils,
- org.openntf.domino.utils.xml
+ org.openntf.domino.utils.xml,
+ rx,
+ rx.exceptions,
+ rx.functions,
+ rx.internal.operators,
+ rx.internal.schedulers,
+ rx.internal.util,
+ rx.internal.util.unsafe,
+ rx.observables,
+ rx.observers,
+ rx.plugins,
+ rx.schedulers,
+ rx.subjects,
+ rx.subscriptions
 Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.0.0_20140416093417
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Built-By: praml
 Build-Date: 20140416093417
-Require-Bundle: org.openntf.formula;bundle-version="1.0.0",
- com.ibm.icu.base;bundle-version="3.8.1",
- com.ibm.commons;bundle-version="9.0.1",
- com.ibm.commons.xml;bundle-version="9.0.1"
-Import-Package: javax.annotation
+Require-Bundle: org.openntf.formula,
+ com.ibm.icu.base,
+ com.ibm.commons,
+ com.ibm.commons.xml,
+ org.eclipse.pde.core;resolution:=optional
+Import-Package: javax.annotation,
+ lotus.domino
+Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .,
- lib-instrument/asm-5.0.3.jar
+
 
 

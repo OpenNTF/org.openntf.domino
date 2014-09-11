@@ -11,97 +11,14 @@ import org.openntf.domino.nsfdata.structs.SIG;
 public abstract class CDRecord extends AbstractStruct {
 
 	public static CDRecord create(final SIG signature, final ByteBuffer data) {
-		switch (signature.getSignature()) {
-		case ACTION:
-			return new CDACTION(signature, data);
-		case ACTIONBAR:
-			return new CDACTIONBAR(signature, data);
-		case ACTIONBAREXT:
-			return new CDACTIONBAREXT(signature, data);
-		case BEGIN:
-			return new CDBEGINRECORD(signature, data);
-		case BITMAPHEADER:
-			return new CDBITMAPHEADER(signature, data);
-		case BITMAPSEGMENT:
-			return new CDBITMAPSEGMENT(signature, data);
-		case BLOBPART:
-			return new CDBLOBPART(signature, data);
-		case BORDERINFO:
-			return new CDBORDERINFO(signature, data);
-		case CAPTION:
-			return new CDCAPTION(signature, data);
-		case COLOR:
-			return new CDCOLOR(signature, data);
-		case COLORTABLE:
-			return new CDCOLORTABLE(signature, data);
-		case DATAFLAGS:
-			return new CDDATAFLAGS(signature, data);
-		case DECSFIELD:
-			return new CDDECSFIELD(signature, data);
-		case DOCUMENT:
-			return new CDDOCUMENT(signature, data);
-		case EMBEDDEDCTL:
-			return new CDEMBEDDEDCTL(signature, data);
-		case END:
-			return new CDENDRECORD(signature, data);
-		case EVENT:
-			return new CDEVENT(signature, data);
-		case EVENT_LANGUAGE_ENTRY:
-			return new CDEVENTENTRY(signature, data);
-		case EXT_FIELD:
-			return new CDEXTFIELD(signature, data);
-		case EXT2_FIELD:
-			return new CDEXT2FIELD(signature, data);
-		case FIELD:
-			return new CDFIELD(signature, data);
-		case FILEHEADER:
-			return new CDFILEHEADER(signature, data);
-		case FILESEGMENT:
-			return new CDFILESEGMENT(signature, data);
-		case FRAMESET:
-			return new CDFRAMESET(signature, data);
-		case FRAMESETHEADER:
-			return new CDFRAMESETHEADER(signature, data);
-		case FRAME:
-			return new CDFRAME(signature, data);
-		case GRAPHIC:
-			return new CDGRAPHIC(signature, data);
-		case HOTSPOTBEGIN:
-			return new CDHOTSPOTBEGIN(signature, data);
-		case HOTSPOTEND:
-			return new CDHOTSPOTEND(signature, data);
-		case HREF:
-			// I don't know why the names are mismatched; ask Lotus
-			return new CDRESOURCE(signature, data);
-		case IMAGEHEADER:
-			return new CDIMAGEHEADER(signature, data);
-		case IMAGESEGMENT:
-			return new CDIMAGESEGMENT(signature, data);
-		case LARGE_PARAGRAPH:
-			return new CDLARGEPARAGRAPH(signature, data);
-		case LINK2:
-			return new CDLINK2(signature, data);
-		case PABDEFINITION:
-			return new CDPABDEFINITION(signature, data);
-		case PABREFERENCE:
-			return new CDPABREFERENCE(signature, data);
-		case PARAGRAPH:
-			return new CDPARAGRAPH(signature, data);
-		case PATTERNTABLE:
-			return new CDPATTERNTABLE(signature, data);
-		case PRETABLEBEGIN:
-			return new CDPRETABLEBEGIN(signature, data);
-		case TABLEBEGIN:
-			return new CDTABLEBEGIN(signature, data);
-		case TABLECELL:
-			return new CDTABLECELL(signature, data);
-		case TABLEDATAEXTENSION:
-			return new CDTABLEDATAEXTENSION(signature, data);
-		case TABLEEND:
-			return new CDTABLEEND(signature, data);
-		case TEXT:
-			return new CDTEXT(signature, data);
-		default:
+		Class<? extends CDRecord> instanceClass = signature.getSignature().getInstanceClass();
+		if (instanceClass != null) {
+			try {
+				return instanceClass.getDeclaredConstructor(SIG.class, ByteBuffer.class).newInstance(signature, data);
+			} catch (Throwable t) {
+				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+			}
+		} else {
 			return new BasicCDRecord(signature, data);
 		}
 	}
@@ -123,7 +40,7 @@ public abstract class CDRecord extends AbstractStruct {
 	/**
 	 * @return The length (in bytes) of the data portion of this record
 	 */
-	public int getDataLength() {
+	public long getDataLength() {
 		return signature_.getLength() - signature_.getSigLength();
 	}
 
@@ -131,29 +48,38 @@ public abstract class CDRecord extends AbstractStruct {
 	 * @return Any additional byte at the end of the record used for word alignment
 	 */
 	public int getExtraLength() {
-		return getDataLength() % 2;
+		return (int) (getDataLength() % 2);
 	}
 
 	@Override
-	public int getStructSize() {
+	public long getStructSize() {
 		return signature_.getLength();
 	}
 
 	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Signature: " + getSignature() + "]";
+	protected byte[] getBytes() {
+		byte[] parentBytes = super.getBytes();
+		byte[] sigBytes = getSignature().getBytes();
+		byte[] result = new byte[parentBytes.length + sigBytes.length];
+		System.arraycopy(sigBytes, 0, result, 0, sigBytes.length);
+		System.arraycopy(parentBytes, 0, result, sigBytes.length, parentBytes.length);
+		return result;
 	}
 
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		super.readExternal(in);
-		signature_ = (SIG) in.readObject();
+		int sigLength = in.readInt();
+		byte[] sigBytes = new byte[sigLength];
+		in.read(sigBytes);
+		signature_ = CDSignature.sigForData(ByteBuffer.wrap(sigBytes));
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		// TODO change this to write the signature bytes directly
-		out.writeObject(signature_);
+		byte[] sigBytes = signature_.getBytes();
+		out.writeInt(sigBytes.length);
+		out.writeObject(sigBytes);
 	}
 }

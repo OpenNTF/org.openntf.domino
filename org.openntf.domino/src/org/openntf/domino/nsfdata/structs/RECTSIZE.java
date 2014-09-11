@@ -4,26 +4,39 @@ import java.nio.ByteBuffer;
 
 /**
  * This structure is used to specify the position in which a bitmap is painted. (global.h)
- * 
- * @author jgallagher
  *
  */
 public class RECTSIZE extends AbstractStruct {
+	public static final int SIZE = 4;
+
+	static {
+		addFixedUnsigned("width", Short.class);
+		addFixedUnsigned("height", Short.class);
+	}
+
+	public RECTSIZE() {
+		super();
+	}
 
 	public RECTSIZE(final ByteBuffer data) {
 		super(data);
 	}
 
 	public int getWidth() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("width");
 	}
 
 	public int getHeight() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("height");
 	}
 
 	@Override
-	public int getStructSize() {
-		return 4;
+	public long getStructSize() {
+		return SIZE;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Width=" + getWidth() + ", Height=" + getHeight() + "]";
 	}
 }

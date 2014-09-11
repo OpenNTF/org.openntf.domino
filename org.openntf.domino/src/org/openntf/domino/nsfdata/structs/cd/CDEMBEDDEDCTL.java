@@ -3,14 +3,32 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record may further define attributes within a CDFIELD such as tab order.
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  */
 public class CDEMBEDDEDCTL extends CDRecord {
+
+	static {
+		addFixed("CtlStyle", Integer.class);
+		addFixed("Flags", Short.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
+		addFixed("Version", Short.class);
+		addFixed("CtlType", Short.class);
+		addFixedUnsigned("MaxChars", Short.class);
+		addFixedUnsigned("MaxLines", Short.class);
+		addFixedUnsigned("Percentage", Short.class);
+		addFixedArray("Spare", Integer.class, 3);
+	}
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEMBEDDEDCTL(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
 
 	public CDEMBEDDEDCTL(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -21,7 +39,7 @@ public class CDEMBEDDEDCTL extends CDRecord {
 	 */
 	public int getCtlStyle() {
 		// TODO make enum
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("CtlStyle");
 	}
 
 	/**
@@ -29,21 +47,21 @@ public class CDEMBEDDEDCTL extends CDRecord {
 	 */
 	public short getFlags() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 4);
+		return (Short) getStructElement("Flags");
 	}
 
 	/**
 	 * @return Width of embedded control
 	 */
-	public short getWidth() {
-		return getData().getShort(getData().position() + 6);
+	public int getWidth() {
+		return (Integer) getStructElement("Width");
 	}
 
 	/**
 	 * @return Height of embedded control
 	 */
-	public short getHeight() {
-		return getData().getShort(getData().position() + 8);
+	public int getHeight() {
+		return (Integer) getStructElement("Height");
 	}
 
 	/**
@@ -51,7 +69,7 @@ public class CDEMBEDDEDCTL extends CDRecord {
 	 */
 	public short getVersion() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 10);
+		return (Short) getStructElement("Version");
 	}
 
 	/**
@@ -59,26 +77,22 @@ public class CDEMBEDDEDCTL extends CDRecord {
 	 */
 	public short getCtlType() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 12);
+		return (Short) getStructElement("CtlType");
 	}
 
-	public short getMaxChars() {
-		return getData().getShort(getData().position() + 14);
+	public int getMaxChars() {
+		return (Integer) getStructElement("MaxChars");
 	}
 
-	public short getMaxLines() {
-		return getData().getShort(getData().position() + 16);
+	public int getMaxLines() {
+		return (Integer) getStructElement("MaxLines");
 	}
 
-	public short getPercentage() {
-		return getData().getShort(getData().position() + 18);
+	public int getPercentage() {
+		return (Integer) getStructElement("Percentage");
 	}
 
 	public int[] getSpare() {
-		int[] result = new int[3];
-		result[0] = getData().getInt(getData().position() + 20);
-		result[1] = getData().getInt(getData().position() + 24);
-		result[2] = getData().getInt(getData().position() + 28);
-		return result;
+		return (int[]) getStructElement("Spare");
 	}
 }

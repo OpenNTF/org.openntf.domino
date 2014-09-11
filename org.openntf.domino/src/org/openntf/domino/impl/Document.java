@@ -578,12 +578,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 			}
 			boolean ret = false;
-			try {
-				ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-			} catch (NotesException e) {
-				log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
-						+ " even though we can't find an item by that name.");
-				//				DominoUtils.handleException(e);
+			if (null != entityItemName) {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+				} catch (NotesException e) {
+					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
+							+ " even though we can't find an item by that name.");
+					//				DominoUtils.handleException(e);
+				}
 			}
 			if (saveChanges) {
 
@@ -2968,7 +2970,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				try {
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
-
 						result = del.save(force, makeResponse, markRead);
 						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
 							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
@@ -3430,6 +3431,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	private void resurrect() {
+		openMIMEEntities.clear();
 		if (noteid_ != null) {
 			try {
 				lotus.domino.Document d = null;
@@ -3617,6 +3619,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public Object get(final Object key) {
+		//TODO NTF: Back this with a caching Map so repeated calls don't bounce down to the delegate unless needed
+		//TODO NTF: Implement a read-only mode for Documents so we know in advance that our cache is valid
 		if (key == null) {
 			return null;
 		}
@@ -3628,6 +3632,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return this.getParentDocument();
 			}
 			if (skey.indexOf("@") != -1) { // TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
+				//TODO NTF: If so, we should change to looking for valid item names first, then trying to treat as formula
 				int pos = skey.indexOf('(');
 				if (pos != -1) {
 					skey = skey.substring(0, pos);
@@ -3683,6 +3688,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 
 				// TODO RPr: This should be replaced
+				//TODO NTF: Agreed when we can have an extensible switch for which formula engine to use
 				Formula formula = new Formula();
 				formula.setExpression(key.toString());
 				List<?> value = formula.getValue(this);
@@ -3867,7 +3873,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			jw.outStringProperty("@unid", getUniversalID());
 			Set<String> keys = keySet();
 			for (String key : keys) {
-				jw.outProperty(key, DominoUtils.toSerializable(getItemValue(key)));
+				Item currItem = getFirstItem(key);
+				if (currItem.getMIMEEntity() == null) {
+					jw.outProperty(key, currItem.getText());
+				} else {
+					String abstractedText = currItem.abstractText(0, false, false);
+					if (null == abstractedText) {
+						jw.outProperty(key, "**MIME ITEM, VALUE CANNOT BE DECODED TO JSON**");
+					} else {
+						jw.outProperty(key, abstractedText);
+					}
+				}
 			}
 			jw.endObject();
 			jw.flush();

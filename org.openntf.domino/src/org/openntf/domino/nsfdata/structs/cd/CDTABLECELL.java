@@ -3,14 +3,33 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the cell of a table. Use this structure when accessing a table in a rich text field. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDTABLECELL extends CDRecord {
+
+	static {
+		addFixedUnsigned("Row", Byte.class);
+		addFixedUnsigned("Column", Byte.class);
+		addFixedUnsigned("LeftMargin", Short.class);
+		addFixedUnsigned("RightMargin", Short.class);
+		addFixedUnsigned("FractionalWidth", Short.class);
+		addFixed("Border", Byte.class);
+		addFixed("Flags", Byte.class);
+		addFixed("v42Border", Short.class);
+		addFixedUnsigned("RowSpan", Short.class);
+		addFixedUnsigned("ColumnSpan", Short.class);
+		addFixed("BackgroundColor", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDTABLECELL(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
 
 	public CDTABLECELL(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -19,36 +38,36 @@ public class CDTABLECELL extends CDRecord {
 	/**
 	 * @return Row number (0 based)
 	 */
-	public byte getRow() {
-		return getData().get(getData().position() + 0);
+	public short getRow() {
+		return (Short) getStructElement("Row");
 	}
 
 	/**
 	 * @return Column number (0 based)
 	 */
-	public byte getColumn() {
-		return getData().get(getData().position() + 1);
+	public short getColumn() {
+		return (Short) getStructElement("Column");
 	}
 
 	/**
 	 * @return TWIPS
 	 */
-	public short getLeftMargin() {
-		return getData().getShort(getData().position() + 2);
+	public int getLeftMargin() {
+		return (Integer) getStructElement("LeftMargin");
 	}
 
 	/**
 	 * @return TWIPS
 	 */
-	public short getRightMargin() {
-		return getData().getShort(getData().position() + 4);
+	public int getRightMargin() {
+		return (Integer) getStructElement("RightMargin");
 	}
 
 	/**
 	 * @return 20" (in twips) * CellWidth / TableWidth Used only if AutoCellWidth is specified in the TABLEBEGIN.
 	 */
-	public short getFractionalWidth() {
-		return getData().getShort(getData().position() + 6);
+	public int getFractionalWidth() {
+		return (Integer) getStructElement("FractionalWidth");
 	}
 
 	/**
@@ -56,7 +75,7 @@ public class CDTABLECELL extends CDRecord {
 	 */
 	public byte getBorder() {
 		// TODO create enum
-		return getData().get(getData().position() + 8);
+		return (Byte) getStructElement("Border");
 	}
 
 	/**
@@ -64,7 +83,7 @@ public class CDTABLECELL extends CDRecord {
 	 */
 	public byte getFlags() {
 		// TODO create enum
-		return getData().get(getData().position() + 9);
+		return (Byte) getStructElement("Flags");
 	}
 
 	/**
@@ -72,15 +91,15 @@ public class CDTABLECELL extends CDRecord {
 	 */
 	public short getV42Border() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 10);
+		return (Short) getStructElement("v42Border");
 	}
 
-	public byte getRowSpan() {
-		return getData().get(getData().position() + 12);
+	public short getRowSpan() {
+		return (Short) getStructElement("RowSpan");
 	}
 
-	public byte getColumnSpan() {
-		return getData().get(getData().position() + 13);
+	public short getColumnSpan() {
+		return (Short) getStructElement("ColumnSpan");
 	}
 
 	/**
@@ -88,6 +107,6 @@ public class CDTABLECELL extends CDRecord {
 	 */
 	public short getBackgroundColor() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 14);
+		return (Short) getStructElement("BackgroundColor");
 	}
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<!--
+		Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xe:navigator id="navigator1">
+		<xe:this.treeNodes>
+			<xe:pageTreeNode label="Home" page="/Home.xsp">
+			</xe:pageTreeNode>
+
+			<xe:separatorTreeNode></xe:separatorTreeNode>
+			<xe:pageTreeNode label="Create Document (Map)" page="/Document_Create_Map.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Create Document (Key/Value Pairs)" page="/Document_Create_Pairs.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="getCreated" page="/Document_CreatedDateOld.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="getCreatedDate" page="/Document_CreatedDate.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Other Dates" page="/Document_OtherDates.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Document as Map 1" page="/Document_Map1.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Document as Map 2" page="/Document_Map2.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Document to JSON" page="/Document_ToJson.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Form Name" page="/Document_FormName.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Form" page="/Document_Form.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="ReplaceItemValue + Summary" page="/Document_ReplaceItemValueSummary.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Date Field" page="/Document_FieldDate.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Formula Field" page="/Document_FieldFormula.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="DocumentCollection Field" page="/Document_FieldDocumentCollection.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Set Names" page="/Document_BreakNames.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Map Field" page="/Document_FieldMap.xsp">
+			</xe:pageTreeNode>
+		</xe:this.treeNodes>
+	</xe:navigator>
+</xp:view>

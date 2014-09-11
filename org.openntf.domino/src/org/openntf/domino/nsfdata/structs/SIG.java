@@ -8,9 +8,9 @@ import org.openntf.domino.nsfdata.structs.cd.CDSignature;
 public abstract class SIG implements Serializable {
 
 	private CDSignature signature_;
-	private int length_;
+	private long length_;
 
-	protected SIG(final CDSignature signature, final int length) {
+	protected SIG(final CDSignature signature, final long length) {
 		signature_ = signature;
 		length_ = length;
 	}
@@ -19,11 +19,17 @@ public abstract class SIG implements Serializable {
 		return signature_;
 	}
 
-	public int getLength() {
+	public long getLength() {
 		return length_;
 	}
 
+	public void setDataLength(final int length) {
+		length_ = getSigLength() + length;
+	}
+
 	public abstract int getSigLength();
+
+	public abstract byte[] getBytes();
 
 	@Override
 	public String toString() {

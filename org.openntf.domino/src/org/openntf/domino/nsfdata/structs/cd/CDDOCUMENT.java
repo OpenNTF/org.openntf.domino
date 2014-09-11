@@ -3,20 +3,39 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines the structure of the document information field in a form note. A document information field is an item with name $INFO
  * (ITEM_NAME_DOCUMENT) and data type TYPE_COMPOSITE. The document information field defines attributes of documents created with that form.
  * (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDDOCUMENT extends CDRecord {
 
-	protected CDDOCUMENT(final SIG signature, final ByteBuffer data) {
+	static {
+		addFixed("PaperColor", Short.class);
+		addFixed("FormFlags", Short.class);
+		addFixed("NotePrivileges", Short.class);
+		addFixed("FormFlags2", Short.class);
+		addFixedUnsigned("InherFieldNameLength", Short.class);
+		addFixed("PaperColorExt", Short.class);
+		addFixed("PaperColorValue", COLOR_VALUE.class);
+		addFixed("FormFlags3", Short.class);
+		addFixed("Spare", Short.class);
+
+		addVariableString("InherFieldName", "getInherFieldNameLength");
+		addVariableString("FieldName", "getFieldNameLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDDOCUMENT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDDOCUMENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
@@ -25,7 +44,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getPaperColor() {
 		// TODO make an enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("PaperColor");
 	}
 
 	/**
@@ -33,7 +52,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getFormFlags() {
 		// TODO make an enum
-		return getData().getShort(getData().position() + 2);
+		return (Short) getStructElement("FormFlags");
 	}
 
 	/**
@@ -41,7 +60,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getNotePrivileges() {
 		// TODO make an enum
-		return getData().getShort(getData().position() + 4);
+		return (Short) getStructElement("NotePrivileges");
 	}
 
 	/**
@@ -49,14 +68,14 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getFormFlags2() {
 		// TODO make an enum
-		return getData().getShort(getData().position() + 6);
+		return (Short) getStructElement("FormFlags2");
 	}
 
 	/**
 	 * @return Length of the name, which follows this struct
 	 */
-	public short getInherFieldNameLength() {
-		return getData().getShort(getData().position() + 8);
+	public int getInherFieldNameLength() {
+		return (Integer) getStructElement("InherFieldNameLength");
 	}
 
 	/**
@@ -65,38 +84,33 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getPaperColorExt() {
 		// TODO make an enum
-		return getData().getShort(getData().position() + 10);
+		return (Short) getStructElement("PaperColorExt");
 	}
 
 	/**
 	 * @return Paper Color: As of v5.0 stored as RGB, other formats possible
 	 */
 	public COLOR_VALUE getPaperColorValue() {
-		ByteBuffer data = getData().duplicate();
-		data.position(getData().position() + 12);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("PaperColorValue");
 	}
 
 	public short getFormFlags3() {
 		// TODO make an enum
-		// There's an extra byte at the end of the color value
-		return getData().getShort(getData().position() + 18);
+		return (Short) getStructElement("FormFlags3");
 	}
 
 	public String getInheritFieldName() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 20);
-		data.limit(data.position() + getInherFieldNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("InherFieldName");
+	}
+
+	public int getFieldNameLength() {
+		return (int) (getDataLength() - 22 - getInherFieldNameLength());
 	}
 
 	/**
 	 * @return string indicating which field to append version number to
 	 */
 	public String getFieldName() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 20 + getInherFieldNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("FieldName");
 	}
 }

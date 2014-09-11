@@ -10,4 +10,9 @@ public class BasicCDRecord extends CDRecord {
 	protected BasicCDRecord(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Signature=" + getSignature() + "]";
+	}
 }

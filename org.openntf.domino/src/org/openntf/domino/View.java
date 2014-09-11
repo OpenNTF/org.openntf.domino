@@ -28,7 +28,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface View.
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
-		DatabaseDescendant {
+DatabaseDescendant {
 
 	public static class Schema extends FactorySchema<View, lotus.domino.View, Database> {
 		@Override
@@ -576,7 +576,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getColumnValues(int)
 	 */
 	@Override
-	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> getColumnValues(final int column);
 
