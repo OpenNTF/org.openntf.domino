@@ -87,15 +87,32 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 		QUERYCD(lotus.domino.Item.QUERYCD), READERS(lotus.domino.Item.READERS), RFC822TEXT(lotus.domino.Item.RFC822TEXT),
 		RICHTEXT(lotus.domino.Item.RICHTEXT), SIGNATURE(lotus.domino.Item.SIGNATURE), TEXT(lotus.domino.Item.TEXT),
 		UNAVAILABLE(lotus.domino.Item.UNAVAILABLE), UNKNOWN(lotus.domino.Item.UNKNOWN), USERDATA(lotus.domino.Item.USERDATA),
-		USERID(lotus.domino.Item.USERID), VIEWMAPDATA(lotus.domino.Item.VIEWMAPDATA), VIEWMAPLAYOUT(lotus.domino.Item.VIEWMAPLAYOUT);
+		USERID(lotus.domino.Item.USERID), VIEWMAPDATA(lotus.domino.Item.VIEWMAPDATA), VIEWMAPLAYOUT(lotus.domino.Item.VIEWMAPLAYOUT),
+		// Unfortunately, the XPage DominoDocument cannot handle serialized MIME beans correctly, so we will return a custom datatype of 10001 
+		MIME_BEAN(10001);
 
+		/**
+		 * @Deprecated better use valueOf
+		 */
+		@Deprecated
 		public static Type getType(final int value) {
+			return valueOf(value);
+		}
+
+		/**
+		 * Return the {@link Item.Type} of a numeric value
+		 * 
+		 * @param value
+		 *            the numeric value
+		 * @return a {@link Item.Type} Object
+		 */
+		public static Type valueOf(final int value) {
 			for (Type level : Type.values()) {
 				if (level.getValue() == value) {
 					return level;
 				}
 			}
-			return null;
+			return Type.UNKNOWN;
 		}
 
 		private final int value_;
@@ -261,8 +278,10 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.Item#getType()
+	 * @Deprecated, better use getTypeEx
 	 */
 	@Override
+	@Deprecated
 	public int getType();
 
 	/*

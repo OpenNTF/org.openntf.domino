@@ -1769,6 +1769,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getType()
 	 */
 	@Override
+	@Deprecated
 	public int getType() {
 		try {
 			return getDelegate().getType();
@@ -1777,6 +1778,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return 0;
 
 		}
+	}
+
+	@Override
+	public Type getTypeEx() {
+		return Type.valueOf(getType());
 	}
 
 	/*

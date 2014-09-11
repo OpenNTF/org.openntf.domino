@@ -22,6 +22,7 @@ import org.openntf.domino.Database.FTSortOption;
 import org.openntf.domino.Database.FixupOption;
 import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
+import org.openntf.domino.Database.Type;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
@@ -64,7 +65,8 @@ public interface Database extends Base {
 	 * 
 	 */
 	public static enum Events implements EnumEvent {
-		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT, AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
+		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT,
+		AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
 	}
 
 	/**
@@ -655,5 +657,12 @@ public interface Database extends Base {
 	 * @return the Locale stored in the Notes database
 	 */
 	public Locale getLocale();
+
+	/**
+	 * Returns the type of this database as Type object
+	 * 
+	 * @return a {@link Type} Object
+	 */
+	Type getTypeEx();
 
 }
