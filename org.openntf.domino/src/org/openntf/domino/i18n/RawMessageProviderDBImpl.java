@@ -6,14 +6,18 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
+import org.openntf.domino.utils.Factory;
 
 /*----------------------------------------------------------------------------*/
 public class RawMessageProviderDBImpl extends RawMessageProvider {
 
 	private Database iDB;
+	private String iDBServer;
+	private String iDBPath;
 	private String iLookupView;
 	private int iColBundle;
 	private int iColKey;
@@ -28,7 +32,10 @@ public class RawMessageProviderDBImpl extends RawMessageProvider {
 
 	protected RawMessageProviderDBImpl(final Database db, final String lookupView, final int colBundle, final int colKey,
 			final int colLanguage, final int colText) {
-		iDB = db;
+		if ((iDB = db) != null) {
+			iDBServer = iDB.getServer();
+			iDBPath = iDB.getFilePath();
+		}
 		iLookupView = lookupView;
 		iColBundle = colBundle;
 		iColKey = colKey;
@@ -65,9 +72,20 @@ public class RawMessageProviderDBImpl extends RawMessageProvider {
 	/*----------------------------------------------------------------------------*/
 	private void buildMsgCache() {
 		iMsgCache = new TreeMap<String, Map<String, Map<String, String>>>();
-		if (iDB == null)
-			return;
+		/*
+		 * To avoid PANIC-s from WrapperFactory.recacheLotusObject (when buildMsgCache is called again),
+		 * this was partly modified 
+		 */
 		try {
+			if (iDB == null) {
+				if (iDBPath == null)
+					return;
+				Session s = Factory.getSession_unchecked();
+				if (s == null || (iDB = s.getDatabase(iDBServer, iDBPath)) == null) {
+					System.err.println("RawMessageProviderDBImpl: Can't open DB " + iDBServer + "!!" + iDBPath);
+					return;
+				}
+			}
 			View v = iDB.getView(iLookupView);
 			if (v == null)
 				return;
@@ -77,6 +95,8 @@ public class RawMessageProviderDBImpl extends RawMessageProvider {
 				oneDBMsgText(ve);
 		} catch (Throwable t) {
 			t.printStackTrace();
+		} finally {
+			iDB = null;
 		}
 	}
 
