@@ -22,8 +22,18 @@ import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NSFService;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
+/**
+ * @author ntfreeman
+ * 
+ *         XotsService created by the XotsDaemon constructor and added from there to the LCDEnvironment's List<HttpService>
+ */
 public class XotsService extends NSFService {
 
+	/**
+	 * Loops through the HTTPServices assigned to LCDEnvironment and returns the first XotsService
+	 * 
+	 * @return the one (and expected to be only) XotsService
+	 */
 	public static XotsService getInstance() {
 		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
 			if (service instanceof XotsService) {
