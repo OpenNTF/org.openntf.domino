@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure is used to define a JPEG or GIF Image that is part of a Domino document. The CDIMAGEHEADER structure follows a CDGRAPHIC
@@ -23,7 +24,13 @@ public class CDIMAGEHEADER extends CDRecord {
 		addFixed("Reserved", Integer.class);
 	}
 
-	protected CDIMAGEHEADER(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDIMAGEHEADER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDIMAGEHEADER(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

@@ -57,15 +57,29 @@ public abstract class CDRecord extends AbstractStruct {
 	}
 
 	@Override
+	protected byte[] getBytes() {
+		byte[] parentBytes = super.getBytes();
+		byte[] sigBytes = getSignature().getBytes();
+		byte[] result = new byte[parentBytes.length + sigBytes.length];
+		System.arraycopy(sigBytes, 0, result, 0, sigBytes.length);
+		System.arraycopy(parentBytes, 0, result, sigBytes.length, parentBytes.length);
+		return result;
+	}
+
+	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		super.readExternal(in);
-		signature_ = (SIG) in.readObject();
+		int sigLength = in.readInt();
+		byte[] sigBytes = new byte[sigLength];
+		in.read(sigBytes);
+		signature_ = CDSignature.sigForData(ByteBuffer.wrap(sigBytes));
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		// TODO change this to write the signature bytes directly
-		out.writeObject(signature_);
+		byte[] sigBytes = signature_.getBytes();
+		out.writeInt(sigBytes.length);
+		out.writeObject(sigBytes);
 	}
 }

@@ -202,12 +202,29 @@ public enum CDSignature {
 		}
 	}
 
+	public byte[] getBytes() {
+		byte[] result = new byte[getSize()];
+		result[0] = (byte) getBaseValue();
+		switch (getEffectiveRecordLength()) {
+		case LONG:
+			result[1] = 0;
+			break;
+		case WORD:
+			result[1] = (byte) 0xFF;
+			break;
+		case BYTE:
+			result[1] = 1; // This will have to be set down the line
+			break;
+		}
+		return result;
+	}
+
 	public static SIG sigForData(final ByteBuffer data) {
-		data.order(ByteOrder.LITTLE_ENDIAN);
+		ByteBuffer sigData = data.duplicate().order(ByteOrder.LITTLE_ENDIAN);
 		//		System.out.println("reading sig at position: " + data.position());
-		byte lowOrderByte = data.get(data.position());
-		int lowOrder = lowOrderByte & 0xFF;
-		int highOrder = data.get(data.position() + 1) & 0xFF;
+		byte lowOrderByte = sigData.get(sigData.position());
+		int lowOrder = lowOrderByte & 0xFF;                          // low order = type
+		int highOrder = sigData.get(sigData.position() + 1) & 0xFF;  // high order = record length
 		//		System.out.println("low order: " + lowOrder);
 		//		System.out.println("low order byte: " + lowOrderByte);
 		//		System.out.println("high order: " + highOrder);
@@ -223,9 +240,9 @@ public enum CDSignature {
 				case BYTE:
 					return new BSIG(cdSig, highOrder);
 				case WORD:
-					return new WSIG(cdSig, data.getShort(data.position() + 2) & 0xFFFF);
+					return new WSIG(cdSig, sigData.getShort(sigData.position() + 2) & 0xFFFF);
 				case LONG:
-					return new LSIG(cdSig, data.getInt(data.position() + 2) & 0xFFFFFFFFL);
+					return new LSIG(cdSig, sigData.getInt(sigData.position() + 2) & 0xFFFFFFFFL);
 				default:
 					break;
 				}

@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record allows for additional information to be provided for a graphic. (editods.h)
@@ -36,6 +37,12 @@ public class CDVERTICALALIGN extends CDRecord {
 
 	static {
 		addFixed("Alignment", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDVERTICALALIGN(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDVERTICALALIGN(final SIG signature, final ByteBuffer data) {

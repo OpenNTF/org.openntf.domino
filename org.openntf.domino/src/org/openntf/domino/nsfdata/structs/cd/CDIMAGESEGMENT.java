@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the image segment data of a JPEG or GIF image and follows a CDIMAGEHEADER structure. The number of segments in the
@@ -21,7 +22,13 @@ public class CDIMAGESEGMENT extends CDRecord {
 		addVariableData("Data", "getDataSize");
 	}
 
-	protected CDIMAGESEGMENT(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDIMAGESEGMENT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDIMAGESEGMENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

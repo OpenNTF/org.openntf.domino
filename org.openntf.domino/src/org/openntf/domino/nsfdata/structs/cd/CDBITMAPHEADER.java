@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A rich text field may contain a bitmap image. There are three types, monochrome, 8-bit mapped color, and 16-bit color; a gray scale
@@ -51,6 +52,8 @@ public class CDBITMAPHEADER extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
 	static {
 		addFixed("Dest", RECTSIZE.class);
 		addFixed("Crop", RECTSIZE.class);
@@ -65,6 +68,12 @@ public class CDBITMAPHEADER extends CDRecord {
 		addFixedUnsigned("SegmentCount", Short.class);
 		addFixedUnsigned("ColorCount", Short.class);
 		addFixedUnsigned("PatternCount", Short.class);
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDBITMAPHEADER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDBITMAPHEADER(final SIG signature, final ByteBuffer data) {

@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure is used to define a Cascading Style Sheet (CSS) that is part of a Domino database. CDFILESEGMENT structure(s) follow the
@@ -23,7 +24,13 @@ public class CDFILEHEADER extends CDRecord {
 		addVariableString("FileExt", "getFileExtLen");
 	}
 
-	protected CDFILEHEADER(final SIG signature, final ByteBuffer data) {
+	public static final int SIZE = getFixedStructSize();
+
+	public CDFILEHEADER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
+	public CDFILEHEADER(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 

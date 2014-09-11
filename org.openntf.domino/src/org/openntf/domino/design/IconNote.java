@@ -16,10 +16,27 @@
 
 package org.openntf.domino.design;
 
+
 /**
  * @author jgallagher
  * 
  */
 public interface IconNote extends DesignBase {
+	public static enum DASMode {
+		NONE, VIEWS, VIEWSANDDOCUMENTS;
+	}
 
+	/**
+	 * Sets the Domino Data Access Service mode for the database.
+	 * 
+	 * @param mode
+	 */
+	void setDASMode(final DASMode mode);
+
+	/**
+	 * @return The Domino Data Access Service mode for the database.
+	 */
+	DASMode getDASMode();
+
+	String[] getXotsClassNames();
 }

@@ -17,6 +17,10 @@ public class LENGTH_VALUE extends AbstractStruct {
 		addFixed("Reserved", Byte.class);
 	}
 
+	public LENGTH_VALUE() {
+		super();
+	}
+
 	public LENGTH_VALUE(final ByteBuffer data) {
 		super(data);
 	}

@@ -1082,6 +1082,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return null;
 	}
 
+	@Override
+	public Document getDocumentByKey(final Serializable key) {
+		return getDocumentWithKey(key);
+	}
+
+	@Override
+	public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
+		return getDocumentWithKey(key, createOnFail);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

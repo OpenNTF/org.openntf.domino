@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the cell of a table. Use this structure when accessing a table in a rich text field. (editods.h)
@@ -22,6 +23,12 @@ public class CDTABLECELL extends CDRecord {
 		addFixedUnsigned("RowSpan", Short.class);
 		addFixedUnsigned("ColumnSpan", Short.class);
 		addFixed("BackgroundColor", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDTABLECELL(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDTABLECELL(final SIG signature, final ByteBuffer data) {

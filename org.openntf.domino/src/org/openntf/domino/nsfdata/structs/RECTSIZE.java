@@ -14,6 +14,10 @@ public class RECTSIZE extends AbstractStruct {
 		addFixedUnsigned("height", Short.class);
 	}
 
+	public RECTSIZE() {
+		super();
+	}
+
 	public RECTSIZE(final ByteBuffer data) {
 		super(data);
 	}

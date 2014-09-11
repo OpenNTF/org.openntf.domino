@@ -8,6 +8,7 @@ import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the Action Bar attributes. It is an extension of the CDACTIONBAR record. It is found within a $V5ACTIONS item and
@@ -167,6 +168,12 @@ public class CDACTIONBAREXT extends CDRecord {
 		addFixed("barFontID", FONTID.class);
 		addFixed("barHeight", LENGTH_VALUE.class);
 		addFixedArray("Spare", Integer.class, 12);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDACTIONBAREXT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDACTIONBAREXT(final SIG signature, final ByteBuffer data) {

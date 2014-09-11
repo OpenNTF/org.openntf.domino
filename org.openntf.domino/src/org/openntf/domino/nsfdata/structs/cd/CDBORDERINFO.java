@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record describes border information for a given table. This CD record will be preceded with CD record CDPRETABLEBEGIN both
@@ -111,6 +112,8 @@ public class CDBORDERINFO extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
 	static {
 		addFixed("Flags", Integer.class);
 		addFixed("BorderStyle", Short.class);
@@ -131,6 +134,12 @@ public class CDBORDERINFO extends CDRecord {
 		addFixedUnsigned("OuterWidthRight", Short.class);
 		addFixed("Color", COLOR_VALUE.class);
 		addFixedArray("wSpares", Short.class, 5);
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDBORDERINFO(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDBORDERINFO(final SIG signature, final ByteBuffer data) {

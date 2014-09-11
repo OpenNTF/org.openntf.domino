@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record further defines information for a table. (editods.h)
@@ -42,6 +43,12 @@ public class CDTABLELABEL extends CDRecord {
 		addFixedArray("Label", Byte.class, 128);
 		addFixedArray("Reserved", Short.class, 3);
 		addFixed("Flags", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDTABLELABEL(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDTABLELABEL(final SIG signature, final ByteBuffer data) {

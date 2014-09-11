@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The bitmap data is divided into segments to optimize data storage within Domino. It is recommended that each segment be no larger than
@@ -12,6 +13,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDBITMAPSEGMENT extends CDRecord {
+	public static final int SIZE;
 
 	static {
 		addFixedArray("Reserved", Integer.class, 2);
@@ -19,6 +21,12 @@ public class CDBITMAPSEGMENT extends CDRecord {
 		addFixedUnsigned("DataSize", Short.class);
 
 		addVariableData("BitmapData", "getDataSize");
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDBITMAPSEGMENT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDBITMAPSEGMENT(final SIG signature, final ByteBuffer data) {

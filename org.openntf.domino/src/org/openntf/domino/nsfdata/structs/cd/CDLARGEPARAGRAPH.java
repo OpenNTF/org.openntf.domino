@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The 64K limit on paragraphs has been removed in Notes/Domino 6. To ensure backward compatibility, "large" paragraphs are broken into
@@ -17,6 +18,12 @@ public class CDLARGEPARAGRAPH extends CDRecord {
 		addFixed("Version", Short.class);
 		addFixed("Flags", Short.class);
 		addFixedArray("Spare", Integer.class, 2);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLARGEPARAGRAPH(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDLARGEPARAGRAPH(final SIG signature, final ByteBuffer data) {

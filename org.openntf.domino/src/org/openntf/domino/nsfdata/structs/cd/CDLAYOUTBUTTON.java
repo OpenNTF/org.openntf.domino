@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A button in a layout region of a form is defined by a CDLAYOUTBUTTON record. This record must be between a CDLAYOUT record and a
@@ -21,6 +22,12 @@ public class CDLAYOUTBUTTON extends CDRecord {
 		addFixed("ElementHeader", ELEMENTHEADER.class);
 		addFixed("Flags", Integer.class);
 		addFixedArray("Reserved", Byte.class, 16);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLAYOUTBUTTON(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDLAYOUTBUTTON(final SIG signature, final ByteBuffer data) {

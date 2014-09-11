@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Starting in Release 4.0 of Notes, a paragraph may have an associated formula that determines when the paragraph is to be hidden. The
@@ -17,6 +18,12 @@ public class CDPABFORMULAREF extends CDRecord {
 	static {
 		addFixed("SourcePABID", Short.class);
 		addFixed("DestPABID", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDPABFORMULAREF(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDPABFORMULAREF(final SIG signature, final ByteBuffer data) {

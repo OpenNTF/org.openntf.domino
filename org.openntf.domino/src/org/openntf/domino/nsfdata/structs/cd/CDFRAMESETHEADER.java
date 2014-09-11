@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Beginning header record to both a CDFRAMESET and CDFRAME record. (fsods.h)
@@ -16,6 +17,12 @@ public class CDFRAMESETHEADER extends CDRecord {
 		addFixed("Version", Short.class);
 		addFixedUnsigned("RecCount", Short.class);
 		addFixedArray("Reserved", Integer.class, 4);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDFRAMESETHEADER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDFRAMESETHEADER(final SIG signature, final ByteBuffer data) {

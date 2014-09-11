@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.NOTES_COLOR;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Specifies a horizontal line (editods.h)
@@ -67,6 +68,8 @@ public class CDHRULE extends CDRecord {
 		addFixed("GradientColor", Short.class);
 	}
 
+	public static final int SIZE = getFixedStructSize();
+
 	/**
 	 * Default value for Height member of the CDRULE structure in TWIPS.
 	 */
@@ -75,6 +78,10 @@ public class CDHRULE extends CDRecord {
 	 * Default value for Width member of the CDRULE structure in TWIPS.
 	 */
 	public static final short DEFAULTHRULEWIDTH = 720;
+
+	public CDHRULE(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
 
 	public CDHRULE(final SIG signature, final ByteBuffer data) {
 		super(signature, data);

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A field in a layout region of a form is defined by a CDLAYOUTFIELD record. This record must be between a CDLAYOUT record and a
@@ -129,6 +130,12 @@ public class CDLAYOUTFIELD extends CDRecord {
 		addFixed("Flags", Integer.class);
 		addFixed("bFieldType", Byte.class);
 		addFixedArray("Reserved", Byte.class, 15);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDLAYOUTFIELD(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDLAYOUTFIELD(final SIG signature, final ByteBuffer data) {

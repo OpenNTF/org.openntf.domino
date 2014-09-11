@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.OLE_GUID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Structure of an on-disk autolaunch item. Most of the information contained in this structure refers to OLE autolaunching behaviors.
@@ -211,6 +212,12 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 		addFixedUnsigned("FieldNameLength", Short.class);
 
 		addVariableString("FieldName", "getFieldNameLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDDOCAUTOLAUNCH(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDDOCAUTOLAUNCH(final SIG signature, final ByteBuffer data) {

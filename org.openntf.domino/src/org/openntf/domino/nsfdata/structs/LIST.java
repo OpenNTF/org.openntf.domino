@@ -15,6 +15,10 @@ public class LIST extends AbstractStruct {
 		addFixedUnsigned("ListEntries", Short.class);
 	}
 
+	public LIST() {
+		super();
+	}
+
 	public LIST(final ByteBuffer data) {
 		super(data);
 	}
@@ -26,5 +30,9 @@ public class LIST extends AbstractStruct {
 
 	public int getListEntries() {
 		return (Integer) getStructElement("ListEntries");
+	}
+
+	public void setListEntries(final int entryCount) {
+		setStructElement("ListEntries", entryCount);
 	}
 }

@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the beginning of a table. It contains information about the format and size of the table. Use this structure
@@ -19,6 +20,12 @@ public class CDTABLEBEGIN extends CDRecord {
 		addFixedUnsigned("V4HorizInterCellSpace", Short.class);
 		addFixedUnsigned("V4VertInterCellSpace", Short.class);
 		addFixed("Flags", Short.class);
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDTABLEBEGIN(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
 	}
 
 	public CDTABLEBEGIN(final SIG signature, final ByteBuffer data) {
