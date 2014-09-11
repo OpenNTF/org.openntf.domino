@@ -8,6 +8,7 @@ Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-DocURL: platform:/plugin/org.openntf.domino.source/doc
 Import-Package: javax.annotation,
+ org.openntf.formula,
  org.osgi.framework
 Bundle-ActivationPolicy: lazy
 Export-Package: com.google.common.annotations,
@@ -142,8 +143,6 @@ Implementation-Version: 1.0.0_20140320054355
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Require-Bundle: com.ibm.commons,
- com.ibm.xsp.domino,
- com.ibm.domino.napi,
  com.ibm.icu,
  org.eclipse.pde.core;resolution:=optional
 Bundle-ClassPath: core/,

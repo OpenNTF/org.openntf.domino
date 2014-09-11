@@ -135,13 +135,13 @@ Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Built-By: praml
 Build-Date: 20140416093417
-Require-Bundle: org.openntf.formula,
- com.ibm.icu.base,
+Require-Bundle: com.ibm.icu.base,
  com.ibm.commons,
  com.ibm.commons.xml,
  org.eclipse.pde.core;resolution:=optional
 Import-Package: javax.annotation,
- lotus.domino
+ lotus.domino,
+ org.openntf.formula
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 
