@@ -24,7 +24,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface NotesCalendar.
  */
 public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.domino.NotesCalendar, org.openntf.domino.ext.NotesCalendar,
-		SessionDescendant {
+SessionDescendant {
 
 	public static class Schema extends FactorySchema<NotesCalendar, lotus.domino.NotesCalendar, Database> {
 		@Override
@@ -229,12 +229,12 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	@Override
 	public void setReadXLotusPropsOutputLevel(final int level);
 
-	/* 
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
-	 */
-	@Override
-	public String getApptunidFromUID(String arg0, boolean arg1);
+	//	/* 
+	//	 * (non-Javadoc)
+	//	 * 
+	//	 * @see lotus.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
+	//	 */
+	// @Override
+	//	public String getApptunidFromUID(String arg0, boolean arg1);
 
 }

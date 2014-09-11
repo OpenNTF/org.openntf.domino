@@ -7,7 +7,7 @@
 	<classpathentry kind="src" path="guava"/>
 	<classpathentry kind="src" path="rxjava"/>
 	<classpathentry kind="src" path="tinkerpop"/>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/openntf/domino/instrument/" kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

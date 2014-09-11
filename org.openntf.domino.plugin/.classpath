@@ -14,9 +14,10 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="src" output="plugin" path="src"/>
-	<classpathentry kind="src" output="core" path="OSGI-OPT/core">
-	<attributes>
-	<attribute  name="javadoc_location" value="platform:/plugin/org.openntf.domino.source/doc"/></attributes>
+	<classpathentry excluding="org/openntf/domino/instrument/" kind="src" output="core" path="OSGI-OPT/core">
+		<attributes>
+			<attribute name="javadoc_location" value="platform:/plugin/org.openntf.domino.source/doc"/>
+		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="formula" path="OSGI-OPT/formula"/>
 	<classpathentry exported="true" kind="lib" path="ext/com.google.guava.jar"/>
