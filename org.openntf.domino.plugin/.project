@@ -2,9 +2,6 @@
 <projectDescription>
 	<name>org.openntf.domino.plugin</name>
 	<comment></comment>
-	<projects>
-		<project>org.openntf.domino</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

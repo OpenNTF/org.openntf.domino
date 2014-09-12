@@ -6,7 +6,6 @@ Bundle-Version: 1.5.0.qualifier
 Bundle-Activator: org.openntf.domino.plugin.Activator
 Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-DocURL: platform:/plugin/org.openntf.domino.source/doc
 Import-Package: javax.annotation,
  org.openntf.formula,
  org.osgi.framework
@@ -143,14 +142,13 @@ Implementation-Version: 1.0.0_20140320054355
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Require-Bundle: com.ibm.commons,
- com.ibm.icu,
- org.eclipse.pde.core;resolution:=optional
-Bundle-ClassPath: core/,
- formula/,
- plugin/,
- ext/com.google.guava.jar,
+ com.ibm.icu
+Bundle-ClassPath: ext/com.google.guava.jar,
  ext/com.tinkerpop.jar,
  ext/javassist.jar,
  ext/jsr305.jar,
- ext/rxjava.jar
+ ext/rxjava.jar,
+ formula/,
+ core/,
+ plugin/
 
