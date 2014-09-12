@@ -1,28 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="ext/jsr305.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="src" path="/org.openntf.formula">
-		<accessrules>
-			<accessrule kind="accessible" pattern="**"/>
-		</accessrules>
-	</classpathentry>
-	<classpathentry exported="true" kind="src" path="/org.openntf.domino">
-		<accessrules>
-			<accessrule kind="accessible" pattern="**"/>
-		</accessrules>
-	</classpathentry>
-	<classpathentry kind="src" output="plugin" path="src"/>
-	<classpathentry excluding="org/openntf/domino/instrument/" kind="src" output="core" path="OSGI-OPT/core">
-		<attributes>
-			<attribute name="javadoc_location" value="platform:/plugin/org.openntf.domino.source/doc"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="formula" path="OSGI-OPT/formula"/>
-	<classpathentry exported="true" kind="lib" path="ext/com.google.guava.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/com.tinkerpop.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jsr305.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/javassist.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/rxjava.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/com.google.guava.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/com.tinkerpop.jar"/>
+	<classpathentry kind="src" output="formula" path="OSGI-OPT/formula"/>
+	<classpathentry excluding="org/openntf/domino/instrument/" kind="src" output="core" path="OSGI-OPT/core"/>
+	<classpathentry kind="src" output="plugin" path="src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
