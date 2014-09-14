@@ -3338,7 +3338,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (!isRemoveQueued_) {
 			DatabaseTransaction txn = getParentDatabase().getTransaction();
 			if (txn != null) {
-				System.out.println("Found a transaction: " + txn + " from parent Database " + getParentDatabase().getApiPath());
+				//				System.out.println("DEBUG: Found a transaction: " + txn + " from parent Database " + getParentDatabase().getApiPath());
 				txn.queueRemove(this);
 				isRemoveQueued_ = true;
 				return true; // we queued this, so whoever asked shouldn't do it yet.
@@ -3390,7 +3390,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		checkMimeOpen();
 		boolean result = false;
 		RemoveType type = removeType_;
-		System.out.println("Forcing delegate removal of type " + type == null ? "null!" : type.name());
+		//		System.out.println("DEBUG: Forcing delegate removal of type " + (type == null ? "null!" : type.name()));
 		try {
 			switch (type) {
 			case SOFT_FALSE:
@@ -3411,12 +3411,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				result = getDelegate().removePermanently(false);
 				break;
 			default:
-				System.out.println("UNKNOWN REMOVE TYPE!");
+				System.out.println("ALERT: Unknown remove type on deletion. This should not be possible.");
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
-		System.out.println("Delegate remove call returned " + String.valueOf(result));
+		//		System.out.println("DEBUG: Delegate remove call returned " + String.valueOf(result));
 		return result;
 	}
 

@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 /**
  * This Exception is used to indicate/detect that some BackendBridge-functions will work properly
  * 
- * @see org.openntf.domino.plugin.Activator#verifyIGetEntryByKey()
  * @see org.openntf.domino.impl.View#iGetEntryByKey
  * @author Roland Praml
  * 
