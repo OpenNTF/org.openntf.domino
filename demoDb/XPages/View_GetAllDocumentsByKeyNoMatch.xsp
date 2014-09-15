@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<!--
+		Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftView xp:key="LeftColumn"></xc:LeftView>
+			<xc:mainArea xp:key="facet_1" title="View" javaMethodName="getAllDocumentsByKeyNoMatch">
+				<xc:this.description>
+					<![CDATA[Outputting contents from a NotesDocumentCollection where the key does not exist.]]>
+				</xc:this.description>
+				<xp:this.facets>
+					<xp:button value="Run SSJS Tests" id="button1"
+						xp:key="SSJSButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="SSJSDiv">
+									<xp:this.action><![CDATA[#{javascript:try {
+	var statesView:org.openntf.domino.View = database.getView("allContactsByState");
+	var sb = new java.lang.StringBuilder();
+	var key:java.util.ArrayList = new java.util.ArrayList();
+	key.add("CX");
+	var dc = statesView.getAllDocumentsByKey(key,true);
+	sb.append("Getting values...");
+	for (doc in dc) {
+		sb.append(doc.get("FirstName") + " " + doc.get("LastName") + "<br/>"); // Do whatever it is you actually want to get done
+	}
+	sb.append("Done");
+	viewScope.put("SSJSTest",sb.toString());
+} catch(e) {
+	dump(e);
+}}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Java Tests" id="button3"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv"
+							action="#{javascript:openNTFViewBean.getAllDocumentsByKeyNoMatch()}">
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Old Java Tests" id="button2"
+						xp:key="oldJavaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="oldJavaDiv"
+							action="#{javascript:oldViewBean.getAllDocumentsByKeyNoMatch()}">
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

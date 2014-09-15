@@ -5,11 +5,11 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD structure defines simple actions, formulas or LotusScript within a given image map. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */
@@ -91,41 +91,57 @@ public class CDEVENT extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Integer.class);
+		addFixed("EventType", Short.class);
+		addFixed("ActionType", Short.class);
+		addFixedUnsigned("ActionLength", Integer.class);
+		addFixedUnsigned("SignatureLength", Short.class);
+		addFixedArray("Reserved", Byte.class, 14);
+
+		addVariableData("Action", "getActionLength");
+		addVariableData("Signature", "getSignatureLength");
+	}
+
+	public static final int SIZE = getFixedStructSize();
+
+	public CDEVENT(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
 	public CDEVENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 0));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	public EventType getEventType() {
-		return EventType.valueOf(getData().getShort(getData().position() + 4));
+		return EventType.valueOf((Short) getStructElement("EventType"));
 	}
 
 	public ActionType getActionType() {
-		return ActionType.valueOf(getData().getShort(getData().position() + 6));
+		return ActionType.valueOf((Short) getStructElement("ActionType"));
 	}
 
-	public long getActionLength() {
-		return getData().getInt(getData().position() + 8) & 0xFFFFFFFFl;
+	public int getActionLength() {
+		return ((Long) getStructElement("ActionLength")).intValue();
 	}
 
 	public int getSignatureLength() {
-		return getData().getShort(getData().position() + 12) & 0xFFFF;
+		return (Integer) getStructElement("SignatureLength");
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[14];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = getData().get(getData().position() + 14 + i);
-		}
-		return result;
+		return (byte[]) getStructElement("Reserved");
 	}
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Flags: " + getFlags() + ", EventType: " + getEventType() + ", ActionType: "
-				+ getActionType() + "]";
+	public byte[] getAction() {
+		return (byte[]) getStructElement("Action");
+	}
+
+	public byte[] getEventSignature() {
+		return (byte[]) getStructElement("Signature");
 	}
 }

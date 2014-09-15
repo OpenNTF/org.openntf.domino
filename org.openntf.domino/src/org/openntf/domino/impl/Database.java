@@ -1084,6 +1084,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return null;
 	}
 
+	@Override
+	public Document getDocumentByKey(final Serializable key) {
+		return getDocumentWithKey(key);
+	}
+
+	@Override
+	public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
+		return getDocumentWithKey(key, createOnFail);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1654,6 +1664,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getReplicaID() {
+		return replid_;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getMetaReplicaId()
+	 */
+	@Override
+	public String getMetaReplicaID() {
+		if (server_.length() > 0)
+			return server_ + "!!" + replid_;
 		return replid_;
 	}
 
@@ -3373,6 +3393,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getApiPath()
+	 */
 	@Override
 	public String getApiPath() {
 		if (server_.length() > 0)
@@ -3383,6 +3406,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private IDatabaseSchema schema_;
 	private volatile Boolean isSchemaChecked_ = Boolean.FALSE;
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getSchema()
+	 */
 	@Override
 	public IDatabaseSchema getSchema() {
 		if (!isSchemaChecked_ && schema_ == null) {
@@ -3392,6 +3418,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return schema_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#setSchema(org.openntf.domino.schema.IDatabaseSchema)
+	 */
 	@Override
 	public void setSchema(final IDatabaseSchema schema) {
 		schema_ = schema;

@@ -91,4 +91,27 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 		// TODO is this safe enough in the event of multiple folders/views with the same name?
 		return getAncestorDatabase().getView(getName());
 	}
+
+	public boolean isAllowDAS() {
+		XMLNode node = getDxlNode("//item[@name='$WebFlags']/text");
+		return node != null && node.getText().contains("A");
+	}
+
+	public void setAllowDAS(final boolean allowDAS) {
+		XMLNode node = getDxlNode("//item[@name='$WebFlags']/text");
+		if (node == null) {
+			node = getDxl().getDocumentElement().addChildElement("item");
+			node.setAttribute("name", "$WebFlags");
+			node = node.addChildElement("text");
+		}
+		if (allowDAS) {
+			if (!node.getText().contains("A")) {
+				node.setText(node.getText() + "A");
+			}
+		} else {
+			if (node.getText().contains("A")) {
+				node.setText(node.getText().replace("A", ""));
+			}
+		}
+	}
 }

@@ -3,20 +3,31 @@ package org.openntf.domino.nsfdata.structs;
 import java.nio.ByteBuffer;
 
 /**
- * This record contains information for storing a length to disk.
- * 
- * @author jgallagher
+ * This record contains information for storing a length to disk. (editods.h)
  *
  */
 public class LENGTH_VALUE extends AbstractStruct {
+
+	public static final int SIZE = 12;
+
+	static {
+		addFixed("Flags", Short.class);
+		addFixed("Length", Double.class);
+		addFixed("Units", Byte.class);
+		addFixed("Reserved", Byte.class);
+	}
+
+	public LENGTH_VALUE() {
+		super();
+	}
 
 	public LENGTH_VALUE(final ByteBuffer data) {
 		super(data);
 	}
 
 	@Override
-	public int getStructSize() {
-		return 12;
+	public long getStructSize() {
+		return SIZE;
 	}
 
 	/**
@@ -24,14 +35,14 @@ public class LENGTH_VALUE extends AbstractStruct {
 	 */
 	public short getFlags() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("Flags");
 	}
 
 	/**
 	 * @return Length of the record
 	 */
 	public double getLength() {
-		return getData().getDouble(getData().position() + 2);
+		return (Double) getStructElement("Length");
 	}
 
 	/**
@@ -39,13 +50,13 @@ public class LENGTH_VALUE extends AbstractStruct {
 	 */
 	public byte getUnits() {
 		// TODO make enum
-		return getData().get(getData().position() + 10);
+		return (Byte) getStructElement("Units");
 	}
 
 	/**
 	 * @return Reserved for future use
 	 */
 	public byte getReserved() {
-		return getData().get(getData().position() + 11);
+		return (Byte) getStructElement("Reserved");
 	}
 }

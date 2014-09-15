@@ -5,44 +5,56 @@ import java.nio.ByteBuffer;
 /**
  * This structure holds the format for character text number strings. You set up this structure based on the number format you want to use.
  * Definitions for the various fields of this structure are found in NFMT_xxx and NATTR_xxx. (misc.h)
- * 
- * @author jgallagher
  *
  */
 public class NFMT extends AbstractStruct {
+	public static final int SIZE = 4;
+
+	static {
+		addFixedUnsigned("Digits", Byte.class);
+		addFixed("Format", Byte.class);
+		addFixed("Attributes", Byte.class);
+		addFixed("Unused", Byte.class);
+	}
+
+	public NFMT() {
+		super();
+	}
 
 	public NFMT(final ByteBuffer data) {
 		super(data);
 	}
 
 	@Override
-	public int getStructSize() {
-		return 4;
+	public long getStructSize() {
+		return SIZE;
 	}
 
 	/**
 	 * @return Number of decimal digits
 	 */
-	public byte getDigits() {
-		return getData().get(getData().position() + 0);
+	public short getDigits() {
+		return (Short) getStructElement("Digits");
 	}
 
 	/**
 	 * @return Display Format
 	 */
 	public byte getFormat() {
-		return getData().get(getData().position() + 1);
+		// TODO make enum
+		return (Byte) getStructElement("Format");
 	}
 
 	/**
 	 * @return Display Attributes
 	 */
 	public byte getAttributes() {
-		return getData().get(getData().position() + 2);
+		// TODO make enum
+		return (Byte) getStructElement("Attributes");
 	}
 
 	public byte getUnused() {
-		return getData().get(getData().position() + 3);
+		return (Byte) getStructElement("Unused");
 	}
 
 	@Override

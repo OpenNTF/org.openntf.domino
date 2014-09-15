@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:mainArea xp:key="facet_1">
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton">
+						<xp:text id="Test1">
+							<xp:this.rendered><![CDATA[#{javascript:try {
+	// rendered property
+	openLogBean.addEvent("Rendered event",this);
+	com.paulwithers.openLog.OpenLogItem.getXspProperty("xsp.openlog.filepath","");
+} catch(e) {
+	openLogBean.addError(e,this);
+	return true;
+}}]]>
+							</xp:this.rendered>
+							<xp:this.value><![CDATA[${javascript:try {
+	// value property
+	openLogBean.addEvent("Value event",this);
+	com.paulwithers.openLog.OpenLogItem.getXspProperty("xsp.openlog.filepath","");
+} catch(e) {
+	openLogBean.addError(e,this);
+	return "BLAH";
+}}]]>
+							</xp:this.value>
+						</xp:text>
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

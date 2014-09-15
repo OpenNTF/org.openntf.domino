@@ -43,7 +43,11 @@ public class DXLNote implements NSFNote, Serializable {
 	}
 
 	private DXLNote(final XMLNode node) {
-		noteClass_ = NoteClass.valueOf(node.getAttribute("class").toUpperCase());
+		String noteClass = node.getAttribute("class");
+		if ("replicationformula".equalsIgnoreCase(noteClass)) {
+			noteClass = "replformula";
+		}
+		noteClass_ = NoteClass.valueOf(noteClass.toUpperCase());
 		default_ = "true".equals(node.getAttribute("default"));
 
 		XMLNode noteInfo = node.selectSingleNode("noteinfo");
@@ -184,7 +188,7 @@ public class DXLNote implements NSFNote, Serializable {
 					}
 					if (record instanceof CDFILESEGMENT) {
 						CDFILESEGMENT seg = (CDFILESEGMENT) record;
-						ByteBuffer data = seg.getFileData().duplicate();
+						ByteBuffer data = ByteBuffer.wrap(seg.getFileData());
 						data.order(ByteOrder.LITTLE_ENDIAN);
 						try {
 							os.write(data.array(), data.position(), data.limit() - data.position());

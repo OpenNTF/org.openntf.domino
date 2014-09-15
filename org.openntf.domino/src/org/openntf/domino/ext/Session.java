@@ -269,7 +269,7 @@ public interface Session {
 	public String getUnique();
 
 	/**
-	 * Gets a Database object by its replica ID (e.g. 85255FA900747B84)
+	 * Gets a Database object by its replica ID (e.g. 85255FA900747B84). Deprecated in favour of {@link Session#getDatabase(String)}
 	 * 
 	 * @param server
 	 *            String server name
@@ -277,7 +277,9 @@ public interface Session {
 	 *            String replica ID
 	 * @return Database or null
 	 * @since org.openntf.domino 4.5.0
+	 * @deprecated in favour of {@link Session#getDatabase(String)}
 	 */
+	@Deprecated
 	public org.openntf.domino.Database getDatabaseByReplicaID(String server, String replicaid);
 
 	/**
@@ -329,14 +331,19 @@ public interface Session {
 	public org.openntf.domino.Database getMailDatabase();
 
 	/**
-	 * Gets a database by its {@link org.openntf.domino.Database#getApiPath()} property (serverName!!filePath)
+	 * Gets a database by:
+	 * <ul>
+	 * <li>Its {@link org.openntf.domino.Database#getApiPath()} property (serverName!!filePath)</li>
+	 * <li>Its {@link org.openntf.domino.Database#getReplicaID()} property</li>
+	 * <li>Its {@link org.openntf.domino.Database#getMetaReplicaId()} property</li>
+	 * </ul>
 	 * 
-	 * @param apiPath
-	 *            String Api Path
+	 * @param key
+	 *            String Api Path, ReplicaID or MetaReplicaID
 	 * @return Database or null
 	 * @since org.openntf.domino 5.0.0
 	 */
-	public org.openntf.domino.Database getDatabase(String apiPath);
+	public org.openntf.domino.Database getDatabase(String key);
 
 	/**
 	 * Gets a document by its {@link org.openntf.domino.Document#getMetaversalID()} property

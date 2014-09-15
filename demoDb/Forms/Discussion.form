@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<form name='Discussion' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.2'
+ replicaid='80257B32007947B2' publicaccess='false' designerversion='8.5.2'
+ renderpassthrough='true'>
+<noteinfo noteid='e82' unid='F2B3E7D472429AE580257B420041A89A' sequence='11'>
+<created><datetime dst='true'>20130403T125710,02+01</datetime></created>
+<modified><datetime>20131121T135615,38+00</datetime></modified>
+<revised><datetime>20131121T135615,37+00</datetime></revised>
+<lastaccessed><datetime>20131121T135615,38+00</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130403T125710,09+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
+<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
+<body><richtext>
+<pardef id='1'/>
+<par def='1'><field type='text' kind='editable' name='Title'/><compositedata
+ type='98' prevtype='65418' nexttype='222' afterparcount='6' containertype='65418'
+ aftercontainercount='1' afterbegincount='3'>
+Yg4BAIQAAAAAAAAAAAA=
+</compositedata></par>
+<par def='1'><field type='text' kind='editable' name='Body'/><compositedata
+ type='98' prevtype='65418' nexttype='222' afterparcount='5' containertype='65418'
+ aftercontainercount='1' afterbegincount='3'>
+Yg4BAIQAAAAAAAAAAAA=
+</compositedata></par>
+<par def='1'><field type='text' kind='editable' name='Author'/><compositedata
+ type='98' prevtype='65418' nexttype='222' afterparcount='5' containertype='65418'
+ aftercontainercount='1' afterbegincount='3'>
+Yg4BAIQAAAAAAAAAAAA=
+</compositedata></par>
+<par def='1'><field type='datetime' kind='editable' name='Date'><datetimeformat
+ show='date' date='yearmonthday' fourdigityearfor21stcentury='true' zone='never'
+ dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/></field></par>
+<par def='1'><field computeaftervalidation='true' type='text' kind='computed'
+ name='Abstract'><code event='defaultvalue'><formula>_ellipsis	:= " ...";
+_length	:= 300;
+_range	:= 10;
+
+_abstract	:= @Abstract([TextOnly]; _length; ""; "Body");
+
+REM {to make sure we don't truncate/clip in the middle of a word,};
+REM {get the text up to the last word before the last space};
+REM {and append ellipsis ' ...'};
+
+@If(	@Length(_abstract) &gt;= (_length - _range);
+	@LeftBack(_abstract; " ") + _ellipsis;
+	_abstract
+)</formula></code></field><compositedata type='98' prevtype='65418' nexttype='222'
+ afterparcount='6' containertype='65418' aftercontainercount='1' afterbegincount='4'>
+Yg4BAIQAAAAAAAAAAAA=
+</compositedata></par></richtext></body>
+<item name='$$ScriptName' summary='false' sign='true'><text>Hierarchy</text></item></form>
+

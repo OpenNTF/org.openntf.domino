@@ -176,6 +176,12 @@ public class DatabaseMetaData implements Serializable {
 		return filePath_;
 	}
 
+	public String getMetaReplicaID() {
+		if (server_.length() > 0)
+			return server_ + "!!" + replicaID_;
+		return replicaID_;
+	}
+
 	public String getFilePath() {
 		return filePath_;
 	}
@@ -302,6 +308,15 @@ public class DatabaseMetaData implements Serializable {
 		@Override
 		public String getApiPath() {
 			return DatabaseMetaData.this.getApiPath();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.openntf.domino.ext.Database#getApiPath()
+		 */
+		@Override
+		public String getMetaReplicaID() {
+			return DatabaseMetaData.this.getMetaReplicaID();
 		}
 
 		/*
@@ -622,6 +637,16 @@ public class DatabaseMetaData implements Serializable {
 		@Override
 		public Document getDocumentWithKey(final Serializable key, final boolean createOnFail) {
 			return getDatabase().getDocumentWithKey(key, createOnFail);
+		}
+
+		@Override
+		public Document getDocumentByKey(final Serializable key) {
+			return getDocumentWithKey(key);
+		}
+
+		@Override
+		public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
+			return getDocumentWithKey(key, createOnFail);
 		}
 
 		/*

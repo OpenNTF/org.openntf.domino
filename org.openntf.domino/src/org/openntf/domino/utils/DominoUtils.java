@@ -84,14 +84,15 @@ public enum DominoUtils {
 					Class<?> result = null;
 					ClassLoader cl = Thread.currentThread().getContextClassLoader();
 					try {
-						result = cl.loadClass(className);
-					} catch (NullPointerException ne) {
-						if (cl != null && "com.ibm.domino.xsp.module.nsf.ModuleClassLoader".equals(cl.getClass().getName())) {
-							//							log_.log(Level.WARNING,
-							//									"ModuleClassLoader lost DynamicClassLoader pointer. Resorting to System ClassLoader for " + className
-							//											+ " instead...");
-							result = Class.forName(className);
+						result = Class.forName(className, false, cl);
+					} catch (Throwable t) {
+						System.err.println("Got a " + t.getClass() + " trying to load " + className + " from a " + cl.getClass().getName());
+						ClassLoader parent = cl.getParent();
+						while (null != parent) {
+							System.err.println("Parent ClassLoader: " + parent.getClass().getName());
+							parent = parent.getParent();
 						}
+						throw new RuntimeException(t);
 					}
 					return result;
 				}
@@ -141,14 +142,16 @@ public enum DominoUtils {
 		@Override
 		protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 			String name = desc.getName();
-			//			if (loader_ == null) {
-			return DominoUtils.getClass(name);
-			//			}
-			//			try {
-			//				return Class.forName(name, false, loader_);
-			//			} catch (ClassNotFoundException e) {
-			//				return super.resolveClass(desc);
-			//			}
+			Class<?> result = null;
+			try {
+				result = DominoUtils.getClass(name);
+			} catch (Exception e) {
+				result = super.resolveClass(desc);
+			}
+			if (result == null) {
+				result = super.resolveClass(desc);
+			}
+			return result;
 		}
 	}
 
@@ -631,6 +634,19 @@ public enum DominoUtils {
 	 */
 	public static boolean isUnid(final String value) {
 		if (value.length() != 32)
+			return false;
+		return DominoUtils.isHex(value);
+	}
+
+	/**
+	 * Checks if is replica id.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return true, if is replica id
+	 */
+	public static boolean isReplicaId(final String value) {
+		if (value.length() != 16)
 			return false;
 		return DominoUtils.isHex(value);
 	}

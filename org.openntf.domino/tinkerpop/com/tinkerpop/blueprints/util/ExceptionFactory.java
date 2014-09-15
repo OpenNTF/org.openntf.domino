@@ -30,6 +30,10 @@ public class ExceptionFactory {
         return new IllegalArgumentException("A direction of BOTH is not supported");
     }
 
+    public static IllegalStateException vertexWithIdDoesNotExist(final Object id) {
+        return new IllegalStateException("Vertex with id does not exist: " + id);
+    }
+
     // Element related exceptions
 
     public static IllegalArgumentException propertyKeyIsReserved(final String key) {
@@ -56,6 +60,10 @@ public class ExceptionFactory {
         return new IllegalArgumentException("Property value can not be null");
     }
 
+    public static IllegalArgumentException edgeLabelCanNotBeNull() {
+        return new IllegalArgumentException("Edge label can not be null");
+    }
+
     // IndexableGraph related exceptions
 
     public static IllegalArgumentException indexAlreadyExists(final String indexName) {
@@ -70,6 +78,10 @@ public class ExceptionFactory {
 
     public static IllegalArgumentException classIsNotIndexable(final Class clazz) {
         return new IllegalArgumentException("Class is not indexable: " + clazz);
+    }
+
+    public static IllegalArgumentException classForElementCannotBeNull() {
+        return new IllegalArgumentException("elementClass argument cannot be null.");
     }
 
     // TransactionalGraph related exceptions

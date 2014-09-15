@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view name='AllNames' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.2'
+ replicaid='80257B32007947B2' showinmenu='false' publicaccess='false' designerversion='8.5.3'
+ unreadmarks='none' onopengoto='lastopened' onrefresh='displayindicator' headers='beveled'
+ opencollapsed='false' showresponsehierarchy='true' showmargin='true' shrinkrows='false'
+ extendlastcolumn='false' showhierarchies='false' unreadcolor='black' rowlinecount='1'
+ headerlinecount='1' rowspacing='1' bgcolor='white' totalscolor='black' headerbgcolor='white'
+ boldunreadrows='false' evaluateactions='false' allownewdocuments='false'
+ allowcustomizations='true' hidemarginborder='false' marginwidth='0px' marginbgcolor='white'
+ uniquekeys='false'>
+<noteinfo noteid='ea2' unid='C32D534E66A4AF3780257B420041B06F' sequence='12'>
+<created><datetime dst='true'>20130403T125730,07+01</datetime></created>
+<modified><datetime>20140318T090754,87+00</datetime></modified>
+<revised><datetime>20140318T090754,86+00</datetime></revised>
+<lastaccessed><datetime dst='true'>20140513T084841,31+01</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130403T125730,22+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=admin/O=Intec-PW</name><name>CN=Paul Withers/O=Intec</name></updatedby>
+<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby><code event='selection'><formula
+>SELECT ((Form = "Contact"))</formula></code>
+<column sort='ascending' resort='both' hidedetailrows='false' itemname='$10'
+ width='27.5000' resizable='true' separatemultiplevalues='false' sortnoaccent='false'
+ sortnocase='true' showaslinks='false'><columnheader title='Name'><font size='9pt'
+ style='bold'/></columnheader><code event='value'><formula>FirstName+" "+LastName</formula></code></column>
+<column hidedetailrows='false' itemname='EMail' width='30.1250' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='EMail'><font size='9pt' style='bold'/></columnheader></column>
+<item name='$SelQuery' sign='true'>
+<rawitemdata type='f'>
+gQYAAAAAif8TAAAAAAABAAcAQ29udGFjdAA=
+</rawitemdata></item></view>
+

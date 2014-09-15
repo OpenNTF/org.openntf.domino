@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="99a2" sequence="100" unid="73C1911BAAD6445D80257B530075F1CB">
+<created><datetime dst="true">20130420T222816,11+01</datetime></created>
+<modified><datetime>20140228T232849,45+00</datetime></modified>
+<revised><datetime>20140228T232849,44+00</datetime></revised>
+<lastaccessed><datetime>20140228T232849,45+00</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20130420T222816,12+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
+<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
+<item name="$Flags"><text>gC~4;</text></item>
+<item name="$TITLE"><text>MethodComparator.xsp</text></item>
+
+
+<item name="$FileNames" sign="true"><text>MethodComparator.xsp</text></item>
+
+
+<item name="$DesignerVersion"><text>8.5.2</text></item>
+
+
+
+
+</note>

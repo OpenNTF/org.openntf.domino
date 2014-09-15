@@ -6,20 +6,17 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A rich text field may contain a bitmap image. There are three types, monochrome, 8-bit mapped color, and 16-bit color; a gray scale
  * bitmap is stored as an 8-bit color bitmap with a color table having entries [0, 0, 0], [1, 1, 1], . . . , [255, 255, 255]. All bitmaps
  * are stored as a single plane (some graphics devices support multiple planes). (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDBITMAPHEADER extends CDRecord {
 	/**
 	 * Option flags set in the CDBITMAPHEADER record
-	 * 
-	 * @author jgallagher
 	 *
 	 */
 	public static enum Flag {
@@ -55,6 +52,30 @@ public class CDBITMAPHEADER extends CDRecord {
 		}
 	}
 
+	public static final int SIZE;
+
+	static {
+		addFixed("Dest", RECTSIZE.class);
+		addFixed("Crop", RECTSIZE.class);
+		addFixed("Flags", Short.class);
+		addFixed("wReserved", Short.class);
+		addFixed("lReserved", Integer.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
+		addFixedUnsigned("BitsPerPixel", Short.class);
+		addFixedUnsigned("SamplesPerPixel", Short.class);
+		addFixedUnsigned("BitsPerSample", Short.class);
+		addFixedUnsigned("SegmentCount", Short.class);
+		addFixedUnsigned("ColorCount", Short.class);
+		addFixedUnsigned("PatternCount", Short.class);
+
+		SIZE = getFixedStructSize();
+	}
+
+	public CDBITMAPHEADER(final CDSignature cdSig) {
+		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	}
+
 	public CDBITMAPHEADER(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -63,20 +84,14 @@ public class CDBITMAPHEADER extends CDRecord {
 	 * @return Dest bitmap height and width in pixels
 	 */
 	public RECTSIZE getDest() {
-		ByteBuffer data = getData();
-		data.position(data.position() + 0);
-		data.limit(data.limit() + 4);
-		return new RECTSIZE(data);
+		return (RECTSIZE) getStructElement("Dest");
 	}
 
 	/**
 	 * @return Crop destination dimensions (UNUSED)
 	 */
 	public RECTSIZE getCrop() {
-		ByteBuffer data = getData();
-		data.position(data.position() + 4);
-		data.limit(data.limit() + 4);
-		return new RECTSIZE(data);
+		return (RECTSIZE) getStructElement("Crop");
 	}
 
 	/**
@@ -85,81 +100,76 @@ public class CDBITMAPHEADER extends CDRecord {
 	 * @return CDBITMAP_FLAGS (version 2 and later)
 	 */
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getShort(getData().position() + 8));
+		return Flag.valuesOf((Short) getStructElement("Flags"));
 	}
 
 	/**
 	 * Reserved for future use
 	 */
 	public short getReserved() {
-		return getData().getShort(getData().position() + 10);
+		return (Short) getStructElement("wReserved");
 	}
 
 	/**
 	 * Reserved for future use
 	 */
 	public int getReserved2() {
-		return getData().getInt(getData().position() + 12);
+		return (Integer) getStructElement("lReserved");
 	}
 
 	/**
 	 * @return Width of bitmap in pixels
 	 */
 	public int getWidth() {
-		return getData().getShort(getData().position() + 16) & 0xFFFF;
+		return (Integer) getStructElement("Width");
 	}
 
 	/**
 	 * @return Height of bitmap in pixels
 	 */
 	public int getHeight() {
-		return getData().getShort(getData().position() + 18) & 0xFFFF;
+		return (Integer) getStructElement("Height");
 	}
 
 	/**
 	 * @return Bits per pixel - must be 1, 8, or 16
 	 */
 	public int getBitsPerPixel() {
-		return getData().getShort(getData().position() + 20) & 0xFFFF;
+		return (Integer) getStructElement("BitsPerPixel");
 	}
 
 	/**
 	 * @return For 1 or 8 bits per pixel, this is set to 1; for 16 bits per pixel, 3
 	 */
 	public int getSamplesPerPixel() {
-		return getData().getShort(getData().position() + 22) & 0xFFFF;
+		return (Integer) getStructElement("SamplesPerPixel");
 	}
 
 	/**
 	 * @return For 1 bit per pixel, this is set to 1; for 8 bits, 8; for 16 bits, 5
 	 */
 	public int getBitsPerSample() {
-		return getData().getShort(getData().position() + 24) & 0xFFFF;
+		return (Integer) getStructElement("BitsPerSample");
 	}
 
 	/**
 	 * @return Number of CDBITMAPSEGMENT records
 	 */
 	public int getSegmentCount() {
-		return getData().getShort(getData().position() + 26) & 0xFFFF;
+		return (Integer) getStructElement("SegmentCount");
 	}
 
 	/**
 	 * @return Number of entries in the CDCOLORTABLE record (0-256)
 	 */
 	public int getColorCount() {
-		return getData().getShort(getData().position() + 28) & 0xFFFF;
+		return (Integer) getStructElement("ColorCount");
 	}
 
 	/**
 	 * @return Number of entries in the CDPATTERNTABLE (0-64)
 	 */
 	public int getPatternCount() {
-		return getData().getShort(getData().position() + 30) & 0xFFFF;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", ColorCount: " + getColorCount() + "]";
+		return (Integer) getStructElement("PatternCount");
 	}
 }

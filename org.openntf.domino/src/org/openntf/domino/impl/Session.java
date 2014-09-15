@@ -777,13 +777,29 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		}
 		if (result == null) {
 			try {
-				//				DbDirectory dir = this.getDbDirectory(server);
-				//				database = dir.openDatabase(db);
-
-				database = getDelegate().getDatabase(server, db, createOnFail);
-				result = fromLotus(database, Database.SCHEMA, this);
-				if (isDbCached_ && result != null)
+				boolean isDbRepId = DominoUtils.isReplicaId(db);
+				if (isDbRepId) {
+					lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
+					boolean opened = nullDb.openByReplicaID(server, db);
+					if (opened) {
+						result = fromLotus(nullDb, Database.SCHEMA, this);
+					} else {
+						s_recycle(nullDb);
+						result = null;
+					}
+				} else {
+					database = getDelegate().getDatabase(server, db, createOnFail);
+					result = fromLotus(database, Database.SCHEMA, this);
+				}
+				if (isDbCached_ && result != null) {
 					databases_.put(key, result);
+					String altKey = "";
+					if (isDbRepId) {
+						databases_.put(result.getApiPath(), result);
+					} else {
+						databases_.put(result.getMetaReplicaID(), result);
+					}
+				}
 			} catch (NotesException e) {
 				String message = e.text;
 				if (message.contains("cannot open database")) {
@@ -812,6 +828,9 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return getDatabase(server, db, false);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getDatabase(java.lang.String)
+	 */
 	@Override
 	public org.openntf.domino.Database getDatabase(final String apiPath) {
 		String server = "";

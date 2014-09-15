@@ -52,12 +52,13 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 
 		// This has the side effect of incrementing the buffer by two for two gets
 		SIG sig = CDSignature.sigForData(data_.duplicate());
+		//		System.out.println("making " + sig);
 
 		// Skip past the Signature's two bytes and the length of the Length value
 		// The length value from the signature is the length of the data PLUS the length of the header
 		data_.position(data_.position() + sig.getSigLength());
 
-		int dataLength = sig.getLength() - sig.getSigLength();
+		long dataLength = sig.getLength() - sig.getSigLength();
 
 		// Now the ByteBuffer is positioned at the start of the data
 		// Create a view starting at the start of the data and going the length of the data
@@ -66,7 +67,11 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 		CDRecord record = CDRecord.create(sig, recordData);
 
 		// Skip past the data for the next record
-		data_.position(data_.position() + dataLength + record.getExtraLength());
+		try {
+			data_.position((int) (data_.position() + dataLength + record.getExtraLength()));
+		} catch (IllegalArgumentException e) {
+			throw e;
+		}
 
 		if (fetched_ == null) {
 			fetched_ = new LinkedList<CDRecord>();

@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import org.openntf.domino.xots.annotations.Persistent;
 import org.openntf.domino.xots.annotations.Schedule;
 
+import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpServletRequestAdapter;
@@ -26,6 +27,13 @@ import com.ibm.domino.xsp.module.nsf.NSFService;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XotsService extends NSFService {
+
+	@Override
+	public void destroyService() {
+		System.out.println("DEBUG: Destroying XotsService...");
+		XotsDaemon.stop();
+		super.destroyService();
+	}
 
 	public static XotsService getInstance() {
 		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
@@ -79,12 +87,19 @@ public class XotsService extends NSFService {
 					classes_.add(curClass);
 					callback_.loaderCallback(this);
 				}
+
+				//				classes_ = result;
+
+				callback_.loaderCallback(this);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			} finally {
 				NotesContext.termThread();
 			}
-
+			//<<<<<<< HEAD
+			//=======
+			//
+			//>>>>>>> Roland's/roland
 		}
 
 		public Set<Class<?>> getClasses() {
@@ -128,24 +143,20 @@ public class XotsService extends NSFService {
 		return super.createNSFModule(arg0);
 	}
 
-	//	@Override
-	//	public ComponentModule getComponentModule(String modulePath) throws ServletException {
-	//		// RPr: on a windows machine, the databasePath is returned with "\\"
-	//		// BTW: why don't we use "loadModule" here
-	//		// BTW: Why do we override this method at all?
-	//		// [15.07.2014 20:38:57] Nathan T. Freeman: okay, if we call createNSFModule instead of loadModule, then it won't cache the module
-	//		// [15.07.2014 20:39:08] Nathan T. Freeman: but createNSFModule is protected
-	//		// but we DO cache the module, so I see no advantage
-	//		modulePath = StringUtil.replace(modulePath, '\\', '/');
-	//		
-	//		System.out.println("DEBUG: XotsService created NSF module for path " + modulePath);
-	//		NSFComponentModule result = modules_.get(modulePath);
-	//		if (result == null) {
-	//			result = super.createNSFModule(modulePath);
-	//			modules_.put(modulePath, result);
-	//		}
-	//		return result;
-	//	}
+	@Override
+	public ComponentModule getComponentModule(final String arg0) throws ServletException {
+		System.out.println("DEBUG: XotsService created NSF module for path " + arg0);
+		return super.getComponentModule(arg0);
+		// BTW: why don't we use "loadModule" here
+		// BTW: Why do we override this method at all?
+		//	Nathan T. Freeman: okay, if we call createNSFModule instead of loadModule, then it won't cache the module
+		//	 Nathan T. Freeman: but createNSFModule is protected
+		// but we DO cache the module, so I see no advantage
+
+		// FIXME NTF In the future we want to allow annotations in the tasklet to indicate whether to use the NSFService cache...
+		// or to allow for a separate one. The XPages NSFService cache is subject to application timeouts and it may be desirable
+		// to ensure that Xots has a classloader that survives this.
+	}
 
 	@Override
 	public boolean doService(final String arg0, final String arg1, final HttpSessionAdapter arg2, final HttpServletRequestAdapter arg3,
@@ -174,6 +185,7 @@ public class XotsService extends NSFService {
 			Persistent persistent = clazz.getAnnotation(Persistent.class);
 			Persistent.Context ctx = persistent.appContext();
 			Persistent.Scope scope = persistent.scope();
+			// TODO de-dupe based on replica ID to handle faux text ".nsf" redirection files
 			if (scope == Persistent.Scope.APPLICATION) {
 				if (ctx == Persistent.Context.XSPFORCED) {
 					try {
@@ -211,6 +223,14 @@ public class XotsService extends NSFService {
 	@Override
 	public void termThreads() {
 		System.out.println("DEBUG: XotsService is being terminated.");
+	}
+
+	protected Set<Class<?>> getLoadedClasses() {
+		Set<Class<?>> result = new HashSet<Class<?>>();
+		for (Set<Class<?>> classes : classMap_.values()) {
+			result.addAll(classes);
+		}
+		return result;
 	}
 
 	@Override

@@ -3,7 +3,6 @@
 	<name>org.openntf.domino</name>
 	<comment></comment>
 	<projects>
-		<project>com.ibm.icu</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
