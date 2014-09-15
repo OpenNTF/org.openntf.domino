@@ -18,6 +18,7 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.xots.annotations.Schedule;
 import org.openntf.domino.xots.annotations.Trigger;
 import org.openntf.domino.xots.builtin.XotsNsfScanner;
 import org.openntf.domino.xots.events.CustomNamedEvent;
@@ -178,6 +179,13 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
 		scanner.addObserver(this);
 		scanner.scan();
+	}
+
+	public void schedule(final Class<? extends Runnable> taskClass) {
+		Schedule schedule = taskClass.getAnnotation(Schedule.class);
+		if (schedule != null) {
+			schedule.timeunit();
+		}
 	}
 
 	public void queue(final Runnable runnable) {

@@ -5,6 +5,8 @@ package org.openntf.domino.ext;
 
 import java.util.Date;
 
+import org.openntf.domino.Item.Type;
+
 /**
  * @author withersp
  * 
@@ -63,4 +65,11 @@ public interface Item {
 	 * Sets the underlying document dirty.
 	 */
 	public void markDirty();
+
+	/**
+	 * Returns the {@link Type} of the Item as Type object
+	 * 
+	 * @return the {@link Type} of the Item
+	 */
+	Type getTypeEx();
 }

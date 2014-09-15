@@ -300,6 +300,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public Edge getEdge(final Vertex outVertex, final Vertex inVertex, final String label) {
 		String id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
 		Edge result = getEdge(id);
+		if (result != null) {
+			((DominoEdge) result).setOutDoc((IDominoVertex) outVertex);
+			((DominoEdge) result).setInDoc((IDominoVertex) inVertex);
+		}
 		return result;
 	}
 

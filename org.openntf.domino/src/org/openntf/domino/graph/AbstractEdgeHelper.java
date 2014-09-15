@@ -130,20 +130,42 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 	@Override
 	public Set<? extends Edge> getEdges(final Vertex vertex) {
-		if (getInType().equals(vertex.getClass())) {
-			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
+		//		System.out.println("DEBUG: Getting edges...");
+		Set<Edge> results = null;
+
+		if (sameTypes_) {
+			//			System.out.println("DEBUG: Both directions are " + inType_.getSimpleName() + " in helper " + getLabel());
+			results = (Set<Edge>) vertex.getEdges(Direction.IN, getLabel());
+			if (results.size() == 0) {
+				results = (Set<Edge>) vertex.getEdges(Direction.OUT, getLabel());
+				//				System.out.println("DEBUG: Returning " + results.size() + " outs");
+			} else {
+				//				System.out.println("DEBUG: Returning " + results.size() + " ins");
+			}
+		} else {
+			//			System.out.println("DEBUG: Analyzing directions for helper " + getLabel() + " with a vertex of "
+			//					+ vertex.getClass().getSimpleName());
+
+			if (getInType().equals(vertex.getClass())) {
+				results = (Set<Edge>) vertex.getEdges(Direction.IN, getLabel());
+			}
+			if (getOutType().equals(vertex.getClass())) {
+				results = (Set<Edge>) vertex.getEdges(Direction.OUT, getLabel());
+			}
+			if (getInType().isAssignableFrom(vertex.getClass())) {
+				results = (Set<Edge>) vertex.getEdges(Direction.IN, getLabel());
+			}
+			if (getOutType().isAssignableFrom(vertex.getClass())) {
+				results = (Set<Edge>) vertex.getEdges(Direction.OUT, getLabel());
+			}
 		}
-		if (getOutType().equals(vertex.getClass())) {
-			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.OUT, getLabel()));
+		if (results == null) {
+			//			System.out.println("DEBUG: Exception " + vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
+			throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
+		} else {
+			//			System.out.println("DEBUG: Returning " + results.size() + " edges for helper " + getLabel());
+			return Collections.unmodifiableSet(results);
 		}
-		if (getInType().isAssignableFrom(vertex.getClass())) {
-			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
-		}
-		if (getOutType().isAssignableFrom(vertex.getClass())) {
-			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.OUT, getLabel()));
-		}
-		//		System.out.println(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
-		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 	}
 
 	@Override

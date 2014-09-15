@@ -6,13 +6,15 @@
       provider-name="OpenNTF.org">
 
    <description>
-      XPages/OSGi Provider for org.openntf.domino API
+      org.openntf.domino API Provider for IBM Domino Servers
    </description>
 
    <copyright>
       © Copyright 2012-2014
-Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkermeyer,
-Declan Lynch, Paul Withers
+Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkelmeyer,
+Declan Lynch, Paul Withers, Devin Olson, Keith Smillie, Foconis
+AG
+https://www.foconis.de
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">
@@ -20,42 +22,32 @@ Declan Lynch, Paul Withers
    </license>
 
    <requires>
-      <import plugin="com.ibm.icu" version="3.8.1" match="greaterOrEqual"/>
       <import plugin="com.ibm.commons"/>
       <import plugin="com.ibm.xsp.domino"/>
       <import plugin="com.ibm.domino.napi"/>
+      <import plugin="com.ibm.icu"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="com.ibm.xsp.domino" version="9.0.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.xsp.extsn" version="9.0.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.designer.runtime" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.designer.runtime"/>
       <import plugin="com.ibm.xsp.designer"/>
-      <import plugin="com.ibm.xsp.extlib.domino"/>
-      <import plugin="com.ibm.xsp.extlib" version="9.0.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.xsp.extlib.controls" version="9.0.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.xsp.extlib.core" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.extlib"/>
       <import plugin="com.ibm.domino.xsp.adapter"/>
       <import plugin="com.ibm.domino.xsp.bootstrap"/>
       <import plugin="com.ibm.designer.lib.jsf"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.equinox.http.servlet"/>
    </requires>
 
    <plugin
          id="org.openntf.domino.plugin"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openntf.domino.xsp"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.openntf.formula"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>

@@ -135,4 +135,11 @@ public interface WrapperFactory {
 
 	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent);
 
+	/**
+	 * Returns the last Documents (max. 10) which where wrapped in the current thread
+	 * 
+	 * @return null if there aren't any, array of correct size, if there are
+	 */
+	public String[] getLastWrappedDocsInThread();
+
 }

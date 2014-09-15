@@ -22,6 +22,7 @@ import org.openntf.domino.Database.FTSortOption;
 import org.openntf.domino.Database.FixupOption;
 import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
+import org.openntf.domino.Database.Type;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
@@ -179,7 +180,7 @@ public interface Database extends Base {
 	 * 
 	 * @see org.openntf.domino.Database.FTIndexOption
 	 * @param options
-	 *            Set<FTIndexOption> full text index options that can be applied
+	 *            Set&lt;FTIndexOption&gt; full text index options that can be applied
 	 * @param recreate
 	 *            boolean whether or not the full text index should be recreated
 	 * @since org.openntf.domino 2.5.0
@@ -667,11 +668,19 @@ public interface Database extends Base {
 	public Locale getLocale();
 
 	/**
+	 * 
 	 * Gets the meta replica ID, an ID in the format serverName!!replicaId, first portion of metaversal ID
 	 * 
 	 * @return the meta replica id
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public String getMetaReplicaID();
+
+	/**
+	 * Returns the type of this database as Type object
+	 * 
+	 * @return a {@link Type} Object
+	 */
+	Type getTypeEx();
 
 }

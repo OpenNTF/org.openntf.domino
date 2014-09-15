@@ -701,7 +701,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * and hit "step into" until you are in one of the mehtods of this file. Move <b>this</b> mehtod to the position you found with the
 	 * debugger.
 	 * 
-	 * @see org.openntf.domino.plugin.Activator#verifyIGetEntryByKey
 	 * @param paramVector
 	 * @param paramBoolean
 	 * @param paramInt

@@ -76,7 +76,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getAclImportOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -91,7 +91,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getCompileLotusScript();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -106,7 +106,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getCreateFTIndex();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -121,7 +121,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getDesignImportOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -136,7 +136,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getDocumentImportOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -151,7 +151,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getExitOnFirstFatalError();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -166,7 +166,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getFirstImportedNoteID();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -181,7 +181,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getImportedNoteCount();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -196,7 +196,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getInputValidationOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -226,7 +226,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getLogComment();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -241,7 +241,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getNextImportedNoteID(noteid);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -256,7 +256,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getReplaceDbProperties();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -271,7 +271,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getReplicaRequiredForReplaceOrUpdate();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -286,7 +286,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			return getDelegate().getUnknownTokenLogOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -301,7 +301,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().importDxl(toLotus(rtitem), toLotus(db));
 		} catch (NotesException e) {
-			//			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e, getLog());
 			DominoUtils.handleException(new Exception(getLog(), e));
 		}
 	}
@@ -316,7 +316,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().importDxl(toLotus(stream), toLotus(db));
 		} catch (NotesException e) {
-			//			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e, getLog());
 			DominoUtils.handleException(new Exception(getLog(), e));
 		}
 	}
@@ -331,7 +331,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().importDxl(dxl, toLotus(db));
 		} catch (NotesException e) {
-			//			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e, getLog());
 			DominoUtils.handleException(new Exception(getLog(), e));
 		}
 	}
@@ -346,7 +346,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setAclImportOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -360,7 +360,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setCompileLotusScript(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -374,7 +374,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setCreateFTIndex(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -388,7 +388,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setDesignImportOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -402,7 +402,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setDocumentImportOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -416,7 +416,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setExitOnFirstFatalError(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -430,7 +430,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setInputValidationOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -444,7 +444,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setLogComment(comment);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -458,7 +458,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setReplaceDbProperties(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -472,7 +472,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setReplicaRequiredForReplaceOrUpdate(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -486,7 +486,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().setUnknownTokenLogOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 

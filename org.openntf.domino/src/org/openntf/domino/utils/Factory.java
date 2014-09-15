@@ -37,7 +37,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Base;
@@ -50,11 +49,7 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.graph.DominoGraph;
-import org.openntf.domino.logging.ConsoleFormatter;
-import org.openntf.domino.logging.DefaultConsoleHandler;
-import org.openntf.domino.logging.DefaultFileHandler;
-import org.openntf.domino.logging.FileFormatter;
-import org.openntf.domino.logging.OpenLogHandler;
+import org.openntf.domino.logging.Logging;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
@@ -102,16 +97,29 @@ public enum Factory {
 						String progpath = System.getProperty("notes.binary");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
-							System.out.println("Inifile not found on notes.binary path: " + progpath);
+							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
 						if (!iniFile.exists()) {
-							System.out.println("Inifile still not found on user.dir path: " + progpath);
+							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						}
+						if (!iniFile.exists()) {
+							//							System.out.println("Inifile still not found on user.dir path: " + progpath);
 							if (progpath.contains("framework")) {
 								String pp2 = progpath.replace("framework", "");
 								iniFile = new File(pp2 + "notes.ini");
-								System.out.println("Attempting to use path: " + pp2);
+								//								System.out.println("Attempting to use path: " + pp2);
+								if (!iniFile.exists()) {
+									System.out
+											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+									for (Object rawName : System.getProperties().keySet()) {
+										if (rawName instanceof String) {
+											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
+										}
+									}
+								}
 							}
 						}
 
@@ -131,29 +139,8 @@ public enum Factory {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
-					// TODO RPr: read config from notes.ini / env
 					public Object run() throws Exception {
-						String pattern = getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
-						Logger oodLogger = Logger.getLogger("org.openntf.domino");
-						oodLogger.setLevel(Level.WARNING);
-
-						DefaultFileHandler dfh = new DefaultFileHandler(pattern, 50000, 100, true);
-						dfh.setFormatter(new FileFormatter());
-						dfh.setLevel(Level.WARNING);
-						oodLogger.addHandler(dfh);
-
-						DefaultConsoleHandler dch = new DefaultConsoleHandler();
-						dch.setFormatter(new ConsoleFormatter());
-						dch.setLevel(Level.WARNING);
-						oodLogger.addHandler(dch);
-
-						OpenLogHandler olh = new OpenLogHandler();
-						olh.setLogDbPath("OpenLog.nsf");
-						olh.setLevel(Level.WARNING);
-						oodLogger.addHandler(olh);
-
-						LogManager manager = LogManager.getLogManager();
-						manager.addLogger(oodLogger);
+						Logging.getInstance().startUp();
 						return null;
 					}
 				});
@@ -187,13 +174,11 @@ public enum Factory {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<String, String>();
 		}
-		int keyCount = 0;
 		if (scanner != null) {
 			while (scanner.hasNextLine()) {
 				String nextLine = scanner.nextLine();
 				int i = nextLine.indexOf('=');
 				if (i > 0) {
-					keyCount++;
 					String key = nextLine.substring(0, i).toLowerCase();
 					String value = nextLine.substring(i + 1);
 					//					System.out.println("DEBUG " + key + " : " + value);
@@ -445,7 +430,6 @@ public enum Factory {
 			lotus.notes.AgentSecurityManager asm = (lotus.notes.AgentSecurityManager) sm;
 			Object xsm = asm.getExtenderSecurityContext();
 			if (xsm instanceof lotus.notes.AgentSecurityContext) {
-				lotus.notes.AgentSecurityContext nasc = (lotus.notes.AgentSecurityContext) xsm;
 			}
 			Object asc = asm.getSecurityContext();
 			if (asc != null) {
@@ -485,6 +469,15 @@ public enum Factory {
 			currentWrapperFactory.set(wf);
 		}
 		return wf;
+	}
+
+	/**
+	 * Returns the wrapper factory if initialized
+	 * 
+	 * @return
+	 */
+	public static WrapperFactory getWrapperFactory_unchecked() {
+		return currentWrapperFactory.get();
 	}
 
 	/**

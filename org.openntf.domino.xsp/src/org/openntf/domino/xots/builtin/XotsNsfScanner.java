@@ -25,7 +25,7 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log_ = Logger.getLogger(XotsNsfScanner.class.getName());
 
-	private final boolean TRACE = true;
+	private final boolean TRACE = false;
 	private final String serverName_;
 
 	public XotsNsfScanner(final String serverName) {
@@ -54,6 +54,8 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 				t.printStackTrace();
 			}
 		}
+		System.out.println("Current XOTS Classes:");
+		System.out.println(getXotsService().toString());
 	}
 
 	private XotsService service_;
@@ -71,6 +73,7 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 	}
 
 	public void scanDatabase(final Database db) throws ServletException, InterruptedException {
+		//NTF Keeping JG's implementation since he made an enhancement to the IconNote class for it! :)
 		log_.finest("Scanning database " + db.getApiPath() + " for Xots Tasklets");
 
 		DatabaseDesign design = db.getDesign();
@@ -83,6 +86,7 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 				}
 				getXotsService().getComponentModule("/" + db.getFilePath());
 				getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
+
 			}
 		}
 	}

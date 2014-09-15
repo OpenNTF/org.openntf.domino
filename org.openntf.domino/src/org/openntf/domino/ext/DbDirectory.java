@@ -79,4 +79,5 @@ public interface DbDirectory {
 	 * @return a DbDirectoryTree
 	 */
 	public DbDirectoryTree getTree(final Type type);
+
 }

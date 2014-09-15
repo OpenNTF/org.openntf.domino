@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import lotus.domino.DateTime;
 import lotus.domino.NotesException;
@@ -21,6 +22,7 @@ import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
@@ -44,7 +46,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class DatabaseMetaData implements Serializable {
-
+	private static final Logger log_ = Logger.getLogger(DatabaseMetaData.class.getName());
 	private static final long serialVersionUID = 1L;
 	// These attributes will never change for a certain database object
 	private final String fileName_;
@@ -1652,6 +1654,7 @@ public class DatabaseMetaData implements Serializable {
 		 * @see org.openntf.domino.Database#getType()
 		 */
 		@Override
+		@Deprecated
 		public int getType() {
 			return getDatabase().getType();
 		}
@@ -1862,7 +1865,10 @@ public class DatabaseMetaData implements Serializable {
 		 */
 		@Override
 		public boolean isOpen() {
-			return getDatabase().isOpen();
+			// isOpen does NOT open the database. Use open instead
+			if (db_ == null)
+				return false;
+			return db_.isOpen();
 		}
 
 		/*
@@ -1907,7 +1913,12 @@ public class DatabaseMetaData implements Serializable {
 		 */
 		@Override
 		public boolean open() {
-			return getDatabase().open();
+			try {
+				getDatabase().open();
+			} catch (Exception e) {
+				log_.log(java.util.logging.Level.FINE, "Could not open the database: " + getApiPath(), e);
+			}
+			return isOpen();
 		}
 
 		/*
@@ -2282,6 +2293,23 @@ public class DatabaseMetaData implements Serializable {
 		@Override
 		public void updateFTIndex(final boolean create) {
 			getDatabase().updateFTIndex(create);
+		}
+
+		@Override
+		public void fillExceptionDetails(final List<Entry> result) {
+			if (db_ != null) {
+				db_.fillExceptionDetails(result);
+			} else {
+				if (session_ != null)
+					session_.fillExceptionDetails(result);
+				result.add(new ExceptionDetails.Entry(this, getApiPath()));
+			}
+
+		}
+
+		@Override
+		public Type getTypeEx() {
+			return getDatabase().getTypeEx();
 		}
 
 	}
