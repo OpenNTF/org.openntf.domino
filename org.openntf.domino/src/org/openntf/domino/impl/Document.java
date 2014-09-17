@@ -573,8 +573,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 				openMIMEEntities.clear();
 			} else {
-				if (openMIMEEntities.containsKey(entityItemName.toLowerCase())) {
-					MIMEEntity currEntity = openMIMEEntities.remove(entityItemName.toLowerCase());
+				String lcName = entityItemName.toLowerCase();
+				if (openMIMEEntities.containsKey(lcName)) {
+					MIMEEntity currEntity = openMIMEEntities.remove(lcName);
 					if (currEntity != null)
 						((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 				}

@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -42,8 +45,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	/**
 	 * we have to track every child element that was queried from this entity.
 	 */
-	private List<MIMEEntity> trackedChildEntites_ = new ArrayList<MIMEEntity>();
-	private List<MIMEHeader> trackedHeaders_ = new ArrayList<MIMEHeader>();
+	private Set<MIMEEntity> trackedChildEntites_ = new HashSet<MIMEEntity>();
+	private Set<MIMEHeader> trackedHeaders_ = new HashSet<MIMEHeader>();
 	private String itemName_;
 
 	/**
@@ -65,18 +68,14 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	protected org.openntf.domino.MIMEEntity track(final org.openntf.domino.MIMEEntity what) {
 		if (what == null)
 			return null;
-		if (!trackedChildEntites_.contains(what)) {
-			trackedChildEntites_.add((MIMEEntity) what);
-		}
+		trackedChildEntites_.add((MIMEEntity) what);
 		return what;
 	}
 
 	protected MIMEHeader track(final MIMEHeader what) {
 		if (what == null)
 			return null;
-		if (!trackedHeaders_.contains(what)) {
-			trackedHeaders_.add(what);
-		}
+		trackedHeaders_.add(what);
 		return what;
 	}
 
@@ -90,14 +89,26 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	public void closeMIMEEntity() {
-		for (MIMEEntity child : trackedChildEntites_) {
-			child.closeMIMEEntity();
+		/*
+		 * We cannot guarantee here, that there are no cycles in the tracked graph,
+		 * so we remove each "child" (also if it is a parent) not to run in an OOS
+		 * Of course, some elements will still be recycled more than once, but this
+		 * is always better as a server crash :) 
+		 */
+		Iterator<MIMEEntity> childIter = trackedChildEntites_.iterator();
+		while (childIter.hasNext()) {
+			MIMEEntity childEnt = childIter.next();
+			childIter.remove(); // remove the entity BEFORE closing
+			childEnt.closeMIMEEntity();
 		}
-		for (MIMEHeader hdr : trackedHeaders_) {
+
+		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
+		while (hdrIter.hasNext()) {
 			try {
-				hdr.recycle();
+				hdrIter.next().recycle();
 			} catch (NotesException e) {
 			}
+			hdrIter.remove();
 		}
 		recycle();
 	}
