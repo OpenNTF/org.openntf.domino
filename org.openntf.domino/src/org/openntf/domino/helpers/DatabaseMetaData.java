@@ -278,6 +278,7 @@ public class DatabaseMetaData implements Serializable {
 	protected class ClosedDatabase implements Database {
 		private final Session session_;
 		private Database db_;
+		private DatabaseHolder databaseHolder_;
 
 		/**
 		 * Create a new "ClosedDatabase" for this session. (Use DatabaseMetaData.getDatabase(session) to get such a database)
@@ -2310,6 +2311,14 @@ public class DatabaseMetaData implements Serializable {
 		@Override
 		public Type getTypeEx() {
 			return getDatabase().getTypeEx();
+		}
+
+		@Override
+		public DatabaseHolder getDatabaseHolder() {
+			if (databaseHolder_ == null) {
+				databaseHolder_ = new DatabaseHolder(this);
+			}
+			return databaseHolder_;
 		}
 
 	}
