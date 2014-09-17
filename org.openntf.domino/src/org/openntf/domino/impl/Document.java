@@ -573,9 +573,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 				openMIMEEntities.clear();
 			} else {
-				MIMEEntity currEntity = openMIMEEntities.remove(entityItemName.toLowerCase());
-				if (currEntity != null)
-					((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+				if (openMIMEEntities.containsKey(entityItemName.toLowerCase())) {
+					MIMEEntity currEntity = openMIMEEntities.remove(entityItemName.toLowerCase());
+					if (currEntity != null)
+						((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+				}
 			}
 			boolean ret = false;
 			if (null != entityItemName) {
