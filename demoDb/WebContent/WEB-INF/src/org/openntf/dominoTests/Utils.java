@@ -42,6 +42,8 @@ import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xots.events.CustomNamedEvent;
 import org.openntf.domino.xotsTests.XotsBasic;
 import org.openntf.domino.xsp.XspOpenLogUtil;
 import org.openntf.domino.xsp.helpers.XspUtils;
@@ -288,9 +290,15 @@ public class Utils {
 	}
 
 	public static void runXotsTasklet() {
+		ExtLibUtil.getApplicationScope().put("MessageFromXots", "Initial  (set from Util)");
 		XotsBasic testRun = new org.openntf.domino.xotsTests.XotsBasic();
 		testRun.setSessionType(DominoSessionType.NATIVE);
 		testRun.queue();
+		ExtLibUtil.getApplicationScope().put("MessageFromXotsConstructor", "Should be complete now (set from util)");
+	}
 
+	public static void triggerEvent() {
+		CustomNamedEvent event = new CustomNamedEvent("testEvent", "hey");
+		XotsDaemon.publishEvent(event);
 	}
 }

@@ -43,7 +43,7 @@
 						<xp:button value="Run Java Test" id="button2">
 							<xp:eventHandler event="onclick" submit="true"
 								refreshMode="partial" refreshId="JavaDiv"
-								action="#{javascript:org.openntf.dominoTests.Utils.runXotsTasklet()}">
+								action="#{javascript:org.openntf.dominoTests.Utils.trigerEvent()}">
 							</xp:eventHandler>
 						</xp:button>
 						<xp:br></xp:br>

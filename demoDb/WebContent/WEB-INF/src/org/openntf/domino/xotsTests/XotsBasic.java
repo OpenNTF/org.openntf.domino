@@ -22,6 +22,10 @@ public class XotsBasic extends XotsBaseTasklet {
 	public XotsBasic() {
 		Database db = Factory.getSession().getCurrentDatabase();
 		setApiPath(db.getApiPath());
+
+		ExtLibUtil.getApplicationScope().put("MessageFromXots",
+				"Please refresh page to see message (set from constructor)");
+		ExtLibUtil.getApplicationScope().put("MessageFromXotsConstructor", "Nothing yet (set from constructor)");
 		setApplicationScope(ExtLibUtil.getApplicationScope());
 		this.setRunAs("Admin");
 		this.setSessionType(DominoSessionType.NAMED);
@@ -40,7 +44,7 @@ public class XotsBasic extends XotsBaseTasklet {
 			String msg = "User is " + sess.getEffectiveUserName();
 			msg = msg + " access is " + Integer.toString(db.getCurrentAccessLevel());
 			System.out.println(msg);
-			getApplicationScope().put("MessageFromXots", msg);
+			getApplicationScope().put("MessageFromXots", msg + "(set from Xots method)");
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
