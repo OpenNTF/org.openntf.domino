@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.formula.ASTNode;
 import org.openntf.formula.FormulaParseException;
@@ -168,6 +169,7 @@ public class LogConfig {
 
 		String _myName;
 		String[] _loggerNames;
+		Logger[] _loggers;	// A strong reference to the Logger itself is necessary in certain cases
 		String _defaultLevelName;
 		Level _defaultLevel;
 		String[] _defaultHandlerNames;

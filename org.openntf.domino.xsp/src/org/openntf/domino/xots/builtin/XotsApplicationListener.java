@@ -15,8 +15,6 @@ import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xots.XotsService;
 
 import com.ibm.designer.runtime.Application;
-import com.ibm.designer.runtime.domino.adapter.HttpService;
-import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.application.DesignerApplicationEx;
 import com.ibm.xsp.application.events.ApplicationListener2;
@@ -76,8 +74,9 @@ public class XotsApplicationListener implements ApplicationListener2 {
 						System.out.println("TRACE: Adding Xots Tasklets for database " + db.getApiPath());
 					}
 					try {
-						getXotsService().getComponentModule("/" + db.getFilePath());
-						getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
+						XotsService xs = XotsService.getInstance();
+						xs.getComponentModule("/" + db.getFilePath());
+						xs.loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
 					} catch (ServletException se) {
 						DominoUtils.handleException(se);
 					}
@@ -92,13 +91,5 @@ public class XotsApplicationListener implements ApplicationListener2 {
 			return finished_;
 		}
 
-		private XotsService getXotsService() {
-			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-				if (service instanceof XotsService) {
-					return (XotsService) service;
-				}
-			}
-			return null;
-		}
 	}
 }

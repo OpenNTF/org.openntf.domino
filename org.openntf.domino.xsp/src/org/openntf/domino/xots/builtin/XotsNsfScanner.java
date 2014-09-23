@@ -16,9 +16,6 @@ import org.openntf.domino.xots.XotsService;
 import org.openntf.domino.xots.annotations.Persistent;
 import org.openntf.domino.xots.annotations.Schedule;
 
-import com.ibm.designer.runtime.domino.adapter.HttpService;
-import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
-
 @Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
 @Persistent
 public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
@@ -51,7 +48,8 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 			try {
 				scanDatabase(db);
 			} catch (Throwable t) {
-				t.printStackTrace();
+				//				t.printStackTrace();
+				System.err.println("*** Exception: " + t.getMessage());
 			}
 		}
 		System.out.println("Current XOTS Classes:");
@@ -61,14 +59,8 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 	private XotsService service_;
 
 	private XotsService getXotsService() {
-		if (service_ == null) {
-			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-				if (service instanceof XotsService) {
-					service_ = (XotsService) service;
-					break;
-				}
-			}
-		}
+		if (service_ == null)
+			service_ = XotsService.getInstance();
 		return service_;
 	}
 
