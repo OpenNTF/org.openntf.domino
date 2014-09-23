@@ -75,6 +75,10 @@ public enum Factory {
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
+	private static ThreadLocal<Session> currentSessionFullAccessHolder_ = new ThreadLocal<Session>();
+
+	private static ThreadLocal<Session> currentTrustedSessionHolder_ = new ThreadLocal<Session>();
+
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
@@ -654,6 +658,8 @@ public enum Factory {
 		if (result == null) {
 			try {
 				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
+				getTrustedSession();
+				getSessionFullAccess();
 				Factory.setNoRecycle(result, false);  // We have created the session, so we recycle it
 			} catch (Exception ne) {
 				try {
@@ -666,7 +672,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
@@ -689,6 +695,24 @@ public enum Factory {
 	 */
 	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+	}
+
+	/**
+	 * Sets the current trusted session
+	 * 
+	 * @param session
+	 */
+	public static void setTrustedSession(final lotus.domino.Session session) {
+		currentTrustedSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+	}
+
+	/**
+	 * Sets the current session with full access
+	 * 
+	 * @param session
+	 */
+	public static void setSessionFullAccess(final lotus.domino.Session session) {
+		currentSessionFullAccessHolder_.set(fromLotus(session, Session.SCHEMA, null));
 	}
 
 	/**
@@ -935,22 +959,32 @@ public enum Factory {
 	 * @return the session full access
 	 */
 	public static org.openntf.domino.Session getSessionFullAccess() {
-		try {
-			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
-					return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+		org.openntf.domino.Session result = currentSessionFullAccessHolder_.get();
+		if (result == null) {
+			try {
+				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+					}
+				});
+				if (tmpResult instanceof org.openntf.domino.Session) {
+					result = (org.openntf.domino.Session) tmpResult;
+					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
+					setSessionFullAccess(result);
 				}
-			});
-			if (result instanceof org.openntf.domino.Session) {
-				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
-				return (org.openntf.domino.Session) result;
+			} catch (PrivilegedActionException e) {
+				DominoUtils.handleException(e);
 			}
-		} catch (PrivilegedActionException e) {
-			DominoUtils.handleException(e);
+			if (result == null) {
+				System.out
+						.println("SEVERE: Unable to get default session with full access. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation.");
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/**
@@ -959,22 +993,37 @@ public enum Factory {
 	 * @return the trusted session
 	 */
 	public static org.openntf.domino.Session getTrustedSession() {
-		try {
-			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-					return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+		System.out.println("Getting trusted session");
+		org.openntf.domino.Session result = currentTrustedSessionHolder_.get();
+		if (result == null) {
+			try {
+				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
+						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+					}
+				});
+				System.out.println("Trying run");
+				if (tmpResult instanceof org.openntf.domino.Session) {
+					result = (org.openntf.domino.Session) tmpResult;
+					System.out.println("Got session");
+					System.out.println(result);
+					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
+					setTrustedSession(result);
+					System.out.println(currentTrustedSessionHolder_.get());
 				}
-			});
-			if (result instanceof org.openntf.domino.Session) {
-				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we are responsible to recycle it.
-				return (org.openntf.domino.Session) result;
+			} catch (PrivilegedActionException e) {
+				DominoUtils.handleException(e);
 			}
-		} catch (PrivilegedActionException e) {
-			DominoUtils.handleException(e);
+			if (result == null) {
+				System.out
+						.println("SEVERE: Unable to get default trusted session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation.");
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/**

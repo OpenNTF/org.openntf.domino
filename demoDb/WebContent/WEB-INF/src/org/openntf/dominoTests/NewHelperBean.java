@@ -111,4 +111,10 @@ public class NewHelperBean implements Serializable {
 	public void getNSAApps() {
 		ExtLibUtil.getViewScope().put("javaTest", NSA.INSTANCE.getReport());
 	}
+
+	public void getSessions() {
+		Factory.getTrustedSession();
+		Factory.getSessionFullAccess();
+		ExtLibUtil.getViewScope().put("javaTest", "Done");
+	}
 }

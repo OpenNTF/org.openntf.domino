@@ -59,7 +59,7 @@
 					</xp:button>
 					<xp:button value="Run Java Tests" id="button1" xp:key="javaButton">
 						<xp:eventHandler event="onclick" submit="true"
-							refreshMode="partial" refreshId="JavaDiv" action="#{openNTFDateTimeBean.runDateTimes}">
+							refreshMode="partial" refreshId="JavaDiv" action="#{testDateTimeBean.runDateTimes}">
 						</xp:eventHandler>
 					</xp:button>
 				</xp:this.facets>
