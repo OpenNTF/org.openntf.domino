@@ -3,8 +3,15 @@
  */
 package org.openntf.domino.xsp.helpers;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import com.ibm.designer.runtime.domino.adapter.HttpService;
+import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
+import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
+import com.ibm.domino.xsp.module.nsf.NSFService;
 
 /**
  * @author Nathan T. Freeman
@@ -32,4 +39,37 @@ public final class ServerBean extends ConcurrentHashMap<String, Object> {
 	public static ServerBean getCurrentInstance() {
 		return instance_;
 	}
+
+	public void cacheObject(final String key, final String filepath, final String className) {
+		try {
+			final ServerBean thisBean = this;
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
+				@Override
+				public Object run() {
+					NSFService nsfservice = null;
+					for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+						if (service instanceof NSFService) {
+							nsfservice = (NSFService) service;
+							break;
+						}
+					}
+					if (nsfservice != null) {
+						try {
+							NSFComponentModule forcedMod = nsfservice.loadModule(filepath);
+							Class<?> klazz = forcedMod.getModuleClassLoader().loadClass(className);
+							Object cacheMeIfYouCan = klazz.newInstance();
+							thisBean.put(key, cacheMeIfYouCan);
+						} catch (Throwable t) {
+							t.printStackTrace();
+						}
+					}
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 }

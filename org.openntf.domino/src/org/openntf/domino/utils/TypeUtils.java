@@ -44,6 +44,36 @@ import com.ibm.icu.text.SimpleDateFormat;
 public enum TypeUtils {
 	;
 
+	public static final String[] DEFAULT_STR_ARRAY = { "" };
+
+	public static <T> T getDefaultInstance(final Class<?> T) {
+		if (T.isArray())
+			if (T.getComponentType() == String.class) {
+				return (T) DEFAULT_STR_ARRAY.clone();
+			} else {
+				return (T) Array.newInstance(T.getComponentType(), 0);
+			}
+		if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
+			return (T) Boolean.FALSE;
+		if (Integer.class.equals(T) || Integer.TYPE.equals(T))
+			return (T) Integer.valueOf(0);
+		if (Long.class.equals(T) || Long.TYPE.equals(T))
+			return (T) Long.valueOf(0l);
+		if (Short.class.equals(T) || Short.TYPE.equals(T))
+			return (T) Short.valueOf("0");
+		if (Double.class.equals(T) || Double.TYPE.equals(T))
+			return (T) Double.valueOf(0d);
+		if (Float.class.equals(T) || Float.TYPE.equals(T))
+			return (T) Float.valueOf(0f);
+		if (String.class.equals(T))
+			return (T) "";
+		try {
+			return (T) T.newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base<?> context)
 			throws IllegalArgumentException {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
@@ -561,6 +591,21 @@ public enum TypeUtils {
 		throw new DataNotCompatibleException("");
 	}
 
+	public static String join(final Object[] values, final String separator) {
+		if (values == null || values.length == 0)
+			return "";
+		StringBuilder sb = new StringBuilder();
+		boolean isFirst = true;
+		for (Object val : values) {
+			if (!isFirst) {
+				sb.append(separator);
+			}
+			sb.append(String.valueOf(val));
+			isFirst = false;
+		}
+		return sb.toString();
+	}
+
 	public static String join(final Collection<?> values, final String separator) {
 		if (values == null || values.isEmpty())
 			return "";
@@ -575,6 +620,10 @@ public enum TypeUtils {
 	}
 
 	public static String join(final Collection<Object> values) {
+		return join(values, ", ");
+	}
+
+	public static String join(final Object[] values) {
 		return join(values, ", ");
 	}
 
@@ -725,6 +774,20 @@ public enum TypeUtils {
 			}
 		}
 		return strings;
+	}
+
+	public static String toString(final java.lang.Object object) throws DataNotCompatibleException {
+		if (object == null)
+			return null;
+		if (object instanceof String) {
+			return (String) object;
+		} else if (object instanceof Collection) {
+			return join((Collection) object);
+		} else if (object.getClass().isArray()) {
+			return join((Object[]) object);
+		} else {
+			return String.valueOf(object);
+		}
 	}
 
 	public static Pattern[] toPatterns(final Collection<Object> vector) throws DataNotCompatibleException {

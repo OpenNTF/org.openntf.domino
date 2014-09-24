@@ -25,6 +25,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.MessageDigest;
@@ -75,7 +76,7 @@ public enum DominoUtils {
 	/** The Constant logBackup_. */
 	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
-	public static Class<?> getClass(final String className) {
+	public static Class<?> getClass(final CharSequence className) {
 		Class<?> result = null;
 		try {
 			result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
@@ -84,7 +85,7 @@ public enum DominoUtils {
 					Class<?> result = null;
 					ClassLoader cl = Thread.currentThread().getContextClassLoader();
 					try {
-						result = Class.forName(className, false, cl);
+						result = Class.forName(className.toString(), false, cl);
 					} catch (Throwable t) {
 						System.err.println("Got a " + t.getClass() + " trying to load " + className + " from a " + cl.getClass().getName());
 						ClassLoader parent = cl.getParent();
@@ -197,7 +198,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is number
 	 */
-	public static boolean isNumber(final String value) {
+	public static boolean isNumber(final CharSequence value) {
 		boolean seenDot = false;
 		boolean seenExp = false;
 		boolean justSeenExp = false;
@@ -227,7 +228,7 @@ public enum DominoUtils {
 			return false;
 		}
 		try {
-			Double.parseDouble(value);
+			Double.parseDouble(value.toString());
 			return true;
 		} catch (NumberFormatException e) {
 			return false;
@@ -321,9 +322,9 @@ public enum DominoUtils {
 	 *            the notesurl
 	 * @return the unid from notes url
 	 */
-	public static String getUnidFromNotesUrl(final String notesurl) {
+	public static String getUnidFromNotesUrl(final CharSequence notesurl) {
 		String result = null;
-		String trimmed = notesurl.toLowerCase().trim();
+		String trimmed = notesurl.toString().toLowerCase().trim();
 		if (trimmed.startsWith("notes://")) {
 			int arg = trimmed.lastIndexOf('?');
 			if (arg == -1) { // there's no ? so we'll just start from the end
@@ -344,7 +345,7 @@ public enum DominoUtils {
 				}
 			}
 		} else {
-			throw new InvalidNotesUrlException(notesurl);
+			throw new InvalidNotesUrlException(notesurl.toString());
 		}
 
 		return result;
@@ -393,11 +394,11 @@ public enum DominoUtils {
 		}
 	}
 
-	public static boolean isHierarchicalName(final String name) {
-		return (Strings.isBlankString(name)) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
+	public static boolean isHierarchicalName(final CharSequence name) {
+		return (Strings.isBlankString(name.toString())) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
 
-	public static String toAbbreviatedName(final String name) {
+	public static String toAbbreviatedName(final CharSequence name) {
 		if (isHierarchicalName(name)) {
 			StringBuilder builder = new StringBuilder();
 			boolean isFirst = true;
@@ -441,49 +442,49 @@ public enum DominoUtils {
 			}
 			return builder.toString();
 		} else {
-			return name;
+			return name.toString();
 		}
 	}
 
-	public static String toCommonName(final String name) {
+	public static String toCommonName(final CharSequence name) {
 		if (isHierarchicalName(name)) {
 			Matcher m = Names.CN_MATCH.matcher(name);
 			if (m.find()) {
 				int start = m.start() + 3;
 				int end = m.end();
 				if (start < end) {
-					return name.substring(start, end);
+					return name.subSequence(start, end).toString();
 				} else {
-					return name;
+					return name.toString();
 				}
 			} else {
 				return "";
 			}
 		} else {
-			return name;
+			return name.toString();
 		}
 	}
 
-	public static String toOrgName(final String name) {
+	public static String toOrgName(final CharSequence name) {
 		if (isHierarchicalName(name)) {
 			Matcher m = Names.O_MATCH.matcher(name);
 			if (m.find()) {
 				int start = m.start() + 2;
 				int end = m.end();
 				if (start < end) {
-					return name.substring(start, end);
+					return name.subSequence(start, end).toString();
 				} else {
-					return name;
+					return name.toString();
 				}
 			} else {
 				return "";
 			}
 		} else {
-			return name;
+			return name.toString();
 		}
 	}
 
-	public static String toOUString(final String name) {
+	public static String toOUString(final CharSequence name) {
 		if (isHierarchicalName(name)) {
 			Matcher m = Names.OU_MATCH.matcher(name);
 			StringBuilder builder = new StringBuilder();
@@ -495,7 +496,7 @@ public enum DominoUtils {
 					if (i > 0) {
 						builder.append('/');
 					}
-					builder.append(name.substring(start, end));
+					builder.append(name.subSequence(start, end));
 					i++;
 				}
 			}
@@ -509,7 +510,7 @@ public enum DominoUtils {
 		}
 	}
 
-	public static String[] toOU(final String name) {
+	public static String[] toOU(final CharSequence name) {
 		if (isHierarchicalName(name)) {
 			Matcher m = Names.OU_MATCH.matcher(name);
 			String[] ous = new String[4];	//maximum number of OUs according to spec
@@ -518,7 +519,7 @@ public enum DominoUtils {
 				int start = m.start() + 3;
 				int end = m.end();
 				if (start < end) {
-					ous[i++] = name.substring(start, end);
+					ous[i++] = name.subSequence(start, end).toString();
 				}
 			}
 			if (i == 0) {
@@ -533,33 +534,33 @@ public enum DominoUtils {
 		}
 	}
 
-	public static String toCountry(final String name) {
+	public static String toCountry(final CharSequence name) {
 		if (isHierarchicalName(name)) {
 			Matcher m = Names.C_MATCH.matcher(name);
 			if (m.find()) {
 				int start = m.start() + 2;
 				int end = m.end();
 				if (start < end) {
-					return name.substring(start, end);
+					return name.subSequence(start, end).toString();
 				} else {
-					return name;
+					return name.toString();
 				}
 			} else {
 				return "";
 			}
 		} else {
-			return name;
+			return name.toString();
 		}
 	}
 
-	public static String toNameType(final String name, final Name.NameType type) {
+	public static String toNameType(final CharSequence name, final Name.NameType type) {
 		switch (type) {
 		case COMMON:
 			return toCommonName(name);
 		case ABBREVIATED:
 			return toAbbreviatedName(name);
 		case CANONICAL:
-			return name;
+			return name.toString();
 		case ORG:
 			return toOrgName(name);
 		case ORGUNIT:
@@ -567,7 +568,7 @@ public enum DominoUtils {
 		case COUNTRY:
 			return toCountry(name);
 		}
-		return name;
+		return name.toString();
 	}
 
 	public static Map<String, String> mapNames(final Collection<String> names, final Name.NameType keyType, final Name.NameType valueType) {
@@ -610,8 +611,10 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is hex
 	 */
-	public static boolean isHex(final String value) {
-		String chk = value.trim().toLowerCase();
+	public static boolean isHex(final CharSequence value) {
+		if (value == null)
+			return false;
+		String chk = value.toString().trim().toLowerCase();
 		for (int i = 0; i < chk.length(); i++) {
 			char c = chk.charAt(i);
 			boolean isHexDigit = Character.isDigit(c) || Character.isWhitespace(c) || c == 'a' || c == 'b' || c == 'c' || c == 'd'
@@ -632,7 +635,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is unid
 	 */
-	public static boolean isUnid(final String value) {
+	public static boolean isUnid(final CharSequence value) {
 		if (value.length() != 32)
 			return false;
 		return DominoUtils.isHex(value);
@@ -645,7 +648,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is replica id
 	 */
-	public static boolean isReplicaId(final String value) {
+	public static boolean isReplicaId(final CharSequence value) {
 		if (value.length() != 16)
 			return false;
 		return DominoUtils.isHex(value);
@@ -670,8 +673,8 @@ public enum DominoUtils {
 	 * @return the string
 	 */
 	public static String toUnid(final Serializable value) {
-		if (value instanceof String && DominoUtils.isUnid((String) value))
-			return (String) value;
+		if (value instanceof CharSequence && DominoUtils.isUnid((CharSequence) value))
+			return value.toString();
 		String hash = DominoUtils.md5(value);
 		while (hash.length() < 32) {
 			hash = "0" + hash;
@@ -679,7 +682,7 @@ public enum DominoUtils {
 		return hash.toUpperCase();
 	}
 
-	public static byte[] toByteArray(final String hexString) {
+	public static byte[] toByteArray(final CharSequence hexString) {
 		if (hexString.length() % 2 != 0)
 			throw new IllegalArgumentException("Only hex strings with an even number of digits can be converted");
 		int arrLength = hexString.length() >> 1;
@@ -688,8 +691,8 @@ public enum DominoUtils {
 		for (int ii = 0; ii < arrLength; ii++) {
 			int index = ii << 1;
 
-			String l_digit = hexString.substring(index, index + 2);
-			buf[ii] = (byte) Integer.parseInt(l_digit, 16);
+			CharSequence l_digit = hexString.subSequence(index, index + 2);
+			buf[ii] = (byte) Integer.parseInt(l_digit.toString(), 16);
 		}
 		return buf;
 	}
@@ -702,6 +705,23 @@ public enum DominoUtils {
 		String result = formatter.toString();
 		formatter.close();
 		return result;
+	}
+
+	public static Integer toInteger(final byte[] bytes) {
+		//FIXME NTF This feels wrong. Should we pad the byte array? Am I being pedantic?
+		if (bytes.length == 1) {
+			return Byte.valueOf(bytes[0]).intValue();
+		} else if (bytes.length == 2) {
+			ByteBuffer wrapped = ByteBuffer.wrap(bytes);
+			short s = wrapped.getShort();
+			return Short.valueOf(s).intValue();
+		} else if (bytes.length == 4) {
+			ByteBuffer wrapped = ByteBuffer.wrap(bytes);
+			int i = wrapped.getInt();
+			return i;
+		} else {
+			throw new IllegalArgumentException("Cannot convert a byte array of length " + bytes.length + " to Integer");
+		}
 	}
 
 	/**
@@ -821,7 +841,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-			// TODO Need to work out how to get from properties file in NSF
+				// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {
@@ -955,12 +975,12 @@ public enum DominoUtils {
 		return result;
 	}
 
-	public static String javaBinaryNameToFilePath(final String binaryName, final String separator) {
-		return binaryName.replace(".", separator) + ".class";
+	public static String javaBinaryNameToFilePath(final CharSequence binaryName, final String separator) {
+		return binaryName.toString().replace(".", separator) + ".class";
 	}
 
-	public static String filePathToJavaBinaryName(final String filePath, final String separator) {
-		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
+	public static String filePathToJavaBinaryName(final CharSequence filePath, final String separator) {
+		return filePath.subSequence(0, filePath.length() - 6).toString().replace(separator, ".");
 	}
 
 }

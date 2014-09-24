@@ -3,16 +3,15 @@ package org.openntf.domino.graph;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javolution.text.TextBuilder;
+import javolution.util.FastMap;
+import javolution.util.FastSet;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.graph.DominoGraph.DominoGraphException;
@@ -37,24 +36,12 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	private static final long serialVersionUID = 1L;
 
-	private Boolean inDirty_ = false;
-
-	private Set<String> inEdges_;
-	// private transient Set<Edge> inEdgesObjects_;
-	private Boolean outDirty_ = false;
-	// private transient Set<Edge> outEdgesObjects_;
-	private Set<String> outEdges_;
-
-	private Map<String, Boolean> inDirtyMap_;
-	private Map<String, Boolean> outDirtyMap_;
-	// private Set<String> inLabels_;
-	// private Set<String> outLabels_;
-	// private Boolean inLabelsDirty_;
-	// private Boolean outLabelsDirty_;
-	private Map<String, Set<String>> inEdgesMap_;
-	private Map<String, Set<String>> outEdgesMap_;
-	private transient Map<String, Set<Edge>> inEdgeCache_;
-	private transient Map<String, Set<Edge>> outEdgeCache_;
+	private FastMap<String, Boolean> inDirtyMap_;
+	private FastMap<String, Boolean> outDirtyMap_;
+	private FastMap<String, FastSet<String>> inEdgesMap_;
+	private FastMap<String, FastSet<String>> outEdgesMap_;
+	private transient FastMap<String, FastSet<Edge>> inEdgeCache_;
+	private transient FastMap<String, FastSet<Edge>> outEdgeCache_;
 
 	public DominoVertex(final DominoGraph parent, final org.openntf.domino.Document doc) {
 		super(parent, doc);
@@ -62,28 +49,28 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	Map<String, Boolean> getInDirtyMap() {
 		if (inDirtyMap_ == null) {
-			inDirtyMap_ = new ConcurrentHashMap<String, Boolean>();
+			inDirtyMap_ = new FastMap<String, Boolean>().atomic();
 		}
 		return inDirtyMap_;
 	}
 
 	Map<String, Boolean> getOutDirtyMap() {
 		if (outDirtyMap_ == null) {
-			outDirtyMap_ = new ConcurrentHashMap<String, Boolean>();
+			outDirtyMap_ = new FastMap<String, Boolean>().atomic();
 		}
 		return outDirtyMap_;
 	}
 
-	Map<String, Set<String>> getInEdgesMap() {
+	Map<String, FastSet<String>> getInEdgesMap() {
 		if (inEdgesMap_ == null) {
-			inEdgesMap_ = new ConcurrentHashMap<String, Set<String>>();
+			inEdgesMap_ = new FastMap<String, FastSet<String>>().atomic();
 		}
 		return inEdgesMap_;
 	}
 
-	Map<String, Set<String>> getOutEdgesMap() {
+	Map<String, FastSet<String>> getOutEdgesMap() {
 		if (outEdgesMap_ == null) {
-			outEdgesMap_ = new ConcurrentHashMap<String, Set<String>>();
+			outEdgesMap_ = new FastMap<String, FastSet<String>>().atomic();
 		}
 		return outEdgesMap_;
 	}
@@ -98,27 +85,30 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	Set<String> getInEdgesSet(final String label) {
 		Set<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			Object o = getProperty(DominoVertex.IN_PREFIX + label, java.util.Collection.class);
 			if (o != null) {
-				if (o instanceof LinkedHashSet) {
-					edgeIds = Collections.synchronizedSet((LinkedHashSet) o);
+				if (o instanceof FastSet) {
+					edgeIds = ((FastSet) o).atomic();
 				} else if (o instanceof java.util.Collection) {
-					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
+					FastSet<String> result = new FastSet<String>();
+					result.addAll((Collection<String>) o);
+					edgeIds = result.atomic();
 				} else {
 					log_.log(Level.SEVERE, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName()
 							+ ". We are clearing the values and rebuilding the edges.");
-					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
+					edgeIds = new FastSet<String>().atomic();
 				}
 			} else {
-				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
+				edgeIds = new FastSet<String>().atomic();
 			}
 			Map map = getInEdgesMap();
-			synchronized (map) {
-				map.put(label, edgeIds);
-			}
+			//			synchronized (map) {
+			map.put(label, edgeIds);
+			//			}
 		}
 		return edgeIds;
 	}
@@ -133,27 +123,29 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
-	Set<String> getOutEdgesSet(final String label) {
-		Set<String> edgeIds = getOutEdgesMap().get(label);
+	FastSet<String> getOutEdgesSet(final String label) {
+		FastSet<String> edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			Object o = getProperty(DominoVertex.OUT_PREFIX + label, java.util.Collection.class);
 			if (o != null) {
-				if (o instanceof LinkedHashSet) {
-					edgeIds = Collections.synchronizedSet((LinkedHashSet) o);
+				if (o instanceof FastSet) {
+					edgeIds = ((FastSet) o).atomic();
 				} else if (o instanceof java.util.Collection) {
-					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
+					FastSet<String> result = new FastSet<String>();
+					result.addAll((Collection<String>) o);
+					edgeIds = result.atomic();
 				} else {
 					log_.log(Level.SEVERE, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName()
 							+ ". We are clearing the values and rebuilding the edges.");
-					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
+					edgeIds = new FastSet<String>().atomic();
 				}
 			} else {
-				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
+				edgeIds = new FastSet<String>().atomic();
 			}
 			Map map = getOutEdgesMap();
-			synchronized (map) {
-				map.put(label, edgeIds);
-			}
+			//			synchronized (map) {
+			map.put(label, edgeIds);
+			//			}
 		}
 		return edgeIds;
 	}
@@ -170,22 +162,22 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 		// Set<String> ins = getInEdges();
 		Set<String> ins = getInEdgesSet(label);
-		synchronized (ins) {
-			if (!ins.contains(edge.getId())) {
-				adding = true;
-				ins.add((String) edge.getId());
-			}
+		//		synchronized (ins) {
+		if (!ins.contains(edge.getId())) {
+			adding = true;
+			ins.add((String) edge.getId());
 		}
+		//		}
 		if (adding) {
 			getParent().startTransaction(this);
 			Map map = getInDirtyMap();
-			synchronized (map) {
-				map.put(label, true);
-			}
+			//			synchronized (map) {
+			map.put(label, true);
+			//			}
 			Set<Edge> inLabelObjs = getInEdgeCache(label);
-			synchronized (inLabelObjs) {
-				inLabelObjs.add(edge);
-			}
+			//			synchronized (inLabelObjs) {
+			inLabelObjs.add(edge);
+			//			}
 
 			// inDirty_ = true;
 			// Set<Edge> inObjs = getInEdgeObjects();
@@ -202,22 +194,22 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 		// Set<String> outs = getOutEdges();
 		Set<String> outs = getOutEdgesSet(label);
-		synchronized (outs) {
-			if (!outs.contains(edge.getId())) {
-				adding = true;
-				outs.add((String) edge.getId());
-			}
+		//		synchronized (outs) {
+		if (!outs.contains(edge.getId())) {
+			adding = true;
+			outs.add((String) edge.getId());
 		}
+		//		}
 		if (adding) {
 			getParent().startTransaction(this);
 			Map map = getOutDirtyMap();
-			synchronized (map) {
-				map.put(label, true);
-			}
+			//			synchronized (map) {
+			map.put(label, true);
+			//			}
 			Set<Edge> outLabelObjs = getOutEdgeCache(label);
-			synchronized (outLabelObjs) {
-				outLabelObjs.add(edge);
-			}
+			//			synchronized (outLabelObjs) {
+			outLabelObjs.add(edge);
+			//			}
 			// outDirty_ = true;
 			// Set<Edge> outObjs = getOutEdgeObjects();
 			// synchronized (outObjs) {
@@ -228,18 +220,18 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	public java.util.Set<String> getBothEdges() {
-		Set<String> result = new LinkedHashSet<String>();
+		FastSet<String> result = new FastSet<String>();
 		result.addAll(getInEdges());
 		result.addAll(getOutEdges());
-		return Collections.unmodifiableSet(result);
+		return result.unmodifiable();
 	}
 
 	@Override
 	public Set<Edge> getEdges(final String... labels) {
-		LinkedHashSet<Edge> result = new LinkedHashSet<Edge>();
+		FastSet<Edge> result = new FastSet<Edge>();
 		result.addAll(getInEdgeObjects(labels));
 		result.addAll(getOutEdgeObjects(labels));
-		return Collections.unmodifiableSet(result);
+		return result.unmodifiable();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -247,18 +239,18 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	public Iterable<Edge> getEdges(final Direction direction, final String... labels) {
 		if (direction == Direction.IN) {
 			if (labels == null || labels.length == 0) {
-				return Collections.unmodifiableSet(getInEdgeObjects());
+				return getInEdgeObjects().unmodifiable();
 			} else {
 				return getInEdgeObjects(labels);
 			}
 		} else if (direction == Direction.OUT) {
 			if (labels == null || labels.length == 0) {
-				return Collections.unmodifiableSet(getOutEdgeObjects());
+				return getOutEdgeObjects().unmodifiable();
 			} else {
 				return getOutEdgeObjects(labels);
 			}
 		} else {
-			LinkedHashSet result = new LinkedHashSet<Edge>();
+			FastSet result = new FastSet<Edge>();
 			if (labels == null || labels.length == 0) {
 				result.addAll(getInEdgeObjects());
 				result.addAll(getOutEdgeObjects());
@@ -266,55 +258,55 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				result.addAll(getInEdgeObjects(labels));
 				result.addAll(getOutEdgeObjects(labels));
 			}
-			return Collections.unmodifiableSet(result);
+			return result.unmodifiable();
 		}
 	}
 
-	private Map<String, Set<Edge>> getInEdgeCache() {
+	private Map<String, FastSet<Edge>> getInEdgeCache() {
 		if (inEdgeCache_ == null) {
-			inEdgeCache_ = Collections.synchronizedMap(new HashMap<String, Set<Edge>>());
+			inEdgeCache_ = new FastMap<String, FastSet<Edge>>().atomic();
 		}
 		return inEdgeCache_;
 	}
 
-	private Set<Edge> getInEdgeCache(final String label) {
-		Map<String, Set<Edge>> inCache = getInEdgeCache();
-		Set<Edge> result = null;
-		synchronized (inCache) {
-			result = inCache.get(label);
-			if (result == null) {
-				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
-				inCache.put(label, result);
-			}
+	private FastSet<Edge> getInEdgeCache(final String label) {
+		Map<String, FastSet<Edge>> inCache = getInEdgeCache();
+		FastSet<Edge> result = null;
+		//		synchronized (inCache) {
+		result = inCache.get(label);
+		if (result == null) {
+			result = new FastSet<Edge>().atomic();
+			inCache.put(label, result);
 		}
+		//		}
 		return result;
 	}
 
-	private Set<Edge> getOutEdgeCache(final String label) {
-		Map<String, Set<Edge>> outCache = getOutEdgeCache();
-		Set<Edge> result = null;
-		synchronized (outCache) {
-			result = outCache.get(label);
-			if (result == null) {
-				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
-				outCache.put(label, result);
-			}
+	private FastSet<Edge> getOutEdgeCache(final String label) {
+		Map<String, FastSet<Edge>> outCache = getOutEdgeCache();
+		FastSet<Edge> result = null;
+		//		synchronized (outCache) {
+		result = outCache.get(label);
+		if (result == null) {
+			result = new FastSet<Edge>().atomic();
+			outCache.put(label, result);
 		}
+		//		}
 		return result;
 	}
 
-	private Map<String, Set<Edge>> getOutEdgeCache() {
+	private FastMap<String, FastSet<Edge>> getOutEdgeCache() {
 		if (outEdgeCache_ == null) {
-			outEdgeCache_ = Collections.synchronizedMap(new HashMap<String, Set<Edge>>());
+			outEdgeCache_ = new FastMap<String, FastSet<Edge>>().atomic();
 		}
 		return outEdgeCache_;
 	}
 
-	protected Set<Edge> getInEdgeObjects(final String... labels) {
-		Map<String, Set<Edge>> inCache = getInEdgeCache();
-		Set<Edge> result = null;
+	protected FastSet<Edge> getInEdgeObjects(final String... labels) {
+		Map<String, FastSet<Edge>> inCache = getInEdgeCache();
+		FastSet<Edge> result = null;
 		if (labels == null || labels.length == 0) {
-			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			result = new FastSet<Edge>().atomic();
 			Set<String> labelSet = this.getInEdgeLabels();
 			//			System.out.println("INFO: Getting all IN edges for a vertex across " + labelSet.size() + " labels.");
 			for (String label : labelSet) {
@@ -324,15 +316,15 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		} else if (labels.length == 1) {
 			String label = labels[0];
 			// System.out.println("Getting in edges from " + getClass().getName() + " with label: " + label + " ...");
-			synchronized (inCache) {
-				result = inCache.get(label);
-			}
+			//			synchronized (inCache) {
+			result = inCache.get(label);
+			//			}
 			if (result == null) {
 				// result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
 				Set<String> edgeIds = getInEdgesSet(label);
-				Set<Edge> edges = getParent().getEdgesFromIds(edgeIds);
+				FastSet<Edge> edges = getParent().getEdgesFromIds(edgeIds);
 				if (edges != null) {
-					result = Collections.synchronizedSet((LinkedHashSet) edges);
+					result = edges.atomic();
 				}
 
 				// Set<Edge> allEdges = Collections.unmodifiableSet(getInEdgeObjects());
@@ -342,29 +334,29 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				// }
 				// }
 
-				synchronized (inCache) {
-					inCache.put(label, result);
-				}
+				//				synchronized (inCache) {
+				inCache.put(label, result);
+				//				}
 			}
 		} else {
-			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			result = new FastSet<Edge>();
 			for (String label : labels) {
 				result.addAll(getInEdgeObjects(label));
 			}
 		}
-		return Collections.unmodifiableSet(result);
+		return result.unmodifiable();
 	}
 
-	protected Set<Edge> getOutEdgeObjects(final String... labels) {
-		Map<String, Set<Edge>> outCache = getOutEdgeCache();
-		Set<Edge> result = null;
+	protected FastSet<Edge> getOutEdgeObjects(final String... labels) {
+		FastMap<String, FastSet<Edge>> outCache = getOutEdgeCache();
+		FastSet<Edge> result = null;
 
 		if (labels == null || labels.length == 0) {
-			result = new LinkedHashSet<Edge>();
-			Set<String> labelSet = this.getOutEdgeLabels();
+			result = new FastSet<Edge>();
+			FastSet<String> labelSet = this.getOutEdgeLabels();
 			//			System.out.println("INFO: Getting all OUT edges for a vertex across " + labelSet.size() + " labels.");
 			for (String label : labelSet) {
-				Set<Edge> curEdges = getOutEdgeObjects(label);
+				FastSet<Edge> curEdges = getOutEdgeObjects(label);
 				//				System.out.println("INFO: Found " + curEdges.size() + " OUT edges for label " + label);
 				result.addAll(curEdges);
 			}
@@ -372,16 +364,16 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		} else if (labels.length == 1) {
 			String label = labels[0];
 			if (label == null) {
-				return Collections.unmodifiableSet(getOutEdgeObjects());
+				return getOutEdgeObjects().unmodifiable();
 			}
-			synchronized (outCache) {
-				result = outCache.get(label);
-			}
+			//			synchronized (outCache) {
+			result = outCache.get(label);
+			//			}
 			if (result == null) {
-				Set<String> edgeIds = getOutEdgesSet(label);
-				Set<Edge> edges = getParent().getEdgesFromIds(edgeIds);
+				FastSet<String> edgeIds = getOutEdgesSet(label);
+				FastSet<Edge> edges = getParent().getEdgesFromIds(edgeIds);
 				if (edges != null) {
-					result = Collections.synchronizedSet((LinkedHashSet) edges);
+					result = edges.atomic();
 				}
 
 				// result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
@@ -399,17 +391,17 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				// }
 				// }
 
-				synchronized (outCache) {
-					outCache.put(label, result);
-				}
+				//				synchronized (outCache) {
+				outCache.put(label, result);
+				//				}
 			}
 		} else {
-			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			result = new FastSet<Edge>();
 			for (String label : labels) {
 				result.addAll(getOutEdgeObjects(label));
 			}
 		}
-		return Collections.unmodifiableSet(result);
+		return result.unmodifiable();
 	}
 
 	// @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -457,8 +449,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	// }
 
 	@Override
-	public Set<String> getInEdgeLabels() {
-		Set<String> result = new LinkedHashSet<String>();
+	public FastSet<String> getInEdgeLabels() {
+		FastSet<String> result = new FastSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
 			if (key.startsWith(IN_PREFIX)) {
@@ -468,8 +460,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
-	private Set<String> getInEdges() {
-		Set<String> result = new LinkedHashSet<String>();
+	private FastSet<String> getInEdges() {
+		FastSet<String> result = new FastSet<String>();
 		for (String label : getInEdgeLabels()) {
 			result.addAll(getInEdgesSet(label));
 		}
@@ -477,8 +469,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	@Override
-	public Set<String> getOutEdgeLabels() {
-		Set<String> result = new LinkedHashSet<String>();
+	public FastSet<String> getOutEdgeLabels() {
+		FastSet<String> result = new FastSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
 			if (key.startsWith(OUT_PREFIX)) {
@@ -488,8 +480,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
-	private Set<String> getOutEdges() {
-		Set<String> result = new LinkedHashSet<String>();
+	private FastSet<String> getOutEdges() {
+		FastSet<String> result = new FastSet<String>();
 		for (String label : getOutEdgeLabels()) {
 			result.addAll(getOutEdgesSet(label));
 		}
@@ -546,9 +538,9 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		if (ins != null) {
 			//			System.out.println("Removing an in edge from " + label + " with id " + edge.getId() + " from a vertex of type "
 			//					+ getProperty("Form"));
-			synchronized (ins) {
-				inChanged = ins.remove(edge.getId());
-			}
+			//			synchronized (ins) {
+			inChanged = ins.remove(edge.getId());
+			//			}
 		} else {
 			//			System.out.println("in edges were null from a vertex of type " + getProperty("Form") + ": " + getId());
 		}
@@ -559,13 +551,13 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		if (inChanged) {
 			//			System.out.println("Ins were changed so recording cache invalidation...");
 			Set<Edge> inObjsLabel = getInEdgeCache(label);
-			synchronized (inObjsLabel) {
-				inObjsLabel.remove(edge);
-			}
+			//			synchronized (inObjsLabel) {
+			inObjsLabel.remove(edge);
+			//			}
 			Map<String, Boolean> inDirtyMap = getInDirtyMap();
-			synchronized (inDirtyMap) {
-				inDirtyMap.put(label, true);
-			}
+			//			synchronized (inDirtyMap) {
+			inDirtyMap.put(label, true);
+			//			}
 		}
 
 		boolean outChanged = false;
@@ -573,22 +565,22 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		if (outs != null) {
 			//			System.out.println("Removing an out edge from " + label + " with id " + edge.getId() + " from a vertex of type "
 			//					+ getProperty("Form"));
-			synchronized (outs) {
-				outChanged = outs.remove(edge.getId());
-			}
+			//			synchronized (outs) {
+			outChanged = outs.remove(edge.getId());
+			//			}
 		} else {
 			//			System.out.println("out edges were null from a vertex of type " + getProperty("Form") + ": " + getId());
 		}
 		if (outChanged) {
 			//			System.out.println("Out were changed so recording cache invalidation...");
 			Set<Edge> outObjsLabel = getOutEdgeCache(label);
-			synchronized (outObjsLabel) {
-				outObjsLabel.remove(edge);
-			}
+			//			synchronized (outObjsLabel) {
+			outObjsLabel.remove(edge);
+			//			}
 			Map<String, Boolean> outDirtyMap = getOutDirtyMap();
-			synchronized (outDirtyMap) {
-				outDirtyMap.put(label, true);
-			}
+			//			synchronized (outDirtyMap) {
+			outDirtyMap.put(label, true);
+			//			}
 		}
 	}
 
@@ -605,7 +597,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	boolean writeEdges(final boolean force) {
 		boolean result = false;
-		Map<String, Set<String>> inMap = getInEdgesMap();
+		Map<String, FastSet<String>> inMap = getInEdgesMap();
 		Map<String, Boolean> inDirtyMap = getInDirtyMap();
 		if (!inDirtyMap.isEmpty()) {
 			for (String key : inDirtyMap.keySet()) {
@@ -616,14 +608,14 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 						setProperty("_COUNT" + DominoVertex.IN_PREFIX + key, edgeIds.size());
 						result = true;
 					}
-					synchronized (inDirtyMap) {
-						inDirtyMap.put(key, Boolean.FALSE);
-					}
+					//					synchronized (inDirtyMap) {
+					inDirtyMap.put(key, Boolean.FALSE);
+					//					}
 				}
 			}
 		}
 
-		Map<String, Set<String>> outMap = getOutEdgesMap();
+		Map<String, FastSet<String>> outMap = getOutEdgesMap();
 		Map<String, Boolean> outDirtyMap = getOutDirtyMap();
 		if (!outDirtyMap.isEmpty()) {
 			for (String key : outDirtyMap.keySet()) {
@@ -634,9 +626,9 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 						setProperty("_COUNT" + DominoVertex.OUT_PREFIX + key, edgeIds.size());
 						result = true;
 					}
-					synchronized (outDirtyMap) {
-						outDirtyMap.put(key, Boolean.FALSE);
-					}
+					//					synchronized (outDirtyMap) {
+					outDirtyMap.put(key, Boolean.FALSE);
+					//					}
 				}
 			}
 		}
@@ -668,13 +660,12 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	@Override
 	public String validateEdges() {
-		StringBuilder sb = new StringBuilder();
+		TextBuilder sb = new TextBuilder();
 		Set<String> inIds = getInEdges();
 		for (String id : inIds.toArray(new String[inIds.size()])) {
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				inIds.remove(id);
-				inDirty_ = true;
 				sb.append("IN: ");
 				sb.append(id);
 				sb.append(",");
@@ -686,7 +677,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				outIds.remove(id);
-				outDirty_ = true;
 				sb.append("OUT: ");
 				sb.append(id);
 				sb.append(",");
@@ -739,7 +729,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	@Override
 	public Set<IEdgeHelper> getEdgeHelpers() {
-		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
+		Set<IEdgeHelper> result = new FastSet<IEdgeHelper>();
 		for (String in : getInEdgeLabels()) {
 			IEdgeHelper helper = getParent().getHelper(in);
 			if (helper != null) {

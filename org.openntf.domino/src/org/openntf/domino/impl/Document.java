@@ -24,16 +24,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javolution.util.FastMap;
+import javolution.util.FastSet;
+import javolution.util.FastSortedMap;
+import javolution.util.function.Equalities;
 
 import lotus.domino.NotesException;
 
@@ -67,7 +70,6 @@ import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
-import org.openntf.domino.types.CaseInsensitiveHashSet;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Documents;
@@ -139,7 +141,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * this means: if you have opened a MIME item do NOTHING with this document until you call closeMimeEntities()
 	 * 
 	 */
-	protected Map<String, MIMEEntity> openMIMEEntities = new HashMap<String, MIMEEntity>();
+	protected Map<String, MIMEEntity> openMIMEEntities = new FastMap<String, MIMEEntity>();
 
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
@@ -2896,10 +2898,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				} else {
 					// Then destroy it (?)
 					this.removeItem("$$ItemInfo");
-					itemInfo_ = new TreeMap<String, Map<String, Serializable>>();
+					itemInfo_ = new FastSortedMap<String, Map<String, Serializable>>();
 				}
 			} else {
-				itemInfo_ = new TreeMap<String, Map<String, Serializable>>();
+				itemInfo_ = new FastSortedMap<String, Map<String, Serializable>>();
 			}
 		}
 		return itemInfo_;
@@ -3224,8 +3226,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3471,13 +3473,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3509,13 +3511,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3737,11 +3739,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return false;
 	}
 
-	private Set<String> fieldNames_;
+	private FastSet<String> fieldNames_;
 
-	protected Set<String> keySetInt() {
+	protected FastSet<String> keySetInt() {
 		if (fieldNames_ == null) {
-			fieldNames_ = new CaseInsensitiveHashSet();
+			fieldNames_ = new FastSet(Equalities.LEXICAL_CASE_INSENSITIVE);
 			//
 			// evaluate("@DocFields",...) is 3 times faster than lotus.domino.Document.getItems()
 			//
@@ -3765,7 +3767,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public Set<String> keySet() {
-		return Collections.unmodifiableSet(keySetInt());
+		return keySetInt().unmodifiable();
 	}
 
 	@Override
@@ -3960,6 +3962,126 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		} catch (NotesException e) {
 		}
 		result.add(new ExceptionDetails.Entry(this, myDetail));
+	}
+
+	public final static String CHUNK_TYPE_NAME = "ODAChunk";
+
+	public boolean isChunked(final String name) {
+		boolean result = false;
+		if (hasItem(name)) {
+			if (hasItem(name + "$" + 1)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	protected String[] getChunkNames(final String name) {
+		List<String> list = new ArrayList<String>();
+		for (String key : keySet()) {
+			if (key.equalsIgnoreCase(name)) {
+				list.add(key);
+			} else if (key.startsWith(name + "$")) {
+				list.add(key);
+			}
+		}
+		return list.toArray(TypeUtils.DEFAULT_STR_ARRAY);
+	}
+
+	protected void writeBinaryChunk(final String name, final int chunk, final byte[] data) {
+		String itemName = name;
+		if (chunk > 0) {
+			itemName = name + "$" + chunk;
+		}
+		try {
+			getDelegate().replaceItemValueCustomDataBytes(itemName, CHUNK_TYPE_NAME, data);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void writeBinary(final String name, final byte[] data, int chunkSize) {
+		int len = data.length;
+		if (chunkSize < 1024) {
+			chunkSize = 1024 * 64;
+		}
+		if (len <= chunkSize) {
+			writeBinaryChunk(name, 0, data);
+		} else {
+			byte[] buffer = new byte[chunkSize];
+			int lastChunkSize = len % chunkSize;
+			int chunks = (len / chunkSize);
+			if (lastChunkSize > 0) {
+				//				System.out.println("DEBUG: Last chunk size is: " + lastChunkSize);
+				chunks++;
+			}
+			for (int i = 0; i < chunks; i++) {
+				if (i == chunks - 1 && lastChunkSize > 0) {
+					//					System.out.println("DEBUG: Writing last chunk");
+					byte[] lastBuffer = new byte[lastChunkSize];
+					System.arraycopy(data, lastChunkSize, lastBuffer, 0, lastBuffer.length);
+					writeBinaryChunk(name, i, lastBuffer);
+				} else {
+					System.arraycopy(data, i * chunkSize, buffer, 0, buffer.length);
+					writeBinaryChunk(name, i, buffer);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public byte[] readBinaryChunk(final String name, final int chunk) {
+		String itemName = name;
+		if (chunk > 0) {
+			itemName = name + "$" + chunk;
+		}
+		try {
+			return getDelegate().getItemValueCustomDataBytes(itemName, CHUNK_TYPE_NAME);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public byte[] readBinary(final String name) {
+		if (isChunked(name)) {
+			String[] chunkNames = getChunkNames(name);
+			int chunks = chunkNames.length;
+			Item startChunk = getFirstItem(name);
+			if (startChunk != null) {
+				int chunkSize = startChunk.getValueLength();
+				int resultMaxSize = chunkSize * chunks;
+				byte[] accumulated = new byte[resultMaxSize];
+				int actual = 0;
+				int count = 0;
+				for (String curChunk : chunkNames) {
+					//					System.out.println("DEBUG: Attempting binary read from " + curChunk);
+					try {
+						byte[] cur = getDelegate().getItemValueCustomDataBytes(curChunk, CHUNK_TYPE_NAME);
+						//						System.out.println("Found " + cur.length + " bytes from chunk " + curChunk);
+						System.arraycopy(cur, 0, accumulated, actual, cur.length);
+						actual = actual + cur.length;
+					} catch (Exception e) {
+						DominoUtils.handleException(e, this);
+					}
+					count++;
+				}
+				byte[] result = new byte[actual];
+				//				System.out.println("DEBUG: resulting read-in array is " + actual + " while we have an actual of " + result.length
+				//						+ " for an accumulated " + accumulated.length);
+				System.arraycopy(accumulated, 0, result, 0, actual);
+				return result;
+			} else {
+				log_.log(Level.WARNING, "No start chunk available for binary read " + name + " on doucment " + noteid_ + " in db "
+						+ getAncestorDatabase().getApiPath());
+			}
+		} else {
+			return readBinaryChunk(name, 0);
+		}
+		return null;
 	}
 
 }

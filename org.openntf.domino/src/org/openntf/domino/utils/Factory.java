@@ -46,6 +46,7 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.graph.DominoGraph;
@@ -102,6 +103,17 @@ public enum Factory {
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
 						if (!iniFile.exists()) {
+							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+							progpath = System.getProperty("java.home");
+							if (progpath.endsWith("jvm")) {
+								iniFile = new File(progpath + System.getProperty("file.separator") + ".."
+										+ System.getProperty("file.separator") + "notes.ini");
+							} else {
+								iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+
+							}
+						}
+						if (!iniFile.exists()) {
 							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
@@ -113,7 +125,7 @@ public enum Factory {
 								//								System.out.println("Attempting to use path: " + pp2);
 								if (!iniFile.exists()) {
 									System.out
-											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+									.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
 									for (Object rawName : System.getProperties().keySet()) {
 										if (rawName instanceof String) {
 											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
@@ -666,7 +678,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
@@ -786,23 +798,27 @@ public enum Factory {
 	}
 
 	public static void setServiceLocator(final AppServiceLocator locator) {
-		currentServiceLocator_.set(locator);
+		currentServiceLocator_.remove();
 	}
 
 	public static void clearWrapperFactory() {
-		currentWrapperFactory.set(null);
+		currentWrapperFactory.remove();
 	}
 
 	public static void clearClassLoader() {
-		currentClassLoader_.set(null);
+		currentClassLoader_.remove();
 	}
 
 	public static void clearServiceLocator() {
-		currentServiceLocator_.set(null);
+		currentServiceLocator_.remove();
 	}
 
 	public static void clearDominoGraph() {
 		DominoGraph.clearDocumentCache();
+	}
+
+	public static void clearNoteCoordinateBuffer() {
+		NoteCoordinate.clearLocals();
 	}
 
 	public static void clearBubbleExceptions() {
