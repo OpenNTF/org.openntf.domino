@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.openntf.domino.xsp.feature_1.5.0.201409171757.jar" id="org.openntf.domino.xsp.feature" version="1.5.0.201409171757">
+   <description name="OpenNTF Domino API for IBM Domino Servers">
+      
+   </description>
+   <feature url="features/org.openntf.domino.xsp.feature_1.5.0.201409241744.jar" id="org.openntf.domino.xsp.feature" version="1.5.0.201409241744">
       <category name="org.openntf.domino.xsp"/>
    </feature>
    <category-def name="org.openntf.domino.xsp" label="OpenNTF Domino XPages integration plugin">
