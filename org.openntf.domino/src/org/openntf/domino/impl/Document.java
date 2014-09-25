@@ -968,19 +968,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public List<org.openntf.domino.EmbeddedObject> getEmbeddedObjects(final boolean includeRTItems) {
-		if (!includeRTItems) {
-			return getEmbeddedObjects();
-		} else {
-			List<org.openntf.domino.EmbeddedObject> result = new ArrayList<org.openntf.domino.EmbeddedObject>();
-			result.addAll(getEmbeddedObjects());
-			for (Item item : getItems()) {
-				if (item instanceof RichTextItem) {
-					result.addAll(((RichTextItem) item).getEmbeddedObjects());
+	public List<org.openntf.domino.EmbeddedObject> getAttachments() {
+		List<org.openntf.domino.EmbeddedObject> result = new ArrayList<org.openntf.domino.EmbeddedObject>();
+		result.addAll(getEmbeddedObjects());
+		for (Item item : getItems()) {
+			if (item instanceof RichTextItem) {
+				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
+				for (EmbeddedObject obj : objects) {
+					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
+						result.add(obj);
+					}
 				}
 			}
-			return result;
 		}
+		return result;
 	}
 
 	/*

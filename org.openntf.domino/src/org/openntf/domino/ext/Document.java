@@ -61,11 +61,9 @@ public interface Document {
 
 	/**
 	 * 
-	 * @param includeRTItems
-	 *            whether embedded objects contained in Rich Text items should be included
-	 * @return A List of embedded objects from the document
+	 * @return A List of the attachments from the document's Rich Text items, as EmbeddedObjects
 	 */
-	public List<org.openntf.domino.EmbeddedObject> getEmbeddedObjects(boolean includeRTItems);
+	public List<org.openntf.domino.EmbeddedObject> getAttachments();
 
 	/**
 	 * Gets the Form name the Document is based upon
