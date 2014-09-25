@@ -244,6 +244,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @return Hierarchical indicator flag
 	 */
+	@Override
 	public boolean isHierarchical() {
 		return this.Hierarchical;
 	}
@@ -442,6 +443,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.arpa.NamePartsMap.Key)
 	 * @see java.util.HashMap#get(Object)
 	 */
+	@Override
 	public String getNamePart(final NamePartsMap.Key key) {
 		try {
 			if (null == key) {
@@ -472,6 +474,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getAbbreviated()
 	 */
+	@Override
 	public String getAbbreviated() {
 		return this.getNamePart(NamePartsMap.Key.Abbreviated);
 	}
@@ -481,6 +484,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see org.openntf.arpa.RFC822name#getAddr821()
 	 */
+	@Override
 	public String getAddr821() {
 		return this.getNamePart(NamePartsMap.Key.Addr821);
 	}
@@ -490,6 +494,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment1()
 	 */
+	@Override
 	public String getAddr822Comment1() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment1);
 	}
@@ -499,6 +504,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment2()
 	 */
+	@Override
 	public String getAddr822Comment2() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment2);
 	}
@@ -508,6 +514,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment3()
 	 */
+	@Override
 	public String getAddr822Comment3() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment3);
 	}
@@ -517,6 +524,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see org.openntf.arpa.RFC822name#getAddr822LocalPart()
 	 */
+	@Override
 	public String getAddr822LocalPart() {
 		return this.getNamePart(NamePartsMap.Key.Addr822LocalPart);
 	}
@@ -526,6 +534,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see org.openntf.arpa.RFC822name#getAddr822Phrase()
 	 */
+	@Override
 	public String getAddr822Phrase() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Phrase);
 	}
@@ -553,6 +562,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getADMD()
 	 */
+	@Override
 	public String getADMD() {
 		return this.getNamePart(NamePartsMap.Key.ADMD);
 	}
@@ -562,6 +572,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getCanonical()
 	 */
+	@Override
 	public String getCanonical() {
 		return this.getNamePart(NamePartsMap.Key.Canonical);
 	}
@@ -571,6 +582,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getCommon()
 	 */
+	@Override
 	public String getCommon() {
 		return this.getNamePart(NamePartsMap.Key.Common);
 	}
@@ -580,6 +592,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getCountry()
 	 */
+	@Override
 	public String getCountry() {
 		return this.getNamePart(NamePartsMap.Key.Country);
 	}
@@ -589,6 +602,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getGeneration()
 	 */
+	@Override
 	public String getGeneration() {
 		return this.getNamePart(NamePartsMap.Key.Generation);
 	}
@@ -598,6 +612,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getGiven()
 	 */
+	@Override
 	public String getGiven() {
 		return this.getNamePart(NamePartsMap.Key.Given);
 	}
@@ -607,6 +622,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getInitials()
 	 */
+	@Override
 	public String getInitials() {
 		return this.getNamePart(NamePartsMap.Key.Initials);
 	}
@@ -616,6 +632,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getKeyword()
 	 */
+	@Override
 	public String getKeyword() {
 		return this.getNamePart(NamePartsMap.Key.Keyword);
 	}
@@ -625,6 +642,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getLanguage()
 	 */
+	@Override
 	public String getLanguage() {
 		return this.getNamePart(NamePartsMap.Key.Language);
 	}
@@ -634,6 +652,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getOrganization()
 	 */
+	@Override
 	public String getOrganization() {
 		return this.getNamePart(NamePartsMap.Key.Organization);
 	}
@@ -643,6 +662,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getOrgUnit1()
 	 */
+	@Override
 	public String getOrgUnit1() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit1);
 	}
@@ -652,6 +672,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getOrgUnit2()
 	 */
+	@Override
 	public String getOrgUnit2() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit2);
 	}
@@ -661,6 +682,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getOrgUnit3()
 	 */
+	@Override
 	public String getOrgUnit3() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit3);
 	}
@@ -670,6 +692,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getOrgUnit4()
 	 */
+	@Override
 	public String getOrgUnit4() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit4);
 	}
@@ -679,6 +702,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getPRMD()
 	 */
+	@Override
 	public String getPRMD() {
 		return this.getNamePart(NamePartsMap.Key.PRMD);
 	}
@@ -699,6 +723,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * @see Name#getAddr821()
 	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
+	@Override
 	public String getRFC82xInternetAddress() {
 		return this.getAddr822FullFirstLast();
 	}
@@ -708,6 +733,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * 
 	 * @see lotus.domino.Name#getSurname()
 	 */
+	@Override
 	public String getSurname() {
 		return this.getNamePart(NamePartsMap.Key.Surname);
 	}
@@ -903,6 +929,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
+	@Override
 	public int compareTo(final Name arg0) {
 		return Name.compare(this, arg0);
 	}
@@ -941,6 +968,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
+	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		this.setHierarchical(in.readBoolean());
 		this.initialize(in.readUTF());
@@ -949,6 +977,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
+	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeBoolean(this.isHierarchical());
 		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
@@ -962,6 +991,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 		super(null, Factory.getSession(), null, 0, NOTES_NAME);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<String> getGroups(final String serverName) {
 		Collection<String> result = null;

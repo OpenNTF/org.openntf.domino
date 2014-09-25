@@ -60,6 +60,14 @@ public interface Document {
 	public Date getCreatedDate();
 
 	/**
+	 * 
+	 * @param includeRTItems
+	 *            whether embedded objects contained in Rich Text items should be included
+	 * @return A List of embedded objects from the document
+	 */
+	public List<org.openntf.domino.EmbeddedObject> getEmbeddedObjects(boolean includeRTItems);
+
+	/**
 	 * Gets the Form name the Document is based upon
 	 * 
 	 * @return String form name
@@ -318,4 +326,12 @@ public interface Document {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public Item getFirstItem(final String name, final boolean returnMime);
+
+	//	public void writeBinaryChunk(String name, int chunk, byte[] data);
+
+	public void writeBinary(String name, byte[] data, int chunkSize);
+
+	public byte[] readBinaryChunk(String name, int chunk);
+
+	public byte[] readBinary(String name);
 }

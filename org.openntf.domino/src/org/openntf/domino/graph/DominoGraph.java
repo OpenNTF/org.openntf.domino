@@ -3,16 +3,18 @@ package org.openntf.domino.graph;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+//import java.util.HashMap;
+//import java.util.HashSet;
+//import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javolution.util.FastMap;
+import javolution.util.FastSet;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
@@ -162,7 +164,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	private String filepath_;
 	private String server_;
-	protected transient Map<String, IEdgeHelper> edgeHelpers_ = new HashMap<String, IEdgeHelper>();
+	protected transient Map<String, IEdgeHelper> edgeHelpers_ = new FastMap<String, IEdgeHelper>();
 
 	public DominoGraph(final org.openntf.domino.Database database) {
 		setRawDatabase(database);
@@ -178,7 +180,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	public Set<IEdgeHelper> findHelpers(final Vertex in, final Vertex out) {
-		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
+		Set<IEdgeHelper> result = new FastSet<IEdgeHelper>();
 		if (in == null || out == null) {
 			return result;
 		}
@@ -229,7 +231,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	private java.util.Map<Object, Element> getCache() {
 		if (cache_ == null) {
-			cache_ = Collections.synchronizedMap(new HashMap<Object, Element>());
+			cache_ = new FastMap<Object, Element>().atomic();
 		}
 		return cache_;
 	}
@@ -241,42 +243,46 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	private void putCache(final Element elem) {
 		if (elem != null) {
 			Map<Object, Element> cache = getCache();
-			synchronized (cache) {
-				cache.put(elem.getId(), elem);
-			}
+			//			synchronized (cache) {
+			cache.put(elem.getId(), elem);
+			//			}
 		}
 	}
 
 	private Element getCache(final Object id) {
 		Map<Object, Element> cache = getCache();
 		Element result = null;
-		synchronized (cache) {
-			result = cache.get(id);
-		}
+		//		synchronized (cache) {
+		result = cache.get(id);
+		//		}
 		return result;
 	}
 
 	private void removeCache(final Element elem) {
 		Map<Object, Element> cache = getCache();
-		synchronized (cache) {
-			cache.remove(elem);
-		}
+		//		synchronized (cache) {
+		cache.remove(elem);
+		//		}
 	}
 
 	private Set<Element> getCacheValues() {
 		Map<Object, Element> cache = getCache();
-		Set<Element> result = new LinkedHashSet<Element>();
-		synchronized (cache) {
-			result.addAll(cache.values());
-		}
-		return Collections.unmodifiableSet(result);
+		FastSet<Element> result = new FastSet<Element>();
+		//		synchronized (cache) {
+		result.addAll(cache.values());
+		//		}
+		return result.unmodifiable();
 	}
 
 	private void clearCache() {
 		Map<Object, Element> cache = getCache();
-		synchronized (cache) {
+		//		synchronized (cache) {
+		try {
 			cache.clear();
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
+		//		}
 		clearDocumentCache();
 	}
 
@@ -371,9 +377,9 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		Map<String, Document> map = documentCache.get();
 		if (id == null && createOnFail) {
 			result = getRawDatabase().createDocument();
-			synchronized (map) {
-				map.put(result.getUniversalID(), result);
-			}
+			//			synchronized (map) {
+			map.put(result.getUniversalID(), result);
+			//			}
 		} else if (id instanceof String) {
 			String sid = (String) id;
 			if (DominoUtils.isUnid(sid)) {
@@ -400,9 +406,9 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 					if (!unid.equalsIgnoreCase(localUnid)) {
 						log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid + ", Result: " + localUnid);
 					}
-					synchronized (map) {
-						map.put(unid, result);
-					}
+					//					synchronized (map) {
+					map.put(unid, result);
+					//					}
 				}
 			}
 		}
@@ -421,11 +427,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@Override
 	public Edge getEdge(final Object id) {
+		//see http://www.tinkerpop.com/docs/javadocs/blueprints/2.5.0/com/tinkerpop/blueprints/Graph.html#getEdge(java.lang.Object)
 		Edge result = null;
 		if (id == null) {
-			Document d = getDocument(id, false);
-			result = new DominoEdge(this, d);
-			putCache(result);
+			//			Document d = getDocument(id, false);
+			//			result = new DominoEdge(this, d);
+			//			putCache(result);
+			return null;
 		} else {
 			result = (Edge) getCache(id);
 			if (result == null) {
@@ -443,13 +451,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@Override
 	public Iterable<Edge> getEdges() {
-		Set<Edge> result = new LinkedHashSet<Edge>();
+		FastSet<Edge> result = new FastSet<Edge>();
 		ViewEntryCollection vec = getEdgeView().getAllEntries();
 		for (ViewEntry entry : vec) {
 			result.add(getEdge(entry.getUniversalID()));
 		}
 
-		return Collections.unmodifiableSet(result);
+		return result.unmodifiable();
 	}
 
 	@Override
@@ -458,8 +466,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		throw new UnsupportedOperationException();
 	}
 
-	public Set<Edge> getEdgesFromIds(final Set<String> set) {
-		Set<Edge> result = new LinkedHashSet<Edge>();
+	public FastSet<Edge> getEdgesFromIds(final Set<String> set) {
+		FastSet<Edge> result = new FastSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -470,7 +478,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	public Set<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
-		Set<Edge> result = new LinkedHashSet<Edge>();
+		FastSet<Edge> result = new FastSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -536,12 +544,12 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@Override
 	public Iterable<Vertex> getVertices() {
-		Set<Vertex> result = new LinkedHashSet<Vertex>();
+		FastSet<Vertex> result = new FastSet<Vertex>();
 		ViewEntryCollection vec = getVertexView().getAllEntries();
 		for (ViewEntry entry : vec) {
 			result.add(getVertex(entry.getUniversalID()));
 		}
-		return Collections.unmodifiableSet(result);
+		return result.unmodifiable();
 	}
 
 	@Override
@@ -604,7 +612,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		 */
 		@Override
 		protected Map<String, Document> initialValue() {
-			return new ConcurrentHashMap<String, Document>();
+			return new FastMap<String, Document>();
 		}
 
 		/*
@@ -616,7 +624,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		public Map<String, Document> get() {
 			Map<String, Document> map = super.get();
 			if (map == null) {
-				map = new ConcurrentHashMap<String, Document>();
+				map = new FastMap<String, Document>();
 				super.set(map);
 
 			}
