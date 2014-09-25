@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <note default='true' class='icon' xmlns='http://www.lotus.com/dxl' version='9.0'
  maintenanceversion='1.2' replicaid='80257B32007947B2'>
-<noteinfo noteid='122' unid='E728BA1B457C3F8080257B21006F80CE' sequence='434'>
+<noteinfo noteid='122' unid='E728BA1B457C3F8080257B21006F80CE' sequence='451'>
 <created><datetime>20130301T201754,70+00</datetime></created>
-<modified><datetime dst='true'>20140922T224824,67+01</datetime></modified>
-<revised><datetime dst='true'>20140922T224824,66+01</datetime></revised>
-<lastaccessed><datetime dst='true'>20140922T224824,67+01</datetime></lastaccessed>
+<modified><datetime dst='true'>20140925T133352,30+01</datetime></modified>
+<revised><datetime dst='true'>20140925T133352,29+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20140925T133352,30+01</datetime></lastaccessed>
 <addedtofile><datetime>20130318T220442,34+00</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
 <wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
@@ -33,5 +33,5 @@ AAAAUEECICABAAD/////+A4DgA==
 <item name='$FlagsNoRefresh'><text>rv</text></item>
 <item name='$Xots'><textlist><text>org.openntf.domino.xotsTests.XotsBasic;true</text><text
 >org.openntf.domino.xots.JSR223Tasklet;true</text><text>org.openntf.domino.xotsTests.XotsScheduledBasic;true</text><text
->org.openntf.domino.xots.builtin.XotsNsfScanner;true</text><text>org.openntf.domino.xotsTests.XotsCustomEvent;true</text></textlist></item></note>
+>org.openntf.domino.xots.builtin.XotsNsfScanner;true</text></textlist></item></note>
 
