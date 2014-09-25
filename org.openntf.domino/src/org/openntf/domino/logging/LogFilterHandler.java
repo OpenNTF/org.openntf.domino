@@ -173,9 +173,9 @@ public class LogFilterHandler extends Handler {
 			}
 		if (_handlerUpdateSet == null)
 			_handlerUpdateSet = new HashSet<L_HandlerUpdateEntry>();
-		_handlerUpdateSet.add(new L_HandlerUpdateEntry(oldHandlerUIF, handlerEnt, oldHex, handlerCfgEnt._handlerConfig,
-				oldHandlerCfgEnt._handlerConfig, useDefaultFormatter, formatter));
-		return true;
+			_handlerUpdateSet.add(new L_HandlerUpdateEntry(oldHandlerUIF, handlerEnt, oldHex, handlerCfgEnt._handlerConfig,
+					oldHandlerCfgEnt._handlerConfig, useDefaultFormatter, formatter));
+			return true;
 	}
 
 	void activateYourself(final LogFilterHandler[] oldLFHs) {
@@ -408,7 +408,6 @@ public class LogFilterHandler extends Handler {
 	 * @param contextMap
 	 *            the map used for the formula engine
 	 * @param exceptionDetails
-	 * @return
 	 */
 	private void contextFromExceptionDetails(final Map<String, Object> contextMap, final List<ExceptionDetails.Entry> exceptionDetails) {
 		for (ExceptionDetails.Entry detail : exceptionDetails) {

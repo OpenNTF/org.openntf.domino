@@ -35,6 +35,7 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
+@SuppressWarnings("rawtypes")
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static class DominoGraphException extends RuntimeException {
 

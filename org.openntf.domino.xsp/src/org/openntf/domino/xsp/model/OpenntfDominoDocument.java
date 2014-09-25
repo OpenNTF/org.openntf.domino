@@ -37,7 +37,6 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-@SuppressWarnings("unchecked")
 public class OpenntfDominoDocument extends DominoDocument implements AsDocMap {
 	// private static final Logger log_ = Logger.getLogger(FocDominoDocument.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -78,8 +77,6 @@ public class OpenntfDominoDocument extends DominoDocument implements AsDocMap {
 	 * "forgot" to use an interface here, we must inherit from DominoDocument and do some tricks not to break everything. (Otherwise we can
 	 * use a delegate pattern)
 	 * 
-	 * @param delegate
-	 * @return
 	 */
 	public OpenntfDominoDocument(final DominoDocument delegate) {
 

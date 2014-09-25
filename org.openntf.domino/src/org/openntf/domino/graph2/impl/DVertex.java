@@ -24,6 +24,8 @@ import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
 public class DVertex extends DElement implements org.openntf.domino.graph2.DVertex {
+	private static final long serialVersionUID = 1L;
+
 	private static final Logger log_ = Logger.getLogger(DVertex.class.getName());
 	public static final String IN_PREFIX = "_OPEN_IN_";
 	public static final String OUT_PREFIX = "_OPEN_OUT_";
@@ -243,7 +245,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	Set<String> getInEdgesSet(final String label) {
 		Set<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -281,6 +283,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	FastSet<String> getOutEdgesSet(final String label) {
 		FastSet<String> edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -404,7 +407,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 				result.addAll(getInEdgeObjects(label));
 			}
 		}
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 	FastSet<Edge> getOutEdgeObjects(final String... labels) {

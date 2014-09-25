@@ -55,10 +55,5 @@ public interface IItemDefinition extends Externalizable {
 
 	public void addItemListener(IItemListener listener);
 
-	/**
-	 * @param result
-	 * @param def
-	 * @return
-	 */
 	public Item createDefaultItem(Document result, DocumentDefinition def);
 }

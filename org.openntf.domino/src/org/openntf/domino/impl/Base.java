@@ -54,7 +54,7 @@ import com.ibm.commons.util.NotImplementedException;
  * 
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		implements org.openntf.domino.Base<D> {
+implements org.openntf.domino.Base<D> {
 	public static final int SOLO_NOTES_NAMES = 1000;
 	public static final int NOTES_SESSION = 1;
 	public static final int NOTES_DATABASE = 2;
@@ -743,6 +743,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param context
 	 *            The context object.
 	 * @param recycleThis
+	 *            A rolling collection of to-recycle objects
 	 * @return An object value that can be stored in an Item.
 	 * @throws IllegalArgumentException
 	 *             When the provided value cannot be successfully converted into an Item-safe value.

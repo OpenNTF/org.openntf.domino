@@ -7,8 +7,9 @@ import java.util.Set;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 
+@SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-com.tinkerpop.blueprints.TransactionalGraph {
+		com.tinkerpop.blueprints.TransactionalGraph {
 
 	public void startTransaction(final Element elem);
 

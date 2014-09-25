@@ -47,9 +47,10 @@ public enum TransactionScratchTest {
 			for (Form form : forms) {
 				// System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
 				Document d = form.getDocument();
-				Vector v = d.getItemValue("$UpdatedBy");
+				Vector<Object> v = d.getItemValue("$UpdatedBy");
 
 				Name n = db.getParent().createName((String) v.get(0));
+				@SuppressWarnings("unused")
 				String cn = n.getCommon();
 				nameCount++;
 				docCount++;
@@ -60,6 +61,7 @@ public enum TransactionScratchTest {
 
 		private void iterateAllDocuments(final Set<Document> secondReference) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
+			@SuppressWarnings("unused")
 			Session s = db.getParent();
 			org.openntf.domino.transactions.DatabaseTransaction txn = db.startTransaction();
 			DocumentCollection dc = db.getAllDocuments();
@@ -87,6 +89,7 @@ public enum TransactionScratchTest {
 				DateTime created = doc.getCreated();
 				if (created != null) {
 					dateCount++;
+					@SuppressWarnings("unused")
 					String busyWork3 = created.getDateOnly();
 				} else {
 					System.out.println("Created was null from document " + doc.getUniversalID());
@@ -101,6 +104,7 @@ public enum TransactionScratchTest {
 			for (Document doc : thirdReference) {
 				DateTime initMod = doc.getInitiallyModified();
 				dateCount++;
+				@SuppressWarnings("unused")
 				String busyWork4 = initMod.getDateOnly();
 			}
 		}
@@ -143,9 +147,6 @@ public enum TransactionScratchTest {
 
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(final String[] args) {
 
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];

@@ -10,7 +10,7 @@ import org.objectweb.asm.ClassWriter;
 
 public class DemoTransformer implements ClassFileTransformer {
 	@Override
-	public byte[] transform(final ClassLoader loader, final String className, final Class classBeingRedefined,
+	public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined,
 			final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
 		byte[] byteCode = classfileBuffer;
 		if (className.startsWith("org/openntf/domino/impl")) {

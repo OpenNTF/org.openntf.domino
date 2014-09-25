@@ -60,6 +60,12 @@ public interface Document {
 	public Date getCreatedDate();
 
 	/**
+	 * 
+	 * @return A List of the attachments from the document's Rich Text items, as EmbeddedObjects
+	 */
+	public List<org.openntf.domino.EmbeddedObject> getAttachments();
+
+	/**
 	 * Gets the Form name the Document is based upon
 	 * 
 	 * @return String form name

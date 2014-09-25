@@ -129,7 +129,7 @@ public enum Factory {
 								//								System.out.println("Attempting to use path: " + pp2);
 								if (!iniFile.exists()) {
 									System.out
-									.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
 									for (Object rawName : System.getProperties().keySet()) {
 										if (rawName instanceof String) {
 											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
@@ -178,13 +178,13 @@ public enum Factory {
 	}
 
 	private static Map<String, String> ENVIRONMENT;
+	@SuppressWarnings("unused")
 	private static boolean session_init = false;
 	private static boolean jar_init = false;
 
 	/**
 	 * load the configuration
 	 * 
-	 * @param session
 	 */
 	public static void loadEnvironment(/*final lotus.domino.Session session, */final Scanner scanner) {
 		if (ENVIRONMENT == null) {
@@ -413,7 +413,7 @@ public enum Factory {
 	/**
 	 * get the active object count
 	 * 
-	 * @return
+	 * @return The current active object count
 	 */
 	public static int getActiveObjectCount() {
 		return lotusCounter.intValue() - autoRecycleCounter.intValue() - manualRecycleCounter.intValue();
@@ -422,7 +422,7 @@ public enum Factory {
 	/**
 	 * Determine the run context where we are
 	 * 
-	 * @return
+	 * @return The active RunContext
 	 */
 	public static RunContext getRunContext() {
 		// TODO finish this implementation, which needs a lot of work.
@@ -490,7 +490,7 @@ public enum Factory {
 	/**
 	 * Returns the wrapper factory if initialized
 	 * 
-	 * @return
+	 * @return The active WrapperFactory
 	 */
 	public static WrapperFactory getWrapperFactory_unchecked() {
 		return currentWrapperFactory.get();
@@ -500,6 +500,7 @@ public enum Factory {
 	 * Set/changes the wrapperFactory for this thread
 	 * 
 	 * @param wf
+	 *            The new WrapperFactory
 	 */
 	public static void setWrapperFactory(final WrapperFactory wf) {
 		currentWrapperFactory.set(wf);
@@ -507,6 +508,7 @@ public enum Factory {
 
 	// --- session handling 
 
+	@SuppressWarnings("rawtypes")
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
 		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
@@ -622,10 +624,6 @@ public enum Factory {
 
 	/**
 	 * @deprecated Use {@link #fromLotusAsVector(Collection, FactorySchema, Base)}
-	 * @param lotusColl
-	 * @param T
-	 * @param parent
-	 * @return
 	 */
 	@Deprecated
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -684,7 +682,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
@@ -702,8 +700,7 @@ public enum Factory {
 
 	/**
 	 * Sets the current session
-	 * 
-	 * @param session
+	 *
 	 */
 	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
@@ -778,9 +775,10 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static Map<Class, List> nonOSGIServicesCache;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		AppServiceLocator serviceLocator = currentServiceLocator_.get();
@@ -792,7 +790,6 @@ public enum Factory {
 		if (nonOSGIServicesCache == null)
 			nonOSGIServicesCache = new HashMap<Class, List>();
 
-		@SuppressWarnings("unchecked")
 		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
 		if (ret == null) {
 			ret = new ArrayList<T>();
@@ -867,6 +864,7 @@ public enum Factory {
 			callback.terminate();
 		}
 		clearSession();
+		@SuppressWarnings("unused")
 		long termCount = wf.terminate();
 		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 		clearBubbleExceptions();
@@ -938,8 +936,6 @@ public enum Factory {
 	/**
 	 * Debug method to get statistics
 	 * 
-	 * @param details
-	 * @return
 	 */
 	public static String dumpCounters(final boolean details) {
 		if (!TRACE_COUNTERS)
@@ -1354,7 +1350,6 @@ public enum Factory {
 	 * This will call the terminate-function of the callback on every "terminate" call. (Across threads!) The callback must handle this with
 	 * threadlocals itself. See DateTime for an example
 	 * 
-	 * @param callback
 	 */
 	public static void onTerminate(final Terminatable callback) {
 		onTerminate_.add(callback);

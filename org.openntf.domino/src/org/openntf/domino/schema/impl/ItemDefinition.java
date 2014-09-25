@@ -192,29 +192,31 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 				DominoUtils.handleException(e);
 			}
 		}
-		if (!def.isDefaultSummary()) {
-			item.setSummary(false);
-		}
-		for (Flags flag : getFlags()) {
-			switch (flag) {
-			case SUMMARY:
-				item.setSummary(true);
-				break;
-			case AUTHORS:
-				item.setAuthors(true);
-				break;
-			case READERS:
-				item.setReaders(true);
-				break;
-			case PROTECTED:
-				item.setProtected(true);
-				break;
-			case SIGNED:
-				item.setSigned(true);
-				break;
-			case ENCRYPTED:
-				item.setEncrypted(true);
-				break;
+		if (item != null) {
+			if (!def.isDefaultSummary()) {
+				item.setSummary(false);
+			}
+			for (Flags flag : getFlags()) {
+				switch (flag) {
+				case SUMMARY:
+					item.setSummary(true);
+					break;
+				case AUTHORS:
+					item.setAuthors(true);
+					break;
+				case READERS:
+					item.setReaders(true);
+					break;
+				case PROTECTED:
+					item.setProtected(true);
+					break;
+				case SIGNED:
+					item.setSigned(true);
+					break;
+				case ENCRYPTED:
+					item.setEncrypted(true);
+					break;
+				}
 			}
 		}
 		return item;

@@ -5,7 +5,6 @@ package org.openntf.formula;
  * 
  * @author Roland Praml, FOCONIS AG
  * 
- * @param <T>
  */
 public interface FormulaProvider<T> {
 	public T get(String key);

@@ -49,7 +49,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
-	private Vector columnValues_;
+	private Vector<Object> columnValues_;
 	private static Method getParentViewMethod;
 
 	static {
@@ -183,9 +183,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * 
 	 * @param returnConstants
 	 *            this parameter controls if constant values should also be returned
-	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
 		try {
 

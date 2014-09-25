@@ -102,8 +102,10 @@ public class FunctionFactory {
 		currentServiceLocator_.set(locator);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static Map<Class, List> nonOSGIServicesCache;
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		AppServiceLocator serviceLocator = currentServiceLocator_.get();
@@ -158,7 +160,6 @@ public class FunctionFactory {
 	/**
 	 * Initializes a class
 	 * 
-	 * @param cls
 	 * @throws
 	 */
 	public static Map<String, Function> getFunctions(final Class<?> cls) {

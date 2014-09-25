@@ -68,7 +68,7 @@ public enum BeanUtils {
 		return crystal;
 	}
 
-	public static Method findSetter(final Class<?> cls, final String prop, final Class[] paramTypes) {
+	public static Method findSetter(final Class<?> cls, final String prop, final Class<?>[] paramTypes) {
 		Map<String, Method> clsMap = PROP_REFLECT_MAP_SET.get(cls);
 		if (clsMap == null) {
 			clsMap = new ConcurrentHashMap<String, Method>();

@@ -85,7 +85,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	Set<String> getInEdgesSet(final String label) {
 		Set<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -123,6 +123,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	FastSet<String> getOutEdgesSet(final String label) {
 		FastSet<String> edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -170,7 +171,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		//		}
 		if (adding) {
 			getParent().startTransaction(this);
-			Map map = getInDirtyMap();
+			Map<String, Boolean> map = getInDirtyMap();
 			//			synchronized (map) {
 			map.put(label, true);
 			//			}
@@ -202,7 +203,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		//		}
 		if (adding) {
 			getParent().startTransaction(this);
-			Map map = getOutDirtyMap();
+			Map<String, Boolean> map = getOutDirtyMap();
 			//			synchronized (map) {
 			map.put(label, true);
 			//			}
@@ -344,7 +345,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				result.addAll(getInEdgeObjects(label));
 			}
 		}
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 	protected FastSet<Edge> getOutEdgeObjects(final String... labels) {
@@ -401,7 +402,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				result.addAll(getOutEdgeObjects(label));
 			}
 		}
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 	// @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -17,9 +17,6 @@ import org.openntf.domino.annotations.Incomplete;
 public class DominoFutureTask<V> extends FutureTask<V> {
 	protected Runnable runnable_;
 
-	/**
-	 * @param paramCallable
-	 */
 	public DominoFutureTask(final Callable<V> paramCallable) {
 		super(paramCallable);
 	}

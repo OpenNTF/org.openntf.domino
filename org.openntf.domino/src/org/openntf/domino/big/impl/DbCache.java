@@ -44,6 +44,7 @@ public class DbCache extends ThreadLocal<Object> {
 		return result;
 	}
 
+	@SuppressWarnings("null")
 	public Document getDocument(final NoteCoordinate nc) {
 		Document result = null;
 		long id = nc.getDbid();

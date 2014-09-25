@@ -16,7 +16,8 @@ import com.ibm.icu.lang.UCharacter;
  *         extended it, but folded is private in IBM's implementation :-/
  * 
  */
-public class CaseInsensitiveString implements CharSequence, Comparable, Externalizable {
+public class CaseInsensitiveString implements CharSequence, Comparable<CharSequence>, Externalizable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(CaseInsensitiveString.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -112,7 +113,8 @@ public class CaseInsensitiveString implements CharSequence, Comparable, External
 		return string;
 	}
 
-	public int compareTo(final Object o) {
+	@Override
+	public int compareTo(final CharSequence o) {
 		if (o == null) {
 			throw new IllegalArgumentException("Cannot compare to null");
 		}
@@ -126,7 +128,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable, External
 			return folded.compareTo(cis.folded);
 		} catch (ClassCastException e) {
 			try {
-				String s = (String) o;
+				String s = o.toString();
 				return folded.compareTo(foldCase(s));
 			} catch (ClassCastException e2) {
 				throw new IllegalArgumentException("Cannot compare an object of type " + (o == null ? "null" : o.getClass().getName()));
@@ -145,22 +147,27 @@ public class CaseInsensitiveString implements CharSequence, Comparable, External
 		}
 	}
 
+	@Override
 	public int length() {
 		return string.length();
 	}
 
+	@Override
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 		string = arg0.readUTF();
 	}
 
+	@Override
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
 		arg0.writeUTF(string);
 	}
 
+	@Override
 	public char charAt(final int index) {
 		return string.charAt(index);
 	}
 
+	@Override
 	public CharSequence subSequence(final int start, final int end) {
 		return string.subSequence(start, end);
 	}

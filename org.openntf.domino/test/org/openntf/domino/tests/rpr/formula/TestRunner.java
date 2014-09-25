@@ -28,6 +28,7 @@ public class TestRunner extends TestRunnerStdIn {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
+	@SuppressWarnings({ "null", "unchecked" })
 	@Override
 	public void run() {
 		try {
@@ -80,6 +81,7 @@ public class TestRunner extends TestRunnerStdIn {
 			System.out.println("Result:\t" + v);
 
 			Session sess = Base.toLotus(Factory.getSession());
+			@SuppressWarnings("unused")
 			long startEvaluate = System.currentTimeMillis();
 			try {
 				time = System.currentTimeMillis();

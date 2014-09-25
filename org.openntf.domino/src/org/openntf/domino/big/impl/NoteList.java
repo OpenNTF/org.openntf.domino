@@ -15,20 +15,23 @@ import javolution.util.function.Equality;
 
 public class NoteList implements List<NoteCoordinate>, Externalizable {
 	private FastTable<NoteCoordinate> delegate_;
+	@SuppressWarnings("unused")
 	private DbCache localCache_ = null;
 
 	protected static class NoteComparator implements Equality<NoteCoordinate> {
+		private static final long serialVersionUID = 1L;
 		private String comparisonKey_;
 
 		NoteComparator(final String key) {
 			comparisonKey_ = key;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public int compare(final NoteCoordinate arg0, final NoteCoordinate arg1) {
 			Object obj0 = arg0.get(comparisonKey_);
 			Object obj1 = arg1.get(comparisonKey_);
-			return ((Comparable) obj0).compareTo(obj1);
+			return ((Comparable<Object>) obj0).compareTo(obj1);
 		}
 
 		@Override
@@ -168,6 +171,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 		return delegate_.size();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<NoteCoordinate> subList(final int fromIndex, final int toIndex) {
 		return delegate_.subList(fromIndex, toIndex);

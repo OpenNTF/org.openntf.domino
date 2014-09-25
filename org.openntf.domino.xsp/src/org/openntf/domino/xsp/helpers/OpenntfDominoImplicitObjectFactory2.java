@@ -434,6 +434,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 
 		Factory.setServiceLocator(new Factory.AppServiceLocator() {
 
+			@SuppressWarnings("rawtypes")
 			@Override
 			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 				List<T> ret = (List<T>) cache.get(serviceClazz);
@@ -456,6 +457,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 
 		FunctionFactory.setServiceLocator(new FunctionFactory.AppServiceLocator() {
 
+			@SuppressWarnings("rawtypes")
 			@Override
 			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 				List<T> ret = (List<T>) cache.get(serviceClazz);

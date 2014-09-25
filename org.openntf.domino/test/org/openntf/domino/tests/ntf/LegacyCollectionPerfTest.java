@@ -24,14 +24,15 @@ import lotus.domino.Session;
  */
 public class LegacyCollectionPerfTest implements Runnable {
 	private static Method getCppMethod;
+	@SuppressWarnings("unused")
 	private static int bitMode;
 	private static Field cpp_field;
 	private static Field wr_field;
 
 	private static ThreadLocal<Long> sessionid = new ThreadLocal<Long>() {
 		/* (non-Javadoc)
-				 * @see java.lang.ThreadLocal#initialValue()
-				 */
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
 		@Override
 		protected Long initialValue() {
 			return 0L;
@@ -123,7 +124,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 
 					wr_field = lotus.domino.local.NotesBase.class.getDeclaredField("weakObject");
 					wr_field.setAccessible(true);
-					Class clazz = wr_field.getType();
+					Class<?> clazz = wr_field.getType();
 					cpp_field = clazz.getDeclaredField("cpp_object");
 					cpp_field.setAccessible(true);
 					return null;
@@ -155,6 +156,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static Map<Long, Byte> idMap = new ConcurrentHashMap<Long, Byte>();
 
 	public static void main(final String[] args) throws InterruptedException {
@@ -218,7 +220,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				nids = nc.getNoteIDs();
 				long ncBuildTime = System.nanoTime();
 				System.out
-						.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
+				.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
 				//				for (int j = 0; j < nids.length; j++) {
 				//					doc = db.getDocumentByID(Integer.toString(nids[j], 16));
 				//				}
@@ -237,6 +239,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				doc = mergeColl.getFirstDocument();
 				while (doc != null) {
 					nextDoc = mergeColl.getNextDocument(doc);
+					@SuppressWarnings("unused")
 					int n = Integer.valueOf(doc.getNoteID(), 16);
 					doc.recycle();
 					doc = nextDoc;
@@ -268,7 +271,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				nids = nc.getNoteIDs();
 				ncBuildTime = System.nanoTime();
 				System.out
-						.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
+				.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
 				//				for (int j = 0; j < nids.length; j++) {
 				//					doc = db.getDocumentByID(Integer.toString(nids[j], 16));
 				//				}
@@ -287,6 +290,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				doc = mergeColl.getFirstDocument();
 				while (doc != null) {
 					nextDoc = mergeColl.getNextDocument(doc);
+					@SuppressWarnings("unused")
 					int n = Integer.valueOf(doc.getNoteID(), 16);
 					doc.recycle();
 					doc = nextDoc;
