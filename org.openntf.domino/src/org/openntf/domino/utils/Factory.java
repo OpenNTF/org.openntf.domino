@@ -682,7 +682,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
@@ -700,7 +700,7 @@ public enum Factory {
 
 	/**
 	 * Sets the current session
-	 *
+	 * 
 	 */
 	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
@@ -1005,7 +1005,6 @@ public enum Factory {
 	 * @return the trusted session
 	 */
 	public static org.openntf.domino.Session getTrustedSession() {
-		System.out.println("Getting trusted session");
 		org.openntf.domino.Session result = currentTrustedSessionHolder_.get();
 		if (result == null) {
 			try {
@@ -1016,14 +1015,10 @@ public enum Factory {
 						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 					}
 				});
-				System.out.println("Trying run");
 				if (tmpResult instanceof org.openntf.domino.Session) {
 					result = (org.openntf.domino.Session) tmpResult;
-					System.out.println("Got session");
-					System.out.println(result);
 					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
 					setTrustedSession(result);
-					System.out.println(currentTrustedSessionHolder_.get());
 				}
 			} catch (PrivilegedActionException e) {
 				DominoUtils.handleException(e);
