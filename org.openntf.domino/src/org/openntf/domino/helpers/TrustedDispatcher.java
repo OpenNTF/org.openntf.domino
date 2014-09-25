@@ -155,6 +155,7 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		/* (non-Javadoc)
 		 * @see org.openntf.domino.thread.DominoExecutor#newTaskFor(java.lang.Runnable, java.lang.Object)
 		 */
+		@SuppressWarnings("unchecked")
 		@Override
 		protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
 			System.out.println("DEBUG: Creating a new TrustedFutureTask for a " + runnable.getClass().getName());
@@ -226,6 +227,7 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		/* (non-Javadoc)
 		 * @see org.openntf.domino.thread.DominoExecutor#newTaskFor(java.lang.Runnable, java.lang.Object)
 		 */
+		@SuppressWarnings("unchecked")
 		@Override
 		protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
 			System.out.println("DEBUG: Creating a new TrustedFutureTask for a " + runnable.getClass().getName());
@@ -264,11 +266,10 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected static class TrustedFutureTask extends DominoFutureTask {
-		/**
-		 * @param runnable
-		 * @param result
-		 */
+
+		@SuppressWarnings("unchecked")
 		public TrustedFutureTask(final Runnable runnable, final Object result, final TrustedDispatcher dispatcher) {
 			super(runnable, result);
 		}
@@ -291,7 +292,6 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 	}
 
 	/**
-	 * @param delay
 	 */
 	public TrustedDispatcher(final long delay) {
 		//		super(delay);

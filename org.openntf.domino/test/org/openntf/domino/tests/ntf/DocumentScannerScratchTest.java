@@ -27,6 +27,7 @@ public class DocumentScannerScratchTest {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
+			@SuppressWarnings("unused")
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			int docCount = 0;
 
@@ -48,14 +49,14 @@ public class DocumentScannerScratchTest {
 			System.out.println("Scanner reports processing " + scanner.getDocCount() + " documents, " + scanner.getItemCount()
 					+ " items, and " + scanner.getTokenCount() + " tokens.");
 			System.out.println("Built field token map of " + scanner.getFieldTokenMap().size() + " entries");
-			Map tfmap = scanner.getTokenLocationMap();
+			Map<?, ?> tfmap = scanner.getTokenLocationMap();
 			System.out.println("Built token location map of " + tfmap.size() + " entries");
 			CaseInsensitiveString dom = new CaseInsensitiveString("domino");
 			if (tfmap.get(dom) != null) {
 				int hitCount = 0;
-				Map tlvalue = (Map) tfmap.get(dom);
+				Map<?, ?> tlvalue = (Map<?, ?>) tfmap.get(dom);
 				for (Object key : tlvalue.keySet()) {
-					Set hits = (Set) tlvalue.get(key);
+					Set<?> hits = (Set<?>) tlvalue.get(key);
 					hitCount += hits.size();
 				}
 				System.out.println("Found " + hitCount + " hits for 'domino'");

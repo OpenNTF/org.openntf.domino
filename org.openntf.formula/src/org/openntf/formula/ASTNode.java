@@ -71,14 +71,12 @@ public interface ASTNode {
 	/**
 	 * Hint for formula (if exception occurs)
 	 * 
-	 * @param formula
 	 */
 	public void setFormula(String formula);
 
 	/**
 	 * Returns the formula for the current AST-Tree
 	 * 
-	 * @return
 	 */
 	public String getFormula();
 }

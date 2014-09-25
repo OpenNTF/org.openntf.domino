@@ -335,8 +335,6 @@ public abstract class FormulaParser {
 	/**
 	 * get a node to include
 	 * 
-	 * @param key
-	 * @return
 	 */
 	public ASTNode getInclude(final String key) {
 		if (includeProvider != null) {

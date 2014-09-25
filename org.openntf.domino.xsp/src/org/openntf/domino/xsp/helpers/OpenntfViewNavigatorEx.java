@@ -27,6 +27,7 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
  */
 public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	private static final long serialVersionUID = -5568170248903953533L;
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorEx.class.getName());
 
 	/**
@@ -47,6 +48,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 * 
 	 * @see com.ibm.xsp.model.domino.viewnavigator.AbstractNavigator#initNavigator(lotus.domino.View)
 	 */
+	@SuppressWarnings({ "unchecked", "null" })
 	@Override
 	public void initNavigator(final View paramView) throws NotesException {
 		// System.out.println("Initializing navigator for view " + paramView.getClass().getName() + ": " + paramView.getName()

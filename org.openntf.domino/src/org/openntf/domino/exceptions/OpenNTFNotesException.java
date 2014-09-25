@@ -37,7 +37,6 @@ public class OpenNTFNotesException extends RuntimeException {
 	/**
 	 * This method is called if we bubble up and reach an other object that implements also ExceptionDetails
 	 * 
-	 * @param hed
 	 */
 	public void addExceptionDetails(final ExceptionDetails ed) {
 		if (exceptionDetails_ == null) {

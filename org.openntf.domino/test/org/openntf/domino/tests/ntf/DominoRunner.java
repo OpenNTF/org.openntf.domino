@@ -34,8 +34,8 @@ public class DominoRunner implements Runnable {
 
 	private static ThreadLocal<Long> sessionid = new ThreadLocal<Long>() {
 		/* (non-Javadoc)
-				 * @see java.lang.ThreadLocal#initialValue()
-				 */
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
 		@Override
 		protected Long initialValue() {
 			return 0L;
@@ -89,7 +89,7 @@ public class DominoRunner implements Runnable {
 
 					wr_field = lotus.domino.local.NotesBase.class.getDeclaredField("weakObject");
 					wr_field.setAccessible(true);
-					Class clazz = wr_field.getType();
+					Class<?> clazz = wr_field.getType();
 					cpp_field = clazz.getDeclaredField("cpp_object");
 					cpp_field.setAccessible(true);
 					return null;
@@ -191,7 +191,8 @@ public class DominoRunner implements Runnable {
 					end.recycle();
 					create.recycle();
 					color.recycle();
-					name.recycle();
+					if (name != null)
+						name.recycle();
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();

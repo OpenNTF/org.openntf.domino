@@ -17,7 +17,6 @@ public interface ExceptionDetails {
 	/**
 	 * This method will provide additional exception details
 	 * 
-	 * @param result
 	 */
 	public void fillExceptionDetails(List<Entry> result);
 
@@ -46,7 +45,7 @@ public interface ExceptionDetails {
 			return sourceCls.getName() + "=" + msg;
 		}
 
-		public Class getSource() {
+		public Class<?> getSource() {
 			return sourceCls;
 		}
 

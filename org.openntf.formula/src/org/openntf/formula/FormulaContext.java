@@ -115,9 +115,6 @@ public class FormulaContext {
 	/**
 	 * Checks if a variable or a doc field is available
 	 * 
-	 * @param keyLowercase
-	 * @param key
-	 * @return
 	 */
 	public boolean isAvailableVarLC(final String keyLowercase, final String key) {
 		ValueHolder var = vars.get(keyLowercase);
@@ -156,7 +153,6 @@ public class FormulaContext {
 	 * 
 	 * @param key
 	 *            the key in properCase
-	 * @return
 	 */
 	public ValueHolder getField(final String key) {
 		if (dataMap != null) {
@@ -175,6 +171,7 @@ public class FormulaContext {
 	 * @param elem
 	 *            the element to set in the field
 	 * @throws EvaluateException
+	 *             in the case of an evaluation exception
 	 */
 	public void setField(final String key, final ValueHolder elem) {
 		setVarLC(key.toLowerCase(), elem);
@@ -214,7 +211,6 @@ public class FormulaContext {
 	/**
 	 * returns the formatter for this context
 	 * 
-	 * @return
 	 */
 	public Formatter getFormatter() {
 		return formatter;
@@ -223,7 +219,6 @@ public class FormulaContext {
 	/**
 	 * returns the parser (needed for evaluate/checkFormulaSyntax)
 	 * 
-	 * @return
 	 */
 	public FormulaParser getParser() {
 		return parser;
@@ -232,8 +227,6 @@ public class FormulaContext {
 	/**
 	 * Reads a system property
 	 * 
-	 * @param key
-	 * @return
 	 */
 	public String getEnv(final String key) {
 		return System.getProperty(key);
@@ -242,8 +235,6 @@ public class FormulaContext {
 	/**
 	 * writes a system property
 	 * 
-	 * @param key
-	 * @param value
 	 */
 	public void setEnv(final String key, final String value) {
 		System.setProperty(key, value);
@@ -258,7 +249,6 @@ public class FormulaContext {
 	/**
 	 * Setup for the parameter provider (needed by FOCONIS)
 	 * 
-	 * @param prov
 	 */
 	public void setParameterProvider(final FormulaProvider<?> prov) {
 		paramProvider = prov;
@@ -271,8 +261,6 @@ public class FormulaContext {
 	/**
 	 * Read a formula parameter
 	 * 
-	 * @param paramName
-	 * @return
 	 */
 	public Object getParam(final String paramName) {
 		if (parameters.containsKey(paramName))

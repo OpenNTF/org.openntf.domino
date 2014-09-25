@@ -14,7 +14,7 @@ public class ProfilerTransformer implements ClassFileTransformer {
 	public static final String DEBUG_DIR = null; //"d:/daten/dump/";
 
 	@Override
-	public byte[] transform(final ClassLoader loader, final String className, final Class classBeingRedefined,
+	public byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined,
 			final ProtectionDomain protectionDomain, final byte[] classfileBuffer) throws IllegalClassFormatException {
 		byte[] byteCode = classfileBuffer;
 		if (className.startsWith("org/openntf/domino") && !className.contains("Profiler")) {

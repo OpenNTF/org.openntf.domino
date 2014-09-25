@@ -25,6 +25,7 @@ import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpSessionAdapter;
  * 
  */
 public class OpenntfHttpService extends HttpService {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfHttpService.class.getName());
 
 	private List<HttpService> services;
@@ -37,9 +38,6 @@ public class OpenntfHttpService extends HttpService {
 
 	};
 
-	/**
-	 * @param arg0
-	 */
 	public OpenntfHttpService(final LCDEnvironment lcdEnv) {
 		super(lcdEnv);
 		this.services = lcdEnv.getServices();

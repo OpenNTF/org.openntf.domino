@@ -131,23 +131,23 @@ public class FormulaValueBinding extends ValueBindingEx {
 			}
 			if ((expectedType.isPrimitive()) || (Number.class.isAssignableFrom(expectedType))) {
 				if ((expectedType == Double.class) || (expectedType == Double.TYPE)) {
-					return ((Number) firstValue).doubleValue();
+					return firstValue == null ? 0d : ((Number) firstValue).doubleValue();
 				}
 				if ((expectedType == Integer.class) || (expectedType == Integer.TYPE)) {
-					return ((Number) firstValue).intValue();
+					return firstValue == null ? 0 : ((Number) firstValue).intValue();
 
 				}
 				if ((expectedType == Long.class) || (expectedType == Long.TYPE)) {
-					return ((Number) firstValue).longValue();
+					return firstValue == null ? 0l : ((Number) firstValue).longValue();
 				}
 				if ((expectedType == Byte.class) || (expectedType == Byte.TYPE)) {
-					return ((Number) firstValue).byteValue();
+					return firstValue == null ? (byte) 0 : ((Number) firstValue).byteValue();
 				}
 				if ((expectedType == Short.class) || (expectedType == Short.TYPE)) {
-					return ((Number) firstValue).shortValue();
+					return firstValue == null ? (short) 0 : ((Number) firstValue).shortValue();
 				}
 				if ((expectedType == Float.class) || (expectedType == Float.TYPE)) {
-					return ((Number) firstValue).floatValue();
+					return firstValue == null ? 0f : ((Number) firstValue).floatValue();
 				}
 			}
 		}

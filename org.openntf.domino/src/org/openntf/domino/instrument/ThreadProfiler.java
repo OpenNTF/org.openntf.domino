@@ -33,9 +33,10 @@ public class ThreadProfiler {
 
 	private long profilerTime[] = new long[1024];
 	private long codeTime[] = new long[1024];
-	private static Set<Data> dataSet = new ConcurrentSkipListSet();
+	private static Set<Data> dataSet = new ConcurrentSkipListSet<Data>();
 
 	private static ConcurrentHashMap<String, Data> dataMap = new ConcurrentHashMap<String, Data>() {
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public Data get(final Object arg0) {
@@ -66,7 +67,7 @@ public class ThreadProfiler {
 		codeTime[curr] = System.nanoTime();
 	}
 
-	public void leave(final Class cls, final String method, final String signature, final long wallTime) {
+	public void leave(final Class<?> cls, final String method, final String signature, final long wallTime) {
 		// TODO Auto-generated method stub
 		int next = cnt;
 		cnt = (cnt - 1) % 1024;

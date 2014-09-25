@@ -21,15 +21,15 @@ public enum OpenNTFvLegacyBenchmark {
 	private static final String dbPath = "events4.nsf";
 
 	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
-			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
+		"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
 	public static class LegacyDoer implements Runnable {
-		private static final long serialVersionUID = 1L;
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
 		int fieldCount = 0;
 
+		@SuppressWarnings("unchecked")
 		private void iterateForms(final lotus.domino.Database db) throws lotus.domino.NotesException {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Forms");
 
@@ -39,9 +39,10 @@ public enum OpenNTFvLegacyBenchmark {
 				notes.add(form);
 				String unid = notes.getUNID(notes.getFirstNoteID());
 				lotus.domino.Document d = form.getParent().getDocumentByUNID(unid);
-				Vector v = d.getItemValue("$UpdatedBy");
+				Vector<Object> v = d.getItemValue("$UpdatedBy");
 
 				lotus.domino.Name n = db.getParent().createName((String) v.get(0));
+				@SuppressWarnings("unused")
 				String cn = n.getCommon();
 				nameCount++;
 				docCount++;
@@ -54,6 +55,7 @@ public enum OpenNTFvLegacyBenchmark {
 			System.out.println("ENDING ITERATION of Forms");
 		}
 
+		@SuppressWarnings({ "unused", "unchecked" })
 		private void iterateAllDocuments(final lotus.domino.Database db) throws lotus.domino.NotesException {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			lotus.domino.Session s = db.getParent();
@@ -64,7 +66,7 @@ public enum OpenNTFvLegacyBenchmark {
 			while (doc != null) {
 				nextDoc = dc.getNextDocument(doc);
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						lotus.domino.Name n = s.createName((String) o);
@@ -98,7 +100,7 @@ public enum OpenNTFvLegacyBenchmark {
 			while (doc != null) {
 				nextDoc = dc.getNextDocument(doc);
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						lotus.domino.Name n = s.createName((String) o);
@@ -137,6 +139,7 @@ public enum OpenNTFvLegacyBenchmark {
 				lotus.domino.NotesThread.sinitThread();
 				s = lotus.domino.NotesFactory.createSessionWithFullAccess();
 				sname = s.getUserNameObject();
+				@SuppressWarnings("unused")
 				DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 				db = s.getDatabase(server, dbPath);
 
@@ -177,15 +180,18 @@ public enum OpenNTFvLegacyBenchmark {
 					ne.printStackTrace();
 				} finally {
 					try {
-						dc.recycle();
+						if (dc != null)
+							dc.recycle();
 					} catch (Exception e) {
 					}
 					try {
-						view.recycle();
+						if (view != null)
+							view.recycle();
 					} catch (Exception e) {
 					}
 					try {
-						nc.recycle();
+						if (nc != null)
+							nc.recycle();
 					} catch (Exception e) {
 					}
 				}
@@ -201,11 +207,13 @@ public enum OpenNTFvLegacyBenchmark {
 					ne.printStackTrace();
 				} finally {
 					try {
-						allViewEntries.recycle();
+						if (allViewEntries != null)
+							allViewEntries.recycle();
 					} catch (Exception e) {
 					}
 					try {
-						view.recycle();
+						if (view != null)
+							view.recycle();
 					} catch (Exception e) {
 					}
 				}
@@ -213,15 +221,18 @@ public enum OpenNTFvLegacyBenchmark {
 				ne1.printStackTrace();
 			} finally {
 				try {
-					db.recycle();
+					if (db != null)
+						db.recycle();
 				} catch (Exception e) {
 				}
 				try {
-					sname.recycle();
+					if (sname != null)
+						sname.recycle();
 				} catch (Exception e) {
 				}
 				try {
-					s.recycle();
+					if (s != null)
+						s.recycle();
 				} catch (Exception e) {
 				}
 				lotus.domino.NotesThread.stermThread();
@@ -253,8 +264,9 @@ public enum OpenNTFvLegacyBenchmark {
 			Vector<org.openntf.domino.Form> forms = db.getForms();
 			for (org.openntf.domino.Form form : forms) {
 				org.openntf.domino.Document d = form.getDocument();
-				Vector v = d.getItemValue("$UpdatedBy");
+				Vector<Object> v = d.getItemValue("$UpdatedBy");
 				org.openntf.domino.Name n = db.getParent().createName((String) v.get(0));
+				@SuppressWarnings("unused")
 				String cn = n.getCommon();
 				nameCount++;
 				docCount++;
@@ -262,6 +274,7 @@ public enum OpenNTFvLegacyBenchmark {
 			System.out.println("ENDING ITERATION of Forms");
 		}
 
+		@SuppressWarnings("unused")
 		private void iterateAllDocuments(final org.openntf.domino.Database db) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			org.openntf.domino.Session s = db.getParent();
@@ -269,7 +282,7 @@ public enum OpenNTFvLegacyBenchmark {
 			org.openntf.domino.DocumentCollection dc = db.getAllDocuments();
 			for (org.openntf.domino.Document doc : dc) {
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						org.openntf.domino.Name n = s.createName((String) o);
@@ -293,7 +306,7 @@ public enum OpenNTFvLegacyBenchmark {
 			System.out.println("REPEATING ITERATION of Documents");
 			for (org.openntf.domino.Document doc : dc) {
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						org.openntf.domino.Name n = s.createName((String) o);
@@ -316,6 +329,7 @@ public enum OpenNTFvLegacyBenchmark {
 			System.out.println("ENDING ITERATION of Documents");
 		}
 
+		@SuppressWarnings("unused")
 		@Override
 		public void run() {
 			long start = System.nanoTime();

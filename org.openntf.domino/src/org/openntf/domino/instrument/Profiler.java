@@ -15,7 +15,7 @@ public enum Profiler {
 		threadProfiler.get().enter(wallTime);
 	}
 
-	public static void leave(final Class cls, final String method, final String signature) {
+	public static void leave(final Class<?> cls, final String method, final String signature) {
 		long wallTime = System.nanoTime();
 		threadProfiler.get().leave(cls, method, signature, wallTime);
 	}

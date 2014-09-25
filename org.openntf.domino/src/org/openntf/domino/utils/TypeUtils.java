@@ -46,6 +46,7 @@ public enum TypeUtils {
 
 	public static final String[] DEFAULT_STR_ARRAY = { "" };
 
+	@SuppressWarnings("unchecked")
 	public static <T> T getDefaultInstance(final Class<?> T) {
 		if (T.isArray())
 			if (T.getComponentType() == String.class) {
@@ -619,7 +620,7 @@ public enum TypeUtils {
 		return sb.toString();
 	}
 
-	public static String join(final Collection<Object> values) {
+	public static String join(final Collection<?> values) {
 		return join(values, ", ");
 	}
 
@@ -782,7 +783,7 @@ public enum TypeUtils {
 		if (object instanceof String) {
 			return (String) object;
 		} else if (object instanceof Collection) {
-			return join((Collection) object);
+			return join((Collection<?>) object);
 		} else if (object.getClass().isArray()) {
 			return join((Object[]) object);
 		} else {
@@ -818,6 +819,7 @@ public enum TypeUtils {
 		if (vector == null || vector.isEmpty())
 			return new Class[0];
 
+		@SuppressWarnings("unused")
 		ClassLoader cl = Factory.getClassLoader();
 		Class<?>[] classes = new Class[vector.size()];
 		int i = 0;
