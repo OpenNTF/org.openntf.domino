@@ -79,13 +79,17 @@ public class XotsService extends NSFService {
 				ClassLoader mcl = module_.getModuleClassLoader();
 				for (String className : classNames_) {
 					Class<?> curClass = null;
-					try {
-						curClass = mcl.loadClass(className);
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
+					String[] classDefBits = className.split(";");	// There may be ";boolean" at the end
+					boolean enabled = classDefBits.length < 2 || "true".equals(classDefBits[1]);
+					if (enabled) {
+						try {
+							curClass = mcl.loadClass(classDefBits[0]);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
+						classes_.add(curClass);
+						callback_.loaderCallback(this);
 					}
-					classes_.add(curClass);
-					callback_.loaderCallback(this);
 				}
 
 				//				classes_ = result;
