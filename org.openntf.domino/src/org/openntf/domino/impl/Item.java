@@ -871,7 +871,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	public void setSaveToDisk(final boolean flag) {
 		markDirty();
 		try {
-			getDelegate().setReaders(flag);
+			getDelegate().setSaveToDisk(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}

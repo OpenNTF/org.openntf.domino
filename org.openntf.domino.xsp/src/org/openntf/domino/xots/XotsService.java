@@ -106,10 +106,6 @@ public class XotsService extends NSFService {
 			} finally {
 				NotesContext.termThread();
 			}
-			//<<<<<<< HEAD
-			//=======
-			//
-			//>>>>>>> Roland's/roland
 		}
 
 		public Set<Class<?>> getClasses() {

@@ -318,4 +318,12 @@ public interface Document {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public Item getFirstItem(final String name, final boolean returnMime);
+
+	//	public void writeBinaryChunk(String name, int chunk, byte[] data);
+
+	public void writeBinary(String name, byte[] data, int chunkSize);
+
+	public byte[] readBinaryChunk(String name, int chunk);
+
+	public byte[] readBinary(String name);
 }

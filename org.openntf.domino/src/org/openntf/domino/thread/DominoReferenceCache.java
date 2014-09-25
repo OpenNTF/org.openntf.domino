@@ -16,9 +16,10 @@
 package org.openntf.domino.thread;
 
 import java.lang.ref.ReferenceQueue;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javolution.util.FastMap;
 
 import org.openntf.domino.utils.Factory;
 
@@ -36,7 +37,8 @@ import org.openntf.domino.utils.Factory;
 
 public class DominoReferenceCache {
 	/** The delegate map contains the value wrapped in phantomReferences) **/
-	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
+	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
+	private Map<Long, DominoReference> map = new FastMap<Long, DominoReference>();
 
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();

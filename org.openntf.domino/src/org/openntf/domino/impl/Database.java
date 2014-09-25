@@ -431,6 +431,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		go = fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
 		if (go) {
 			try {
+				if (!getDelegate().isOpen()) {
+					getDelegate().open();
+				}
 				result = fromLotus(getDelegate().createDocument(), Document.SCHEMA, this);
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
@@ -485,6 +488,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public DocumentCollection createDocumentCollection() {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createDocumentCollection(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -497,6 +503,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public DocumentCollection createMergableDocumentCollection() {
 		try {
 			lotus.domino.Database db = getDelegate();
+			if (!db.isOpen()) {
+				db.open();
+			}
 			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);
 			if (rawColl.getCount() > 0) {
 				int[] nids = org.openntf.domino.impl.DocumentCollection.toNoteIdArray(rawColl);
@@ -568,6 +577,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public NoteCollection createNoteCollection(final boolean selectAllFlag) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createNoteCollection(selectAllFlag), NoteCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -600,6 +612,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Outline createOutline(final String name) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createOutline(name), Outline.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -617,6 +632,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView,
 			final boolean prohibitDesignRefresh) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createQueryView(viewName, query, toLotus(templateView), prohibitDesignRefresh), View.SCHEMA,
 					this);
 		} catch (NotesException e) {
@@ -634,6 +652,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createQueryView(viewName, query, toLotus(templateView)), View.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -650,6 +671,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public View createQueryView(final String viewName, final String query) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createQueryView(viewName, query), View.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -680,6 +704,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#createView()
 	 */
 	@Override
+	@Deprecated
 	public View createView() {
 		try {
 			return fromLotus(getDelegate().createView(), View.SCHEMA, this);
@@ -699,6 +724,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView,
 			final boolean prohibitDesignRefresh) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createView(viewName, selectionFormula, toLotus(templateView), prohibitDesignRefresh),
 					View.SCHEMA, this);
 		} catch (NotesException e) {
@@ -715,13 +743,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView) {
-		try {
-			return fromLotus(getDelegate().createView(viewName, selectionFormula, toLotus(templateView)), View.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this, "View=" + viewName);
-			return null;
-
-		}
+		return createView(viewName, selectionFormula, templateView, true);
 	}
 
 	/*
@@ -731,7 +753,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public View createView(final String viewName, final String selectionFormula) {
+		//TODO NTF even though I'd prefer to just pass defaults to the next overloaded version, it's not clear what the default
+		//templateView should be in order to get the native behavior. Does null work?
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().createView(viewName, selectionFormula), View.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "View=" + viewName);
@@ -747,13 +774,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public View createView(final String viewName) {
-		try {
-			return fromLotus(getDelegate().createView(viewName), View.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this, "View=" + viewName);
-			return null;
-
-		}
+		return createView(viewName, "SELECT @All");
 	}
 
 	/*
@@ -809,6 +830,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public ACL getACL() {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getACL(), ACL.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -842,6 +866,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Agent getAgent(final String name) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getAgent(name), Agent.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -858,6 +885,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Vector<org.openntf.domino.Agent> getAgents() {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotusAsVector(getDelegate().getAgents(), org.openntf.domino.Agent.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1042,6 +1072,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Document getDocumentByID(final String noteid) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getDocumentByID(noteid), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "NoteId=" + noteid);
@@ -1104,6 +1137,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			if (unid == null || unid.isEmpty())
 				return null;
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
@@ -1251,6 +1287,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Form getForm(final String name) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getForm(name), Form.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1267,6 +1306,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Vector<Form> getForms() {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotusAsVector(getDelegate().getForms(), Form.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1487,6 +1529,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public DocumentCollection getModifiedDocuments() {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getModifiedDocuments(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1509,6 +1554,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			lotus.domino.DateTime tempDT = getAncestorSession().createDateTime(since);
 			lotus.domino.DateTime dt = toLotus(tempDT);
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			result = fromLotus(getDelegate().getModifiedDocuments(dt, noteClass.getValue()), DocumentCollection.SCHEMA, this);
 			if (tempDT instanceof Encapsulated) {
 				dt.recycle();
@@ -1633,6 +1681,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public DocumentCollection getProfileDocCollection(final String profileName) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getProfileDocCollection(profileName), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1649,6 +1700,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Document getProfileDocument(final String profileName, final String key) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotus(getDelegate().getProfileDocument(profileName, key), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1863,6 +1917,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public View getView(final String name) {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			View result = fromLotus(getDelegate().getView(name), View.SCHEMA, this);
 			if (result != null) {
 				if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
@@ -1885,6 +1942,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Vector<org.openntf.domino.View> getViews() {
 		try {
+			if (!getDelegate().isOpen()) {
+				getDelegate().open();
+			}
 			return fromLotusAsVector(getDelegate().getViews(), org.openntf.domino.View.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);

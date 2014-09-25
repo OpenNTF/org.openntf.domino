@@ -154,39 +154,6 @@ public class DominoEmail implements IEmail {
 		}
 	}
 
-	/*
-	 * Based on same method in SBT email, but requires MIMEPart class from there.
-	 * Leaving it out for the moment, in case of issues with Apache licensing and dependencies
-	public Document createJSONEmail(final JsonObject src) {
-		try {
-			setTo(convertObjectToList(src.getJsonProperty("to"), ","));
-			setCC(convertObjectToList(src.getJsonProperty("cc"), ","));
-			setBCC(convertObjectToList(src.getJsonProperty("bcc"), ","));
-			Object subjectObj = src.getJsonProperty("subject");
-			if (subjectObj instanceof String) {
-				setSubject((String) subjectObj);
-			} else {
-				setSubject("");
-			}
-			Object senderObj = src.getJsonProperty("sender");
-			if (senderObj instanceof String) {
-				setSenderEmail((String) senderObj);
-			}
-			Object mimePartsObj = src.getJsonProperty("mimeParts");
-			if (mimePartsObj instanceof List) {
-				List<JsonObject> mimeParts = (List<JsonObject>) mimePartsObj;
-				for (JsonObject json : mimeParts) {
-
-				}
-			}
-			return send();
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
-	 */
-
 	/**
 	 * Takes an object - String, List, Array - and converts it to a List for passing into to, cc, bcc
 	 * 
