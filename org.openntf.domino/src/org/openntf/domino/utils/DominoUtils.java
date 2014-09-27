@@ -633,7 +633,7 @@ public enum DominoUtils {
 	 * 
 	 * @param value
 	 *            the value
-	 * @return true, if is unid
+	 * @return true, if is 32-character hexadecimal sequence
 	 */
 	public static boolean isUnid(final CharSequence value) {
 		if (value.length() != 32)
@@ -646,7 +646,7 @@ public enum DominoUtils {
 	 * 
 	 * @param value
 	 *            the value
-	 * @return true, if is replica id
+	 * @return true, if is 16-character hexadecimal sequence
 	 */
 	public static boolean isReplicaId(final CharSequence value) {
 		if (value.length() != 16)
@@ -658,8 +658,8 @@ public enum DominoUtils {
 	 * Md5.
 	 * 
 	 * @param object
-	 *            the object
-	 * @return the string
+	 *            the Serializable object
+	 * @return the string representing the MD5 hash value of the serialized version of the object
 	 */
 	public static String md5(final Serializable object) {
 		return DominoUtils.checksum(object, "MD5");
@@ -670,7 +670,7 @@ public enum DominoUtils {
 	 * 
 	 * @param value
 	 *            the value
-	 * @return the string
+	 * @return a 32-character hexadecimal string that can be used as a UNID, uniquely and deterministically based on the value argument
 	 */
 	public static String toUnid(final Serializable value) {
 		if (value instanceof CharSequence && DominoUtils.isUnid((CharSequence) value))
@@ -841,7 +841,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

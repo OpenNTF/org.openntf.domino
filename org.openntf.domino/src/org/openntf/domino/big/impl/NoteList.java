@@ -51,6 +51,10 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 		delegate_ = new FastTable<NoteCoordinate>();
 	}
 
+	public NoteList(final boolean concurrent) {
+		delegate_ = new FastTable<NoteCoordinate>().atomic();
+	}
+
 	public NoteList(final DbCache cache) {
 		localCache_ = cache;
 		delegate_ = new FastTable<NoteCoordinate>();

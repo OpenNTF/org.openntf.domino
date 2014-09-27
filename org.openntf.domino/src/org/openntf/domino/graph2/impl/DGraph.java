@@ -1,14 +1,16 @@
 package org.openntf.domino.graph2.impl;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javolution.util.FastSet;
+import javolution.util.FastTable;
 
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.impl.DbCache;
+import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph2.DConfiguration;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.exception.ElementKeyException;
@@ -36,7 +38,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	}
 
-	protected Map<Class<?>, Integer> getTypeMap() {
+	protected Map<Class<?>, String> getTypeMap() {
 		return configuration_.getTypeMap();
 	}
 
@@ -89,6 +91,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Edge getEdge(final Object id) {
+		if (id instanceof NoteCoordinate) {
+
+		}
 		return findElementStore(id).getEdge(id);
 	}
 
@@ -164,15 +169,15 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	}
 
 	@Override
-	public List<DElementStore> getElementStores() {
-		return configuration_.getElementStoreList();
+	public Map<String, DElementStore> getElementStores() {
+		return configuration_.getElementStores();
 	}
 
 	@Override
 	public DElementStore findElementStore(final Element element) {
 		DElementStore result = null;
 		Class<?> type = element.getClass();
-		Integer key = getTypeMap().get(type);
+		String key = getTypeMap().get(type);
 		if (key != null) {
 			result = findElementStore(type);
 		} else {
@@ -188,7 +193,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public DElementStore findElementStore(final Class<?> type) {
 		DElementStore result = getDefaultElementStore();
-		Integer key = getTypeMap().get(type);
+		String key = getTypeMap().get(type);
 		if (key != null) {
 			DElementStore chk = getElementStores().get(key);
 			if (chk != null) {
@@ -203,12 +208,10 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		DElementStore result = null;
 		if (delegateKey instanceof CharSequence) {
 			CharSequence skey = (CharSequence) delegateKey;
-			if (skey.length() == 36) {
+			if (skey.length() == 48) {
 				if (DominoUtils.isHex(skey)) {
-					CharSequence prefix = skey.subSequence(0, 4);
-					//					CharSequence unid = skey.subSequence(4, 36);
-					Integer esKey = Integer.valueOf(prefix.toString(), 16);
-					result = getElementStores().get(esKey);
+					CharSequence prefix = skey.subSequence(0, 16);
+					result = getElementStores().get(prefix);
 				} else {
 					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 				}
@@ -217,19 +220,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			} else {
 				throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 			}
-		} else if (delegateKey instanceof byte[]) {
-			byte[] bkey = (byte[]) delegateKey;
-			if (bkey.length == 18) {
-				byte[] sub = new byte[2];
-				sub[0] = bkey[0];
-				sub[1] = bkey[1];
-				Integer esKey = DominoUtils.toInteger(sub);
-				result = getElementStores().get(esKey);
-			} else if (bkey.length == 16) {
-				result = getDefaultElementStore();
-			} else {
-				throw new ElementKeyException("Cannot resolve a byte key of " + bkey.length + " length");
-			}
+		} else if (delegateKey instanceof NoteCoordinate) {
+			//TODO
 		}
 		if (result == null) {
 			result = getDefaultElementStore();
@@ -240,6 +232,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public DElementStore getDefaultElementStore() {
 		return getConfiguration().getDefaultElementStore();
+	}
+
+	public FastTable<Edge> getEdgesFromIds(final NoteList list) {
+		FastTable<Edge> result = new FastTable<Edge>();
+		for (NoteCoordinate id : list) {
+			Edge edge = getEdge(id);
+			if (edge != null) {
+				result.add(edge);
+			}
+		}
+		return result;
 	}
 
 	@Override

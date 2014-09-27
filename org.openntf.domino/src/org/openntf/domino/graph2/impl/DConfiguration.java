@@ -8,15 +8,14 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javolution.util.FastMap;
-import javolution.util.FastTable;
 
 import org.openntf.domino.graph2.DElementStore;
 
 public class DConfiguration implements org.openntf.domino.graph2.DConfiguration {
 	private static final Logger log_ = Logger.getLogger(DConfiguration.class.getName());
-	private int defaultElementStoreIndex_ = 0;
-	private List<DElementStore> elementStoreList_;
-	private Map<Class<?>, Integer> typeMap_;
+	private String defaultElementStoreKey_ = "";
+	private Map<String, DElementStore> elementStoreMap_;
+	private Map<Class<?>, String> typeMap_;
 	private transient DGraph graph_;
 
 	public DConfiguration() {
@@ -34,59 +33,58 @@ public class DConfiguration implements org.openntf.domino.graph2.DConfiguration 
 	}
 
 	@Override
-	public Map<Class<?>, Integer> getTypeMap() {
+	public Map<Class<?>, String> getTypeMap() {
 		if (typeMap_ == null) {
-			typeMap_ = new FastMap<Class<?>, Integer>();
+			typeMap_ = new FastMap<Class<?>, String>();
 		}
 		return typeMap_;
 	}
 
 	@Override
-	public void setDefaultElementStore(final int index) {
-		defaultElementStoreIndex_ = index;
+	public void setDefaultElementStore(final String key) {
+		defaultElementStoreKey_ = key;
 	}
 
 	@Override
 	public DElementStore getDefaultElementStore() {
-		return getElementStoreList().get(defaultElementStoreIndex_);
+		return getElementStores().get(defaultElementStoreKey_);
 	}
 
 	@Override
-	public List<DElementStore> getElementStoreList() {
-		if (elementStoreList_ == null) {
-			elementStoreList_ = new FastTable<DElementStore>();
+	public Map<String, DElementStore> getElementStores() {
+		if (elementStoreMap_ == null) {
+			elementStoreMap_ = new FastMap<String, DElementStore>();
 		}
-		return elementStoreList_;
+		return elementStoreMap_;
 	}
 
 	@Override
 	public void addElementStore(final DElementStore store) {
-		int index = getElementStoreList().indexOf(store);
-		if (index < 0) {
-			index = getElementStoreList().size();
-			getElementStoreList().add(store);
+		String key = store.getStoreKey();
+		DElementStore schk = getElementStores().get(key);
+		if (schk == null) {
+			getElementStores().put(key, store);
 		}
 		List<Class<?>> types = store.getTypes();
 		for (Class<?> type : types) {
-			Integer chk = getTypeMap().get(type);
+			String chk = getTypeMap().get(type);
 			if (chk != null) {
-				if (chk != index) {
+				if (!chk.equals(key)) {
 					throw new IllegalStateException("Element store has already been registered for type " + type.getName());
 				}
 			} else {
-				getTypeMap().put(type, index);
+				getTypeMap().put(type, key);
 			}
 		}
 	}
 
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-		defaultElementStoreIndex_ = in.readInt();
+		defaultElementStoreKey_ = in.readUTF();
 		int count = in.readInt();
-		List<DElementStore> list = getElementStoreList();
 		for (int i = 0; i < count; i++) {
 			DElementStore store = (DElementStore) in.readObject();
-			list.add(store);
+			addElementStore(store);
 			store.setConfiguration(this);
 		}
 
@@ -94,9 +92,9 @@ public class DConfiguration implements org.openntf.domino.graph2.DConfiguration 
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
-		out.writeInt(defaultElementStoreIndex_);
-		out.writeInt(getElementStoreList().size());
-		for (DElementStore store : getElementStoreList()) {
+		out.writeUTF(defaultElementStoreKey_);
+		out.writeInt(getElementStores().size());
+		for (DElementStore store : getElementStores().values()) {
 			out.writeObject(store);
 		}
 	}

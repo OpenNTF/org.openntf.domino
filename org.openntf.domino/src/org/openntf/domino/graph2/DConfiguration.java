@@ -1,16 +1,15 @@
 package org.openntf.domino.graph2;
 
 import java.io.Externalizable;
-import java.util.List;
 import java.util.Map;
 
 import org.openntf.domino.graph2.impl.DGraph;
 
 public interface DConfiguration extends Externalizable {
 
-	public Map<Class<?>, Integer> getTypeMap();
+	public Map<Class<?>, String> getTypeMap();
 
-	public List<DElementStore> getElementStoreList();
+	public Map<String, DElementStore> getElementStores();
 
 	public void addElementStore(DElementStore store);
 
@@ -20,6 +19,6 @@ public interface DConfiguration extends Externalizable {
 
 	public DElementStore getDefaultElementStore();
 
-	public void setDefaultElementStore(int index);
+	public void setDefaultElementStore(String key);
 
 }

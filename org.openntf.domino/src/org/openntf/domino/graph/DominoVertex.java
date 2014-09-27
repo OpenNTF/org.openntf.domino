@@ -315,7 +315,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			//			System.out.println("INFO: Found " + result.size() + " IN edges.");
 		} else if (labels.length == 1) {
 			String label = labels[0];
-			// System.out.println("Getting in edges from " + getClass().getName() + " with label: " + label + " ...");
+			//			System.out.println("Getting in edges from " + getClass().getName() + " with label: " + label + " ...");
 			//			synchronized (inCache) {
 			result = inCache.get(label);
 			//			}
@@ -344,6 +344,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				result.addAll(getInEdgeObjects(label));
 			}
 		}
+		//		System.out.println("Returning " + (result == null ? "null" : result.size()) + " edges");
 		return result.unmodifiable();
 	}
 

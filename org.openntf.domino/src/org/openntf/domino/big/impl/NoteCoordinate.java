@@ -45,6 +45,8 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	private long y;
 	transient private Map<String, Object> propertyCache;
 
+	//TODO NTF we should probably have a factory that creates these instead of instantiating them directly
+
 	public NoteCoordinate(final long db, final long x, final long y) {
 		this.db = db;
 		this.x = x;
@@ -115,6 +117,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		return propertyCache;
 	}
 
+	@Override
 	public Object get(final String key) {
 		Object result = getPropertyCache().get(key);
 		if (result == null) {

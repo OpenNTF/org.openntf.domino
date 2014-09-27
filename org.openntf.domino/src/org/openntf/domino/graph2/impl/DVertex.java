@@ -11,8 +11,10 @@ import java.util.logging.Logger;
 
 import javolution.util.FastMap;
 import javolution.util.FastSet;
+import javolution.util.FastTable;
 
-import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph.DominoVertex;
 
 import com.tinkerpop.blueprints.Direction;
@@ -30,12 +32,12 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	private FastSet<String> inDirtyKeySet_;
 	private FastSet<String> outDirtyKeySet_;
-	private FastMap<String, FastSet<String>> inEdgesMap_;
-	private FastMap<String, FastSet<NoteCoordinate>> inEdgesMapCompressed_;
-	private FastMap<String, FastSet<String>> outEdgesMap_;
-	private FastMap<String, FastSet<NoteCoordinate>> outEdgesMapCompressed_;
-	private transient FastMap<String, FastSet<Edge>> inEdgeCache_;
-	private transient FastMap<String, FastSet<Edge>> outEdgeCache_;
+	//	private FastMap<String, FastSet<String>> inEdgesMap_;
+	private FastMap<String, NoteList> inEdgesMapCompressed_;
+	//	private FastMap<String, FastSet<String>> outEdgesMap_;
+	private FastMap<String, NoteList> outEdgesMapCompressed_;
+	private transient FastMap<String, FastTable<Edge>> inEdgeCache_;
+	private transient FastMap<String, FastTable<Edge>> outEdgeCache_;
 
 	public DVertex(final org.openntf.domino.graph2.DGraph parent) {
 		super(parent);
@@ -99,15 +101,20 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	public void addInEdge(final Edge edge) {
 		boolean adding = false;
 		String label = edge.getLabel();
-		Set<String> ins = getInEdgesSet(label);
+		NoteList ins = getInEdgesSet(label);
 		if (!ins.contains(edge.getId())) {
 			adding = true;
-			ins.add((String) edge.getId());
+			if (edge.getId() instanceof NoteCoordinate) {
+				ins.add((NoteCoordinate) edge.getId());
+			} else {
+				//TODO
+				//				ins.add((String) edge.getId());
+			}
 		}
 		if (adding) {
 			getParent().startTransaction(this);
 			getInDirtyKeySet().add(label);
-			Set<Edge> inLabelObjs = getInEdgeCache(label);
+			List<Edge> inLabelObjs = getInEdgeCache(label);
 			inLabelObjs.add(edge);
 		}
 	}
@@ -116,15 +123,20 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	public void addOutEdge(final Edge edge) {
 		boolean adding = false;
 		String label = edge.getLabel();
-		Set<String> outs = getOutEdgesSet(label);
+		NoteList outs = getOutEdgesSet(label);
 		if (!outs.contains(edge.getId())) {
 			adding = true;
-			outs.add((String) edge.getId());
+			if (edge.getId() instanceof NoteCoordinate) {
+				outs.add((NoteCoordinate) edge.getId());
+			} else {
+				//TODO
+				//				outs.add((String) edge.getId());
+			}
 		}
 		if (adding) {
 			getParent().startTransaction(this);
 			getOutDirtyKeySet().add(label);
-			Set<Edge> outLabelObjs = getOutEdgeCache(label);
+			List<Edge> outLabelObjs = getOutEdgeCache(label);
 			outLabelObjs.add(edge);
 		}
 	}
@@ -175,67 +187,67 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		String label = edge.getLabel();
 
 		boolean inChanged = false;
-		Set<String> ins = getInEdgesSet(label);
+		NoteList ins = getInEdgesSet(label);
 		if (ins != null) {
 			inChanged = ins.remove(edge.getId());
 		}
 		if (inChanged) {
-			Set<Edge> inObjsLabel = getInEdgeCache(label);
-			inObjsLabel.remove(edge);
+			List<Edge> inObjs = getInEdgeCache(label);
+			inObjs.remove(edge);
 			getInDirtyKeySet().add(label);
 		}
 
 		boolean outChanged = false;
-		Set<String> outs = getOutEdgesSet(label);
+		NoteList outs = getOutEdgesSet(label);
 		if (outs != null) {
 			outChanged = outs.remove(edge.getId());
 		}
 		if (outChanged) {
-			Set<Edge> outObjsLabel = getOutEdgeCache(label);
-			outObjsLabel.remove(edge);
+			List<Edge> outObjs = getOutEdgeCache(label);
+			outObjs.remove(edge);
 			getOutDirtyKeySet().add(label);
 		}
 	}
 
-	Map<String, FastSet<Edge>> getInEdgeCache() {
+	Map<String, FastTable<Edge>> getInEdgeCache() {
 		if (inEdgeCache_ == null) {
-			inEdgeCache_ = new FastMap<String, FastSet<Edge>>().atomic();
+			inEdgeCache_ = new FastMap<String, FastTable<Edge>>().atomic();
 		}
 		return inEdgeCache_;
 	}
 
-	FastSet<Edge> getInEdgeCache(final String label) {
-		Map<String, FastSet<Edge>> inCache = getInEdgeCache();
-		FastSet<Edge> result = null;
+	FastTable<Edge> getInEdgeCache(final String label) {
+		Map<String, FastTable<Edge>> inCache = getInEdgeCache();
+		FastTable<Edge> result = null;
 		result = inCache.get(label);
 		if (result == null) {
-			result = new FastSet<Edge>().atomic();
+			result = new FastTable<Edge>().atomic();
 			inCache.put(label, result);
 		}
 		return result;
 	}
 
-	FastSet<Edge> getOutEdgeCache(final String label) {
-		Map<String, FastSet<Edge>> outCache = getOutEdgeCache();
-		FastSet<Edge> result = null;
+	FastTable<Edge> getOutEdgeCache(final String label) {
+		Map<String, FastTable<Edge>> outCache = getOutEdgeCache();
+		FastTable<Edge> result = null;
 		result = outCache.get(label);
 		if (result == null) {
-			result = new FastSet<Edge>().atomic();
+			result = new FastTable<Edge>().atomic();
 			outCache.put(label, result);
 		}
 		return result;
 	}
 
-	FastMap<String, FastSet<Edge>> getOutEdgeCache() {
+	FastMap<String, FastTable<Edge>> getOutEdgeCache() {
 		if (outEdgeCache_ == null) {
-			outEdgeCache_ = new FastMap<String, FastSet<Edge>>().atomic();
+			outEdgeCache_ = new FastMap<String, FastTable<Edge>>().atomic();
 		}
 		return outEdgeCache_;
 	}
 
 	@Override
 	public int getInEdgeCount(final String label) {
-		Set<String> edgeIds = getInEdgesMap().get(label);
+		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			return getProperty("_COUNT" + DominoVertex.IN_PREFIX + label, Integer.class, false);
 		} else {
@@ -244,36 +256,40 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	}
 
 	@SuppressWarnings("unchecked")
-	Set<String> getInEdgesSet(final String label) {
-		Set<String> edgeIds = getInEdgesMap().get(label);
+	NoteList getInEdgesSet(final String label) {
+		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			Object o = getProperty(DominoVertex.IN_PREFIX + label, java.util.Collection.class);
 			if (o != null) {
-				if (o instanceof FastSet) {
-					edgeIds = ((FastSet) o).atomic();
+				if (o instanceof NoteList) {
+					edgeIds = ((NoteList) o);
 				} else if (o instanceof java.util.Collection) {
-					FastSet<String> result = new FastSet<String>();
-					result.addAll((Collection<String>) o);
-					edgeIds = result.atomic();
+					NoteList result = new NoteList(true);
+					for (Object raw : (Collection) o) {
+						if (raw instanceof String) {
+							result.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+						} else {
+							//TODO NTF
+						}
+					}
+					edgeIds = result;
 				} else {
 					log_.log(Level.SEVERE, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName()
 							+ ". We are clearing the values and rebuilding the edges.");
-					edgeIds = new FastSet<String>().atomic();
+					edgeIds = new NoteList(true);
 				}
 			} else {
-				edgeIds = new FastSet<String>().atomic();
+				edgeIds = new NoteList(true);
 			}
 			Map map = getInEdgesMap();
-			//			synchronized (map) {
 			map.put(label, edgeIds);
-			//			}
 		}
 		return edgeIds;
 	}
 
 	@Override
 	public int getOutEdgeCount(final String label) {
-		Set<String> edgeIds = getOutEdgesMap().get(label);
+		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			return getProperty("_COUNT" + DominoVertex.OUT_PREFIX + label, Integer.class, false);
 		} else {
@@ -281,24 +297,30 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 	}
 
-	FastSet<String> getOutEdgesSet(final String label) {
-		FastSet<String> edgeIds = getOutEdgesMap().get(label);
+	NoteList getOutEdgesSet(final String label) {
+		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			Object o = getProperty(DominoVertex.OUT_PREFIX + label, java.util.Collection.class);
 			if (o != null) {
-				if (o instanceof FastSet) {
-					edgeIds = ((FastSet) o).atomic();
+				if (o instanceof NoteList) {
+					edgeIds = ((NoteList) o);
 				} else if (o instanceof java.util.Collection) {
-					FastSet<String> result = new FastSet<String>();
-					result.addAll((Collection<String>) o);
-					edgeIds = result.atomic();
+					NoteList result = new NoteList(true);
+					for (Object raw : (Collection) o) {
+						if (raw instanceof String) {
+							result.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+						} else {
+							//TODO NTF
+						}
+					}
+					edgeIds = result;
 				} else {
 					log_.log(Level.SEVERE, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName()
 							+ ". We are clearing the values and rebuilding the edges.");
-					edgeIds = new FastSet<String>().atomic();
+					edgeIds = new NoteList(true);
 				}
 			} else {
-				edgeIds = new FastSet<String>().atomic();
+				edgeIds = new NoteList(true);
 			}
 			Map map = getOutEdgesMap();
 			map.put(label, edgeIds);
@@ -313,11 +335,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return inDirtyKeySet_;
 	}
 
-	Map<String, FastSet<String>> getInEdgesMap() {
-		if (inEdgesMap_ == null) {
-			inEdgesMap_ = new FastMap<String, FastSet<String>>().atomic();
+	Map<String, NoteList> getInEdgesMap() {
+		if (inEdgesMapCompressed_ == null) {
+			inEdgesMapCompressed_ = new FastMap<String, NoteList>().atomic();
 		}
-		return inEdgesMap_;
+		return inEdgesMapCompressed_;
 	}
 
 	FastSet<String> getOutDirtyKeySet() {
@@ -327,11 +349,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return outDirtyKeySet_;
 	}
 
-	Map<String, FastSet<String>> getOutEdgesMap() {
-		if (outEdgesMap_ == null) {
-			outEdgesMap_ = new FastMap<String, FastSet<String>>().atomic();
+	Map<String, NoteList> getOutEdgesMap() {
+		if (outEdgesMapCompressed_ == null) {
+			outEdgesMapCompressed_ = new FastMap<String, NoteList>().atomic();
 		}
-		return outEdgesMap_;
+		return outEdgesMapCompressed_;
 	}
 
 	@Override
@@ -342,13 +364,13 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	boolean writeEdges() {
 		boolean result = false;
-		Map<String, FastSet<String>> inMap = getInEdgesMap();
+		Map<String, NoteList> inMap = getInEdgesMap();
 		FastSet<String> inDirtySet = getInDirtyKeySet();
 		if (!inDirtySet.isEmpty()) {
 			Iterator<String> it = inDirtySet.iterator();
 			while (it.hasNext()) {
 				String key = it.next();
-				Set<String> edgeIds = inMap.get(key);
+				NoteList edgeIds = inMap.get(key);
 				if (edgeIds != null) {
 					setProperty(DominoVertex.IN_PREFIX + key, edgeIds);
 					setProperty("_COUNT" + DominoVertex.IN_PREFIX + key, edgeIds.size());
@@ -358,13 +380,13 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			}
 		}
 
-		Map<String, FastSet<String>> outMap = getOutEdgesMap();
+		Map<String, NoteList> outMap = getOutEdgesMap();
 		FastSet<String> outDirtySet = getOutDirtyKeySet();
 		if (!outDirtySet.isEmpty()) {
 			Iterator<String> it = outDirtySet.iterator();
 			while (it.hasNext()) {
 				String key = it.next();
-				Set<String> edgeIds = outMap.get(key);
+				NoteList edgeIds = outMap.get(key);
 				if (edgeIds != null) {
 					setProperty(DominoVertex.OUT_PREFIX + key, edgeIds);
 					setProperty("_COUNT" + DominoVertex.OUT_PREFIX + key, edgeIds.size());
@@ -378,11 +400,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return result;
 	}
 
-	FastSet<Edge> getInEdgeObjects(final String... labels) {
-		Map<String, FastSet<Edge>> inCache = getInEdgeCache();
-		FastSet<Edge> result = null;
+	FastTable<Edge> getInEdgeObjects(final String... labels) {
+		Map<String, FastTable<Edge>> inCache = getInEdgeCache();
+		FastTable<Edge> result = null;
 		if (labels == null || labels.length == 0) {
-			result = new FastSet<Edge>().atomic();
+			result = new FastTable<Edge>().atomic();
 			Set<String> labelSet = getInEdgeLabels();
 			for (String label : labelSet) {
 				result.addAll(getInEdgeObjects(label));
@@ -391,15 +413,15 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			String label = labels[0];
 			result = inCache.get(label);
 			if (result == null) {
-				Set<String> edgeIds = getInEdgesSet(label);
-				FastSet<Edge> edges = getParent().getEdgesFromIds(edgeIds);
+				NoteList edgeIds = getInEdgesSet(label);
+				FastTable<Edge> edges = getParent().getEdgesFromIds(edgeIds);
 				if (edges != null) {
 					result = edges.atomic();
 				}
 				inCache.put(label, result);
 			}
 		} else {
-			result = new FastSet<Edge>();
+			result = new FastTable<Edge>();
 			for (String label : labels) {
 				result.addAll(getInEdgeObjects(label));
 			}
@@ -407,14 +429,14 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return result.unmodifiable();
 	}
 
-	FastSet<Edge> getOutEdgeObjects(final String... labels) {
-		FastMap<String, FastSet<Edge>> outCache = getOutEdgeCache();
-		FastSet<Edge> result = null;
+	FastTable<Edge> getOutEdgeObjects(final String... labels) {
+		FastMap<String, FastTable<Edge>> outCache = getOutEdgeCache();
+		FastTable<Edge> result = null;
 		if (labels == null || labels.length == 0) {
-			result = new FastSet<Edge>();
+			result = new FastTable<Edge>();
 			Set<String> labelSet = getOutEdgeLabels();
 			for (String label : labelSet) {
-				FastSet<Edge> curEdges = getOutEdgeObjects(label);
+				FastTable<Edge> curEdges = getOutEdgeObjects(label);
 				result.addAll(curEdges);
 			}
 		} else if (labels.length == 1) {
@@ -424,15 +446,15 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			}
 			result = outCache.get(label);
 			if (result == null) {
-				FastSet<String> edgeIds = getOutEdgesSet(label);
-				FastSet<Edge> edges = getParent().getEdgesFromIds(edgeIds);
+				NoteList edgeIds = getOutEdgesSet(label);
+				FastTable<Edge> edges = getParent().getEdgesFromIds(edgeIds);
 				if (edges != null) {
 					result = edges.atomic();
 				}
 				outCache.put(label, result);
 			}
 		} else {
-			result = new FastSet<Edge>();
+			result = new FastTable<Edge>();
 			for (String label : labels) {
 				result.addAll(getOutEdgeObjects(label));
 			}

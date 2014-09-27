@@ -1,6 +1,5 @@
 package org.openntf.domino.graph2;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,7 +7,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-com.tinkerpop.blueprints.TransactionalGraph {
+		com.tinkerpop.blueprints.TransactionalGraph {
 
 	public void startTransaction(final Element elem);
 
@@ -16,7 +15,7 @@ com.tinkerpop.blueprints.TransactionalGraph {
 
 	public void removeDelegate(Element element);
 
-	public List<DElementStore> getElementStores();
+	public Map<String, DElementStore> getElementStores();
 
 	public DElementStore findElementStore(Element element);
 

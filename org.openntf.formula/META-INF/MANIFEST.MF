@@ -21,4 +21,3 @@ Export-Package: org.openntf.formula,
  org.openntf.formula.parse
 Require-Bundle: com.ibm.icu;bundle-version="3.8.1",
  com.ibm.commons
-Bundle-ActivationPolicy: lazy

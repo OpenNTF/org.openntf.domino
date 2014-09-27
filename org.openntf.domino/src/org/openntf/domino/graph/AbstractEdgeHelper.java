@@ -148,15 +148,16 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 			if (getInType().equals(vertex.getClass())) {
 				results = (Set<Edge>) vertex.getEdges(Direction.IN, getLabel());
-			}
-			if (getOutType().equals(vertex.getClass())) {
+				//				System.out.println("DEBUG: " + vertex.getClass().getSimpleName() + " is the IN type");
+			} else if (getOutType().equals(vertex.getClass())) {
 				results = (Set<Edge>) vertex.getEdges(Direction.OUT, getLabel());
-			}
-			if (getInType().isAssignableFrom(vertex.getClass())) {
+				//				System.out.println("DEBUG: " + vertex.getClass().getSimpleName() + " is the OUT type");
+			} else if (getInType().isAssignableFrom(vertex.getClass())) {
 				results = (Set<Edge>) vertex.getEdges(Direction.IN, getLabel());
-			}
-			if (getOutType().isAssignableFrom(vertex.getClass())) {
+				//				System.out.println("DEBUG: " + vertex.getClass().getSimpleName() + " can be assigned as the IN type");
+			} else if (getOutType().isAssignableFrom(vertex.getClass())) {
 				results = (Set<Edge>) vertex.getEdges(Direction.OUT, getLabel());
+				//				System.out.println("DEBUG: " + vertex.getClass().getSimpleName() + " can be assigned as the OUT type");
 			}
 		}
 		if (results == null) {
