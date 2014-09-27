@@ -51,7 +51,6 @@ public class UserDefinedFunction extends AtFunction {
 	 *            the function-name (with @-sign)
 	 * @param parameter
 	 *            the parameters for this function
-	 * @param variable
 	 * @param function
 	 *            the function-node to execute (if @functionName is invoked in formula)
 	 * @param parser

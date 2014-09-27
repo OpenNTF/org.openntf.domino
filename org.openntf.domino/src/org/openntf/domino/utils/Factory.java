@@ -76,6 +76,10 @@ public enum Factory {
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
+	private static ThreadLocal<Session> currentSessionFullAccessHolder_ = new ThreadLocal<Session>();
+
+	private static ThreadLocal<Session> currentTrustedSessionHolder_ = new ThreadLocal<Session>();
+
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
@@ -125,7 +129,7 @@ public enum Factory {
 								//								System.out.println("Attempting to use path: " + pp2);
 								if (!iniFile.exists()) {
 									System.out
-									.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
 									for (Object rawName : System.getProperties().keySet()) {
 										if (rawName instanceof String) {
 											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
@@ -174,13 +178,13 @@ public enum Factory {
 	}
 
 	private static Map<String, String> ENVIRONMENT;
+	@SuppressWarnings("unused")
 	private static boolean session_init = false;
 	private static boolean jar_init = false;
 
 	/**
 	 * load the configuration
 	 * 
-	 * @param session
 	 */
 	public static void loadEnvironment(/*final lotus.domino.Session session, */final Scanner scanner) {
 		if (ENVIRONMENT == null) {
@@ -409,7 +413,7 @@ public enum Factory {
 	/**
 	 * get the active object count
 	 * 
-	 * @return
+	 * @return The current active object count
 	 */
 	public static int getActiveObjectCount() {
 		return lotusCounter.intValue() - autoRecycleCounter.intValue() - manualRecycleCounter.intValue();
@@ -418,7 +422,7 @@ public enum Factory {
 	/**
 	 * Determine the run context where we are
 	 * 
-	 * @return
+	 * @return The active RunContext
 	 */
 	public static RunContext getRunContext() {
 		// TODO finish this implementation, which needs a lot of work.
@@ -486,7 +490,7 @@ public enum Factory {
 	/**
 	 * Returns the wrapper factory if initialized
 	 * 
-	 * @return
+	 * @return The active WrapperFactory
 	 */
 	public static WrapperFactory getWrapperFactory_unchecked() {
 		return currentWrapperFactory.get();
@@ -496,6 +500,7 @@ public enum Factory {
 	 * Set/changes the wrapperFactory for this thread
 	 * 
 	 * @param wf
+	 *            The new WrapperFactory
 	 */
 	public static void setWrapperFactory(final WrapperFactory wf) {
 		currentWrapperFactory.set(wf);
@@ -503,6 +508,7 @@ public enum Factory {
 
 	// --- session handling 
 
+	@SuppressWarnings("rawtypes")
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
 		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
@@ -618,10 +624,6 @@ public enum Factory {
 
 	/**
 	 * @deprecated Use {@link #fromLotusAsVector(Collection, FactorySchema, Base)}
-	 * @param lotusColl
-	 * @param T
-	 * @param parent
-	 * @return
 	 */
 	@Deprecated
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -666,6 +668,8 @@ public enum Factory {
 		if (result == null) {
 			try {
 				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
+				getTrustedSession();
+				getSessionFullAccess();
 				Factory.setNoRecycle(result, false);  // We have created the session, so we recycle it
 			} catch (Exception ne) {
 				try {
@@ -697,10 +701,27 @@ public enum Factory {
 	/**
 	 * Sets the current session
 	 * 
-	 * @param session
 	 */
 	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+	}
+
+	/**
+	 * Sets the current trusted session
+	 * 
+	 * @param session
+	 */
+	public static void setTrustedSession(final lotus.domino.Session session) {
+		currentTrustedSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+	}
+
+	/**
+	 * Sets the current session with full access
+	 * 
+	 * @param session
+	 */
+	public static void setSessionFullAccess(final lotus.domino.Session session) {
+		currentSessionFullAccessHolder_.set(fromLotus(session, Session.SCHEMA, null));
 	}
 
 	/**
@@ -754,9 +775,10 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static Map<Class, List> nonOSGIServicesCache;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		AppServiceLocator serviceLocator = currentServiceLocator_.get();
@@ -768,7 +790,6 @@ public enum Factory {
 		if (nonOSGIServicesCache == null)
 			nonOSGIServicesCache = new HashMap<Class, List>();
 
-		@SuppressWarnings("unchecked")
 		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
 		if (ret == null) {
 			ret = new ArrayList<T>();
@@ -843,6 +864,7 @@ public enum Factory {
 			callback.terminate();
 		}
 		clearSession();
+		@SuppressWarnings("unused")
 		long termCount = wf.terminate();
 		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 		clearBubbleExceptions();
@@ -914,8 +936,6 @@ public enum Factory {
 	/**
 	 * Debug method to get statistics
 	 * 
-	 * @param details
-	 * @return
 	 */
 	public static String dumpCounters(final boolean details) {
 		if (!TRACE_COUNTERS)
@@ -951,22 +971,32 @@ public enum Factory {
 	 * @return the session full access
 	 */
 	public static org.openntf.domino.Session getSessionFullAccess() {
-		try {
-			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
-					return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+		org.openntf.domino.Session result = currentSessionFullAccessHolder_.get();
+		if (result == null) {
+			try {
+				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+					}
+				});
+				if (tmpResult instanceof org.openntf.domino.Session) {
+					result = (org.openntf.domino.Session) tmpResult;
+					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
+					setSessionFullAccess(result);
 				}
-			});
-			if (result instanceof org.openntf.domino.Session) {
-				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
-				return (org.openntf.domino.Session) result;
+			} catch (PrivilegedActionException e) {
+				DominoUtils.handleException(e);
 			}
-		} catch (PrivilegedActionException e) {
-			DominoUtils.handleException(e);
+			if (result == null) {
+				System.out
+						.println("SEVERE: Unable to get default session with full access. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation.");
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/**
@@ -975,22 +1005,32 @@ public enum Factory {
 	 * @return the trusted session
 	 */
 	public static org.openntf.domino.Session getTrustedSession() {
-		try {
-			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-					return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+		org.openntf.domino.Session result = currentTrustedSessionHolder_.get();
+		if (result == null) {
+			try {
+				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
+						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
+					}
+				});
+				if (tmpResult instanceof org.openntf.domino.Session) {
+					result = (org.openntf.domino.Session) tmpResult;
+					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
+					setTrustedSession(result);
 				}
-			});
-			if (result instanceof org.openntf.domino.Session) {
-				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we are responsible to recycle it.
-				return (org.openntf.domino.Session) result;
+			} catch (PrivilegedActionException e) {
+				DominoUtils.handleException(e);
 			}
-		} catch (PrivilegedActionException e) {
-			DominoUtils.handleException(e);
+			if (result == null) {
+				System.out
+						.println("SEVERE: Unable to get default trusted session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation.");
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/**
@@ -1305,7 +1345,6 @@ public enum Factory {
 	 * This will call the terminate-function of the callback on every "terminate" call. (Across threads!) The callback must handle this with
 	 * threadlocals itself. See DateTime for an example
 	 * 
-	 * @param callback
 	 */
 	public static void onTerminate(final Terminatable callback) {
 		onTerminate_.add(callback);

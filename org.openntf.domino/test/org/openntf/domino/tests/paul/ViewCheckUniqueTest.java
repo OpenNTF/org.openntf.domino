@@ -34,9 +34,6 @@ public class ViewCheckUniqueTest {
 		this.database = d;
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(final String[] args) {
 		Session s = null;
 		Database d = null;
@@ -53,6 +50,7 @@ public class ViewCheckUniqueTest {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void NotesMain() {
 		Session session;
 		Database database;

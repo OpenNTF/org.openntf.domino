@@ -28,9 +28,6 @@ public class EvaluateException extends Exception {
 	/**
 	 * Creates a new exception with reference to codeLine and codeColumn
 	 * 
-	 * @param codeLine
-	 * @param codeColumn
-	 * @param cause
 	 */
 	public EvaluateException(final int codeLine, final int codeColumn, final Throwable cause) {
 		super(initialise(codeLine, codeColumn, cause), cause);

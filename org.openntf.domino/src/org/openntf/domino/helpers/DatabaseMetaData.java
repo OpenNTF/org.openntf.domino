@@ -222,8 +222,6 @@ public class DatabaseMetaData implements Serializable {
 	 * Returns a ClosedDatabase represented by this metaData. The Database is only opened (and uses a NotesHandle), if you try to read
 	 * properties (or call methods) which are not part of the MetaData
 	 * 
-	 * @param session
-	 * @return
 	 */
 	public Database getDatabase(final Session session) {
 		return new ClosedDatabase(session);

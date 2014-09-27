@@ -30,6 +30,7 @@ public class IMDBTest implements Runnable {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
+	@SuppressWarnings("unused")
 	private void importMovies(final Database db) {
 		if (db == null) {
 			System.out.println("db is null. Cannot proceed.");
@@ -76,7 +77,7 @@ public class IMDBTest implements Runnable {
 								"17 Kids and Counting" (2008)				2008-????
 								"17 Kids and Counting" (2008) {20 Years, 20 Duggars (#3.15)}	2009
 								"17 Kids and Counting" (2008) {38 Kids & Counting! (#8.7)}	2011
-								
+
 								 */
 								entryKey = rawMovieTitle;
 								int endQuote = rawMovieTitle.indexOf('"', 2);
@@ -177,7 +178,7 @@ public class IMDBTest implements Runnable {
 		/*
 		MOVIES LIST
 		===========
-		
+
 		"17 Kids and Counting" (2008)				2008-????
 		"17 Kids and Counting" (2008) {20 Years, 20 Duggars (#3.15)}	2009
 		"17 Kids and Counting" (2008) {38 Kids & Counting! (#8.7)}	2011
@@ -261,6 +262,7 @@ public class IMDBTest implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void importPlots(final Database db) {
 		/*
 		 PLOT SUMMARIES LIST
@@ -377,6 +379,7 @@ public class IMDBTest implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void importDirectors(final Database db) {
 		/*
 		 THE DIRECTORS LIST
@@ -384,7 +387,7 @@ public class IMDBTest implements Runnable {
 
 		Name			Titles
 		----			------
-				 
+
 		Enlow, Scott (I)	"17 Kids and Counting" (2008) {Big Family Meets Big Apple (#1.1)}
 			"17 Kids and Counting" (2008) {Duggars Do New York (#1.2)}
 			"17 Kids and Counting" (2008) {Duggars Movin' Out (#4.4)}
@@ -400,9 +403,10 @@ public class IMDBTest implements Runnable {
 			My Heart, a Drum (2010)
 			Winning Streaks (2012)
 
-		*/
+		 */
 	}
 
+	@SuppressWarnings("unused")
 	private void importActors(final DbDirectory dir) {
 		if (dir == null) {
 			System.out.println("dir is null. Cannot proceed.");
@@ -446,6 +450,7 @@ public class IMDBTest implements Runnable {
 									System.out.println("Processing actor " + actorCount + ": " + curActor + " (" + lineCount + " lines)");
 								}
 								Database db = null; //TODO obviously not...
+								@SuppressWarnings("null")
 								Document doc = db.getDocumentWithKey(curActor, false);
 								if (doc != null) {
 									doc.replaceItemValue("Genres", genres);

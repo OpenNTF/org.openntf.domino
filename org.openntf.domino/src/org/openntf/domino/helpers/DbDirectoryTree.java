@@ -93,7 +93,6 @@ public class DbDirectoryTree {
 	/**
 	 * Return the parent directory
 	 * 
-	 * @return
 	 */
 	public DbDirectoryTree getParent() {
 		return parent_;
@@ -102,7 +101,6 @@ public class DbDirectoryTree {
 	/**
 	 * Return the complete dir layout of this node
 	 * 
-	 * @return
 	 */
 	public String getDirPath() {
 		if (getParent() == null)
@@ -132,8 +130,6 @@ public class DbDirectoryTree {
 	/**
 	 * Return a list of DatabaseMetaData in this directory and optional in this subdirectories
 	 * 
-	 * @param recursive
-	 * @return
 	 */
 	public List<DatabaseMetaData> getDatabaseMetaDatas(final boolean recursive) {
 		return getDatabaseMetaDatas(null, recursive);
@@ -156,8 +152,6 @@ public class DbDirectoryTree {
 	/**
 	 * Returns an iterarable over all databases in this directory
 	 * 
-	 * @param recursive
-	 * @return
 	 */
 	public Iterable<Database> getDatabases(final boolean recursive) {
 		final Iterator<DatabaseMetaData> metaIter = getDatabaseMetaDatas(recursive).iterator();

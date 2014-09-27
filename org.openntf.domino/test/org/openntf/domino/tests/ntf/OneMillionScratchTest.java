@@ -33,6 +33,7 @@ public enum OneMillionScratchTest {
 
 	static class Doer implements Runnable {
 
+		@SuppressWarnings("unused")
 		@Override
 		public void run() {
 			long start = System.nanoTime();
@@ -52,7 +53,7 @@ public enum OneMillionScratchTest {
 			for (Form form : forms) {
 				// System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
 				Document d = form.getDocument();
-				Vector v = d.getItemValue("$UpdatedBy");
+				Vector<Object> v = d.getItemValue("$UpdatedBy");
 
 				Name n = s.createName((String) v.get(0));
 				nameCount++;
@@ -66,7 +67,7 @@ public enum OneMillionScratchTest {
 			DocumentCollection dc = db.getAllDocuments();
 			for (Document doc : dc) {
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						Name n = s.createName((String) o);
@@ -111,11 +112,13 @@ public enum OneMillionScratchTest {
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public void Count(final Database db) {
 			DocumentCollection dc = db.getAllDocuments();
 			NoteCollection nc = db.createNoteCollection(false);
 			nc.add(dc);
 
+			Arrays.asList(nc.getNoteIDs());
 			Set setAll = new HashSet(Arrays.asList(nc.getNoteIDs()));
 
 			View allView = db.getView("All Documents");
@@ -141,6 +144,7 @@ public enum OneMillionScratchTest {
 	 * @param args
 	 *            the arguments >>>>>>> origin/declan
 	 */
+	@SuppressWarnings("unused")
 	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");

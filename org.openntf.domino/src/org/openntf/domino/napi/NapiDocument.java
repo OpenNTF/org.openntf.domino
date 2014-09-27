@@ -94,34 +94,26 @@ public interface NapiDocument {
 
 	/**
 	 * @param noteClass
-	 * @return
 	 */
 	boolean setClass(int noteClass);
 
 	/**
 	 * @param itemName
 	 * @param value
-	 * @return
 	 */
 	boolean setItemAsTextList(String itemName, List<String> value);
 
 	/**
 	 * @param itemName
 	 * @param value
-	 * @return
 	 */
 	boolean setItemText(String itemName, String value);
 
 	/**
 	 * @param unid
-	 * @return
 	 */
 	boolean setUnid(String unid);
 
-	/**
-	 * @return
-	 * 
-	 */
 	boolean update();
 
 }

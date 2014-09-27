@@ -84,8 +84,6 @@ public enum XspFunctions {
 	/**
 	 * Returns the value of the current UIComponent
 	 * 
-	 * @param ctx
-	 * @return
 	 */
 	@ParamCount(0)
 	public static ValueHolder atThisValue(final FormulaContextXsp ctx) {

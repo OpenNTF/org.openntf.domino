@@ -1,7 +1,7 @@
 package org.openntf.dominoTests;
 
 /*
- 	Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+ 	Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
 	(the "License"); you may not use this file except in compliance with the
 	License. You may obtain a copy of the License at
 
@@ -42,6 +42,8 @@ import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xots.events.CustomNamedEvent;
 import org.openntf.domino.xotsTests.XotsBasic;
 import org.openntf.domino.xsp.XspOpenLogUtil;
 import org.openntf.domino.xsp.helpers.XspUtils;
@@ -288,9 +290,15 @@ public class Utils {
 	}
 
 	public static void runXotsTasklet() {
+		ExtLibUtil.getApplicationScope().put("MessageFromXots", "Initial  (set from Util)");
 		XotsBasic testRun = new org.openntf.domino.xotsTests.XotsBasic();
 		testRun.setSessionType(DominoSessionType.NATIVE);
 		testRun.queue();
+		ExtLibUtil.getApplicationScope().put("MessageFromXotsConstructor", "Should be complete now (set from util)");
+	}
 
+	public static void triggerEvent() {
+		CustomNamedEvent event = new CustomNamedEvent("testEvent", "hey");
+		XotsDaemon.publishEvent(event);
 	}
 }

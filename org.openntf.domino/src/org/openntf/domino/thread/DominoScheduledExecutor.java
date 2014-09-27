@@ -232,7 +232,7 @@ public class DominoScheduledExecutor extends ScheduledThreadPoolExecutor {
 	 */
 	@Override
 	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
-		return new DominoFutureTask(callable);
+		return new DominoFutureTask<T>(callable);
 	}
 
 	/* (non-Javadoc)

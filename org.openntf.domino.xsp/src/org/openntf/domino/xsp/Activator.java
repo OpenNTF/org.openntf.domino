@@ -80,7 +80,6 @@ public class Activator extends Plugin {
 	 * @param path
 	 *            String relative to the root of the plugin, e.g. "/resources/log-transform.xsl"
 	 * @return InputStream containing the contents of the resource
-	 * @throws Exception
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	public InputStream getResourceAsStream(final String path) throws Exception {

@@ -26,8 +26,18 @@ import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NSFService;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
+/**
+ * @author ntfreeman
+ * 
+ *         XotsService created by the XotsDaemon constructor and added from there to the LCDEnvironment's List<HttpService>
+ */
 public class XotsService extends NSFService {
 
+	/**
+	 * Loops through the HTTPServices assigned to LCDEnvironment and returns the first XotsService
+	 * 
+	 * @return the one (and expected to be only) XotsService
+	 */
 	@Override
 	public void destroyService() {
 		System.out.println("DEBUG: Destroying XotsService...");
@@ -79,13 +89,17 @@ public class XotsService extends NSFService {
 				ClassLoader mcl = module_.getModuleClassLoader();
 				for (String className : classNames_) {
 					Class<?> curClass = null;
-					try {
-						curClass = mcl.loadClass(className);
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
+					String[] classDefBits = className.split(";");	// There may be ";boolean" at the end
+					boolean enabled = classDefBits.length < 2 || "true".equals(classDefBits[1]);
+					if (enabled) {
+						try {
+							curClass = mcl.loadClass(classDefBits[0]);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						}
+						classes_.add(curClass);
+						callback_.loaderCallback(this);
 					}
-					classes_.add(curClass);
-					callback_.loaderCallback(this);
 				}
 
 				//				classes_ = result;

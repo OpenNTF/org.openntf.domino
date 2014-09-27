@@ -22,14 +22,15 @@ import lotus.domino.Session;
  */
 public class LegacyCollectionTest implements Runnable {
 	private static Method getCppMethod;
+	@SuppressWarnings("unused")
 	private static int bitMode;
 	private static Field cpp_field;
 	private static Field wr_field;
 
 	private static ThreadLocal<Long> sessionid = new ThreadLocal<Long>() {
 		/* (non-Javadoc)
-				 * @see java.lang.ThreadLocal#initialValue()
-				 */
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
 		@Override
 		protected Long initialValue() {
 			return 0L;
@@ -121,7 +122,7 @@ public class LegacyCollectionTest implements Runnable {
 
 					wr_field = lotus.domino.local.NotesBase.class.getDeclaredField("weakObject");
 					wr_field.setAccessible(true);
-					Class clazz = wr_field.getType();
+					Class<?> clazz = wr_field.getType();
 					cpp_field = clazz.getDeclaredField("cpp_object");
 					cpp_field.setAccessible(true);
 					return null;
@@ -153,6 +154,7 @@ public class LegacyCollectionTest implements Runnable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static Map<Long, Byte> idMap = new ConcurrentHashMap<Long, Byte>();
 
 	public static void main(final String[] args) throws InterruptedException {

@@ -293,6 +293,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getProperty(key, java.lang.Object.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
@@ -366,6 +367,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T, final boolean allowNull) {
 		T result = getProperty(propertyName, T);
@@ -560,7 +562,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 						//							}
 					}
 				} else if (value == null) {
-					if (!current.equals(Null.INSTANCE)) {
+					if (current != null && !current.equals(Null.INSTANCE)) {
 						getParent().startTransaction(this);
 						old = props.put(key, Null.INSTANCE);
 						//							synchronized (changedProperties_) {
@@ -678,12 +680,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Object result = value;
 		if (EnumSet.class.isAssignableFrom(value.getClass())) {
 			System.out.println("DEBUG: Mapping an EnumSet");
-			if (!((EnumSet) value).isEmpty()) {
+			if (!((EnumSet<?>) value).isEmpty()) {
 				StringBuilder eListing = new StringBuilder();
 				eListing.append('[');
-				for (Object rawEnum : (EnumSet) value) {
+				for (Object rawEnum : (EnumSet<?>) value) {
 					if (Enum.class.isAssignableFrom(rawEnum.getClass())) {
-						eListing.append(((Enum) rawEnum).name());
+						eListing.append(((Enum<?>) rawEnum).name());
 					} else {
 						eListing.append("ERROR: expected Enum was a " + rawEnum.getClass().getName());
 					}
@@ -696,7 +698,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				result = "";
 			}
 		} else if (Enum.class.isAssignableFrom(value.getClass())) {
-			result = ((Enum) value).name();
+			result = ((Enum<?>) value).name();
 		} else if (CharSequence.class.isAssignableFrom(value.getClass())) {
 			result = ((CharSequence) value).toString();
 		} else if (BigString.class.isAssignableFrom(value.getClass())) {
