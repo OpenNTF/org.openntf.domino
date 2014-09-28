@@ -413,6 +413,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	private FastSet<String> propKeys_;
+	private boolean checkedDocProps_ = false;
 
 	private FastSet<String> getPropKeysInt() {
 		if (propKeys_ == null) {
@@ -422,9 +423,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	@Override
-	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {	//TODO NTF fix?
-		if (getPropKeysInt().isEmpty()) {
-			getPropKeysInt().addAll(getRawDocument().keySet());
+	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
+		if (!checkedDocProps_) {
+			Set<String> raws = getRawDocument().keySet();
+			getPropKeysInt().addAll(raws);
+			checkedDocProps_ = true;
 		}
 		if (includeEdgeFields) {
 			return getPropKeysInt().unmodifiable();
