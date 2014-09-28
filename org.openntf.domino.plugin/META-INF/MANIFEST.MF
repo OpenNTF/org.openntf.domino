@@ -8,7 +8,8 @@ Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.annotation,
  org.openntf.formula,
- org.osgi.framework
+ org.osgi.framework,
+ org.osgi.service.log
 Bundle-ActivationPolicy: lazy
 Export-Package: com.google.common.annotations,
  com.google.common.base,
