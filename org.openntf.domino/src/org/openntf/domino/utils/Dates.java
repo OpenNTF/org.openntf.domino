@@ -436,60 +436,41 @@ public enum Dates {
 	}
 
 	/**
-	 * Gets a Date object representing the epoch
+	 * Determines if a date has a time value of Midnight (12:00:00 AM)
 	 * 
-	 * @return Date representing the epoch
+	 * NOTE: ONLY CHECKS to the Seconds level. Milliseconds are NOT checked.
+	 * 
+	 * @param source
+	 *            Date to check.
+	 * 
+	 * @return Flag indicating if the specified source has a time value equal to Midnight.
 	 */
-	public static final Date getEpoch() {
-		return new Date(0);
+	public static boolean isMidnight(final Object source) {
+		return Dates.isMidnight(source, false);
 	}
 
 	/**
-	 * Generates a Date object from the specified source, with all TIME values set to that of the epoch
+	 * Determines if a date has a time value of Midnight (12:00:00 AM)
 	 * 
 	 * @param source
-	 *            Object from which a Date object can be constructed.
+	 *            Date to check.
 	 * 
-	 * @return Date constructed from the source with all TIME values set to that of the epoch.
+	 * @param compareMilliseconds
+	 *            Flag indicating if milliseconds should be checked. If FALSE, then source will only be checked to the SECONDS level.
+	 * 
+	 * @return Flag indicating if the specified source has a time value equal to Midnight.
 	 */
-	public static Date getEpochedDate(final Object source) {
-		final Date date = Dates.getDate(source);
-		if (null == date) {
-			return null;
-		} else {
-			final Calendar epoch = Calendar.getInstance();
-			epoch.setTime(Dates.getEpoch());
-			final Calendar result = Calendar.getInstance();
-			result.setTime(date);
-			result.set(Calendar.HOUR_OF_DAY, epoch.get(Calendar.HOUR_OF_DAY));
-			result.set(Calendar.MINUTE, epoch.get(Calendar.MINUTE));
-			result.set(Calendar.SECOND, epoch.get(Calendar.SECOND));
-			result.set(Calendar.MILLISECOND, epoch.get(Calendar.MILLISECOND));
-			return result.getTime();
-		}
-	}
+	public static boolean isMidnight(final Object source, final boolean compareMilliseconds) {
+		final Calendar cal = Dates.getCalendar(source);
 
-	/**
-	 * Generates a Date object from the specified source, with all DATE values set to that of the epoch
-	 * 
-	 * @param source
-	 *            Object from which a Date object can be constructed.
-	 * 
-	 * @return Date constructed from the source with all DATE values set to that of the epoch
-	 */
-	public static Date getEpochedTime(final Object source) {
-		final Date date = Dates.getDate(source);
-		if (null == date) {
-			return null;
-		} else {
-			final Calendar epoch = Calendar.getInstance();
-			epoch.setTime(Dates.getEpoch());
-			final Calendar result = Calendar.getInstance();
-			result.setTime(date);
-			result.set(Calendar.YEAR, epoch.get(Calendar.YEAR));
-			result.set(Calendar.DAY_OF_YEAR, epoch.get(Calendar.DAY_OF_YEAR));
-			return result.getTime();
+		if (null != cal) {
+			final boolean result = ((cal.get(Calendar.HOUR_OF_DAY) == 0) && (cal.get(Calendar.MINUTE) == 0) && (cal.get(Calendar.SECOND) == 0));
+			if (result) {
+				return (compareMilliseconds) ? (cal.get(Calendar.MILLISECOND) == 0) : true;
+			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -1462,4 +1443,72 @@ public enum Dates {
 			throw new RuntimeException("EXCEPTION in Dates.compareDates()");
 		}
 	}
+
+	/*
+	 * ***************************************************
+	 * ***************************************************
+	 * 
+	 * EPOCH methods
+	 * 
+	 * ***************************************************
+	 * ***************************************************
+	 */
+
+	/**
+	 * Gets a Date object representing the epoch
+	 * 
+	 * @return Date representing the epoch
+	 */
+	public static final Date getEpoch() {
+		return new Date(0);
+	}
+
+	/**
+	 * Generates a Date object from the specified source, with all TIME values set to that of the epoch
+	 * 
+	 * @param source
+	 *            Object from which a Date object can be constructed.
+	 * 
+	 * @return Date constructed from the source with all TIME values set to that of the epoch.
+	 */
+	public static Date getEpochedDate(final Object source) {
+		final Date date = Dates.getDate(source);
+		if (null == date) {
+			return null;
+		} else {
+			final Calendar epoch = Calendar.getInstance();
+			epoch.setTime(Dates.getEpoch());
+			final Calendar result = Calendar.getInstance();
+			result.setTime(date);
+			result.set(Calendar.HOUR_OF_DAY, epoch.get(Calendar.HOUR_OF_DAY));
+			result.set(Calendar.MINUTE, epoch.get(Calendar.MINUTE));
+			result.set(Calendar.SECOND, epoch.get(Calendar.SECOND));
+			result.set(Calendar.MILLISECOND, epoch.get(Calendar.MILLISECOND));
+			return result.getTime();
+		}
+	}
+
+	/**
+	 * Generates a Date object from the specified source, with all DATE values set to that of the epoch
+	 * 
+	 * @param source
+	 *            Object from which a Date object can be constructed.
+	 * 
+	 * @return Date constructed from the source with all DATE values set to that of the epoch
+	 */
+	public static Date getEpochedTime(final Object source) {
+		final Date date = Dates.getDate(source);
+		if (null == date) {
+			return null;
+		} else {
+			final Calendar epoch = Calendar.getInstance();
+			epoch.setTime(Dates.getEpoch());
+			final Calendar result = Calendar.getInstance();
+			result.setTime(date);
+			result.set(Calendar.YEAR, epoch.get(Calendar.YEAR));
+			result.set(Calendar.DAY_OF_YEAR, epoch.get(Calendar.DAY_OF_YEAR));
+			return result.getTime();
+		}
+	}
+
 }

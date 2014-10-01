@@ -304,6 +304,18 @@ public enum ISO {
 	}
 
 	/**
+	 * Determines if an object is not null and an instance of String.
+	 * 
+	 * @param object
+	 *            Object to test.
+	 * 
+	 * @return Flag indicating whether or not the object is a String.
+	 */
+	public static boolean isString(final Object object) {
+		return ((null != object) && (object instanceof String));
+	}
+
+	/**
 	 * Determines if a string is null or blank
 	 * 
 	 * @param string
@@ -357,6 +369,7 @@ public enum ISO {
 	public static Throwable handleException(final Throwable t, final String details) {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
 				public Object run() throws Exception {
 					if (ISO.log_.getLevel() == null) {
 						LogUtils.loadLoggerConfig(false, "");
@@ -368,6 +381,7 @@ public enum ISO {
 				}
 			});
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
 				public Object run() throws Exception {
 					if (LogUtils.hasAccessException(ISO.log_)) {
 						ISO.logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);

@@ -316,6 +316,36 @@ public enum Strings {
 	}
 
 	/**
+	 * Determines if an object is not null and an instance of String.
+	 * 
+	 * @param object
+	 *            Object to test.
+	 * 
+	 * @return Flag indicating whether or not the object is a String.
+	 */
+	public static boolean isString(final Object object) {
+		return ISO.isString(object);
+	}
+
+	/**
+	 * Gets the String of an object.
+	 * 
+	 * Returns "" if the object is null. If the object is a String returns the object, otherwise returns the object's toString() method.
+	 * 
+	 * @param object
+	 *            Object from which to get the String.
+	 * 
+	 * @return String of an object.
+	 */
+	public static String toString(final Object object) {
+		if (null == object) {
+			return "";
+		}
+
+		return (object instanceof String) ? (String) object : object.toString();
+	}
+
+	/**
 	 * Determines if a specified string is a Hexadecimal string (comprised of characters 0-9 or A-F, case insensitive)
 	 * 
 	 * @param string
