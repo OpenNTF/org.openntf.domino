@@ -5,16 +5,23 @@ Open replacement for lotus.domino package in IBM Domino
 
 Project goals:
 
-1. Eliminate ham-fisted Exception handling in lotus.domino API by allowing static exception delegation
+1. Eliminate Exception handling in lotus.domino API by allowing static exception delegation and standard Java logging
 2. Modernize getters/setters to use Java standard interfaces
 3. Modernize collection objects to implement Iterators where appropriate
-4. Implement Maps and Collections using Domino data objects (ie: Document implements Map<String, Object>)
+4. Implement Maps and Collections using Domino data objects (eg: Document implements Map<String, Object>)
 5. Using MIME storage, allow any Serializable content to be stored in an Item
-6. Correct methods with have dangerous side-effects (ie: View.isFolder() which builds the index if it didn't already exist)
+6. Correct methods with have dangerous side-effects (eg: View.isFolder() which builds the index if it didn't already exist)
 7. Provide useful global convenience settings like alwaysUseJavaDates and alwaysStoreGMTTime
 8. Provide useful static utility methods like incinerate(), toDxl() and toUnid(String)
 9. Have some operations that currently throw Exceptions unnecessarily instead simply return null (ie: Database.getDocumentByUnid())
 10. Provide coherent content assist via Javadoc annotations and retention of parameter names in byte code
+11. Eliminate the need to .recycle() Domino objects. Ever.
+12. Greatly reduce the need for defensive coding by allowing typed data access
+13. Provide helper classes and convenience methods for common Domino programming idioms (eg: Name.getGroups(), Database.getDocumentWithKey())
+14. Leverage and republish high-quality core Java libraries like Google Guava and Javolution
+15. Greatly extend the ability of the API to inspect and manipulate design elements
+16. Provide entirely new paradigms like database schemas, graphs, tasklets, event listeners, transactional boundaries, and multi-NSF searching and collections.
+17. Provide an alternative, pure Java implementation of the @Formula engine
 
 
 OPENNTF
