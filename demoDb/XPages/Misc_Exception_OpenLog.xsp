@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xp:this.resources>
+		<xp:dojoModule name="extlib.dijit.Loading"></xp:dojoModule>
+	</xp:this.resources>
+
+	<xc:ccLayoutOneUI selected="home">
+		<xp:this.facets>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+			<xc:mainArea xp:key="facet_1" title="Exception">
+				<xc:this.description>
+					<![CDATA[This demonstrates the exception handling. Messages are logged to the console, IBM_TECHNICAL_SUPPORT 
+					folder in a file org.openntf.log.X.Y.txt and to OpenLog.]]>
+				</xc:this.description>
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton">
+					<xe:dumpObject id="dumpObject1" value="#{requestScope}"></xe:dumpObject>
+					<xp:text id="Test1">
+							<xp:this.rendered><![CDATA[#{javascript:try {
+	// rendered property
+	openLogBean.addEvent("Rendered event",this);
+	com.paulwithers.openLog.OpenLogItem.getXspProperty("xsp.openlog.filepath","");
+} catch(e) {
+	openLogBean.addError(e,this);
+	return true;
+}}]]>
+							</xp:this.rendered>
+							<xp:this.value><![CDATA[${javascript:try {
+	// value property
+	openLogBean.addEvent("Value event",this);
+	com.paulwithers.openLog.OpenLogItem.getXspProperty("xsp.openlog.filepath","");
+} catch(e) {
+	openLogBean.addError(e,this);
+	return "BLAH";
+}}]]>
+							</xp:this.value>
+						</xp:text>
+					</xp:div>
+					<xp:button value="Run Java Tests" id="button4"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv">
+							<xp:this.action><![CDATA[#{javascript:org.openntf.dominoTests.Utils.openLogTest();
+org.openntf.dominoTests.Utils.openLogUtilTest();
+@InfoMessage("Done")}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

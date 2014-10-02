@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core"
+	xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<xp:this.data>
+		<xp:dominoDocument var="document1" formName="Contact"
+			action="openDocument">
+			<xp:this.documentId><![CDATA[${javascript:database.getView("AllContacts").getFirstDocument().getUniversalID();}]]></xp:this.documentId>
+		</xp:dominoDocument>
+	</xp:this.data>
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+
+			<xc:mainArea xp:key="facet_1" title="XSPUtils">
+				<xp:this.facets>
+					
+					<xp:button id="button1" xp:key="javaButton"
+						value="Test DominoDocument">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="complete">
+							<xp:this.action><![CDATA[#{javascript:org.openntf.dominoTests.Utils.XSPUtilsTest(document1);}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+				<xc:this.description><![CDATA[This demonstrates a helper method to get the backend document from a DominoDocument datasource.<br/><br/>
+				DominoDocument and DominoView calls in Java need to catch NotesExceptions, so the helper method means you don't have to catch NotesExceptions.<br/><br/>
+				There is no corresponding method of DominoView class to get the backend view.<br/><br/>
+				SSJS is less strongly typed, so you don't need to catch NotesExceptions. Of course it also means that if you type dpcument1 instead of document1, it doesn't warn you!]]></xc:this.description>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

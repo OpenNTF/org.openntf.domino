@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xp:this.resources>
+		<xp:dojoModule name="extlib.dijit.Loading"></xp:dojoModule>
+		<xp:script src="/SSJS_SL.jss" clientSide="false"></xp:script>
+	</xp:this.resources>
+
+	<xc:ccLayoutOneUI selected="home">
+		<xp:this.facets>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+			<xc:mainArea xp:key="facet_1" title="DocumentScanner">
+				<xc:this.description>
+					<![CDATA[This demonstrates the Document Scanner. SSJS uses all Threads, Java uses all Contacts.]]>
+				</xc:this.description>
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton" id="SSJSArea">
+						<xp:button value="Run SSJS Tests Successfully" id="button3">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="SSJSDiv">
+								<xp:this.action><![CDATA[#{javascript:try {
+	importPackage(org.openntf.domino.helpers);
+	var scanner = new DocumentScanner();
+	scanner.setIgnoreDollar(true);
+
+	var contacts = database.getView("AllThreads");
+	for (ent in contacts.getAllEntries()) {
+		scanner.processDocument(ent.getDocument());
+	}
+
+	viewScope.put("scannerFieldTokenMap", scanner.getFieldTokenMap());
+	viewScope.put("scannerFieldValueMap", scanner.getFieldValueMap());
+	viewScope.put("scannerFieldTypeMap", scanner.getFieldTypeMap());
+	viewScope.put("scannerTokenFreqMap", scanner.getTokenFreqMap());
+	@InfoMessage("Done");
+} catch(e) {
+	dump(e);
+	@ErrorMessage(e.toString());
+}}]]></xp:this.action>
+								<xp:this.script><![CDATA[XSP.animateLoading('#{id:SSJSArea}')]]></xp:this.script>
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xc:docScanner></xc:docScanner>
+					</xp:div>
+					<xp:div xp:key="javaButton" id="JavaArea">
+						<xp:button value="Run Java Tests" id="button4">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="JavaDiv">
+								<xp:this.action><![CDATA[#{javascript:org.openntf.dominoTests.Utils.contactScannerMap();
+@InfoMessage("Done")}]]></xp:this.action>
+							<xp:this.script><![CDATA[XSP.animateLoading('#{id:JavaArea}')]]></xp:this.script>
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xc:docScanner></xc:docScanner>
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

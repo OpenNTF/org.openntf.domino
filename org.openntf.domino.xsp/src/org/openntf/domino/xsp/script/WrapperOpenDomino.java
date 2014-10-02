@@ -10,6 +10,7 @@ import java.util.Map;
 
 import lotus.domino.DateTime;
 
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.jscript.InterpretException;
 import com.ibm.jscript.JSContext;
 import com.ibm.jscript.JavaScriptException;
@@ -23,11 +24,7 @@ import com.ibm.jscript.types.GeneratedWrapperObject.MethodMap;
 import com.ibm.jscript.types.IWrapperFactory;
 import com.ibm.jscript.types.Registry;
 
-/**
- * @author withersp
- * 
- */
-public class WrapperOpenDomino {
+public class WrapperOpenDomino implements WrapperRegistry {
 
 	/*
 	 * First block extends IBM's baseline GeneratedWrapper classes. Why? Because as you can see with the OpenFunction.call() method, we want
@@ -502,12 +499,12 @@ public class WrapperOpenDomino {
 	}
 
 	/**
-	 * The MethodMap is a simple static HashMap that binds a String, like "getItemValue" or "isBefore" to an OpenFunction object
-	 * 
-	 * This way when SSJS encounters an org.openntf.domino.DateTime, and it sees .isBefore(DateTime) called on it, it can resolve the string
-	 * to a particular fct_OpenDateTime object, with a specific index value. It then invokes the call() method on that particular function
-	 * object, passing in the DateTime argument from SSJS, as well as the DateTime object on which the .isBefore was invoked.
-	 */
+		 * The MethodMap is a simple static HashMap that binds a String, like "getItemValue" or "isBefore" to an OpenFunction object
+		 * 
+		 * This way when SSJS encounters an org.openntf.domino.DateTime, and it sees .isBefore(DateTime) called on it, it can resolve the
+		 * string to a particular fct_OpenDateTime object, with a specific index value. It then invokes the call() method on that particular
+		 * function object, passing in the DateTime argument from SSJS, as well as the DateTime object on which the .isBefore was invoked.
+		 */
 	public static class OpenMethodMap extends GeneratedWrapperObject.MethodMap {
 		public OpenMethodMap(final JSContext arg0, final Class<?> arg1, final Class<?>[] arg2) {
 			super(arg0, arg1, arg2);
@@ -696,9 +693,13 @@ public class WrapperOpenDomino {
 			registry.registerPackage("OpenNTFDomino", 1337);
 			FBSDefaultObject defaultObject = registry.getRegistryObject();
 
-			for (Class<?> clazz : WRAPPED_CLASSES) {
-				registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
-				defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+			List<Object> wregs = ExtensionManager.findServices(null, WrapperOpenDomino.class, WrapperRegistry.class.getName());
+			// for (Class<?> clazz : WRAPPED_CLASSES) {
+			for (Object wreg : wregs) {
+				for (Class<?> clazz : ((WrapperRegistry) wreg).getWrapperClasses()) {
+					registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
+					defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+				}
 			}
 
 		} catch (Exception e) {
@@ -770,6 +771,10 @@ public class WrapperOpenDomino {
 		WRAPPED_CLASSES.add(org.openntf.domino.ViewEntry.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ViewEntryCollection.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ViewNavigator.class);
+	}
+	@Override
+	public List<Class<?>> getWrapperClasses() {
+		return WRAPPED_CLASSES;
 	}
 
 }

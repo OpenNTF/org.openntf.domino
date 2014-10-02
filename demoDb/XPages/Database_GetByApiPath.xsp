@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftDatabase xp:key="LeftColumn"></xc:LeftDatabase>
+			<xc:mainArea xp:key="facet_1" title="Get API Path"
+				description="XPages core controls store the database location in a specific format, server!!filePath. 
+				This allows all key data about the database to be stored in a Serializable format. 
+				This is useful for holding system-specific database variables as an api path in keyword documents, then   
+				loading them into applicationScope
+				Session.getDatabase(String) allows you to pass in just a filepath, as the core Domino API allows, 
+				but also can take an apiPath to map to a specific server.">
+				<xp:this.facets>
+					<xp:button id="button1" xp:key="SSJSButton"
+						value="Run SSJS Test">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="SSJSDiv">
+							<xp:this.action><![CDATA[#{javascript:try {
+	var path = database.getApiPath();
+	var currDb = session.getDatabase(path);
+	if (currDb != null) {
+		viewScope.put("SSJSTest","Got database at " + path);
+	}
+} catch (e) {
+	@ErrorMessage(e.toString());
+}}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Java Test" id="button2"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv"
+							action="#{javascript:openNTFDatabaseBean.getByApiPath()}">
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

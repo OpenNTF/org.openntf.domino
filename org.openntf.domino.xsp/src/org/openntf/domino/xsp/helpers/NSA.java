@@ -22,7 +22,6 @@ import com.ibm.designer.runtime.domino.bootstrap.BootstrapEnvironment;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NSFService;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
-import com.ibm.domino.xsp.module.nsf.runtime.NotesApplication;
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.application.events.ApplicationListener;
 import com.ibm.xsp.application.events.SessionListener;
@@ -31,6 +30,7 @@ import com.ibm.xsp.application.events.SessionListener;
  * @author Nathan T. Freeman
  * 
  */
+@SuppressWarnings("deprecation")
 public enum NSA implements ApplicationListener, SessionListener {
 	INSTANCE;
 
@@ -187,7 +187,7 @@ public enum NSA implements ApplicationListener, SessionListener {
 	public void registerModule(final String appId, final NSFComponentModule app) {
 		Map<String, NSFComponentModule> modules = getModules();
 		String id = appId;
-		NotesApplication na = app.getNotesApplication();
+		app.getNotesApplication();
 		// System.out.println("Registering Module " + id + " for NotesApplication " + na.getAppName() + " (" + na.getAppId() + ") into "
 		// + System.identityHashCode(this));
 		synchronized (modules) {
@@ -268,7 +268,7 @@ public enum NSA implements ApplicationListener, SessionListener {
 				sb.append(" : ");
 				Object o = apps.get(key);
 				sb.append(o.getClass().getName());
-				NSFComponentModule module = getModules().get(key);
+				getModules().get(key);
 				// if (module != null) {
 				// NotesContext nc = new NotesContext(module);
 				// NotesContext.initThread(nc);
@@ -345,7 +345,7 @@ public enum NSA implements ApplicationListener, SessionListener {
 					sb.append(String.valueOf(vname) + ": " + String.valueOf(session.getValue(vname)) + ", ");
 				}
 				sb.append("<br/>ATTRIBUTES<br/>");
-				Map attribs = session.getAttributes();
+				Map<?, ?> attribs = session.getAttributes();
 				for (Object akey : attribs.keySet()) {
 					sb.append(String.valueOf(akey) + ": " + String.valueOf(attribs.get(key)) + ", ");
 				}
@@ -355,12 +355,12 @@ public enum NSA implements ApplicationListener, SessionListener {
 					sb.append("<br/>**********" + sc.getClass().getName() + "*********<br/>");
 					// sb.append(", ");
 					LCDAdapterServletContext lasc = (LCDAdapterServletContext) sc;
-					Enumeration lascAs = lasc.getAttributeNames();
+					Enumeration<?> lascAs = lasc.getAttributeNames();
 					while (lascAs.hasMoreElements()) {
 						Object o = lascAs.nextElement();
 						sb.append((String) o + ": " + lasc.getAttribute((String) o) + "<br/>");
 					}
-					Enumeration servlets = lasc.getServlets();
+					Enumeration<?> servlets = lasc.getServlets();
 					while (servlets.hasMoreElements()) {
 						Object o = servlets.nextElement();
 						sb.append("Servlet: " + o.getClass().getName() + "<br/>");

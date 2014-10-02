@@ -1,0 +1,88 @@
+<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+<theme extends="oneuiv3.0.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="platform:/plugin/com.ibm.designer.domino.stylekits/schema/stylekit.xsd" >
+	<!-- 
+		Use this pattern to include resources (such as style sheets
+		and JavaScript files that are used by this theme.
+	-->
+	<resource>
+		<content-type>text/css</content-type>
+		<href>styles.css</href>
+	</resource>
+
+	<!--
+		Use this pattern to define property name/value pairs for controls
+	-->
+	<control>
+		<name>Section</name>
+		<property>
+			<name>initClosed</name>
+			<value>#{true}</value>
+		</property>
+		<property>
+			<name>collapsedImage</name>
+			<value>/.ibmxspres/domino/oneuiv2/images/iconExpandTree.png</value>
+		</property>
+		<property>
+			<name>expandedImage</name>
+			<value>/.ibmxspres/domino/oneuiv2/images/iconCollapseTree.png</value>
+		</property>
+	</control>
+
+	<control>
+		<name>Message</name>
+		<property>
+			<name>layout</name>
+			<value>table</value>
+		</property>
+		<property>
+			<name>styleClass</name>
+			<value>error</value>
+		</property>
+		<property>
+			<name>style</name>
+			<value>line-height:24px;</value>
+		</property>
+	</control>
+
+	<control>
+		<name>Message.List</name>
+		<property>
+			<name>layout</name>
+			<value>table</value>
+		</property>
+		<property>
+			<name>styleClass</name>
+			<value>error</value>
+		</property>
+	</control>
+
+	<control>
+		<name>Text.Label</name>
+		<property mode="concat">
+			<name>style</name>
+			<value>font-weight:bold;</value>
+		</property>
+	</control>
+	
+	<control>
+		<name>HtmlTable</name>
+		<property>
+			<name>cellspacing</name>
+			<value>0</value>
+		</property>
+		<property>
+			<name>cellpadding</name>
+			<value>0</value>
+		</property>
+	</control>	
+</theme>

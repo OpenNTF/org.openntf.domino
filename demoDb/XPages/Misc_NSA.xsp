@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:mainArea xp:key="facet_1" title="NSA"
+				description="Uses NSA flag to track details about database">
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton">
+						<xp:label value="Apps" id="label1" for="computedField1"></xp:label>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField1"
+							value="#{javascript:org.openntf.domino.xsp.helpers.NSA.INSTANCE.getApps()}">
+						</xp:text>
+						<xp:br></xp:br>
+						<xp:label value="Modules" id="label2" for="computedField2"></xp:label>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField2"
+							value="#{javascript:org.openntf.domino.xsp.helpers.NSA.INSTANCE.getModules()}">
+						</xp:text>
+						<xp:br></xp:br>
+						<xp:label value="Sessions" id="label3" for="computedField3"></xp:label>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField3"
+							value="#{javascript:org.openntf.domino.xsp.helpers.NSA.INSTANCE.getSessions()}">
+						</xp:text>
+						<xp:br></xp:br>
+					</xp:div>
+					<xp:div xp:key="javaButton">
+						<xp:button value="Get Report" id="button1">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="complete">
+								<xp:this.action><![CDATA[#{javascript:openNTFHelperBean.getNSAApps();}]]></xp:this.action>
+							</xp:eventHandler>
+						</xp:button>
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+			<xc:mainArea xp:key="facet_1" title="Sorted Collection"
+				description="Shows documents created by Adela Foster sorted by date">
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton">
+						<xe:dataView id="dataView2" var="thread" rows="10">
+							<xe:this.extraColumns>
+								<xe:viewExtraColumn>
+									<xe:this.value><![CDATA[#{javascript:thread.getItemValue("Date",java.util.Date)}]]></xe:this.value>
+								</xe:viewExtraColumn>
+							</xe:this.extraColumns>
+							<xe:this.value><![CDATA[#{javascript:var sSearch = "FIELD Author contains \"Aline Winters\"";
+var dc = org.openntf.domino.utils.Factory.getSession().getCurrentDatabase().FTSearch(sSearch, 500);
+var criteria = new java.util.ArrayList();
+criteria.add("Date");
+var sorter = new org.openntf.domino.helpers.DocumentSorter(dc, criteria);
+var results = sorter.sort();
+viewScope.put("SSJSTest", results.getCount());
+return results;}]]></xe:this.value>
+							<xp:this.facets>
+								<xp:pager layout="Previous Group Next"
+									partialRefresh="true" id="pager3" xp:key="pagerBottomRight">
+								</xp:pager>
+								<xp:pager layout="Previous Group Next"
+									partialRefresh="true" id="pager4" xp:key="pagerTopRight">
+								</xp:pager>
+							</xp:this.facets>
+
+							<xe:this.summaryColumn>
+								<xe:viewSummaryColumn>
+									<xe:this.value><![CDATA[#{javascript:thread.getItemValueString("Title")}]]></xe:this.value>
+								</xe:viewSummaryColumn>
+							</xe:this.summaryColumn>
+						</xe:dataView>
+					</xp:div>
+					<xp:div xp:key="javaButton">
+						<xe:dataView id="dataView1" var="thread" rows="10"
+							value="#{javascript:openNTFHelperBean.getSortedCollection()}">
+							<xe:this.extraColumns>
+								<xe:viewExtraColumn>
+									<xe:this.value><![CDATA[#{javascript:thread.getItemValue("Date",java.util.Date)}]]></xe:this.value>
+								</xe:viewExtraColumn>
+							</xe:this.extraColumns>
+							<xp:this.facets>
+								<xp:pager layout="Previous Group Next"
+									partialRefresh="true" id="pager2" xp:key="pagerBottomRight">
+								</xp:pager>
+								<xp:pager layout="Previous Group Next"
+									partialRefresh="true" id="pager1" xp:key="pagerTopRight">
+								</xp:pager>
+							</xp:this.facets>
+
+							<xe:this.summaryColumn>
+								<xe:viewSummaryColumn>
+									<xe:this.value><![CDATA[#{javascript:thread.getItemValueString("Title")}]]></xe:this.value>
+								</xe:viewSummaryColumn>
+							</xe:this.summaryColumn>
+						</xe:dataView>
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

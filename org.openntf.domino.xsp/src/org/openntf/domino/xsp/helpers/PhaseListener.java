@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.domino.utils.Factory;
 
+import com.ibm.xsp.context.FacesContextEx;
+
 /**
  * PhaseListener for the library
  */
@@ -65,8 +67,11 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 	private void doBeforeEveryPhase(final PhaseEvent arg0) {
 		FacesContext ctx = arg0.getFacesContext();
 		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
-		if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
-			((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
+
+		if (ctx instanceof FacesContextEx) {
+			FacesContextEx ctxex = (FacesContextEx) ctx;
+			ctxex.addRequestListener(this);
+
 		}
 	}
 

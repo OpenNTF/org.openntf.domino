@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core"
+	xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex">
+	<xp:this.data>
+		<xp:dominoDocument var="document1" formName="Contact"
+			action="openDocument">
+			<xp:this.documentId><![CDATA[${javascript:contacts = database.getView("AllContacts");
+var doc = contacts.getFirstDocument();
+return doc.getUniversalID();}]]></xp:this.documentId>
+		</xp:dominoDocument>
+	</xp:this.data>
+	
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftDocument xp:key="LeftColumn"></xc:LeftDocument>
+			<xc:mainArea xp:key="facet_1" title="DocumentCollection">
+				<xp:this.facets>
+					<xp:text escape="true" id="computedField1"
+						xp:key="SSJSButton" value="Pending....not sure if this works!!">
+					</xp:text>
+					<xp:div xp:key="javaButton">
+						<xp:button value="Run Java Tests" id="button2">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="full">
+								<xp:this.action><![CDATA[#{javascript:openNTFDocumentBean.setMapField()}]]></xp:this.action>
+							</xp:eventHandler>
+						</xp:button>
+						<xe:dumpObject id="dumpObject1">
+							<xe:this.value><![CDATA[#{javascript:document1.getItemValue("javaMapField")}]]></xe:this.value>
+						</xe:dumpObject>
+						<xp:br></xp:br>
+						<xp:text escape="false">
+							<xp:this.value><![CDATA[Session s = Factory.getSession();
+		Database currDb = s.getCurrentDatabase();<br/>
+		View contacts = currDb.getView("AllContacts");<br/>
+		Utils.addAllListeners(currDb);<br/>
+		Document doc = contacts.getFirstDocument();<br/>
+		TreeMap<String, String> testMap = new TreeMap<String, String>();<br/>
+		testMap.put("Per", "Denmark");<br/>
+		testMap.put("John", "South Africa");<br/>
+		testMap.put("Mark", "Netherlands");<br/>
+		testMap.put("Paul", "UK");<br/>
+		doc.put("javaMapField", testMap);<br/>
+		doc.save(true, false);]]></xp:this.value>
+						</xp:text>
+					</xp:div>
+					
+				</xp:this.facets>
+				<xc:this.description><![CDATA[This demonstrates writing a TreeMap to a field.]]></xc:this.description>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

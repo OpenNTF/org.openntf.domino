@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex" xmlns:on="http://www.openntf.org/domino/xsp">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftHelper xp:key="LeftColumn"></xc:LeftHelper>
+			<xc:mainArea xp:key="facet_1" title="Value Pickers"
+				description="Shows use of OpenNTF MapPicker and ListPicker for Value Pickers.">
+
+				<xp:this.facets>
+					<xp:div xp:key="SSJSButton">
+						<xp:label for="inputText1"
+							value="Value Picker picking from LinkedHashMap (so they're in the order they're added). Search gets first ftsearch match with only those results">
+						</xp:label>
+						<xp:br></xp:br>
+						<xp:inputText id="inputText1"
+							value="#{viewScope.value1}">
+						</xp:inputText>
+						<xe:valuePicker id="valuePicker1" for="inputText1" dojoType="extlib.dijit.PickerListSearch">
+							<xe:this.dataProvider>
+								<on:mapValuePicker caseInsensitive="true"
+									searchType="ftSearch" searchStyle="restrictToSearch">
+									<on:this.options><![CDATA[#{javascript:var val=new java.util.LinkedHashMap();
+var count = 1;
+for (key in applicationScope.keySet()) {
+	val.put(@Text(count) + " - " + key, key);
+	count ++;
+}
+return val;}]]></on:this.options>
+								</on:mapValuePicker>
+							</xe:this.dataProvider>
+						</xe:valuePicker>
+
+						<xp:br></xp:br>
+						<xp:label for="inputText1"
+							value="Value Picker picking from ArrayList. Search does a starts from search but case insensitive">
+						</xp:label>
+						<xp:br></xp:br>
+						<xp:inputText id="inputText2"
+							value="#{viewScope.value2}">
+						</xp:inputText>
+						<xe:valuePicker id="valuePicker2" for="inputText2" dojoType="extlib.dijit.PickerListSearch">
+							<xe:this.dataProvider>
+								<on:collectionValuePicker caseInsensitive="true">
+									<on:this.collection><![CDATA[#{javascript:var val=new java.util.ArrayList();
+var count = 1;
+for (key in applicationScope.keySet()) {
+	val.add(key);
+	count ++;
+}
+return val;}]]></on:this.collection>
+								</on:collectionValuePicker>
+							</xe:this.dataProvider>
+						</xe:valuePicker>
+
+						<xp:br></xp:br>
+						<xp:label for="inputText3"
+							value="Value Picker picking from Enum">
+						</xp:label>
+						<xp:br></xp:br>
+						<xp:inputText id="inputText3"
+							value="#{viewScope.value3}">
+						</xp:inputText>
+						<xe:valuePicker id="valuePicker3" for="inputText3"
+							dialogTitle="Enum Picker">
+							<xe:this.dataProvider>
+								<on:enumValuePicker
+									enumName="org.openntf.domino.impl.Document$RemoveType"
+									sorted="true">
+								</on:enumValuePicker>
+							</xe:this.dataProvider>
+						</xe:valuePicker>
+					</xp:div>
+					<xp:div xp:key="javaButton">
+						<xp:label for="inputText4"
+							value="Value Picker picking from LinkedHashMap (so they're in the order they're added). Search will only work with an exact match (not case-sensitive">
+						</xp:label>
+						<xp:br></xp:br>
+						<xp:inputText id="inputText4"
+							value="#{viewScope.value4}">
+						</xp:inputText>
+						<xe:valuePicker id="valuePicker4" for="inputText4" dojoType="extlib.dijit.PickerListSearch">
+							<xe:this.dataProvider>
+								<on:mapValuePicker caseInsensitive="true"
+									searchType="match">
+									<on:this.options><![CDATA[#{javascript:importPackage(org.openntf.dominoTests);
+				return Utils.getSessionAndApplicationMaps();}]]></on:this.options>
+								</on:mapValuePicker>
+							</xe:this.dataProvider>
+						</xe:valuePicker>
+
+						<xp:br></xp:br>
+						<xp:label for="inputText5"
+							value="Value Picker picking from TreeSet. Search does a starts from search but is case-sensitive">
+						</xp:label>
+						<xp:br></xp:br>
+						<xp:inputText id="inputText5"
+							value="#{viewScope.value5}">
+						</xp:inputText>
+						<xe:valuePicker id="valuePicker5" for="inputText5" dojoType="extlib.dijit.PickerListSearch">
+							<xe:this.dataProvider>
+								<on:collectionValuePicker
+									caseInsensitive="false" searchType="startFrom">
+									<on:this.collection><![CDATA[#{javascript:importPackage(org.openntf.dominoTests);
+				return Utils.getSessionAndApplicationSets();}]]></on:this.collection>
+								</on:collectionValuePicker>
+							</xe:this.dataProvider>
+						</xe:valuePicker>
+
+					</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>
