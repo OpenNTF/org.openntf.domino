@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.helpers.TrustedDispatcher;
@@ -49,6 +51,12 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 				System.out.println("DEBUG: XotsExecutor has been asked to execute a " + runnable.getClass().getName());
 			}
 			super.execute(runnable);
+		}
+
+		@Override
+		public ScheduledFuture<?> schedule(final Runnable command, final long delay, final TimeUnit unit) {
+			System.out.println("DEBUG: Scheduling a runnable " + command.getClass().getName() + " to run in " + delay + " " + unit.name());
+			return super.schedule(command, delay, unit);
 		}
 
 		@Override
@@ -175,16 +183,39 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		return intimidator_;
 	}
 
+	@Override
+	protected TrustedScheduledExecutor getScheduledExecutor() {
+		if (vengeance_ == null) {
+			vengeance_ = new XotsScheduledExecutor(this);
+		}
+		return vengeance_;
+	}
+
 	public void scan(final String serverName) {
 		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
 		scanner.addObserver(this);
 		scanner.scan();
 	}
 
-	public void schedule(final Class<? extends Runnable> taskClass) {
+	public void schedule(final Class<? extends Runnable> taskClass) throws IllegalAccessException, InstantiationException {
 		Schedule schedule = taskClass.getAnnotation(Schedule.class);
 		if (schedule != null) {
-			schedule.timeunit();
+			TimeUnit unit = schedule.timeunit();
+			long freq = schedule.frequency();
+			System.out.println("DEBUG: found a tasklet " + taskClass.getName() + " set to run every " + freq + " " + unit.name());
+			Runnable runnable = taskClass.newInstance();
+			getScheduledExecutor().schedule(runnable, freq, unit);
+		}
+	}
+
+	public void schedule(final Runnable runnable) throws IllegalAccessException, InstantiationException {
+		Class<? extends Runnable> taskClass = runnable.getClass();
+		Schedule schedule = taskClass.getAnnotation(Schedule.class);
+		if (schedule != null) {
+			TimeUnit unit = schedule.timeunit();
+			long freq = schedule.frequency();
+			System.out.println("DEBUG: found a tasklet " + taskClass.getName() + " set to run every " + freq + " " + unit.name());
+			getScheduledExecutor().schedule(runnable, freq, unit);
 		}
 	}
 

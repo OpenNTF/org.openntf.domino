@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -122,7 +123,7 @@ public class XotsService extends NSFService {
 	}
 
 	// private final Map<String, NSFComponentModule> modules_ = new ConcurrentHashMap<String, NSFComponentModule>();
-	private final Map<NSFComponentModule, Set<Class<?>>> classMap_ = new ConcurrentHashMap<NSFComponentModule, Set<Class<?>>>();
+	private final Map<Class<?>, NSFComponentModule> classMap_ = new ConcurrentHashMap<Class<?>, NSFComponentModule>();
 
 	public XotsService(final LCDEnvironment arg0) {
 		super(arg0);
@@ -156,7 +157,11 @@ public class XotsService extends NSFService {
 	@Override
 	public ComponentModule getComponentModule(final String arg0) throws ServletException {
 		System.out.println("DEBUG: XotsService created NSF module for path " + arg0);
-		return super.getComponentModule(arg0);
+		//		return super.getComponentModule(arg0);
+		return super.loadModule(arg0);
+		//NTF switching to loadModule because we DO want to cache the module in the XPages Service
+		//now that we've got an option for preloading a Server cache
+
 		// BTW: why don't we use "loadModule" here
 		// BTW: Why do we override this method at all?
 		//	Nathan T. Freeman: okay, if we call createNSFModule instead of loadModule, then it won't cache the module
@@ -180,13 +185,16 @@ public class XotsService extends NSFService {
 		final LoaderRunnable loaderRunnable = new LoaderRunnable(module, classNames, this);
 		Thread t = new lotus.domino.NotesThread(loaderRunnable);
 		t.start();
-		try {
-			t.join();// RPr: should we really load all modules in an own thread async?s
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+
+		//NTF agreed that there's no reason to .join() this thread
+		//		try {
+		//			t.join();// RPr: should we really load all modules in an own thread async?s
+		//		} catch (InterruptedException e) {
+		//			e.printStackTrace();
+		//		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void loaderCallback(final LoaderRunnable runner) {
 		NSFComponentModule referenceMod = runner.getModule();
 
@@ -201,7 +209,7 @@ public class XotsService extends NSFService {
 					try {
 						NSFComponentModule forcedMod = getNsfService().loadModule(referenceMod.getDatabasePath());
 						synchronized (classMap_) {
-							classMap_.put(forcedMod, classes);
+							classMap_.put(clazz, forcedMod);
 						}
 					} catch (Throwable t) {
 						t.printStackTrace();
@@ -213,13 +221,20 @@ public class XotsService extends NSFService {
 			} else if (scope == Persistent.Scope.SERVER) {
 				NSFComponentModule mod = runner.getModule();
 				synchronized (classMap_) {
-					classMap_.put(mod, classes);	// TODO need to put actual objects rather than classes into the map
+					classMap_.put(clazz, mod);	// TODO need to put actual objects rather than classes into the map
 				}
 			} else {
 				NSFComponentModule mod = runner.getModule();
 				synchronized (classMap_) {
-					classMap_.put(mod, classes);
+					classMap_.put(clazz, mod);
 				}
+			}
+			try {
+				XotsDaemon.getInstance().schedule((Class<? extends Runnable>) clazz);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -235,66 +250,63 @@ public class XotsService extends NSFService {
 		System.out.println("DEBUG: XotsService is being terminated.");
 	}
 
-	protected Set<Class<?>> getLoadedClasses() {
-		Set<Class<?>> result = new HashSet<Class<?>>();
-		for (Set<Class<?>> classes : classMap_.values()) {
-			result.addAll(classes);
-		}
-		return result;
+	protected Collection<Class<?>> getLoadedClasses() {
+		return classMap_.keySet();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		System.out.println(TimeUnit.MINUTES);
-		for (Entry<NSFComponentModule, Set<Class<?>>> e : classMap_.entrySet()) {
+		for (Entry<Class<?>, NSFComponentModule> e : classMap_.entrySet()) {
 			if (sb.length() > 0)
 				sb.append('\n');
-			sb.append(e.getKey().getDatabasePath());
+			sb.append(e.getValue().getDatabasePath());
 			sb.append('\n');
-			for (Class<?> cls : e.getValue()) {
-				sb.append('\t');
-				sb.append(cls.getName());
-				Persistent persistent = cls.getAnnotation(Persistent.class);
-				if (persistent != null) {
-					sb.append(", Scope:");
-					sb.append(persistent.scope());
-					sb.append(", AppContext:");
-					sb.append(persistent.appContext());
-				}
-				Schedule schedule = cls.getAnnotation(Schedule.class);
-				if (schedule != null) {
-					sb.append(", Freq:");
-					sb.append(schedule.frequency());
-
-					// sb.append(", TimeUnit:");
-					// sb.append(schedule.timeunit());
-					//
-					// WHEE: Why do I get this error here:
-					//			java.lang.TypeNotPresentException: Type java.util.concurrent.TimeUnit not present
-					//				       at com.ibm.oti.reflect.AnnotationHelper$AnnotationInvocationHandler.invoke(AnnotationHelper.java:134)
-					//				       at com.sun.proxy.$Proxy1.timeunit(Unknown Source)
-					//				       at org.openntf.domino.xots.XotsService.toString(XotsService.java:242)
-					//				       at org.openntf.domino.xots.builtin.XotsNsfScanner.scan(XotsNsfScanner.java:56)
-					//				       at org.openntf.domino.xots.builtin.XotsNsfScanner.run(XotsNsfScanner.java:39)
-					//				       at lotus.domino.NotesThread.run(Unknown Source)
-					//				Caused by:
-					//				java.lang.ClassNotFoundException: java.util.concurrent.TimeUnit
-					//				       at com.ibm.oti.reflect.AnnotationHelper.getReturnValueForEntry(Native Method)
-					//				       at com.ibm.oti.reflect.AnnotationHelper.access$000(AnnotationHelper.java:19)
-					//				       at com.ibm.oti.reflect.AnnotationHelper$AnnotationInvocationHandler.invoke(AnnotationHelper.java:132)
-					//				       ... 5 more
-
-					sb.append(", WeekDays:");
-					sb.append(Arrays.toString(schedule.weekdays()));
-					sb.append(", ");
-					sb.append(schedule.starthour());
-					sb.append("-");
-					sb.append(schedule.endhour());
-					sb.append("h");
-				}
-				sb.append('\n');
+			//			for (Class<?> cls : e.getValue()) {
+			Class<?> cls = e.getKey();
+			sb.append('\t');
+			sb.append(cls.getName());
+			Persistent persistent = cls.getAnnotation(Persistent.class);
+			if (persistent != null) {
+				sb.append(", Scope:");
+				sb.append(persistent.scope());
+				sb.append(", AppContext:");
+				sb.append(persistent.appContext());
 			}
+			Schedule schedule = cls.getAnnotation(Schedule.class);
+			if (schedule != null) {
+				sb.append(", Freq:");
+				sb.append(schedule.frequency());
+
+				// sb.append(", TimeUnit:");
+				// sb.append(schedule.timeunit());
+				//
+				// WHEE: Why do I get this error here:
+				//			java.lang.TypeNotPresentException: Type java.util.concurrent.TimeUnit not present
+				//				       at com.ibm.oti.reflect.AnnotationHelper$AnnotationInvocationHandler.invoke(AnnotationHelper.java:134)
+				//				       at com.sun.proxy.$Proxy1.timeunit(Unknown Source)
+				//				       at org.openntf.domino.xots.XotsService.toString(XotsService.java:242)
+				//				       at org.openntf.domino.xots.builtin.XotsNsfScanner.scan(XotsNsfScanner.java:56)
+				//				       at org.openntf.domino.xots.builtin.XotsNsfScanner.run(XotsNsfScanner.java:39)
+				//				       at lotus.domino.NotesThread.run(Unknown Source)
+				//				Caused by:
+				//				java.lang.ClassNotFoundException: java.util.concurrent.TimeUnit
+				//				       at com.ibm.oti.reflect.AnnotationHelper.getReturnValueForEntry(Native Method)
+				//				       at com.ibm.oti.reflect.AnnotationHelper.access$000(AnnotationHelper.java:19)
+				//				       at com.ibm.oti.reflect.AnnotationHelper$AnnotationInvocationHandler.invoke(AnnotationHelper.java:132)
+				//				       ... 5 more
+
+				sb.append(", WeekDays:");
+				sb.append(Arrays.toString(schedule.weekdays()));
+				sb.append(", ");
+				sb.append(schedule.starthour());
+				sb.append("-");
+				sb.append(schedule.endhour());
+				sb.append("h");
+			}
+			sb.append('\n');
+			//			}
 		}
 		return sb.toString();
 	}

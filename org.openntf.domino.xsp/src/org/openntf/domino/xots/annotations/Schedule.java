@@ -15,7 +15,7 @@ public @interface Schedule {
 
 	TimeUnit timeunit();
 
-	int frequency();
+	long frequency();
 
 	int[] weekdays() default { ALL };
 
