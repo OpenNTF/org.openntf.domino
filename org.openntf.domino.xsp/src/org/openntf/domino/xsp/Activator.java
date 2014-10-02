@@ -80,7 +80,6 @@ public class Activator extends Plugin {
 	 * @param path
 	 *            String relative to the root of the plugin, e.g. "/resources/log-transform.xsl"
 	 * @return InputStream containing the contents of the resource
-	 * @throws Exception
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	public InputStream getResourceAsStream(final String path) throws Exception {
@@ -280,28 +279,14 @@ public class Activator extends Plugin {
 	}
 
 	/**
-	 * Gets an Xsp property or notes.ini variable, based on the value passed
+	 * Gets an Xsp property or notes.ini variable for PLUGIN_ID (="org.openntf.domino.xsp")
 	 * 
-	 * @return String value for the property
+	 * @return String value for the PLUGIN_ID property
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public static String getEnvironmentStringsAsString() {
-		String result = "";
-		try {
-			result = Platform.getInstance().getProperty(PLUGIN_ID); // $NON-NLS-1$
-			if (StringUtil.isEmpty(result)) {
-				result = System.getProperty(PLUGIN_ID); // $NON-NLS-1$
-				if (StringUtil.isEmpty(result)) {
-					result = com.ibm.xsp.model.domino.DominoUtils.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
-				}
-			}
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-		return result;
+		return getEnvironmentStringsAsString(PLUGIN_ID);
 	}
-
-	private Bundle bundle_;
 
 	/*
 	 * (non-Javadoc)
@@ -311,7 +296,6 @@ public class Activator extends Plugin {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		bundle_ = bundleContext.getBundle();
 	}
 
 	/*

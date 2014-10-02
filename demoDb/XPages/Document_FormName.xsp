@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftDocument xp:key="LeftColumn"></xc:LeftDocument>
+			<xc:mainArea xp:key="facet_1" title="Document"
+				javaMethodName="getFormName">
+				<xp:this.facets>
+					<xp:button value="Run Java Tests" id="button2"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv">
+							<xp:this.action><![CDATA[#{javascript:openNTFDocumentBean.getFormName()}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Old Java Tests" id="button3"
+						xp:key="oldJavaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="oldJavaDiv">
+							<xp:this.action><![CDATA[#{javascript:oldDocumentBean.getFormName()}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run SSJS Tests" id="button1"
+						xp:key="SSJSButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="complete">
+							<xp:this.action><![CDATA[#{javascript:contacts = database.getView("AllContacts");
+var doc = contacts.getFirstDocument();
+viewScope.put("SSJSTest", doc.getFormName());}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+				<xc:this.description><![CDATA[This demonstrates using getFormName to return the form name.]]></xc:this.description>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

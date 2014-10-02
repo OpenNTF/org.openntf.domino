@@ -44,6 +44,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoViewEntry;
  * 
  *         OpenntfNABNamePickerData, for use with the NamePicker control
  */
+@SuppressWarnings("javadoc")
 public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 	private String addressBookSel;
@@ -130,6 +131,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	private static class NABDb implements Serializable { // Serializable because it goes to a scope
 		private static final long serialVersionUID = 1L;
 		String name;
+		@SuppressWarnings("unused")
 		String title;
 		boolean publicNab;
 		boolean privateNab;
@@ -302,6 +304,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerResult#getEntries()
 		 */
+		@Override
 		public List<IPickerEntry> getEntries() {
 			return entries;
 		}
@@ -311,6 +314,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerResult#getTotalCount()
 		 */
+		@Override
 		public int getTotalCount() {
 			return count;
 		}
@@ -475,6 +479,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getValue()
 		 */
+		@Override
 		public Object getValue() {
 			return value;
 		}
@@ -484,6 +489,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getLabel()
 		 */
+		@Override
 		public Object getLabel() {
 			return label;
 		}
@@ -493,6 +499,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getAttributeCount()
 		 */
+		@Override
 		public int getAttributeCount() {
 			return 0;
 		}
@@ -502,6 +509,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getAttributeName(int)
 		 */
+		@Override
 		public String getAttributeName(final int index) {
 			return null;
 		}
@@ -511,6 +519,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getAttributeValue(int)
 		 */
+		@Override
 		public Object getAttributeValue(final int index) {
 			return attributes[index];
 		}
@@ -1060,7 +1069,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
 			NamePartsMap.Key key = getMetaData().getKey();
-			if ("G".equals((String) columnValues.get(0))) {
+			if ("G".equals(columnValues.get(0))) {
 				// Groups are never canonical, only have a basic value
 				return columnValues.get(1);
 			} else {

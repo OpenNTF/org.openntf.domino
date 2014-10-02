@@ -14,7 +14,6 @@ public interface IAdaptiveController {
 	 * 
 	 * @param id
 	 *            String
-	 * @return
 	 */
 	public org.openntf.domino.schema.IDominoType getDataType(String id);
 

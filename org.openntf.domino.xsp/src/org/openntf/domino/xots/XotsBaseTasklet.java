@@ -2,6 +2,7 @@ package org.openntf.domino.xots;
 
 import org.openntf.domino.thread.AbstractDominoRunnable;
 
+@SuppressWarnings("serial")
 public abstract class XotsBaseTasklet extends AbstractDominoRunnable {
 
 	public XotsBaseTasklet() {

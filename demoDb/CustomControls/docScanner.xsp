@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xe="http://www.ibm.com/xsp/coreex">
+	<xp:div rendered="#{viewScope.scannerFieldTokenMap != null}" id="selectorArea">
+		<xp:label for="fieldCombo" value="Select Field"></xp:label>
+		<xp:comboBox id="fieldCombo">
+			<xp:selectItems>
+				<xp:this.value><![CDATA[#{javascript:viewScope.get("scannerFieldTokenMap").keySet().toArray()}]]></xp:this.value>
+			</xp:selectItems>
+			<xp:eventHandler event="onchange" submit="true" refreshMode="partial"
+				refreshId="selectorArea">
+				<xp:this.action><![CDATA[#{javascript:var key = new org.openntf.domino.types.CaseInsensitiveString(this.getParent().getValue());
+var retVal=viewScope.get("scannerFieldTypeMap").get(key);
+viewScope.put("fieldDataType",retVal);}]]></xp:this.action>
+			</xp:eventHandler>
+		</xp:comboBox>
+		<xe:djextListTextBox id="djextListTextBox1" value="#{viewScope.fieldDataType}"
+			displayLabel="true" readOnly="true">
+		</xe:djextListTextBox>
+		<xe:valuePicker id="valuePicker1" for="djextListTextBox1">
+			<xe:this.dataProvider>
+				<xe:simpleValuePicker
+					valueList="DateTime|1024,Names|1074,Readers|1075,Authors|1076,Text|1280,Number|768"
+					valueListSeparator="," labelSeparator="|">
+				</xe:simpleValuePicker>
+			</xe:this.dataProvider>
+		</xe:valuePicker>
+		<xp:br></xp:br>
+		<xp:table>
+			<xp:this.rendered><![CDATA[#{javascript:!!getComponent("fieldCombo").getValue()}]]></xp:this.rendered>
+			<xp:tr>
+				<xp:td>
+					<xp:label for="inputTokens"
+						value="Select from Field Value">
+					</xp:label>
+				</xp:td>
+				<xp:td>
+					<xp:inputText id="inputText1">
+						<xp:typeAhead mode="partial" minChars="1"
+							ignoreCase="true">
+							<xp:this.valueList><![CDATA[#{javascript:var key = new org.openntf.domino.types.CaseInsensitiveString(getComponent("fieldCombo").getValue());
+		viewScope.get("scannerFieldValueMap").get(key).toArray();}]]></xp:this.valueList>
+						</xp:typeAhead>
+					</xp:inputText>
+				</xp:td>
+			</xp:tr>
+			<xp:tr>
+				<xp:td>
+					<xp:label for="inputTokens"
+						value="Select from Token (Single Word)">
+					</xp:label>
+				</xp:td>
+				<xp:td>
+					<xp:inputText id="inputTokens">
+						<xp:typeAhead mode="partial" minChars="1"
+							ignoreCase="true">
+							<xp:this.valueList><![CDATA[#{javascript:var key = new org.openntf.domino.types.CaseInsensitiveString(getComponent("fieldCombo").getValue());
+		viewScope.get("scannerFieldTokenMap").get(key).toArray();}]]></xp:this.valueList>
+						</xp:typeAhead>
+						<xp:eventHandler event="onblur" submit="true"
+							refreshMode="partial" refreshId="tokenFreq">
+						</xp:eventHandler>
+					</xp:inputText>
+					<xp:text id="tokenFreq">
+						<xp:this.value><![CDATA[#{javascript:try {
+	var key = new org.openntf.domino.types.CaseInsensitiveString(getComponent("inputTokens").getValue());
+	"Occurs " + viewScope.get("scannerTokenFreqMap").get(key) + " times in collection.";
+} catch(e) {
+
+}}]]></xp:this.value>
+					</xp:text>
+				</xp:td>
+			</xp:tr>
+		</xp:table>
+	</xp:div>
+	<xp:section header="ScannerFieldTokenMap">
+		<xe:dumpObject id="dumpObject1" value="#{viewScope.scannerFieldTokenMap}">
+		</xe:dumpObject>
+	</xp:section>
+	<xp:section header="ScannerFieldValueMap">
+		<xe:dumpObject id="dumpObject2" value="#{viewScope.scannerFieldValueMap}">
+		</xe:dumpObject>
+	</xp:section>
+	<xp:section header="ScannerFieldTypeMap">
+		<xe:dumpObject id="dumpObject3" value="#{viewScope.scannerFieldTypeMap}">
+		</xe:dumpObject>
+	</xp:section>
+	<xp:section header="ScannerTokenFreqMap">
+		<xe:dumpObject id="dumpObject4" value="#{viewScope.scannerTokenFreqMap}">
+		</xe:dumpObject>
+	</xp:section>
+</xp:view>

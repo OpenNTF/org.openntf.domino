@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xe:navigator id="navigator1">
+		<xe:this.treeNodes>
+			<xe:pageTreeNode label="Home" page="/Home.xsp">
+			</xe:pageTreeNode>
+
+			<xe:separatorTreeNode></xe:separatorTreeNode>
+			<xe:pageTreeNode label="View Navigation" page="/View_ViewEntry.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get All Entries By Key (Object)" page="/View_GetAllEntriesByKey.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get All Documents By Key (Object)" page="/View_GetAllDocumentsByKey.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get All Entries By Key (No Match)" page="/View_GetAllEntriesByKeyNoMatch.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Get All Documents By Key (No Match)" page="/View_GetAllDocumentsByKeyNoMatch.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Is Unique" page="/View_IsUnique.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Is TimeSensitive" page="/View_TimeSensitive.xsp">
+			</xe:pageTreeNode>
+			<xe:pageTreeNode label="Index Flags" page="/View_IndexFlags.xsp">
+			</xe:pageTreeNode>
+		</xe:this.treeNodes>
+	</xe:navigator>
+
+</xp:view>

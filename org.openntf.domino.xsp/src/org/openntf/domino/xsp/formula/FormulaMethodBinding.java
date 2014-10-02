@@ -59,6 +59,13 @@ public class FormulaMethodBinding extends MethodBindingEx {
 	}
 
 	/**
+	 * Trivial Constructor (needed for restoreState)
+	 */
+	public FormulaMethodBinding() {
+		this.formulaStr = null;
+	}
+
+	/**
 	 * The type. Not used here
 	 * 
 	 * @return {@link Object}.class
