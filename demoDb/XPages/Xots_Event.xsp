@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<!--
+		Copyright 2013 Paul Withers Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftXots xp:key="LeftColumn"></xc:LeftXots>
+			<xc:mainArea xp:key="facet_1" title="XOTS"
+				description="This page shows examples of XOTS triggered task. SSJS assumes a user named Admin on your server. You will need to refresh the page to get the updated message. Java overrides the constructor to run as server. The message will show on the SSJS tab.">
+				<xp:this.facets>
+					<xp:panel xp:key="SSJSButton" id="divArea">
+						<xp:button id="button1" value="Run SSJS Test">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="SSJSDiv">
+								<xp:this.action><![CDATA[#{javascript:try {
+	var testRun = new org.openntf.domino.xotsTests.XotsBasic();
+	testRun.queue();
+} catch (e) {
+	@ErrorMessage(e.toString());
+}}]]></xp:this.action>
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField1"
+							value="Latest Message: #{applicationScope.MessageFromXots}">
+						</xp:text>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField2"
+							value="Constructor Message: #{applicationScope.MessageFromXotsConstructor}">
+						</xp:text>
+					</xp:panel>
+					<xp:panel xp:key="javaButton">
+						<xp:button value="Run Java Test" id="button2">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="JavaDiv"
+								action="#{javascript:org.openntf.dominoTests.Utils.trigerEvent()}">
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField3"
+							value="Latest Message: #{applicationScope.MessageFromXots}">
+						</xp:text>
+						<xp:br></xp:br>
+						<xp:text escape="true" id="computedField4"
+							value="Constructor Message: #{applicationScope.MessageFromXotsConstructor}">
+						</xp:text>
+					</xp:panel>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

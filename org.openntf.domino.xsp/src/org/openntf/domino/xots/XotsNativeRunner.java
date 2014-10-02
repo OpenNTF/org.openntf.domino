@@ -1,14 +1,13 @@
 package org.openntf.domino.xots;
 
-import lotus.notes.NotesThread;
-
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoNativeRunner;
 
 import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
-public class XotsNativeRunner extends DominoNativeRunner {
+public class XotsNativeRunner extends DominoNativeRunner implements IXotsRunner {
 	protected NSFComponentModule module_;
 
 	public XotsNativeRunner(final Runnable runnable) {
@@ -54,25 +53,32 @@ public class XotsNativeRunner extends DominoNativeRunner {
 		}
 	}
 
+	public NSFComponentModule getModule() {
+		return module_;
+	}
+
 	@Override
 	protected void preRun() {
+		ClassLoader cl = ((AbstractDominoRunnable) getRunnable()).getContextClassLoader();
+		if (cl == null) {
+			cl = classLoader_;
+		}
 		if (module_ != null) {
 			NotesContext nctx = new NotesContext(module_);
-			NotesContext.initThread(nctx);
-		} else {
-			NotesThread.sinitThread();
+			NotesContext.contextThreadLocal.set(nctx);
 		}
 		super.preRun();
 	}
 
 	@Override
 	protected void postRun() {
+		NotesContext.contextThreadLocal.set(null);
 		super.postRun();
-		if (module_ != null) {
-			NotesContext.termThread();
-		} else {
-			NotesThread.stermThread();
-		}
+	}
+
+	@Override
+	public ClassLoader getContextClassLoader() {
+		return getClassLoader();
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.openntf.domino.xots;
 
-public interface XotsITriggeredTasklet {
+import org.openntf.domino.events.IDominoEvent;
 
+public interface XotsITriggeredTasklet {
+	public void handleEvent(IDominoEvent event);
 }

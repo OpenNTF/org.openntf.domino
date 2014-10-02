@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftDocument xp:key="LeftColumn"></xc:LeftDocument>
+			<xc:mainArea xp:key="facet_1" title="Document">
+				<xp:this.facets>
+					<xp:button value="Run Java Tests" id="button2"
+						xp:key="javaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="JavaDiv">
+							<xp:this.action><![CDATA[#{javascript:openNTFDocumentBean.containsCheckItems()}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run Old Java Tests" id="button3"
+						xp:key="oldJavaButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="partial" refreshId="oldJavaDiv">
+							<xp:this.action><![CDATA[#{javascript:oldDocumentBean.containsCheckItems()}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+					<xp:button value="Run SSJS Tests" id="button1"
+						xp:key="SSJSButton">
+						<xp:eventHandler event="onclick" submit="true"
+							refreshMode="complete">
+							<xp:this.action><![CDATA[#{javascript:contacts = database.getView("AllContacts");
+		var items = new java.util.ArrayList();
+		items.add("FirstName");
+		items.add("LastName");
+		items.add("City");
+		var count = 0;
+		for (ent in contacts.getAllEntries()) {
+			if (ent.getDocument().containsValue("Aurora", items)) {
+				count += 1;
+			}
+		}
+		var sb = @Text(count) + " documents contained a value 'Aurora'";
+		sb += "..............";
+		testDoc = contacts.getFirstDocument();
+		if (testDoc.containsKey("Form")) {
+			sb += "First doc contains key Form";
+		} else {
+			sb += "First doc does not contain key Form";
+		}
+viewScope.put("SSJSTest", sb);}]]></xp:this.action>
+						</xp:eventHandler>
+					</xp:button>
+				</xp:this.facets>
+				<xc:this.description><![CDATA[This demonstrates using Map methods containsKey and containsValue to interact with a NotesDocument.<br/><br/>
+Note .clear() is deliberately unsupported. Note .put("myItem",null) will remove the Item.]]></xc:this.description>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

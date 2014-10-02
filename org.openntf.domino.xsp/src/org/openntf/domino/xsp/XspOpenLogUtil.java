@@ -55,7 +55,6 @@ public class XspOpenLogUtil {
 	 *            Session to log the eror for
 	 * @param ee
 	 *            Throwable holding the error
-	 * @return String error message logged
 	 * @since org.openntf.domino 4.5.0
 	 */
 	public static void logError(final Session s, final Throwable ee) {
@@ -75,7 +74,6 @@ public class XspOpenLogUtil {
 	 *            Level to log at
 	 * @param doc
 	 *            Document to log the error for or null
-	 * @return String error message logged
 	 * @since org.openntf.domino 4.5.0
 	 */
 	public static void logError(final Session s, final Throwable ee, final String msg, final Level severityType, final Document doc) {

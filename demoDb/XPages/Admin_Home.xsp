@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<!--
+		Copyright 2014 Paul Withers Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+
+
+	<xp:this.resources>
+		<xp:dojoModule name="extlib.dijit.Loading"></xp:dojoModule>
+	</xp:this.resources>
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftAdmin xp:key="LeftColumn"></xc:LeftAdmin>
+			<xp:panel id="panel6" xp:key="facet_1">
+				<xp:button value="Return to Home" id="button8">
+					<xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+						<xp:this.action><![CDATA[#{javascript:context.redirectToPage("Home.xsp")}]]></xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<hr></hr>
+				<xp:label
+					value="Create a sample dataset to experiment the application features (users, states, discussion threads...)"
+					id="label5" style="font-weight:bold">
+				</xp:label>
+				<xp:br></xp:br>
+				<xp:br></xp:br>
+				This creates:
+				<xp:table>
+					<xp:tr>
+						<th>Sample Data Set</th>
+						<th>Bigger Data Set</th>
+					</xp:tr>
+					<xp:tr>
+						<xp:td>
+							<ul>
+								<li>200 users</li>
+								<li>100 main discussion threads, plus responses</li>
+								<li>All the US states (code and label)</li>
+							</ul>
+							<xp:button value="Create Sample Data Set" id="button5">
+								<xp:eventHandler event="onclick" submit="true"
+									refreshMode="complete">
+									<xp:this.action><![CDATA[#{javascript:try {
+	var d = new extlib.DataInitializerOpenNTF();
+	d.initDeleteDocuments();
+	d.initUsers(200);
+	d.initDiscussionDocuments(100, 10, 5);
+	d.initStates();
+	d.initAllTypes();
+	d.run();
+
+	var msg = "Created Sample Data Set";
+	@WarningMessage(msg);
+} catch(e) {
+	@ErrorMessage(e.toString());
+}}]]></xp:this.action>
+									<xp:this.script><![CDATA[XSP.animateLoading('#{id:panel6}')]]></xp:this.script>
+								</xp:eventHandler>
+							</xp:button>
+						</xp:td>
+						<xp:td>
+							<ul>
+								<li>10000 users</li>
+								<li>1000 main discussion threads, plus responses</li>
+								<li>All the US states (code and label)</li>
+							</ul>
+							<xp:button value="Create Bigger Data Set" id="button7">
+								<xp:eventHandler event="onclick" submit="true"
+									refreshMode="complete">
+									<xp:this.action><![CDATA[#{javascript:var d = new extlib.DataInitializerOpenNTF()
+d.initDeleteDocuments()
+d.initUsers(10000)
+d.initDiscussionDocuments(1000, 10, 5)
+d.initStates()
+d.initAllTypes()
+d.run()
+
+var msg = "Created Sample Data Set";
+@WarningMessage(msg)
+}]]></xp:this.action>
+									<xp:this.script><![CDATA[XSP.animateLoading('#{id:panel6}')]]></xp:this.script>
+								</xp:eventHandler>
+							</xp:button>
+						</xp:td>
+					</xp:tr>
+				</xp:table>
+
+				<xp:br></xp:br>
+				<xp:br></xp:br>
+				<xp:br></xp:br>
+				<hr></hr>
+				<xp:label value="Create custom dataset" id="label1" style="font-weight:bold">
+				</xp:label>
+				<xp:br></xp:br>
+				<xp:br></xp:br>
+				<xp:button value="Delete All Documents" id="button3">
+					<xp:eventHandler
+						event="onclick"
+						submit="true"
+						refreshMode="complete">
+						<xp:this.action><![CDATA[#{javascript:var d = new extlib.DataInitializerOpenNTF();
+d.initDeleteDocuments();
+d.run();
+
+var msg = "Deleted all documents.";
+var info = javax.faces.application.FacesMessage.SEVERITY_INFO;
+facesContext.addMessage(this.getClientId(facesContext),
+    new javax.faces.application.FacesMessage(info, msg, msg));}]]></xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<xp:br></xp:br>
+				<xp:br></xp:br>
+				<xp:button value="Create users (200)" id="button1">
+					<xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+						<xp:this.action><![CDATA[#{javascript:var d = new extlib.DataInitializer()
+d.initUsers(200)
+d.run()
+
+var msg = "Created 200 users";
+@WarningMessage(msg)
+}]]></xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<xp:button value="Create Discussion Documents (100)" id="button2">
+					<xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+						<xp:this.action><![CDATA[#{javascript:var d = new extlib.DataInitializer()
+d.initDiscussionDocuments(100, 10, 5)
+d.run()
+
+var msg = "Created 100 Discussion Documents."
+@WarningMessage(msg)
+}]]></xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<xp:button value="Create US States" id="button4">
+					<xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+						<xp:this.action><![CDATA[#{javascript:var d = new extlib.DataInitializer()
+d.initStates()
+d.run()
+
+var msg = "Created US States"
+@WarningMessage(msg)
+}]]></xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<xp:button value="Create All Types" id="button6">
+					<xp:eventHandler event="onclick" submit="true" refreshMode="complete">
+						<xp:this.action><![CDATA[#{javascript:var d = new extlib.DataInitializer()
+d.initAllTypes()
+d.run()
+
+var msg = "Created All Types"
+@WarningMessage(msg)
+}]]></xp:this.action>
+					</xp:eventHandler>
+				</xp:button>
+				<xp:br />
+				<xp:messages id="messages1"></xp:messages>
+			</xp:panel>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

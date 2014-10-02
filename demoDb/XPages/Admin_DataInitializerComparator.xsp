@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex">
+
+	<!--
+		Copyright 2014 OpenNTF Domino API Team Licensed under the Apache License, Version 2.0
+		(the "License"); you may not use this file except in compliance with the
+		License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+		or agreed to in writing, software distributed under the License is distributed
+		on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+		express or implied. See the License for the specific language governing
+		permissions and limitations under the License
+	-->
+	<xp:this.resources>
+		<xp:dojoModule name="extlib.dijit.Loading"></xp:dojoModule>
+	</xp:this.resources>
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftAdmin xp:key="LeftColumn"></xc:LeftAdmin>
+			<xp:panel xp:key="facet_1" id="mainPanel">
+				<xp:this.dataContexts>
+					<xp:dataContext var="lotusClassName"
+						value="DataInitializer">
+					</xp:dataContext>
+					<xp:dataContext var="ourClassName"
+						value="DataInitializerOpenNTF">
+					</xp:dataContext>
+				</xp:this.dataContexts>
+				<xp:text tagName="h1" value="DataInitializer Class"></xp:text>
+				<xp:label value="Select Method: "></xp:label>
+				<xp:comboBox id="comboBox1" value="#{viewScope.methodName}">
+					<xp:selectItems>
+						<xp:this.value><![CDATA[#{dataComparator.dataInitializerMethods}]]></xp:this.value>
+					</xp:selectItems>
+					<xp:eventHandler event="onchange" submit="true"
+						refreshMode="partial" refreshId="mainPanel">
+						<xp:this.script><![CDATA[XSP.animateLoading('#{id:mainPanel}','Retrieving Method and Comparing...')]]></xp:this.script>
+					</xp:eventHandler>
+				</xp:comboBox>
+				<xp:br />
+				<xp:br />
+				<xp:panel rendered="#{javascript:viewScope.methodName!=null}">
+					<xp:table id="table1" styleClass="lotusFormTable">
+						<xp:tr style="background-color:#E8FAEE">
+							<xp:td style="width:50%">
+								<xp:section header="Ext Lib Code">
+									<xp:text id="compar1" escape="false"
+										value="#{javascript:dataComparator.getLotusMethodText(viewScope.methodName)}">
+									</xp:text>
+								</xp:section>
+							</xp:td>
+							<xp:td style="width:50%">
+								<xp:section header="OpenNTF Domino Code">
+									<xp:text id="compar2" escape="false"
+										value="#{javascript:dataComparator.getOurMethodText(viewScope.methodName)}">
+									</xp:text>
+								</xp:section>
+							</xp:td>
+						</xp:tr>
+						<xp:tr>
+							<xp:td colspan="2"
+								style="padding-left:20px;background-color:#F8F8F8">
+								<xp:text tagName="h2"
+									value="Domino/OpenNTF Comparison">
+								</xp:text>
+								<xp:text escape="false">
+									<xp:this.value><![CDATA[#{javascript:importPackage(org.openntf.dominoTests);
+Utils.runComparison(getComponent("compar1").getValue(),getComponent("compar2").getValue());}]]></xp:this.value>
+								</xp:text>
+							</xp:td>
+						</xp:tr>
+					</xp:table>
+				</xp:panel>
+			</xp:panel>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

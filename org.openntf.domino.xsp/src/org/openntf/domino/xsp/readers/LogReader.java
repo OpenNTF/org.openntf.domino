@@ -172,7 +172,7 @@ public class LogReader {
 	 *            the pattern to be matched for. This can contain the wildcard character '*' (asterisk).
 	 * @return <tt>true</tt> if a match is found, <tt>false</tt> otherwise.
 	 * @since org.openntf.domino.xsp 2.5.0
-	 * @see http://www.adarshr.com/papers/wildcard
+	 * @see "http://www.adarshr.com/papers/wildcard"
 	 */
 	public static boolean wildCardMatch(String text, final String pattern) {
 		// Create the cards by splitting using a RegEx. If more speed

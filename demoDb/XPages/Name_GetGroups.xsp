@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xp:view xmlns:xp="http://www.ibm.com/xsp/core" xmlns:xc="http://www.ibm.com/xsp/custom"
+	xmlns:xe="http://www.ibm.com/xsp/coreex" xmlns:on="http://www.openntf.org/domino/xsp">
+
+	<xc:ccLayoutOneUI>
+		<xp:this.facets>
+			<xc:LeftName xp:key="LeftColumn"></xc:LeftName>
+			<xc:mainArea xp:key="facet_1" title="Name Picker">
+				<xc:this.description><![CDATA[Shows use of getGroups() method in Name class.]]></xc:this.description>
+				<xp:this.facets>
+					<xp:div xp:key="javaButton">
+						<xp:text escape="true" id="computedField1">
+							<xp:this.value><![CDATA[#{javascript:openNTFNameBean.getGroups();}]]></xp:this.value>
+						</xp:text>
+					</xp:div>
+					<xp:div xp:key="SSJSButton">
+						<xp:button value="Get Groups" id="button1" refreshId="computedField2">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="complete">
+								<xp:this.action><![CDATA[#{javascript:var selName:org.openntf.domino.Name=session.createName(session.getEffectiveUserName());
+viewScope.put("SSJSTest", selName.getGroups(session.getServerName()));}]]></xp:this.action>
+							</xp:eventHandler></xp:button>
+						</xp:div>
+				</xp:this.facets>
+			</xc:mainArea>
+		</xp:this.facets>
+	</xc:ccLayoutOneUI>
+</xp:view>

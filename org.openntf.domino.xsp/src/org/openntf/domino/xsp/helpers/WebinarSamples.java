@@ -273,17 +273,15 @@ public class WebinarSamples {
 
 	// ******* BEGIN HELPER SAMPLES
 
-	@SuppressWarnings("unused")
 	public void doMapStuff(final org.openntf.domino.Document doc) {
-		// Document implements Map<String, Object>
-		Object val = doc.get("foo");	// gets contents of item "foo" or returns null;
+		doc.get("foo");
 		doc.put("foo", "bar");			// puts "bar" in item "foo"
 		doc.clear();					// removes every item from doc (not recommended)
 		doc.size();						// returns the number of items
-		Object eval = doc.get("@Adjust(@Modified; 1; 0; 0; 0; 0; 0)");	// AVAILABLE IN M3
+		doc.get("@Adjust(@Modified; 1; 0; 0; 0; 0; 0)");
 	}
 
-	public Map scanDatabase(final org.openntf.domino.Database db) {
+	public Map<?, ?> scanDatabase(final org.openntf.domino.Database db) {
 		// DocumentScanner looks at values of all string-based items in a document
 		DocumentScanner scanner = new DocumentScanner();
 		for (org.openntf.domino.Document doc : db.getAllDocuments()) {

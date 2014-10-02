@@ -15,9 +15,9 @@ import javax.faces.el.ValueBinding;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
- * @author Nathan T. Freeman Enum
+ * @author Nathan T. Freeman
  * 
- *         ValuePickerData for use with ValuePicker control<br/>
+ *         EnumValuePickerData for use with ValuePicker control<br/>
  *         NOTE: This has not been fully tested
  */
 @SuppressWarnings("rawtypes")
