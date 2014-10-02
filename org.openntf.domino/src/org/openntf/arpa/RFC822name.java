@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * Carrier and parsing object for various RFC822 name parts.
  * 
- * @author Devin S. Olsonm (dolson@czarnowski.com)
+ * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  * @see "RFC822: Standard for ARPA Internet Text Messages" http://www.w3.org/Protocols/rfc822/
  * 
