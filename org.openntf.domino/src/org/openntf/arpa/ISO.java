@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 import org.openntf.domino.logging.LogUtils;
 
 /**
- * @author dolson
+ * ISO Utilities
+ * 
+ * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  */
 public enum ISO {
@@ -37,9 +39,9 @@ public enum ISO {
 	/**
 	 * Carrier for ISO 3166-1 alpha 2 and alpha 3 code
 	 * 
-	 * @author Devin S. Olsonm (dolson@czarnowski.com)
+	 * @author Devin S. Olson (dolson@czarnowski.com)
 	 * 
-	 @see "Country Codes - ISO 3166" http://www.iso.org/iso/home/standards/country_codes.htm
+	 * @see "Country Codes - ISO 3166  http://www.iso.org/iso/home/standards/country_codes.htm "
 	 * 
 	 */
 	public static enum ISO3166 {
@@ -311,7 +313,7 @@ public enum ISO {
 	 * 
 	 * @return Flag indicating whether or not the object is a String.
 	 */
-	public static boolean isString(final Object object) {
+	public static boolean isNonNullString(final Object object) {
 		return ((null != object) && (object instanceof String));
 	}
 

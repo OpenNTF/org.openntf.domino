@@ -323,8 +323,8 @@ public enum Strings {
 	 * 
 	 * @return Flag indicating whether or not the object is a String.
 	 */
-	public static boolean isString(final Object object) {
-		return ISO.isString(object);
+	public static boolean isNonNullString(final Object object) {
+		return ISO.isNonNullString(object);
 	}
 
 	/**
