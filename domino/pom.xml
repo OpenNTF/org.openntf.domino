@@ -1,14 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
-  <groupId>org.openntf</groupId>
+ 
+  <groupId>org.openntf.domino</groupId>
   <artifactId>domino</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>latest</version>
   <packaging>pom</packaging>
 
-  <name>domino</name>
-  <url>http://maven.apache.org</url>
+  <name>OpenNTF Domino API</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,4 +21,13 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  
+  <modules>
+  <module>externals</module>
+  <module>formula</module>
+  <module>core</module>
+  <module>xsp</module>
+  </modules>
+ 
 </project>
