@@ -29,12 +29,6 @@
   		<artifactId>formula</artifactId>
   		<version>latest</version>
   	</dependency>
-  		<dependency>
-	  	<groupId>lotus.domino</groupId>
-  		<artifactId>notes</artifactId>
-  		<version>current</version>
-  		<type>jar</type>
-  	</dependency>
   	<dependency>
   		<groupId>org.openntf.domino</groupId>
   		<artifactId>asm</artifactId>
@@ -76,9 +70,14 @@
   		<version>9.0.0</version>
   	</dependency>
   	<dependency>
-  		<groupId>com.ibm</groupId>
-  		<artifactId>runtime</artifactId>
-  		<version>2.6.0</version>
+  		<groupId>ibm.domino</groupId>
+  		<artifactId>notes</artifactId>
+  		<version>9.0.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>ibm.domino</groupId>
+  		<artifactId>jvmRuntime</artifactId>
+  		<version>9.0.1</version>
   	</dependency>
   </dependencies>
 </project>
