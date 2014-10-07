@@ -76,11 +76,6 @@
 				<version>9.0.1</version>
 			</dependency>
 			<dependency>
-				<groupId>org.eclipse.core</groupId>
-				<artifactId>runtime</artifactId>
-				<version>3.4.0</version>
-			</dependency>
-			<dependency>
 				<groupId>ibm.domino</groupId>
 				<artifactId>extlibControls</artifactId>
 				<version>9.0.1</version>
@@ -98,6 +93,11 @@
 			<dependency>
 				<groupId>ibm.domino</groupId>
 				<artifactId>designerRuntime</artifactId>
+				<version>9.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>ibm.domino</groupId>
+				<artifactId>orgiRuntime</artifactId>
 				<version>9.0.1</version>
 			</dependency>
 		</dependencies>
