@@ -18,12 +18,12 @@
  */
 package org.openntf.domino.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openntf.domino.DateTime;
@@ -36,20 +36,25 @@ import org.openntf.domino.Item;
  * 
  */
 public enum Dates {
-	DATEONLY(Strings.TIMESTAMP_DATEONLY, Strings.REGEX_DATEONLY),
+	DATEONLY(Strings.TIMESTAMP_DATEONLY, Strings.REGEX_DATEONLY, false),
 
-	TIMEONLY(Strings.TIMESTAMP_TIMEONLY, Strings.REGEX_TIMEONLY),
+	TIMEONLY(Strings.TIMESTAMP_TIMEONLY, Strings.REGEX_TIMEONLY, true),
 
-	DAYMONTH_NAMES(Strings.TIMESTAMP_DAYMONTH_NAMES, Strings.REGEX_DAYMONTH_NAMES),
+	DAYMONTH_NAMES(Strings.TIMESTAMP_DAYMONTH_NAMES, Strings.REGEX_DAYMONTH_NAMES, true),
 
-	DEFAULT(Strings.TIMESTAMP_DEFAULT, Strings.REGEX_DEFAULT),
+	DEFAULT(Strings.TIMESTAMP_DEFAULT, Strings.REGEX_DEFAULT, true),
 
-	MILITARY(Strings.TIMESTAMP_MILITARY, Strings.REGEX_MILITARY),
+	MEDDATE(Strings.TIMESTAMP_MEDDATE, Strings.REGEX_MEDDATE, false),
 
-	SIMPLETIME(Strings.TIMESTAMP_SIMPLETIME, Strings.REGEX_SIMPLETIME);
+	MILITARY(Strings.TIMESTAMP_MILITARY, Strings.REGEX_MILITARY, true),
+
+	SHORTDATE(Strings.TIMESTAMP_SHORTDATE, Strings.REGEX_SHORTDATE, false),
+
+	SIMPLETIME(Strings.TIMESTAMP_SIMPLETIME, Strings.REGEX_SIMPLETIME, true);
 
 	private final String _timestampFormat;
 	private final String _regex;
+	private final boolean _hasTimeComponent;
 	private Pattern _pattern;
 	private SimpleDateFormat _sdf;
 
@@ -61,10 +66,11 @@ public enum Dates {
 	 * @param regex
 	 *            String used to generate the pattern
 	 */
-	private Dates(final String timestampFormat, final String regex) {
+	private Dates(final String timestampFormat, final String regex, final boolean hastimecomponent) {
 		this._timestampFormat = timestampFormat;
 		this._regex = Strings.REGEX_BEGIN_NOCASE + regex + Strings.REGEX_END;
 		this._pattern = Pattern.compile(Strings.REGEX_BEGIN_NOCASE + regex + Strings.REGEX_END);
+		this._hasTimeComponent = hastimecomponent;
 	}
 
 	@Override
@@ -150,6 +156,15 @@ public enum Dates {
 	}
 
 	/**
+	 * Indicates if the formatter has a Time Component
+	 * 
+	 * @return Flag indicating if the formatter has a time component.
+	 */
+	public boolean hasTimeComponent() {
+		return this._hasTimeComponent;
+	}
+
+	/**
 	 * Determines if a given source string matches the Pattern.
 	 * 
 	 * @param source
@@ -158,14 +173,47 @@ public enum Dates {
 	 * @return Flag indicating if the source string matches the Pattern.
 	 */
 	public boolean matches(final String source) {
+		return this.getPattern().matcher(source).matches();
+	}
+
+	/**
+	 * Attempts to spawn a new Date by parsing a string.
+	 * 
+	 * @param string
+	 *            Value from which to attempt to construct a new Date object.
+	 * 
+	 * @return new Date object constructed from the string. Null on error.
+	 */
+	public Date parseInstance(final String string) {
+
 		try {
-			final Matcher m = this.getPattern().matcher(source);
-			return m.matches();
+			if (Strings.isBlankString(string)) {
+				throw new IllegalArgumentException("String to parse is null or blank");
+			}
+
+			final SimpleDateFormat sdf = this.getSimpleDateFormat();
+			Date result = sdf.parse(string);
+
+			if (null == result) {
+				throw new ParseException("Unable to parse: " + string, 0);
+			}
+
+			if (this.hasTimeComponent() && (string.toUpperCase().indexOf("PM") > 0)) {
+				Calendar cal = Dates.getCalendar(result);
+				if (cal.get(Calendar.HOUR_OF_DAY) < 12) {
+					// AM vs PM Parsing problem has occurred.  Add 12 hours to the time.
+					cal.add(Calendar.HOUR_OF_DAY, 12);
+					result = cal.getTime();
+				}
+			}
+
+			return result;
+
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
 
-		return false;
+		return null;
 	}
 
 	/*
@@ -210,15 +258,15 @@ public enum Dates {
 	}
 
 	/**
-	 * Gets the timestamp for a date.
+	 * Gets the timestamp for a specified date.
 	 * 
 	 * @param date
-	 *            the date from which to get the timestamp
+	 *            date from which to generate a timestamp
 	 * 
 	 * @param format
-	 *            the format for the timestamp.
+	 *            format for the timestamp.
 	 * 
-	 * @return the timestamp for the date.
+	 * @return the timestamp for the specified date.
 	 */
 	public static String getTimestamp(final Object object, final String format) {
 		try {
@@ -243,23 +291,36 @@ public enum Dates {
 	}
 
 	/**
-	 * Gets the timestamp.
+	 * Gets the timestamp for a specified date.
 	 * 
 	 * @param date
-	 *            the date
-	 * @return the timestamp
+	 *            date from which to generate a timestamp
+	 * 
+	 * @return timestamp for the specified date
 	 */
 	public static String getTimestamp(final Date date) {
 		return Dates.DEFAULT.getInstanceTimestamp(date);
 	}
 
 	/**
-	 * Gets the timestamp.
+	 * Gets the timestamp for the current date.
 	 * 
-	 * @return the timestamp
+	 * @return timestamp for the current date
 	 */
 	public static String getTimestamp() {
 		return Dates.DEFAULT.getInstanceTimestamp();
+	}
+
+	/**
+	 * Gets the timestamp for the current date.
+	 * 
+	 * @param format
+	 *            format for the timestamp.
+	 * 
+	 * @return the timestamp for the current date.
+	 */
+	public static String getTimestamp(final String format) {
+		return Dates.getTimestamp(Dates.getDate(), format);
 	}
 
 	/**
@@ -375,60 +436,41 @@ public enum Dates {
 	}
 
 	/**
-	 * Gets a Date object representing the epoch
+	 * Determines if a date has a time value of Midnight (12:00:00 AM)
 	 * 
-	 * @return Date representing the epoch
+	 * NOTE: ONLY CHECKS to the Seconds level. Milliseconds are NOT checked.
+	 * 
+	 * @param source
+	 *            Date to check.
+	 * 
+	 * @return Flag indicating if the specified source has a time value equal to Midnight.
 	 */
-	public static final Date getEpoch() {
-		return new Date(0);
+	public static boolean isMidnight(final Object source) {
+		return Dates.isMidnight(source, false);
 	}
 
 	/**
-	 * Generates a Date object from the specified source, with all TIME values set to that of the epoch
+	 * Determines if a date has a time value of Midnight (12:00:00 AM)
 	 * 
 	 * @param source
-	 *            Object from which a Date object can be constructed.
+	 *            Date to check.
 	 * 
-	 * @return Date constructed from the source with all TIME values set to that of the epoch.
+	 * @param compareMilliseconds
+	 *            Flag indicating if milliseconds should be checked. If FALSE, then source will only be checked to the SECONDS level.
+	 * 
+	 * @return Flag indicating if the specified source has a time value equal to Midnight.
 	 */
-	public static Date getEpochedDate(final Object source) {
-		final Date date = Dates.getDate(source);
-		if (null == date) {
-			return null;
-		} else {
-			final Calendar epoch = Calendar.getInstance();
-			epoch.setTime(Dates.getEpoch());
-			final Calendar result = Calendar.getInstance();
-			result.setTime(date);
-			result.set(Calendar.HOUR_OF_DAY, epoch.get(Calendar.HOUR_OF_DAY));
-			result.set(Calendar.MINUTE, epoch.get(Calendar.MINUTE));
-			result.set(Calendar.SECOND, epoch.get(Calendar.SECOND));
-			result.set(Calendar.MILLISECOND, epoch.get(Calendar.MILLISECOND));
-			return result.getTime();
-		}
-	}
+	public static boolean isMidnight(final Object source, final boolean compareMilliseconds) {
+		final Calendar cal = Dates.getCalendar(source);
 
-	/**
-	 * Generates a Date object from the specified source, with all DATE values set to that of the epoch
-	 * 
-	 * @param source
-	 *            Object from which a Date object can be constructed.
-	 * 
-	 * @return Date constructed from the source with all DATE values set to that of the epoch
-	 */
-	public static Date getEpochedTime(final Object source) {
-		final Date date = Dates.getDate(source);
-		if (null == date) {
-			return null;
-		} else {
-			final Calendar epoch = Calendar.getInstance();
-			epoch.setTime(Dates.getEpoch());
-			final Calendar result = Calendar.getInstance();
-			result.setTime(date);
-			result.set(Calendar.YEAR, epoch.get(Calendar.YEAR));
-			result.set(Calendar.DAY_OF_YEAR, epoch.get(Calendar.DAY_OF_YEAR));
-			return result.getTime();
+		if (null != cal) {
+			final boolean result = ((cal.get(Calendar.HOUR_OF_DAY) == 0) && (cal.get(Calendar.MINUTE) == 0) && (cal.get(Calendar.SECOND) == 0));
+			if (result) {
+				return (compareMilliseconds) ? (cal.get(Calendar.MILLISECOND) == 0) : true;
+			}
 		}
+
+		return false;
 	}
 
 	/**
@@ -878,6 +920,7 @@ public enum Dates {
 					return result;
 				}
 			}
+
 			for (final Dates result : Dates.values()) {
 				if (result.matches(key)) {
 					return result;
@@ -1116,15 +1159,33 @@ public enum Dates {
 	 * @return new Date object constructed from the string. Null on error.
 	 */
 	public static Date parse(final String string) {
-		if (!Strings.isBlankString(string)) {
-			try {
-				final Dates tf = Dates.get(string);
-				final SimpleDateFormat sdf = (null == tf) ? new SimpleDateFormat() : tf.getSimpleDateFormat();
-				return sdf.parse(string);
 
-			} catch (final Exception e) {
-				DominoUtils.handleException(e);
+		try {
+			if (Strings.isBlankString(string)) {
+				throw new IllegalArgumentException("String to parse is null or blank");
 			}
+
+			Dates tf = Dates.get(string);
+
+			if ((null == tf) && (string.indexOf(" ") > 0)) {
+				return Dates.parse(string.trim().replaceAll("\\s", ""));
+			}
+
+			if (null != tf) {
+				return tf.parseInstance(string);
+			}
+
+			final SimpleDateFormat sdf = new SimpleDateFormat();
+			Date result = sdf.parse(string);
+
+			if (null == result) {
+				throw new ParseException("Unable to parse: " + string, 0);
+			}
+
+			return result;
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
 		}
 
 		return null;
@@ -1382,4 +1443,72 @@ public enum Dates {
 			throw new RuntimeException("EXCEPTION in Dates.compareDates()");
 		}
 	}
+
+	/*
+	 * ***************************************************
+	 * ***************************************************
+	 * 
+	 * EPOCH methods
+	 * 
+	 * ***************************************************
+	 * ***************************************************
+	 */
+
+	/**
+	 * Gets a Date object representing the epoch
+	 * 
+	 * @return Date representing the epoch
+	 */
+	public static final Date getEpoch() {
+		return new Date(0);
+	}
+
+	/**
+	 * Generates a Date object from the specified source, with all TIME values set to that of the epoch
+	 * 
+	 * @param source
+	 *            Object from which a Date object can be constructed.
+	 * 
+	 * @return Date constructed from the source with all TIME values set to that of the epoch.
+	 */
+	public static Date getEpochedDate(final Object source) {
+		final Date date = Dates.getDate(source);
+		if (null == date) {
+			return null;
+		} else {
+			final Calendar epoch = Calendar.getInstance();
+			epoch.setTime(Dates.getEpoch());
+			final Calendar result = Calendar.getInstance();
+			result.setTime(date);
+			result.set(Calendar.HOUR_OF_DAY, epoch.get(Calendar.HOUR_OF_DAY));
+			result.set(Calendar.MINUTE, epoch.get(Calendar.MINUTE));
+			result.set(Calendar.SECOND, epoch.get(Calendar.SECOND));
+			result.set(Calendar.MILLISECOND, epoch.get(Calendar.MILLISECOND));
+			return result.getTime();
+		}
+	}
+
+	/**
+	 * Generates a Date object from the specified source, with all DATE values set to that of the epoch
+	 * 
+	 * @param source
+	 *            Object from which a Date object can be constructed.
+	 * 
+	 * @return Date constructed from the source with all DATE values set to that of the epoch
+	 */
+	public static Date getEpochedTime(final Object source) {
+		final Date date = Dates.getDate(source);
+		if (null == date) {
+			return null;
+		} else {
+			final Calendar epoch = Calendar.getInstance();
+			epoch.setTime(Dates.getEpoch());
+			final Calendar result = Calendar.getInstance();
+			result.setTime(date);
+			result.set(Calendar.YEAR, epoch.get(Calendar.YEAR));
+			result.set(Calendar.DAY_OF_YEAR, epoch.get(Calendar.DAY_OF_YEAR));
+			return result.getTime();
+		}
+	}
+
 }

@@ -22,7 +22,7 @@ public class HexToByteConversionTest implements Runnable {
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		//		Session session = this.getSession();
 		List<String> hexes = new ArrayList<String>();
 		hexes.add("DEAD");
 		hexes.add("85255D220072624");

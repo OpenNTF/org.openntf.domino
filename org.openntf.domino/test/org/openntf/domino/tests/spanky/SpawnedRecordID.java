@@ -1,44 +1,42 @@
-package org.openntf.domino.tests.ntf;
+package org.openntf.domino.tests.spanky;
 
 import lotus.domino.NotesFactory;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Strings;
 
-public class DocumentCollectionIteratorTest implements Runnable {
+public class SpawnedRecordID implements Runnable {
 	private static int THREAD_COUNT = 1;
 
 	public static void main(final String[] args) {
 		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new DocumentCollectionIteratorTest());
+			de.execute(new SpawnedRecordID());
 		}
 		de.shutdown();
-		//		for (int i = 0; i < 4; i++) {
-		//			DominoThread thread = new DominoThread(new LargishSortedCollectionTest(), "My thread " + i);
-		//			thread.start();
-		//		}
 	}
 
-	public DocumentCollectionIteratorTest() {
+	public SpawnedRecordID() {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
 	@Override
 	public void run() {
-		long testStartTime = System.nanoTime();
 		try {
+
 			Session session = this.getSession();
-			Database db = session.getDatabase("", "C:/Program Files/IBM/domino/data/events4.nsf");
-			DocumentCollection coll = db.getAllDocuments();
-			for (Document doc : coll) {
-				System.out.println("nid: " + doc.getNoteID());
+			String effective = session.getEffectiveUserName();
+			Name name = session.createName((Strings.isBlankString(effective)) ? "Bucky WonderCrust" : effective);
+
+			System.out.println("Spawning RecordIDs for " + name.getAbbreviated());
+
+			for (int i = 0; i < 10; i++) {
+				System.out.println("Spawned RecordID: " + Strings.getSpawnedRecordID(name));
 			}
-			long endTime = System.nanoTime();
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
