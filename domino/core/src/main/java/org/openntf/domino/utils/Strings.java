@@ -89,13 +89,17 @@ public enum Strings {
 
 	public static final String REGEX_MILITARY = Strings.join(" ", Strings.REGEX_9_8, Strings.REGEX_HHmmss + ",", Strings.REGEX_TIMEZONE);
 
+	public static final String REGEX_MEDDATE = "\\d+/\\d+/\\d{4}";
+	public static final String REGEX_SHORTDATE = "\\d+/\\d+/\\d+";
 	public static final String REGEX_SIMPLETIME = Strings.REGEX_9_4 + Strings.REGEX_ampm;
 
 	public static final String TIMESTAMP_DATEONLY = "dd MMM yyyy";
 	public static final String TIMESTAMP_TIMEONLY = "HH:mm aa";
 	public static final String TIMESTAMP_DEFAULT = "dd MMM yyyy hh:mm aa zzz";
 	public static final String TIMESTAMP_DAYMONTH_NAMES = "EEE, dd MMM yyyy HH:mm:ss aa zzz";
+	public static final String TIMESTAMP_MEDDATE = "MM/dd/yyyy";
 	public static final String TIMESTAMP_MILITARY = "yyyyMMdd HHmm:ss, zzz";
+	public static final String TIMESTAMP_SHORTDATE = "MM/dd/yy";
 	public static final String TIMESTAMP_SIMPLETIME = "HHmmaa";
 
 	public static enum IDTYPE {
