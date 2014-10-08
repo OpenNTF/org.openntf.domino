@@ -64,6 +64,7 @@ public class DConfiguration implements org.openntf.domino.graph2.DConfiguration 
 		DElementStore schk = getElementStores().get(key);
 		if (schk == null) {
 			getElementStores().put(key, store);
+			store.setConfiguration(this);
 		}
 		List<Class<?>> types = store.getTypes();
 		for (Class<?> type : types) {

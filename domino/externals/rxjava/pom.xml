@@ -10,7 +10,6 @@
 	</parent>
 	<artifactId>rxjava</artifactId>
 	<name>rxjava</name>
-	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -33,7 +32,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		 <directory>${basedir}/target</directory>
-        <finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 </project>

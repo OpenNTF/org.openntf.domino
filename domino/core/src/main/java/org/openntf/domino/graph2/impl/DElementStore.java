@@ -13,7 +13,6 @@ import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -102,6 +101,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public Object getStoreDelegate() {
+		if (delegate_ == null) {
+			org.openntf.domino.graph2.DConfiguration config = getConfiguration();
+			org.openntf.domino.graph2.DGraph graph = config.getGraph();
+			delegate_ = graph.getStoreDelegate(this);
+		}
 		return delegate_;
 	}
 
@@ -131,35 +135,43 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Vertex addVertex(final Object id) {
-		Vertex result = null;
-		Element chk = getElementCache().get(id);
-		if (chk != null) {
-			if (chk instanceof Vertex) {
-				result = (Vertex) chk;
+	public void setStoreKey(final String storeKey) {
+		delegateKey_ = storeKey;
+	}
+
+	protected Object localizeKey(final Object id) {
+		if (id instanceof CharSequence) {
+			String idStr = id.toString();
+			if (idStr.length() > 16) {
+				String prefix = idStr.substring(0, 16);
+				System.out.println("TEMP DEBUG: prefix on key is " + prefix + " while store key is " + getStoreKey());
+				if (prefix.equalsIgnoreCase(getStoreKey())) {
+					String localKey = idStr.substring(16);
+					System.out.println("TEMP DEBUG: adding vertex with local key " + localKey);
+					return localKey;
+				} else {
+					return idStr;
+				}
 			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
-						+ chk.getClass().getName());
+				return idStr;
 			}
 		} else {
-			Map<String, Object> delegate = addElementDelegate(id);
-			if (delegate != null) {
-				Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-				if (typeChk == null) {//NTF new delegate
-					delegate.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE);
-				} else if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(TypeUtils.toString(typeChk))) {//NTF existing delegate that's a vertex
+			return id;
+		}
+	}
 
-				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(id)
-							+ " results in a delegate with a graph type of " + TypeUtils.toString(typeChk));
-				}
+	@Override
+	public Vertex addVertex(final Object id) {
+		Vertex result = null;
+		Element chk = getCachedElement(id, Vertex.class);
+		if (chk != null) {
+			result = (Vertex) chk;
+		} else {
+			Object localkey = localizeKey(id);
+			Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class);
+			if (delegate != null) {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
-			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id)
-						+ " results in a null delegate and therefore cannot be persisted.");
-			}
-			if (result != null) {
 				getElementCache().put(result.getId(), result);
 			}
 		}
@@ -169,32 +181,15 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex getVertex(final Object id) {
 		Vertex result = null;
-		Element chk = getElementCache().get(id);
+		Element chk = getCachedElement(id, Vertex.class);
 		if (chk != null) {
-			if (chk instanceof Vertex) {
-				result = (Vertex) chk;
-			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
-						+ chk.getClass().getName());
-			}
+			result = (Vertex) chk;
 		} else {
-			Map<String, Object> delegate = findElementDelegate(id);
+			Object localkey = localizeKey(id);
+			Map<String, Object> delegate = findElementDelegate(localkey, Vertex.class);
 			if (delegate != null) {
-				Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-				if (typeChk == null) {//NTF new delegate
-					delegate.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE);
-				} else if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(TypeUtils.toString(typeChk))) {//NTF existing delegate that's a vertex
-
-				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(id)
-							+ " results in a delegate with a graph type of " + TypeUtils.toString(typeChk));
-				}
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
-			} else {
-				return null;
-			}
-			if (result != null) {
 				getElementCache().put(result.getId(), result);
 			}
 		}
@@ -215,71 +210,49 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Edge addEdge(final Object id) {
 		Edge result = null;
-		Element chk = getElementCache().get(id);
+		Element chk = getCachedElement(id, Edge.class);
 		if (chk != null) {
-			if (chk instanceof Edge) {
-				result = (Edge) chk;
-			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
-						+ chk.getClass().getName());
-			}
+			result = (Edge) chk;
 		} else {
-			Map<String, Object> delegate = addElementDelegate(id);
+			Object localkey = localizeKey(id);
+			Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
 			if (delegate != null) {
-				Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-				if (typeChk == null) {//NTF new delegate
-					delegate.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE);
-				} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(TypeUtils.toString(typeChk))) {//NTF existing delegate that's a vertex
-				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(id)
-							+ " results in a delegate with a graph type of " + TypeUtils.toString(typeChk));
-				}
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
-			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id)
-						+ " results in a null delegate and therefore cannot be persisted.");
-			}
-			if (result != null) {
 				getElementCache().put(result.getId(), result);
 			}
 		}
 		return result;
 	}
 
-	@Override
-	public Edge getEdge(final Object id) {
-		Edge result = null;
+	protected Element getCachedElement(final Object id, final Class<? extends Element> type) {
 		Element chk = getElementCache().get(id);
 		if (chk != null) {
-			if (chk instanceof Edge) {
-				result = (Edge) chk;
+			if (type.isAssignableFrom(chk.getClass())) {
+				return chk;
 			} else {
 				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
 						+ chk.getClass().getName());
 			}
-		} else {
-			Map<String, Object> delegate = findElementDelegate(id);
-			if (delegate != null) {
-				Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-				if (typeChk == null) {//NTF new delegate
-					delegate.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE);
-				} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(TypeUtils.toString(typeChk))) {//NTF existing delegate that's a vertex
+		}
+		return null;
+	}
 
-				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(id)
-							+ " results in a delegate with a graph type of " + TypeUtils.toString(typeChk));
-				}
-				DEdge vertex = new DEdge(getConfiguration().getGraph(), delegate);
-				result = vertex;
-			} else {
-				return null;
-			}
-			if (result != null) {
+	@Override
+	public Edge getEdge(final Object id) {
+		Edge result = null;
+		Element chk = getCachedElement(id, Edge.class);
+		if (chk != null) {
+			result = (Edge) chk;
+		} else {
+			Object localkey = localizeKey(id);
+			Map<String, Object> delegate = findElementDelegate(localkey, Edge.class);
+			if (delegate != null) {
+				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
+				result = edge;
 				getElementCache().put(result.getId(), result);
 			}
 		}
-
 		return result;
 	}
 
@@ -303,7 +276,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Map<String, Object> findElementDelegate(final Object delegateKey) {
+	public Map<String, Object> findElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
 		Map<String, Object> result = null;
 		Object del = getStoreDelegate();
 		if (del instanceof Database) {
@@ -316,6 +289,34 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		} else {
 			//TODO NTF alternative strategies...
 		}
+		if (result != null) {
+			if (type.equals(Element.class)) {
+				return result;
+			}
+			Object typeChk = result.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+			String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+			if (org.openntf.domino.utils.Strings.isBlankString(strChk)) {//NTF new delegate
+				if (Vertex.class.isAssignableFrom(type)) {
+					result.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE);
+				} else if (Edge.class.isAssignableFrom(type)) {
+					result.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE);
+				} else {
+					//Illegal request
+				}
+			} else {//NTF existing delegate that's a vertex
+				if (Vertex.class.isAssignableFrom(type) && org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
+					//okay
+				} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+					//okay
+				} else {
+					throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
+							+ " results in a delegate with a graph type of " + strChk);
+				}
+			}
+		} else {
+			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
+					+ " results in a null delegate and therefore cannot be persisted.");
+		}
 		return result;
 	}
 
@@ -325,7 +326,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	}
 
-	protected Map<String, Object> addElementDelegate(final Object delegateKey) {
+	protected Map<String, Object> addElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
 		Map<String, Object> result = null;
 		Object del = getStoreDelegate();
 		if (del instanceof Database) {
@@ -337,6 +338,31 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		} else {
 			//TODO NTF alternative strategies...
+		}
+		if (result != null) {
+			Object typeChk = result.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+			String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+			if (org.openntf.domino.utils.Strings.isBlankString(strChk)) {//NTF new delegate
+				if (Vertex.class.isAssignableFrom(type)) {
+					result.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE);
+				} else if (Edge.class.isAssignableFrom(type)) {
+					result.put(org.openntf.domino.graph2.DElement.TYPE_FIELD, org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE);
+				} else {
+					//Illegal request
+				}
+			} else {//NTF existing delegate that's a vertex
+				if (Vertex.class.isAssignableFrom(type) && org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
+					//okay
+				} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+					//okay
+				} else {
+					throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
+							+ " results in a delegate with a graph type of " + strChk);
+				}
+			}
+		} else {
+			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
+					+ " results in a null delegate and therefore cannot be persisted.");
 		}
 		return result;
 	}

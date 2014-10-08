@@ -307,8 +307,14 @@ public enum Strings {
 	 * 
 	 * @return Flag indicating if the source string is null or blank.
 	 */
-	public static boolean isBlankString(final String string) {
-		return ISO.isBlankString(string);
+	public static boolean isBlankString(final Object string) {
+		if (string instanceof CharSequence) {
+			return ISO.isBlankString(((CharSequence) string).toString());
+		} else {
+			if (string == null)
+				return true;
+			throw new RuntimeException("Cannot check for blankness on a non-null object of type " + string.getClass().getName());
+		}
 	}
 
 	/**

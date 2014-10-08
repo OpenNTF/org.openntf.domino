@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javolution.util.FastSet;
 import javolution.util.FastTable;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.big.impl.NoteList;
@@ -15,6 +16,7 @@ import org.openntf.domino.graph2.DConfiguration;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.exception.ElementKeyException;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -44,6 +46,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	public DGraph(final DConfiguration config) {
 		configuration_ = config;
+		config.setGraph(this);
 	}
 
 	protected Map<Class<?>, String> getTypeMap() {
@@ -172,7 +175,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public Map<String, Object> findDelegate(final Object delegateKey) {
 		DElementStore store = findElementStore(delegateKey);
-		return store.findElementDelegate(delegateKey);
+		return store.findElementDelegate(delegateKey, Element.class);
 	}
 
 	@Override
@@ -221,9 +224,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		DElementStore result = null;
 		if (delegateKey instanceof CharSequence) {
 			CharSequence skey = (CharSequence) delegateKey;
-			if (skey.length() == 48) {
-				if (DominoUtils.isHex(skey)) {
-					CharSequence prefix = skey.subSequence(0, 16);
+			if (skey.length() > 16) {
+				CharSequence prefix = skey.subSequence(0, 16);
+				if (DominoUtils.isReplicaId(prefix)) {
 					result = getElementStores().get(prefix);
 				} else {
 					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
@@ -284,6 +287,16 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				}
 			}
 		}
+		return result;
+	}
+
+	@Override
+	public Object getStoreDelegate(final DElementStore store) {
+		//FIXME NTF probably need to farm this out to some kind of Factory...
+		Object result = null;
+		String key = store.getStoreKey();
+		Session session = Factory.getSession();
+		result = session.getDatabase(key);	//TODO NTF sort out server?
 		return result;
 	}
 
