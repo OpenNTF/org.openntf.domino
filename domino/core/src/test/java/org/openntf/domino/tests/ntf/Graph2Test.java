@@ -9,6 +9,8 @@ import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+import com.tinkerpop.blueprints.Vertex;
+
 public class Graph2Test implements Runnable {
 	private static int THREAD_COUNT = 1;
 	private long marktime;
@@ -49,8 +51,31 @@ public class Graph2Test implements Runnable {
 			timelog("Beginning graph2 test...");
 
 			DElementStore crewStore = new DElementStore();
+			crewStore.setStoreKey(crewId);
+			DElementStore movieStore = new DElementStore();
+			movieStore.setStoreKey(movieId);
+			DElementStore edgeStore = new DElementStore();
+			edgeStore.setStoreKey(edgeId);
 			DConfiguration config = new DConfiguration();
+			config.addElementStore(crewStore);
+			config.addElementStore(movieStore);
+			config.addElementStore(edgeStore);
 			DGraph graph = new DGraph(config);
+			Vertex starwars = graph.addVertex(movieId + "Star Wars");
+			starwars.setProperty("Title", "Star Wars");
+
+			Vertex empire = graph.addVertex(movieId + "The Empire Strikes Back");
+			starwars.setProperty("Title", "The Empire Strikes Back");
+
+			Vertex jedi = graph.addVertex(movieId + "Return of the Jedi");
+			starwars.setProperty("Title", "Return of the Jedi");
+
+			Vertex lucas = graph.addVertex(crewId + "George Lucas");
+			lucas.setProperty("firstName", "George");
+			lucas.setProperty("lastName", "Lucas");
+			Vertex kershner = graph.addVertex(crewId + "Irvin Kershner");
+			kershner.setProperty("firstName", "Irvin");
+			kershner.setProperty("lastName", "Kershner");
 
 		} catch (Throwable t) {
 			t.printStackTrace();

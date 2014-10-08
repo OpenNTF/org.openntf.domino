@@ -19,5 +19,3 @@ Export-Package: org.openntf.formula,
  org.openntf.formula.function,
  org.openntf.formula.impl,
  org.openntf.formula.parse
-Require-Bundle: com.ibm.icu;bundle-version="3.8.1",
- com.ibm.commons

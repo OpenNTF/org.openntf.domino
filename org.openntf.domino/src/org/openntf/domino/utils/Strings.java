@@ -54,10 +54,10 @@ public enum Strings {
 	 * **************************************************************************
 	 * **************************************************************************
 	 */
-	public static final String CHARSET_NAME = "UTF-8";
+	public static final String CHARSET_NAME = "CP1252";
 
 	// <ALT> + 0216 on numeric keypad
-	public static final String DEFAULT_DELIMITER = "~";
+	public static final String DEFAULT_DELIMITER = "Ø";
 
 	public static final String MESSAGE_DIGEST_ALGORYTHM = "MD5";
 	public static final String MESSAGE_FORMULA_INVALID = "The Formula syntax is invalid.  ";
@@ -311,14 +311,38 @@ public enum Strings {
 	 * 
 	 * @return Flag indicating if the source string is null or blank.
 	 */
-	public static boolean isBlankString(final Object string) {
-		if (string instanceof CharSequence) {
-			return ISO.isBlankString(((CharSequence) string).toString());
-		} else {
-			if (string == null)
-				return true;
-			throw new RuntimeException("Cannot check for blankness on a non-null object of type " + string.getClass().getName());
+	public static boolean isBlankString(final String string) {
+		return ISO.isBlankString(string);
+	}
+
+	/**
+	 * Determines if an object is not null and an instance of String.
+	 * 
+	 * @param object
+	 *            Object to test.
+	 * 
+	 * @return Flag indicating whether or not the object is a String.
+	 */
+	public static boolean isString(final Object object) {
+		return ISO.isString(object);
+	}
+
+	/**
+	 * Gets the String of an object.
+	 * 
+	 * Returns "" if the object is null. If the object is a String returns the object, otherwise returns the object's toString() method.
+	 * 
+	 * @param object
+	 *            Object from which to get the String.
+	 * 
+	 * @return String of an object.
+	 */
+	public static String toString(final Object object) {
+		if (null == object) {
+			return "";
 		}
+
+		return (object instanceof String) ? (String) object : object.toString();
 	}
 
 	/**
@@ -469,6 +493,7 @@ public enum Strings {
 	 * 
 	 * @param sb
 	 *            StringBuilder object from which to remove all blank spaces.
+	 * 
 	 * @return StringBuilder object with all blank spaces removed.
 	 */
 	public static StringBuilder removeBlankSpace(final StringBuilder sb) {

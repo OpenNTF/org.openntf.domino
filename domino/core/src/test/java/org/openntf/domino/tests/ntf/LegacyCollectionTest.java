@@ -2,8 +2,6 @@ package org.openntf.domino.tests.ntf;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,36 +101,6 @@ public class LegacyCollectionTest implements Runnable {
 			}
 		};
 	};
-
-	static {
-		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					String bitModeRaw = System.getProperty("com.ibm.vm.bitmode");
-					try {
-						int mode = Integer.valueOf(bitModeRaw);
-						System.out.println("Set bitmode to " + mode);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
-					getCppMethod.setAccessible(true);
-
-					wr_field = lotus.domino.local.NotesBase.class.getDeclaredField("weakObject");
-					wr_field.setAccessible(true);
-					Class<?> clazz = wr_field.getType();
-					cpp_field = clazz.getDeclaredField("cpp_object");
-					cpp_field.setAccessible(true);
-					return null;
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
 
 	public static long getLotusId(final lotus.domino.Base base) {
 		try {

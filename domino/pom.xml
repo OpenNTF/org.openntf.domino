@@ -1,33 +1,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
- 
-  <groupId>org.openntf.domino</groupId>
-  <artifactId>domino</artifactId>
-  <version>latest</version>
-  <packaging>pom</packaging>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <name>OpenNTF Domino API</name>
+	<groupId>org.openntf.domino</groupId>
+	<artifactId>domino</artifactId>
+	<version>latest</version>
+	<packaging>pom</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+	<name>OpenNTF Domino API</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  
-  
-  <modules>
-  <module>externals</module>
-  <module>formula</module>
-  <module>core</module>
-  <module>xsp</module>
-  </modules>
- 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+
+	<modules>
+		<module>externals</module>
+		<module>formula</module>
+		<module>core</module>
+		<module>xsp</module>
+	</modules>
+
 </project>

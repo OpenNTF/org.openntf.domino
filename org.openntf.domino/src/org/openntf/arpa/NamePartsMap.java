@@ -34,9 +34,7 @@ import java.util.logging.Logger;
 public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements Serializable {
 
 	public static enum Key {
-		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common,
-		Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname,
-		IDprefix, SourceString;
+		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common, Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname, IDprefix, SourceString;
 
 		@Override
 		public String toString() {
@@ -518,14 +516,14 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return false;
 
 	} /*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * private methods
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
+		* ******************************************************************
+		* ******************************************************************
+		* 
+		* private methods
+		* 
+		* ******************************************************************
+		* ******************************************************************
+		*/
 
 	/**
 	 * Retrieves and sets the various name values by parsing an input source string.
