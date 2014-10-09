@@ -2,7 +2,6 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +12,7 @@ import javolution.util.FastMap;
 import javolution.util.FastSet;
 import javolution.util.FastTable;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph.DominoVertex;
@@ -102,14 +102,19 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		boolean adding = false;
 		String label = edge.getLabel();
 		NoteList ins = getInEdgesSet(label);
-		if (!ins.contains(edge.getId())) {
+		Object eid = edge.getId();
+		if (eid instanceof NoteCoordinate) {
+			eid = eid;
+		} else if (eid instanceof CharSequence) {
+			eid = new NoteCoordinate((CharSequence) eid);
+		} else {
+			log_.log(Level.WARNING, "Edge ids of type " + eid.getClass().getName() + " not yet supported");
+		}
+		if (!ins.contains(eid)) {
 			adding = true;
-			if (edge.getId() instanceof NoteCoordinate) {
-				ins.add((NoteCoordinate) edge.getId());
-			} else {
-				//TODO
-				//				ins.add((String) edge.getId());
-			}
+			ins.add((NoteCoordinate) eid);
+		} else {
+			System.out.println("TEMP DEBUG: Not adding an in edge on " + label + " because it's already in the list");
 		}
 		if (adding) {
 			getParent().startTransaction(this);
@@ -124,14 +129,19 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		boolean adding = false;
 		String label = edge.getLabel();
 		NoteList outs = getOutEdgesSet(label);
-		if (!outs.contains(edge.getId())) {
+		Object eid = edge.getId();
+		if (eid instanceof NoteCoordinate) {
+			eid = eid;
+		} else if (eid instanceof CharSequence) {
+			eid = new NoteCoordinate((CharSequence) eid);
+		} else {
+			log_.log(Level.WARNING, "Edge ids of type " + eid.getClass().getName() + " not yet supported");
+		}
+		if (!outs.contains(eid)) {
 			adding = true;
-			if (edge.getId() instanceof NoteCoordinate) {
-				outs.add((NoteCoordinate) edge.getId());
-			} else {
-				//TODO
-				//				outs.add((String) edge.getId());
-			}
+			outs.add((NoteCoordinate) eid);
+		} else {
+			System.out.println("TEMP DEBUG: Not adding an out edge on " + label + " because it's already in the list");
 		}
 		if (adding) {
 			getParent().startTransaction(this);
@@ -259,27 +269,30 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	NoteList getInEdgesSet(final String label) {
 		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
-			Object o = getProperty(DominoVertex.IN_PREFIX + label, java.util.Collection.class);
-			if (o != null) {
-				if (o instanceof NoteList) {
-					edgeIds = ((NoteList) o);
-				} else if (o instanceof java.util.Collection) {
-					NoteList result = new NoteList(true);
-					for (Object raw : (Collection) o) {
-						if (raw instanceof String) {
-							result.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
-						} else {
-							//TODO NTF
-						}
-					}
-					edgeIds = result;
+			String key = DominoVertex.IN_PREFIX + label;
+			edgeIds = new NoteList(true);
+			Map delegate = getDelegate();
+			if (delegate.containsKey(key)) {
+				if (delegate instanceof Document) {
+					byte[] bytes = ((Document) delegate).readBinary(key);
+					edgeIds.loadByteArray(bytes);
 				} else {
-					log_.log(Level.SEVERE, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName()
-							+ ". We are clearing the values and rebuilding the edges.");
-					edgeIds = new NoteList(true);
+					Object o = getProperty(key, java.util.Collection.class);
+					if (o instanceof NoteList) {
+						edgeIds = ((NoteList) o);
+					} else if (o instanceof java.util.Collection) {
+						for (Object raw : (Collection) o) {
+							if (raw instanceof String) {
+								edgeIds.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+							} else {
+								//TODO NTF
+							}
+						}
+					} else {
+						log_.log(Level.SEVERE, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName()
+								+ ". We are clearing the values and rebuilding the edges.");
+					}
 				}
-			} else {
-				edgeIds = new NoteList(true);
 			}
 			Map map = getInEdgesMap();
 			map.put(label, edgeIds);
@@ -300,27 +313,32 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	NoteList getOutEdgesSet(final String label) {
 		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
-			Object o = getProperty(DominoVertex.OUT_PREFIX + label, java.util.Collection.class);
-			if (o != null) {
-				if (o instanceof NoteList) {
-					edgeIds = ((NoteList) o);
-				} else if (o instanceof java.util.Collection) {
-					NoteList result = new NoteList(true);
-					for (Object raw : (Collection) o) {
-						if (raw instanceof String) {
-							result.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+			String key = DominoVertex.OUT_PREFIX + label;
+			edgeIds = new NoteList(true);
+			Map delegate = getDelegate();
+			if (delegate.containsKey(key)) {
+				if (delegate instanceof Document) {
+					byte[] bytes = ((Document) delegate).readBinary(key);
+					edgeIds.loadByteArray(bytes);
+				} else {
+					Object o = getProperty(key, java.util.Collection.class);
+					if (o != null) {
+						if (o instanceof NoteList) {
+							edgeIds = ((NoteList) o);
+						} else if (o instanceof java.util.Collection) {
+							for (Object raw : (Collection) o) {
+								if (raw instanceof String) {
+									edgeIds.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+								} else {
+									//TODO NTF
+								}
+							}
 						} else {
-							//TODO NTF
+							log_.log(Level.SEVERE, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName()
+									+ ". We are clearing the values and rebuilding the edges.");
 						}
 					}
-					edgeIds = result;
-				} else {
-					log_.log(Level.SEVERE, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName()
-							+ ". We are clearing the values and rebuilding the edges.");
-					edgeIds = new NoteList(true);
 				}
-			} else {
-				edgeIds = new NoteList(true);
 			}
 			Map map = getOutEdgesMap();
 			map.put(label, edgeIds);
@@ -359,7 +377,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	@Override
 	public void applyChanges() {
 		writeEdges();
-		applyChanges();
+		super.applyChanges();
 	}
 
 	boolean writeEdges() {
@@ -367,34 +385,29 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		Map<String, NoteList> inMap = getInEdgesMap();
 		FastSet<String> inDirtySet = getInDirtyKeySet();
 		if (!inDirtySet.isEmpty()) {
-			Iterator<String> it = inDirtySet.iterator();
-			while (it.hasNext()) {
-				String key = it.next();
+			for (String key : inDirtySet) {
 				NoteList edgeIds = inMap.get(key);
 				if (edgeIds != null) {
 					setProperty(DominoVertex.IN_PREFIX + key, edgeIds);
 					setProperty("_COUNT" + DominoVertex.IN_PREFIX + key, edgeIds.size());
 					result = true;
 				}
-				it.remove();
 			}
+			inDirtySet.clear();
 		}
 
 		Map<String, NoteList> outMap = getOutEdgesMap();
 		FastSet<String> outDirtySet = getOutDirtyKeySet();
 		if (!outDirtySet.isEmpty()) {
-			Iterator<String> it = outDirtySet.iterator();
-			while (it.hasNext()) {
-				String key = it.next();
+			for (String key : outDirtySet) {
 				NoteList edgeIds = outMap.get(key);
 				if (edgeIds != null) {
 					setProperty(DominoVertex.OUT_PREFIX + key, edgeIds);
 					setProperty("_COUNT" + DominoVertex.OUT_PREFIX + key, edgeIds.size());
 					result = true;
 				}
-				it.remove();
 			}
-
+			outDirtySet.clear();
 		}
 
 		return result;

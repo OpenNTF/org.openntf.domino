@@ -63,6 +63,10 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		}
 	}
 
+	public NoteCoordinate(final CharSequence metaversalid) {
+		this(metaversalid.subSequence(0, 16), metaversalid.subSequence(16, 48));
+	}
+
 	public NoteCoordinate(final CharSequence replicaid, final CharSequence unid) {
 		this.db = getLongFromReplid(replicaid);
 		long[] unids = getLongsFromUnid(unid);
@@ -163,6 +167,11 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		insertByteArray(x, bytes, pos + 8);
 		insertByteArray(y, bytes, pos + 16);
 		return pos + 24;
+	}
+
+	@Override
+	public String toString() {
+		return getReplicaId() + getUNID();
 	}
 
 	@Override

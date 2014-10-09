@@ -12,6 +12,7 @@ import javolution.util.FastSet;
 import javolution.util.function.Equalities;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
@@ -27,7 +28,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	protected transient org.openntf.domino.graph2.DGraph parent_;
-	private String delegateKey_;
+	private Object delegateKey_;
 	private transient Map<String, Object> delegate_;
 
 	public DElement(final org.openntf.domino.graph2.DGraph parent) {
@@ -148,11 +149,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Map<String, Object> props = getProps();
 		if (props != null) {
 			if (key != null) {
-				Object current = getProperty(key);
-				//				if (key.startsWith(DominoVertex.IN_PREFIX) && value instanceof java.util.Collection) {
-				//					isEdgeCollection = true;
-				//				}
+				Object current = null;
+				if (value != null) {
+					current = getProperty(key, value.getClass());
+				} else {
+					current = getProperty(key);
+				}
 				if (current == null && value == null) {
+					System.out.println("TEMP DEBUG: Both current and new value for " + key + " are null");
 					return;
 				}
 				//NTF The standard equality check has a fast out based on array size, so I think it's safe to use here...
@@ -174,30 +178,36 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					}
 				}
 				if (isEqual) {
+					System.out.println("TEMP DEBUG: Not setting property " + key + " because the new value is equal to the existing value");
 					log_.log(Level.FINE, "Not setting property " + key + " because the new value is equal to the existing value");
 				}
 				if (value instanceof Serializable) {
 					if (current == null || Null.INSTANCE.equals(current)) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
+						props.put(key, value);
 					} else if (!isEqual) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
+						props.put(key, value);
 					} else {
 					}
 				} else if (value == null) {
 					if (!Null.INSTANCE.equals(current)) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
+						props.put(key, value);
 					}
 				} else {
 					log_.log(Level.FINE, "Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
 					if (current == null || Null.INSTANCE.equals(current)) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
+						props.put(key, value);
 					} else if (!isEqual) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
+						props.put(key, value);
 					} else {
 					}
 				}
@@ -231,6 +241,16 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Object getId() {
+		if (delegateKey_ == null) {
+			Map delegate = getDelegate();
+			if (delegate instanceof Document) {
+				//				NoteCoordinate nc
+				delegateKey_ = new NoteCoordinate((Document) delegate);
+				//				String replid = ((Document) delegate).getAncestorDatabase().getReplicaID().toLowerCase();
+				//				String unid = ((Document) delegate).getUniversalID().toLowerCase();
+				//				delegateKey_ = replid + unid;
+			}
+		}
 		return delegateKey_;
 	}
 
@@ -309,15 +329,20 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	protected void applyChanges() {
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
-		if (!props.isEmpty()) {
+		FastSet<String> changes = getChangedPropertiesInt();
+		if (!props.isEmpty() && !changes.isEmpty()) {
+			System.out.println("TEMP DEBUG: Writing " + getChangedPropertiesInt().size() + " changed properties for " + getId());
 			for (String s : getChangedPropertiesInt()) {
 				String key = s;
 				Object v = props.get(key);
+				System.out.println("TEMP DEBUG: Writing a " + v.getClass().getSimpleName() + " to " + key);
 				if (s.startsWith(DominoVertex.IN_PREFIX) || s.startsWith(DominoVertex.OUT_PREFIX)) {
 					if (delegate instanceof Document) {
 						if (v instanceof NoteList) {
 							byte[] bytes = ((NoteList) v).toByteArray();
 							((Document) delegate).writeBinary(s, bytes, 2048 * 24);
+							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
+									+ " to a Document in " + s);
 						} else {
 							((Document) delegate).replaceItemValue(s, v, false);
 						}
@@ -329,6 +354,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				}
 			}
 			getChangedPropertiesInt().clear();
+		} else {
+			//			System.out.println("TEMP ALERT: No changed properties for element " + getId());
 		}
 		for (String key : getRemovedPropertiesInt()) {
 			delegate.remove(key);
