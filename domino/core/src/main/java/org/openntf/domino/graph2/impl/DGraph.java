@@ -96,8 +96,18 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Edge addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
-		// TODO Auto-generated method stub
-		return null;
+		Edge result = null;
+		//		if (id != null) {
+		//			System.out.println("TEMP DEBUG: Adding " + label + " edge with id " + String.valueOf(id));
+		result = findElementStore(id).addEdge(id);
+		((DEdge) result).setLabel(label);
+		((DEdge) result).setInVertex(inVertex);
+		((DEdge) result).setOutVertex(outVertex);
+		//		} else {
+		//			//TODO NTF implementation
+		//			System.out.println("TEMP DEBUG: id is null so we don't have an implementation yet.");
+		//		}
+		return result;
 	}
 
 	@Override
@@ -222,6 +232,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public DElementStore findElementStore(final Object delegateKey) {
 		DElementStore result = null;
+		if (delegateKey == null) {
+			return getDefaultElementStore();
+		}
 		if (delegateKey instanceof CharSequence) {
 			CharSequence skey = (CharSequence) delegateKey;
 			if (skey.length() > 16) {

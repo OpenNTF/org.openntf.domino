@@ -3,7 +3,6 @@ package org.openntf.domino.graph2.impl;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.openntf.domino.graph.IDominoVertex;
 import org.openntf.domino.graph2.DGraph;
 
 import com.tinkerpop.blueprints.Direction;
@@ -75,10 +74,10 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		return other.getProperty(property);
 	}
 
-	void setInDoc(final IDominoVertex in) {
-		in.addInEdge(this);
+	void setInVertex(final Vertex in) {
+		((DVertex) in).addInEdge(this);
 		in_ = in;
-		inKey_ = (String) in.getId();
+		inKey_ = in.getId().toString();
 		setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, inKey_);
 	}
 
@@ -87,10 +86,10 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		setProperty(org.openntf.domino.graph2.DEdge.LABEL_NAME, label);
 	}
 
-	void setOutDoc(final IDominoVertex out) {
-		out.addOutEdge(this);
+	void setOutVertex(final Vertex out) {
+		((DVertex) out).addOutEdge(this);
 		out_ = out;
-		outKey_ = (String) out.getId();
+		outKey_ = out.getId().toString();
 		setProperty(org.openntf.domino.graph2.DEdge.OUT_NAME, outKey_);
 	}
 

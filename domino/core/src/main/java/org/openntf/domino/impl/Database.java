@@ -1104,8 +1104,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 				return doc;
 
 			} else if (createOnFail) {
-				log_.log(java.util.logging.Level.WARNING,
-						"Document by key requested with null key. This is probably not what you meant to do...");
+				//				log_.log(java.util.logging.Level.FINE,
+				//						"Document by key requested with null key. This is probably not what you meant to do...");
+				//NTF No, its exactly what we meant to do in the case of graph elements
 				Document doc = this.createDocument();
 				doc.replaceItemValue("$Created", new Date());
 				doc.replaceItemValue("$$Key", "");
