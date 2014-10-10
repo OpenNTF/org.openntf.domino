@@ -6,6 +6,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DGraph;
+import org.openntf.domino.graph2.impl.DTypedPropertyHandler;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -13,6 +14,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.InVertex;
@@ -103,8 +105,47 @@ public class Graph2Test implements Runnable {
 
 	}
 
+	public interface User extends DVertexFrame {
+		@Property("name")
+		public String getName();
+
+		@Property("name")
+		public void setName(String name);
+	}
+
+	public interface DWorkflowVertexFrame extends DVertexFrame {
+		@Adjacency(label = "submitted")
+		public User getSubmittedBy();
+
+		@Adjacency(label = "submitted")
+		public void setSubmittedBy(User submitted);
+	}
+
+	public abstract class WorkflowInstance implements DWorkflowVertexFrame {
+
+	}
+
+	public interface DSocialVertexFrame extends DVertexFrame {
+		@Adjacency(label = "commented")
+		public Iterable<Comment> getComments();
+
+		@Adjacency(label = "commented")
+		public Comment addComment(Comment comment);
+
+		@Adjacency(label = "commented")
+		public Comment removeComments(Comment comment);
+	}
+
+	public interface Comment extends DVertexFrame {
+		@Property("body")
+		public String getBody();
+
+		@Property("body")
+		public void setBody(String body);
+	}
+
 	@TypeValue("movie")
-	public interface Movie extends DVertexFrame {
+	public interface Movie extends DSocialVertexFrame {
 		@Property("title")
 		public String getTitle();
 
@@ -128,6 +169,15 @@ public class Graph2Test implements Runnable {
 
 		@Adjacency(label = "directedBy")
 		public Crew removeDirectedByCrew(Crew crew);
+
+		@Adjacency(label = "starring")
+		public Iterable<Crew> getStarringCrew();
+
+		@Adjacency(label = "starring")
+		public Crew addStarringCrew(Crew crew);
+
+		@Adjacency(label = "starring")
+		public Crew removeStarringCrew(Crew crew);
 
 	}
 
@@ -154,10 +204,28 @@ public class Graph2Test implements Runnable {
 		@Property("name")
 		public void setName(String name);
 
+		@Adjacency(label = "appearsIn")
+		public Iterable<Movie> getAppearsInMovies();
+
+		@Adjacency(label = "appearsIn")
+		public Edge addAppearsInMovies(Movie movie);
+
+		@Adjacency(label = "appearsIn")
+		public void removeAppearsInMovies(Movie movie);
+
 	}
 
 	@TypeValue("crew")
 	public interface Crew extends DVertexFrame {
+		abstract class CrewImpl implements Crew {
+			@Override
+			public void setFullName(final String fullName) {
+				int pos = fullName.lastIndexOf(' ');
+				setFirstName(fullName.substring(0, pos - 1));
+				setLastName(fullName.substring(pos + 1));
+			}
+		}
+
 		@Property("firstName")
 		public String getFirstName();
 
@@ -170,11 +238,25 @@ public class Graph2Test implements Runnable {
 		@Property("lastName")
 		public void setLastName(String lastName);
 
+		public void setFullName(String fullName);
+
 		@Adjacency(label = "portrays")
 		public Iterable<Character> getPortraysCharacters();
 
 		@Adjacency(label = "portrays")
-		public void addPortraysCharacter(Character character);
+		public Edge addPortraysCharacter(Character character);
+
+		@Adjacency(label = "portrays")
+		public void removePortraysCharacter(Character character);
+
+		@Adjacency(label = "starring")
+		public Iterable<Movie> getStarsInMovies();
+
+		@Adjacency(label = "starring")
+		public Edge addStarsInMovie(Movie movie);
+
+		@Adjacency(label = "starring")
+		public void removeStarsInMovie(Movie movie);
 
 	}
 
@@ -232,7 +314,12 @@ public class Graph2Test implements Runnable {
 
 			FramedGraphFactory factory = new FramedGraphFactory(new TypedGraphModuleBuilder().withClass(Movie.class)
 					.withClass(Character.class).withClass(Crew.class).build());
+			FramedGraphConfiguration frameConfig = new FramedGraphConfiguration();
+			frameConfig.addMethodHandler(new DTypedPropertyHandler());
+
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
+
+			framedGraph.registerAnnotationHandler(new DTypedPropertyHandler());
 
 			Movie newhopeMovie = framedGraph.addVertex(movieId + MV_SW, Movie.class);
 			newhopeMovie.setTitle(MV_SW);
@@ -291,10 +378,14 @@ public class Graph2Test implements Runnable {
 			DirectedBy rosDirector = revengeMovie.addDirectedBy(lucasCrew);
 			rosDirector.setRating(1);
 
-			Vertex luke = graph.addVertex(characterId + CH_LS);
-			graph.addEdge(null, luke, newhope, appearsIn);
-			graph.addEdge(null, luke, empire, appearsIn);
-			graph.addEdge(null, luke, jedi, appearsIn);
+			//			Vertex luke = graph.addVertex(characterId + CH_LS);
+			//			graph.addEdge(null, luke.asVertex(), newhope, appearsIn);
+			//			graph.addEdge(null, luke, empire, appearsIn);
+			//			graph.addEdge(null, luke, jedi, appearsIn);
+			Character luke = framedGraph.addVertex(characterId + CH_LS, Character.class);
+			luke.addAppearsInMovies(newhopeMovie);
+			luke.addAppearsInMovies(empireMovie);
+			luke.addAppearsInMovies(jediMovie);
 			Vertex leia = graph.addVertex(characterId + CH_LO);
 			graph.addEdge(null, leia, newhope, appearsIn);
 			graph.addEdge(null, leia, empire, appearsIn);
@@ -386,6 +477,7 @@ public class Graph2Test implements Runnable {
 			graph.addEdge(null, wedge, jedi, appearsIn);
 
 			Vertex ford = graph.addVertex(crewId + ACT_HF);
+
 			ford.setProperty("firstName", "Harrison");
 			ford.setProperty("lastName", "Ford");
 			graph.addEdge(null, newhope, ford, starring);
@@ -407,7 +499,7 @@ public class Graph2Test implements Runnable {
 			graph.addEdge(null, newhope, hammill, starring);
 			graph.addEdge(null, empire, hammill, starring);
 			graph.addEdge(null, jedi, hammill, starring);
-			graph.addEdge(null, hammill, luke, portrays);
+			graph.addEdge(null, hammill, luke.asVertex(), portrays);
 
 			Vertex daniels = graph.addVertex(crewId + ACT_AD);
 			daniels.setProperty("firstName", "Anthony");
@@ -599,7 +691,7 @@ public class Graph2Test implements Runnable {
 			Edge curEdge = null;
 			curEdge = graph.addEdge(null, anakin, obiwan, kills);
 			curEdge.setProperty("film", newhope.getId().toString());
-			curEdge = graph.addEdge(null, luke, tarkin, kills);
+			curEdge = graph.addEdge(null, luke.asVertex(), tarkin, kills);
 			curEdge.setProperty("film", newhope.getId().toString());
 			curEdge = graph.addEdge(null, windu, jango, kills);
 			curEdge.setProperty("film", clones.getId().toString());
@@ -623,9 +715,9 @@ public class Graph2Test implements Runnable {
 			curEdge.setProperty("film", revenge.getId().toString());
 
 			graph.addEdge(null, anakin, threepio, spawns);
-			graph.addEdge(null, anakin, luke, spawns);
+			graph.addEdge(null, anakin, luke.asVertex(), spawns);
 			graph.addEdge(null, anakin, leia, spawns);
-			graph.addEdge(null, padme, luke, spawns);
+			graph.addEdge(null, padme, luke.asVertex(), spawns);
 			graph.addEdge(null, padme, leia, spawns);
 			graph.addEdge(null, shmi, anakin, spawns);
 			graph.addEdge(null, jango, boba, spawns);
