@@ -258,7 +258,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	@Override
 	public <T> T getValue(final Class<?> T) {
 		Vector<Object> v = getValue();
-		return TypeUtils.vectorToClass(v, T, getSession());
+		return TypeUtils.collectionToClass(v, T, getSession());
 	}
 
 	/*
@@ -282,7 +282,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	@Override
 	public <T> T getValue(final Session session, final Class<?> T) {
 		Vector<Object> v = getValue(session);
-		return TypeUtils.vectorToClass(v, T, session);
+		return TypeUtils.collectionToClass(v, T, session);
 	}
 
 	/*
@@ -306,7 +306,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	@Override
 	public <T> T getValue(final Document document, final Class<?> T) {
 		Vector<Object> v = getValue(document);
-		return TypeUtils.vectorToClass(v, T, document.getAncestorSession());
+		return TypeUtils.collectionToClass(v, T, document.getAncestorSession());
 	}
 
 	/*

@@ -563,11 +563,11 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	public <T> T getColumnValue(final String columnName, final Class<?> T) {
 		Object rawResult = getColumnValue(columnName);
 		if (rawResult instanceof Vector) {
-			return TypeUtils.vectorToClass((Vector<?>) rawResult, T, this.getAncestorSession());
+			return TypeUtils.collectionToClass((Vector<?>) rawResult, T, this.getAncestorSession());
 		} else {
 			Vector<Object> v = new Vector<Object>();
 			v.add(rawResult);
-			return TypeUtils.vectorToClass(v, T, this.getAncestorSession());
+			return TypeUtils.collectionToClass(v, T, this.getAncestorSession());
 		}
 	}
 

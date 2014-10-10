@@ -3,10 +3,12 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -128,7 +130,7 @@ public enum TypeUtils {
 		Session session = Factory.getSession(item);
 		T result = null;
 		try {
-			result = vectorToClass(v, T, session);
+			result = collectionToClass(v, T, session);
 		} catch (DataNotCompatibleException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
 			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid);
@@ -204,24 +206,168 @@ public enum TypeUtils {
 	}
 
 	public static <T> T objectToClass(final Object o, final Class<?> T, final Session session) {
-		if (o == null) {
-			return null;
-		}
-		if (o instanceof Vector) {
-			return vectorToClass((Vector<?>) o, T, session);
-		}
-		Vector<Object> v = new Vector<Object>();
-		v.add(o);
-		return vectorToClass(v, T, session);
+		return convertToTarget(o, T, session);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
-		//		if (T == java.lang.Class.class) {
-		//			log_.log(Level.WARNING, "Class type requested from type coersion!");
-		//		} else if (T == java.util.Collection.class) {
-		//			log_.log(Level.WARNING, "Collection type requested from type coersion!");
-		//		}
+	public static <T> T convertToTarget(final Object o, final Class<?> T, final Session session) {
+		if (o == null) {
+			return null;
+		}
+		Object result = null;
+		if (o instanceof Collection) {
+			result = collectionToClass((Collection) o, T, session);
+		}
+		Class<?> CType = null;
+		if (T.equals(String[].class)) {
+			result = toStrings(o);
+			return (T) result;
+		}
+		if (T.isArray()) {
+			if (String[].class.equals(T)) {
+				// System.out.println("Shallow route to string array");
+				result = toStrings(o);
+			} else {
+				CType = T.getComponentType();
+				if (CType.isPrimitive()) {
+					try {
+						result = toPrimitiveArray(o, CType);
+					} catch (DataNotCompatibleException e) {
+						throw e;
+					}
+				} else if (Number.class.isAssignableFrom(CType)) {
+					result = toNumberArray(o, CType);
+				} else {
+					if (CType == String.class) {
+						// System.out.println("Deep route to string array");
+						result = toStrings(o);
+					} else if (CType == BigString.class) {
+						result = toBigStrings(o);
+					} else if (CType == Pattern.class) {
+						result = toPatterns(o);
+					} else if (CType == Enum.class) {
+						result = toEnums(o);
+					} else if (Class.class.isAssignableFrom(CType)) {
+						result = toClasses(o);
+					} else if (Formula.class.isAssignableFrom(CType)) {
+						result = toFormulas(o);
+					} else if (CType == Date.class) {
+						result = toDates(o);
+					} else if (DateTime.class.isAssignableFrom(CType)) {
+						result = toDateTimes(o, session);
+					} else if (Name.class.isAssignableFrom(CType)) {
+						result = toNames(o, session);
+					} else if (CType == Boolean.class) {
+						result = toBooleans(o);
+					} else if (CType == java.lang.Object.class) {
+						result = toObjects(o);
+					} else {
+						throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
+					}
+				}
+			}
+		} else if (T.isPrimitive()) {
+			try {
+				result = toPrimitive(o, T);
+			} catch (DataNotCompatibleException e) {
+				throw e;
+			}
+		} else {
+			if (T == String.class) {
+				result = String.valueOf(o);
+			} else if (T == Enum.class) {
+				String str = String.valueOf(o);
+				result = toEnum(str);
+			} else if (T == BigString.class) {
+				result = new BigString(String.valueOf(o));
+			} else if (T == Pattern.class) {
+				result = Pattern.compile(String.valueOf(o));
+			} else if (Class.class.isAssignableFrom(T)) {
+				String cn = String.valueOf(o);
+				Class<?> cls = DominoUtils.getClass(cn);
+				result = cls;
+			} else if (Formula.class.isAssignableFrom(T)) {
+				Formula formula = new org.openntf.domino.helpers.Formula(String.valueOf(o));
+				result = formula;
+			} else if (java.util.Collection.class.equals(T)) {
+				result = new ArrayList();
+				((ArrayList) result).add(o);
+
+			} else if (java.util.Collection.class.isAssignableFrom(T)) {
+				try {
+					result = T.newInstance();
+					Collection coll = (Collection) result;
+					coll.addAll(toSerializables(o));
+				} catch (IllegalAccessException e) {
+					DominoUtils.handleException(e);
+				} catch (InstantiationException e) {
+					DominoUtils.handleException(e);
+				}
+			} else if (T == Date.class) {
+				result = toDate(o);
+			} else if (T == org.openntf.domino.DateTime.class) {
+				if (session != null) {
+					result = session.createDateTime(toDate(o));
+				} else {
+					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
+							+ " to DateTime without a valid Session object");
+				}
+			} else if (T == org.openntf.domino.Name.class) {
+				if (session != null) {
+
+					result = session.createName(String.valueOf(o));
+
+				} else {
+					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
+							+ " to Name without a valid Session object");
+				}
+			} else if (Boolean.class.equals(T)) {
+				result = toBoolean(o);
+			} else if (Number.class.isAssignableFrom(T)) {
+				result = toNumber(o, T);
+			} else {
+				result = T.cast(o);
+			}
+		}
+
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		}
+		return (T) result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Collection<Serializable> toSerializables(final Object value) {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return DominoUtils.toSerializable((Collection) value);
+		} else if (value.getClass().isArray()) {
+			return DominoUtils.toSerializable(Arrays.asList(value));
+		} else {
+			Collection<Serializable> result = new ArrayList<Serializable>();
+			if (value instanceof org.openntf.domino.DateTime) {
+				Date date = null;
+				org.openntf.domino.DateTime dt = (org.openntf.domino.DateTime) value;
+				date = dt.toJavaDate();
+				result.add(date);
+			} else if (value instanceof org.openntf.domino.Name) {
+				result.add(DominoUtils.toNameString((org.openntf.domino.Name) value));
+			} else if (value instanceof String) {
+				result.add((String) value);
+			} else if (value instanceof Number) {
+				result.add((Number) value);
+			}
+			return result;
+		}
+	}
+
+	public static <T> T vectorToClass(final Collection<?> v, final Class<?> T, final Session session) {
+		return collectionToClass(v, T, session);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static <T> T collectionToClass(final Collection v, final Class<?> T, final Session session) {
 		if (v == null) {
 			return null;
 		}
@@ -293,14 +439,9 @@ public enum TypeUtils {
 			} else if (T == Pattern.class) {
 				result = Pattern.compile(join(v));
 			} else if (Class.class.isAssignableFrom(T)) {
-				//				try {
 				String cn = join(v);
 				Class<?> cls = DominoUtils.getClass(cn);
 				result = cls;
-				//				} catch (ClassNotFoundException e) {
-				//					DominoUtils.handleException(e);
-				//					result = null;
-				//				}
 			} else if (Formula.class.isAssignableFrom(T)) {
 				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
 				result = formula;
@@ -332,7 +473,8 @@ public enum TypeUtils {
 					if (v.isEmpty()) {
 						result = session.createName("");
 					} else {
-						result = session.createName(String.valueOf(v.get(0)));
+						Iterator it = v.iterator();
+						result = session.createName(String.valueOf(it.next()));
 					}
 				} else {
 					throw new IllegalArgumentException("Cannont convert a Vector to Name without a valid Session object");
@@ -342,14 +484,16 @@ public enum TypeUtils {
 				if (v.isEmpty()) {
 					result = Boolean.FALSE;
 				} else {
-					result = toBoolean(v.get(0));
+					Iterator it = v.iterator();
+					result = toBoolean(it.next());
 				}
 			} else {
 				if (!v.isEmpty()) {
 					if (Number.class.isAssignableFrom(T)) {
 						result = toNumber(v, T);
 					} else {
-						result = v.get(0);
+						Iterator it = v.iterator();
+						result = it.next();
 					}
 				}
 			}
@@ -363,12 +507,33 @@ public enum TypeUtils {
 
 	private static final Logger log_ = Logger.getLogger(TypeUtils.class.getName());
 
+	public static <T> T toNumberArray(final Object value, final Class<?> T) {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return (T) collectionToNumberArray((Collection) value, T);
+		} else if (value.getClass().isArray()) {
+			Object[] arr = (Object[]) value;
+			Object[] result = (Object[]) Array.newInstance(T, arr.length);
+			for (int i = 0; i < arr.length; i++) {
+				result[i++] = toNumber(arr[i], T);
+			}
+			return (T) result;
+		} else {
+			Object[] result = (Object[]) Array.newInstance(T, 1);
+			result[0] = toNumber(value, T);
+			return (T) result;
+		}
+	}
+
 	@SuppressWarnings("unchecked")
-	public static <T> T toNumberArray(final Vector<Object> value, final Class<?> T) {
+	public static <T> T collectionToNumberArray(final Collection<Object> value, final Class<?> T) {
 		int size = value.size();
 		Object[] result = (Object[]) Array.newInstance(T, size);
-		for (int i = 0; i < size; i++) {
-			result[i] = toNumber(value.get(i), T);
+		int i = 0;
+		Iterator<Object> it = value.iterator();
+		while (it.hasNext()) {
+			result[i++] = toNumber(it.next(), T);
 		}
 		return (T) result;
 	}
@@ -479,7 +644,21 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static Boolean[] toBooleans(final Collection<Object> vector) {
+	public static Boolean[] toBooleans(final Object value) {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToBooleans((Collection<Object>) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToBooleans(Arrays.asList(value));
+		} else {
+			Boolean[] result = new Boolean[1];
+			result[0] = toBoolean(value);
+			return result;
+		}
+	}
+
+	public static Boolean[] collectionToBooleans(final Collection<Object> vector) {
 		if (vector == null || vector.isEmpty())
 			return new Boolean[0];
 		Boolean[] bools = new Boolean[vector.size()];
@@ -558,10 +737,36 @@ public enum TypeUtils {
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to float primitive.");
 		}
-
 	}
 
-	public static Object toPrimitive(final Vector<Object> values, final Class<?> ctype) {
+	public static Object toPrimitive(final Object value, final Class<?> ctype) {
+		if (value instanceof Collection) {
+			return toPrimitive((Collection) value, ctype);
+		} else {
+			if (ctype == Boolean.TYPE)
+				return toBoolean(value);
+			if (ctype == Integer.TYPE)
+				return toInt(value);
+			if (ctype == Short.TYPE)
+				return toShort(value);
+			if (ctype == Long.TYPE)
+				return toLong(value);
+			if (ctype == Float.TYPE)
+				return toFloat(value);
+			if (ctype == Double.TYPE)
+				return toDouble(value);
+			if (ctype == Byte.TYPE)
+				throw new UnimplementedException("Primitive conversion for byte not yet defined");
+			if (ctype == Character.TYPE)
+				throw new UnimplementedException("Primitive conversion for char not yet defined");
+			if (ctype == com.ibm.icu.lang.UCharacter.class)
+				throw new UnimplementedException("Primitive conversion for char not yet defined");
+			throw new DataNotCompatibleException("");
+
+		}
+	}
+
+	public static Object toPrimitive(final Collection<Object> values, final Class<?> ctype) {
 		if (ctype.isPrimitive()) {
 			throw new DataNotCompatibleException(ctype.getName() + " is not a primitive type.");
 		}
@@ -571,18 +776,19 @@ public enum TypeUtils {
 		if (values.isEmpty()) {
 			throw new DataNotCompatibleException("Cannot create a primitive " + ctype + " from data because we don't have any values.");
 		}
+		Iterator it = values.iterator();
 		if (ctype == Boolean.TYPE)
-			return toBoolean(values.get(0));
+			return toBoolean(it.next());
 		if (ctype == Integer.TYPE)
-			return toInt(values.get(0));
+			return toInt(it.next());
 		if (ctype == Short.TYPE)
-			return toShort(values.get(0));
+			return toShort(it.next());
 		if (ctype == Long.TYPE)
-			return toLong(values.get(0));
+			return toLong(it.next());
 		if (ctype == Float.TYPE)
-			return toFloat(values.get(0));
+			return toFloat(it.next());
 		if (ctype == Double.TYPE)
-			return toDouble(values.get(0));
+			return toDouble(it.next());
 		if (ctype == Byte.TYPE)
 			throw new UnimplementedException("Primitive conversion for byte not yet defined");
 		if (ctype == Character.TYPE)
@@ -628,15 +834,65 @@ public enum TypeUtils {
 		return join(values, ", ");
 	}
 
-	public static Object toPrimitiveArray(final Vector<Object> values, final Class<?> ctype) throws DataNotCompatibleException {
+	public static Object toPrimitiveArray(final Object value, final Class<?> ctype) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToPrimitiveArray((Collection) value, ctype);
+		} else if (value.getClass().isArray()) {
+			//TODO NTF this could be better, but I'm tired
+			return collectionToPrimitiveArray(Arrays.asList(value), ctype);
+		} else {
+			Object result = null;
+			if (ctype == Boolean.TYPE) {
+				boolean[] outcome = new boolean[1];
+				// TODO NTF - should allow for String fields that are binary sequences: "1001001" (SOS)
+				outcome[0] = toBoolean(value);
+				result = outcome;
+			} else if (ctype == Byte.TYPE) {
+				byte[] outcome = new byte[1];
+				// TODO
+				result = outcome;
+			} else if (ctype == Character.TYPE) {
+				char[] outcome = new char[0];
+				// TODO How should this work? Just concatenate the char arrays for each String?
+				result = outcome;
+			} else if (ctype == Short.TYPE) {
+				short[] outcome = new short[1];
+				outcome[0] = toShort(value);
+				result = outcome;
+			} else if (ctype == Integer.TYPE) {
+				int[] outcome = new int[1];
+				outcome[0] = toInt(value);
+				result = outcome;
+			} else if (ctype == Long.TYPE) {
+				long[] outcome = new long[1];
+				outcome[0] = toLong(value);
+				result = outcome;
+			} else if (ctype == Float.TYPE) {
+				float[] outcome = new float[1];
+				outcome[0] = toFloat(value);
+				result = outcome;
+			} else if (ctype == Double.TYPE) {
+				double[] outcome = new double[1];
+				outcome[0] = toDouble(value);
+				result = outcome;
+			}
+			return result;
+		}
+	}
+
+	public static Object collectionToPrimitiveArray(final Collection<Object> values, final Class<?> ctype)
+			throws DataNotCompatibleException {
 		Object result = null;
 		int size = values.size();
+		Iterator it = values.iterator();
+		int i = 0;
 		if (ctype == Boolean.TYPE) {
 			boolean[] outcome = new boolean[size];
 			// TODO NTF - should allow for String fields that are binary sequences: "1001001" (SOS)
-			for (int i = 0; i < size; i++) {
-				Object o = values.get(i);
-				outcome[i] = toBoolean(o);
+			while (it.hasNext()) {
+				outcome[i++] = toBoolean(it.next());
 			}
 			result = outcome;
 		} else if (ctype == Byte.TYPE) {
@@ -649,37 +905,32 @@ public enum TypeUtils {
 			result = outcome;
 		} else if (ctype == Short.TYPE) {
 			short[] outcome = new short[size];
-			for (int i = 0; i < size; i++) {
-				Object o = values.get(i);
-				outcome[i] = toShort(o);
+			while (it.hasNext()) {
+				outcome[i++] = toShort(it.next());
 			}
 			result = outcome;
 		} else if (ctype == Integer.TYPE) {
 			int[] outcome = new int[size];
-			for (int i = 0; i < size; i++) {
-				Object o = values.get(i);
-				outcome[i] = toInt(o);
+			while (it.hasNext()) {
+				outcome[i++] = toInt(it.next());
 			}
 			result = outcome;
 		} else if (ctype == Long.TYPE) {
 			long[] outcome = new long[size];
-			for (int i = 0; i < size; i++) {
-				Object o = values.get(i);
-				outcome[i] = toLong(o);
+			while (it.hasNext()) {
+				outcome[i++] = toLong(it.next());
 			}
 			result = outcome;
 		} else if (ctype == Float.TYPE) {
 			float[] outcome = new float[size];
-			for (int i = 0; i < size; i++) {
-				Object o = values.get(i);
-				outcome[i] = toFloat(o);
+			while (it.hasNext()) {
+				outcome[i++] = toFloat(it.next());
 			}
 			result = outcome;
 		} else if (ctype == Double.TYPE) {
 			double[] outcome = new double[size];
-			for (int i = 0; i < size; i++) {
-				Object o = values.get(i);
-				outcome[i] = toDouble(o);
+			while (it.hasNext()) {
+				outcome[i++] = toDouble(it.next());
 			}
 			result = outcome;
 		}
@@ -714,7 +965,21 @@ public enum TypeUtils {
 		}
 	}
 
-	public static Date[] toDates(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static Date[] toDates(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToDates((Collection<Object>) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToDates(Arrays.asList(value));
+		} else {
+			Date[] result = new Date[1];
+			result[0] = toDate(value);
+			return result;
+		}
+	}
+
+	public static Date[] collectionToDates(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new Date[0];
 
@@ -726,8 +991,24 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static org.openntf.domino.DateTime[] toDateTimes(final Collection<Object> vector, final org.openntf.domino.Session session)
+	public static org.openntf.domino.DateTime[] toDateTimes(final Object value, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToDateTimes((Collection) value, session);
+		} else if (value.getClass().isArray()) {
+			return collectionToDateTimes(Arrays.asList(value), session);
+		} else {
+			org.openntf.domino.DateTime[] result = new org.openntf.domino.DateTime[1];
+			result[0] = session.createDateTime(toDate(value));
+			;
+			return result;
+		}
+	}
+
+	public static org.openntf.domino.DateTime[] collectionToDateTimes(final Collection<Object> vector,
+			final org.openntf.domino.Session session) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new org.openntf.domino.DateTime[0];
 
@@ -743,7 +1024,22 @@ public enum TypeUtils {
 		}
 	}
 
-	public static org.openntf.domino.Name[] toNames(final Collection<Object> vector, final org.openntf.domino.Session session)
+	public static org.openntf.domino.Name[] toNames(final Object value, final org.openntf.domino.Session session)
+			throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToNames((Collection) value, session);
+		} else if (value.getClass().isArray()) {
+			return collectionToNames(Arrays.asList(value), session);
+		} else {
+			org.openntf.domino.Name[] result = new org.openntf.domino.Name[1];
+			result[0] = session.createName(String.valueOf(value));
+			return result;
+		}
+	}
+
+	public static org.openntf.domino.Name[] collectionToNames(final Collection<Object> vector, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new org.openntf.domino.Name[0];
@@ -760,7 +1056,27 @@ public enum TypeUtils {
 		}
 	}
 
-	public static String[] toStrings(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static String[] toStrings(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToStrings((Collection) value);
+		} else if (value.getClass().isArray()) {
+			Object[] arr = (Object[]) value;
+			String[] result = new String[arr.length];
+			for (int i = 0; i < arr.length; i++) {
+				result[i] = String.valueOf(arr[i]);
+			}
+			return result;
+		} else {
+			String[] result = new String[1];
+			result[0] = String.valueOf(value);
+			return result;
+		}
+
+	}
+
+	public static String[] collectionToStrings(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new String[0];
 
@@ -791,7 +1107,21 @@ public enum TypeUtils {
 		}
 	}
 
-	public static Pattern[] toPatterns(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static Pattern[] toPatterns(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToPatterns((Collection) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToPatterns(Arrays.asList(value));
+		} else {
+			Pattern[] result = new Pattern[1];
+			result[0] = Pattern.compile(String.valueOf(value));
+			return result;
+		}
+	}
+
+	public static Pattern[] collectionToPatterns(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new Pattern[0];
 
@@ -803,7 +1133,21 @@ public enum TypeUtils {
 		return patterns;
 	}
 
-	public static java.lang.Object[] toObjects(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static java.lang.Object[] toObjects(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToObjects((Collection) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToObjects(Arrays.asList(value));
+		} else {
+			java.lang.Object[] result = new java.lang.Object[1];
+			result[0] = value;
+			return result;
+		}
+	}
+
+	public static java.lang.Object[] collectionToObjects(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new Object[0];
 
@@ -815,7 +1159,23 @@ public enum TypeUtils {
 		return patterns;
 	}
 
-	public static Class<?>[] toClasses(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static Class<?>[] toClasses(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToClasses((Collection) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToClasses(Arrays.asList(value));
+		} else {
+			Class<?>[] classes = new Class[1];
+			String cn = String.valueOf(value);
+			Class<?> cls = DominoUtils.getClass(cn);
+			classes[0] = cls;
+			return classes;
+		}
+	}
+
+	public static Class<?>[] collectionToClasses(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new Class[0];
 
@@ -826,15 +1186,8 @@ public enum TypeUtils {
 		for (Object o : vector) {
 			int pos = i++;
 			String cn = String.valueOf(o);
-			//			try {
 			Class<?> cls = DominoUtils.getClass(cn);
-			//				Class<?> cls = Class.forName(cn, false, cl);
 			classes[pos] = cls;
-			//			} catch (ClassNotFoundException e) {
-			//				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
-			//				DominoUtils.handleException(e);
-			//				classes[pos] = null;
-			//			}
 		}
 		return classes;
 	}
@@ -893,7 +1246,21 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static Enum<?>[] toEnums(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static Enum<?>[] toEnums(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToEnums((Collection) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToEnums(Arrays.asList(value));
+		} else {
+			Enum<?>[] classes = new Enum[1];
+			classes[0] = toEnum(value);
+			return classes;
+		}
+	}
+
+	public static Enum<?>[] collectionToEnums(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new Enum[0];
 		ClassLoader cl = Factory.getClassLoader();
@@ -926,7 +1293,21 @@ public enum TypeUtils {
 		return classes;
 	}
 
-	public static Formula[] toFormulas(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static Formula[] toFormulas(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToFormulas((Collection<Object>) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToFormulas(Arrays.asList(value));
+		} else {
+			Formula[] strings = new Formula[1];
+			strings[0] = new org.openntf.domino.helpers.Formula(String.valueOf(value));
+			return strings;
+		}
+	}
+
+	public static Formula[] collectionToFormulas(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new Formula[0];
 		Formula[] formulas = new Formula[vector.size()];
@@ -938,7 +1319,21 @@ public enum TypeUtils {
 		return formulas;
 	}
 
-	public static BigString[] toBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {
+	public static BigString[] toBigStrings(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToBigStrings((Collection<Object>) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToBigStrings(Arrays.asList(value));
+		} else {
+			BigString[] strings = new BigString[1];
+			strings[0] = new BigString(String.valueOf(value));
+			return strings;
+		}
+	}
+
+	public static BigString[] collectionToBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
 			return new BigString[0];
 		BigString[] strings = new BigString[vector.size()];
@@ -953,7 +1348,24 @@ public enum TypeUtils {
 		return strings;
 	}
 
-	public static int[] toIntArray(final Collection<Integer> coll) {
+	public static int[] toIntArray(final Object value) {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToIntArray((Collection<Integer>) value);
+		} else if (value.getClass().isArray()) {
+			if (value instanceof int[]) {
+				return (int[]) value;
+			}
+			throw new DataNotCompatibleException("Can't convert an array of " + value.getClass().getName() + " to an int[] yet");
+		} else {
+			int[] ret = new int[1];
+			ret[0] = toInt(value);
+			return ret;
+		}
+	}
+
+	public static int[] collectionToIntArray(final Collection<Integer> coll) {
 		int[] ret = new int[coll.size()];
 		Iterator<Integer> iterator = coll.iterator();
 		for (int i = 0; i < ret.length; i++) {
@@ -962,7 +1374,7 @@ public enum TypeUtils {
 		return ret;
 	}
 
-	public static short[] toShortArray(final Collection<Short> coll) {
+	public static short[] collectionToShortArray(final Collection<Short> coll) {
 		short[] ret = new short[coll.size()];
 		Iterator<Short> iterator = coll.iterator();
 		for (int i = 0; i < ret.length; i++) {
@@ -972,7 +1384,7 @@ public enum TypeUtils {
 		return ret;
 	}
 
-	public static long[] toLongArray(final Collection<Long> coll) {
+	public static long[] collectionToLongArray(final Collection<Long> coll) {
 		long[] ret = new long[coll.size()];
 		Iterator<Long> iterator = coll.iterator();
 		for (int i = 0; i < ret.length; i++) {
@@ -981,7 +1393,7 @@ public enum TypeUtils {
 		return ret;
 	}
 
-	public static byte[] toByteArray(final Collection<Byte> coll) {
+	public static byte[] collectionToByteArray(final Collection<Byte> coll) {
 		byte[] ret = new byte[coll.size()];
 		Iterator<Byte> iterator = coll.iterator();
 		for (int i = 0; i < ret.length; i++) {
