@@ -3,6 +3,7 @@ package org.openntf.domino.graph2;
 import java.io.Externalizable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openntf.domino.annotations.Incomplete;
 
@@ -38,8 +39,6 @@ public interface DElementStore extends Externalizable {
 
 	public Vertex getVertex(Object id);
 
-	public Map<Object, Vertex> getVertexCache();
-
 	public void removeVertex(Vertex vertex);
 
 	public Edge addEdge(Object id);
@@ -48,10 +47,11 @@ public interface DElementStore extends Externalizable {
 
 	public void removeEdge(Edge edge);
 
-	public Map<Object, Edge> getEdgeCache();
-
 	public Map<String, Object> findElementDelegate(Object delegateKey, Class<? extends Element> type);
 
 	public void removeElementDelegate(Element element);
 
+	public Set<Vertex> getCachedVertices();
+
+	public Set<Edge> getCachedEdges();
 }

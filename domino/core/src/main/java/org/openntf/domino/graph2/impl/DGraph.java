@@ -1,9 +1,6 @@
 package org.openntf.domino.graph2.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -87,13 +84,11 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Iterable<Vertex> getVertices() {
-		final List<Vertex> vertices = new ArrayList<Vertex>();
-		Iterator elems = getElementStores().values().iterator();
-		while (elems.hasNext()) {
-			DElementStore store = (DElementStore) elems.next();
-			vertices.addAll(store.getVertexCache().values());
+		FastSet<Vertex> result = new FastSet<Vertex>();
+		for (DElementStore store : getElementStores().values()) {
+			result.addAll(store.getCachedVertices());
 		}
-		return vertices;
+		return result.unmodifiable();
 	}
 
 	@Override
@@ -133,13 +128,11 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Iterable<Edge> getEdges() {
-		final List<Edge> edges = new ArrayList<Edge>();
-		Iterator elems = getElementStores().values().iterator();
-		while (elems.hasNext()) {
-			DElementStore store = (DElementStore) elems.next();
-			edges.addAll(store.getEdgeCache().values());
+		FastSet<Edge> result = new FastSet<Edge>();
+		for (DElementStore store : getElementStores().values()) {
+			result.addAll(store.getCachedEdges());
 		}
-		return edges;
+		return result.unmodifiable();
 	}
 
 	@Override
@@ -321,16 +314,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		String key = store.getStoreKey();
-		try {
-			Long dbid = NoteCoordinate.Utils.getLongFromReplid(key);
-			if (null == dbCache_) {
-				dbCache_ = new DbCache();
-			}
-			result = dbCache_.getDatabase(dbid);
-		} catch (Exception e) {
-			Session session = Factory.getSession();
-			result = session.getDatabase(key);	//TODO NTF sort out server?
-		}
+		Session session = Factory.getSession();
+		result = session.getDatabase(key);	//TODO NTF sort out server?
 		return result;
 	}
 

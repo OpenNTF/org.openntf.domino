@@ -834,7 +834,6 @@ public class Graph2Test implements Runnable {
 			Transformer<Vertex, String> vertexLabelTransformer = new Transformer<Vertex, String>() {
 				@Override
 				public String transform(final Vertex vertex) {
-					System.out.println(vertex.getProperty("name"));
 					return (String) vertex.getProperty("name");
 				}
 			};
@@ -856,7 +855,7 @@ public class Graph2Test implements Runnable {
 			frame.pack();
 			frame.setVisible(true);
 
-			graph.commit();
+			graph.rollback();
 
 		} catch (Throwable t) {
 			t.printStackTrace();

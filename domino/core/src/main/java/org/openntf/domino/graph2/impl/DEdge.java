@@ -11,9 +11,9 @@ import com.tinkerpop.blueprints.Vertex;
 public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	private static final Logger log_ = Logger.getLogger(DEdge.class.getName());
 	private transient Vertex in_;
-	private String inKey_;
+	private Object inKey_;
 	private transient Vertex out_;
-	private String outKey_;
+	private Object outKey_;
 	private String label_;
 
 	public DEdge(final DGraph parent) {
@@ -35,16 +35,18 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		return getParent().getVertex(getVertexId(direction));
 	}
 
-	public String getVertexId(final Direction direction) {
+	public Object getVertexId(final Direction direction) {
 		if (direction == Direction.IN) {
 			if (inKey_ == null) {
-				inKey_ = getProperty(org.openntf.domino.graph2.DEdge.IN_NAME, String.class);
+				String key = getProperty(org.openntf.domino.graph2.DEdge.IN_NAME, String.class);
+				inKey_ = new org.openntf.domino.big.impl.NoteCoordinate(key);
 			}
 			return inKey_;
 		}
 		if (direction == Direction.OUT) {
 			if (outKey_ == null) {
-				outKey_ = getProperty(org.openntf.domino.graph2.DEdge.OUT_NAME, String.class);
+				String key = getProperty(org.openntf.domino.graph2.DEdge.OUT_NAME, String.class);
+				outKey_ = new org.openntf.domino.big.impl.NoteCoordinate(key);
 			}
 			return outKey_;
 		}
