@@ -321,8 +321,16 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		String key = store.getStoreKey();
-		Session session = Factory.getSession();
-		result = session.getDatabase(key);	//TODO NTF sort out server?
+		try {
+			Long dbid = NoteCoordinate.Utils.getLongFromReplid(key);
+			if (null == dbCache_) {
+				dbCache_ = new DbCache();
+			}
+			result = dbCache_.getDatabase(dbid);
+		} catch (Exception e) {
+			Session session = Factory.getSession();
+			result = session.getDatabase(key);	//TODO NTF sort out server?
+		}
 		return result;
 	}
 

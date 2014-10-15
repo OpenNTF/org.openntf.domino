@@ -825,8 +825,6 @@ public class Graph2Test implements Runnable {
 
 			System.out.println("Starting GraphJung...");
 
-			graph.commit();
-
 			GraphJung graph2 = new GraphJung(graph);
 			Layout<Vertex, Edge> layout = new CircleLayout<Vertex, Edge>(graph2);
 			layout.setSize(new Dimension(300, 300));
@@ -857,6 +855,8 @@ public class Graph2Test implements Runnable {
 			frame.getContentPane().add(viz);
 			frame.pack();
 			frame.setVisible(true);
+
+			graph.commit();
 
 		} catch (Throwable t) {
 			t.printStackTrace();
