@@ -1,6 +1,9 @@
 package org.openntf.domino.graph2.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -84,8 +87,13 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Iterable<Vertex> getVertices() {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Vertex> vertices = new ArrayList<Vertex>();
+		Iterator elems = getElementStores().values().iterator();
+		while (elems.hasNext()) {
+			DElementStore store = (DElementStore) elems.next();
+			vertices.addAll(store.getVertexCache().values());
+		}
+		return vertices;
 	}
 
 	@Override
@@ -125,8 +133,13 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Iterable<Edge> getEdges() {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Edge> edges = new ArrayList<Edge>();
+		Iterator elems = getElementStores().values().iterator();
+		while (elems.hasNext()) {
+			DElementStore store = (DElementStore) elems.next();
+			edges.addAll(store.getEdgeCache().values());
+		}
+		return edges;
 	}
 
 	@Override

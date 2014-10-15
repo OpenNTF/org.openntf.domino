@@ -26,6 +26,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	private Object delegate_;
 	private String delegateKey_;
 	private transient Map<Object, Element> elementCache_;
+	private transient Map<Object, Vertex> vertexCache_;
+	private transient Map<Object, Edge> edgeCache_;
 	private transient org.openntf.domino.graph2.DConfiguration configuration_;
 
 	protected void setTypes(final List<Class<?>> types) {
@@ -37,6 +39,20 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			elementCache_ = new FastMap<Object, Element>().atomic();
 		}
 		return elementCache_;
+	}
+
+	public Map<Object, Edge> getEdgeCache() {
+		if (edgeCache_ == null) {
+			edgeCache_ = new FastMap<Object, Edge>().atomic();
+		}
+		return edgeCache_;
+	}
+
+	public Map<Object, Vertex> getVertexCache() {
+		if (vertexCache_ == null) {
+			vertexCache_ = new FastMap<Object, Vertex>().atomic();
+		}
+		return vertexCache_;
 	}
 
 	public DElementStore() {
@@ -173,6 +189,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
 				getElementCache().put(result.getId(), result);
+				getVertexCache().put(result.getId(), result);
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -225,6 +242,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				result = edge;
 				System.out.println("TEMP DEBUG: Returning edge " + result.getId());
 				getElementCache().put(result.getId(), result);
+				getEdgeCache().put(result.getId(), result);
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}

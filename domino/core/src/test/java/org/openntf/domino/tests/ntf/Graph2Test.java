@@ -11,16 +11,15 @@ import org.openntf.domino.Session;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DGraph;
-import org.openntf.domino.graph2.impl.DTypedPropertyHandler;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.oupls.jung.GraphJung;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.EdgeFrame;
-import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.InVertex;
@@ -28,6 +27,11 @@ import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
+import com.tinkerpop.frames.modules.Module;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
@@ -115,83 +119,59 @@ public class Graph2Test implements Runnable {
 
 	}
 
-	public interface User extends DVertexFrame {
-		@Property("name")
-		public String getName();
+	@TypeField("form")
+	public interface DEdgeFrame extends EdgeFrame {
 
-		@Property("name")
-		public void setName(String name);
-	}
-
-	public interface DWorkflowVertexFrame extends DVertexFrame {
-		@Adjacency(label = "submitted")
-		public User getSubmittedBy();
-
-		@Adjacency(label = "submitted")
-		public void setSubmittedBy(User submitted);
-	}
-
-	public abstract class WorkflowInstance implements DWorkflowVertexFrame {
-
-	}
-
-	public interface DSocialVertexFrame extends DVertexFrame {
-		@Adjacency(label = "commented")
-		public Iterable<Comment> getComments();
-
-		@Adjacency(label = "commented")
-		public Comment addComment(Comment comment);
-
-		@Adjacency(label = "commented")
-		public Comment removeComments(Comment comment);
-	}
-
-	public interface Comment extends DVertexFrame {
-		@Property("body")
-		public String getBody();
-
-		@Property("body")
-		public void setBody(String body);
 	}
 
 	@TypeValue("movie")
-	public interface Movie extends DSocialVertexFrame {
+	public interface Movie extends DVertexFrame {
 		@Property("title")
 		public String getTitle();
 
 		@Property("title")
 		public void setTitle(String title);
 
-		@Incidence(label = "directedBy")
-		public Iterable<DirectedBy> getDirectedBy();
+		@Incidence(label = directedBy)
+		public DirectedBy getDirectedBy();
 
-		@Incidence(label = "directedBy")
+		@Incidence(label = directedBy)
 		public DirectedBy addDirectedBy(Crew crew);
 
-		@Incidence(label = "directedBy")
+		@Incidence(label = directedBy)
 		public void removeDirectedBy(Crew crew);
 
-		@Adjacency(label = "directedBy")
+		@Adjacency(label = directedBy)
 		public Crew getDirectedByCrew();
 
-		@Adjacency(label = "directedBy")
+		@Adjacency(label = directedBy)
 		public Crew addDirectedByCrew(Crew crew);
 
-		@Adjacency(label = "directedBy")
+		@Adjacency(label = directedBy)
 		public Crew removeDirectedByCrew(Crew crew);
 
-		@Adjacency(label = "starring")
+		@Incidence(label = starring)
+		public Iterable<Starring> getStarring();
+
+		@Incidence(label = starring)
+		public Starring addStarring(Crew crew);
+
+		@Incidence(label = starring)
+		public void removeStarring(Crew crew);
+
+		@Adjacency(label = starring)
 		public Iterable<Crew> getStarringCrew();
 
-		@Adjacency(label = "starring")
+		@Adjacency(label = starring)
 		public Crew addStarringCrew(Crew crew);
 
-		@Adjacency(label = "starring")
+		@Adjacency(label = starring)
 		public Crew removeStarringCrew(Crew crew);
 
 	}
 
-	public interface DirectedBy extends EdgeFrame {
+	@TypeValue(directedBy)
+	public interface DirectedBy extends DEdgeFrame {
 		@Property("rating")
 		public Integer getRating();
 
@@ -206,6 +186,57 @@ public class Graph2Test implements Runnable {
 
 	}
 
+	@TypeValue(starring)
+	public interface Starring extends DEdgeFrame {
+		@OutVertex
+		Movie getMovie();
+
+		@InVertex
+		Crew getStar();
+	}
+
+	@TypeValue(portrays)
+	public interface Portrays extends DEdgeFrame {
+		@OutVertex
+		Crew getStar();
+
+		@InVertex
+		Character getCharacter();
+	}
+
+	@TypeValue(appearsIn)
+	public interface AppearsIn extends DEdgeFrame {
+		@OutVertex
+		Character getCharacter();
+
+		@InVertex
+		Movie getMovie();
+	}
+
+	@TypeValue(spawns)
+	public interface Spawns extends DEdgeFrame {
+		@OutVertex
+		Character getParent();
+
+		@InVertex
+		Character getCreated();
+	}
+
+	@TypeValue(kills)
+	public interface Kills extends DEdgeFrame {
+		@Property("film")
+		public String getFilm();
+
+		@Property("film")
+		public void setFilm(String film);
+
+		@OutVertex
+		Character getKiller();
+
+		@InVertex
+		Character getVictim();
+	}
+
 	@TypeValue("character")
 	public interface Character extends DVertexFrame {
 		@Property("name")
@@ -214,28 +245,82 @@ public class Graph2Test implements Runnable {
 		@Property("name")
 		public void setName(String name);
 
-		@Adjacency(label = "appearsIn")
+		@Adjacency(label = appearsIn)
 		public Iterable<Movie> getAppearsInMovies();
 
-		@Adjacency(label = "appearsIn")
-		public Edge addAppearsInMovies(Movie movie);
+		@Incidence(label = appearsIn)
+		public Iterable<AppearsIn> getAppearsIn();
 
-		@Adjacency(label = "appearsIn")
-		public void removeAppearsInMovies(Movie movie);
+		@Incidence(label = appearsIn)
+		public AppearsIn addAppearsIn(Movie movie);
 
+		@Incidence(label = appearsIn)
+		public void removeAppearsIn(AppearsIn appearance);
+
+		@Adjacency(label = portrays, direction = Direction.IN)
+		public Iterable<Crew> getPortrayedByCrew();
+
+		@Incidence(label = portrays, direction = Direction.IN)
+		public Iterable<Portrays> getPortrayedBy();
+
+		@Incidence(label = portrays, direction = Direction.IN)
+		public Portrays addPortrayedBy(Crew crew);
+
+		@Incidence(label = portrays, direction = Direction.IN)
+		public void removePortrayedBy(Portrays portrayal);
+
+		@Adjacency(label = kills, direction = Direction.IN)
+		public Iterable<Character> getKilledByCharacters();
+
+		@Incidence(label = kills, direction = Direction.IN)
+		public Iterable<Kills> getKilledBy();
+
+		@Incidence(label = kills, direction = Direction.IN)
+		public Kills addKilledBy(Character character);
+
+		@Incidence(label = kills, direction = Direction.IN)
+		public void removeKilledBy(Kills kill);
+
+		@Adjacency(label = kills, direction = Direction.OUT)
+		public Iterable<Character> getKillsCharacters();
+
+		@Incidence(label = kills, direction = Direction.OUT)
+		public Iterable<Kills> getKills();
+
+		@Incidence(label = kills, direction = Direction.OUT)
+		public Kills addKills(Character character);
+
+		@Incidence(label = kills, direction = Direction.OUT)
+		public void removeKills(Kills kill);
+
+		@Adjacency(label = spawns, direction = Direction.IN)
+		public Iterable<Character> getSpawnedByCharacters();
+
+		@Incidence(label = spawns, direction = Direction.IN)
+		public Iterable<Spawns> getSpawnedBy();
+
+		@Incidence(label = spawns, direction = Direction.IN)
+		public Spawns addSpawnedBy(Character character);
+
+		@Incidence(label = spawns, direction = Direction.IN)
+		public void removeSpawnedBy(Spawns spawn);
+
+		@Adjacency(label = spawns, direction = Direction.OUT)
+		public Iterable<Character> getSpawnsCharacters();
+
+		@Incidence(label = spawns, direction = Direction.OUT)
+		public Iterable<Spawns> getSpawns();
+
+		@Incidence(label = spawns, direction = Direction.OUT)
+		public Spawns addSpawns(Character character);
+
+		@Adjacency(label = spawns, direction = Direction.OUT)
+		public void removeSpawns(Character spawn);
 	}
 
 	@TypeValue("crew")
+	@JavaHandlerClass(CrewImpl.class)
 	public interface Crew extends DVertexFrame {
-		abstract class CrewImpl implements Crew {
-			@Override
-			public void setFullName(final String fullName) {
-				int pos = fullName.lastIndexOf(' ');
-				setFirstName(fullName.substring(0, pos - 1));
-				setLastName(fullName.substring(pos + 1));
-			}
-		}
-
 		@Property("firstName")
 		public String getFirstName();
 
@@ -248,26 +333,41 @@ public class Graph2Test implements Runnable {
 		@Property("lastName")
 		public void setLastName(String lastName);
 
+		@JavaHandler
 		public void setFullName(String fullName);
 
-		@Adjacency(label = "portrays")
+		@Adjacency(label = portrays)
 		public Iterable<Character> getPortraysCharacters();
 
-		@Adjacency(label = "portrays")
-		public Edge addPortraysCharacter(Character character);
+		@Incidence(label = portrays)
+		public Iterable<Portrays> getPortrayals();
 
-		@Adjacency(label = "portrays")
-		public void removePortraysCharacter(Character character);
+		@Incidence(label = portrays)
+		public Portrays addPortrayals(Character character);
 
-		@Adjacency(label = "starring")
+		@Incidence(label = portrays)
+		public void removePortrayals(Portrays portrayal);
+
+		@Adjacency(label = starring)
 		public Iterable<Movie> getStarsInMovies();
 
-		@Adjacency(label = "starring")
-		public Edge addStarsInMovie(Movie movie);
+		@Incidence(label = starring)
+		public Iterable<Starring> getStarsIn();
 
-		@Adjacency(label = "starring")
+		@Incidence(label = starring)
+		public Starring addStarsInMovie(Movie movie);
+
+		@Adjacency(label = starring)
 		public void removeStarsInMovie(Movie movie);
+	}
 
+	public static abstract class CrewImpl implements JavaHandlerContext<Vertex>, Crew {
+		@Override
+		public void setFullName(final String fullName) {
+			int pos = fullName.lastIndexOf(' ');
+			setFirstName(fullName.substring(0, pos));
+			setLastName(fullName.substring(pos + 1));
+		}
 	}
 
 	public static void main(final String[] args) {
@@ -308,7 +408,6 @@ public class Graph2Test implements Runnable {
 		Session session = this.getSession();
 
 		try {
-
 			timelog("Beginning graph2 test...");
 
 			DElementStore crewStore = new DElementStore();
@@ -327,14 +426,12 @@ public class Graph2Test implements Runnable {
 			config.setDefaultElementStore(edgeId);
 			DGraph graph = new DGraph(config);
 
-			FramedGraphFactory factory = new FramedGraphFactory(new TypedGraphModuleBuilder().withClass(Movie.class)
-					.withClass(Character.class).withClass(Crew.class).build());
-			FramedGraphConfiguration frameConfig = new FramedGraphConfiguration();
-			frameConfig.addMethodHandler(new DTypedPropertyHandler());
+			JavaHandlerModule jhm = new JavaHandlerModule();
+
+			Module module = new TypedGraphModuleBuilder().withClass(Movie.class).withClass(Character.class).withClass(Crew.class).build();
+			FramedGraphFactory factory = new FramedGraphFactory(module, jhm);
 
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
-
-			//	framedGraph.registerAnnotationHandler(new DTypedPropertyHandler());
 
 			Movie newhopeMovie = framedGraph.addVertex(movieId + MV_SW, Movie.class);
 			newhopeMovie.setTitle(MV_SW);
@@ -393,351 +490,343 @@ public class Graph2Test implements Runnable {
 			DirectedBy rosDirector = revengeMovie.addDirectedBy(lucasCrew);
 			rosDirector.setRating(1);
 
-			//			Vertex luke = graph.addVertex(characterId + CH_LS);
-			//			graph.addEdge(null, luke.asVertex(), newhope, appearsIn);
-			//			graph.addEdge(null, luke, empire, appearsIn);
-			//			graph.addEdge(null, luke, jedi, appearsIn);
 			Character luke = framedGraph.addVertex(characterId + CH_LS, Character.class);
-			luke.addAppearsInMovies(newhopeMovie);
-			luke.addAppearsInMovies(empireMovie);
-			luke.addAppearsInMovies(jediMovie);
-			Vertex leia = graph.addVertex(characterId + CH_LO);
-			graph.addEdge(null, leia, newhope, appearsIn);
-			graph.addEdge(null, leia, empire, appearsIn);
-			graph.addEdge(null, leia, jedi, appearsIn);
-			Vertex han = graph.addVertex(characterId + CH_HS);
-			graph.addEdge(null, han, newhope, appearsIn);
-			graph.addEdge(null, han, empire, appearsIn);
-			graph.addEdge(null, han, jedi, appearsIn);
-			Vertex chewy = graph.addVertex(characterId + CH_CH);
-			graph.addEdge(null, chewy, newhope, appearsIn);
-			graph.addEdge(null, chewy, empire, appearsIn);
-			graph.addEdge(null, chewy, jedi, appearsIn);
-			Vertex threepio = graph.addVertex(characterId + CH_C3);
-			graph.addEdge(null, threepio, newhope, appearsIn);
-			graph.addEdge(null, threepio, empire, appearsIn);
-			graph.addEdge(null, threepio, jedi, appearsIn);
-			graph.addEdge(null, threepio, phantom, appearsIn);
-			graph.addEdge(null, threepio, clones, appearsIn);
-			graph.addEdge(null, threepio, revenge, appearsIn);
-			Vertex artoo = graph.addVertex(characterId + CH_R2);
-			graph.addEdge(null, artoo, newhope, appearsIn);
-			graph.addEdge(null, artoo, empire, appearsIn);
-			graph.addEdge(null, artoo, jedi, appearsIn);
-			graph.addEdge(null, artoo, phantom, appearsIn);
-			graph.addEdge(null, artoo, clones, appearsIn);
-			graph.addEdge(null, artoo, revenge, appearsIn);
-			Vertex lando = graph.addVertex(characterId + CH_LC);
-			graph.addEdge(null, lando, empire, appearsIn);
-			graph.addEdge(null, lando, jedi, appearsIn);
-			Vertex anakin = graph.addVertex(characterId + CH_AS);
-			graph.addEdge(null, anakin, newhope, appearsIn);
-			graph.addEdge(null, anakin, empire, appearsIn);
-			graph.addEdge(null, anakin, jedi, appearsIn);
-			graph.addEdge(null, anakin, phantom, appearsIn);
-			graph.addEdge(null, anakin, clones, appearsIn);
-			graph.addEdge(null, anakin, revenge, appearsIn);
-			Vertex palpatine = graph.addVertex(characterId + CH_DS);
-			graph.addEdge(null, palpatine, empire, appearsIn);
-			graph.addEdge(null, palpatine, jedi, appearsIn);
-			graph.addEdge(null, palpatine, phantom, appearsIn);
-			graph.addEdge(null, palpatine, clones, appearsIn);
-			graph.addEdge(null, palpatine, revenge, appearsIn);
-			Vertex obiwan = graph.addVertex(characterId + CH_OWK);
-			graph.addEdge(null, obiwan, newhope, appearsIn);
-			graph.addEdge(null, obiwan, empire, appearsIn);
-			graph.addEdge(null, obiwan, jedi, appearsIn);
-			graph.addEdge(null, obiwan, phantom, appearsIn);
-			graph.addEdge(null, obiwan, clones, appearsIn);
-			graph.addEdge(null, obiwan, revenge, appearsIn);
-			Vertex quigon = graph.addVertex(characterId + CH_QGJ);
-			graph.addEdge(null, quigon, phantom, appearsIn);
-			Vertex yoda = graph.addVertex(characterId + CH_Y);
-			graph.addEdge(null, yoda, empire, appearsIn);
-			graph.addEdge(null, yoda, jedi, appearsIn);
-			graph.addEdge(null, yoda, phantom, appearsIn);
-			graph.addEdge(null, yoda, clones, appearsIn);
-			graph.addEdge(null, yoda, revenge, appearsIn);
-			Vertex jango = graph.addVertex(characterId + CH_JF);
-			graph.addEdge(null, jango, clones, appearsIn);
-			graph.addEdge(null, jango, revenge, appearsIn);
-			Vertex boba = graph.addVertex(characterId + CH_BF);
-			graph.addEdge(null, boba, empire, appearsIn);
-			graph.addEdge(null, boba, jedi, appearsIn);
-			graph.addEdge(null, boba, clones, appearsIn);
-			graph.addEdge(null, boba, revenge, appearsIn);
-			Vertex padme = graph.addVertex(characterId + CH_P);
-			graph.addEdge(null, padme, phantom, appearsIn);
-			graph.addEdge(null, padme, clones, appearsIn);
-			graph.addEdge(null, padme, revenge, appearsIn);
-			Vertex shmi = graph.addVertex(characterId + CH_SS);
-			graph.addEdge(null, shmi, phantom, appearsIn);
-			graph.addEdge(null, shmi, clones, appearsIn);
-			Vertex tyranus = graph.addVertex(characterId + CH_DT);
-			graph.addEdge(null, tyranus, clones, appearsIn);
-			graph.addEdge(null, tyranus, revenge, appearsIn);
-			Vertex maul = graph.addVertex(characterId + CH_DM);
-			graph.addEdge(null, maul, phantom, appearsIn);
-			Vertex tarkin = graph.addVertex(characterId + CH_GMT);
-			graph.addEdge(null, tarkin, newhope, appearsIn);
-			Vertex windu = graph.addVertex(characterId + CH_MW);
-			graph.addEdge(null, windu, phantom, appearsIn);
-			graph.addEdge(null, windu, clones, appearsIn);
-			graph.addEdge(null, windu, revenge, appearsIn);
-			Vertex greedo = graph.addVertex(characterId + CH_G);
-			graph.addEdge(null, greedo, newhope, appearsIn);
-			Vertex wedge = graph.addVertex(characterId + CH_WA);
-			graph.addEdge(null, wedge, newhope, appearsIn);
-			graph.addEdge(null, wedge, empire, appearsIn);
-			graph.addEdge(null, wedge, jedi, appearsIn);
+			luke.addAppearsIn(newhopeMovie);
+			luke.addAppearsIn(empireMovie);
+			luke.addAppearsIn(jediMovie);
+			luke.setName(CH_LS);
+			Character leia = framedGraph.addVertex(characterId + CH_LO, Character.class);
+			leia.addAppearsIn(newhopeMovie);
+			leia.addAppearsIn(empireMovie);
+			leia.addAppearsIn(jediMovie);
+			leia.setName(CH_LO);
+			Character han = framedGraph.addVertex(characterId + CH_HS, Character.class);
+			han.addAppearsIn(newhopeMovie);
+			han.addAppearsIn(empireMovie);
+			han.addAppearsIn(jediMovie);
+			han.setName(CH_HS);
+			Character chewy = framedGraph.addVertex(characterId + CH_CH, Character.class);
+			chewy.addAppearsIn(newhopeMovie);
+			chewy.addAppearsIn(empireMovie);
+			chewy.addAppearsIn(jediMovie);
+			chewy.addAppearsIn(revengeMovie);
+			chewy.setName(CH_CH);
+			Character threepio = framedGraph.addVertex(characterId + CH_C3, Character.class);
+			threepio.addAppearsIn(newhopeMovie);
+			threepio.addAppearsIn(empireMovie);
+			threepio.addAppearsIn(jediMovie);
+			threepio.addAppearsIn(phantomMovie);
+			threepio.addAppearsIn(clonesMovie);
+			threepio.addAppearsIn(revengeMovie);
+			threepio.setName(CH_C3);
+			Character artoo = framedGraph.addVertex(characterId + CH_R2, Character.class);
+			artoo.addAppearsIn(newhopeMovie);
+			artoo.addAppearsIn(empireMovie);
+			artoo.addAppearsIn(jediMovie);
+			artoo.addAppearsIn(phantomMovie);
+			artoo.addAppearsIn(clonesMovie);
+			artoo.addAppearsIn(revengeMovie);
+			artoo.setName(CH_R2);
+			Character lando = framedGraph.addVertex(characterId + CH_LC, Character.class);
+			lando.addAppearsIn(empireMovie);
+			lando.addAppearsIn(jediMovie);
+			lando.setName(CH_LC);
+			Character anakin = framedGraph.addVertex(characterId + CH_AS, Character.class);
+			anakin.addAppearsIn(newhopeMovie);
+			anakin.addAppearsIn(empireMovie);
+			anakin.addAppearsIn(jediMovie);
+			anakin.addAppearsIn(phantomMovie);
+			anakin.addAppearsIn(clonesMovie);
+			anakin.addAppearsIn(revengeMovie);
+			anakin.setName(CH_AS);
+			Character palpatine = framedGraph.addVertex(characterId + CH_DS, Character.class);
+			palpatine.addAppearsIn(empireMovie);
+			palpatine.addAppearsIn(jediMovie);
+			palpatine.addAppearsIn(phantomMovie);
+			palpatine.addAppearsIn(clonesMovie);
+			palpatine.addAppearsIn(revengeMovie);
+			palpatine.setName(CH_DS);
+			Character obiwan = framedGraph.addVertex(characterId + CH_OWK, Character.class);
+			obiwan.addAppearsIn(newhopeMovie);
+			obiwan.addAppearsIn(empireMovie);
+			obiwan.addAppearsIn(jediMovie);
+			obiwan.addAppearsIn(phantomMovie);
+			obiwan.addAppearsIn(clonesMovie);
+			obiwan.addAppearsIn(revengeMovie);
+			obiwan.setName(CH_OWK);
+			Character quigon = framedGraph.addVertex(characterId + CH_QGJ, Character.class);
+			quigon.addAppearsIn(phantomMovie);
+			quigon.setName(CH_QGJ);
+			Character yoda = framedGraph.addVertex(characterId + CH_Y, Character.class);
+			yoda.addAppearsIn(empireMovie);
+			yoda.addAppearsIn(jediMovie);
+			yoda.addAppearsIn(phantomMovie);
+			yoda.addAppearsIn(clonesMovie);
+			yoda.addAppearsIn(revengeMovie);
+			yoda.setName(CH_Y);
+			Character jango = framedGraph.addVertex(characterId + CH_JF, Character.class);
+			jango.addAppearsIn(clonesMovie);
+			yoda.setName(CH_JF);
+			Character boba = framedGraph.addVertex(characterId + CH_BF, Character.class);
+			boba.addAppearsIn(empireMovie);
+			boba.addAppearsIn(jediMovie);
+			boba.addAppearsIn(clonesMovie);
+			yoda.setName(CH_BF);
+			Character padme = framedGraph.addVertex(characterId + CH_P, Character.class);
+			padme.addAppearsIn(phantomMovie);
+			padme.addAppearsIn(clonesMovie);
+			padme.addAppearsIn(revengeMovie);
+			padme.setName(CH_P);
+			Character shmi = framedGraph.addVertex(characterId + CH_SS, Character.class);
+			shmi.addAppearsIn(phantomMovie);
+			shmi.addAppearsIn(clonesMovie);
+			shmi.setName(CH_SS);
+			Character tyranus = framedGraph.addVertex(characterId + CH_DT, Character.class);
+			tyranus.addAppearsIn(clonesMovie);
+			tyranus.addAppearsIn(revengeMovie);
+			tyranus.setName(CH_DT);
+			Character maul = framedGraph.addVertex(characterId + CH_DM, Character.class);
+			maul.addAppearsIn(phantomMovie);
+			maul.addAppearsIn(clonesMovie);
+			maul.setName(CH_DM);
+			Character tarkin = framedGraph.addVertex(characterId + CH_GMT, Character.class);
+			tarkin.addAppearsIn(newhopeMovie);
+			tarkin.setName(CH_GMT);
+			Character windu = framedGraph.addVertex(characterId + CH_MW, Character.class);
+			windu.addAppearsIn(phantomMovie);
+			windu.addAppearsIn(clonesMovie);
+			windu.addAppearsIn(revengeMovie);
+			windu.setName(CH_MW);
+			Character greedo = framedGraph.addVertex(characterId + CH_G, Character.class);
+			greedo.addAppearsIn(newhopeMovie);
+			greedo.setName(CH_G);
+			Character wedge = framedGraph.addVertex(characterId + CH_WA, Character.class);
+			wedge.addAppearsIn(newhopeMovie);
+			wedge.addAppearsIn(empireMovie);
+			wedge.addAppearsIn(jediMovie);
+			wedge.setName(CH_WA);
 
-			Vertex ford = graph.addVertex(crewId + ACT_HF);
+			Crew ford = framedGraph.addVertex(crewId + ACT_HF, Crew.class);
+			ford.setFullName(ACT_HF);
+			ford.addStarsInMovie(newhopeMovie);
+			ford.addStarsInMovie(empireMovie);
+			ford.addStarsInMovie(jediMovie);
+			han.addPortrayedBy(ford);
 
-			ford.setProperty("firstName", "Harrison");
-			ford.setProperty("lastName", "Ford");
-			graph.addEdge(null, newhope, ford, starring);
-			graph.addEdge(null, empire, ford, starring);
-			graph.addEdge(null, jedi, ford, starring);
-			graph.addEdge(null, ford, han, portrays);
+			Crew fischer = framedGraph.addVertex(crewId + ACT_CF, Crew.class);
+			fischer.setFullName(ACT_CF);
+			fischer.addStarsInMovie(newhopeMovie);
+			fischer.addStarsInMovie(empireMovie);
+			fischer.addStarsInMovie(jediMovie);
+			fischer.addPortrayals(leia);
 
-			Vertex fischer = graph.addVertex(crewId + "Carrie Fischer");
-			fischer.setProperty("firstName", "Carrie");
-			fischer.setProperty("lastName", "Fischer");
-			graph.addEdge(null, newhope, fischer, starring);
-			graph.addEdge(null, empire, fischer, starring);
-			graph.addEdge(null, jedi, fischer, starring);
-			graph.addEdge(null, fischer, leia, portrays);
+			Crew hammill = framedGraph.addVertex(crewId + ACT_MH, Crew.class);
+			hammill.setFullName(ACT_MH);
+			hammill.addStarsInMovie(newhopeMovie);
+			hammill.addStarsInMovie(empireMovie);
+			hammill.addStarsInMovie(jediMovie);
+			hammill.addPortrayals(luke);
 
-			Vertex hammill = graph.addVertex(crewId + ACT_MH);
-			hammill.setProperty("firstName", "Mark");
-			hammill.setProperty("lastName", "Hammill");
-			graph.addEdge(null, newhope, hammill, starring);
-			graph.addEdge(null, empire, hammill, starring);
-			graph.addEdge(null, jedi, hammill, starring);
-			graph.addEdge(null, hammill, luke.asVertex(), portrays);
+			Crew daniels = framedGraph.addVertex(crewId + ACT_AD, Crew.class);
+			daniels.setFullName(ACT_AD);
+			daniels.addStarsInMovie(newhopeMovie);
+			daniels.addStarsInMovie(empireMovie);
+			daniels.addStarsInMovie(jediMovie);
+			daniels.addStarsInMovie(phantomMovie);
+			daniels.addStarsInMovie(clonesMovie);
+			daniels.addStarsInMovie(revengeMovie);
+			daniels.addPortrayals(threepio);
 
-			Vertex daniels = graph.addVertex(crewId + ACT_AD);
-			daniels.setProperty("firstName", "Anthony");
-			daniels.setProperty("lastName", "Daniels");
-			graph.addEdge(null, newhope, daniels, starring);
-			graph.addEdge(null, empire, daniels, starring);
-			graph.addEdge(null, jedi, daniels, starring);
-			graph.addEdge(null, phantom, daniels, starring);
-			graph.addEdge(null, clones, daniels, starring);
-			graph.addEdge(null, revenge, daniels, starring);
-			graph.addEdge(null, daniels, threepio, portrays);
+			Crew baker = framedGraph.addVertex(crewId + ACT_KB, Crew.class);
+			baker.setFullName(ACT_KB);
+			baker.addStarsInMovie(newhopeMovie);
+			baker.addStarsInMovie(empireMovie);
+			baker.addStarsInMovie(jediMovie);
+			baker.addStarsInMovie(phantomMovie);
+			baker.addStarsInMovie(clonesMovie);
+			baker.addStarsInMovie(revengeMovie);
+			baker.addPortrayals(artoo);
 
-			Vertex baker = graph.addVertex(crewId + ACT_KB);
-			baker.setProperty("firstName", "Kenny");
-			baker.setProperty("lastName", "Baker");
-			graph.addEdge(null, newhope, baker, starring);
-			graph.addEdge(null, empire, baker, starring);
-			graph.addEdge(null, jedi, baker, starring);
-			graph.addEdge(null, phantom, baker, starring);
-			graph.addEdge(null, clones, baker, starring);
-			graph.addEdge(null, revenge, baker, starring);
-			graph.addEdge(null, baker, artoo, portrays);
+			Crew prowse = framedGraph.addVertex(crewId + ACT_DP, Crew.class);
+			prowse.setFullName(ACT_DP);
+			prowse.addStarsInMovie(newhopeMovie);
+			prowse.addStarsInMovie(empireMovie);
+			prowse.addStarsInMovie(jediMovie);
+			prowse.addPortrayals(anakin);
 
-			Vertex prowse = graph.addVertex(crewId + ACT_DP);
-			prowse.setProperty("firstName", "David");
-			prowse.setProperty("lastName", "Prowse");
-			graph.addEdge(null, newhope, prowse, starring);
-			graph.addEdge(null, empire, prowse, starring);
-			graph.addEdge(null, jedi, prowse, starring);
-			graph.addEdge(null, prowse, anakin, portrays);
+			Crew williams = framedGraph.addVertex(crewId + ACT_BDW, Crew.class);
+			williams.setFullName(ACT_BDW);
+			williams.addStarsInMovie(empireMovie);
+			williams.addStarsInMovie(jediMovie);
+			williams.addPortrayals(lando);
 
-			Vertex williams = graph.addVertex(crewId + ACT_BDW);
-			williams.setProperty("firstName", "Billy Dee");
-			williams.setProperty("lastName", "Williams");
-			graph.addEdge(null, empire, williams, starring);
-			graph.addEdge(null, jedi, williams, starring);
-			graph.addEdge(null, williams, lando, portrays);
+			Crew guinness = framedGraph.addVertex(crewId + ACT_AG, Crew.class);
+			guinness.setFullName(ACT_AG);
+			guinness.addStarsInMovie(newhopeMovie);
+			guinness.addStarsInMovie(empireMovie);
+			guinness.addStarsInMovie(jediMovie);
+			guinness.addPortrayals(obiwan);
 
-			Vertex guinness = graph.addVertex(crewId + ACT_AG);
-			guinness.setProperty("firstName", "Alec");
-			guinness.setProperty("lastName", "Guinness");
-			graph.addEdge(null, newhope, guinness, starring);
-			graph.addEdge(null, empire, guinness, starring);
-			graph.addEdge(null, jedi, guinness, starring);
-			graph.addEdge(null, guinness, obiwan, portrays);
+			Crew ewan = framedGraph.addVertex(crewId + ACT_EM, Crew.class);
+			ewan.setFullName(ACT_EM);
+			ewan.addStarsInMovie(phantomMovie);
+			ewan.addStarsInMovie(clonesMovie);
+			ewan.addStarsInMovie(revengeMovie);
+			ewan.addPortrayals(obiwan);
 
-			Vertex ewan = graph.addVertex(crewId + ACT_EM);
-			ewan.setProperty("firstName", "Ewan");
-			ewan.setProperty("lastName", "McGregor");
-			graph.addEdge(null, phantom, ewan, starring);
-			graph.addEdge(null, clones, ewan, starring);
-			graph.addEdge(null, revenge, ewan, starring);
-			graph.addEdge(null, ewan, obiwan, portrays);
+			Crew cushing = framedGraph.addVertex(crewId + ACT_PC, Crew.class);
+			cushing.setFullName(ACT_PC);
+			cushing.addStarsInMovie(newhopeMovie);
+			cushing.addPortrayals(tarkin);
 
-			Vertex cushing = graph.addVertex(crewId + ACT_PC);
-			cushing.setProperty("firstName", "Peter");
-			cushing.setProperty("lastName", "Cushing");
-			graph.addEdge(null, newhope, cushing, starring);
-			graph.addEdge(null, cushing, tarkin, portrays);
+			Crew mayhew = framedGraph.addVertex(crewId + ACT_PM, Crew.class);
+			mayhew.setFullName(ACT_PM);
+			mayhew.addStarsInMovie(newhopeMovie);
+			mayhew.addStarsInMovie(empireMovie);
+			mayhew.addStarsInMovie(jediMovie);
+			mayhew.addStarsInMovie(revengeMovie);
+			mayhew.addPortrayals(chewy);
 
-			Vertex mayhew = graph.addVertex(crewId + ACT_PM);
-			mayhew.setProperty("firstName", "Peter");
-			mayhew.setProperty("lastName", "Mayhew");
-			graph.addEdge(null, newhope, mayhew, starring);
-			graph.addEdge(null, empire, mayhew, starring);
-			graph.addEdge(null, jedi, mayhew, starring);
-			graph.addEdge(null, revenge, mayhew, starring);
-			graph.addEdge(null, mayhew, chewy, portrays);
+			Crew oz = framedGraph.addVertex(crewId + ACT_FO, Crew.class);
+			oz.setFullName(ACT_FO);
+			oz.addStarsInMovie(empireMovie);
+			oz.addStarsInMovie(jediMovie);
+			oz.addStarsInMovie(phantomMovie);
+			oz.addStarsInMovie(clonesMovie);
+			oz.addStarsInMovie(revengeMovie);
+			oz.addPortrayals(yoda);
 
-			Vertex oz = graph.addVertex(crewId + ACT_FO);
-			oz.setProperty("firstName", "Frank");
-			oz.setProperty("lastName", "Oz");
-			graph.addEdge(null, phantom, oz, starring);
-			graph.addEdge(null, empire, oz, starring);
-			graph.addEdge(null, jedi, oz, starring);
-			graph.addEdge(null, revenge, oz, starring);
-			graph.addEdge(null, clones, oz, starring);
-			graph.addEdge(null, oz, yoda, portrays);
+			Crew bulloch = framedGraph.addVertex(crewId + ACT_JB, Crew.class);
+			bulloch.setFullName(ACT_JB);
+			bulloch.addStarsInMovie(empireMovie);
+			bulloch.addStarsInMovie(jediMovie);
+			bulloch.addPortrayals(boba);
 
-			Vertex bulloch = graph.addVertex(crewId + ACT_JB);
-			bulloch.setProperty("firstName", "Jeremy");
-			bulloch.setProperty("lastName", "Bulloch");
-			graph.addEdge(null, empire, bulloch, starring);
-			graph.addEdge(null, jedi, bulloch, starring);
-			graph.addEdge(null, bulloch, boba, portrays);
+			Crew revill = framedGraph.addVertex(crewId + ACT_CR, Crew.class);
+			revill.setFullName(ACT_CR);
+			revill.addStarsInMovie(empireMovie);
+			revill.addPortrayals(palpatine);
 
-			Vertex revill = graph.addVertex(crewId + ACT_CR);
-			revill.setProperty("firstName", "Clive");
-			revill.setProperty("lastName", "Revill");
-			graph.addEdge(null, empire, revill, starring);
-			graph.addEdge(null, revill, palpatine, portrays);
+			Crew ian = framedGraph.addVertex(crewId + ACT_IM, Crew.class);
+			ian.setFullName(ACT_IM);
+			ian.addStarsInMovie(jediMovie);
+			ian.addStarsInMovie(phantomMovie);
+			ian.addStarsInMovie(clonesMovie);
+			ian.addStarsInMovie(revengeMovie);
+			ian.addPortrayals(palpatine);
 
-			Vertex ian = graph.addVertex(crewId + ACT_IM);
-			ian.setProperty("firstName", "Ian");
-			ian.setProperty("lastName", "McDiarmid");
-			graph.addEdge(null, jedi, ian, starring);
-			graph.addEdge(null, phantom, ian, starring);
-			graph.addEdge(null, clones, ian, starring);
-			graph.addEdge(null, revenge, ian, starring);
-			graph.addEdge(null, ian, palpatine, portrays);
+			Crew shaw = framedGraph.addVertex(crewId + ACT_SS, Crew.class);
+			shaw.setFullName(ACT_SS);
+			shaw.addStarsInMovie(jediMovie);
+			shaw.addPortrayals(anakin);
 
-			Vertex shaw = graph.addVertex(crewId + ACT_SS);
-			shaw.setProperty("firstName", "Sebastian");
-			shaw.setProperty("lastName", "Shaw");
-			graph.addEdge(null, jedi, shaw, starring);
-			graph.addEdge(null, shaw, anakin, portrays);
+			Crew liam = framedGraph.addVertex(crewId + ACT_LN, Crew.class);
+			liam.setFullName(ACT_LN);
+			liam.addStarsInMovie(phantomMovie);
+			liam.addPortrayals(quigon);
 
-			Vertex liam = graph.addVertex(crewId + ACT_LN);
-			liam.setProperty("firstName", "Liam");
-			liam.setProperty("lastName", "Neeson");
-			graph.addEdge(null, phantom, liam, starring);
-			graph.addEdge(null, liam, quigon, portrays);
+			Crew portman = framedGraph.addVertex(crewId + ACT_NP, Crew.class);
+			portman.setFullName(ACT_NP);
+			portman.addStarsInMovie(phantomMovie);
+			portman.addStarsInMovie(clonesMovie);
+			portman.addStarsInMovie(revengeMovie);
+			portman.addPortrayals(padme);
 
-			Vertex portman = graph.addVertex(crewId + ACT_NP);
-			portman.setProperty("firstName", "Natalie");
-			portman.setProperty("lastName", "Portman");
-			graph.addEdge(null, phantom, portman, starring);
-			graph.addEdge(null, clones, portman, starring);
-			graph.addEdge(null, revenge, portman, starring);
-			graph.addEdge(null, portman, padme, portrays);
+			Crew lloyd = framedGraph.addVertex(crewId + ACT_JL, Crew.class);
+			lloyd.setFullName(ACT_JL);
+			lloyd.addStarsInMovie(phantomMovie);
+			lloyd.addPortrayals(anakin);
 
-			Vertex lloyd = graph.addVertex(crewId + ACT_JL);
-			lloyd.setProperty("firstName", "Jake");
-			lloyd.setProperty("lastName", "Lloyd");
-			graph.addEdge(null, phantom, lloyd, starring);
-			graph.addEdge(null, lloyd, anakin, portrays);
+			Crew hayden = framedGraph.addVertex(crewId + ACT_HC, Crew.class);
+			hayden.setFullName(ACT_HC);
+			hayden.addStarsInMovie(clonesMovie);
+			hayden.addStarsInMovie(revengeMovie);
+			hayden.addPortrayals(anakin);
 
-			Vertex hayden = graph.addVertex(crewId + ACT_HC);
-			hayden.setProperty("firstName", "Hayden");
-			hayden.setProperty("lastName", "Christensen");
-			graph.addEdge(null, clones, hayden, starring);
-			graph.addEdge(null, revenge, hayden, starring);
-			graph.addEdge(null, hayden, anakin, portrays);
+			Crew august = framedGraph.addVertex(crewId + ACT_PA, Crew.class);
+			august.setFullName(ACT_PA);
+			august.addStarsInMovie(phantomMovie);
+			august.addStarsInMovie(clonesMovie);
+			august.addPortrayals(shmi);
 
-			Vertex august = graph.addVertex(crewId + ACT_PA);
-			august.setProperty("firstName", "Pernill");
-			hayden.setProperty("lastName", "August");
-			graph.addEdge(null, phantom, august, starring);
-			graph.addEdge(null, clones, august, starring);
-			graph.addEdge(null, august, shmi, portrays);
+			Crew park = framedGraph.addVertex(crewId + ACT_RP, Crew.class);
+			park.setFullName(ACT_RP);
+			park.addStarsInMovie(phantomMovie);
+			park.addPortrayals(maul);
 
-			Vertex park = graph.addVertex(crewId + ACT_RP);
-			park.setProperty("firstName", "Ray");
-			park.setProperty("lastName", "Park");
-			graph.addEdge(null, phantom, park, starring);
-			graph.addEdge(null, park, maul, portrays);
+			Crew samuel = framedGraph.addVertex(crewId + ACT_SLJ, Crew.class);
+			samuel.setFullName(ACT_SLJ);
+			samuel.addStarsInMovie(phantomMovie);
+			samuel.addStarsInMovie(clonesMovie);
+			samuel.addStarsInMovie(revengeMovie);
+			samuel.addPortrayals(windu);
 
-			Vertex samuel = graph.addVertex(crewId + ACT_SLJ);
-			samuel.setProperty("firstName", "Samuel L.");
-			samuel.setProperty("lastName", "Jackson");
-			graph.addEdge(null, phantom, samuel, starring);
-			graph.addEdge(null, clones, samuel, starring);
-			graph.addEdge(null, revenge, samuel, starring);
-			graph.addEdge(null, samuel, windu, portrays);
+			Crew lee = framedGraph.addVertex(crewId + ACT_CL, Crew.class);
+			lee.setFullName(ACT_CL);
+			lee.addStarsInMovie(clonesMovie);
+			lee.addStarsInMovie(revengeMovie);
+			lee.addPortrayals(tyranus);
 
-			Vertex lee = graph.addVertex(crewId + ACT_CL);
-			lee.setProperty("firstName", "Christopher");
-			lee.setProperty("lastName", "Lee");
-			graph.addEdge(null, clones, lee, starring);
-			graph.addEdge(null, revenge, lee, starring);
-			graph.addEdge(null, lee, tyranus, portrays);
+			Crew morrison = framedGraph.addVertex(crewId + ACT_TM, Crew.class);
+			morrison.setFullName(ACT_TM);
+			morrison.addStarsInMovie(clonesMovie);
+			morrison.addPortrayals(jango);
 
-			Vertex morrison = graph.addVertex(crewId + ACT_TM);
-			morrison.setProperty("firstName", "Temuera");
-			morrison.setProperty("lastName", "Morrison");
-			graph.addEdge(null, clones, morrison, starring);
-			graph.addEdge(null, morrison, jango, portrays);
+			Crew logan = framedGraph.addVertex(crewId + ACT_DL, Crew.class);
+			logan.setFullName(ACT_DL);
+			logan.addStarsInMovie(clonesMovie);
+			logan.addPortrayals(boba);
 
-			Vertex logan = graph.addVertex(crewId + ACT_DL);
-			logan.setProperty("firstName", "Daniel");
-			logan.setProperty("lastName", "Logan");
-			graph.addEdge(null, clones, logan, starring);
-			graph.addEdge(null, logan, boba, portrays);
+			Crew blake = framedGraph.addVertex(crewId + ACT_PB, Crew.class);
+			blake.setFullName(ACT_PB);
+			blake.addStarsInMovie(newhopeMovie);
+			blake.addPortrayals(greedo);
 
-			Vertex blake = graph.addVertex(crewId + ACT_PB);
-			blake.setProperty("firstName", "Paul");
-			blake.setProperty("lastName", "Blake");
-			graph.addEdge(null, newhope, blake, starring);
-			graph.addEdge(null, blake, greedo, portrays);
+			Crew lawson = framedGraph.addVertex(crewId + ACT_DLW, Crew.class);
+			lawson.setFullName(ACT_DLW);
+			lawson.addStarsInMovie(newhopeMovie);
+			lawson.addStarsInMovie(empireMovie);
+			lawson.addStarsInMovie(jediMovie);
+			lawson.addPortrayals(wedge);
 
-			Vertex lawson = graph.addVertex(crewId + ACT_DLW);
-			lawson.setProperty("firstName", "Denis");
-			lawson.setProperty("lastName", "Lawson");
-			graph.addEdge(null, newhope, lawson, starring);
-			graph.addEdge(null, empire, lawson, starring);
-			graph.addEdge(null, jedi, lawson, starring);
-			graph.addEdge(null, lawson, wedge, portrays);
+			Kills curEdge = null;
+			curEdge = anakin.addKills(obiwan);
+			curEdge.setFilm(newhope.getId().toString());
+			luke.addKills(tarkin);
+			curEdge.setFilm(newhope.getId().toString());
+			windu.addKills(jango);
+			curEdge.setFilm(clones.getId().toString());
+			palpatine.addKills(windu);
+			curEdge.setFilm(revenge.getId().toString());
+			wedge.addKills(anakin);
+			curEdge.setFilm(jedi.getId().toString());
+			lando.addKills(anakin);
+			curEdge.setFilm(jedi.getId().toString());
+			anakin.addKills(palpatine);
+			curEdge.setFilm(jedi.getId().toString());
+			maul.addKills(quigon);
+			curEdge.setFilm(phantom.getId().toString());
+			obiwan.addKills(maul);
+			curEdge.setFilm(phantom.getId().toString());
+			han.addKills(greedo);
+			curEdge.setFilm(newhope.getId().toString());
+			han.addKills(boba);
+			curEdge.setFilm(jedi.getId().toString());
+			anakin.addKills(tyranus);
+			curEdge.setFilm(revenge.getId().toString());
 
-			Edge curEdge = null;
-			curEdge = graph.addEdge(null, anakin, obiwan, kills);
-			curEdge.setProperty("film", newhope.getId().toString());
-			curEdge = graph.addEdge(null, luke.asVertex(), tarkin, kills);
-			curEdge.setProperty("film", newhope.getId().toString());
-			curEdge = graph.addEdge(null, windu, jango, kills);
-			curEdge.setProperty("film", clones.getId().toString());
-			curEdge = graph.addEdge(null, palpatine, windu, kills);
-			curEdge.setProperty("film", revenge.getId().toString());
-			curEdge = graph.addEdge(null, wedge, anakin, kills);
-			curEdge.setProperty("film", jedi.getId().toString());
-			curEdge = graph.addEdge(null, lando, anakin, kills);
-			curEdge.setProperty("film", jedi.getId().toString());
-			curEdge = graph.addEdge(null, anakin, palpatine, kills);
-			curEdge.setProperty("film", jedi.getId().toString());
-			curEdge = graph.addEdge(null, maul, quigon, kills);
-			curEdge.setProperty("film", phantom.getId().toString());
-			curEdge = graph.addEdge(null, obiwan, maul, kills);
-			curEdge.setProperty("film", phantom.getId().toString());
-			curEdge = graph.addEdge(null, han, greedo, kills);
-			curEdge.setProperty("film", newhope.getId().toString());
-			curEdge = graph.addEdge(null, han, boba, kills);
-			curEdge.setProperty("film", jedi.getId().toString());
-			curEdge = graph.addEdge(null, anakin, tyranus, kills);
-			curEdge.setProperty("film", revenge.getId().toString());
+			anakin.addSpawns(threepio);
+			anakin.addSpawns(luke);
+			anakin.addSpawns(leia);
+			padme.addSpawns(luke);
+			padme.addSpawns(leia);
+			shmi.addSpawns(anakin);
+			jango.addSpawns(boba);
 
-			graph.addEdge(null, anakin, threepio, spawns);
-			graph.addEdge(null, anakin, luke.asVertex(), spawns);
-			graph.addEdge(null, anakin, leia, spawns);
-			graph.addEdge(null, padme, luke.asVertex(), spawns);
-			graph.addEdge(null, padme, leia, spawns);
-			graph.addEdge(null, shmi, anakin, spawns);
-			graph.addEdge(null, jango, boba, spawns);
+			System.out.println("Starting GraphJung...");
 
-			// Will fail until DGraph.getVertices() and getEdges() are implemented
+			graph.commit();
+
 			GraphJung graph2 = new GraphJung(graph);
 			Layout<Vertex, Edge> layout = new CircleLayout<Vertex, Edge>(graph2);
 			layout.setSize(new Dimension(300, 300));
@@ -747,6 +836,7 @@ public class Graph2Test implements Runnable {
 			Transformer<Vertex, String> vertexLabelTransformer = new Transformer<Vertex, String>() {
 				@Override
 				public String transform(final Vertex vertex) {
+					System.out.println(vertex.getProperty("name"));
 					return (String) vertex.getProperty("name");
 				}
 			};
@@ -754,6 +844,7 @@ public class Graph2Test implements Runnable {
 			Transformer<Edge, String> edgeLabelTransformer = new Transformer<Edge, String>() {
 				@Override
 				public String transform(final Edge edge) {
+					System.out.println(edge.getLabel());
 					return edge.getLabel();
 				}
 			};
@@ -767,14 +858,11 @@ public class Graph2Test implements Runnable {
 			frame.pack();
 			frame.setVisible(true);
 
-			graph.commit();
-
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
-
 	}
 
 	protected Session getSession() {

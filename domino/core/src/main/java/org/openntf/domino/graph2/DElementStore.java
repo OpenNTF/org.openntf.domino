@@ -38,6 +38,8 @@ public interface DElementStore extends Externalizable {
 
 	public Vertex getVertex(Object id);
 
+	public Map<Object, Vertex> getVertexCache();
+
 	public void removeVertex(Vertex vertex);
 
 	public Edge addEdge(Object id);
@@ -45,6 +47,8 @@ public interface DElementStore extends Externalizable {
 	public Edge getEdge(Object id);
 
 	public void removeEdge(Edge edge);
+
+	public Map<Object, Edge> getEdgeCache();
 
 	public Map<String, Object> findElementDelegate(Object delegateKey, Class<? extends Element> type);
 
