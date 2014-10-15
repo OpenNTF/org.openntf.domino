@@ -1,7 +1,12 @@
 package org.openntf.domino.tests.ntf;
 
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+
 import lotus.domino.NotesFactory;
 
+import org.apache.commons.collections15.Transformer;
 import org.openntf.domino.Session;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
@@ -12,6 +17,7 @@ import org.openntf.domino.utils.Factory;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.oupls.jung.GraphJung;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraphConfiguration;
@@ -25,6 +31,10 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
+
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 public class Graph2Test implements Runnable {
 	private static int THREAD_COUNT = 1;
@@ -285,15 +295,20 @@ public class Graph2Test implements Runnable {
 	}
 
 	public void run1() {
-		String crewId = "85257D640018A1B3";
-		String movieId = "85257D640018AD81";
-		String characterId = "85257D6B007ECB47";
-		String edgeId = "85257D640018BCDF";
+		//		String crewId = "85257D640018A1B3";
+		//		String movieId = "85257D640018AD81";
+		//		String characterId = "85257D6B007ECB47";
+		//		String edgeId = "85257D640018BCDF";
+		String crewId = "80257D6D0035CE87";
+		String movieId = "80257D6D0035D5A8";
+		String characterId = "80257D6D0035DAD9";
+		String edgeId = "80257D6D0035E02A";
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
 		Session session = this.getSession();
 
 		try {
+
 			timelog("Beginning graph2 test...");
 
 			DElementStore crewStore = new DElementStore();
@@ -319,7 +334,7 @@ public class Graph2Test implements Runnable {
 
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 
-			framedGraph.registerAnnotationHandler(new DTypedPropertyHandler());
+			//	framedGraph.registerAnnotationHandler(new DTypedPropertyHandler());
 
 			Movie newhopeMovie = framedGraph.addVertex(movieId + MV_SW, Movie.class);
 			newhopeMovie.setTitle(MV_SW);
@@ -722,6 +737,36 @@ public class Graph2Test implements Runnable {
 			graph.addEdge(null, shmi, anakin, spawns);
 			graph.addEdge(null, jango, boba, spawns);
 
+			// Will fail until DGraph.getVertices() and getEdges() are implemented
+			GraphJung graph2 = new GraphJung(graph);
+			Layout<Vertex, Edge> layout = new CircleLayout<Vertex, Edge>(graph2);
+			layout.setSize(new Dimension(300, 300));
+			BasicVisualizationServer<Vertex, Edge> viz = new BasicVisualizationServer<Vertex, Edge>(layout);
+			viz.setPreferredSize(new Dimension(350, 350));
+
+			Transformer<Vertex, String> vertexLabelTransformer = new Transformer<Vertex, String>() {
+				@Override
+				public String transform(final Vertex vertex) {
+					return (String) vertex.getProperty("name");
+				}
+			};
+
+			Transformer<Edge, String> edgeLabelTransformer = new Transformer<Edge, String>() {
+				@Override
+				public String transform(final Edge edge) {
+					return edge.getLabel();
+				}
+			};
+
+			viz.getRenderContext().setEdgeLabelTransformer(edgeLabelTransformer);
+			viz.getRenderContext().setVertexLabelTransformer(vertexLabelTransformer);
+
+			JFrame frame = new JFrame("Star Wars");
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.getContentPane().add(viz);
+			frame.pack();
+			frame.setVisible(true);
+
 			graph.commit();
 
 		} catch (Throwable t) {
@@ -729,6 +774,7 @@ public class Graph2Test implements Runnable {
 		}
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
+
 	}
 
 	protected Session getSession() {
