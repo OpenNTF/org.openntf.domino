@@ -1,12 +1,7 @@
 package org.openntf.domino.tests.ntf;
 
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-
 import lotus.domino.NotesFactory;
 
-import org.apache.commons.collections15.Transformer;
 import org.openntf.domino.Session;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
@@ -15,9 +10,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.oupls.jung.GraphJung;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraphFactory;
@@ -35,10 +28,6 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
-
-import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 
 public class Graph2Test implements Runnable {
 	private static int THREAD_COUNT = 1;
@@ -395,14 +384,10 @@ public class Graph2Test implements Runnable {
 	}
 
 	public void run1() {
-		//		String crewId = "85257D640018A1B3";
-		//		String movieId = "85257D640018AD81";
-		//		String characterId = "85257D6B007ECB47";
-		//		String edgeId = "85257D640018BCDF";
-		String crewId = "80257D6D0035CE87";
-		String movieId = "80257D6D0035D5A8";
-		String characterId = "80257D6D0035DAD9";
-		String edgeId = "80257D6D0035E02A";
+		String crewId = "85257D640018A1B3";
+		String movieId = "85257D640018AD81";
+		String characterId = "85257D6B007ECB47";
+		String edgeId = "85257D640018BCDF";
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
 		Session session = this.getSession();
@@ -825,51 +810,7 @@ public class Graph2Test implements Runnable {
 
 			System.out.println("Starting GraphJung...");
 
-			GraphJung graph2 = new GraphJung(graph);
-			Layout<Vertex, Edge> layout = new CircleLayout<Vertex, Edge>(graph2);
-			layout.setSize(new Dimension(300, 300));
-			BasicVisualizationServer<Vertex, Edge> viz = new BasicVisualizationServer<Vertex, Edge>(layout);
-			viz.setPreferredSize(new Dimension(350, 350));
-
-			Transformer<Vertex, String> vertexLabelTransformer = new Transformer<Vertex, String>() {
-				@Override
-				public String transform(final Vertex vertex) {
-					String form = vertex.getProperty("form");
-					String retVal_ = "";
-					if ("movie".equals(form)) {
-						retVal_ = (String) vertex.getProperty("title");
-					} else if ("crew".equals(form)) {
-						retVal_ = (String) vertex.getProperty("lastName");
-					} else {
-						retVal_ = (String) vertex.getProperty("name");
-					}
-					System.out.println(retVal_);
-					if ("".equals(retVal_)) {
-						return form;
-					} else {
-						return retVal_;
-					}
-				}
-			};
-
-			Transformer<Edge, String> edgeLabelTransformer = new Transformer<Edge, String>() {
-				@Override
-				public String transform(final Edge edge) {
-					System.out.println(edge.getLabel());
-					return edge.getLabel();
-				}
-			};
-
-			viz.getRenderContext().setEdgeLabelTransformer(edgeLabelTransformer);
-			viz.getRenderContext().setVertexLabelTransformer(vertexLabelTransformer);
-
-			JFrame frame = new JFrame("Star Wars");
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.getContentPane().add(viz);
-			frame.pack();
-			frame.setVisible(true);
-
-			graph.rollback();
+			graph.commit();
 
 		} catch (Throwable t) {
 			t.printStackTrace();
