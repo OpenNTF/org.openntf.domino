@@ -566,12 +566,12 @@ public class Graph2Test implements Runnable {
 			yoda.setName(CH_Y);
 			Character jango = framedGraph.addVertex(characterId + CH_JF, Character.class);
 			jango.addAppearsIn(clonesMovie);
-			yoda.setName(CH_JF);
+			jango.setName(CH_JF);
 			Character boba = framedGraph.addVertex(characterId + CH_BF, Character.class);
 			boba.addAppearsIn(empireMovie);
 			boba.addAppearsIn(jediMovie);
 			boba.addAppearsIn(clonesMovie);
-			yoda.setName(CH_BF);
+			boba.setName(CH_BF);
 			Character padme = framedGraph.addVertex(characterId + CH_P, Character.class);
 			padme.addAppearsIn(phantomMovie);
 			padme.addAppearsIn(clonesMovie);
@@ -834,7 +834,21 @@ public class Graph2Test implements Runnable {
 			Transformer<Vertex, String> vertexLabelTransformer = new Transformer<Vertex, String>() {
 				@Override
 				public String transform(final Vertex vertex) {
-					return (String) vertex.getProperty("name");
+					String form = vertex.getProperty("form");
+					String retVal_ = "";
+					if ("movie".equals(form)) {
+						retVal_ = (String) vertex.getProperty("title");
+					} else if ("crew".equals(form)) {
+						retVal_ = (String) vertex.getProperty("lastName");
+					} else {
+						retVal_ = (String) vertex.getProperty("name");
+					}
+					System.out.println(retVal_);
+					if ("".equals(retVal_)) {
+						return form;
+					} else {
+						return retVal_;
+					}
 				}
 			};
 

@@ -14,6 +14,7 @@ import javolution.util.FastSet;
 import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.utils.Factory;
 
 import com.tinkerpop.blueprints.Direction;
@@ -184,7 +185,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex getVertex(final Object id) {
 		Vertex result = null;
-		Element chk = getCachedElement(id, Vertex.class);
+		Element chk;
+		if (id instanceof String) {
+			chk = getCachedElement(new NoteCoordinate(id.toString()), Vertex.class);
+		} else {
+			chk = getCachedElement(id, Vertex.class);
+		}
 		if (chk != null) {
 			result = (Vertex) chk;
 		} else {
