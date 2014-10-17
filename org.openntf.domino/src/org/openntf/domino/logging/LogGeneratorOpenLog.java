@@ -30,7 +30,6 @@ public class LogGeneratorOpenLog {
 
 	/*-------------------------------------------------------------*/
 	private static final String _logFormName = "LogEvent";
-	private static final String _xotsLogDBTaskletClassName = "org.openntf.domino.xots.builtin.XotsLogDBTasklet";
 	private static final String _xotsDemonClassName = "org.openntf.domino.xots.XotsDaemon";
 	private static final String _xotsDemonToQueueMethodName = "addToQueue";
 
@@ -87,10 +86,9 @@ public class LogGeneratorOpenLog {
 		try {
 			Class<?> xotsDemonClass = Class.forName(_xotsDemonClassName, true, loader);
 			Method xotsDemonToQueueMethod = xotsDemonClass.getMethod(_xotsDemonToQueueMethodName, Runnable.class);
-			Class<?> xotsLogDBTaskletClass = Class.forName(_xotsLogDBTaskletClassName, true, loader);
-			Runnable r = (Runnable) xotsLogDBTaskletClass.newInstance();
+			LogTaskletOpenLog tol = new LogTaskletOpenLog();
 			_olQueue = new LinkedBlockingQueue<LogGeneratorOpenLog.OL_EntryToWrite>();
-			xotsDemonToQueueMethod.invoke(null, r);
+			xotsDemonToQueueMethod.invoke(null, tol);
 		} catch (Exception e) {
 			System.out.println("Can't make Xots-LogDB-Thread: " + e.getMessage());
 			_olQueue = null;
