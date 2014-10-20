@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>latest</version>
+		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>externals</artifactId>
 	<packaging>pom</packaging>
@@ -13,18 +13,6 @@
 	<name>externals</name>
 	<url>http://www.openntf.org</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 	<modules>
 		<module>jsr305</module>
 		<module>asm</module>
@@ -34,16 +22,4 @@
 		<module>javolution</module>
 		<module>tinkerpop</module>
 	</modules>
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<compilerArgument>-g</compilerArgument>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 </project>
