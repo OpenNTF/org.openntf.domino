@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
+import org.openntf.domino.xsp.adapter.OpenntfHttpService;
 import org.openntf.domino.xsp.config.DominoConfig;
 
+import com.ibm.designer.runtime.domino.adapter.HttpService;
+import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.xsp.extlib.config.ExtlibPluginConfig;
 import com.ibm.xsp.library.AbstractXspLibrary;
@@ -27,9 +30,9 @@ public class XspLibrary extends AbstractXspLibrary {
 	 * a correct call would look like this:
 	 * 
 	 * <pre>
-	 * jclass activityClass = env->GetObjectClass(dummyView); 
-	 * jmethodID mID = env->GetMethodID(activityClass, "iGetEntryByKey", "..."); 
-	 * entry = env->CallIntMethod(obj, mID);
+	 * jclass activityClass = env -&gt; GetObjectClass(dummyView);
+	 * jmethodID mID = env -&gt; GetMethodID(activityClass, &quot;iGetEntryByKey&quot;, &quot;...&quot;);
+	 * entry = env -&gt; CallIntMethod(obj, mID);
 	 * </pre>
 	 * 
 	 * IBM's code probably looks like this:
@@ -110,6 +113,11 @@ public class XspLibrary extends AbstractXspLibrary {
 	public XspLibrary() {
 		System.out.println("Loading org.openntf.domino.xsp library");
 		verifyIGetEntryByKey();
+		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+			if (service instanceof OpenntfHttpService) {
+				((OpenntfHttpService) service).activate();
+			}
+		}
 	}
 
 	/*

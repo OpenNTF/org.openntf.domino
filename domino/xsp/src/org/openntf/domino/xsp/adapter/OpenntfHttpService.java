@@ -29,6 +29,8 @@ public class OpenntfHttpService extends HttpService {
 	private static final Logger log_ = Logger.getLogger(OpenntfHttpService.class.getName());
 
 	private List<HttpService> services;
+	private HttpService priorService = null;
+	private boolean active = false;
 
 	private ThreadLocal<Boolean> doServiceEntered = new ThreadLocal<Boolean>() {
 		@Override
@@ -44,6 +46,16 @@ public class OpenntfHttpService extends HttpService {
 		// here is the right place to initialize things on server start
 		Factory.init();
 		Factory.terminate();
+	}
+
+	public void activate() {
+		log_.info("OpenNTFHttpService activated");
+		active = true;
+	}
+
+	public void deactivate() {
+		log_.info("OpenNTFHttpService deactivated");
+		active = false;
 	}
 
 	@Override
@@ -66,39 +78,65 @@ public class OpenntfHttpService extends HttpService {
 			IOException {
 		// System.out.println("DEBUG ALERT!! OpenntfHttpService has been asked to service an HttpRequest!");
 
-		if (doServiceEntered.get().booleanValue()) {
-			// prevent recursion (if someone does the same trick)
-			return false;
-		}
+		//FIXME We really should have a registry of the paths that are using the API so we only 
+		if (active) {
+			if (doServiceEntered.get().booleanValue()) {
+				// prevent recursion (if someone does the same trick)
+				return false;
+			}
 
-		Factory.init();
-		Factory.setUserLocale(httpRequest.getLocale());
-		doServiceEntered.set(Boolean.TRUE);
+			Factory.init();
+			Factory.setUserLocale(httpRequest.getLocale());
+			doServiceEntered.set(Boolean.TRUE);
 
-		try {
-			// TODO - NSA: This is a optimal place where you can put your code to sniff the whole unencrypted HTTP-traffic
-			// FIXME - NSA: Go get a real job and mind your own business
-			// System.out.println("ContexPath: " + contextPath);
-			// System.out.println("Path: " + path);
+			try {
+				// TODO - NSA: This is a optimal place where you can put your code to sniff the whole unencrypted HTTP-traffic
+				// FIXME - NSA: Go get a real job and mind your own business
+				// System.out.println("ContexPath: " + contextPath);
+				// System.out.println("Path: " + path);
 
-			boolean behindUs = false;
-			for (HttpService service : this.services) {
-				if (behindUs) {
-					if (service.doService(contextPath, path, httpSession, httpRequest, httpResponse)) {
-						return true;
+				if (priorService == null) {
+					boolean behindUs = false;
+					for (HttpService service : this.services) {
+						if (behindUs) {
+							if (service.doService(contextPath, path, httpSession, httpRequest, httpResponse)) {
+								priorService = service;
+								return true;
+							}
+						}
+						if (service == this) {
+							behindUs = true;
+						}
+					}
+					return false;
+				} else {
+					return priorService.doService(contextPath, path, httpSession, httpRequest, httpResponse);
+				}
+			} finally {
+				doServiceEntered.set(Boolean.FALSE);
+				Factory.terminate();
+
+				// System.out.println("DEBUG: terminating a Session with object id: " + System.identityHashCode(session)
+				// + " after an http request");
+			}
+		} else {
+			if (priorService == null) {
+				boolean behindUs = false;
+				for (HttpService service : this.services) {
+					if (behindUs) {
+						if (service.doService(contextPath, path, httpSession, httpRequest, httpResponse)) {
+							priorService = service;
+							return true;
+						}
+					}
+					if (service == this) {
+						behindUs = true;
 					}
 				}
-				if (service == this) {
-					behindUs = true;
-				}
+				return false;
+			} else {
+				return priorService.doService(contextPath, path, httpSession, httpRequest, httpResponse);
 			}
-			return false;
-		} finally {
-			doServiceEntered.set(Boolean.FALSE);
-			Factory.terminate();
-
-			// System.out.println("DEBUG: terminating a Session with object id: " + System.identityHashCode(session)
-			// + " after an http request");
 		}
 	}
 

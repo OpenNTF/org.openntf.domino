@@ -529,7 +529,7 @@ public class Graph2Test implements Runnable {
 
 			Movie empireMovie = framedGraph.addVertex(movieId + MV_ESB, Movie.class);
 			empireMovie.setTitle(MV_ESB);
-			Vertex empire = empireMovie.asVertex();
+			//			Vertex empire = empireMovie.asVertex();
 
 			Movie jediMovie = framedGraph.addVertex(movieId + MV_RoJ, Movie.class);
 			jediMovie.setTitle(MV_RoJ);
