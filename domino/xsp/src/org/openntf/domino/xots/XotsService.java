@@ -1,8 +1,6 @@
 package org.openntf.domino.xots;
 
 import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -56,17 +54,18 @@ public class XotsService extends NSFService {
 	}
 
 	public synchronized static void addToQueue(final Runnable runnable) {
-		try {
-			AccessController.doPrivileged(new PrivilegedAction<Object>() {
-				@Override
-				public Object run() {
-					// getInstance().queue(runnable, runnable.getClass().getClassLoader());
-					return null;
-				}
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		XotsDaemon.addToQueue(runnable);
+		//		try {
+		//			AccessController.doPrivileged(new PrivilegedAction<Object>() {
+		//				@Override
+		//				public Object run() {
+		//					//					getInstance().queue(runnable, runnable.getClass().getClassLoader());
+		//					return null;
+		//				}
+		//			});
+		//		} catch (Exception e) {
+		//			e.printStackTrace();
+		//		}
 	}
 
 	public static class LoaderRunnable implements Runnable {

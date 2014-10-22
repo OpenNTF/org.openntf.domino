@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.ClassUtilities;
+import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
@@ -31,6 +32,9 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 
 	public Object processVertex(final AdjacencyUnique adjacency, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Vertex vertex) {
+		Edge resultEdge = null;
+		Class<?> returnType = method.getReturnType();
+
 		if (ClassUtilities.isGetMethod(method)) {
 			final FramedVertexIterable r = new FramedVertexIterable(framedGraph, vertex.getVertices(adjacency.direction(),
 					adjacency.label()), ClassUtilities.getGenericClass(method));
@@ -40,7 +44,6 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 				return r.iterator().hasNext() ? r.iterator().next() : null;
 			}
 		} else if (ClassUtilities.isAddMethod(method)) {
-			Class<?> returnType = method.getReturnType();
 			Vertex newVertex;
 			Object returnValue = null;
 			if (arguments == null) {
@@ -49,6 +52,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 				returnValue = framedGraph.addVertex(null, returnType);
 				newVertex = ((VertexFrame) returnValue).asVertex();
 			} else {
+
 				newVertex = ((VertexFrame) arguments[0]).asVertex();
 				switch (adjacency.direction()) {
 				case OUT:
@@ -58,7 +62,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 					for (Edge edge : outedges) {
 						Vertex v = edge.getVertex(Direction.IN);
 						if (v.getId().equals(inVertex.getId())) {
-							return framedGraph.frame(edge, method.getReturnType());
+							resultEdge = edge;
 						}
 					}
 					break;
@@ -69,7 +73,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 					for (Edge edge : inedges) {
 						Vertex v = edge.getVertex(Direction.IN);
 						if (v.getId().equals(inVertex.getId())) {
-							return framedGraph.frame(edge, method.getReturnType());
+							resultEdge = edge;
 						}
 					}
 					break;
@@ -77,14 +81,18 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 					throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
 				}
 			}
-			addEdges(adjacency, framedGraph, vertex, newVertex);
-
+			if (resultEdge == null) {
+				resultEdge = addEdge(adjacency, framedGraph, vertex, newVertex);
+			}
 			if (returnType.isPrimitive()) {
 				return null;
+			} else if (Edge.class.isAssignableFrom(returnType)) {
+				return resultEdge;
+			} else if (EdgeFrame.class.isAssignableFrom(returnType)) {
+				return framedGraph.frame(resultEdge, returnType);
 			} else {
 				return returnValue;
 			}
-
 		} else if (ClassUtilities.isRemoveMethod(method)) {
 			removeEdges(adjacency.direction(), adjacency.label(), vertex, ((VertexFrame) arguments[0]).asVertex(), framedGraph);
 			return null;
@@ -93,13 +101,13 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 			if (ClassUtilities.acceptsIterable(method)) {
 				for (Object o : (Iterable) arguments[0]) {
 					Vertex v = ((VertexFrame) o).asVertex();
-					addEdges(adjacency, framedGraph, vertex, v);
+					addEdge(adjacency, framedGraph, vertex, v);
 				}
 				return null;
 			} else {
 				if (null != arguments[0]) {
 					Vertex newVertex = ((VertexFrame) arguments[0]).asVertex();
-					addEdges(adjacency, framedGraph, vertex, newVertex);
+					addEdge(adjacency, framedGraph, vertex, newVertex);
 				}
 				return null;
 			}
@@ -108,36 +116,37 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 		return null;
 	}
 
-	private void addEdges(final AdjacencyUnique adjacency, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex) {
-		boolean exists = false;
+	private Edge addEdge(final AdjacencyUnique adjacency, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex) {
+		Edge result = null;
 		switch (adjacency.direction()) {
 		case OUT:
 			Iterable<Edge> outedges = vertex.getEdges(Direction.OUT, adjacency.label());	//FIXME NTF Correct direction?
 			for (Edge edge : outedges) {
 				Vertex v = edge.getVertex(Direction.IN);
 				if (v.getId().equals(newVertex.getId())) {
-					exists = true;
+					result = edge;
 					break;
 				}
 			}
-			if (!exists)
-				framedGraph.addEdge(null, vertex, newVertex, adjacency.label());
+			if (result == null)
+				result = framedGraph.addEdge(null, vertex, newVertex, adjacency.label());
 			break;
 		case IN:
 			Iterable<Edge> inedges = vertex.getEdges(Direction.IN, adjacency.label());	//FIXME NTF Correct direction?
 			for (Edge edge : inedges) {
 				Vertex v = edge.getVertex(Direction.OUT);
 				if (v.getId().equals(newVertex.getId())) {
-					exists = true;
+					result = edge;
 					break;
 				}
 			}
-			if (!exists)
-				framedGraph.addEdge(null, newVertex, vertex, adjacency.label());
+			if (result == null)
+				result = framedGraph.addEdge(null, newVertex, vertex, adjacency.label());
 			break;
 		case BOTH:
 			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
 		}
+		return result;
 	}
 
 	private void removeEdges(final Direction direction, final String label, final Vertex element, final Vertex otherVertex,
