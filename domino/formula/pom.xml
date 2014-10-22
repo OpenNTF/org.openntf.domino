@@ -4,35 +4,18 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>latest</version>
+		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<artifactId>formula</artifactId>
+	<artifactId>org.openntf.formula</artifactId>
 	<name>OpenNTF Formula Engine</name>
 	<description>Alternative Java-based engine for executing Notes/Domino @Formula</description>
+	<packaging>eclipse-plugin</packaging>
 	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
+	<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 	</build>
 	<organization>
 		<name>OpenNTF.org</name>
 		<url>http://www.openntf.org</url>
 	</organization>
-	<dependencies>
-		<dependency>
-			<groupId>com.ibm.icu</groupId>
-			<artifactId>icu4j</artifactId>
-			<version>3.8</version>
-		</dependency>
-	</dependencies>
 </project>

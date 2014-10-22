@@ -6,9 +6,9 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>externals</artifactId>
-		<version>latest</version>
+		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>tinkerpop</artifactId>
+	<artifactId>com.tinkerpop</artifactId>
 	<name>tinkerpop</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,16 +46,10 @@
 			<version>2.0</version>
 		</dependency>
 	</dependencies>
+	<version>2.6.0.qualifier</version>
+	<packaging>eclipse-plugin</packaging>
 	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<compilerArgument>-g</compilerArgument>
-				</configuration>
-			</plugin>
-		</plugins>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 	</build>
 </project>

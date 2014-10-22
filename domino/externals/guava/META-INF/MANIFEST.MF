@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Google Guava
-Bundle-SymbolicName: com.google.guave
+Bundle-SymbolicName: com.google.guava
 Bundle-Version: 18.0.0.qualifier
 Export-Package: com.google.common.annotations,
  com.google.common.base,
@@ -22,3 +22,4 @@ Export-Package: com.google.common.annotations,
  com.google.thirdparty.publicsuffix
 Bundle-Vendor: Google
 Bundle-ClassPath: .
+Require-Bundle: jsr305;bundle-version="1.0.0"

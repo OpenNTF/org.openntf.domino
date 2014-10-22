@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF XSP Wrapper for org.openntf.domino API
 Bundle-SymbolicName: org.openntf.domino.xsp;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.5.0.qualifier
 Bundle-Activator: org.openntf.domino.xsp.Activator
 Bundle-Vendor: OpenNTF.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -22,3 +22,17 @@ Export-Package: org.openntf.domino.xots,
  org.openntf.domino.xsp.msg,
  org.openntf.domino.xsp.readers,
  org.openntf.domino.xsp.script
+Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.1",
+ com.ibm.xsp.extlib;bundle-version="9.0.1",
+ com.ibm.xsp.extsn;bundle-version="9.0.1",
+ org.openntf.domino;bundle-version="1.5.0",
+ org.openntf.formula;bundle-version="1.5.0",
+ com.ibm.designer.runtime;bundle-version="9.0.1",
+ com.ibm.domino.xsp.bootstrap;bundle-version="9.0.1",
+ com.ibm.xsp.designer;bundle-version="9.0.1",
+ com.ibm.domino.napi;bundle-version="9.0.1"
+Import-Package: com.ibm.commons.util,
+ com.ibm.icu.util,
+ com.ibm.jscript,
+ org.eclipse.core.runtime;version="3.4.0",
+ org.osgi.framework;version="1.4.0"

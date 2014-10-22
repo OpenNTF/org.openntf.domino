@@ -4,30 +4,21 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>latest</version>
+		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<artifactId>core</artifactId>
+	<artifactId>org.openntf.domino</artifactId>
 	<name>OpenNTF Domino API</name>
 	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
+	<packaging>eclipse-plugin</packaging>
 	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-		</plugins>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 	</build>
 	<organization>
 		<name>OpenNTF</name>
 		<url>http://www.openntf.org</url>
 	</organization>
-	<dependencies>
+<!--	<dependencies>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>formula</artifactId>
@@ -82,6 +73,6 @@
 			<groupId>ibm.domino</groupId>
 			<artifactId>jvmRuntime</artifactId>
 			<version>9.0.1</version>
-		</dependency>
-	</dependencies>
+		</dependency> 
+	</dependencies> -->
 </project>
