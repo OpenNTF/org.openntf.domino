@@ -27,7 +27,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
-import org.openntf.domino.iterators.DocumentCollectionIterator;
+import org.openntf.domino.iterators.DocumentCollectionSimpleIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
@@ -36,7 +36,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class DocumentCollection.
  */
 public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database> implements
-org.openntf.domino.DocumentCollection {
+		org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
@@ -384,7 +384,7 @@ org.openntf.domino.DocumentCollection {
 	@Override
 	public void deleteDocument(final lotus.domino.Document doc) {
 		try {
-			getDelegate().deleteDocument(toLotus(doc));
+			getDelegate().deleteDocument((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -845,7 +845,8 @@ org.openntf.domino.DocumentCollection {
 	@Override
 	public Iterator<org.openntf.domino.Document> iterator() {
 		//return new DocumentIterator(this);
-		return new DocumentCollectionIterator(this);
+		//		return new DocumentCollectionIterator(this);
+		return new DocumentCollectionSimpleIterator(this);
 	}
 
 	public org.openntf.domino.Database getParentDatabase() {

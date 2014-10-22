@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="OpenNTF Domino Demo Database">
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/Web-Content/WEB-INF/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/Web-Content/WEB-INF/lib"/>
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <property name="context-root" value="OpenNTF_Domino_Demo_Database"/>
+        <property name="java-output-path" value="/OpenNTF Domino Demo Database/build/classes"/>
+    </wb-module>
+</project-modules>

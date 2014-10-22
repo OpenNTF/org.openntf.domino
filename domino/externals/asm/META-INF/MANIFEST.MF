@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: asm
+Bundle-SymbolicName: asm
+Bundle-Version: 5.0.3.qualifier
+Export-Package: org.objectweb.asm,
+ org.objectweb.asm.commons,
+ org.objectweb.asm.optimizer,
+ org.objectweb.asm.signature,
+ org.objectweb.asm.tree,
+ org.objectweb.asm.tree.analysis,
+ org.objectweb.asm.util,
+ org.objectweb.asm.xml
+Bundle-Vendor: OW2 Consortium
+Bundle-ClassPath: .

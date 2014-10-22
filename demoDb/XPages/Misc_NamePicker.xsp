@@ -10,12 +10,12 @@
 				<xp:this.facets>
 					<xp:div xp:key="javaButton">
 						<xp:text escape="true" id="computedField1">
-							<xp:this.value><![CDATA[#{javascript:openNTFHelperBean.getGroups();}]]></xp:this.value>
+							<xp:this.value><![CDATA[#{javascript:openNTFNameBean.getGroups();}]]></xp:this.value>
 						</xp:text>
 					</xp:div>
 					<xp:div xp:key="SSJSButton">
 						<xp:label for="inputText1"
-							value="This doesn't work">
+							value="This one uses the core dataProvider">
 						</xp:label>
 						<xp:inputText id="inputText1" value="#{viewScope.name1}">
 						</xp:inputText>
@@ -28,7 +28,7 @@
 						</xe:namePicker>
 						<xp:br></xp:br>
 						<xp:br></xp:br>
-						<xp:label for="inputText1" value="This one's fine, using OpenNTF Name Picker">
+						<xp:label for="inputText1" value="This one uses OpenNTF Name Picker">
 						</xp:label>
 						<xp:br></xp:br>
 						<xp:inputText id="inputText2" value="#{viewScope.name2}">

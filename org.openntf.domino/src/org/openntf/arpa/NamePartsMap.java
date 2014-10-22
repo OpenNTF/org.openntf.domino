@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import org.openntf.domino.utils.DominoUtils;
-
 /**
  * NamePartsMap carries the various component string values that make up a name.
  * 
@@ -88,7 +86,6 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 	}
 
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(NamePartsMap.class.getName());
 	private static final long serialVersionUID = 1L;
 	private RFC822name _rfc822name;
@@ -435,7 +432,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				}
 
 				result = sb.toString();
-				this.put(Key.IDprefix, result);
+
+				// use super.put() to avoid endless loop! 
+				super.put(Key.IDprefix, result);
 			}
 		}
 
@@ -517,14 +516,14 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return false;
 
 	} /*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * private methods
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
+		* ******************************************************************
+		* ******************************************************************
+		* 
+		* private methods
+		* 
+		* ******************************************************************
+		* ******************************************************************
+		*/
 
 	/**
 	 * Retrieves and sets the various name values by parsing an input source string.
@@ -658,7 +657,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 								}
 
 							} catch (final Exception e) {
-								DominoUtils.handleException(e, "Source String: \"" + string + "\"");
+								ISO.handleException(e, "Source String: \"" + string + "\"");
 							}
 
 						} else {
@@ -707,7 +706,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			return true;
 
 		} catch (final Exception e) {
-			DominoUtils.handleException(e, "Source String: \"" + string + "\"");
+			ISO.handleException(e, "Source String: \"" + string + "\"");
 		}
 
 		return false;

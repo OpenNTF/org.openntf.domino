@@ -18,8 +18,14 @@
  */
 package org.openntf.arpa;
 
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.openntf.domino.logging.LogUtils;
 
 /**
  * @author dolson
@@ -33,11 +39,11 @@ public enum ISO {
 	 * 
 	 * @author Devin S. Olsonm (dolson@czarnowski.com)
 	 * 
-	 * @see "Country Codes - ISO 3166" http://www.iso.org/iso/home/standards/country_codes.htm
+	 @see "Country Codes - ISO 3166" http://www.iso.org/iso/home/standards/country_codes.htm
 	 * 
 	 */
 	public static enum ISO3166 {
-		AF("AFG", "Afghanistan"), AX("ALA", "Ã…land Islands"), AL("ALB", "Albania"), DZ("DZA", "Algeria"), AS("ASM", "American Samoa"), AD(
+		AF("AFG", "Afghanistan"), AX("ALA", "Åland Islands"), AL("ALB", "Albania"), DZ("DZA", "Algeria"), AS("ASM", "American Samoa"), AD(
 				"AND", "Andorra"), AO("AGO", "Angola"), AI("AIA", "Anguilla"), AQ("ATA", "Antarctica"), AG("ATG", "Antigua and Barbuda"), AR(
 				"ARG", "Argentina"), AM("ARM", "Armenia"), AW("ABW", "Aruba"), AU("AUS", "Australia"), AT("AUT", "Austria"), AZ("AZE",
 				"Azerbaijan"), BS("BHS", "Bahamas"), BH("BHR", "Bahrain"), BD("BGD", "Bangladesh"), BB("BRB", "Barbados"), BY("BLR",
@@ -49,7 +55,7 @@ public enum ISO {
 				"Cayman Islands"), CF("CAF", "Central African Republic"), TD("TCD", "Chad "), CL("CHL", "Chile"), CN("CHN", "China"), CX(
 				"CXR", "Christmas Island"), CC("CCK", "Cocos (Keeling) Islands"), CO("COL", "Colombia"), KM("COM", "Comoros"), CG("COG",
 				"Congo"), CD("COD", "Congo, the Democratic Republic of the"), CK("COK", "Cook Islands"), CR("CRI", "Costa Rica"), CI("CIV",
-				"CÃ´te d'Ivoire"), HR("HRV", "Croatia"), CU("CUB", "Cuba"), CW("CUW", "CuraÃ§ao"), CY("CYP", "Cyprus"), CZ("CZE",
+				"Côte d'Ivoire"), HR("HRV", "Croatia"), CU("CUB", "Cuba"), CW("CUW", "Curaçao"), CY("CYP", "Cyprus"), CZ("CZE",
 				"Czech Republic"), DK("DNK", "Denmark"), DJ("DJI", "Djibouti"), DM("DMA", "Dominica"), DO("DOM", "Dominican Republic"), EC(
 				"ECU", "Ecuador"), EG("EGY", "Egypt"), SV("SLV", "El Salvador"), GQ("GNQ", "Equatorial Guinea"), ER("ERI", "Eritrea"), EE(
 				"EST", "Estonia"), ET("ETH", "Ethiopia"), FK("FLK", "Falkland Islands (Malvinas)"), FO("FRO", "Faroe Islands"), FJ("FJI",
@@ -75,8 +81,8 @@ public enum ISO {
 				"Norfolk Island"), MP("MNP", "Northern Mariana Islands"), NO("NOR", "Norway"), OM("OMN", "Oman"), PK("PAK", "Pakistan"), PW(
 				"PLW", "Palau"), PS("PSE", "Palestine, State of"), PA("PAN", "Panama"), PG("PNG", "Papua New Guinea"), PY("PRY", "Paraguay"), PE(
 				"PER", "Peru"), PH("PHL", "Philippines"), PN("PCN", "Pitcairn"), PL("POL", "Poland"), PT("PRT", "Portugal"), PR("PRI",
-				"Puerto Rico"), QA("QAT", "Qatar"), RE("REU", "RÃ©union"), RO("ROU", "Romania"), RU("RUS", "Russian Federation"), RW("RWA",
-				"Rwanda"), BL("BLM", "Saint BarthÃ©lemy"), SH("SHN", "Saint Helena, Ascension and Tristan da Cunha"), KN("KNA",
+				"Puerto Rico"), QA("QAT", "Qatar"), RE("REU", "Réunion"), RO("ROU", "Romania"), RU("RUS", "Russian Federation"), RW("RWA",
+				"Rwanda"), BL("BLM", "Saint Barthélemy"), SH("SHN", "Saint Helena, Ascension and Tristan da Cunha"), KN("KNA",
 				"Saint Kitts and Nevis"), LC("LCA", "Saint Lucia"), MF("MAF", "Saint Martin (French part)"), PM("SPM",
 				"Saint Pierre and Miquelon"), VC("VCT", "Saint Vincent and the Grenadines"), WS("WSM", "Samoa"), SM("SMR", "San Marino"), ST(
 				"STP", "Sao Tome and Principe"), SA("SAU", "Saudi Arabia"), SN("SEN", "Senegal"), RS("SRB", "Serbia"), SC("SYC",
@@ -197,10 +203,15 @@ public enum ISO {
 	 * $ match the preceding match instructions against the end of the string.
 	 */
 	public static Pattern PatternRFC822 = Pattern.compile("^.*<.*>.*$");
+	public static final Pattern PatternAlpha2 = Pattern.compile("^[A-Z]+[A-Z]$");
+	public static final Pattern PatternAlpha3 = Pattern.compile("^[A-Z]+[A-Z]+[A-Z]$");
 	public static final Pattern PatternHexadecimal = Pattern.compile("^[A-Fa-f0-9]+$");
 
 	/** The Constant log_. */
-	private static final Logger log_ = Logger.getLogger(ISO.class.getName());
+	private static final Logger log_ = Logger.getLogger("org.openntf.arpa");
+
+	/** The Constant logBackup_. */
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/**
 	 * Gets the ISO3166 enum for the specified code
@@ -211,25 +222,33 @@ public enum ISO {
 	 * @return ISO2166 enum for the specified code, if found. Null otherwise
 	 */
 	public static ISO3166 getISO3166(final String code) {
-		if (code == null)
-			return null;
-		int length = code.length();
-		if (length != 2 && length != 3)
-			return null;
-		for (int i = 0; i < length; i++) {
-			char c = code.charAt(i);
-			if (c < 'A' || c > 'Z')
+		if (null != code) {
+			final int length = code.length();
+			switch (length) {
+			case 2: {
+				final Matcher matcher = ISO.PatternAlpha2.matcher(code);
+				for (final ISO3166 result : ISO3166.values()) {
+					if (code.equals(result.getCode2())) {
+						return result;
+					}
+				}
+				break;
+			}
+			case 3: {
+				final Matcher matcher = ISO.PatternAlpha3.matcher(code);
+				for (final ISO3166 result : ISO3166.values()) {
+					if (code.equals(result.getCode3())) {
+						return result;
+					}
+				}
+				break;
+			}
+			default:
 				return null;
+			} // switch 
+
 		}
-		if (length == 2) {
-			for (final ISO3166 result : ISO3166.values())
-				if (code.equals(result.getCode2()))
-					return result;
-			return null;
-		}
-		for (final ISO3166 result : ISO3166.values())
-			if (code.equals(result.getCode3()))
-				return result;
+
 		return null;
 	}
 
@@ -285,6 +304,18 @@ public enum ISO {
 	}
 
 	/**
+	 * Determines if an object is not null and an instance of String.
+	 * 
+	 * @param object
+	 *            Object to test.
+	 * 
+	 * @return Flag indicating whether or not the object is a String.
+	 */
+	public static boolean isString(final Object object) {
+		return ((null != object) && (object instanceof String));
+	}
+
+	/**
 	 * Determines if a string is null or blank
 	 * 
 	 * @param string
@@ -319,10 +350,80 @@ public enum ISO {
 	 * ******************************************************************
 	 * ******************************************************************
 	 * 
-	 * EXCEPTION HANDLING deleted (was duplicated code)
+	 * EXCEPTION HANDLING based on code in org.openntf.domino.utils.DominoUtils
 	 * 
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
+	/**
+	 * Handle exception.
+	 * 
+	 * @param t
+	 *            the t
+	 * @return the throwable
+	 */
+	public static Throwable handleException(final Throwable t) {
+		return (ISO.handleException(t, null));
+	}
+
+	public static Throwable handleException(final Throwable t, final String details) {
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					if (ISO.log_.getLevel() == null) {
+						LogUtils.loadLoggerConfig(false, "");
+					}
+					if (ISO.log_.getLevel() == null) {
+						ISO.log_.setLevel(Level.WARNING);
+					}
+					return null;
+				}
+			});
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					if (LogUtils.hasAccessException(ISO.log_)) {
+						ISO.logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
+						if (!ISO.isBlankString(details)) {
+							ISO.logBackup_.log(Level.SEVERE, "DETAILS: " + details);
+						}
+					} else {
+						ISO.log_.log(Level.WARNING, t.getLocalizedMessage(), t);
+						if (!ISO.isBlankString(details)) {
+							ISO.log_.log(Level.WARNING, "DETAILS: " + details);
+						}
+					}
+					return null;
+				}
+			});
+
+		} catch (final Throwable e) {
+			e.printStackTrace();
+		}
+
+		if (ISO.getBubbleExceptions()) {
+			throw new RuntimeException(t);
+		}
+		return t;
+	}
+
+	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+	};
+
+	public static Boolean getBubbleExceptions() {
+		if (ISO.bubbleExceptions_.get() == null) {
+			ISO.setBubbleExceptions(Boolean.FALSE);
+		}
+		return ISO.bubbleExceptions_.get();
+	}
+
+	public static void setBubbleExceptions(final Boolean value) {
+		ISO.bubbleExceptions_.set(value);
+	}
 
 }
