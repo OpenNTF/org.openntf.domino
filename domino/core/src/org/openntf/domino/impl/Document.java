@@ -141,7 +141,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * this means: if you have opened a MIME item do NOTHING with this document until you call closeMimeEntities()
 	 * 
 	 */
-	protected Map<String, MIMEEntity> openMIMEEntities = new FastMap<String, MIMEEntity>();
+	protected Map<String, MIMEEntity> openMIMEEntities = new FastMap<String, Set<MIMEEntity>>();
 
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
@@ -568,31 +568,41 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
-			// TODO: Should we add closeMIMEEntity to the interface?
+			// RPR: I don't exactly remember, why we do that. As far as I know, we should
+			// ensure that every MIME item is recycled before closing.
+			boolean ret = false;
+
 			if (entityItemName == null) {
-				for (MIMEEntity currEntity : openMIMEEntities.values()) {
-					((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+				for (Set<MIMEEntity> currEntitySet : openMIMEEntities.values()) {
+					for (MIMEEntity currEntity : currEntitySet)
+						((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 				}
 				openMIMEEntities.clear();
 			} else {
-				if (openMIMEEntities.containsKey(entityItemName.toLowerCase())) {
-					MIMEEntity currEntity = openMIMEEntities.remove(entityItemName.toLowerCase());
-					if (currEntity != null)
-						((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+				String lcName = entityItemName.toLowerCase();
+				if (openMIMEEntities.containsKey(lcName)) {
+					Set<MIMEEntity> currEntitySet = openMIMEEntities.remove(lcName);
+					if (currEntitySet != null) {
+						for (MIMEEntity currEntity : currEntitySet)
+							((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+					}
 				}
 			}
-			boolean ret = false;
-			if (null != entityItemName) {
-				try {
-					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-				} catch (NotesException e) {
+			// Now every dependent element shoult be purged
+			// call close on the "delegate" (entityItemName = null will close all entities)
+			try {
+				ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+			} catch (NotesException e) {
+				if (null != entityItemName) {
 					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
 							+ " even though we can't find an item by that name.");
-					//				DominoUtils.handleException(e);
+				} else {
+					log_.log(Level.INFO, "Failed to close all MIMEEntities: " + e.getMessage());
 				}
+				// we continue anyway
 			}
-			if (saveChanges) {
 
+			if (saveChanges) {
 				// This item is for debugging only, so keep 5-10 items in that list
 				// http://www-01.ibm.com/support/docview.wss?uid=swg27002572
 
@@ -751,6 +761,31 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	//RPr: currently not used. So I commented this out
 	//private final transient Map<String, MIMEEntity> entityCache_ = new HashMap<String, MIMEEntity>();
 
+	/**
+	 * This is used to track all MIMEEntities in this document. EVERY MIME-Item should be routed over this method!
+	 * 
+	 * @param lotus
+	 * @param markDirty
+	 * @return
+	 */
+	public MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName, final boolean markDirty) {
+		if (lotus == null)
+			return null;
+		MIMEEntity wrapped = fromLotus(lotus, MIMEEntity.SCHEMA, this);
+		if (wrapped != null) {
+			((org.openntf.domino.impl.MIMEEntity) wrapped).init(itemName);
+
+			String lcName = itemName.toLowerCase();
+			Set<MIMEEntity> entityGroup = openMIMEEntities.get(lcName);
+			if (entityGroup == null) {
+				entityGroup = new FastSet<MIMEEntity>();
+				openMIMEEntities.put(itemName, entityGroup);
+			}
+			entityGroup.add(wrapped);
+		}
+		return wrapped;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -765,13 +800,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				itemName = "Body";
 			}
 			try {
-				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
-				if (wrapped != null) {
-					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
-					wrapped.initItemName(itemName);
-					markDirty(itemName, true);
-				}
-				return wrapped;
+				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName, true);
 			} catch (NotesException alreadyThere) {
 				Item chk = getFirstItem(itemName);
 				if (chk != null) {
@@ -784,13 +813,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					return me;
 				}
 				closeMIMEEntities(false, itemName);
-				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
-				if (wrapped != null) {
-					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
-					wrapped.initItemName(itemName);
-					markDirty(itemName, true);
-				}
-				return wrapped;
+				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName, true);
 			}
 			// return fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
 		} catch (NotesException e) {
@@ -1510,12 +1533,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			if (convertMime)
 				getAncestorSession().setConvertMime(false);
-			MIMEEntity ret = fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
-
-			if (ret != null) {
-				openMIMEEntities.put(itemName.toLowerCase(), ret);
-				ret.initItemName(itemName); // here it is allowed to initialize the item with its name
-			}
+			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName, false);
 
 			if (openMIMEEntities.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");

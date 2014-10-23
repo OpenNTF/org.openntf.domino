@@ -13,8 +13,7 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import lotus.domino.cso.Database;
-
+import org.openntf.domino.Database;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
@@ -173,9 +172,9 @@ public class LogFilterHandler extends Handler {
 			}
 		if (_handlerUpdateSet == null)
 			_handlerUpdateSet = new HashSet<L_HandlerUpdateEntry>();
-			_handlerUpdateSet.add(new L_HandlerUpdateEntry(oldHandlerUIF, handlerEnt, oldHex, handlerCfgEnt._handlerConfig,
-					oldHandlerCfgEnt._handlerConfig, useDefaultFormatter, formatter));
-			return true;
+		_handlerUpdateSet.add(new L_HandlerUpdateEntry(oldHandlerUIF, handlerEnt, oldHex, handlerCfgEnt._handlerConfig,
+				oldHandlerCfgEnt._handlerConfig, useDefaultFormatter, formatter));
+		return true;
 	}
 
 	void activateYourself(final LogFilterHandler[] oldLFHs) {
@@ -190,12 +189,13 @@ public class LogFilterHandler extends Handler {
 			}
 			_handlerUpdateSet = null;
 		}
+		_myConfigLFH._loggers = new Logger[_myConfigLFH._loggerNames.length];
 		for (int i = 0; i < _myConfigLFH._loggerNames.length; i++)
-			activateOneLogger(_myConfigLFH._loggerNames[i], oldLFHs);
+			_myConfigLFH._loggers[i] = activateOneLogger(_myConfigLFH._loggerNames[i], oldLFHs);
 		_activated = true;
 	}
 
-	private void activateOneLogger(final String loggerName, final LogFilterHandler[] oldLFHs) {
+	private Logger activateOneLogger(final String loggerName, final LogFilterHandler[] oldLFHs) {
 		Logger l = Logger.getLogger(loggerName);
 		l.setLevel(getLevel());
 		for (int i = 0; i < oldLFHs.length; i++) {
@@ -205,13 +205,13 @@ public class LogFilterHandler extends Handler {
 		l.addHandler(this);
 		l.setUseParentHandlers(false);
 		LogManager.getLogManager().addLogger(l);
+		return l;
 	}
 
 	public void finishUp() {
-		for (int i = 0; i < _myConfigLFH._loggerNames.length; i++) {
-			Logger l = Logger.getLogger(_myConfigLFH._loggerNames[i]);
-			l.removeHandler(this);
-		}
+		if (_myConfigLFH._loggers != null)
+			for (int i = 0; i < _myConfigLFH._loggers.length; i++)
+				_myConfigLFH._loggers[i].removeHandler(this);
 		close();
 		Set<Map.Entry<LogConfig.L_LogHandler, L_HandlerEx>> handlerSet = _myHandlers.entrySet();
 		for (Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> handlerEnt : handlerSet)
