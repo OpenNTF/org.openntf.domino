@@ -330,11 +330,10 @@ public class LogConfig {
 	/*--------------------------------------------------------------*/
 	private static String readProp(final Properties props, final String key, final boolean required) {
 		String ret = props.getProperty(key);
-		if (ret != null && ret.isEmpty()) {
+		if (ret != null && ret.isEmpty())
 			ret = null;
-			if (required)
-				System.err.println("LogConfig: Required Property " + key + " isn't supplied");
-		}
+		if (required && ret == null)
+			System.err.println("LogConfig: Required Property " + key + " isn't supplied");
 		return ret;
 	}
 

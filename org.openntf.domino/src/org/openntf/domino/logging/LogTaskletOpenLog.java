@@ -1,11 +1,11 @@
-package org.openntf.domino.xots.builtin;
+package org.openntf.domino.logging;
 
-import org.openntf.domino.logging.LogGeneratorOpenLog;
+import org.openntf.domino.thread.tasklet.AbstractNativeTasklet;
 
 @SuppressWarnings("serial")
-public class XotsLogDBTasklet extends XotsAbstractNativeTasklet {
+public class LogTaskletOpenLog extends AbstractNativeTasklet {
 
-	public XotsLogDBTasklet() {
+	public LogTaskletOpenLog() {
 		super();
 	}
 
@@ -18,12 +18,12 @@ public class XotsLogDBTasklet extends XotsAbstractNativeTasklet {
 				if (oletw != null)
 					oletw._logGenerator._olWriter.writeLogRecToDB(this.getSession(), oletw._logRec, oletw._logGenerator._startTime);
 			} catch (InterruptedException e) {
-				System.out.println("XotsLogDBTasklet: Caught an InterruptedException; finishing ...");
+				System.out.println("LogTaskletOpenLog: Caught an InterruptedException; finishing ...");
 				break;
 			} catch (Throwable t) {
-				System.err.println("XotsLogDBTasklet: Caught an unexpected exception " + t.getClass().getName() + ":");
+				System.err.println("LogTaskletOpenLog: Caught an unexpected exception " + t.getClass().getName() + ":");
 				t.printStackTrace();
-				System.err.println("XotsLogDBTasklet: Aborting.");
+				System.err.println("LogTaskletOpenLog: Aborting.");
 				break;
 			}
 		}

@@ -211,6 +211,7 @@ public class Logging {
 		}
 		_propFileLh = oldFileLh;
 		_propFileCRC = oldFileCRC;
+		System.err.println("Logging: Couldn't update LogConfig from changed PropertyFile because of errors");
 		return ConfigChangeFlag.CFG_ERROR;
 	}
 
