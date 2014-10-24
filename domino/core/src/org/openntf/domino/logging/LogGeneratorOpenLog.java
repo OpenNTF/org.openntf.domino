@@ -6,6 +6,7 @@ package org.openntf.domino.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,20 +23,17 @@ import org.openntf.domino.Document;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+@SuppressWarnings("restriction")
 public class LogGeneratorOpenLog {
 
+	/*-------------------------------------------------------------*/
 	private static final String _logFormName = "LogEvent";
+	private static final String _xotsDemonClassName = "org.openntf.domino.xots.XotsDaemon";
+	private static final String _xotsDemonToQueueMethodName = "addToQueue";
 
-	private String _logDbPath;
-	private Date _startTime;
-	private LinkedBlockingQueue<OL_LogRecord> _olQueue;
-	private OL_Writer _olWriter;
-
-	// private DominoThread _writerThread;
-
+	/*-------------------------------------------------------------*/
 	class OL_LogRecord {
 		LogRecord _logRec;
 		List<ExceptionDetails.Entry> _exceptionDetails;
@@ -56,19 +54,53 @@ public class LogGeneratorOpenLog {
 		}
 	}
 
-	public LogGeneratorOpenLog(final String logDBPath) {
-		_logDbPath = logDBPath;
-		_startTime = new Date();
-		// _olQueue = new LinkedBlockingQueue<LogGeneratorOpenLog.OL_LogRecord>();
+	public class OL_EntryToWrite {
+		public LogGeneratorOpenLog _logGenerator;
+		public OL_LogRecord _logRec;
+
+		OL_EntryToWrite(final LogGeneratorOpenLog logGenerator, final OL_LogRecord logRec) {
+			_logGenerator = logGenerator;
+			_logRec = logRec;
+		}
 	}
 
-	void log(final Session sess, LogRecord logRec, final LogRecordAdditionalInfo lrai) {
-		if (_olWriter == null)
-			_olWriter = new OL_Writer(_startTime, _logDbPath, _olQueue);
-		//		if (_writerThread == null || !_writerThread.isAlive()) {
-		//			_writerThread = new DominoThread(new OL_Writer(_startTime, _logDbPath, _olQueue));
-		//			_writerThread.start();
-		//		}
+	/*-------------------------------------------------------------*/
+	private String _logDBPath;
+	public Date _startTime;
+	public OL_Writer _olWriter;
+
+	/*-------------------------------------------------------------*/
+	public LogGeneratorOpenLog(final String logDBPath) {
+		_startTime = new Date();
+		_logDBPath = logDBPath;
+		_olWriter = new OL_Writer(_logDBPath);
+	}
+
+	/*-------------------------------------------------------------*/
+	public static LinkedBlockingQueue<LogGeneratorOpenLog.OL_EntryToWrite> _olQueue = null;
+	private static boolean _xInitDone = false;
+
+	/*-------------------------------------------------------------*/
+	private static void doStaticStartUp() {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		try {
+			Class<?> xotsDemonClass = Class.forName(_xotsDemonClassName, true, loader);
+			Method xotsDemonToQueueMethod = xotsDemonClass.getMethod(_xotsDemonToQueueMethodName, Runnable.class);
+			LogTaskletOpenLog tol = new LogTaskletOpenLog();
+			_olQueue = new LinkedBlockingQueue<LogGeneratorOpenLog.OL_EntryToWrite>();
+			xotsDemonToQueueMethod.invoke(null, tol);
+		} catch (Exception e) {
+			System.out.println("Can't make Xots-LogDB-Thread: " + e.getMessage());
+			_olQueue = null;
+		} finally {
+			_xInitDone = true;
+		}
+	}
+
+	/*-------------------------------------------------------------*/
+	synchronized void log(final Session sess, LogRecord logRec, final LogRecordAdditionalInfo lrai) {
+		if (!_xInitDone)
+			doStaticStartUp();
 		OL_LogRecord ollr = new OL_LogRecord(logRec, lrai.getExceptionDetails(), lrai.getLastWrappedDocs());
 		Exception localExc = null;
 		try {
@@ -93,8 +125,10 @@ public class LogGeneratorOpenLog {
 			ollr._clientVersion = new String[] { "Exception while collecting logg data!", "See next LogEntry for details." };
 			localExc = e;
 		}
-		//		_olQueue.add(ollr);
-		_olWriter.writeLogRecToDB(ollr);
+		if (_olQueue != null)
+			_olQueue.add(new OL_EntryToWrite(this, ollr));
+		else
+			_olWriter.writeLogRecToDB(sess, ollr, _startTime);
 		if (localExc == null)
 			return;
 		logRec = new LogRecord(Level.SEVERE, "Exception in LogGenerator.log");
@@ -102,11 +136,14 @@ public class LogGeneratorOpenLog {
 		logRec.setMillis(System.currentTimeMillis());
 		ollr = new OL_LogRecord(logRec, null, null);
 		ollr._agentName = "LogGeneratorOpenLog";
-		ollr._dbPath = _logDbPath;
-		//		_olQueue.add(ollr);
-		_olWriter.writeLogRecToDB(ollr);
+		ollr._dbPath = _logDBPath;
+		if (_olQueue != null)
+			_olQueue.add(new OL_EntryToWrite(this, ollr));
+		else
+			_olWriter.writeLogRecToDB(sess, ollr, _startTime);
 	}
 
+	/*-------------------------------------------------------------*/
 	private String getAccessLevel(final Database currDB) {
 		int acl = currDB.getCurrentAccessLevel();
 		String ret;
@@ -132,40 +169,40 @@ public class LogGeneratorOpenLog {
 		e.printStackTrace();
 	}
 
-	static class OL_Writer implements Runnable {
+	/*-------------------------------------------------------------*/
+	public class OL_Writer {
 
-		private Date _parentStartTime;
 		private String _myDBPath;
-		private LinkedBlockingQueue<LogGeneratorOpenLog.OL_LogRecord> _myQueue;
-		private Database _logDb;
+		private Database _logDB = null;
 
-		OL_Writer(final Date startTime, final String dbPath, final LinkedBlockingQueue<LogGeneratorOpenLog.OL_LogRecord> queue) {
-			_parentStartTime = startTime;
+		OL_Writer(final String dbPath) {
 			_myDBPath = dbPath;
-			_myQueue = queue;
 		}
 
-		@Override
-		public void run() {
-			DominoUtils.setBubbleExceptions(true);
-			for (;;) {
-				LogGeneratorOpenLog.OL_LogRecord ollr;
-				try {
-					ollr = _myQueue.take();
-				} catch (InterruptedException e) {
-					printException(e);
-					break;
-				}
-				if (ollr != null)
-					writeLogRecToDB(ollr);
-			}
-		}
-
-		private void writeLogRecToDB(final OL_LogRecord ollr) {
+		/*-------------------------------------------------------------*/
+		private Document getEmptyDocument(final Session s) {
+			Document ret = null;
 			try {
-				if (_logDb == null)
-					_logDb = Factory.getSession().getDatabase(_myDBPath);
-				Document olDoc = _logDb.createDocument();
+				if (_logDB != null)
+					ret = _logDB.createDocument();
+			} catch (Throwable t) {
+			}
+			if (ret == null)
+				try {
+					_logDB = s.getDatabase(_myDBPath);
+					ret = _logDB.createDocument();
+				} catch (Exception e) {
+					printException(e);
+				}
+			return ret;
+		}
+
+		/*-------------------------------------------------------------*/
+		public void writeLogRecToDB(final Session sess, final OL_LogRecord ollr, final Date logStartTime) {
+			Document olDoc = getEmptyDocument(sess);
+			if (olDoc == null)
+				return;
+			try {
 				olDoc.replaceItemValue("Form", _logFormName);
 				Throwable t = ollr._logRec.getThrown();
 				if (t != null) {
@@ -207,7 +244,7 @@ public class LogGeneratorOpenLog {
 				olDoc.replaceItemValue("LogAccessLevel", ollr._accessLevel);
 				olDoc.replaceItemValue("LogUserRoles", ollr._userRoles);
 				olDoc.replaceItemValue("LogClientVersion", ollr._clientVersion);
-				olDoc.replaceItemValue("LogAgentStartTime", _parentStartTime);
+				olDoc.replaceItemValue("LogAgentStartTime", logStartTime);
 				if (ollr._exceptionDetails == null)
 					olDoc.replaceItemValue("LogExceptionDetails", "* Not available *");
 				else {
@@ -228,7 +265,7 @@ public class LogGeneratorOpenLog {
 			}
 		}
 
-		private String getMessage(final LogRecord logRec) {
+		String getMessage(final LogRecord logRec) {
 			String ret = logRec.getMessage();
 			if (ret != null && !ret.isEmpty())
 				return ret;

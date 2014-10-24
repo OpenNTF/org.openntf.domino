@@ -22,6 +22,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.openntf.domino.AsDocMap;
 import org.openntf.domino.i18n.MessageProvider;
 import org.openntf.domino.xsp.model.DominoDocumentMapAdapter;
 
@@ -130,12 +131,15 @@ public enum MsgUtilXsp {
 
 		Map<String, Object> dataMap = null;
 		if (pmp.iDocName != null) {
-			DominoDocument dominoDoc = (DominoDocument) ExtLibUtil.resolveVariable(fc, pmp.iDocName);
+			Object dominoDoc = ExtLibUtil.resolveVariable(fc, pmp.iDocName);
 			if (dominoDoc != null) {
-				if (dominoDoc instanceof Map)
+				if (dominoDoc instanceof Map) {
 					dataMap = (Map<String, Object>) dominoDoc;
-				else
-					dataMap = new DominoDocumentMapAdapter(dominoDoc);
+				} else if (dominoDoc instanceof AsDocMap) {
+					dataMap = ((AsDocMap) dominoDoc).asDocMap();
+				} else if (dominoDoc instanceof DominoDocument) {
+					dataMap = new DominoDocumentMapAdapter((DominoDocument) dominoDoc);
+				}
 			}
 		}
 		if (dataMap == null) {

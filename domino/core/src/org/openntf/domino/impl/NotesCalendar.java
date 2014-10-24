@@ -420,9 +420,9 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
-	 */
+	//	/* (non-Javadoc)
+	//	 * @see org.openntf.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
+	//	 */
 	//	public String getApptunidFromUID(final String arg0, final boolean arg1) {
 	//		try {
 	//			return getDelegate().getApptunidFromUID(arg0, arg1);
