@@ -19,8 +19,8 @@
 		<repository>
 			<id>notes-lvl1</id>
 			<layout>p2</layout>
-			<!-- <url>file:${user.dir}/../dominoP2.update</url> -->
-			<url>file:///D:\Daten\GitHub\java\openntf\dominoP2.update</url>
+			<url>file:${user.dir}/../dominoP2.update</url>
+			<!--  <url>file:///D:\Daten\GitHub\java\openntf\dominoP2.update</url> -->
 		</repository>
 	</repositories>
 	<dependencies>
@@ -38,6 +38,7 @@
 		<module>core</module>
 		<module>xsp</module>
 		<module>org.openntf.domino.feature</module>
+		<module>org.openntf.domino.updatesite</module>
 	</modules>
 
 	<build>

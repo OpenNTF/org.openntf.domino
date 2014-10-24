@@ -16,10 +16,6 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.apache.commons.feature"
-         version="0.0.0"/>
-
    <plugin
          id="com.ibm.commons.icu"
          download-size="0"
