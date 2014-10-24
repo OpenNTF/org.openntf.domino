@@ -26,11 +26,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
-			<artifactId>asm</artifactId>
-			<version>latest</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openntf.domino</groupId>
 			<artifactId>jsr305</artifactId>
 			<version>latest</version>
 		</dependency>
