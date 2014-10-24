@@ -141,7 +141,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * this means: if you have opened a MIME item do NOTHING with this document until you call closeMimeEntities()
 	 * 
 	 */
-	protected Map<String, MIMEEntity> openMIMEEntities = new FastMap<String, Set<MIMEEntity>>();
+	protected Map<String, Set<MIMEEntity>> openMIMEEntities = new FastMap<String, Set<MIMEEntity>>();
 
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"

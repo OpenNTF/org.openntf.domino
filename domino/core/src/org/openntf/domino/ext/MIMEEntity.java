@@ -16,12 +16,6 @@ public interface MIMEEntity {
 	public void markDirty();
 
 	/**
-	 * This method initializes the name of this MimeEntity, so that the entity knwos it's field name. Should NOT be called in your code!
-	 * 
-	 */
-	public void initItemName(String itemName);
-
-	/**
 	 * Returns the according ItemName of this entity
 	 * 
 	 */
