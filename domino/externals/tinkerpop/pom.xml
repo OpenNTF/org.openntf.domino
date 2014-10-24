@@ -20,9 +20,10 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
-			<artifactId>guava</artifactId>
+			<artifactId>com.google.guava</artifactId>
 			<version>latest</version>
 		</dependency>
 		<dependency>
@@ -30,11 +31,19 @@
 			<artifactId>javassist</artifactId>
 			<version>latest</version>
 		</dependency>
+		
+		<!-- 
 		<dependency>
 			<groupId>net.sourceforge.collections</groupId>
 			<artifactId>collections-generic</artifactId>
 			<version>4.01</version>
 		</dependency>
+		 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-exec</artifactId>
+			<version>1.2</version>
+		</dependency>		 
 		<dependency>
 			<groupId>net.sf.jung</groupId>
 			<artifactId>jung-algorithms</artifactId>

@@ -17,9 +17,10 @@
 
 	<repositories>
 		<repository>
-			<id>notes</id>
+			<id>notes-lvl1</id>
 			<layout>p2</layout>
-			<url>file:///C:\data\DominoP2Repo</url>
+			<!-- <url>file:${user.dir}/../dominoP2.update</url> -->
+			<url>file:///D:\Daten\GitHub\java\openntf\dominoP2.update</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -44,10 +45,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
 				<configuration>
 					<source>${compiler}</source>
 					<target>${compiler}</target>
-					<version>3.1</version>
 					<compilerArgument>-err:-forbidden,discouraged,deprecation</compilerArgument>
 				</configuration>
 			</plugin>
