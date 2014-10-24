@@ -57,9 +57,8 @@ Build-Date: 20140416093417
 Require-Bundle: com.ibm.icu.base,
  com.ibm.commons;bundle-version="9.0.0",
  com.google.guava;bundle-version="18.0.0",
- com.ibm.notes.java.api,
  com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
- asm;bundle-version="5.0.3",
+ com.ibm.notes.java.api;bundle-version="8.5.3";visibility:=reexport,
  javolution;bundle-version="6.1.0",
  org.openntf.formula;bundle-version="1.5.0"
 Import-Package: lotus.domino
