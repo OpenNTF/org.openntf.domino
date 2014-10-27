@@ -17,7 +17,7 @@
 
 	<repositories>
 		<repository>
-			<id>notes-lvl1</id>
+			<id>notes</id>
 			<layout>p2</layout>
 			<url>file:${user.dir}/../dominoP2.update</url>
 			<!--  <url>file:///D:\Daten\GitHub\java\openntf\dominoP2.update</url> -->
@@ -37,8 +37,9 @@
 		<module>formula</module>
 		<module>core</module>
 		<module>xsp</module>
-		<module>org.openntf.domino.feature</module>
-		<module>org.openntf.domino.updatesite</module>
+		<module>org.openntf.domino.feature.group</module>
+ 		<module>org.openntf.domino.updatesite</module>
+
 	</modules>
 
 	<build>
@@ -119,6 +120,7 @@
 							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
+					<resolver>p2</resolver>
 				</configuration>
 			</plugin>
 			<!-- <plugin> <groupId>org.eclipse.tycho.extras</groupId> <artifactId>tycho-p2-extras-plugin</artifactId> 
@@ -141,4 +143,15 @@
 		</plugins>
 	</build>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.openntf.domino</groupId>
+				<artifactId>
+					org.openntf.domino.feature.group
+				</artifactId>
+				<version>latest</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

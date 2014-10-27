@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.openntf.domino.feature"
+      id="org.openntf.domino.feature.group"
       label="OpenNTF Domino API for IBM Domino Server"
       version="1.5.0.qualifier"
       provider-name="OpenNTF">

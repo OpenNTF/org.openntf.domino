@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-	<artifactId>org.openntf.domino.updatesite</artifactId>
-	<packaging>eclipse-update-site</packaging>
+  <artifactId>org.openntf.domino.updatesite</artifactId>
+  <packaging>eclipse-update-site</packaging>
   <parent>
-    <groupId>org.openntf.domino</groupId>
-    <artifactId>domino</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+  	<groupId>org.openntf.domino</groupId>
+  	<artifactId>domino</artifactId>
+  	<version>1.5.0-SNAPSHOT</version>
   </parent>
+  <!-- 
 	<build>
 		<plugins>
 			<plugin>
@@ -28,4 +29,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	 -->
 </project>
