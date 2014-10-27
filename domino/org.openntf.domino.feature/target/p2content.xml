@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <units size='2'>
-  <unit id='org.openntf.domino.feature.feature.group' version='1.5.0.201410171840' singleton='false'>
-    <update id='org.openntf.domino.feature.feature.group' range='[0.0.0,1.5.0.201410171840)' severity='0'/>
+  <unit id='org.openntf.domino.feature.feature.group' version='1.5.0.201410271320' singleton='false'>
+    <update id='org.openntf.domino.feature.feature.group' range='[0.0.0,1.5.0.201410271320)' severity='0'/>
     <properties size='8'>
       <property name='org.eclipse.equinox.p2.name' value='OpenNTF Domino API for IBM Domino Server'/>
       <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
@@ -13,20 +13,42 @@
       <property name='maven-version' value='1.5.0-SNAPSHOT'/>
     </properties>
     <provides size='1'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.feature.feature.group' version='1.5.0.201410171840'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.feature.feature.group' version='1.5.0.201410271320'/>
     </provides>
-    <requires size='11'>
-      <required namespace='org.eclipse.equinox.p2.iu' name='asm' range='[5.0.3.201410171840,5.0.3.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='com.google.guava' range='[18.0.0.201410171840,18.0.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='com.tinkerpop' range='[2.6.0.201410171840,2.6.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='javassist' range='[3.18.2.201410171840,3.18.2.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='javolution' range='[6.1.0.201410171840,6.1.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='jsr305' range='[1.0.0.201410171840,1.0.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino' range='[1.5.0.201410171840,1.5.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.xsp' range='[1.5.0.201410171840,1.5.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.formula' range='[1.5.0.201410171840,1.5.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='rx' range='[1.0.0.201410171840,1.0.0.201410171840]'/>
-      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.feature.feature.jar' range='[1.5.0.201410171840,1.5.0.201410171840]'>
+    <requires size='33'>
+      <required namespace='org.eclipse.equinox.p2.iu' name='jsr305' range='1.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.google.guava' range='18.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='javassist' range='3.18.2'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.osgi' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.osgi.services' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.icu.base' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.commons' range='9.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.notes.java.api' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.tinkerpop' range='2.6.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='asm' range='5.0.3'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.xsp.domino' range='9.0.1'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.xsp.extlib' range='9.0.1'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.xsp.extsn' range='9.0.1'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino' range='1.5.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.formula' range='1.5.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.designer.runtime' range='9.0.1'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.domino.xsp.bootstrap' range='9.0.1'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.domino.napi' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.icu' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.jscript' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.eclipse.core.runtime' range='0.0.0'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.ibm.icu.base' range='3.8.1'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='asm' range='[5.0.3.201410271320,5.0.3.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.google.guava' range='[18.0.0.201410271320,18.0.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='com.tinkerpop' range='[2.6.0.201410271320,2.6.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='javassist' range='[3.18.2.201410271320,3.18.2.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='javolution' range='[6.1.0.201410271320,6.1.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='jsr305' range='[1.0.0.201410271320,1.0.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino' range='[1.5.0.201410271320,1.5.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.xsp' range='[1.5.0.201410271320,1.5.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.formula' range='[1.5.0.201410271320,1.5.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='rx' range='[1.0.0.201410271320,1.0.0.201410271320]'/>
+      <required namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.feature.feature.jar' range='[1.5.0.201410271320,1.5.0.201410271320]'>
         <filter>
           (org.eclipse.update.install.features=true)
         </filter>
@@ -42,7 +64,7 @@
       [Enter Copyright Description here.]
     </copyright>
   </unit>
-  <unit id='org.openntf.domino.feature.feature.jar' version='1.5.0.201410171840'>
+  <unit id='org.openntf.domino.feature.feature.jar' version='1.5.0.201410271320'>
     <properties size='7'>
       <property name='org.eclipse.equinox.p2.name' value='OpenNTF Domino API for IBM Domino Server'/>
       <property name='org.eclipse.equinox.p2.description' value='[Enter Feature Description here.]'/>
@@ -53,15 +75,15 @@
       <property name='maven-version' value='1.5.0-SNAPSHOT'/>
     </properties>
     <provides size='3'>
-      <provided namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.feature.feature.jar' version='1.5.0.201410171840'/>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino.feature.feature.jar' version='1.5.0.201410271320'/>
       <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='feature' version='1.0.0'/>
-      <provided namespace='org.eclipse.update.feature' name='org.openntf.domino.feature' version='1.5.0.201410171840'/>
+      <provided namespace='org.eclipse.update.feature' name='org.openntf.domino.feature' version='1.5.0.201410271320'/>
     </provides>
     <filter>
       (org.eclipse.update.install.features=true)
     </filter>
     <artifacts size='1'>
-      <artifact classifier='org.eclipse.update.feature' id='org.openntf.domino.feature' version='1.5.0.201410171840'/>
+      <artifact classifier='org.eclipse.update.feature' id='org.openntf.domino.feature' version='1.5.0.201410271320'/>
     </artifacts>
     <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
     <touchpointData size='1'>

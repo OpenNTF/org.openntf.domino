@@ -3,6 +3,7 @@ package org.openntf.domino.tests.paul;
 import lotus.domino.NotesFactory;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DGraph;
@@ -136,19 +137,19 @@ public class Graph2Test implements Runnable {
 			timelog("Beginning graph2 test...");
 
 			DElementStore crewStore = new DElementStore();
-			crewStore.setStoreKey(crewId);
+			crewStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(crewId));
 			DElementStore movieStore = new DElementStore();
-			movieStore.setStoreKey(movieId);
+			movieStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(movieId));
 			DElementStore characterStore = new DElementStore();
-			characterStore.setStoreKey(characterId);
+			characterStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(characterId));
 			DElementStore edgeStore = new DElementStore();
-			edgeStore.setStoreKey(edgeId);
+			edgeStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(edgeId));
 			DConfiguration config = new DConfiguration();
 			config.addElementStore(crewStore);
 			config.addElementStore(movieStore);
 			config.addElementStore(characterStore);
 			config.addElementStore(edgeStore);
-			config.setDefaultElementStore(edgeId);
+			config.setDefaultElementStore(NoteCoordinate.Utils.getLongFromReplid(edgeId));
 			DGraph graph = new DGraph(config);
 
 			JavaHandlerModule jhm = new JavaHandlerModule();

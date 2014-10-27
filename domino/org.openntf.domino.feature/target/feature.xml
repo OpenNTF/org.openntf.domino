@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.domino.feature"
       label="OpenNTF Domino API for IBM Domino Server"
-      version="1.5.0.201410171840"
+      version="1.5.0.201410271320"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
@@ -26,74 +26,99 @@
  * permissions and limitations under the License.
    </license>
 
+   <requires>
+      <import plugin="jsr305" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="18.0.0" match="greaterOrEqual"/>
+      <import plugin="javassist" version="3.18.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="com.ibm.icu.base"/>
+      <import plugin="com.ibm.commons" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.notes.java.api"/>
+      <import plugin="com.tinkerpop" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="asm" version="5.0.3" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.domino" version="9.0.1" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.extlib" version="9.0.1" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.extsn" version="9.0.1" match="greaterOrEqual"/>
+      <import plugin="org.openntf.domino" version="1.5.0" match="greaterOrEqual"/>
+      <import plugin="org.openntf.formula" version="1.5.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.designer.runtime" version="9.0.1" match="greaterOrEqual"/>
+      <import plugin="com.ibm.domino.xsp.bootstrap" version="9.0.1" match="greaterOrEqual"/>
+      <import plugin="com.ibm.domino.napi"/>
+      <import plugin="com.ibm.icu"/>
+      <import plugin="com.ibm.jscript"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="com.ibm.icu.base" version="3.8.1" match="greaterOrEqual"/>
+   </requires>
+
    <plugin
          id="asm"
-         download-size="668"
-         install-size="1115"
-         version="5.0.3.201410171840"
+         download-size="667"
+         install-size="1113"
+         version="5.0.3.201410271320"
          unpack="false"/>
 
    <plugin
          id="com.google.guava"
          download-size="2144"
          install-size="4646"
-         version="18.0.0.201410171840"
+         version="18.0.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="com.tinkerpop"
          download-size="388"
          install-size="853"
-         version="2.6.0.201410171840"
+         version="2.6.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="javassist"
          download-size="697"
          install-size="1342"
-         version="3.18.2.201410171840"
+         version="3.18.2.201410271320"
          unpack="false"/>
 
    <plugin
          id="javolution"
          download-size="469"
-         install-size="907"
-         version="6.1.0.201410171840"
+         install-size="906"
+         version="6.1.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="jsr305"
          download-size="18"
          install-size="21"
-         version="1.0.0.201410171840"
+         version="1.0.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="org.openntf.domino"
-         download-size="1698"
-         install-size="3529"
-         version="1.5.0.201410171840"
+         download-size="1716"
+         install-size="3564"
+         version="1.5.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="org.openntf.domino.xsp"
          download-size="220"
          install-size="449"
-         version="1.5.0.201410171840"
+         version="1.5.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="org.openntf.formula"
          download-size="254"
          install-size="555"
-         version="1.5.0.201410171840"
+         version="1.5.0.201410271320"
          unpack="false"/>
 
    <plugin
          id="rx"
          download-size="637"
          install-size="1235"
-         version="1.0.0.201410171840"
+         version="1.0.0.201410271320"
          unpack="false"/>
 
 </feature>
