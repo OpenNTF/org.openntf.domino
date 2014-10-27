@@ -36,7 +36,6 @@
       <import plugin="com.ibm.commons" version="9.0.0" match="greaterOrEqual"/>
       <import plugin="com.ibm.notes.java.api"/>
       <import plugin="com.tinkerpop" version="2.6.0" match="greaterOrEqual"/>
-      <import plugin="asm" version="5.0.3" match="greaterOrEqual"/>
       <import plugin="com.ibm.xsp.domino" version="9.0.1" match="greaterOrEqual"/>
       <import plugin="com.ibm.xsp.extlib" version="9.0.1" match="greaterOrEqual"/>
       <import plugin="com.ibm.xsp.extsn" version="9.0.1" match="greaterOrEqual"/>

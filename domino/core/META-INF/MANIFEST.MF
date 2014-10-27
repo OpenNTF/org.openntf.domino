@@ -60,7 +60,8 @@ Require-Bundle: com.ibm.icu.base,
  com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  com.ibm.notes.java.api;bundle-version="8.5.3";visibility:=reexport,
  javolution;bundle-version="6.1.0",
- org.openntf.formula;bundle-version="1.5.0"
+ org.openntf.formula;bundle-version="1.5.0",
+ com.ibm.commons.icu;bundle-version="9.0.1"
 Import-Package: lotus.domino
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
