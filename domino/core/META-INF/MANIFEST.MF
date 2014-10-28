@@ -54,7 +54,7 @@ Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Built-By: praml
 Build-Date: 20140416093417
-Require-Bundle: com.ibm.icu.base,
+Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1",
  com.ibm.commons;bundle-version="9.0.0",
  com.google.guava;bundle-version="18.0.0",
  com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
