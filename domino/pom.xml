@@ -19,8 +19,7 @@
 		<repository>
 			<id>notes</id>
 			<layout>p2</layout>
-			<url>file:${user.dir}/../dominoP2.update</url>
-			<!--  <url>file:///D:\Daten\GitHub\java\openntf\dominoP2.update</url> -->
+			<url>${notes-platform}</url>
 		</repository>
 	</repositories>
 	<dependencies>
