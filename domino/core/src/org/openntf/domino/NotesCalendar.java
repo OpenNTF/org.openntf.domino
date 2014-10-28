@@ -229,12 +229,12 @@ SessionDescendant {
 	@Override
 	public void setReadXLotusPropsOutputLevel(final int level);
 
-	//	/* 
-	//	 * (non-Javadoc)
-	//	 * 
-	//	 * @see lotus.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
-	//	 */
-	// @Override
-	//	public String getApptunidFromUID(String arg0, boolean arg1);
+		/* 
+		 * (non-Javadoc)
+		 * 
+		 * @see lotus.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
+		 */
+	 @Override
+		public String getApptunidFromUID(String arg0, boolean arg1);
 
 }
