@@ -58,5 +58,12 @@
       </service>
    </extension>
 
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+      class="org.openntf.formula.function.FocFunctions$Functions"
+            type="org.openntf.formula.FunctionSet">
+      </service>
+   </extension>
 </plugin>
 
