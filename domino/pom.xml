@@ -142,16 +142,54 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.openntf.domino</groupId>
-				<artifactId>
-					org.openntf.domino.feature.group
-				</artifactId>
-				<version>latest</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+	
+	<licenses>
+		<license>
+			<name>Apache License, V2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>AWa</id>
+			<name>Alex Wagner</name>
+			<email>alexander.wagner@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>MSte</id>
+			<name>Manfred Steinsiek</name>
+			<email>manfred.steinsiek@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>RPr</id>
+			<name>Roland Praml</name>
+			<email>roland.praml@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+			<properties>
+				<picUrl><![CDATA[https://avatars2.githubusercontent.com/u/5530228?v=2&s=60]]></picUrl>
+			</properties>
+		</developer>
+	</developers>
 </project>
