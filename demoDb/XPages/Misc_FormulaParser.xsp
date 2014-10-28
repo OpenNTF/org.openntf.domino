@@ -36,7 +36,7 @@ try {
 						<xp:button value="Process Formula" id="button1">
 							<xp:eventHandler event="onclick" submit="true"
 								refreshMode="partial" refreshId="JavaDiv">
-								<xp:this.action><![CDATA[#{javascript:openNTFHelperBean.processFormula()}]]></xp:this.action>
+								<xp:this.action><![CDATA[#{javascript:newHelperBean2.processFormula()}]]></xp:this.action>
 							</xp:eventHandler>
 						</xp:button>
 					</xp:div>
