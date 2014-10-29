@@ -113,10 +113,14 @@ public class XspLibrary extends AbstractXspLibrary {
 	public XspLibrary() {
 		System.out.println("Loading org.openntf.domino.xsp library");
 		verifyIGetEntryByKey();
-		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-			if (service instanceof OpenntfHttpService) {
-				((OpenntfHttpService) service).activate();
+		try {
+			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+				if (service instanceof OpenntfHttpService) {
+					((OpenntfHttpService) service).activate();
+				}
 			}
+		} catch (Throwable t) {
+			System.out.println("HttpServices don't work for client");
 		}
 	}
 
