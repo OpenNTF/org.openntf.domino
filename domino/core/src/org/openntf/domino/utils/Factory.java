@@ -819,7 +819,7 @@ public enum Factory {
 	}
 
 	public static void setServiceLocator(final AppServiceLocator locator) {
-		currentServiceLocator_.remove();
+		currentServiceLocator_.set(locator);
 	}
 
 	public static void clearWrapperFactory() {
