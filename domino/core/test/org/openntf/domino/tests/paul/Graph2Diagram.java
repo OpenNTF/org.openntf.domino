@@ -81,10 +81,10 @@ public class Graph2Diagram implements Runnable {
 		//		String movieId = "85257D640018AD81";
 		//		String characterId = "85257D6B007ECB47";
 		//		String edgeId = "85257D640018BCDF";
-		String crewId = "80257D6D0035CE87";
-		String movieId = "80257D6D0035D5A8";
-		String characterId = "80257D6D0035DAD9";
-		String edgeId = "80257D6D0035E02A";
+		Long crewId = 1L; //"80257D6D0035CE87";
+		Long movieId = 2L; //"80257D6D0035D5A8";
+		Long characterId = 3L; //"80257D6D0035DAD9";
+		Long edgeId = 4L; //"80257D6D0035E02A";
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
 		Session session = this.getSession();

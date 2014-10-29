@@ -22,7 +22,7 @@ Export-Package: org.openntf.domino.xots,
  org.openntf.domino.xsp.msg,
  org.openntf.domino.xsp.readers,
  org.openntf.domino.xsp.script
-Require-Bundle: org.openntf.domino;bundle-version="1.5.0",
+Require-Bundle: org.openntf.domino;bundle-version="1.5.0";visibility:=reexport,
  com.ibm.xsp.domino;bundle-version="9.0.1",
  com.ibm.xsp.extlib;bundle-version="9.0.1",
  com.ibm.xsp.extsn;bundle-version="9.0.1",
