@@ -195,8 +195,8 @@ public enum Documents {
 
 		// entity.recycle();
 		if (!doc.closeMIMEEntities(false, itemName)) {
-			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-					+ doc.getAncestorDatabase().getApiPath());
+			//			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+			//					+ doc.getAncestorDatabase().getApiPath());
 		}
 
 		return result;
@@ -369,7 +369,8 @@ public enum Documents {
 			//		previousState = null;	// why set to null?
 			if (!doc.closeMIMEEntities(true, itemName)) {
 				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-						+ doc.getAncestorDatabase().getApiPath());
+						+ doc.getAncestorDatabase().getApiPath() + " during a saveState call. This may result in data loss!",
+						new Throwable());
 			}
 			if (convertMime) {
 				session.setConvertMime(true);

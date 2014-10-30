@@ -30,14 +30,14 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	public static final String IN_PREFIX = "_OPEN_IN_";
 	public static final String OUT_PREFIX = "_OPEN_OUT_";
 
-	private FastSet<String> inDirtyKeySet_;
-	private FastSet<String> outDirtyKeySet_;
+	protected FastSet<String> inDirtyKeySet_;
+	protected FastSet<String> outDirtyKeySet_;
 	//	private FastMap<String, FastSet<String>> inEdgesMap_;
-	private FastMap<String, NoteList> inEdgesMapCompressed_;
+	protected FastMap<String, NoteList> inEdgesMapCompressed_;
 	//	private FastMap<String, FastSet<String>> outEdgesMap_;
-	private FastMap<String, NoteList> outEdgesMapCompressed_;
-	private transient FastMap<String, FastTable<Edge>> inEdgeCache_;
-	private transient FastMap<String, FastTable<Edge>> outEdgeCache_;
+	protected FastMap<String, NoteList> outEdgesMapCompressed_;
+	protected transient FastMap<String, FastTable<Edge>> inEdgeCache_;
+	protected transient FastMap<String, FastTable<Edge>> outEdgeCache_;
 
 	public DVertex(final org.openntf.domino.graph2.DGraph parent) {
 		super(parent);
@@ -219,14 +219,14 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 	}
 
-	Map<String, FastTable<Edge>> getInEdgeCache() {
+	protected Map<String, FastTable<Edge>> getInEdgeCache() {
 		if (inEdgeCache_ == null) {
 			inEdgeCache_ = new FastMap<String, FastTable<Edge>>().atomic();
 		}
 		return inEdgeCache_;
 	}
 
-	FastTable<Edge> getInEdgeCache(final String label) {
+	protected FastTable<Edge> getInEdgeCache(final String label) {
 		Map<String, FastTable<Edge>> inCache = getInEdgeCache();
 		FastTable<Edge> result = null;
 		result = inCache.get(label);
@@ -237,7 +237,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return result;
 	}
 
-	FastTable<Edge> getOutEdgeCache(final String label) {
+	protected FastTable<Edge> getOutEdgeCache(final String label) {
 		Map<String, FastTable<Edge>> outCache = getOutEdgeCache();
 		FastTable<Edge> result = null;
 		result = outCache.get(label);
@@ -248,7 +248,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return result;
 	}
 
-	FastMap<String, FastTable<Edge>> getOutEdgeCache() {
+	protected FastMap<String, FastTable<Edge>> getOutEdgeCache() {
 		if (outEdgeCache_ == null) {
 			outEdgeCache_ = new FastMap<String, FastTable<Edge>>().atomic();
 		}
@@ -266,7 +266,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	}
 
 	@SuppressWarnings("unchecked")
-	NoteList getInEdgesSet(final String label) {
+	protected NoteList getInEdgesSet(final String label) {
 		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			String key = DominoVertex.IN_PREFIX + label;
@@ -310,7 +310,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 	}
 
-	NoteList getOutEdgesSet(final String label) {
+	protected NoteList getOutEdgesSet(final String label) {
 		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			String key = DominoVertex.OUT_PREFIX + label;
@@ -346,28 +346,28 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return edgeIds;
 	}
 
-	FastSet<String> getInDirtyKeySet() {
+	protected FastSet<String> getInDirtyKeySet() {
 		if (inDirtyKeySet_ == null) {
 			inDirtyKeySet_ = new FastSet<String>().atomic();
 		}
 		return inDirtyKeySet_;
 	}
 
-	Map<String, NoteList> getInEdgesMap() {
+	protected Map<String, NoteList> getInEdgesMap() {
 		if (inEdgesMapCompressed_ == null) {
 			inEdgesMapCompressed_ = new FastMap<String, NoteList>().atomic();
 		}
 		return inEdgesMapCompressed_;
 	}
 
-	FastSet<String> getOutDirtyKeySet() {
+	protected FastSet<String> getOutDirtyKeySet() {
 		if (outDirtyKeySet_ == null) {
 			outDirtyKeySet_ = new FastSet<String>().atomic();
 		}
 		return outDirtyKeySet_;
 	}
 
-	Map<String, NoteList> getOutEdgesMap() {
+	protected Map<String, NoteList> getOutEdgesMap() {
 		if (outEdgesMapCompressed_ == null) {
 			outEdgesMapCompressed_ = new FastMap<String, NoteList>().atomic();
 		}
@@ -380,7 +380,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		super.applyChanges();
 	}
 
-	boolean writeEdges() {
+	protected boolean writeEdges() {
 		boolean result = false;
 		Map<String, NoteList> inMap = getInEdgesMap();
 		FastSet<String> inDirtySet = getInDirtyKeySet();
@@ -413,7 +413,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return result;
 	}
 
-	FastTable<Edge> getInEdgeObjects(final String... labels) {
+	protected FastTable<Edge> getInEdgeObjects(final String... labels) {
 		Map<String, FastTable<Edge>> inCache = getInEdgeCache();
 		FastTable<Edge> result = null;
 		if (labels == null || labels.length == 0) {
@@ -442,7 +442,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		return result.unmodifiable();
 	}
 
-	FastTable<Edge> getOutEdgeObjects(final String... labels) {
+	protected FastTable<Edge> getOutEdgeObjects(final String... labels) {
 		FastMap<String, FastTable<Edge>> outCache = getOutEdgeCache();
 		FastTable<Edge> result = null;
 		if (labels == null || labels.length == 0) {
