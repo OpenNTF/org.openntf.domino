@@ -42,6 +42,8 @@ public class Graph2Test implements Runnable {
 	public static String movieId = "85257D640018AD81";
 	public static String characterId = "85257D6B007ECB47";
 	public static String edgeId = "85257D640018BCDF";
+	public static String usersId = "85257D810065979B";
+	public static String nabId = "85257A600051D882";
 
 	private static final String directedBy = "DirectedBy";
 	private static final String appearsIn = "AppearsIn";
@@ -440,6 +442,10 @@ public class Graph2Test implements Runnable {
 
 		try {
 			timelog("Beginning graph2 test...");
+
+			DElementStore usersStore = new DElementStore();
+			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
+			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
 
 			DElementStore crewStore = new DElementStore();
 			crewStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(crewId));
