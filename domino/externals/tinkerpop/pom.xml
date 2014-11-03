@@ -11,7 +11,7 @@
 	<artifactId>com.tinkerpop</artifactId>
 	<name>tinkerpop</name>
 	<version>2.6.0.qualifier</version>
-	<packaging>pom</packaging>
+	<packaging>eclipse-plugin</packaging>
 
 	<repositories>
 		<repository>
@@ -40,6 +40,11 @@
 			<groupId>net.sourceforge.collections</groupId>
 			<artifactId>collections-generic</artifactId>
 			<version>4.01</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
 		</dependency>
 	</dependencies>
 </project>

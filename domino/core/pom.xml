@@ -9,7 +9,7 @@
 	<artifactId>org.openntf.domino</artifactId>
 	<name>OpenNTF Domino API</name>
 	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
-	<packaging>pom</packaging>
+	<packaging>eclipse-plugin</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>

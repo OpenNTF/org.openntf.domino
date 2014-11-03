@@ -150,6 +150,8 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
+	
+	<!-- List all developers here -->
 	<developers>
 		<developer>
 			<id>AWa</id>
@@ -191,4 +193,13 @@
 			</properties>
 		</developer>
 	</developers>
+	
+    <distributionManagement>
+      <site>
+        <id>www.openntf.org</id>
+        <url>file://c:\fullsite/</url>
+      </site>
+    </distributionManagement>
+	
+
 </project>
