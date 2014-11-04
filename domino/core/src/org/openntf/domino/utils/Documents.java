@@ -260,16 +260,8 @@ public enum Documents {
 		}
 		Session session = doc.getAncestorSession();
 		boolean convertMime = session.isConvertMime();
-		//		if (convertMime) {
 		session.setConvertMime(false);
-		//		}
 
-		// String diagKey = doc.getUniversalID() + itemName;
-		// if (diagCount.containsKey(diagKey)) {
-		// diagCount.put(diagKey, diagCount.get(diagKey) + 1);
-		// } else {
-		// diagCount.put(diagKey, 1);
-		// }
 		if (compress) {	// Check whether it is already a zipped byte[]; if so, don't zip it once more
 			if (object.getClass().getName().equals("[B")) {	// Then it's a byte[]
 				byte[] b = (byte[]) object;
@@ -368,9 +360,9 @@ public enum Documents {
 			//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
 			//		previousState = null;	// why set to null?
 			if (!doc.closeMIMEEntities(true, itemName)) {
-				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-						+ doc.getAncestorDatabase().getApiPath() + " during a saveState call. This may result in data loss!",
-						new Throwable());
+				//				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+				//						+ doc.getAncestorDatabase().getApiPath() + " during a saveState call. This may result in data loss!",
+				//						new Throwable());
 			}
 			if (convertMime) {
 				session.setConvertMime(true);

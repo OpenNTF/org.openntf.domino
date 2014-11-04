@@ -28,15 +28,15 @@ public class OpenntfServiceFactory implements IServiceFactory {
 	private static XotsDaemon DAEMON = XotsDaemon.getInstance();
 
 	public OpenntfServiceFactory() {
-
-		System.out.println("Openntf-Factory loaded");
+		System.out.println("Openntf-Factory loaded but disabled");
 	}
 
 	@Override
 	public HttpService[] getServices(final LCDEnvironment paramLCDEnvironment) {
-		HttpService[] ret = new HttpService[1];
-		ret[0] = new OpenntfHttpService(paramLCDEnvironment);
-		return ret;
+		//		HttpService[] ret = new HttpService[1];
+		//		ret[0] = new OpenntfHttpService(paramLCDEnvironment);
+		//		return ret;
+		return null;
 	}
 
 }

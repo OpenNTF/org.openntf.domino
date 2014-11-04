@@ -109,15 +109,20 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					//					System.out.println("TEMP DEBUG: library " + s);
 					if (s.equals(XspLibrary.LIBRARY_ID)) {
 						current = Boolean.TRUE;
-						OpenntfHttpService.getCurrentInstance().activate((HttpServletRequest) ctx.getExternalContext().getRequest());
-						//TODO add path registration to HttpService
+						OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
+						if (service != null) {
+							service.activate((HttpServletRequest) ctx.getExternalContext().getRequest());
+						}
 					}
 				}
 			} else {
 				//				System.out.println("TEMP DEBUG: no library dependencies found");
 			}
 			if (current == Boolean.FALSE) {
-				OpenntfHttpService.getCurrentInstance().deactivate((HttpServletRequest) ctx.getExternalContext().getRequest());
+				OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
+				if (service != null) {
+					service.deactivate((HttpServletRequest) ctx.getExternalContext().getRequest());
+				}
 			}
 			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_XspLibrary", current);
 		}
@@ -479,6 +484,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			System.out.println("DEBUG: Beginning creation of implicit objects...");
 		}
 		// TODO RPr: I enabled the "setClassLoader" here
+		Factory.init();
+		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
 
 		final ApplicationEx app = ctx.getApplicationEx();

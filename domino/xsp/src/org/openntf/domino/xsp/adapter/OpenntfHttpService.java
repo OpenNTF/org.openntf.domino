@@ -169,7 +169,7 @@ public class OpenntfHttpService extends HttpService {
 
 	@Override
 	public int getPriority() {
-		return 0; // NSFService has 99, this must be lower
+		return 1000; // NSFService has 99, this must be lower
 	}
 
 	/*
