@@ -1,0 +1,79 @@
+package org.openntf.domino.graph2.impl;
+
+import org.openntf.domino.graph2.annotations.AdjacencyUniqueHandler;
+import org.openntf.domino.graph2.annotations.IncidenceUniqueHandler;
+import org.openntf.domino.graph2.annotations.TypedPropertyHandler;
+
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.TransactionalGraph;
+import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.frames.FramedGraphConfiguration;
+import com.tinkerpop.frames.FramedTransactionalGraph;
+import com.tinkerpop.frames.annotations.AdjacencyAnnotationHandler;
+import com.tinkerpop.frames.annotations.DomainAnnotationHandler;
+import com.tinkerpop.frames.annotations.InVertexAnnotationHandler;
+import com.tinkerpop.frames.annotations.IncidenceAnnotationHandler;
+import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
+import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
+import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
+import com.tinkerpop.frames.modules.Module;
+
+public class DFramedGraphFactory {
+	protected Module[] modules;
+
+	public DFramedGraphFactory(final Module... modules) {
+		this.modules = modules;
+	}
+
+	/**
+	 * Create a new {@link FramedGraph}.
+	 * 
+	 * @param baseGraph
+	 *            The graph whose elements to frame.
+	 * @return The {@link FramedGraph}
+	 */
+	public <T extends TransactionalGraph> FramedTransactionalGraph<T> create(final T baseGraph) {
+		FramedGraphConfiguration config = getConfiguration(TransactionalGraph.class, baseGraph);
+		FramedTransactionalGraph<T> framedGraph = new DFramedTransactionalGraph<T>(baseGraph, config);
+		return framedGraph;
+	}
+
+	/**
+	 * Returns a configuration that can be used when constructing a framed graph.
+	 * 
+	 * @param requiredType
+	 *            The type of graph required after configuration e.g. {@link TransactionalGraph}
+	 * @param baseGraph
+	 *            The base graph to get a configuration for.
+	 * @return The configuration.
+	 */
+	protected <T extends Graph> FramedGraphConfiguration getConfiguration(final Class<T> requiredType, final T baseGraph) {
+		Graph configuredGraph = baseGraph;
+		DConfiguration config = getBaseConfig();
+		for (Module module : modules) {
+			configuredGraph = module.configure(configuredGraph, config);
+			if (!(requiredType.isInstance(configuredGraph))) {
+				throw new UnsupportedOperationException("Module '" + module.getClass() + "' returned a '" + baseGraph.getClass().getName()
+						+ "' but factory requires '" + requiredType.getName() + "'");
+			}
+		}
+		config.setConfiguredGraph(configuredGraph);
+		return config;
+	}
+
+	private DConfiguration getBaseConfig() {
+		DConfiguration config = new DConfiguration();
+		config.addAnnotationHandler(new PropertyAnnotationHandler());
+		config.addMethodHandler(new TypedPropertyHandler());
+		config.addAnnotationHandler(new AdjacencyAnnotationHandler());
+		config.addAnnotationHandler(new AdjacencyUniqueHandler());
+		config.addAnnotationHandler(new IncidenceAnnotationHandler());
+		config.addAnnotationHandler(new IncidenceUniqueHandler());
+		config.addAnnotationHandler(new DomainAnnotationHandler());
+		config.addAnnotationHandler(new RangeAnnotationHandler());
+		config.addAnnotationHandler(new InVertexAnnotationHandler());
+		config.addAnnotationHandler(new OutVertexAnnotationHandler());
+		return config;
+	}
+
+}

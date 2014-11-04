@@ -5,11 +5,8 @@ import java.util.List;
 
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
-import org.openntf.domino.xsp.adapter.OpenntfHttpService;
 import org.openntf.domino.xsp.config.DominoConfig;
 
-import com.ibm.designer.runtime.domino.adapter.HttpService;
-import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.xsp.extlib.config.ExtlibPluginConfig;
 import com.ibm.xsp.library.AbstractXspLibrary;
@@ -19,7 +16,7 @@ import com.ibm.xsp.library.AbstractXspLibrary;
  * 
  */
 public class XspLibrary extends AbstractXspLibrary {
-	private final static String LIBRARY_ID = XspLibrary.class.getName();
+	public final static String LIBRARY_ID = XspLibrary.class.getName();
 	public final static String LIBRARY_BEAN_PREFIX = "org.openntf.domino.xsp";
 	private static Boolean GLOBAL;
 	private List<ExtlibPluginConfig> plugins;
@@ -113,11 +110,6 @@ public class XspLibrary extends AbstractXspLibrary {
 	public XspLibrary() {
 		System.out.println("Loading org.openntf.domino.xsp library");
 		verifyIGetEntryByKey();
-		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-			if (service instanceof OpenntfHttpService) {
-				((OpenntfHttpService) service).activate();
-			}
-		}
 	}
 
 	/*
@@ -213,7 +205,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	@Override
 	public boolean isGlobalScope() {
 		boolean result = isGlobal();
-		// System.out.println(Activator.PLUGIN_ID + " global: " + String.valueOf(result));
+		//		System.out.println(Activator.PLUGIN_ID + " global: " + String.valueOf(result));
 		return result;
 	}
 

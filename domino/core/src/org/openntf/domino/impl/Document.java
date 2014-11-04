@@ -141,13 +141,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * this means: if you have opened a MIME item do NOTHING with this document until you call closeMimeEntities()
 	 * 
 	 */
-	protected Map<String, Set<MIMEEntity>> openMIMEEntities = new FastMap<String, Set<MIMEEntity>>();
+	protected Map<String, MIMEEntity> openMIMEEntities = new FastMap<String, MIMEEntity>();
 
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
 	//http://www-10.lotus.com/ldd/nd8forum.nsf/5f27803bba85d8e285256bf10054620d/cd146d4165336a5e852576b600114830?OpenDocument
-	protected void checkMimeOpen() {
-		if (!openMIMEEntities.isEmpty() && getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE)) {
+	private boolean mimeWarned_ = false;
+
+	protected boolean checkMimeOpen() {
+		if (!openMIMEEntities.isEmpty() && getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE) && mimeWarned_ == false) {
 			if (getAncestorSession().isOnServer()) {
 				System.out.println("******** WARNING ********");
 				System.out.println("Document Items were accessed in a document while MIMEEntities are still open.");
@@ -164,10 +166,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				System.out.println("******** END WARNING ********");
+				mimeWarned_ = true;
+				return true;
 			} else {
 				throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities.keySet());
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -568,41 +573,34 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
-			// RPR: I don't exactly remember, why we do that. As far as I know, we should
-			// ensure that every MIME item is recycled before closing.
-			boolean ret = false;
-
+			// TODO: Should we add closeMIMEEntity to the interface?
 			if (entityItemName == null) {
-				for (Set<MIMEEntity> currEntitySet : openMIMEEntities.values()) {
-					for (MIMEEntity currEntity : currEntitySet)
-						((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+				for (MIMEEntity currEntity : openMIMEEntities.values()) {
+					((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 				}
 				openMIMEEntities.clear();
 			} else {
-				String lcName = entityItemName.toLowerCase();
-				if (openMIMEEntities.containsKey(lcName)) {
-					Set<MIMEEntity> currEntitySet = openMIMEEntities.remove(lcName);
-					if (currEntitySet != null) {
-						for (MIMEEntity currEntity : currEntitySet)
-							((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
-					}
+				//				System.out.println("Closing a specific MIMEEntity: " + entityItemName);
+				if (openMIMEEntities.containsKey(entityItemName.toLowerCase())) {
+					MIMEEntity currEntity = openMIMEEntities.remove(entityItemName.toLowerCase());
+					if (currEntity != null)
+						((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 				}
 			}
-			// Now every dependent element shoult be purged
-			// call close on the "delegate" (entityItemName = null will close all entities)
-			try {
-				ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-			} catch (NotesException e) {
-				if (null != entityItemName) {
+			boolean ret = false;
+			if (null != entityItemName) {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+				} catch (NotesException e) {
 					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
 							+ " even though we can't find an item by that name.");
-				} else {
-					log_.log(Level.INFO, "Failed to close all MIMEEntities: " + e.getMessage());
+					//				DominoUtils.handleException(e);
 				}
-				// we continue anyway
+			} else {
+				ret = getDelegate().closeMIMEEntities(saveChanges, null);
 			}
-
 			if (saveChanges) {
+
 				// This item is for debugging only, so keep 5-10 items in that list
 				// http://www-01.ibm.com/support/docview.wss?uid=swg27002572
 
@@ -761,31 +759,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	//RPr: currently not used. So I commented this out
 	//private final transient Map<String, MIMEEntity> entityCache_ = new HashMap<String, MIMEEntity>();
 
-	/**
-	 * This is used to track all MIMEEntities in this document. EVERY MIME-Item should be routed over this method!
-	 * 
-	 * @param lotus
-	 * @param markDirty
-	 * @return
-	 */
-	public MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName, final boolean markDirty) {
-		if (lotus == null)
-			return null;
-		MIMEEntity wrapped = fromLotus(lotus, MIMEEntity.SCHEMA, this);
-		if (wrapped != null) {
-			((org.openntf.domino.impl.MIMEEntity) wrapped).init(itemName);
-
-			String lcName = itemName.toLowerCase();
-			Set<MIMEEntity> entityGroup = openMIMEEntities.get(lcName);
-			if (entityGroup == null) {
-				entityGroup = new FastSet<MIMEEntity>();
-				openMIMEEntities.put(itemName, entityGroup);
-			}
-			entityGroup.add(wrapped);
-		}
-		return wrapped;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -800,7 +773,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				itemName = "Body";
 			}
 			try {
-				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName, true);
+				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
+				if (wrapped != null) {
+					//					log_.log(Level.WARNING, "TMP DEBUG: Opening a new MIMEEntity: " + itemName, new Throwable());
+
+					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
+					wrapped.initItemName(itemName);
+					markDirty(itemName, true);
+				}
+				return wrapped;
 			} catch (NotesException alreadyThere) {
 				Item chk = getFirstItem(itemName);
 				if (chk != null) {
@@ -813,7 +794,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					return me;
 				}
 				closeMIMEEntities(false, itemName);
-				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName, true);
+				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
+				if (wrapped != null) {
+					//					log_.log(Level.WARNING, "TMP DEBUG: Opening a new MIMEEntity: " + itemName, new Throwable());
+
+					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
+					wrapped.initItemName(itemName);
+					markDirty(itemName, true);
+				}
+				return wrapped;
 			}
 			// return fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
 		} catch (NotesException e) {
@@ -1050,6 +1039,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Item getFirstItem(final String name) {
 		return getFirstItem(name, false);
+	}
+
+	@Override
+	public void recycle() {
+		//		System.out.println("Recycle called on document " + getNoteID());
+		closeMIMEEntities(false, null);
+		super.recycle();
 	}
 
 	@Override
@@ -1533,7 +1529,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			if (convertMime)
 				getAncestorSession().setConvertMime(false);
-			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName, false);
+			MIMEEntity ret = fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
+
+			if (ret != null) {
+				//				log_.log(Level.WARNING, "TMP DEBUG: Opening a new MIMEEntity: " + itemName, new Throwable());
+				openMIMEEntities.put(itemName.toLowerCase(), ret);
+
+				ret.initItemName(itemName); // here it is allowed to initialize the item with its name
+			}
 
 			if (openMIMEEntities.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");
@@ -3263,8 +3266,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3510,13 +3513,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3548,13 +3551,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");

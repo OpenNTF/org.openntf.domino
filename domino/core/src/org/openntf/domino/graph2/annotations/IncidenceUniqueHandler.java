@@ -33,11 +33,17 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 	public Object processVertex(final IncidenceUnique incidence, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Vertex vertex) {
 		if (ClassUtilities.isGetMethod(method)) {
-			return new FramedEdgeIterable(framedGraph, vertex.getEdges(incidence.direction(), incidence.label()), incidence.direction(),
-					ClassUtilities.getGenericClass(method));
+			Class<?> returnType = method.getReturnType();
+			if (Iterable.class.isAssignableFrom(returnType)) {
+				return new FramedEdgeIterable(framedGraph, vertex.getEdges(incidence.direction(), incidence.label()),
+						incidence.direction(), ClassUtilities.getGenericClass(method));
+			} else if (Edge.class.isAssignableFrom(returnType)) {
+				return vertex.getEdges(incidence.direction(), incidence.label()).iterator().next();
+			} else {
+				Edge e = vertex.getEdges(incidence.direction(), incidence.label()).iterator().next();
+				return framedGraph.frame(e, returnType);
+			}
 		} else if (ClassUtilities.isAddMethod(method)) {
-			boolean exists = false;
-
 			switch (incidence.direction()) {
 			case OUT:
 				Vertex outVertex = vertex;
@@ -49,7 +55,8 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 						return framedGraph.frame(edge, method.getReturnType());
 					}
 				}
-				return framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
+				Edge e1 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
+				return framedGraph.frame(e1, method.getReturnType());
 			case IN:
 				inVertex = vertex;
 				outVertex = ((VertexFrame) arguments[0]).asVertex();
@@ -60,7 +67,8 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 						return framedGraph.frame(edge, method.getReturnType());
 					}
 				}
-				return framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
+				Edge e2 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
+				return framedGraph.frame(e2, method.getReturnType());
 			case BOTH:
 				throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
 			}

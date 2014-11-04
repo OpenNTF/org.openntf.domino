@@ -1,0 +1,6 @@
+/target/
+features/
+plugins/
+artifacts.jar
+content.jar
+*.zip
