@@ -10,6 +10,7 @@ import javax.script.ScriptException;
 import org.openntf.domino.Database;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.FileResource;
+import org.openntf.domino.utils.Factory;
 
 public class JSR223Tasklet extends XotsBaseTasklet {
 	private static final long serialVersionUID = 1L;
@@ -30,7 +31,7 @@ public class JSR223Tasklet extends XotsBaseTasklet {
 
 	@Override
 	public void run() {
-		Database database = getSession().getDatabase(databasePath_);
+		Database database = Factory.getSession().getDatabase(databasePath_);
 
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByExtension(scriptExt_);

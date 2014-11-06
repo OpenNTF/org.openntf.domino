@@ -46,7 +46,6 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
-import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.graph.DominoGraph;
@@ -66,24 +65,54 @@ public enum Factory {
 	}
 
 	/**
-	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 *         We have so many threadLocals here, so that it is worth to handle them all in a container class.
 	 */
-	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>();
+	private static class ThreadVariables {
+		private WrapperFactory wrapperFactory;
 
-	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
+		private ClassLoader classLoader;
 
-	private static ThreadLocal<AppServiceLocator> currentServiceLocator_ = new ThreadLocal<AppServiceLocator>();
+		private AppServiceLocator serviceLocator;
 
-	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
+		private Session sessionHolder;
 
-	private static ThreadLocal<Session> currentSessionFullAccessHolder_ = new ThreadLocal<Session>();
+		private Session sessionFullAccessHolder;
 
-	private static ThreadLocal<Session> currentTrustedSessionHolder_ = new ThreadLocal<Session>();
+		private Session trustedSessionHolder;
 
-	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
+		/**
+		 * Support for different Locale
+		 */
+		private Locale userLocale;
+		private List<Runnable> terminateHooks = new ArrayList<Runnable>();
 
-	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
-	// private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+		private void clear() {
+			wrapperFactory = null;
+			classLoader = null;
+			serviceLocator = null;
+			sessionHolder = null;
+			sessionFullAccessHolder = null;
+			trustedSessionHolder = null;
+			userLocale = null;
+			terminateHooks.clear();
+		}
+
+	}
+
+	/**
+	 * Holder for variables that are different per thread
+	 */
+	private static ThreadLocal<ThreadVariables> threadVariables = new ThreadLocal<ThreadVariables>() {
+		@Override
+		protected ThreadVariables initialValue() {
+			return new ThreadVariables();
+		}
+	};
+
+	private static List<Runnable> terminateHooks = new ArrayList<Runnable>();
+	private static List<Runnable> shutdownHooks = new ArrayList<Runnable>();
 
 	/**
 	 * setup the environment and loggers
@@ -478,11 +507,12 @@ public enum Factory {
 	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
-		WrapperFactory wf = currentWrapperFactory.get();
+		ThreadVariables tv = threadVariables.get();
+		WrapperFactory wf = tv.wrapperFactory;
 		if (wf == null) {
 			List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
 			wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
-			currentWrapperFactory.set(wf);
+			tv.wrapperFactory = wf;
 		}
 		return wf;
 	}
@@ -493,18 +523,19 @@ public enum Factory {
 	 * @return The active WrapperFactory
 	 */
 	public static WrapperFactory getWrapperFactory_unchecked() {
-		return currentWrapperFactory.get();
+		return threadVariables.get().wrapperFactory;
 	}
 
-	/**
-	 * Set/changes the wrapperFactory for this thread
-	 * 
-	 * @param wf
-	 *            The new WrapperFactory
-	 */
-	public static void setWrapperFactory(final WrapperFactory wf) {
-		currentWrapperFactory.set(wf);
-	}
+	// RPr: A setter is normally not needed. The wrapperFactory should be configure with an application service!
+	//	/**
+	//	 * Set/changes the wrapperFactory for this thread
+	//	 * 
+	//	 * @param wf
+	//	 *            The new WrapperFactory
+	//	 */
+	//	public static void setWrapperFactory(final WrapperFactory wf) {
+	//		currentWrapperFactory.set(wf);
+	//	}
 
 	// --- session handling 
 
@@ -664,7 +695,7 @@ public enum Factory {
 	 * @return the session
 	 */
 	public static org.openntf.domino.Session getSession() {
-		org.openntf.domino.Session result = currentSessionHolder_.get();
+		org.openntf.domino.Session result = threadVariables.get().sessionHolder;
 		if (result == null) {
 			try {
 				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
@@ -695,7 +726,7 @@ public enum Factory {
 	 * @return the session
 	 */
 	public static org.openntf.domino.Session getSession_unchecked() {
-		return currentSessionHolder_.get();
+		return threadVariables.get().sessionHolder;
 	}
 
 	/**
@@ -703,7 +734,7 @@ public enum Factory {
 	 * 
 	 */
 	public static void setSession(final lotus.domino.Session session) {
-		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+		threadVariables.get().sessionHolder = fromLotus(session, Session.SCHEMA, null);
 	}
 
 	/**
@@ -712,7 +743,7 @@ public enum Factory {
 	 * @param session
 	 */
 	public static void setTrustedSession(final lotus.domino.Session session) {
-		currentTrustedSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+		threadVariables.get().trustedSessionHolder = fromLotus(session, Session.SCHEMA, null);
 	}
 
 	/**
@@ -721,15 +752,15 @@ public enum Factory {
 	 * @param session
 	 */
 	public static void setSessionFullAccess(final lotus.domino.Session session) {
-		currentSessionFullAccessHolder_.set(fromLotus(session, Session.SCHEMA, null));
+		threadVariables.get().sessionFullAccessHolder = fromLotus(session, Session.SCHEMA, null);
 	}
 
-	/**
-	 * clears the current session
-	 */
-	public static void clearSession() {
-		currentSessionHolder_.set(null);
-	}
+	//	/**
+	//	 * clears the current session
+	//	 */
+	//	public static void clearSession() {
+	//		threadVariables.get().sessionHolder = null;
+	//	}
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
 	/**
@@ -756,7 +787,8 @@ public enum Factory {
 	//	}
 
 	public static ClassLoader getClassLoader() {
-		if (currentClassLoader_.get() == null) {
+		ThreadVariables tv = threadVariables.get();
+		if (tv.classLoader == null) {
 			ClassLoader loader = null;
 			try {
 				loader = AccessController.doPrivileged(new PrivilegedExceptionAction<ClassLoader>() {
@@ -772,7 +804,7 @@ public enum Factory {
 			}
 			setClassLoader(loader);
 		}
-		return currentClassLoader_.get();
+		return tv.classLoader;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -781,14 +813,15 @@ public enum Factory {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
-		AppServiceLocator serviceLocator = currentServiceLocator_.get();
-		if (serviceLocator != null) {
-			return serviceLocator.findApplicationServices(serviceClazz);
+		ThreadVariables tv = threadVariables.get();
+		if (tv.serviceLocator != null) {
+			return tv.serviceLocator.findApplicationServices(serviceClazz);
 		}
 
 		// this is the non OSGI case:
-		if (nonOSGIServicesCache == null)
-			nonOSGIServicesCache = new HashMap<Class, List>();
+		if (nonOSGIServicesCache == null) {
+			nonOSGIServicesCache = new ConcurrentHashMap<Class, List>();
+		}
 
 		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
 		if (ret == null) {
@@ -811,40 +844,37 @@ public enum Factory {
 	}
 
 	public static void setClassLoader(final ClassLoader loader) {
-		if (loader != null) {
-			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
-		}
-		//		currentLoadedClasses_.get().clear();
-		currentClassLoader_.set(loader);
+		threadVariables.get().classLoader = loader;
 	}
 
 	public static void setServiceLocator(final AppServiceLocator locator) {
-		currentServiceLocator_.set(locator);
+		threadVariables.get().serviceLocator = locator;
 	}
 
-	public static void clearWrapperFactory() {
-		currentWrapperFactory.remove();
-	}
-
-	public static void clearClassLoader() {
-		currentClassLoader_.remove();
-	}
-
-	public static void clearServiceLocator() {
-		currentServiceLocator_.remove();
-	}
-
-	public static void clearDominoGraph() {
-		DominoGraph.clearDocumentCache();
-	}
-
-	public static void clearNoteCoordinateBuffer() {
-		NoteCoordinate.clearLocals();
-	}
-
-	public static void clearBubbleExceptions() {
-		DominoUtils.setBubbleExceptions(null);
-	}
+	// avoid clear methods
+	//	public static void clearWrapperFactory() {
+	//		currentWrapperFactory.remove();
+	//	}
+	//
+	//	public static void clearClassLoader() {
+	//		currentClassLoader_.remove();
+	//	}
+	//
+	//	public static void clearServiceLocator() {
+	//		currentServiceLocator_.remove();
+	//	}
+	//
+	//	public static void clearDominoGraph() {
+	//		DominoGraph.clearDocumentCache();
+	//	}
+	//
+	//	public static void clearNoteCoordinateBuffer() {
+	//		NoteCoordinate.clearLocals();
+	//	}
+	//
+	//	public static void clearBubbleExceptions() {
+	//		DominoUtils.setBubbleExceptions(null);
+	//	}
 
 	/**
 	 * Begin with a clear environment
@@ -856,41 +886,58 @@ public enum Factory {
 
 	public static lotus.domino.Session terminate() {
 		lotus.domino.Session result = null;
+		ThreadVariables tv = threadVariables.get();
+
 		WrapperFactory wf = getWrapperFactory();
-		if (currentSessionHolder_.get() != null) {
-			result = wf.toLotus(currentSessionHolder_.get());
+		if (tv.sessionHolder != null) {
+			result = wf.toLotus(tv.sessionHolder);
 		}
-		for (Terminatable callback : onTerminate_) {
-			callback.terminate();
+		tv.sessionHolder = null;
+
+		Iterator<Runnable> iter = tv.terminateHooks.iterator();
+		while (iter.hasNext()) {
+			Runnable term = iter.next();
+			term.run();
+			iter.remove();
 		}
-		clearSession();
+
+		iter = terminateHooks.iterator();
+		while (iter.hasNext()) {
+			Runnable term = iter.next();
+			term.run();
+		}
+
 		@SuppressWarnings("unused")
 		long termCount = wf.terminate();
 		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
-		clearBubbleExceptions();
-		clearDominoGraph();
-		clearWrapperFactory();
-		clearClassLoader();
-		clearUserLocale();
-		clearServiceLocator();
+		DominoUtils.setBubbleExceptions(null);
+		DominoGraph.clearDocumentCache();
+
+		tv.clear();
+
 		return result;
 	}
 
-	/**
-	 * Support for different Locale
-	 */
-	private static ThreadLocal<Locale> userLocale_ = new ThreadLocal<Locale>();
+	public static void shutdown() {
+		System.out.println("Shutting down the OpenNTF Domino API... ");
+		Runnable[] copy = shutdownHooks.toArray(new Runnable[shutdownHooks.size()]);
+		for (Runnable term : copy) {
+			System.out.println("* shutting down " + term);
+			try {
+				term.run();
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+		System.out.println("... OpenNTF Domino API shut down");
+	}
 
 	public static void setUserLocale(final Locale loc) {
-		userLocale_.set(loc);
+		threadVariables.get().userLocale = loc;
 	}
 
 	public static Locale getUserLocale() {
-		return userLocale_.get();
-	}
-
-	private static void clearUserLocale() {
-		userLocale_.set(null);
+		return threadVariables.get().userLocale;
 	}
 
 	/**
@@ -971,7 +1018,7 @@ public enum Factory {
 	 * @return the session full access
 	 */
 	public static org.openntf.domino.Session getSessionFullAccess() {
-		org.openntf.domino.Session result = currentSessionFullAccessHolder_.get();
+		org.openntf.domino.Session result = threadVariables.get().sessionFullAccessHolder;
 		if (result == null) {
 			try {
 				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -1005,7 +1052,7 @@ public enum Factory {
 	 * @return the trusted session
 	 */
 	public static org.openntf.domino.Session getTrustedSession() {
-		org.openntf.domino.Session result = currentTrustedSessionHolder_.get();
+		org.openntf.domino.Session result = threadVariables.get().trustedSessionHolder;
 		if (result == null) {
 			try {
 				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -1342,12 +1389,41 @@ public enum Factory {
 	}
 
 	/**
-	 * This will call the terminate-function of the callback on every "terminate" call. (Across threads!) The callback must handle this with
-	 * threadlocals itself. See DateTime for an example
+	 * Add a hook that will run on the next "terminate" call
 	 * 
+	 * @param hook
 	 */
-	public static void onTerminate(final Terminatable callback) {
-		onTerminate_.add(callback);
+	public static void addTerminateHook(final Runnable hook, final boolean global) {
+		if (global) {
+			terminateHooks.add(hook);
+		} else {
+			threadVariables.get().terminateHooks.add(hook);
+		}
+	}
+
+	public static void removeTerminateHook(final Runnable hook, final boolean global) {
+		if (global) {
+			terminateHooks.remove(hook);
+		} else {
+			threadVariables.get().terminateHooks.remove(hook);
+		}
+	}
+
+	/**
+	 * Add a hook that will run on shutdown
+	 */
+	public static void addShutdownHook(final Runnable hook) {
+		shutdownHooks.add(hook);
+	}
+
+	/**
+	 * Remove a shutdown hook
+	 * 
+	 * @param hook
+	 *            the hook that should be removed
+	 */
+	public static void removeShutdownHook(final Runnable hook) {
+		shutdownHooks.remove(hook);
 	}
 
 }

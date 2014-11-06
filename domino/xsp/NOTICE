@@ -1,5 +1,5 @@
 OpenNTF Domino API
-© Copyright 2012-2014
+ï¿½ Copyright 2012-2014
   Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkelmeyer, Declan Lynch, Paul Withers, Devin Olson, Mark Leusink, Keith Smillie, Foconis AG
   https://www.foconis.de
 
@@ -48,3 +48,8 @@ Includes Javolution - Java(tm) Solution for Real-Time and Embedded Systems under
 Includes URL Regex pattern under MIT license
 	Copyright (c) 2010-2013 Diego Perini (http://www.iport.it)
 	Details: https://gist.github.com/dperini/729294
+	
+Includes content from Quartz Job Scheduler under Apache License 2.0
+  http://quartz-scheduler.org
+  Copyright (c) Terracotta, Inc.  
+	

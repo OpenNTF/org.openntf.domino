@@ -2,17 +2,13 @@ package org.openntf.domino.xots.builtin;
 
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
-import org.openntf.domino.thread.DominoSessionType;
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsBaseTasklet;
 import org.openntf.domino.xots.XotsDaemon;
-import org.openntf.domino.xots.XotsService;
 
 import com.ibm.designer.runtime.Application;
 import com.ibm.xsp.application.ApplicationEx;
@@ -49,21 +45,20 @@ public class XotsApplicationListener implements ApplicationListener2 {
 
 		private final boolean TRACE = true;
 
-		private boolean finished_ = false;
 		private final String appName_;
 
 		public XotsRefresher(final String appName) {
 			appName_ = appName;
 		}
 
-		@Override
-		public DominoSessionType getSessionType() {
-			return DominoSessionType.NATIVE;
-		}
+		//		@Override
+		//		public DominoSessionType getSessionType() {
+		//			return DominoSessionType.NATIVE;
+		//		}
 
 		@Override
 		public void run() {
-			Session session = getSession();
+			Session session = Factory.getSession();
 			Database db = session.getDatabase(appName_);
 			DatabaseDesign design = db.getDesign();
 			IconNote icon = design.getIconNote();
@@ -73,22 +68,15 @@ public class XotsApplicationListener implements ApplicationListener2 {
 					if (TRACE) {
 						System.out.println("TRACE: Adding Xots Tasklets for database " + db.getApiPath());
 					}
-					try {
-						XotsService xs = XotsService.getInstance();
-						xs.getComponentModule("/" + db.getFilePath());
-						xs.loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
-					} catch (ServletException se) {
-						DominoUtils.handleException(se);
-					}
+					//					try {
+					//						//	XotsService xs = XotsService.getInstance();
+					//						//	xs.getComponentModule("/" + db.getFilePath());
+					//						//	xs.loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
+					//					} catch (ServletException se) {
+					//						DominoUtils.handleException(se);
+					//					}
 				}
 			}
-
-			finished_ = true;
-		}
-
-		@Override
-		public boolean shouldStop() {
-			return finished_;
 		}
 
 	}

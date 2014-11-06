@@ -9,7 +9,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xots,
- org.openntf.domino.xots.annotations,
  org.openntf.domino.xots.builtin,
  org.openntf.domino.xots.events,
  org.openntf.domino.xsp,

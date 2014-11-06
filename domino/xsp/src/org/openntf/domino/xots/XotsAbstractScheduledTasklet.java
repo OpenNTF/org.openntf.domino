@@ -10,6 +10,7 @@ public abstract class XotsAbstractScheduledTasklet extends XotsBaseTasklet imple
 
 	}
 
+	@Override
 	public Schedule getSchedule() {
 		if (schedule_ == null) {
 			// default schedule is DAILY

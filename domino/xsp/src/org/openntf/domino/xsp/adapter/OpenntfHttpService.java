@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xots.XotsDaemon;
 
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
@@ -17,6 +18,7 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpServletRequestAdapter;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpServletResponseAdapter;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpSessionAdapter;
+import com.ibm.domino.xsp.module.nsf.NSFService;
 
 /**
  * This class wraps doService calls and terminates the factory after execution
@@ -27,9 +29,7 @@ import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpSessionAdapter;
 public class OpenntfHttpService extends HttpService {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfHttpService.class.getName());
-
-	private List<HttpService> services;
-	private HttpService priorService = null;
+	private static OpenntfHttpService instance_;
 	private boolean active = false;
 
 	private ThreadLocal<Boolean> doServiceEntered = new ThreadLocal<Boolean>() {
@@ -37,15 +37,33 @@ public class OpenntfHttpService extends HttpService {
 		protected Boolean initialValue() {
 			return Boolean.FALSE;
 		}
-
 	};
 
 	public OpenntfHttpService(final LCDEnvironment lcdEnv) {
 		super(lcdEnv);
-		this.services = lcdEnv.getServices();
-		// here is the right place to initialize things on server start
-		Factory.init();
-		Factory.terminate();
+		System.out.println("Openntf-Service loaded");
+		try {
+			//this.services = lcdEnv.getServices();
+			if (instance_ != null) {
+				log_.severe("There is more than one XotsService instance active. This may cause problems.");
+			}
+			instance_ = this;
+			// here is the right place to initialize things on server start
+			Factory.init();
+			Factory.terminate();
+
+			XotsDaemon.getInstance().start();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
+	@Override
+	public void destroyService() {
+		XotsDaemon.getInstance().stop();
+		Factory.shutdown();
+		super.destroyService();
+		instance_ = null;
 	}
 
 	public void activate() {
@@ -58,10 +76,27 @@ public class OpenntfHttpService extends HttpService {
 		active = false;
 	}
 
-	@Override
-	public void destroyService() {
-		// here you can put code that runs when the Http-Task will shut down.
+	private NSFService nsfservice_;
 
+	/**
+	 * Method to find the active NSFService
+	 * 
+	 * @return the NSFService
+	 */
+	private NSFService getNsfService() {
+		if (nsfservice_ == null) {
+			for (HttpService service : getEnvironment().getServices()) {
+				if (service instanceof NSFService) {
+					nsfservice_ = (NSFService) service;
+					break;
+				}
+			}
+		}
+		return nsfservice_;
+	}
+
+	public static NSFService sGetNsfService() {
+		return instance_.getNsfService();
 	}
 
 	/*
@@ -76,73 +111,36 @@ public class OpenntfHttpService extends HttpService {
 	public boolean doService(final String contextPath, final String path, final HttpSessionAdapter httpSession,
 			final HttpServletRequestAdapter httpRequest, final HttpServletResponseAdapter httpResponse) throws ServletException,
 			IOException {
-		// System.out.println("DEBUG ALERT!! OpenntfHttpService has been asked to service an HttpRequest!");
 
 		//FIXME We really should have a registry of the paths that are using the API so we only 
-		if (active) {
-			if (doServiceEntered.get().booleanValue()) {
-				// prevent recursion (if someone does the same trick)
-				return false;
-			}
+		if (!active) {
+			return false;
+		}
 
-			Factory.init();
-			Factory.setUserLocale(httpRequest.getLocale());
-			doServiceEntered.set(Boolean.TRUE);
+		if (doServiceEntered.get().booleanValue()) {
+			// prevent recursion (if someone does the same trick)
+			return false;
+		}
 
-			try {
-				// TODO - NSA: This is a optimal place where you can put your code to sniff the whole unencrypted HTTP-traffic
-				// FIXME - NSA: Go get a real job and mind your own business
-				// System.out.println("ContexPath: " + contextPath);
-				// System.out.println("Path: " + path);
+		Factory.init();
+		Factory.setUserLocale(httpRequest.getLocale());
+		doServiceEntered.set(Boolean.TRUE);
 
-				if (priorService == null) {
-					boolean behindUs = false;
-					for (HttpService service : this.services) {
-						if (behindUs) {
-							if (service.doService(contextPath, path, httpSession, httpRequest, httpResponse)) {
-								priorService = service;
-								return true;
-							}
-						}
-						if (service == this) {
-							behindUs = true;
-						}
-					}
-					return false;
-				} else {
-					return priorService.doService(contextPath, path, httpSession, httpRequest, httpResponse);
-				}
-			} finally {
-				doServiceEntered.set(Boolean.FALSE);
-				Factory.terminate();
-
-				// System.out.println("DEBUG: terminating a Session with object id: " + System.identityHashCode(session)
-				// + " after an http request");
-			}
-		} else {
-			if (priorService == null) {
-				boolean behindUs = false;
-				for (HttpService service : this.services) {
-					if (behindUs) {
-						if (service.doService(contextPath, path, httpSession, httpRequest, httpResponse)) {
-							priorService = service;
-							return true;
-						}
-					}
-					if (service == this) {
-						behindUs = true;
-					}
-				}
-				return false;
-			} else {
-				return priorService.doService(contextPath, path, httpSession, httpRequest, httpResponse);
-			}
+		try {
+			// TODO - NSA: This is a optimal place where you can put your code to sniff the whole unencrypted HTTP-traffic
+			// FIXME - NSA: Go get a real job and mind your own business
+			// System.out.println("ContexPath: " + contextPath);
+			// System.out.println("Path: " + path);
+			return getNsfService().doService(contextPath, path, httpSession, httpRequest, httpResponse);
+		} finally {
+			doServiceEntered.set(Boolean.FALSE);
+			Factory.terminate();
 		}
 	}
 
 	@Override
 	public int getPriority() {
-		return 0; // NSFService has 99, this must be lower
+		return 98; // NSFService has 99, this must be lower
 	}
 
 	/*

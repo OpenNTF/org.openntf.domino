@@ -23,12 +23,7 @@ import lotus.domino.NotesThread;
  */
 public class DominoThread extends NotesThread {
 	private transient Runnable runnable_;
-	protected Status status_ = Status.NONE;
 	protected int nativeId_;
-
-	public enum Status {
-		NONE, INITIALIZED, RUNNING, TERMINATED
-	}
 
 	/**
 	 * Instantiates a new domino thread.
@@ -81,10 +76,6 @@ public class DominoThread extends NotesThread {
 		return runnable_;
 	}
 
-	public Status getStatus() {
-		return status_;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -104,19 +95,6 @@ public class DominoThread extends NotesThread {
 	}
 
 	@Override
-	public void interrupt() {
-		//		System.out.println("ALERT! Thread interrupted!");
-		//		termThread();
-		super.interrupt();
-	}
-
-	@Override
-	public void initThread() {
-		super.initThread();
-		//		System.out.println("DEBUG: Initialized a " + toString());
-	}
-
-	@Override
 	public void termThread() {
 		System.out.println("DEBUG: Terminating a " + toString());
 		super.termThread();
@@ -127,10 +105,5 @@ public class DominoThread extends NotesThread {
 		return (getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this) + ") native: " + this
 				.getNativeThreadID());
 	}
-
-	//	public synchronized void start(final ClassLoader loader) {
-	//		setContextClassLoader(loader);
-	//		start();
-	//	}
 
 }
