@@ -146,8 +146,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
 	//http://www-10.lotus.com/ldd/nd8forum.nsf/5f27803bba85d8e285256bf10054620d/cd146d4165336a5e852576b600114830?OpenDocument
-	protected void checkMimeOpen() {
-		if (!openMIMEEntities.isEmpty() && getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE)) {
+	private boolean mimeWarned_ = false;
+
+	protected boolean checkMimeOpen() {
+		if (!openMIMEEntities.isEmpty() && getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE) && mimeWarned_ == false) {
 			if (getAncestorSession().isOnServer()) {
 				System.out.println("******** WARNING ********");
 				System.out.println("Document Items were accessed in a document while MIMEEntities are still open.");
@@ -164,10 +166,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				System.out.println("******** END WARNING ********");
+				mimeWarned_ = true;
+				return true;
 			} else {
 				throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities.keySet());
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -556,8 +561,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 			// RPR: I don't exactly remember, why we do that. As far as I know, we should
 			// ensure that every MIME item is recycled before closing.
-			boolean ret = false;
-
 			if (entityItemName == null) {
 				for (Set<MIMEEntity> currEntitySet : openMIMEEntities.values()) {
 					for (MIMEEntity currEntity : currEntitySet)
@@ -574,18 +577,28 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 			}
-			// Now every dependent element shoult be purged
-			// call close on the "delegate" (entityItemName = null will close all entities)
-			try {
-				ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-			} catch (NotesException e) {
-				if (null != entityItemName) {
+			boolean ret = false;
+			if (null != entityItemName) {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+					if (saveChanges && !ret) {
+						if (log_.isLoggable(Level.FINE)) {
+							log_.log(Level.FINE, "closeMIMEEntities returned false for item " + entityItemName + " on doc " + getNoteID()
+									+ " in db " + getAncestorDatabase().getApiPath()
+									+ ". As far as we can tell, it always returns false so this is not useful feedback", new Throwable());
+						}
+					}
+				} catch (NotesException e) {
 					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
-							+ " even though we can't find an item by that name.");
-				} else {
-					log_.log(Level.INFO, "Failed to close all MIMEEntities: " + e.getMessage());
+							+ " even though we can't find an item by that name.", e);
+
 				}
-				// we continue anyway
+			} else {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, null);
+				} catch (NotesException e) {
+					log_.log(Level.INFO, "Failed to close all MIMEEntities", e);
+				}
 			}
 
 			if (saveChanges) {
@@ -1036,6 +1049,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Item getFirstItem(final String name) {
 		return getFirstItem(name, false);
+	}
+
+	@Override
+	public void recycle() {
+		//		System.out.println("Recycle called on document " + getNoteID());
+		closeMIMEEntities(false, null);
+		super.recycle();
 	}
 
 	@Override

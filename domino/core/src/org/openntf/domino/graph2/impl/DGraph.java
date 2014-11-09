@@ -243,7 +243,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		}
 		if (delegateKey instanceof CharSequence) {
 			CharSequence skey = (CharSequence) delegateKey;
-			if (skey.length() > 16) {
+			if (skey.length() == 16) {
+				if (DominoUtils.isReplicaId(skey)) {
+					Long rid = NoteCoordinate.Utils.getLongFromReplid(skey);
+					result = getElementStores().get(rid);
+				} else {
+					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
+				}
+			} else if (skey.length() > 16) {
 				CharSequence prefix = skey.subSequence(0, 16);
 				if (DominoUtils.isReplicaId(prefix)) {
 					Long rid = NoteCoordinate.Utils.getLongFromReplid(prefix);
@@ -315,6 +322,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getStoreKey();
+		Session session = Factory.getSession();
+		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
+		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
+		return result;
+	}
+
+	@Override
+	public Object getProxyStoreDelegate(final DElementStore store) {
+		//FIXME NTF probably need to farm this out to some kind of Factory...
+		Object result = null;
+		Long key = store.getProxyStoreKey();
 		Session session = Factory.getSession();
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?

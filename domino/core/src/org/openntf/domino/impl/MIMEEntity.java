@@ -43,7 +43,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		org.openntf.domino.MIMEEntity {
 
 	/**
-	 * we have to track every child element that was queried from this entity.
+	 * we have to track every child element that was queried from this entity.rec
 	 */
 	private Set<MIMEHeader> trackedHeaders_ = new HashSet<MIMEHeader>();
 	private String itemName_;
@@ -741,6 +741,12 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	@Override
+	public void recycle() {
+		//		System.out.println("TMP DEBUG: Recycle called on a MIMEEntity: " + getItemName());
+		getParent().closeMIMEEntities(false, getItemName());
 	}
 
 	/*
