@@ -38,19 +38,6 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 */
-	@Deprecated
-	public Outline(final lotus.domino.Outline delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
-	}
-
-	/**
-	 * Instantiates a new outline.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
 	 * @param wf
 	 *            the wrapperfactory
 	 * @param cppId

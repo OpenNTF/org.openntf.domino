@@ -27,7 +27,6 @@ import org.openntf.domino.NotesCalendarNotice;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -35,19 +34,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
 		org.openntf.domino.NotesCalendar {
-
-	/**
-	 * Instantiates a new notes calendar.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.

@@ -3,22 +3,21 @@ package org.openntf.domino.thread;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.AgentBase;
 import lotus.domino.NotesException;
 import lotus.domino.NotesThread;
-import lotus.domino.Session;
 
+import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.thread.model.Context;
 import org.openntf.domino.thread.model.Scope;
 import org.openntf.domino.thread.model.SessionType;
 import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionMode;
 
 /**
  * A Wrapper for runnables
@@ -29,10 +28,9 @@ public class DominoRunner extends DominoThread {
 	private static final Logger log_ = Logger.getLogger(DominoRunner.class.getName());
 
 	/** the context when this object was created */
-	private final AccessControlContext rootAcc;
+	protected ISessionFactory sessionFactory;
 
 	protected String runAs;
-	protected SessionType sessionType;
 	protected Scope scope;
 	protected Context context;
 
@@ -59,21 +57,21 @@ public class DominoRunner extends DominoThread {
 		this(runnable, null); // CHECKME: should we use AccessController.getContext()
 	}
 
-	public DominoRunner(final Runnable runnable, final AccessControlContext rootAcc) {
+	public DominoRunner(final Runnable runnable, final ISessionFactory sessionFactory) {
 		super(runnable);
 		if (runnable instanceof NotesThread) {
 			throw new IllegalStateException("Cannot wrap the NotesThread " + runnable.getClass().getName() + " into a DominoRunner");
 		}
-		this.rootAcc = rootAcc;
+		this.sessionFactory = sessionFactory;
 		init(runnable);
 	}
 
-	public <T> DominoRunner(final Callable<T> callable, final AccessControlContext rootAcc) {
+	public <T> DominoRunner(final Callable<T> callable, final ISessionFactory sessionFactory) {
 		super(new CallableToRunnable<T>(callable));
 		if (callable instanceof NotesThread) {
 			throw new IllegalStateException("Cannot wrap the NotesThread " + callable.getClass().getName() + " into a DominoRunner");
 		}
-		this.rootAcc = rootAcc;
+		this.sessionFactory = sessionFactory;
 		init(callable);
 	}
 
@@ -93,7 +91,10 @@ public class DominoRunner extends DominoThread {
 
 		if (runnable instanceof XotsTasklet.Interface) {
 			XotsTasklet.Interface dominoRunnable = (XotsTasklet.Interface) runnable;
-			sessionType = dominoRunnable.getSessionType();
+			ISessionFactory sf = dominoRunnable.getSessionFactory();
+			if (sf != null) {
+				sessionFactory = sf;
+			}
 			scope = dominoRunnable.getScope();
 			runAs = dominoRunnable.getRunAs();
 			context = dominoRunnable.getContext();
@@ -112,12 +113,15 @@ public class DominoRunner extends DominoThread {
 		}
 		XotsTasklet annot = runnable.getClass().getAnnotation(XotsTasklet.class);
 		if (annot != null) {
-			if (sessionType == null) {
-				sessionType = annot.session();
+			if (annot.session() == SessionType.NATIVE) {
+				sessionFactory = new NativeSessionFactory(sessionFactory);
 			}
-			if (sessionType == null) {
-				sessionType = SessionType.DEFAULT;
-			}
+			//			if (sessionType == null) {
+			//				sessionType = annot.session();
+			//			}
+			//			if (sessionType == null) {
+			//				sessionType = SessionType.DEFAULT;
+			//			}
 
 			if (context == null) {
 				context = annot.context();
@@ -134,66 +138,6 @@ public class DominoRunner extends DominoThread {
 			}
 		}
 	}
-
-	//	/**
-	//	 * Determines the context under which the current runnable should run.
-	//	 * 
-	//	 * @param runnable
-	//	 * @return
-	//	 */
-	//	protected Context getContext(final Runnable runnable) {
-	//		Context context = null;
-	//		if (runnable instanceof IDominoRunnable) {
-	//			context = ((IDominoRunnable) runnable).getContext();
-	//			if (context != null)
-	//				return context;
-	//		}
-	//		Persistent annot = runnable.getClass().getAnnotation(Persistent.class);
-	//		if (annot != null) {
-	//			context = annot.context();
-	//			if (context != null)
-	//				return context;
-	//		}
-	//		return Context.XOTS;
-	//	}
-
-	//	/**
-	//	 * Determines the context under which the current runnable should run.
-	//	 * 
-	//	 * @param runnable
-	//	 * @return
-	//	 */
-	//	protected Scope getScope(final Runnable runnable) {
-	//		Scope context = null;
-	//		if (runnable instanceof IDominoRunnable) {
-	//			context = ((IDominoRunnable) runnable).getScope();
-	//			if (context != null)
-	//				return context;
-	//		}
-	//		Persistent annot = runnable.getClass().getAnnotation(Persistent.class);
-	//		if (annot != null) {
-	//			context = annot.scope();
-	//			if (context != null)
-	//				return context;
-	//		}
-	//		return Scope.NONE;
-	//	}
-	//
-	//	/**
-	//	 * Determines the "runAs" name, if the runnable should run in a named session
-	//	 * 
-	//	 * @param runnable
-	//	 * @return
-	//	 */
-	//	protected String getRunAs(final Runnable runnable) {
-	//		String runAs;
-	//		if (runnable instanceof IDominoRunnable) {
-	//			runAs = ((IDominoRunnable) runnable).getRunAs();
-	//			if (runAs != null)
-	//				return runAs;
-	//		}
-	//		return "Anonymous";
-	//	}
 
 	@Override
 	public ClassLoader getContextClassLoader() {
@@ -231,7 +175,7 @@ public class DominoRunner extends DominoThread {
 
 	@Override
 	public void runNotes() {
-		Factory.init();
+		Factory.initThread();
 		try {
 			final ClassLoader oldClassLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
 				@Override
@@ -256,32 +200,20 @@ public class DominoRunner extends DominoThread {
 				});
 			}
 		} finally {
-			Factory.terminate();
+			Factory.termThread();
 		}
 	}
 
 	protected void runWithSession() {
-		lotus.domino.Session session = createSession(sessionType);
-		try {
-			Factory.setSession(session);
-			runWithXspContext(session);
-		} finally {
-			Factory.terminate();
-			if (session != null) {
-				try {
-					session.recycle();
-				} catch (NotesException ne) {
-					ne.printStackTrace();
-				}
-			}
-		}
+		Factory.setSessionFactory(sessionFactory, SessionMode.DEFAULT);
+		runWithXspContext();
 	}
 
-	protected void runWithXspContext(final Session session) {
-		runRunnable(session);
+	protected void runWithXspContext() {
+		runRunnable();
 	}
 
-	protected void runRunnable(final Session session) {
+	protected void runRunnable() {
 		// If we have a RunContext, we run the runnable in a privileged section with this context
 		AccessControlContext runContext = getAccessControlContext();
 		if (runContext == null) {
@@ -295,104 +227,6 @@ public class DominoRunner extends DominoThread {
 				}
 			}, runContext);
 		}
-	}
-
-	protected Session createSession(final SessionType sessionType) {
-		switch (sessionType) {
-
-		case FULL_ACCESS:
-			try {
-				return createSessionWithFullAccess();
-			} catch (PrivilegedActionException e) {
-				log_.log(Level.WARNING, "Unable to create session with full access. Falling back to trusted session", e);
-				return createSession(SessionType.TRUSTED);
-			}
-
-		case TRUSTED:
-			try {
-				return createTrustedSession();
-			} catch (PrivilegedActionException e) {
-				log_.log(Level.WARNING, "Unable to create trusted session. Falling back to native session", e);
-				return createSession(SessionType.NATIVE);
-			}
-
-		case NATIVE:
-			try {
-				return createNativeSession();
-			} catch (PrivilegedActionException e) {
-				log_.log(Level.WARNING, "Unable to create trusted session. Falling back to native session", e);
-				return createSession(SessionType.NAMED);
-			}
-
-		case NAMED:
-			try {
-				return createNamedSession();
-			} catch (PrivilegedActionException e) {
-				log_.log(Level.WARNING, "Unable to create a named session.", e);
-				return null; // createSession(DominoSessionType.NAMED);
-			}
-		}
-		return null;
-	}
-
-	private Session createNativeSession() throws PrivilegedActionException {
-		return AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
-			@Override
-			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.NotesFactory.createSession();
-				} finally {
-					System.setSecurityManager(oldSm);
-				}
-			}
-		}, rootAcc);
-	}
-
-	private Session createTrustedSession() throws PrivilegedActionException {
-		return AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
-			@Override
-			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.NotesFactory.createTrustedSession();
-				} finally {
-					System.setSecurityManager(oldSm);
-				}
-			}
-		}, rootAcc);
-	}
-
-	private Session createSessionWithFullAccess() throws PrivilegedActionException {
-		return AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
-			@Override
-			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.NotesFactory.createSessionWithFullAccess();
-				} finally {
-					System.setSecurityManager(oldSm);
-				}
-			}
-		}, rootAcc);
-	}
-
-	private Session createNamedSession() throws PrivilegedActionException {
-		return AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
-			@Override
-			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.local.Session.createSessionWithTokenEx(runAs);
-				} finally {
-					System.setSecurityManager(oldSm);
-				}
-			}
-		}, rootAcc);
 	}
 
 	public <T> Callable<T> asCallable(final Callable<T> dummy) {

@@ -36,19 +36,6 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	//private static final Logger log_ = Logger.getLogger(RichTextDoclink.class.getName());
 
 	/**
-	 * Instantiates a new rich text doclink.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (RichTextItem) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
@@ -326,6 +313,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.RichTextDoclink#getDatabase()
 	 */
+	@Override
 	public Database getDatabase() {
 		Session session = getAncestorSession();
 		Database database = session.getDatabase("", "");
@@ -336,6 +324,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.RichTextDoclink#getDocument()
 	 */
+	@Override
 	public org.openntf.domino.Document getDocument() {
 		String documentId = getDocUnID();
 		if (documentId != null && !documentId.isEmpty()) {
@@ -348,6 +337,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.RichTextDoclink#getView()
 	 */
+	@Override
 	public View getView() {
 		String viewId = getViewUnID();
 		if (viewId != null && !viewId.isEmpty()) {

@@ -31,7 +31,6 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.impl,
  org.openntf.domino.iterators,
  org.openntf.domino.logging,
- org.openntf.domino.napi,
  org.openntf.domino.nsfdata,
  org.openntf.domino.nsfdata.impldxl,
  org.openntf.domino.nsfdata.impldxl.item,
@@ -60,7 +59,7 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0",
  com.ibm.commons;bundle-version="9.0.0",
  com.ibm.notes.java.api;bundle-version="8.5.3";visibility:=reexport,
  com.ibm.commons.icu;bundle-version="9.0.1",
- com.ibm.icu.base;bundle-version="3.8.1"
-Import-Package: lotus.domino
+ com.ibm.icu.base;bundle-version="3.8.1",
+ org.junit;bundle-version="4.11.0";resolution:=optional
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

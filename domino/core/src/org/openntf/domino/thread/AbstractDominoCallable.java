@@ -8,9 +8,9 @@ import java.util.Observable;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.thread.model.Context;
 import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.SessionType;
 import org.openntf.domino.thread.model.XotsTasklet;
 
 /**
@@ -27,7 +27,7 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Xo
 	private Thread runningThread_;
 
 	@Override
-	public SessionType getSessionType() {
+	public ISessionFactory getSessionFactory() {
 		return null;
 	}
 

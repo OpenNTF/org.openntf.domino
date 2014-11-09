@@ -21,7 +21,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -29,19 +28,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
 		org.openntf.domino.Newsletter {
-
-	/**
-	 * Instantiates a new newsletter.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Newsletter(final lotus.domino.Newsletter delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.

@@ -43,25 +43,12 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	private NamePartsMap _namePartsMap;
 	private boolean Hierarchical;
 
-	/**
-	 * * Zero-Argument Constructor
+	/*
+	 * Deprecated, but needed for Externalization
 	 */
-	//	public Name() {	// this one doesn't work (runs into NullPointerExc.); see after writeExternal
-	//		super(null, null);
-	//	}
-
-	/**
-	 * Default Constructor.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
-		super(null, (Session) parent);
-		this.initialize(delegate);
-		Base.s_recycle(delegate);
+	@Deprecated
+	public Name() {
+		super(null, Factory.getSession(), null, 0, NOTES_NAME);
 	}
 
 	/**
@@ -71,8 +58,19 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 *            Session used for Name processing
 	 */
 	public Name(final Session session) {
-		super(null, session);
+		super(null, session, null, 0, NOTES_NAME);
 		this.initialize(session.getEffectiveUserName());
+	}
+
+	/**
+	 * Optional Constructor to clone a name
+	 * 
+	 * @param name
+	 *            the name to clone
+	 */
+	public Name(final Session session, final lotus.domino.Name name) throws NotesException {
+		super(null, session, null, 0, NOTES_NAME);
+		this.initialize(name);
 	}
 
 	/**
@@ -85,7 +83,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 *            String used to construct the Name object
 	 */
 	public Name(final Session session, final String name) {
-		super(null, (Session) Factory.fromLotus(session, Session.class, null));
+		super(null, session, null, 0, NOTES_NAME);
 		this.initialize(name);
 	}
 
@@ -96,8 +94,27 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 *            String used to construct the Name object
 	 */
 	public Name(final String name) {
-		super(null, Factory.getSession());
+		super(null, Factory.getSession(), null, 0, NOTES_NAME);
 		this.initialize(name);
+	}
+
+	/**
+	 * Instantiates a new name.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Name(final lotus.domino.Name delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_NAME);
+		initialize(delegate);
+		// TODO: Wrapping recycles the caller's object. This may cause issues.
+		Base.s_recycle(delegate);
 	}
 
 	/**
@@ -284,42 +301,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 */
 	public boolean isHasRFC82xContent() {
 		return (null == this._namePartsMap) ? false : this.getNamePartsMap().isHasRFC82xContent();
-	}
-
-	/**
-	 * Instantiates a new name.
-	 * 
-	 * @deprecated Use {@link #Name(lotus.domino.Name, Session, WrapperFactory, long)} instead
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Name(final lotus.domino.Name delegate, final Session parent) {
-		super(null, Factory.getSession(parent));
-		initialize(delegate);
-		Base.s_recycle(delegate);
-	}
-
-	/**
-	 * Instantiates a new name.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
-	 */
-	public Name(final lotus.domino.Name delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_NAME);
-		initialize(delegate);
-		// TODO: Wrapping recycles the caller's object. This may cause issues.
-		Base.s_recycle(delegate);
 	}
 
 	/**
@@ -981,14 +962,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeBoolean(this.isHierarchical());
 		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
-	}
-
-	/*
-	 * Deprecated, but needed for Externalization
-	 */
-	@Deprecated
-	public Name() {
-		super(null, Factory.getSession(), null, 0, NOTES_NAME);
 	}
 
 	@Override

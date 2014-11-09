@@ -5,12 +5,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.openntf.domino.session.ISessionFactory;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface XotsTasklet {
 	public interface Interface {
 
-		public SessionType getSessionType();
+		public ISessionFactory getSessionFactory();
 
 		public String getRunAs();
 

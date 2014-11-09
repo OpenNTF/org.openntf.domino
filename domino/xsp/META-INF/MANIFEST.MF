@@ -28,7 +28,8 @@ Require-Bundle: org.openntf.domino;bundle-version="1.5.0";visibility:=reexport,
  com.ibm.designer.runtime;bundle-version="9.0.1",
  com.ibm.domino.xsp.bootstrap;bundle-version="9.0.1",
  com.ibm.xsp.designer;bundle-version="9.0.1",
- com.ibm.domino.napi;bundle-version="9.0.1"
+ com.ibm.domino.napi;bundle-version="9.0.1",
+ org.junit;bundle-version="4.11.0";resolution:=optional
 Import-Package: com.ibm.commons.util,
  com.ibm.icu.util,
  com.ibm.jscript,

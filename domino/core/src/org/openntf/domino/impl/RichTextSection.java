@@ -35,19 +35,6 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	//private static final Logger log_ = Logger.getLogger(RichTextSection.class.getName());
 
 	/**
-	 * Instantiates a new rich text section.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextSection(final lotus.domino.RichTextSection delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (RichTextNavigator) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

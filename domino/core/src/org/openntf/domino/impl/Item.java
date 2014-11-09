@@ -38,7 +38,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 import org.xml.sax.InputSource;
 
@@ -53,20 +52,6 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	private String name_;
 	private Type itemType;
 	private EnumSet<Flags> flagSet_;
-
-	/**
-	 * Instantiates a new item.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Item(final lotus.domino.Item delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (Document) parent);
-		initialize(delegate);
-	}
 
 	/**
 	 * Instantiates a new outline.
@@ -1080,7 +1065,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
 				setDelegate(item, 0);
-				Factory.recacheLotus(d, this, parent_);
+				getFactory().recacheLotusObject(d, this, parent_);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");

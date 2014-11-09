@@ -36,7 +36,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class DocumentCollection.
  */
 public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database> implements
-org.openntf.domino.DocumentCollection {
+		org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
@@ -57,19 +57,6 @@ org.openntf.domino.DocumentCollection {
 		NthDocumentMethodNotPermittedException() {
 			super("The OpenNTF Domino API does not permit the use of GetNthDocument methods in DocumentCollections");
 		}
-	}
-
-	/**
-	 * Instantiates a new document collection.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public DocumentCollection(final lotus.domino.DocumentCollection delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
 	}
 
 	/**

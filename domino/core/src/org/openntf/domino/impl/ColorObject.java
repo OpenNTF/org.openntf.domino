@@ -20,7 +20,6 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,19 +27,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
 		org.openntf.domino.ColorObject {
-
-	/**
-	 * Instantiates a new color object.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ColorObject(final lotus.domino.ColorObject delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.
@@ -182,6 +168,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ColorObject#setColor(java.awt.Color)
 	 */
+	@Override
 	public void setColor(final java.awt.Color color) {
 		this.setRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}

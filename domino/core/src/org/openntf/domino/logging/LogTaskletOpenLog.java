@@ -1,9 +1,10 @@
 package org.openntf.domino.logging;
 
-import org.openntf.domino.thread.tasklet.AbstractNativeTasklet;
+import org.openntf.domino.thread.AbstractDominoRunnable;
+import org.openntf.domino.utils.Factory;
 
 @SuppressWarnings("serial")
-public class LogTaskletOpenLog extends AbstractNativeTasklet {
+public class LogTaskletOpenLog extends AbstractDominoRunnable {
 
 	public LogTaskletOpenLog() {
 		super();
@@ -11,12 +12,12 @@ public class LogTaskletOpenLog extends AbstractNativeTasklet {
 
 	@Override
 	public void run() {
-		for (;;) {
+		while (!shouldStop()) {
 			LogGeneratorOpenLog.OL_EntryToWrite oletw;
 			try {
 				oletw = LogGeneratorOpenLog._olQueue.take();
 				if (oletw != null)
-					oletw._logGenerator._olWriter.writeLogRecToDB(this.getSession(), oletw._logRec, oletw._logGenerator._startTime);
+					oletw._logGenerator._olWriter.writeLogRecToDB(Factory.getSession(), oletw._logRec, oletw._logGenerator._startTime);
 			} catch (InterruptedException e) {
 				System.out.println("LogTaskletOpenLog: Caught an InterruptedException; finishing ...");
 				break;

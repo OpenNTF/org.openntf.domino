@@ -17,6 +17,8 @@ package org.openntf.domino.thread;
 
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.utils.Factory;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class DominoThread.
@@ -95,8 +97,16 @@ public class DominoThread extends NotesThread {
 	}
 
 	@Override
+	public void initThread() {
+		super.initThread();
+		Factory.initThread();
+	}
+
+	@Override
 	public void termThread() {
 		System.out.println("DEBUG: Terminating a " + toString());
+		Factory.termThread();
+
 		super.termThread();
 	}
 

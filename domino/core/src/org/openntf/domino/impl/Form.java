@@ -36,22 +36,6 @@ import org.openntf.domino.utils.DominoUtils;
  */
 public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
 
-	/** The temp_. */
-	lotus.domino.Form temp_;
-
-	/**
-	 * Instantiates a new form.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Form(final lotus.domino.Form delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
-	}
-
 	/**
 	 * Instantiates a new form.
 	 * 
@@ -81,6 +65,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getAliases()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getAliases() {
@@ -108,6 +93,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getFieldType(java.lang.String)
 	 */
+	@Override
 	public int getFieldType(final String arg0) {
 		try {
 			return getDelegate().getFieldType(arg0);
@@ -123,6 +109,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getFields()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFields() {
@@ -140,6 +127,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getFormUsers()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFormUsers() {
@@ -157,6 +145,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getHttpURL()
 	 */
+	@Override
 	public String getHttpURL() {
 		try {
 			return getDelegate().getHttpURL();
@@ -172,6 +161,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getLockHolders()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getLockHolders() {
@@ -189,6 +179,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getName()
 	 */
+	@Override
 	public String getName() {
 		try {
 			return getDelegate().getName();
@@ -216,6 +207,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getNotesURL()
 	 */
+	@Override
 	public String getNotesURL() {
 		try {
 			return getDelegate().getNotesURL();
@@ -241,6 +233,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getReaders()
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getReaders() {
@@ -270,6 +263,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#getURL()
 	 */
+	@Override
 	public String getURL() {
 		try {
 			return getDelegate().getURL();
@@ -311,6 +305,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#isProtectReaders()
 	 */
+	@Override
 	public boolean isProtectReaders() {
 		try {
 			return getDelegate().isProtectReaders();
@@ -326,6 +321,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#isProtectUsers()
 	 */
+	@Override
 	public boolean isProtectUsers() {
 		try {
 			return getDelegate().isProtectUsers();
@@ -341,6 +337,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#isSubForm()
 	 */
+	@Override
 	public boolean isSubForm() {
 		try {
 			return getDelegate().isSubForm();
@@ -356,6 +353,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lock()
 	 */
+	@Override
 	public boolean lock() {
 		try {
 			return getDelegate().lock();
@@ -371,6 +369,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lock(boolean)
 	 */
+	@Override
 	public boolean lock(final boolean arg0) {
 		try {
 			return getDelegate().lock(arg0);
@@ -386,6 +385,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.lang.String, boolean)
 	 */
+	@Override
 	public boolean lock(final String arg0, final boolean arg1) {
 		try {
 			return getDelegate().lock(arg0, arg1);
@@ -401,6 +401,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.lang.String)
 	 */
+	@Override
 	public boolean lock(final String arg0) {
 		try {
 			return getDelegate().lock(arg0);
@@ -416,6 +417,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector, boolean)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public boolean lock(final Vector arg0, final boolean arg1) {
 		try {
@@ -432,6 +434,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public boolean lock(final Vector arg0) {
 		try {
@@ -448,6 +451,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lockProvisional()
 	 */
+	@Override
 	public boolean lockProvisional() {
 		try {
 			return getDelegate().lockProvisional();
@@ -463,6 +467,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lockProvisional(java.lang.String)
 	 */
+	@Override
 	public boolean lockProvisional(final String arg0) {
 		try {
 			return getDelegate().lockProvisional(arg0);
@@ -478,6 +483,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#lockProvisional(java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public boolean lockProvisional(final Vector arg0) {
 		try {
@@ -494,6 +500,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#remove()
 	 */
+	@Override
 	public void remove() {
 		try {
 			getDelegate().remove();
@@ -508,6 +515,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#setFormUsers(java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void setFormUsers(final Vector arg0) {
 		try {
@@ -523,6 +531,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#setProtectReaders(boolean)
 	 */
+	@Override
 	public void setProtectReaders(final boolean arg0) {
 		try {
 			getDelegate().setProtectReaders(arg0);
@@ -537,6 +546,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#setProtectUsers(boolean)
 	 */
+	@Override
 	public void setProtectUsers(final boolean arg0) {
 		try {
 			getDelegate().setProtectUsers(arg0);
@@ -551,6 +561,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#setReaders(java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void setReaders(final Vector arg0) {
 		try {
@@ -566,6 +577,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * 
 	 * @see org.openntf.domino.Form#unlock()
 	 */
+	@Override
 	public void unlock() {
 		try {
 			getDelegate().unlock();
@@ -615,6 +627,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 		return nc.getCount();
 	}
 
+	@Override
 	public String getSelectionFormula() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ");

@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
-import org.openntf.domino.utils.DominoFormatter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1076,10 +1075,4 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	public boolean verifyPassword(final String password, final String hashedPassword);
 
-	/**
-	 * Returns a Domino Formatter
-	 * 
-	 * @return the formatter
-	 */
-	DominoFormatter getFormatter();
 }

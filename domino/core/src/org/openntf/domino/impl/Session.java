@@ -61,6 +61,7 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
+import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
@@ -1687,6 +1688,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	private AutoMime isAutoMime_;
 
+	private ISessionFactory sessionFactory_;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1939,5 +1942,23 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			userName = "[getEffectiveUserName -> NotesException: " + e.text + "]";
 		}
 		result.add(new ExceptionDetails.Entry(this, userName));
+	}
+
+	@Override
+	public Fixes[] getEnabledFixes() {
+		// TODO Auto-generated method stub
+		return fixes_.toArray(new Fixes[fixes_.size()]);
+	}
+
+	@Override
+	public void setSessionFactory(final ISessionFactory sessionFactory) {
+		sessionFactory_ = sessionFactory;
+
+	}
+
+	@Override
+	public ISessionFactory getSessionFactory() {
+		// TODO Auto-generated method stub
+		return sessionFactory_;
 	}
 }

@@ -3,8 +3,6 @@
  */
 package org.openntf.domino.thread;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -22,7 +20,9 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
+import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionMode;
 
 /**
  * A ThreadPoolExecutor for Domino runnables. It sets up a shutdown hook for proper termination. There should be maximum one instance of
@@ -34,7 +34,6 @@ import org.openntf.domino.utils.Factory;
 public class DominoExecutor extends ScheduledThreadPoolExecutor {
 
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
-	protected AccessControlContext rootAcc = AccessController.getContext();
 
 	protected List<Runnable> deferred = new ArrayList<Runnable>();
 	private Set<IDominoListener> listeners_;
@@ -55,7 +54,7 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 		Factory.addShutdownHook(shutdownHook);
 	}
 
-	protected DominoExecutor(final int corePoolSize) {
+	public DominoExecutor(final int corePoolSize) {
 		super(corePoolSize);
 		init();
 	}
@@ -201,8 +200,8 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 	 */
 	public boolean queue(final Runnable runnable) {
 		try {
-			schedule(runnable, 30, TimeUnit.SECONDS);
 			execute(runnable);
+			//schedule(runnable, 30, TimeUnit.SECONDS);
 			return true;
 		} catch (RejectedExecutionException ex) {
 			// if we are shutting down, don't queue anything
@@ -284,13 +283,15 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 		if (runnable instanceof DominoRunner) {
 			return runnable;
 		}
-		return new DominoRunner(runnable, rootAcc);
+		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+		return new DominoRunner(runnable, sf);
 	}
 
 	protected <T> Callable<T> wrap(final Callable<T> callable) {
 		if (callable instanceof DominoRunner) {
 			return callable;
 		}
-		return new DominoRunner(callable, rootAcc).asCallable(callable);
+		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+		return new DominoRunner(callable, sf).asCallable(callable);
 	}
 }

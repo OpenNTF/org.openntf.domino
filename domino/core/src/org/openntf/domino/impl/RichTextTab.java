@@ -34,19 +34,6 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 	//private static final Logger log_ = Logger.getLogger(RichTextTab.class.getName());
 
 	/**
-	 * Instantiates a new rich text tab.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextTab(final lotus.domino.RichTextTab delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (RichTextParagraphStyle) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

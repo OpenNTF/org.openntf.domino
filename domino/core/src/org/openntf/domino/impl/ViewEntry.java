@@ -70,26 +70,6 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	}
 
 	/**
-	 * Instantiates a new view entry.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ViewEntry(final lotus.domino.ViewEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (View) parent);
-		try {
-			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
-				delegate.setPreferJavaDates(true);
-			}
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

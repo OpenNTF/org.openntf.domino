@@ -5,7 +5,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.thread.model.DominoSessionType;
 
 public class DeferredDocumentTest extends AbstractDominoRunnable {
 	private static int THREAD_COUNT = 1;
@@ -18,9 +18,9 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 		de.shutdown();
 	}
 
-	public DeferredDocumentTest() {
-		this.setSessionType(DominoSessionType.NATIVE);
-		// whatever you might want to do in your constructor, but stay away from Domino objects
+	@Override
+	public DominoSessionType getSessionType() {
+		return DominoSessionType.NATIVE;
 	}
 
 	@Override

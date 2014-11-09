@@ -171,20 +171,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	/**
-	 * Instantiates a new document.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Document(final lotus.domino.Document delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getParentDatabase(parent));
-		initialize(delegate);
-	}
-
-	/**
 	 * Instantiates a new Document.
 	 * 
 	 * @param delegate
@@ -3500,7 +3486,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				setDelegate(d, 0);
-				Factory.recacheLotus(d, this, parent_);
+				getFactory().recacheLotusObject(d, this, parent_);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
