@@ -52,17 +52,26 @@ public class XotsDaemon implements Observer {
 		}
 	}
 
-	public void stop() {
-		synchronized (this) {
+	public static void stop(int wait) {
+		synchronized (INSTANCE) {
 			System.out.println("DEBUG: Destroying XotsService...");
 			if (isStarted()) {
-				executor_.shutdown();
+				long running;
 				try {
-					executor_.awaitTermination(10, TimeUnit.SECONDS);
+					while ((running = INSTANCE.executor_.getActiveCount()) > 0 && wait-- > 0) {
+						System.out.println("There are " + running + " tasks... waiting: " + wait);
+						Thread.sleep(1000);
+					}
+				} catch (InterruptedException e) {
+				}
+				INSTANCE.executor_.shutdownNow();
+				try {
+					INSTANCE.executor_.awaitTermination(10, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
 				}
 			}
 			System.out.println("DEBUG: ... Done");
+			INSTANCE.executor_ = null;
 		}
 	}
 

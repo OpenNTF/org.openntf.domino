@@ -25,8 +25,10 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.adapter.OpenntfHttpService;
+import org.openntf.domino.xsp.helpers.ModuleLoader;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 
 /**
  * 
@@ -116,11 +118,11 @@ public class OsgiCommandProvider implements CommandProvider {
 		String moduleName = ci.nextArgument();
 
 		try {
-			OpenntfHttpService.sGetNsfService().loadModule(moduleName);
+			NSFComponentModule module = ModuleLoader.loadModule(moduleName);
+			module.getModuleClassLoader().l
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 }

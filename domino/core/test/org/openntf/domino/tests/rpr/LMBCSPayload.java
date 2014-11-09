@@ -1,4 +1,4 @@
-package org.openntf.domino.junit.rpr;
+package org.openntf.domino.tests.rpr;
 
 import java.io.File;
 import java.io.IOException;

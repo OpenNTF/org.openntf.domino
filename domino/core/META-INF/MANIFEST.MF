@@ -30,6 +30,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.i18n,
  org.openntf.domino.impl,
  org.openntf.domino.iterators,
+ org.openntf.domino.junit,
  org.openntf.domino.logging,
  org.openntf.domino.nsfdata,
  org.openntf.domino.nsfdata.impldxl,
@@ -40,12 +41,14 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.schema.exceptions,
  org.openntf.domino.schema.impl,
  org.openntf.domino.schema.types,
+ org.openntf.domino.session,
  org.openntf.domino.thread,
  org.openntf.domino.thread.model,
  org.openntf.domino.transactions,
  org.openntf.domino.types,
  org.openntf.domino.utils,
- org.openntf.domino.utils.xml
+ org.openntf.domino.utils.xml,
+ org.openntf.domino.xots
 Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.0.0_20140416093417
 Implementation-Vendor: OpenNTF

@@ -265,18 +265,9 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 
 	@Override
 	public List<Runnable> shutdownNow() {
-		try {
-			return super.shutdownNow();
-		} finally {
-			Factory.removeShutdownHook(shutdownHook);
-			try {
-				while (!awaitTermination(10, TimeUnit.SECONDS)) {
-					log_.info("Awaiting completion of threads.");
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		List<Runnable> ret = super.shutdownNow();
+		Factory.removeShutdownHook(shutdownHook);
+		return ret;
 	}
 
 	protected Runnable wrap(final Runnable runnable) {

@@ -175,33 +175,33 @@ public class DominoRunner extends DominoThread {
 
 	@Override
 	public void runNotes() {
-		Factory.initThread();
+		//Factory.initThread(); initThread not needed. The thread is already initialized
+		//try {
+		final ClassLoader oldClassLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+			@Override
+			public ClassLoader run() {
+				ClassLoader ret = Thread.currentThread().getContextClassLoader();
+				ClassLoader contextClassLoader = getContextClassLoader();
+				Thread.currentThread().setContextClassLoader(contextClassLoader);
+				Factory.setClassLoader(contextClassLoader);
+				return ret;
+			}
+		});
+
 		try {
-			final ClassLoader oldClassLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+			runWithSession();
+		} finally {
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
 				@Override
-				public ClassLoader run() {
-					ClassLoader ret = Thread.currentThread().getContextClassLoader();
-					ClassLoader contextClassLoader = getContextClassLoader();
-					Thread.currentThread().setContextClassLoader(contextClassLoader);
-					Factory.setClassLoader(contextClassLoader);
-					return ret;
+				public Object run() {
+					Thread.currentThread().setContextClassLoader(oldClassLoader);
+					return null;
 				}
 			});
-
-			try {
-				runWithSession();
-			} finally {
-				AccessController.doPrivileged(new PrivilegedAction<Object>() {
-					@Override
-					public Object run() {
-						Thread.currentThread().setContextClassLoader(oldClassLoader);
-						return null;
-					}
-				});
-			}
-		} finally {
-			Factory.termThread();
 		}
+		//		} finally {
+		//			Factory.termThread();
+		//		}
 	}
 
 	protected void runWithSession() {

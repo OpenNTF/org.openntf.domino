@@ -676,6 +676,22 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
+	 */
+	@Override
+	public ViewNavigator createViewNavFromCategory(final String categoryName) {
+		try {
+			getDelegate().setAutoUpdate(false);
+			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -713,22 +729,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		}
 		return null;
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
-	 */
-	@Override
-	public ViewNavigator createViewNavFromCategory(final String categoryName) {
-		try {
-			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
 	}
 
 	/*

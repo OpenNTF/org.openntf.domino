@@ -1,4 +1,4 @@
-package org.openntf.domino.junit.rpr;
+package org.openntf.domino.tests.rpr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

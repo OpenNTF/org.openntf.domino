@@ -7,7 +7,10 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.openntf.domino.thread.DominoExecutor;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xots.XotsDaemon;
 
 /**
  * A Testrunner to run JUnit tests with proper set up of ODA.
@@ -29,8 +32,12 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 	@Override
 	public void run(final RunNotifier notifier) {
 		System.out.println("Setting up the domino test environment");
-		Factory.startup();
 		NotesThread.sinitThread();
+		Factory.startup();
+
+		DominoExecutor executor = new DominoExecutor(50);
+		XotsDaemon.start(executor);
+
 		try {
 			lotus.domino.Session masterSession = lotus.domino.local.Session.createSession();
 			TestProps.setup(masterSession);
@@ -42,8 +49,10 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 		} catch (NotesException e) {
 			e.printStackTrace();
 		} finally {
-			NotesThread.stermThread();
+			XotsDaemon.stop(600); // 10 minutes should be enough for tests
 			Factory.shutdown();
+			NotesThread.stermThread();
+
 			System.out.println("Shut down the domino test environment");
 		}
 	}
@@ -52,6 +61,7 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 	protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
 		// TODO Auto-generated method stub
 		Factory.initThread();
+		DominoUtils.setBubbleExceptions(true); // Test MUST bubble up exceptions!
 		try {
 			super.runChild(method, notifier);
 		} finally {

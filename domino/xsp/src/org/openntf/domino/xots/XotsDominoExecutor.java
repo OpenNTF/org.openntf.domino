@@ -1,10 +1,12 @@
 package org.openntf.domino.xots;
 
-import java.security.AccessControlContext;
 import java.util.concurrent.Callable;
 
+import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.thread.DominoRunner;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionMode;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -12,12 +14,12 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
 public class XotsDominoExecutor extends DominoExecutor {
 
 	public static class XotsDominoRunner extends DominoRunner {
-		protected XotsDominoRunner(final Runnable runnable, final AccessControlContext rootAcc) {
-			super(runnable, rootAcc);
+		protected XotsDominoRunner(final Runnable runnable, final ISessionFactory sessionFactory) {
+			super(runnable, sessionFactory);
 		}
 
-		protected <T> XotsDominoRunner(final Callable<T> callable, final AccessControlContext rootAcc) {
-			super(callable, rootAcc);
+		protected <T> XotsDominoRunner(final Callable<T> callable, final ISessionFactory sessionFactory) {
+			super(callable, sessionFactory);
 		}
 
 		public transient NSFComponentModule module;
@@ -91,7 +93,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 		if (runnable instanceof XotsDominoRunner) {
 			return (XotsDominoRunner) runnable;
 		}
-		return new XotsDominoRunner(runnable, rootAcc);
+		return new XotsDominoRunner(runnable, Factory.getSessionFactory(SessionMode.DEFAULT));
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 		if (callable instanceof DominoRunner) {
 			return callable;
 		}
-		return new XotsDominoRunner(callable, rootAcc).asCallable(callable);
+		return new XotsDominoRunner(callable, Factory.getSessionFactory(SessionMode.DEFAULT)).asCallable(callable);
 	}
 
 }

@@ -1547,4 +1547,9 @@ public enum Factory {
 		shutdownHooks.remove(hook);
 	}
 
+	public static String getLocalServerName() {
+		// TODO Auto-generated method stub
+		return "CN=srv-01-xdev1/OU=srv/O=FOCONIS"; // TODO RPr
+	}
+
 }

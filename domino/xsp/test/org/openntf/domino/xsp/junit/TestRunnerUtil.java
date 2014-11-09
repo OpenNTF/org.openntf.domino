@@ -1,4 +1,4 @@
-package org.openntf.domino.xsp.tests;
+package org.openntf.domino.xsp.junit;
 
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;

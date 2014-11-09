@@ -22,96 +22,72 @@ package org.openntf.domino.tests.eknori;
  Thread MassCreateDocumentsScratchTest auto-recycled 2975322 lotus references during run. Then recycled 24679 lotus references on completion and had 0 recycle errors
 
  */
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Enum MassCreateDocumentsScratchTest.
  */
-public enum MassCreateDocumentsScratchTest {
-	
-	/** The instance. */
-	INSTANCE;
+@RunWith(DominoJUnitRunner.class)
+public class MassCreateDocumentsScratchTest {
 
-	/**
-	 * Instantiates a new mass create documents scratch test.
-	 */
-	private MassCreateDocumentsScratchTest() {
-		// TODO Auto-generated constructor stub
-	}
+	/** The Constant TEMPLATE. */
+	private static final String TEMPLATE = "simple.ntf";
 
-	/**
-	 * The Class Doer.
-	 */
-	static class Doer implements Runnable {
+	/** The Constant TARGET. */
+	private static final String TARGET = "target.nsf";
 
-		/** The Constant TEMPLATE. */
-		private static final String TEMPLATE = "simple.ntf";
-		
-		/** The Constant TARGET. */
-		private static final String TARGET = "target.nsf";
-		
-		/** The Constant FORM. */
-		private static final String FORM = "person";
-		
-		/** The Constant ITEM. */
-		private static final String ITEM = "subject";
-		
-		/** The Constant NUMBER_OF_DOCS. */
-		private static final int NUMBER_OF_DOCS = 1000000;
+	/** The Constant FORM. */
+	private static final String FORM = "person";
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Runnable#run()
-		 */
-		@Override
-		public void run() {
-			Session s = Factory.getSession();
+	/** The Constant ITEM. */
+	private static final String ITEM = "subject";
 
-			Database db = s.getDatabase("", TARGET, true);
+	/** The Constant NUMBER_OF_DOCS. */
+	private static final int NUMBER_OF_DOCS = 1000000;
 
-			if (!db.isOpen()) {
-				Database db2 = s.getDatabase("", TEMPLATE, true);
-				db = db2.createCopy("", TARGET);
-				if (!db.isOpen())
-					db.open();
-			}
-
-			Document doc = null;
-			System.out.println("-- START --");
-			long start = System.nanoTime();
-			for (int i = 1; i < NUMBER_OF_DOCS + 1; i++) {
-
-				doc = db.createDocument();
-				doc.replaceItemValue("form", FORM);
-				doc.replaceItemValue(ITEM, String.valueOf(System.nanoTime()));
-				doc.computeWithForm(false, false);
-				doc.save();
-				/*
-				 * if (i % 5000 == 0) { System.out.println("Created " + i + " documents so far. Still going..."); }
-				 */
-			}
-			long elapsed = System.nanoTime() - start;
-			System.out.println("-- STOP --");
-			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
-
-		}
-	}
-
-	/**
-	 * The main method.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param args
-	 *            the arguments
+	 * @see java.lang.Runnable#run()
 	 */
-	public static void main(final String[] args) {
-		DominoThread dt = new DominoThread(new Doer(), "MassCreateDocumentsScratchTest");
-		dt.start();
+	@Test
+	public void run() {
+		Session s = Factory.getSession();
+
+		Database db = s.getDatabase("", TARGET, true);
+
+		if (!db.isOpen()) {
+			Database db2 = s.getDatabase("", TEMPLATE, true);
+			db = db2.createCopy("", TARGET);
+			if (!db.isOpen())
+				db.open();
+		}
+
+		Document doc = null;
+		System.out.println("-- START --");
+		long start = System.nanoTime();
+		for (int i = 1; i < NUMBER_OF_DOCS + 1; i++) {
+
+			doc = db.createDocument();
+			doc.replaceItemValue("form", FORM);
+			doc.replaceItemValue(ITEM, String.valueOf(System.nanoTime()));
+			doc.computeWithForm(false, false);
+			doc.save();
+			/*
+			 * if (i % 5000 == 0) { System.out.println("Created " + i + " documents so far. Still going..."); }
+			 */
+		}
+		long elapsed = System.nanoTime() - start;
+		System.out.println("-- STOP --");
+		System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
+
 	}
 
 }

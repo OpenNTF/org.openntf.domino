@@ -744,9 +744,11 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	@Override
+	@Deprecated
 	public void recycle() {
 		//		System.out.println("TMP DEBUG: Recycle called on a MIMEEntity: " + getItemName());
 		getParent().closeMIMEEntities(false, getItemName());
+		super.recycle();
 	}
 
 	/*
