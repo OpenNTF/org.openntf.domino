@@ -19,12 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.openntf.domino.xots.XotsDaemon;
-import org.openntf.domino.xsp.adapter.OpenntfHttpService;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
 
 import com.ibm.commons.util.StringUtil;
@@ -106,7 +103,7 @@ public class OsgiCommandProvider implements CommandProvider {
 			// TODO what does XOTS?
 		} else if (cmp(cmd, "tasks", 1)) { // tasks
 			ci.println("XOTS task list:");
-			ci.println(XotsDaemon.getInstance().getRunningTasks());
+			ci.println(XotsDaemon.getRunningTasks());
 		} else if (cmp(cmd, "schedule", 1)) {
 			ci.println("XOTS schedule list:");
 		} else if (cmp(cmd, "run", 1)) {
@@ -116,11 +113,16 @@ public class OsgiCommandProvider implements CommandProvider {
 
 	private void xotsRun(final CommandInterpreter ci) {
 		String moduleName = ci.nextArgument();
-
+		String className = ci.nextArgument();
 		try {
+			ci.println("DEBUG: Opening module: " + moduleName);
 			NSFComponentModule module = ModuleLoader.loadModule(moduleName);
-			module.getModuleClassLoader().l
-		} catch (ServletException e) {
+			ci.println("DEBUG: loading class: " + className);
+			Class cls = module.getModuleClassLoader().loadClass(className);
+			ci.println("DEBUG: creating instance of: " + className);
+			Object obj = cls.newInstance();
+			System.out.println("Success: " + obj);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

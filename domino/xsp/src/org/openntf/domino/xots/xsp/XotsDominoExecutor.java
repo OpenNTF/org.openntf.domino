@@ -1,4 +1,4 @@
-package org.openntf.domino.xots;
+package org.openntf.domino.xots.xsp;
 
 import java.util.concurrent.Callable;
 
@@ -84,7 +84,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 
 	}
 
-	protected XotsDominoExecutor(final int corePoolSize) {
+	public XotsDominoExecutor(final int corePoolSize) {
 		super(corePoolSize);
 	}
 

@@ -23,7 +23,7 @@ public class XotsApplicationListener implements ApplicationListener2 {
 	public void applicationCreated(final ApplicationEx app) {
 		if (app instanceof DesignerApplicationEx) {
 			Application designerApp = ((DesignerApplicationEx) app).getDesignerApplication();
-			XotsDaemon.addToQueue(new XotsRefresher(designerApp.getAppName()));
+			XotsDaemon.queue(new XotsRefresher(designerApp.getAppName()));
 		}
 	}
 
@@ -35,7 +35,7 @@ public class XotsApplicationListener implements ApplicationListener2 {
 	public void applicationRefreshed(final ApplicationEx app) {
 		if (app instanceof DesignerApplicationEx) {
 			Application designerApp = ((DesignerApplicationEx) app).getDesignerApplication();
-			XotsDaemon.addToQueue(new XotsRefresher(designerApp.getAppName()));
+			XotsDaemon.queue(new XotsRefresher(designerApp.getAppName()));
 		}
 	}
 

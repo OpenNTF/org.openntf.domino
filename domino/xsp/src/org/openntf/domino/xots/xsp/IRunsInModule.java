@@ -1,4 +1,4 @@
-package org.openntf.domino.xots;
+package org.openntf.domino.xots.xsp;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 

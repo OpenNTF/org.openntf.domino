@@ -16,7 +16,8 @@
 package org.openntf.domino.utils;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileNotFoundException;
+import java.net.URL;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
@@ -24,6 +25,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +41,9 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesException;
+import lotus.notes.NotesThread;
+
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
@@ -50,7 +55,6 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
-import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NamedSessionFactory;
@@ -209,110 +213,110 @@ public enum Factory {
 		return tv;
 	}
 
-	/**
-	 * setup the environment and loggers
-	 * 
-	 * @author praml
-	 * 
-	 */
-	private static class SetupJob implements Runnable {
-		@Override
-		public void run() {
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-						String progpath = System.getProperty("notes.binary");
-						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-						if (!iniFile.exists()) {
-							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-							progpath = System.getProperty("user.dir");
-							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-						}
-						if (!iniFile.exists()) {
-							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-							progpath = System.getProperty("java.home");
-							if (progpath.endsWith("jvm")) {
-								iniFile = new File(progpath + System.getProperty("file.separator") + ".."
-										+ System.getProperty("file.separator") + "notes.ini");
-							} else {
-								iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-
-							}
-						}
-						if (!iniFile.exists()) {
-							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
-							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-						}
-						if (!iniFile.exists()) {
-							//							System.out.println("Inifile still not found on user.dir path: " + progpath);
-							if (progpath.contains("framework")) {
-								String pp2 = progpath.replace("framework", "");
-								iniFile = new File(pp2 + "notes.ini");
-								//								System.out.println("Attempting to use path: " + pp2);
-								if (!iniFile.exists()) {
-									System.out
-											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
-									for (Object rawName : System.getProperties().keySet()) {
-										if (rawName instanceof String) {
-											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
-										}
-									}
-								}
-							}
-						}
-
-						Scanner scanner = new Scanner(iniFile);
-						scanner.useDelimiter("\n|\r\n");
-						loadEnvironment(scanner);
-						scanner.close();
-						return null;
-					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
-			}
-
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						Logging.getInstance().startUp();
-						return null;
-					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	static {
-		SetupJob job = new SetupJob();
-		job.run();
-		//		TrustedDispatcher td = new TrustedDispatcher();
-		//		td.process(job);
-		//		System.out.println("DEBUG: SetupJob dispatched");
-		//		td.stop(false);
-	}
+	// RPr: I have objections in this type of setup (locating the correct notes.ini is NOT trivial)
+	//	/**
+	//	 * setup the environment and loggers
+	//	 * 
+	//	 * @author praml
+	//	 * 
+	//	 */
+	//	private static class SetupJob implements Runnable {
+	//		@Override
+	//		public void run() {
+	//			try {
+	//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+	//					@Override
+	//					public Object run() throws Exception {
+	//						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
+	//						String progpath = System.getProperty("notes.binary");
+	//						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//						if (!iniFile.exists()) {
+	//							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+	//							progpath = System.getProperty("user.dir");
+	//							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//						}
+	//						if (!iniFile.exists()) {
+	//							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+	//							progpath = System.getProperty("java.home");
+	//							if (progpath.endsWith("jvm")) {
+	//								iniFile = new File(progpath + System.getProperty("file.separator") + ".."
+	//										+ System.getProperty("file.separator") + "notes.ini");
+	//							} else {
+	//								iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//
+	//							}
+	//						}
+	//						if (!iniFile.exists()) {
+	//							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+	//							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//						}
+	//						if (!iniFile.exists()) {
+	//							//							System.out.println("Inifile still not found on user.dir path: " + progpath);
+	//							if (progpath.contains("framework")) {
+	//								String pp2 = progpath.replace("framework", "");
+	//								iniFile = new File(pp2 + "notes.ini");
+	//								//								System.out.println("Attempting to use path: " + pp2);
+	//								if (!iniFile.exists()) {
+	//									System.out
+	//											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+	//									for (Object rawName : System.getProperties().keySet()) {
+	//										if (rawName instanceof String) {
+	//											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
+	//										}
+	//									}
+	//								}
+	//							}
+	//						}
+	//
+	//						Scanner scanner = new Scanner(iniFile);
+	//						scanner.useDelimiter("\n|\r\n");
+	//						loadEnvironment(scanner);
+	//						scanner.close();
+	//						return null;
+	//					}
+	//				});
+	//			} catch (AccessControlException e) {
+	//				e.printStackTrace();
+	//			} catch (PrivilegedActionException e) {
+	//				e.printStackTrace();
+	//			}
+	//
+	//			try {
+	//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+	//					@Override
+	//					public Object run() throws Exception {
+	//						Logging.getInstance().startUp();
+	//						return null;
+	//					}
+	//				});
+	//			} catch (AccessControlException e) {
+	//				e.printStackTrace();
+	//			} catch (PrivilegedActionException e) {
+	//				e.printStackTrace();
+	//			}
+	//		}
+	//	}
+	//
+	//	static {
+	//		SetupJob job = new SetupJob();
+	//		job.run();
+	//		//		TrustedDispatcher td = new TrustedDispatcher();
+	//		//		td.process(job);
+	//		//		System.out.println("DEBUG: SetupJob dispatched");
+	//		//		td.stop(false);
+	//	}
 
 	private static Map<String, String> ENVIRONMENT;
 	@SuppressWarnings("unused")
-	private static boolean session_init = false;
-	private static boolean jar_init = false;
-
+	//private static boolean session_init = false;
+	//private static boolean jar_init = false;
 	private static boolean started = false;
 
 	/**
 	 * load the configuration
 	 * 
 	 */
-	public static void loadEnvironment(/*final lotus.domino.Session session, */final Scanner scanner) {
+	private static void loadEnvironment(final Scanner scanner) {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<String, String>();
 		}
@@ -328,62 +332,52 @@ public enum Factory {
 				}
 			}
 			//			System.out.println("DEBUG: Added " + keyCount + " environment variables to avoid using a session");
-			session_init = true;
 		}
-		//		if (session != null && !session_init) {
-		//			try {
-		//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-		//					@Override
-		//					public Object run() throws Exception {
-		//						try {
-		//							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
-		//							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
-		//							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
-		//							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
-		//							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
-		//							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
-		//						} catch (NotesException ne) {
-		//							ne.printStackTrace();
-		//						}
-		//						return null;
-		//					}
-		//				});
-		//			} catch (AccessControlException e) {
-		//				e.printStackTrace();
-		//			} catch (PrivilegedActionException e) {
-		//				e.printStackTrace();
-		//			}
-		//			session_init = true;
-		//		}
-		if (!jar_init) {
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						try {
-							ClassLoader cl = Thread.currentThread().getContextClassLoader();
-							InputStream inputStream = cl.getResourceAsStream("META-INF/MANIFEST.MF");
-							if (inputStream != null) {
-								Manifest mani;
-								mani = new Manifest(inputStream);
-								Attributes attrib = mani.getMainAttributes();
-								ENVIRONMENT.put("version", attrib.getValue("Implementation-Version"));
-								ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
-								ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					try {
+						ClassLoader cl = Thread.currentThread().getContextClassLoader();
+						// we MUST use the Factory-classloader to find the correct MANIFEST
+						Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
+						while (resources.hasMoreElements()) {
+
+							Manifest manifest = new Manifest(resources.nextElement().openStream());
+							// check that this is your manifest and do what you need or get the next one
+							Attributes attrib = manifest.getMainAttributes();
+
+							String bundleName = attrib.getValue("Bundle-SymbolicName");
+							if (bundleName != null) {
+								int pos;
+								if ((pos = bundleName.indexOf(';')) != -1) {
+									bundleName = bundleName.substring(0, pos);
+								}
+								if ("org.openntf.domino".equals(bundleName)) {
+									ENVIRONMENT.put("version", attrib.getValue("Implementation-Version"));
+									ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
+									ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+									return null;
+								}
 							}
-						} catch (Exception e) {
-							e.printStackTrace();
+
 						}
-						return null;
+
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
-			}
-			jar_init = true;
+					return null;
+				}
+			});
+		} catch (AccessControlException e) {
+			e.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
 		}
+		if (!ENVIRONMENT.containsKey("version")) {
+			ENVIRONMENT.put("version", "0.0.0.unknown");
+		}
+
 	}
 
 	public static String getEnvironment(final String key) {
@@ -1069,14 +1063,94 @@ public enum Factory {
 		}
 	}
 
+	private static File getConfigFileFallback() {
+		String progpath = System.getProperty("notes.binary");
+		File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		if (!iniFile.exists()) {
+			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+			progpath = System.getProperty("user.dir");
+			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		}
+		if (!iniFile.exists()) {
+			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+			progpath = System.getProperty("java.home");
+			if (progpath.endsWith("jvm")) {
+				iniFile = new File(progpath + System.getProperty("file.separator") + ".." + System.getProperty("file.separator")
+						+ "notes.ini");
+			} else {
+				iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+
+			}
+		}
+		if (!iniFile.exists()) {
+			progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		}
+		if (!iniFile.exists()) {
+			//							System.out.println("Inifile still not found on user.dir path: " + progpath);
+			if (progpath.contains("framework")) {
+				String pp2 = progpath.replace("framework", "");
+				iniFile = new File(pp2 + "notes.ini");
+				//								System.out.println("Attempting to use path: " + pp2);
+				if (!iniFile.exists()) {
+					System.out.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+					for (Object rawName : System.getProperties().keySet()) {
+						if (rawName instanceof String) {
+							System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
+						}
+					}
+				}
+			}
+		}
+		return iniFile;
+	}
+
 	public static void startup() {
 		synchronized (Factory.class) {
+			NotesThread.sinitThread();
+			try {
+				lotus.domino.Session sess = lotus.domino.NotesFactory.createSession();
+				try {
+					startup(sess);
+				} finally {
+					sess.recycle();
+				}
+			} catch (NotesException e) {
+				e.printStackTrace();
+			} finally {
+				NotesThread.stermThread();
+			}
+		}
+	}
 
+	public static void startup(final lotus.domino.Session session) {
+		synchronized (Factory.class) {
+			if (session instanceof org.openntf.domino.Session) {
+				throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
+			}
 			if (started) {
 				System.out.println("OpenNTF Domino API is already started. Cannot start it again");
 			}
-			System.out.println("Starting the OpenNTF Domino API... ");
-			started = true;
+			File iniFile;
+			try {
+				iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
+			} catch (NotesException e) {
+				System.out.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
+				iniFile = getConfigFileFallback();
+			}
+
+			System.out.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
+
+			try {
+				Scanner scanner = new Scanner(iniFile);
+				scanner.useDelimiter("\n|\r\n");
+				loadEnvironment(scanner);
+				scanner.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Cannot read notes.ini. Giving up");
+				e.printStackTrace();
+			}
+
 			Fixes[] fixes = Fixes.values(); // it is always a good idea to enable ALL fixes
 			AutoMime automime = AutoMime.WRAP_32K; // CHECKME RPr: this is the best choice for FOCONIS. For others, too?
 			String contextDatabase = null; // All the default sessionfactories do not have a contextDB
@@ -1084,6 +1158,8 @@ public enum Factory {
 			defaultSessionFactories[SessionMode.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
 			defaultSessionFactories[SessionMode.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
 			defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
+			started = true;
+			System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
 		}
 	}
 

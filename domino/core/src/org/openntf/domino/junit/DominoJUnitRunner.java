@@ -41,17 +41,27 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 
 	}
 
+	protected void startUp() {
+		System.out.println("Setting up the domino test environment");
+		Factory.startup();
+		NotesThread.sinitThread();
+		DominoExecutor executor = new DominoExecutor(50);
+		XotsDaemon.start(executor);
+	}
+
+	protected void tearDown() {
+		XotsDaemon.stop(600); // 10 minutes should be enough for tests
+		Factory.shutdown();
+		NotesThread.stermThread();
+	}
+
 	/**
 	 * Startup the ODA and the NotesThread once. Create one masterSession to keep alive the connection
 	 */
 	@Override
 	public void run(final RunNotifier notifier) {
-		System.out.println("Setting up the domino test environment");
-		NotesThread.sinitThread();
-		Factory.startup();
 
-		DominoExecutor executor = new DominoExecutor(50);
-		XotsDaemon.start(executor);
+		startUp();
 
 		try {
 			lotus.domino.Session masterSession = lotus.domino.local.Session.createSession();
@@ -64,9 +74,7 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 		} catch (NotesException e) {
 			e.printStackTrace();
 		} finally {
-			XotsDaemon.stop(600); // 10 minutes should be enough for tests
-			Factory.shutdown();
-			NotesThread.stermThread();
+			tearDown();
 
 			System.out.println("Shut down the domino test environment");
 		}
