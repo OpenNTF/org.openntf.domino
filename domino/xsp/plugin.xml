@@ -46,7 +46,7 @@
    </extension>
    
 	<extension point="com.ibm.commons.Extension">
-		<service class="org.openntf.domino.xots.builtin.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
+		<service class="org.openntf.domino.xsp.xots.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
 	</extension>
   
 

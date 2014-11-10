@@ -1,7 +1,5 @@
 bin
 Snap*
 javacore*
-/IBM_TECHNICAL_SUPPORT
-/OSGI-OPT
-/formula/
-/target/
+/target
+/target

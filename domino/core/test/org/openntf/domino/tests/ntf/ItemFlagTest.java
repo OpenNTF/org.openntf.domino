@@ -6,7 +6,6 @@ import org.openntf.domino.Item;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.model.SessionType;
 import org.openntf.domino.utils.Factory;
 
 public class ItemFlagTest extends AbstractDominoRunnable {
@@ -18,11 +17,6 @@ public class ItemFlagTest extends AbstractDominoRunnable {
 			de.execute(new ItemFlagTest());
 		}
 		de.shutdown();
-	}
-
-	@Override
-	public SessionType getSessionType() {
-		return SessionType.NATIVE;
 	}
 
 	@Override

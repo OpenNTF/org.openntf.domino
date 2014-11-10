@@ -1,4 +1,4 @@
-package org.openntf.domino.xots.builtin;
+package org.openntf.domino.xsp.xots;
 
 import java.util.logging.Logger;
 

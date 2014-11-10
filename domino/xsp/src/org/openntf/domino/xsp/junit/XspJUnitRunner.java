@@ -7,7 +7,7 @@ import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsDaemon;
-import org.openntf.domino.xots.xsp.XotsDominoExecutor;
+import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.bootstrap.BootstrapEnvironment;

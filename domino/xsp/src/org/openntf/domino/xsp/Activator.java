@@ -319,7 +319,12 @@ public class Activator extends Plugin {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
-		registerCommandProvider(bundleContext);
+		try {
+			registerCommandProvider(bundleContext);
+		} catch (Throwable t) {
+			System.out.println("Could not register command provider");
+			t.printStackTrace();
+		}
 	}
 
 	/*

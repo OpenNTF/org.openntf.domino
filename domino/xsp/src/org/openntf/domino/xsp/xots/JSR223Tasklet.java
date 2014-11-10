@@ -1,4 +1,4 @@
-package org.openntf.domino.xots.xsp;
+package org.openntf.domino.xsp.xots;
 
 import java.io.PrintWriter;
 
