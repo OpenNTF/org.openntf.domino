@@ -42,6 +42,11 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Xo
 	}
 
 	@Override
+	public String getSigner() {
+		return null;
+	}
+
+	@Override
 	public String getRunAs() {
 		return null;
 	}

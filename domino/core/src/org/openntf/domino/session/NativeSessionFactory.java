@@ -28,12 +28,14 @@ public class NativeSessionFactory extends AbstractSessionFactory {
 		lotus.domino.Session raw = AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.local.Session.createSession();
-				} finally {
-					System.setSecurityManager(oldSm);
+				synchronized (SecurityManager.class) {
+					SecurityManager oldSm = System.getSecurityManager();
+					System.setSecurityManager(null);
+					try {
+						return lotus.domino.local.Session.createSession();
+					} finally {
+						System.setSecurityManager(oldSm);
+					}
 				}
 			}
 		}, acc_);

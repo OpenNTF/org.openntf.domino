@@ -42,13 +42,15 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				synchronized (SecurityManager.class) {
+					SecurityManager oldSm = System.getSecurityManager();
+					System.setSecurityManager(null);
+					try {
+						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
 
-				} finally {
-					System.setSecurityManager(oldSm);
+					} finally {
+						System.setSecurityManager(oldSm);
+					}
 				}
 			}
 		}, acc_);

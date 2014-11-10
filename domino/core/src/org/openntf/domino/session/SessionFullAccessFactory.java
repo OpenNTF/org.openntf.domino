@@ -42,13 +42,15 @@ public class SessionFullAccessFactory extends AbstractSessionFactory implements 
 
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				SecurityManager oldSm = System.getSecurityManager();
-				System.setSecurityManager(null);
-				try {
-					return lotus.domino.local.Session.createSessionWithFullAccess(userName);
+				synchronized (SecurityManager.class) {
+					SecurityManager oldSm = System.getSecurityManager();
+					System.setSecurityManager(null);
+					try {
+						return lotus.domino.local.Session.createSessionWithFullAccess(userName);
 
-				} finally {
-					System.setSecurityManager(oldSm);
+					} finally {
+						System.setSecurityManager(oldSm);
+					}
 				}
 			}
 		}, acc_);

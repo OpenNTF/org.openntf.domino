@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.thread;
 
+import java.util.logging.Logger;
+
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.utils.Factory;
@@ -24,6 +26,7 @@ import org.openntf.domino.utils.Factory;
  * The Class DominoThread.
  */
 public class DominoThread extends NotesThread {
+	private static final Logger log_ = Logger.getLogger(DominoThread.class.getName());
 	private transient Runnable runnable_;
 	protected int nativeId_;
 
@@ -99,21 +102,21 @@ public class DominoThread extends NotesThread {
 	@Override
 	public void initThread() {
 		super.initThread();
+		log_.fine("DEBUG: Initializing a " + toString());
 		Factory.initThread();
 	}
 
 	@Override
 	public void termThread() {
-		System.out.println("DEBUG: Terminating a " + toString());
+		log_.fine("DEBUG: Terminating a " + toString());
 		Factory.termThread();
-
 		super.termThread();
 	}
 
 	@Override
 	public String toString() {
-		return (getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this) + ") native: " + this
-				.getNativeThreadID());
+		return (getClass().getSimpleName() + ": " + this.getId() + //
+				getRunnable() == null ? "" : ("( Runnable: " + getRunnable().getClass().getName() + ") ") + " native: "
+				+ this.getNativeThreadID());
 	}
-
 }

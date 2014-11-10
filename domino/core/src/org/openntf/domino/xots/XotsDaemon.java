@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.events.IDominoEvent;
@@ -132,6 +134,16 @@ public class XotsDaemon implements Observer {
 			((Observable) runnable).addObserver(INSTANCE);
 		}
 		return INSTANCE.executor_.queue(runnable);
+	}
+
+	public static <T> Future<T> queue(final Callable<T> callable) {
+		if (!isStarted()) {
+			throw new IllegalStateException("XotsService is not started");
+		}
+		if (callable instanceof Observable) {
+			((Observable) callable).addObserver(INSTANCE);
+		}
+		return INSTANCE.executor_.submit(callable);
 	}
 
 	public void fireEvent(final IDominoEvent event) {

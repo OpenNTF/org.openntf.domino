@@ -325,9 +325,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public DateTime getLastAccessed() {
 		checkMimeOpen(); // RPr: needed?
 		try {
-			if (getDelegate().getLastAccessed() == null)
+			lotus.domino.DateTime lotusDate = getDelegate().getLastAccessed();
+			if (lotusDate == null)
 				return null;
-			return fromLotus(getDelegate().getLastAccessed(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
+			return fromLotus(lotusDate, DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -363,9 +364,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public DateTime getLastModified() {
 		checkMimeOpen(); // RPr: needed?
 		try {
-			if (getDelegate().getLastModified() == null)
+			lotus.domino.DateTime lotusDate = getDelegate().getLastModified();
+			if (lotusDate == null)
 				return null;
-			return fromLotus(getDelegate().getLastModified(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
+			return fromLotus(lotusDate, DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
 
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);

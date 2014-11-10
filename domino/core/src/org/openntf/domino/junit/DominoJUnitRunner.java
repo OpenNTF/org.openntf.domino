@@ -26,6 +26,21 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 		super(testClass);
 	}
 
+	static {
+		// TODO RPr: remove this code
+		NotesThread.sinitThread();
+		Factory.class.getName();
+		// wait some millis until setup job is complete
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		NotesThread.stermThread();
+
+	}
+
 	/**
 	 * Startup the ODA and the NotesThread once. Create one masterSession to keep alive the connection
 	 */
