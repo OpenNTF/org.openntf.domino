@@ -28,7 +28,6 @@ import lotus.domino.Document;
 import lotus.domino.NotesException;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.acl.NoAccessSignal;
 import com.ibm.xsp.domino.ResourceHandler;
@@ -153,7 +152,7 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 		Document backendDoc = com.ibm.xsp.model.domino.DominoUtils.getDocumentById(db, noteId, allowDelted);
 
 		if (backendDoc != null) {
-			BackendBridge.setNoRecycle(backendDoc.getParentDatabase().getParent(), backendDoc, true);
+			//				BackendBridge.setNoRecycle(backendDoc.getParentDatabase().getParent(), backendDoc, true);
 		}
 
 		DominoDocument dominoDoc = DominoDocument.wrap(getDatabaseName(), backendDoc, getComputeWithForm(), getConcurrencyMode(),

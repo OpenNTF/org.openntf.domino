@@ -24,6 +24,7 @@ import org.openntf.domino.xsp.XspOpenLogErrorHolder;
 import org.openntf.domino.xsp.adapter.OpenntfHttpService;
 import org.openntf.formula.FunctionFactory;
 
+import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
@@ -372,6 +373,10 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			if (rawDatabase != null) {
 				database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
 				Factory.setNoRecycle(database, true);
+				//FIXME: The following call is for diagnostic purposes. It should normally be turned OFF
+				//****************BEGIN DIAGNOSTIC DEBUG
+				BackendBridge.setNoRecycle(database.getAncestorSession(), database, true);
+				//****************END DIAGNOSTIC
 
 				localMap.put(dbKey, database);
 			} else {

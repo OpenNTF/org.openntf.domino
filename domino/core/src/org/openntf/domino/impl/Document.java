@@ -4053,6 +4053,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (chunkSize < 1024) {
 			chunkSize = 1024 * 64;
 		}
+		int i = 0;
 		if (len <= chunkSize) {
 			writeBinaryChunk(name, 0, data);
 		} else {
@@ -4063,7 +4064,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				//				System.out.println("DEBUG: Last chunk size is: " + lastChunkSize);
 				chunks++;
 			}
-			for (int i = 0; i < chunks; i++) {
+			for (i = 0; i < chunks; i++) {
 				if (i == chunks - 1 && lastChunkSize > 0) {
 					//					System.out.println("DEBUG: Writing last chunk");
 					byte[] lastBuffer = new byte[lastChunkSize];
@@ -4074,6 +4075,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					writeBinaryChunk(name, i, buffer);
 				}
 			}
+		}
+		while (hasItem(name + "$" + (++i))) {
+			removeItem(name + "$" + i);
 		}
 
 	}
@@ -4129,6 +4133,34 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			return readBinaryChunk(name, 0);
 		}
 		return null;
+	}
+
+	@Override
+	public List<?> getItemSeriesValues(final CharSequence name) {
+		List result = new Vector();
+		String key = name.toString();
+		if (hasItem(key)) {
+			result.addAll(getItemValue(key));
+		}
+		for (int i = 0; i <= 10; i++) {
+			String curKey = key + "_" + i;
+			if (hasItem(curKey)) {
+				result.addAll(getItemValue(curKey));
+			}
+		}
+		int i = 11;
+		while (hasItem(key + "_" + i)) {
+			result.addAll(getItemValue(key + "_" + i));
+			i++;
+		}
+		return result;
+	}
+
+	@Override
+	public <T> T getItemSeriesValues(final CharSequence name, final Class<?> T) {
+		T result = null;
+		result = TypeUtils.vectorToClass(getItemSeriesValues(name), T, getAncestorSession());
+		return result;
 	}
 
 }

@@ -408,8 +408,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				}
 			}
 		} else {
-			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-					+ " results in a null delegate and therefore cannot be persisted.");
+			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey) + " in store at "
+					+ ((Database) getStoreDelegate()).getApiPath() + " results in a null delegate and therefore cannot be persisted.");
 		}
 		return result;
 	}

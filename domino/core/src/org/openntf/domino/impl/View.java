@@ -696,9 +696,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
 	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
 	 * 
-	 * To find the correct positon, trace a call of<br>
+	 * To find the correct position, trace a call of<br>
 	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
-	 * and hit "step into" until you are in one of the mehtods of this file. Move <b>this</b> mehtod to the position you found with the
+	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
 	 * debugger.
 	 * 
 	 * @param paramVector

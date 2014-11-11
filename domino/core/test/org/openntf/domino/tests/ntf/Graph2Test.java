@@ -44,8 +44,10 @@ public class Graph2Test implements Runnable {
 	public static String edgeId = "85257D640018BCDF";
 	public static String usersId = "85257D810065979B";
 	public static String nabId = "85257A600051D882";
+	public static String ntfUnid = "2F25B5EDE23C245785257A600059FD2E";
 
 	private static final String directedBy = "DirectedBy";
+	private static final String likes = "Likes";
 	private static final String appearsIn = "AppearsIn";
 	private static final String portrays = "Portrays";
 	private static final String starring = "Starring";
@@ -59,6 +61,61 @@ public class Graph2Test implements Runnable {
 
 	@TypeField("form")
 	public interface DEdgeFrame extends EdgeFrame {
+
+	}
+
+	@TypeValue("Person")
+	public interface User extends DVertexFrame {
+		@TypedProperty("FirstName")
+		public String getFirstName();
+
+		@TypedProperty("FirstName")
+		public void setFirstName(String firstName);
+
+		@TypedProperty("LastName")
+		public String getLastName();
+
+		@TypedProperty("LastName")
+		public void setLastName(String lastName);
+
+		@TypedProperty("FullName")
+		public String[] getFullName();
+
+		@TypedProperty("FullName")
+		public void setFullName(String[] fullName);
+
+		@IncidenceUnique(label = likes)
+		public Likes getLikes();
+
+		@IncidenceUnique(label = likes)
+		public Likes addLikes(Movie movie);
+
+		@IncidenceUnique(label = likes)
+		public void removeLikes(Movie movie);
+
+		@AdjacencyUnique(label = likes)
+		public Movie getLikesMovies();
+
+		@AdjacencyUnique(label = likes)
+		public Movie addLikesMovie(Movie movie);
+
+		@AdjacencyUnique(label = likes)
+		public Movie removeLikesMovie(Movie movie);
+	}
+
+	@TypeValue(likes)
+	public interface Likes extends DEdgeFrame {
+		@TypedProperty("rating")
+		public Integer getRating();
+
+		@TypedProperty("rating")
+		public void setRating(Integer rating);
+
+		@OutVertex
+		User getUser();
+
+		@InVertex
+		Movie getMovie();
 
 	}
 
@@ -105,6 +162,24 @@ public class Graph2Test implements Runnable {
 
 		@AdjacencyUnique(label = starring, direction = Direction.IN)
 		public Crew removeStarringCrew(Crew crew);
+
+		@IncidenceUnique(label = likes, direction = Direction.IN)
+		public Likes getLikedBy();
+
+		@IncidenceUnique(label = likes, direction = Direction.IN)
+		public Likes addLikedBy(User user);
+
+		@IncidenceUnique(label = likes, direction = Direction.IN)
+		public void removeLikedBy(User user);
+
+		@AdjacencyUnique(label = likes, direction = Direction.IN)
+		public Movie getLikedByUsers();
+
+		@AdjacencyUnique(label = likes, direction = Direction.IN)
+		public Movie addLikedByUser(User user);
+
+		@AdjacencyUnique(label = likes, direction = Direction.IN)
+		public Movie removeLikedByUser(User user);
 
 	}
 
@@ -443,10 +518,6 @@ public class Graph2Test implements Runnable {
 		try {
 			timelog("Beginning graph2 test...");
 
-			DElementStore usersStore = new DElementStore();
-			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
-			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
-
 			DElementStore crewStore = new DElementStore();
 			crewStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(crewId));
 			crewStore.addType(Crew.class);
@@ -458,27 +529,42 @@ public class Graph2Test implements Runnable {
 			characterStore.addType(Character.class);
 			DElementStore edgeStore = new DElementStore();
 			edgeStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(edgeId));
+			DElementStore usersStore = new DElementStore();
+			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
+			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
+			usersStore.addType(User.class);
+
 			DConfiguration config = new DConfiguration();
 			config.addElementStore(crewStore);
 			config.addElementStore(movieStore);
 			config.addElementStore(characterStore);
 			config.addElementStore(edgeStore);
+			config.addElementStore(usersStore);
 			config.setDefaultElementStore(NoteCoordinate.Utils.getLongFromReplid(edgeId));
 			graph = new DGraph(config);
 
 			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = new TypedGraphModuleBuilder().withClass(Movie.class).withClass(Character.class).withClass(Crew.class).build();
+			Module module = new TypedGraphModuleBuilder().withClass(User.class).withClass(Movie.class).withClass(Character.class)
+					.withClass(Crew.class).build();
 			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 
+			User ntfUser = framedGraph.getVertex(nabId + ntfUnid, User.class);
+
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
+			Likes ntfLikesNH = ntfUser.addLikes(newhopeMovie);
+			ntfLikesNH.setRating(4);
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
+			Likes ntfLikesESB = ntfUser.addLikes(empireMovie);
+			ntfLikesESB.setRating(5);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
+			Likes ntfLikesRoJ = ntfUser.addLikes(jediMovie);
+			ntfLikesRoJ.setRating(5);
 
 			Movie phantomMovie = framedGraph.addVertex("The Phantom Menace", Movie.class);
 			phantomMovie.setTitle("The Phantom Menace");
