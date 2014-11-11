@@ -110,7 +110,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Deprecated
 	public View() {
-		super(null, null, null, 0L, NOTES_VIEW);
+		super(NOTES_VIEW);
 	}
 
 	/* (non-Javadoc)

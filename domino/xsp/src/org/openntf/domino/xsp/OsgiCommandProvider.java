@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.xsp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -23,6 +25,7 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
+import org.openntf.domino.xsp.xots.XotsDominoRunner;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
@@ -74,6 +77,9 @@ public class OsgiCommandProvider implements CommandProvider {
 		addHeader("XOTS commands", sb);
 		addCommand("xots tasks", "(filter)", "Show currently running tasks", sb);
 		addCommand("xots schedule", "(filter)", "Show all scheduled tasks", sb);
+		addCommand("oda stop", "Stop the ODA-API", sb);
+		addCommand("oda start", "Start the ODA-API", sb);
+		addCommand("oda restart", "ReStart the ODA-API", sb);
 		return sb.toString();
 	}
 
@@ -91,10 +97,10 @@ public class OsgiCommandProvider implements CommandProvider {
 				if (inp.charAt(i) != cmd.charAt(i))
 					return false;
 			} else {
-				return (i + 1 >= len);
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public void _xots(final CommandInterpreter ci) {
@@ -111,20 +117,53 @@ public class OsgiCommandProvider implements CommandProvider {
 		}
 	}
 
+	public void _oda(final CommandInterpreter ci) {
+		String cmd = ci.nextArgument();
+		if (StringUtil.isEmpty(cmd)) {
+			// TODO what does ODA?
+		} else if (cmp(cmd, "stop", 3)) {
+			Activator.stopOda();
+		} else if (cmp(cmd, "start", 3)) {
+			Activator.startOda();
+		} else if (cmp(cmd, "restart", 1)) {
+			Activator.stopOda();
+			Activator.startOda();
+		}
+	}
+
 	private void xotsRun(final CommandInterpreter ci) {
 		String moduleName = ci.nextArgument();
-		String className = ci.nextArgument();
+		final String className = ci.nextArgument();
 		try {
 			ci.println("DEBUG: Opening module: " + moduleName);
-			NSFComponentModule module = ModuleLoader.loadModule(moduleName);
-			ci.println("DEBUG: loading class: " + className);
-			Class cls = module.getModuleClassLoader().loadClass(className);
-			ci.println("DEBUG: creating instance of: " + className);
-			Object obj = cls.newInstance();
-			System.out.println("Success: " + obj);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			NSFComponentModule module = ModuleLoader.loadModule(moduleName, true);
+
+			Runnable runner = new XotsDominoRunner(module, new Runnable() {
+				@Override
+				public void run() {
+					try {
+						ci.println("DEBUG: loading class: " + className);
+						ClassLoader mcl = Thread.currentThread().getContextClassLoader();
+						Class cls = mcl.loadClass(className);
+						ci.println("DEBUG: creating instance of: " + cls);
+						Object obj = cls.newInstance();
+						ci.println("Success: " + obj);
+						if (obj instanceof Runnable) {
+							XotsDaemon.queue((Runnable) obj);
+						}
+					} catch (Throwable e) {
+						StringWriter errors = new StringWriter();
+						e.printStackTrace(new PrintWriter(errors));
+						ci.println(errors);
+					}
+				}
+			});
+			XotsDaemon.queue(runner);
+
+		} catch (Throwable e) {
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			ci.println(errors);
 		}
 	}
 }

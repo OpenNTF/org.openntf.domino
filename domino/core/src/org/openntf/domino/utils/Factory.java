@@ -24,16 +24,13 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.ServiceLoader;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
@@ -63,6 +60,8 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.service.IServiceLocator;
+import org.openntf.service.ServiceLocatorFinder;
 
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
@@ -86,16 +85,6 @@ public enum Factory {
 			this.index = index;
 			this.alias = alias;
 		}
-	}
-
-	/**
-	 * Callback interface for the FindService Method
-	 * 
-	 * @author Roland Praml, FOCONIS AG
-	 * 
-	 */
-	public interface AppServiceLocator {
-		public <T> List<T> findApplicationServices(final Class<T> serviceClazz);
 	}
 
 	/**
@@ -159,7 +148,7 @@ public enum Factory {
 
 		private ClassLoader classLoader;
 
-		private AppServiceLocator serviceLocator;
+		private IServiceLocator serviceLocator;
 
 		/**
 		 * Support for different Locale
@@ -939,48 +928,20 @@ public enum Factory {
 		return tv.classLoader;
 	}
 
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, List> nonOSGIServicesCache;
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		ThreadVariables tv = getThreadVariables();
-		if (tv.serviceLocator != null) {
-			return tv.serviceLocator.findApplicationServices(serviceClazz);
+
+		if (tv.serviceLocator == null) {
+			tv.serviceLocator = ServiceLocatorFinder.findServiceLocator();
 		}
 
-		// this is the non OSGI case:
-		if (nonOSGIServicesCache == null) {
-			nonOSGIServicesCache = new ConcurrentHashMap<Class, List>();
-		}
-
-		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
-		if (ret == null) {
-			ret = new ArrayList<T>();
-			nonOSGIServicesCache.put(serviceClazz, ret);
-
-			ClassLoader cl = getClassLoader();
-			if (cl != null) {
-				ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
-				Iterator<T> it = loader.iterator();
-				while (it.hasNext()) {
-					ret.add(it.next());
-				}
-			}
-			if (Comparable.class.isAssignableFrom(serviceClazz)) {
-				Collections.sort((List<? extends Comparable>) ret);
-			}
-		}
-		return ret;
+		return tv.serviceLocator.findApplicationServices(serviceClazz);
 	}
 
 	public static void setClassLoader(final ClassLoader loader) {
 		getThreadVariables().classLoader = loader;
-	}
-
-	public static void setServiceLocator(final AppServiceLocator locator) {
-		getThreadVariables().serviceLocator = locator;
 	}
 
 	// avoid clear methods
@@ -1034,14 +995,13 @@ public enum Factory {
 		}
 
 		try {
-			WrapperFactory wf = getWrapperFactory();
 
 			for (Runnable term : terminateHooks) {
 				term.run();
 			}
-
-			@SuppressWarnings("unused")
-			long termCount = wf.terminate();
+			if (tv.wrapperFactory != null) {
+				tv.wrapperFactory.terminate();
+			}
 			//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 			DominoUtils.setBubbleExceptions(null);
 			DominoGraph.clearDocumentCache();
@@ -1106,7 +1066,9 @@ public enum Factory {
 	}
 
 	public static void startup() {
+
 		synchronized (Factory.class) {
+
 			NotesThread.sinitThread();
 			try {
 				lotus.domino.Session sess = lotus.domino.NotesFactory.createSession();
@@ -1131,6 +1093,7 @@ public enum Factory {
 			if (started) {
 				System.out.println("OpenNTF Domino API is already started. Cannot start it again");
 			}
+
 			File iniFile;
 			try {
 				iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());

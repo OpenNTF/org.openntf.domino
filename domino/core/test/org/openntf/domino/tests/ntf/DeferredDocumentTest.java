@@ -8,7 +8,6 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsDaemon;
 
@@ -16,18 +15,18 @@ import org.openntf.domino.xots.XotsDaemon;
 public class DeferredDocumentTest extends AbstractDominoRunnable {
 	private static int THREAD_COUNT = 1;
 
-	public static void main(final String[] args) {
-		Factory.startup();
-
-		DominoExecutor executor = new DominoExecutor(50);
-		XotsDaemon.start(executor);
-
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			XotsDaemon.queue(new DeferredDocumentTest());
-		}
-
-		Factory.shutdown();
-	}
+	//	public static void main(final String[] args) {
+	//		Factory.startup();
+	//
+	//		DominoExecutor executor = new DominoExecutor(50);
+	//		XotsDaemon.start(executor);
+	//
+	//		for (int i = 0; i < THREAD_COUNT; i++) {
+	//			XotsDaemon.queue(new DeferredDocumentTest());
+	//		}
+	//
+	//		Factory.shutdown();
+	//	}
 
 	@Test
 	public void testDeferredDocuments() {

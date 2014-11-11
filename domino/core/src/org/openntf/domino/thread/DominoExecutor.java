@@ -271,7 +271,7 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 	}
 
 	protected Runnable wrap(final Runnable runnable) {
-		if (runnable instanceof DominoRunner) {
+		if (runnable instanceof AbstractDominoRunner) {
 			return runnable;
 		}
 		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
@@ -279,7 +279,7 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 	}
 
 	protected <T> Callable<T> wrap(final Callable<T> callable) {
-		if (callable instanceof DominoRunner) {
+		if (callable instanceof AbstractDominoRunner.WrappedCallable) {
 			return callable;
 		}
 		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
