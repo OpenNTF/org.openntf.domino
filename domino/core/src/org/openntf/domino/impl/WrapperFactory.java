@@ -248,7 +248,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	}
 
-
 	// --- others
 	/**
 	 * Wraps & caches all lotus object except Names, DateTimes, Sessions, Documents
@@ -282,7 +281,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
 
 			result = wrapLotusObject(lotus, parent, cpp_key);
-
+			if (result == null && lotus != null) {
+				throw new IllegalStateException("Could not wrap an object of type" + lotus.getClass().getName());
+			}
 			cache.processQueue(prevent_recycling); // recycle all elements but not the current ones
 
 			cache.put(cpp_key, result, lotus);

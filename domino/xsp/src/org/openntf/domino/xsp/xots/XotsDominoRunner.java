@@ -153,7 +153,10 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 					// Set up the "TopLevelXPageSigner == Signer of the runnable
 					// As soon as we are in a xspnsf, we do not have a SessionFactory!
 
-					Factory.setSessionFactory(null, SessionMode.SESSION_AS_SIGNER);
+					if (sessionFactory == null) {
+						Factory.setSession(ctx.getCurrentSession(), SessionMode.DEFAULT);
+					}
+
 					System.out.println("Loading Class from NSF:" + url);
 					ctx.setSignerSessionRights("WEB-INF/classes/" + str);
 					// TODO: RPr: There is a bug: you can decide if you want to use "sessionAsSigner" or "sessionAsSignerFullAccess"
@@ -167,11 +170,13 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 						Factory.setSession(null, SessionMode.SESSION_AS_SIGNER);
 					}
 
+				} else {
+					Factory.setSessionFactory(sessionFactory, SessionMode.DEFAULT);
+					Factory.setSessionFactory(sessionFactory, SessionMode.SESSION_AS_SIGNER);
 				}
 			}
 
 			Factory.setClassLoader(mcl);
-			Factory.setSessionFactory(sessionFactory, SessionMode.DEFAULT);
 
 			AccessControlContext runContext = getAccessControlContext();
 			if (runContext == null) {
