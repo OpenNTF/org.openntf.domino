@@ -36,19 +36,6 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	private static final Logger log_ = Logger.getLogger(MIMEHeader.class.getName());
 
 	/**
-	 * Instantiates a new mIME header.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public MIMEHeader(final lotus.domino.MIMEHeader delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

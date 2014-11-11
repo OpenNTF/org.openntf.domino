@@ -33,19 +33,6 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		org.openntf.domino.ReplicationEntry {
 
 	/**
-	 * Instantiates a new replication entry.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (Replication) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
@@ -336,6 +323,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ReplicationEntry#setViews(java.util.Collection)
 	 */
+	@Override
 	public void setViews(final Collection<String> views) {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;

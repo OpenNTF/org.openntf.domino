@@ -3,8 +3,6 @@
  */
 package org.openntf.domino.xsp.adapter;
 
-import org.openntf.domino.xots.XotsDaemon;
-
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.IServiceFactory;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
@@ -18,25 +16,18 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
  * 
  */
 public class OpenntfServiceFactory implements IServiceFactory {
-	static {
-		// attach the agent as soon as possible, you can only instrument classes, that are not loaded at this time
-		// unfortunately the whole lotus.domino package is alredy loaded. 
-		// (so you will need to use the -javaagent option if you want to instrument these)
-
-		// ProfilerAgent.attach();
-	}
-	private static XotsDaemon DAEMON = XotsDaemon.getInstance();
 
 	public OpenntfServiceFactory() {
-		System.out.println("Openntf-Factory loaded but disabled");
+		System.out.println("Openntf-Factory loaded");
 	}
 
 	@Override
 	public HttpService[] getServices(final LCDEnvironment paramLCDEnvironment) {
-		//		HttpService[] ret = new HttpService[1];
-		//		ret[0] = new OpenntfHttpService(paramLCDEnvironment);
-		//		return ret;
-		return null;
+		// We need this for proper XOTS working. But the service does NOTHING
+		HttpService[] ret = new HttpService[1];
+		ret[0] = new OpenntfHttpService(paramLCDEnvironment);
+		return ret;
+		//return null;
 	}
 
 }

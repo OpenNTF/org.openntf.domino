@@ -35,19 +35,6 @@ import org.openntf.domino.utils.DominoUtils;
 public class RichTextItem extends Item implements org.openntf.domino.RichTextItem {
 
 	/**
-	 * Instantiates a new rich text item.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextItem(final lotus.domino.RichTextItem delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
-	}
-
-	/**
 	 * Instantiates a new richtext-item.
 	 * 
 	 * @param delegate

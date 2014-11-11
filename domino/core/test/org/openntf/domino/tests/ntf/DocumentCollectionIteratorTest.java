@@ -17,11 +17,12 @@ public class DocumentCollectionIteratorTest implements Runnable {
 		for (int i = 0; i < THREAD_COUNT; i++) {
 			de.execute(new DocumentCollectionIteratorTest());
 		}
-		de.shutdown();
+		// de.shutdown();
 		//		for (int i = 0; i < 4; i++) {
 		//			DominoThread thread = new DominoThread(new LargishSortedCollectionTest(), "My thread " + i);
 		//			thread.start();
 		//		}
+		Factory.shutdown();
 	}
 
 	public DocumentCollectionIteratorTest() {
@@ -33,7 +34,7 @@ public class DocumentCollectionIteratorTest implements Runnable {
 		long testStartTime = System.nanoTime();
 		try {
 			Session session = this.getSession();
-			Database db = session.getDatabase("", "C:/Program Files/IBM/domino/data/events4.nsf");
+			Database db = session.getDatabase("", "events4.nsf");
 			DocumentCollection coll = db.getAllDocuments();
 			for (Document doc : coll) {
 				System.out.println("nid: " + doc.getNoteID());
@@ -47,7 +48,7 @@ public class DocumentCollectionIteratorTest implements Runnable {
 
 	protected Session getSession() {
 		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.class, null);
+			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
 			return session;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);

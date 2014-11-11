@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='asm' version='5.0.3.201411032143' singleton='false'>
+    <update id='asm' range='[0.0.0,5.0.3.201411032143)' severity='0'/>
+    <properties size='5'>
+      <property name='org.eclipse.equinox.p2.name' value='asm'/>
+      <property name='org.eclipse.equinox.p2.provider' value='OW2 Consortium'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='asm'/>
+      <property name='maven-version' value='5.0.3.qualifier'/>
+    </properties>
+    <provides size='11'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='asm' version='5.0.3.201411032143'/>
+      <provided namespace='osgi.bundle' name='asm' version='5.0.3.201411032143'/>
+      <provided namespace='java.package' name='org.objectweb.asm' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.commons' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.optimizer' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.signature' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.tree' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.tree.analysis' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.objectweb.asm.xml' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='asm' version='5.0.3.201411032143'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: asm&#xA;Bundle-Version: 5.0.3.201411032143&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

@@ -23,7 +23,6 @@ import org.openntf.domino.DirectoryNavigator;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,18 +30,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements org.openntf.domino.Directory {
 
-	/**
-	 * Instantiates a new directory.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Directory(final lotus.domino.Directory delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.

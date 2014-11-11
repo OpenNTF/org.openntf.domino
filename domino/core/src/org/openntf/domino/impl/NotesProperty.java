@@ -33,19 +33,6 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		org.openntf.domino.NotesProperty {
 
 	/**
-	 * Instantiates a new notes property.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public NotesProperty(final lotus.domino.NotesProperty delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (PropertyBroker) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

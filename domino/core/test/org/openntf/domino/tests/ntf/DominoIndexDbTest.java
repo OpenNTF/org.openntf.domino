@@ -41,7 +41,7 @@ public class DominoIndexDbTest implements Runnable {
 
 	protected Session getSession() {
 		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.class, null);
+			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
 			return session;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);

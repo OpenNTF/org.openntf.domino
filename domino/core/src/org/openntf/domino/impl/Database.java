@@ -56,11 +56,11 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.helpers.DatabaseHolder;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
@@ -106,20 +106,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Database(final lotus.domino.Database delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_DATABASE);
 		initialize(delegate);
-	}
-
-	/**
-	 * Instantiates a new database.
-	 * 
-	 * @deprecated Use {@link #Database(lotus.domino.Database, Session, WrapperFactory, long)} instead
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Database(final lotus.domino.Database delegate, final lotus.domino.Base parent) {
-		this(delegate, (Session) parent, Factory.getWrapperFactory(), 0L);
 	}
 
 	/**
@@ -3016,6 +3002,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 		Session rawSessionUs = getAncestorSession();
 		if (rawSessionUs == null) {
+			// CHECKME RPr: Why should getAncestorSession return null?
 			rawSessionUs = org.openntf.domino.utils.Factory.getSession();
 		}
 		lotus.domino.Session rawSession = toLotus(rawSessionUs);
@@ -3023,7 +3010,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			//d.open();
 			setDelegate(d, 0);
-			Factory.recacheLotus(d, this, parent_);
+			getFactory().recacheLotusObject(d, this, parent_);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
 				StackTraceElement[] elements = t.getStackTrace();
@@ -3548,6 +3535,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	private transient NoteCollection intNC_;
 
+	private DatabaseHolder databaseHolder_;
+
 	private NoteCollection getInternalNoteCollection() {
 		if (null == intNC_) {
 			intNC_ = this.createNoteCollection(false);
@@ -3605,5 +3594,13 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		if (mySess != null)
 			mySess.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
+	}
+
+	@Override
+	public DatabaseHolder getDatabaseHolder() {
+		if (databaseHolder_ == null) {
+			databaseHolder_ = new DatabaseHolder(this);
+		}
+		return databaseHolder_;
 	}
 }

@@ -33,19 +33,6 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 		org.openntf.domino.OutlineEntry {
 
 	/**
-	 * Instantiates a new outline entry.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
-	}
-
-	/**
 	 * Instantiates a new outlineentry.
 	 * 
 	 * @param delegate

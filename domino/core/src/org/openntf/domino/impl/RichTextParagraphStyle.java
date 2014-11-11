@@ -21,7 +21,6 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -29,19 +28,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session>
 		implements org.openntf.domino.RichTextParagraphStyle {
-
-	/**
-	 * Instantiates a new rich text paragraph style.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.
@@ -242,6 +228,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.RichTextParagraphStyle#setAlignment(org.openntf.domino.RichTextParagraphStyle.Align)
 	 */
+	@Override
 	public void setAlignment(final Align value) {
 		setAlignment(value.getValue());
 	}

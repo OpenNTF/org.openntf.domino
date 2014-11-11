@@ -6,7 +6,7 @@ import org.openntf.domino.Item;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.utils.Factory;
 
 public class ItemFlagTest extends AbstractDominoRunnable {
 	private static int THREAD_COUNT = 1;
@@ -19,14 +19,9 @@ public class ItemFlagTest extends AbstractDominoRunnable {
 		de.shutdown();
 	}
 
-	public ItemFlagTest() {
-		this.setSessionType(DominoSessionType.NATIVE);
-		// whatever you might want to do in your constructor, but stay away from Domino objects
-	}
-
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession();
 		long collectionBuildNS = 0l;
 		long documentBuildNS = 0l;
 		long documentPageNS = 0l;

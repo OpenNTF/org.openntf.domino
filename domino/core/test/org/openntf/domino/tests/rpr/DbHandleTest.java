@@ -2,14 +2,16 @@ package org.openntf.domino.tests.rpr;
 
 import lotus.domino.NotesException;
 
+import org.junit.runner.RunWith;
 import org.openntf.domino.impl.Base;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.DominoJUnitRunner;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 
+@RunWith(DominoJUnitRunner.class)
 public class DbHandleTest implements Runnable {
 	public static void main(final String[] args) {
-		DominoThread thread = new DominoThread(new DbHandleTest(), "My thread");
-		thread.start();
+		TestRunnerUtil.runAsDominoThread(new DbHandleTest());
 	}
 
 	public DbHandleTest() {
@@ -18,6 +20,7 @@ public class DbHandleTest implements Runnable {
 
 	@Override
 	public void run() {
+		Factory.enableCounters(true, false);
 		try {
 			lotus.domino.Session s = Factory.toLotus(Factory.getSession());
 			lotus.domino.Database d1 = s.getDatabase("", "");
@@ -38,9 +41,6 @@ public class DbHandleTest implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		Factory.terminate();
-		System.out.println(Factory.dumpCounters(true));
 	}
 
 }

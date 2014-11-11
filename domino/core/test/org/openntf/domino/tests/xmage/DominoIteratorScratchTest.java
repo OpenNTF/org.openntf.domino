@@ -80,7 +80,7 @@ public enum DominoIteratorScratchTest {
 			Session s = Factory.getSession();
 			if (s == null) {
 				try {
-					s = Factory.fromLotus(lotus.domino.NotesFactory.createTrustedSession(), Session.class, null);
+					s = Factory.getTrustedSession();
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}
@@ -132,8 +132,9 @@ public enum DominoIteratorScratchTest {
 			 */
 
 			System.out
-					.println("Thread " + Thread.currentThread().getName() + " processed " + (dbCount /* + templateCount */) + " databases, "
-							+ docCount + " documents, " + nameCount + " names, and " + dateCount + " datetimes without recycling.");
+					.println("Thread " + Thread.currentThread().getName() + " processed " + (dbCount /* + templateCount */)
+							+ " databases, " + docCount + " documents, " + nameCount + " names, and " + dateCount
+							+ " datetimes without recycling.");
 			long elapsed = System.nanoTime() - start;
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 

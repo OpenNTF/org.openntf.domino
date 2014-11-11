@@ -34,19 +34,6 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		org.openntf.domino.RichTextRange {
 
 	/**
-	 * Instantiates a new rich text range.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextRange(final lotus.domino.RichTextRange delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (RichTextItem) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

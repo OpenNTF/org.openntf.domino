@@ -25,26 +25,12 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Stream.
  */
 public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream, Session> implements org.openntf.domino.Stream {
-
-	/**
-	 * Instantiates a new stream.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Stream(final lotus.domino.Stream delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.

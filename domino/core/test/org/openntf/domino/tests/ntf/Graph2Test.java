@@ -497,8 +497,8 @@ public class Graph2Test implements Runnable {
 			for (Edge e : graph.getEdges()) {
 				System.out.println("RESULT: " + e.getId().toString() + ":" + e.getLabel());
 			}
-			lotus.domino.Session s = Factory.terminate();
-			s.recycle();
+			//			lotus.domino.Session s = Factory.terminate();
+			//			s.recycle();
 			graph = null;
 			System.gc();
 		} catch (Throwable t) {

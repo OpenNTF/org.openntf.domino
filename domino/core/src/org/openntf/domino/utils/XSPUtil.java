@@ -7,8 +7,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
-import org.openntf.domino.ViewEntryCollection;
-import org.openntf.domino.ViewNavigator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -57,18 +55,19 @@ public enum XSPUtil {
 				view = (lotus.domino.View) parent;
 			}
 			lotus.domino.Database db = view.getParent();
-			Session session = Factory.fromLotus(db.getParent(), Session.class, null);
-			Database wrappedDB = Factory.fromLotus(db, Database.class, session);
-			View wrappedView = Factory.fromLotus(view, View.class, wrappedDB);
-			if (parent instanceof lotus.domino.ViewEntryCollection) {
-				ViewEntryCollection vec = Factory.fromLotus((lotus.domino.Base) parent, ViewEntryCollection.class, wrappedView);
-				return Factory.fromLotus(entry, ViewEntry.class, vec);
-			} else if (parent instanceof lotus.domino.ViewNavigator) {
-				ViewNavigator vnav = Factory.fromLotus((lotus.domino.Base) parent, ViewNavigator.class, wrappedView);
-				return Factory.fromLotus(entry, ViewEntry.class, vnav);
-			} else {
-				return Factory.fromLotus(entry, ViewEntry.class, wrappedView);
-			}
+			Session session = Factory.fromLotus(db.getParent(), Session.SCHEMA, null);
+			Database wrappedDB = Factory.fromLotus(db, Database.SCHEMA, session);
+			View wrappedView = Factory.fromLotus(view, View.SCHEMA, wrappedDB);
+			//			if (parent instanceof lotus.domino.ViewEntryCollection) {
+			//				ViewEntryCollection vec = Factory.fromLotus((lotus.domino.ViewEntryCollection) parent, ViewEntryCollection.SCHEMA,
+			//						wrappedView);
+			//				return Factory.fromLotus(entry, ViewEntry.SCHEMA, vec);
+			//			} else if (parent instanceof lotus.domino.ViewNavigator) {
+			//				ViewNavigator vnav = Factory.fromLotus((lotus.domino.ViewNavigator) parent, ViewNavigator.SCHEMA, wrappedView);
+			//				return Factory.fromLotus(entry, ViewEntry.SCHEMA, vnav);
+			//			} else {
+			return Factory.fromLotus(entry, ViewEntry.SCHEMA, wrappedView);
+			//			}
 		} catch (lotus.domino.NotesException ne) {
 			return null;
 		}
@@ -105,11 +104,11 @@ public enum XSPUtil {
 			if (s instanceof org.openntf.domino.Session) {
 				return (org.openntf.domino.Session) s;
 			} else {
-				return Factory.fromLotus(s, Session.class, null);
+				return Factory.fromLotus(s, Session.SCHEMA, null);
 			}
 		} catch (ClassNotFoundException nfe) {
 			System.out
-			.println("Class not found exception generally indicates that the OpenNTF API has not been initialized from XPages. Please see the installation instructions.");
+					.println("Class not found exception generally indicates that the OpenNTF API has not been initialized from XPages. Please see the installation instructions.");
 			return null;
 		} catch (Exception ne) {
 			System.out.println("ALERT! Unable to find current session. Normal log handling not likely available.");
@@ -140,7 +139,7 @@ public enum XSPUtil {
 	@SuppressWarnings("deprecation")
 	public static Session getCurrentSessionAsSignerWithFullAccess() {
 		try {
-			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSignerWithFullAccess"), Session.class, null);
+			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSignerWithFullAccess"), Session.SCHEMA, null);
 		} catch (Exception ne) {
 			DominoUtils.handleException(ne);
 			return null;

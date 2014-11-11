@@ -7,13 +7,14 @@ import java.util.List;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 
 public class SimpleTest implements Runnable {
 	public static void main(final String[] args) {
-		DominoThread thread = new DominoThread(new SimpleTest(), "My thread");
-		thread.start();
+		System.out.println("START");
+		TestRunnerUtil.runAsDominoThread(new SimpleTest());
+		System.out.println("STOP");
 	}
 
 	public SimpleTest() {
@@ -22,6 +23,8 @@ public class SimpleTest implements Runnable {
 
 	@Override
 	public void run() {
+		Factory.enableCounters(true, false);
+
 		Session s = Factory.getSession();
 		Database d = s.getDatabase("", "names.nsf");
 		List<String> ids = new ArrayList<String>();
@@ -32,7 +35,7 @@ public class SimpleTest implements Runnable {
 			ids.add(doc.getNoteID());
 		}
 		//System.out.println("IDS.size " + ids.size());
-		for (int i = 1; i < 100; i++) {
+		for (int i = 1; i < 10; i++) {
 			System.out.println(i + ": " + Factory.dumpCounters(false));
 			Document doc1 = null;
 			Document doc2 = null;
@@ -63,8 +66,7 @@ public class SimpleTest implements Runnable {
 			}
 			//System.out.println(doc1 + "" + doc2 + "" + doc3);
 		}
-		Factory.terminate();
-		System.out.println(Factory.dumpCounters(true));
+
 	}
 
 }

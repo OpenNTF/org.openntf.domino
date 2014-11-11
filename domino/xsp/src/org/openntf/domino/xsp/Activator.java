@@ -2,13 +2,16 @@ package org.openntf.domino.xsp;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
-import org.openntf.domino.xsp.readers.LogReader;
+import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import com.ibm.commons.Platform;
 import com.ibm.commons.util.StringUtil;
@@ -27,7 +30,27 @@ public class Activator extends Plugin {
 	public static Activator instance;
 
 	private static String version;
-	private static BundleContext context;
+	private ServiceRegistration consoleCommandService;
+
+	//private static BundleContext context;
+
+	/**
+	 * Registers the AmgrCommandProvider to handle commands
+	 * 
+	 * @param bundle
+	 * 
+	 * @param bundleContext
+	 */
+	private void registerCommandProvider(final BundleContext bundleContext) {
+		CommandProvider cp = new OsgiCommandProvider();
+		Bundle bundle = bundleContext.getBundle();
+		Dictionary<String, Object> cpDictionary = new Hashtable<String, Object>(7);
+		cpDictionary.put("service.vendor", bundle.getHeaders().get("Bundle-Vendor"));
+		cpDictionary.put("service.ranking", new Integer(Integer.MIN_VALUE));
+		cpDictionary.put("service.pid", bundle.getBundleId() + "." + cp.getClass().getName());
+
+		consoleCommandService = bundleContext.registerService(CommandProvider.class.getName(), cp, cpDictionary);
+	}
 
 	/**
 	 * Gets the current Activator instance
@@ -49,17 +72,17 @@ public class Activator extends Plugin {
 		return _debug;
 	}
 
-	/**
-	 * Gets the bundle context, i.e. the top level of the plugin. Used to get resources from resources folder.
-	 * 
-	 * @see LogReader
-	 * 
-	 * @return BundleContext for all resouorces in this plugin
-	 * @since org.openntf.domino.xsp 2.5.0
-	 */
-	static BundleContext getContext() {
-		return context;
-	}
+	//	/**
+	//	 * Gets the bundle context, i.e. the top level of the plugin. Used to get resources from resources folder.
+	//	 * 
+	//	 * @see LogReader
+	//	 * 
+	//	 * @return BundleContext for all resouorces in this plugin
+	//	 * @since org.openntf.domino.xsp 2.5.0
+	//	 */
+	//	static BundleContext getContext() {
+	//		return context;
+	//	}
 
 	/**
 	 * Gets the Bundle-Version property from the MANIFEST-MF
@@ -83,8 +106,8 @@ public class Activator extends Plugin {
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	public InputStream getResourceAsStream(final String path) throws Exception {
-		BundleContext ctx = getContext();
-		Bundle bundle = ctx.getBundle();
+		//BundleContext ctx = getContext();
+		Bundle bundle = getBundle();
 		URL url = bundle.getEntry(path);
 		if (url == null) {
 			return Activator.class.getResourceAsStream(path);
@@ -295,7 +318,13 @@ public class Activator extends Plugin {
 	 */
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
+		super.start(bundleContext);
+		try {
+			registerCommandProvider(bundleContext);
+		} catch (Throwable t) {
+			System.out.println("Could not register command provider");
+			t.printStackTrace();
+		}
 	}
 
 	/*
@@ -305,7 +334,11 @@ public class Activator extends Plugin {
 	 */
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception {
-		Activator.context = null;
+		if (consoleCommandService != null) {
+			consoleCommandService.unregister();
+			consoleCommandService = null;
+		}
+		super.stop(bundleContext);
 	}
 
 }

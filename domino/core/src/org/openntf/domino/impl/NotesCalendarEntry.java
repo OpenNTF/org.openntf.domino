@@ -35,19 +35,6 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 		implements org.openntf.domino.NotesCalendarEntry {
 
 	/**
-	 * Instantiates a new notes calendar entry.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (NotesCalendar) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
@@ -494,6 +481,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2) {
 		try {
@@ -506,6 +494,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3) {
 		try {
@@ -518,6 +507,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3, final int arg4) {
 		try {
@@ -530,6 +520,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int, int, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3, final int arg4, final int arg5,
 			final String arg6) {
@@ -543,6 +534,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3) {
 		try {
@@ -555,6 +547,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4) {
 		try {
@@ -567,6 +560,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4, final int arg5) {
 		try {
@@ -579,6 +573,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int, int, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4,
 			final int arg5, final int arg6, final String arg7) {
@@ -593,6 +588,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0) {
 		try {
@@ -605,6 +601,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0, final String arg1) {
 		try {
@@ -617,6 +614,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String, int)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0, final String arg1, final int arg2) {
 		try {
@@ -629,6 +627,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String, int, int, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0, final String arg1, final int arg2, final int arg3, final String arg4) {
 		try {
@@ -641,6 +640,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#requestInfo(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void requestInfo(final String arg0, final String arg1) {
 		try {
 			getDelegate().requestInfo(arg0, arg1);

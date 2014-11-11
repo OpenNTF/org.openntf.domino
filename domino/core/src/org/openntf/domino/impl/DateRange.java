@@ -72,22 +72,6 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	private DateTime startDateTime_ = null;
 	private DateTime endDateTime_ = null;
 
-	//	 * Instantiates a new date range.
-	//	 * 
-	//	 * @param delegate
-	//	 *            the delegate
-	//	 * @param parent
-	//	 *            the parent
-	//	 */
-	//	@Deprecated
-	//	public DateRange(final lotus.domino.DateRange delegate, final Session parent, WrapperFactory wf, long cppId) {
-	//		super(delegate, Factory.getSession(parent), wf);
-	//		if (delegate instanceof lotus.domino.local.DateRange) {
-	//			initialize(delegate);
-	//			Base.s_recycle(delegate);
-	//		}
-	//	}
-
 	/**
 	 * Creates a Daterange based on java dates
 	 * 
@@ -356,6 +340,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
+	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		startDateTime_ = (DateTime) in.readObject();
 		endDateTime_ = (DateTime) in.readObject();
@@ -364,6 +349,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
+	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeObject(startDateTime_);
 		out.writeObject(endDateTime_);

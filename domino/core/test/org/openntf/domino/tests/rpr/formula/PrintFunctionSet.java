@@ -23,6 +23,7 @@ public class PrintFunctionSet extends TestRunnerStdIn {
 
 	@Override
 	public void run() {
+		Factory.enableCounters(true, false);
 		try {
 			System.out.println("Currently supported functions");
 			List<Function> funcs = new ArrayList<Function>();
@@ -41,7 +42,5 @@ public class PrintFunctionSet extends TestRunnerStdIn {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Factory.terminate();
-		System.out.println(Factory.dumpCounters(true));
 	}
 }

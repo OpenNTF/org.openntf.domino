@@ -20,7 +20,6 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,19 +27,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
 		org.openntf.domino.DxlImporter {
-
-	/**
-	 * Instantiates a new dxl importer.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public DxlImporter(final lotus.domino.DxlImporter delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new DxlImporter.

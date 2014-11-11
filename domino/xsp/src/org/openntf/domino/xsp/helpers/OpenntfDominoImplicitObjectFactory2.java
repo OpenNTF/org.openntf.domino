@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.faces.application.Application;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openntf.domino.AutoMime;
@@ -21,10 +20,8 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspLibrary;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
-import org.openntf.domino.xsp.adapter.OpenntfHttpService;
 import org.openntf.formula.FunctionFactory;
 
-import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
@@ -110,20 +107,20 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					//					System.out.println("TEMP DEBUG: library " + s);
 					if (s.equals(XspLibrary.LIBRARY_ID)) {
 						current = Boolean.TRUE;
-						OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
-						if (service != null) {
-							service.activate((HttpServletRequest) ctx.getExternalContext().getRequest());
-						}
+						//						OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
+						//						if (service != null) {
+						//							service.activate((HttpServletRequest) ctx.getExternalContext().getRequest());
+						//						}
 					}
 				}
 			} else {
 				//				System.out.println("TEMP DEBUG: no library dependencies found");
 			}
 			if (current == Boolean.FALSE) {
-				OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
-				if (service != null) {
-					service.deactivate((HttpServletRequest) ctx.getExternalContext().getRequest());
-				}
+				//				OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
+				//				if (service != null) {
+				//					service.deactivate((HttpServletRequest) ctx.getExternalContext().getRequest());
+				//				}
 			}
 			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_XspLibrary", current);
 		}
@@ -372,12 +369,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			}
 			if (rawDatabase != null) {
 				database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
-				Factory.setNoRecycle(database, true);
-				//FIXME: The following call is for diagnostic purposes. It should normally be turned OFF
-				//****************BEGIN DIAGNOSTIC DEBUG
-				BackendBridge.setNoRecycle(database.getAncestorSession(), database, true);
-				//****************END DIAGNOSTIC
-
+				//				Factory.setNoRecycle(database, true);
 				localMap.put(dbKey, database);
 			} else {
 				System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
@@ -489,7 +481,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			System.out.println("DEBUG: Beginning creation of implicit objects...");
 		}
 		// TODO RPr: I enabled the "setClassLoader" here
-		Factory.init();
+		//		Factory.init();
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
 
@@ -577,7 +569,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	@Override
 	public void destroyImplicitObjects(final FacesContext paramFacesContext) {
 		//		System.out.println("TEMP DEBUG: destroyImplicitObjects called.");
-		Factory.terminate();	//TODO NTF keep here?
+		//		Factory.terminate();	//TODO NTF keep here?
 	}
 
 	/*

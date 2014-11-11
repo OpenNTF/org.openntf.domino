@@ -33,19 +33,6 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		org.openntf.domino.DirectoryNavigator {
 
 	/**
-	 * Instantiates a new directory navigator.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (Directory) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

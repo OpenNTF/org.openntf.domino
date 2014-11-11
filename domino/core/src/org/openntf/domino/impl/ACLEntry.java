@@ -36,14 +36,6 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		org.openntf.domino.ACLEntry {
 
 	/**
-	 * @deprecated: use {@link #ACLEntry(lotus.domino.ACLEntry, ACL, WrapperFactory, long)} instead
-	 */
-	@Deprecated
-	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
-		super(delegate, null);
-	}
-
-	/**
 	 * Instantiates a new ACL entry.
 	 * 
 	 * @param delegate

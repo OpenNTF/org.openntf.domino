@@ -39,22 +39,6 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent, Da
 	/**
 	 * Instantiates a new agent.
 	 * 
-	 * @deprecated use {@link #Agent(lotus.domino.Agent, Database, WrapperFactory, long)} instead
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
-
-	}
-
-	/**
-	 * Instantiates a new agent.
-	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent

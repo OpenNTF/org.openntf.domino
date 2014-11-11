@@ -34,7 +34,6 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.napi.NapiFactory;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.utils.DominoUtils;
@@ -54,7 +53,7 @@ import com.ibm.commons.util.NotImplementedException;
  * 
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-implements org.openntf.domino.Base<D> {
+		implements org.openntf.domino.Base<D> {
 	public static final int SOLO_NOTES_NAMES = 1000;
 	public static final int NOTES_SESSION = 1;
 	public static final int NOTES_DATABASE = 2;
@@ -293,37 +292,15 @@ implements org.openntf.domino.Base<D> {
 	//		}
 	//	};
 
-	/** The NAPI-Factory to speed up some things */
-	private static NapiFactory napiFactory_ = null;
-
 	/**
 	 * Gets the parent.
 	 * 
 	 * @return the parent
 	 */
-	//org.openntf.domino.Base<?> getParent() {
-	//	return parent_;
-	//}
-
 	protected P getAncestor() {
 		return parent_;
 	}
 
-	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
-	/** The children_. */
-	// private final Set<org.openntf.domino.Base<?>> children_ = Collections
-	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
-
-	/**
-	 * @deprecated Use constructor with ClassID in future
-	 * 
-	 * @param delegate
-	 * @param parent
-	 */
-	@Deprecated
-	protected Base(final D delegate, final P parent) {
-		this(delegate, parent, null, 0L, 0);
-	}
 
 	/**
 	 * Instantiates a new base.
@@ -1248,28 +1225,6 @@ implements org.openntf.domino.Base<D> {
 	@Deprecated
 	Vector getStringArrayProperty(final int paramInt) {
 		throw new NotImplementedException();
-	}
-
-	/**
-	 * Set the NAPI Factory if you are running in an XPage-environment.
-	 * 
-	 * TODO RPr: THIS IS HIGHLY EXPERIMENTAL
-	 * 
-	 * @param napiFactory
-	 *            the NapiFactory Interface
-	 */
-	public static void setNapiFactory(final NapiFactory napiFactory) {
-		napiFactory_ = napiFactory;
-
-	}
-
-	/**
-	 * Return the NAPI-Factory
-	 * 
-	 * @return
-	 */
-	protected NapiFactory getNapiFactory() {
-		return napiFactory_;
 	}
 
 }

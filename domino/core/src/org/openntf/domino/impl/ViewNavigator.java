@@ -37,19 +37,6 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		org.openntf.domino.ViewNavigator {
 
 	/**
-	 * Instantiates a new view navigator.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ViewNavigator(final lotus.domino.ViewNavigator delegate, final org.openntf.domino.View parent) {
-		super(delegate, parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
@@ -526,6 +513,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ViewNavigator#gotoEntry(org.openntf.domino.Document)
 	 */
+	@Override
 	public boolean gotoEntry(final Document document) {
 		return gotoEntry((Object) document);
 	}
@@ -533,6 +521,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ViewNavigator#gotoEntry(org.openntf.domino.ViewEntry)
 	 */
+	@Override
 	public boolean gotoEntry(final ViewEntry entry) {
 		return gotoEntry((Object) entry);
 	}
@@ -1029,6 +1018,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
+	@Override
 	public Iterator<org.openntf.domino.ViewEntry> iterator() {
 		return new ViewNavigatorEntryIterator(this);
 	}

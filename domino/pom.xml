@@ -19,35 +19,54 @@
 		<repository>
 			<id>notes</id>
 			<layout>p2</layout>
-			<url>file:///C:\data\DominoP2Repo</url>
+			<url>${notes-platform}</url>
 		</repository>
 	</repositories>
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 
 	<modules>
 		<module>externals</module>
 		<module>formula</module>
 		<module>core</module>
 		<module>xsp</module>
-		<module>org.openntf.domino.feature</module>
+		<module>junit4xpages</module>
+		<module>tests</module>
+		<module>org.openntf.domino.feature.group</module>
+ 		<module>org.openntf.domino.updatesite</module>
+
 	</modules>
 
 	<build>
 		<plugins>
+		<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <version>2.6</version>
+          <configuration>
+  <!--            <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>false</downloadJavadocs>
+            <additionalBuildcommands>
+              <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
+              <buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand>
+              <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand>
+            </additionalBuildcommands>
+            <additionalProjectnatures>
+              <projectnature>org.eclipse.pde.PluginNature</projectnature>
+              <projectnature>org.eclipse.jdt.core.javanature</projectnature>
+            </additionalProjectnatures> -->
+            <classpathContainers>
+              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
+              <classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
+            </classpathContainers>
+          </configuration>
+        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
 				<configuration>
 					<source>${compiler}</source>
 					<target>${compiler}</target>
-					<version>3.1</version>
 					<compilerArgument>-err:-forbidden,discouraged,deprecation</compilerArgument>
 				</configuration>
 			</plugin>
@@ -117,6 +136,7 @@
 							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
+					<resolver>p2</resolver>
 				</configuration>
 			</plugin>
 			<!-- <plugin> <groupId>org.eclipse.tycho.extras</groupId> <artifactId>tycho-p2-extras-plugin</artifactId> 
@@ -138,5 +158,65 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<licenses>
+		<license>
+			<name>Apache License, V2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	
+	<!-- List all developers here -->
+	<developers>
+		<developer>
+			<id>AWa</id>
+			<name>Alex Wagner</name>
+			<email>alexander.wagner@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>MSte</id>
+			<name>Manfred Steinsiek</name>
+			<email>manfred.steinsiek@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>RPr</id>
+			<name>Roland Praml</name>
+			<email>roland.praml@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+			<properties>
+				<picUrl><![CDATA[https://avatars2.githubusercontent.com/u/5530228?v=2&s=60]]></picUrl>
+			</properties>
+		</developer>
+	</developers>
+	
+    <distributionManagement>
+      <site>
+        <id>www.openntf.org</id>
+        <url>file://c:\fullsite/</url>
+      </site>
+    </distributionManagement>
+	
 
 </project>

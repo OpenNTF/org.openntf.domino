@@ -45,33 +45,10 @@
       </service>
    </extension>
    
-   <extension
-         point="com.ibm.commons.Extension">
-      <service
-            class="org.openntf.domino.i18n.FormulaMessageProvider"
-            type="org.openntf.domino.i18n.MessageProvider">
-      </service>
-   </extension>
-   <extension
-         point="com.ibm.commons.Extension">
-      <service
-            class="org.openntf.domino.i18n.RawMessageProviderImpl"
-            type="org.openntf.domino.i18n.RawMessageProvider">
-      </service>
-
-   </extension>
-   
 	<extension point="com.ibm.commons.Extension">
-		<service class="org.openntf.domino.xots.builtin.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
+		<service class="org.openntf.domino.xsp.xots.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
 	</extension>
-      <extension
-         point="com.ibm.commons.Extension">
-      <service
-			class="org.openntf.formula.function.FocFunctions$Functions"
-            type="org.openntf.formula.FunctionSet">
-      </service>
-   </extension>
-   
+  
 
 
 </plugin>

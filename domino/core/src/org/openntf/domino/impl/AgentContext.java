@@ -38,20 +38,6 @@ import org.openntf.domino.utils.DominoUtils;
 public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.domino.AgentContext, Session> implements
 		org.openntf.domino.AgentContext {
 
-	/**
-	 * Instantiates a new agent context.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (Session) parent);
-
-	}
-
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
@@ -169,6 +155,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.AgentContext#getParentSession()
 	 */
+	@Override
 	public Session getParentSession() {
 		return getAncestor();
 	}

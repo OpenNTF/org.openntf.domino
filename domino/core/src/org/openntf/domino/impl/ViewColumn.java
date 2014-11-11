@@ -34,19 +34,6 @@ import org.openntf.domino.utils.DominoUtils;
 public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements org.openntf.domino.ViewColumn {
 
 	/**
-	 * Instantiates a new view column.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ViewColumn(final lotus.domino.ViewColumn delegate, final org.openntf.domino.View parent) {
-		super(delegate, parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

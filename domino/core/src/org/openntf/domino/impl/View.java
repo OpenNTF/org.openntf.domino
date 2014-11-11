@@ -95,20 +95,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 */
-	@Deprecated
-	public View(final lotus.domino.View delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getParentDatabase(parent));
-		initialize(delegate);
-	}
-
-	/**
-	 * Instantiates a new view.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
 	 * @param wf
 	 *            the wrapperfactory
 	 * @param cppId
@@ -690,6 +676,22 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
+	 */
+	@Override
+	public ViewNavigator createViewNavFromCategory(final String categoryName) {
+		try {
+			getDelegate().setAutoUpdate(false);
+			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -727,22 +729,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		}
 		return null;
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
-	 */
-	@Override
-	public ViewNavigator createViewNavFromCategory(final String categoryName) {
-		try {
-			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
 	}
 
 	/*
@@ -2629,7 +2615,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			lotus.domino.Database d = toLotus(db);
 			lotus.domino.View view = d.getView(name_);
 			setDelegate(view, 0);
-			Factory.recacheLotus(d, this, parent_);
+			getFactory().recacheLotusObject(d, this, parent_);
 			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
 			view.setAutoUpdate(false);
 			//			}

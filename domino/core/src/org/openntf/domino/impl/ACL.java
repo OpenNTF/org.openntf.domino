@@ -26,28 +26,12 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ACL.
  */
 public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
-
-	/**
-	 * Instantiates a new acl.
-	 * 
-	 * @deprecated use {@link #ACL(lotus.domino.ACL, Database, WrapperFactory, long)} instead
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ACL(final lotus.domino.ACL delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, null);
-	}
 
 	/**
 	 * Instantiates a new acl.
@@ -468,7 +452,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 			lotus.domino.Database db = toLotus(getParent());
 			lotus.domino.ACL d = db.getACL();
 			setDelegate(d, 0);
-			Factory.recacheLotus(d, this, parent_);
+			getFactory().recacheLotusObject(d, this, parent_);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

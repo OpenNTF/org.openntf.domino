@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -40,11 +43,11 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		org.openntf.domino.MIMEEntity {
 
 	/**
-	 * we have to track every child element that was queried from this entity.
+	 * we have to track every child element that was queried from this entity.rec
 	 */
-	private List<MIMEEntity> trackedChildEntites_ = new ArrayList<MIMEEntity>();
-	private List<MIMEHeader> trackedHeaders_ = new ArrayList<MIMEHeader>();
+	private Set<MIMEHeader> trackedHeaders_ = new HashSet<MIMEHeader>();
 	private String itemName_;
+	private org.openntf.domino.impl.Document sourceDoc_;
 
 	/**
 	 * Instantiates a new outline.
@@ -62,21 +65,25 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
 	}
 
-	protected org.openntf.domino.MIMEEntity track(final org.openntf.domino.MIMEEntity what) {
-		if (what == null)
-			return null;
-		if (!trackedChildEntites_.contains(what)) {
-			trackedChildEntites_.add((MIMEEntity) what);
-		}
-		return what;
+	/**
+	 * This method initializes the name of this MimeEntity, so that the entity knwos it's field name. Should NOT be called in your code!
+	 * 
+	 * @param itemName
+	 */
+	public void init(final String itemName) {
+		itemName_ = itemName;
+	}
+
+	protected org.openntf.domino.MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final boolean markDirty) {
+		org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) getParent();
+		return doc.fromLotusMimeEntity(lotus, itemName_, markDirty);
+
 	}
 
 	protected MIMEHeader track(final MIMEHeader what) {
 		if (what == null)
 			return null;
-		if (!trackedHeaders_.contains(what)) {
-			trackedHeaders_.add(what);
-		}
+		trackedHeaders_.add(what);
 		return what;
 	}
 
@@ -90,14 +97,13 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	public void closeMIMEEntity() {
-		for (MIMEEntity child : trackedChildEntites_) {
-			child.closeMIMEEntity();
-		}
-		for (MIMEHeader hdr : trackedHeaders_) {
+		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
+		while (hdrIter.hasNext()) {
 			try {
-				hdr.recycle();
+				hdrIter.next().recycle();
 			} catch (NotesException e) {
 			}
+			hdrIter.remove();
 		}
 		recycle();
 	}
@@ -111,7 +117,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	public org.openntf.domino.MIMEEntity createChildEntity() {
 		markDirty();
 		try {
-			return track(fromLotus(getDelegate().createChildEntity(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().createChildEntity(), true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -127,7 +133,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	public org.openntf.domino.MIMEEntity createChildEntity(final lotus.domino.MIMEEntity nextSibling) {
 		markDirty();
 		try {
-			return track(fromLotus(getDelegate().createChildEntity(toLotus(nextSibling)), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().createChildEntity(toLotus(nextSibling)), true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -159,7 +165,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	public org.openntf.domino.MIMEEntity createParentEntity() {
 		markDirty();
 		try {
-			return track(fromLotus(getDelegate().createParentEntity(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().createParentEntity(), true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -409,7 +415,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getFirstChildEntity() {
 		try {
-			return track(fromLotus(getDelegate().getFirstChildEntity(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getFirstChildEntity(), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -484,7 +490,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getNextEntity() {
 		try {
-			return track(fromLotus(getDelegate().getNextEntity(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getNextEntity(), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -499,7 +505,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getNextEntity(final int search) {
 		try {
-			return track(fromLotus(getDelegate().getNextEntity(search), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getNextEntity(search), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -514,7 +520,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getNextSibling() {
 		try {
-			return track(fromLotus(getDelegate().getNextSibling(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getNextSibling(), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -567,7 +573,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getParentEntity() {
 		try {
-			return track(fromLotus(getDelegate().getParentEntity(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getParentEntity(), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -597,7 +603,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getPrevEntity() {
 		try {
-			return track(fromLotus(getDelegate().getPrevEntity(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getPrevEntity(), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -612,7 +618,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getPrevEntity(final int search) {
 		try {
-			return track(fromLotus(getDelegate().getPrevEntity(search), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getPrevEntity(search), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -627,7 +633,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public org.openntf.domino.MIMEEntity getPrevSibling() {
 		try {
-			return track(fromLotus(getDelegate().getPrevSibling(), MIMEEntity.SCHEMA, getParent()));
+			return fromLotusMimeEntity(getDelegate().getPrevSibling(), false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -738,9 +744,11 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	@Override
+	@Deprecated
 	public void recycle() {
 		//		System.out.println("TMP DEBUG: Recycle called on a MIMEEntity: " + getItemName());
 		getParent().closeMIMEEntities(false, getItemName());
+		super.recycle();
 	}
 
 	/*
@@ -835,15 +843,6 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.ext.MIMEEntity#initName(java.lang.String)
-	 */
-	@Override
-	public void initItemName(final String itemName) {
-		itemName_ = itemName;
-
 	}
 
 	/* (non-Javadoc)

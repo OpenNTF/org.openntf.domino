@@ -4,9 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.DominoJUnitRunner;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.LMBCSUtils;
 
@@ -21,10 +25,10 @@ import org.openntf.domino.utils.LMBCSUtils;
  * @author Manfred Steinsiek, Foconis AG
  * 
  */
+@RunWith(DominoJUnitRunner.class)
 public class LMBCSPayload implements Runnable {
 	public static void main(final String[] args) {
-		DominoThread thread = new DominoThread(new LMBCSPayload(), "My thread");
-		thread.start();
+		TestRunnerUtil.runAsDominoThread(new LMBCSPayload());
 	}
 
 	public LMBCSPayload() {
@@ -32,6 +36,7 @@ public class LMBCSPayload implements Runnable {
 	}
 
 	@Override
+	@Test
 	public void run() {
 		Session sess = Factory.getSession();
 		boolean succ = true;
@@ -57,11 +62,11 @@ public class LMBCSPayload implements Runnable {
 				System.out.println("Differences (" + diffv.size() + "):");
 				for (String s : diffv)
 					System.out.println(s);
+				Assert.fail("Payloads are not equal");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Factory.terminate();
 	}
 
 	private boolean cmpOne(final Session sess, final String s, final int[] payloads, final boolean protIfEq) throws IOException {

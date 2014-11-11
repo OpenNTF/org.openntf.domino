@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 
 import org.openntf.arpa.NamePartsMap;
 import org.openntf.arpa.RFC822name;
-import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Name;
@@ -614,7 +613,7 @@ public enum Names {
 				throw new IllegalArgumentException("Name is null");
 			}
 
-			return new org.openntf.domino.impl.Name(name, name.getParent());
+			return new org.openntf.domino.impl.Name(name.getParent(), name);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -637,8 +636,8 @@ public enum Names {
 			if (null == name) {
 				throw new IllegalArgumentException("Name is null");
 			}
-
-			return new org.openntf.domino.impl.Name(name, (Base<?>) name.getParent());
+			Session sess = Factory.fromLotus(name.getParent(), Session.SCHEMA, null);
+			return new org.openntf.domino.impl.Name(sess, name);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);

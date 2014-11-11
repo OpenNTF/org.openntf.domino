@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.logging.Formatter;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.openntf.domino.exceptions.OpenNTFNotesException;
@@ -35,12 +36,14 @@ public class LogFormatterFileDefault extends Formatter {
 			if (stes != null && stes.length > 0)
 				ste = stes[0];
 		}
-		sb.append("    ");
+		sb.append("      ");
 		sb.append(logRecord.getMessage());
-		sb.append(" - ");
+		boolean levelSevere = (logRecord.getLevel().intValue() >= Level.SEVERE.intValue());
+		if (ste != null || levelSevere)
+			sb.append(" - ");
 		if (ste != null)
 			sb.append(ste.getClassName() + "." + ste.getMethodName());
-		else
+		else if (levelSevere)
 			sb.append("***NO STACK TRACE***");
 		sb.append('\n');
 		if (logRecord.getThrown() instanceof OpenNTFNotesException) {

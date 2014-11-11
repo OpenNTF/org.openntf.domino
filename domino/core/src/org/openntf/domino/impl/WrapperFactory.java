@@ -46,7 +46,6 @@ import org.openntf.domino.View;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.thread.DominoReferenceCache;
 import org.openntf.domino.types.FactorySchema;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -249,33 +248,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	}
 
-	// --- session handling 
-	/**
-	 * Wraps and caches sessions. Sessions are put in a separate map (otherwise you can use fromLotusObject). (you may overwrite this if we
-	 * make a non static IFactory)
-	 * 
-	 * @param lotus
-	 * @param parent
-	 */
-	protected void setCurrentSession(final Session newSession) {
-
-		// Store the first wrapped session in the sessionHolder
-		Session currentSession = Factory.getSession_unchecked();
-		if (currentSession == newSession) {
-			// if this is the identical object, do nothing
-		} else if (currentSession != null) {
-			lotus.domino.Session rawSession = org.openntf.domino.impl.Base.toLotus(currentSession);
-			if (org.openntf.domino.impl.Base.isDead(rawSession)) {
-				//				Factory.loadEnvironment(newSession);
-				// System.out.println("Resetting default local session because we got an exception");
-				Factory.setSession(newSession);
-			}
-		} else {
-			//			Factory.loadEnvironment(newSession);
-			// System.out.println("Resetting default local session because it was null");
-			Factory.setSession(newSession);
-		}
-	}
 
 	// --- others
 	/**
@@ -540,9 +512,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 
 		if (lotus instanceof lotus.domino.Session) {
-			Session result = new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, (SessionHasNoParent) parent, this, cpp);
-			setCurrentSession(result);
-			return result;
+			return new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, (SessionHasNoParent) parent, this, cpp);
 		}
 		throw new UndefinedDelegateTypeException(lotus == null ? "null" : lotus.getClass().getName());
 		//		return null;

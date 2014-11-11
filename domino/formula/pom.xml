@@ -11,7 +11,7 @@
 	<description>Alternative Java-based engine for executing Notes/Domino @Formula</description>
 	<packaging>eclipse-plugin</packaging>
 	<build>
-	<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 	</build>
 	<organization>

@@ -35,19 +35,6 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 		implements org.openntf.domino.NotesCalendarNotice {
 
 	/**
-	 * Instantiates a new notes calendar notice.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (NotesCalendar) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

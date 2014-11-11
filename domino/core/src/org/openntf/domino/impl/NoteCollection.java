@@ -29,7 +29,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.NoteIterator;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -76,19 +75,6 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 			result = coll;
 		}
 		return result;
-	}
-
-	/**
-	 * Instantiates a new note collection.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public NoteCollection(final lotus.domino.NoteCollection delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getParentDatabase(parent));
 	}
 
 	/**

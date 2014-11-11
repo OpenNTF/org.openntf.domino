@@ -20,7 +20,6 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,19 +27,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class International extends Base<org.openntf.domino.International, lotus.domino.International, Session> implements
 		org.openntf.domino.International {
-
-	/**
-	 * Instantiates a new international.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public International(final lotus.domino.International delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new International.
