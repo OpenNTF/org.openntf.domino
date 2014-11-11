@@ -301,6 +301,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return parent_;
 	}
 
+	/**
+	 * This constructor is required for special objects like Names and so on
+	 * 
+	 * @param classId
+	 */
+	protected Base(final int classId) {
+		parent_ = null;
+		factory_ = null;
+		clsid = classId;
+	}
 
 	/**
 	 * Instantiates a new base.

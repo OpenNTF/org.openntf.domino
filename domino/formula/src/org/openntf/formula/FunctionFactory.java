@@ -25,14 +25,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 import org.openntf.formula.impl.AtFunction;
 import org.openntf.formula.impl.AtFunctionGeneric;
 import org.openntf.formula.impl.AtFunctionSimple;
+import org.openntf.service.IServiceLocator;
+import org.openntf.service.ServiceLocatorFinder;
 
 /**
  * 
@@ -40,12 +40,7 @@ import org.openntf.formula.impl.AtFunctionSimple;
  * 
  */
 public class FunctionFactory {
-
-	public interface AppServiceLocator {
-		public <T> List<T> findApplicationServices(final Class<T> serviceClazz);
-	}
-
-	private static ThreadLocal<AppServiceLocator> currentServiceLocator_ = new ThreadLocal<AppServiceLocator>();
+	private static ThreadLocal<IServiceLocator> currentServiceLocator_ = new ThreadLocal<IServiceLocator>();
 
 	private final Map<String, Function> functions = new HashMap<String, Function>();
 	private boolean immutable;
@@ -98,41 +93,15 @@ public class FunctionFactory {
 		return instance;
 	}
 
-	public static void setServiceLocator(final AppServiceLocator locator) {
-		currentServiceLocator_.set(locator);
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, List> nonOSGIServicesCache;
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
-		AppServiceLocator serviceLocator = currentServiceLocator_.get();
-		if (serviceLocator != null) {
-			return serviceLocator.findApplicationServices(serviceClazz);
+		IServiceLocator serviceLocator = currentServiceLocator_.get();
+		if (serviceLocator == null) {
+			serviceLocator = ServiceLocatorFinder.findServiceLocator();
+			currentServiceLocator_.set(serviceLocator);
 		}
-
-		// this is the non OSGI case:
-		if (nonOSGIServicesCache == null)
-			nonOSGIServicesCache = new HashMap<Class, List>();
-
-		@SuppressWarnings("unchecked")
-		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
-		if (ret == null) {
-			ret = new ArrayList<T>();
-			nonOSGIServicesCache.put(serviceClazz, ret);
-
-			ServiceLoader<T> loader = ServiceLoader.load(serviceClazz);
-			Iterator<T> it = loader.iterator();
-			while (it.hasNext()) {
-				ret.add(it.next());
-			}
-			if (Comparable.class.isAssignableFrom(serviceClazz)) {
-				Collections.sort((List<? extends Comparable>) ret);
-			}
-		}
-		return ret;
+		return serviceLocator.findApplicationServices(serviceClazz);
 	}
 
 	/**

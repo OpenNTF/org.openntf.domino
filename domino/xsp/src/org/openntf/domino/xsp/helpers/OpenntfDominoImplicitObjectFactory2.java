@@ -1,10 +1,6 @@
 package org.openntf.domino.xsp.helpers;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +16,6 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspLibrary;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
-import org.openntf.formula.FunctionFactory;
 
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
@@ -485,56 +480,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		//		Factory.init();
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
-
-		final ApplicationEx app = ctx.getApplicationEx();
-		final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
-
-		Factory.setServiceLocator(new Factory.AppServiceLocator() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-				List<T> ret = (List<T>) cache.get(serviceClazz);
-
-				if (ret == null) {
-					ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-						@Override
-						public List<T> run() {
-							return app.findServices(serviceClazz.getName());
-						}
-					});
-					if (Comparable.class.isAssignableFrom(serviceClazz)) {
-						Collections.sort((List<? extends Comparable>) ret);
-					}
-					cache.put(serviceClazz, ret);
-				}
-				return ret;
-			}
-		});
-
-		FunctionFactory.setServiceLocator(new FunctionFactory.AppServiceLocator() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-				List<T> ret = (List<T>) cache.get(serviceClazz);
-
-				if (ret == null) {
-					ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-						@Override
-						public List<T> run() {
-							return app.findServices(serviceClazz.getName());
-						}
-					});
-					if (Comparable.class.isAssignableFrom(serviceClazz)) {
-						Collections.sort((List<? extends Comparable>) ret);
-					}
-					cache.put(serviceClazz, ret);
-				}
-				return ret;
-			}
-		});
-
+		// hopefully locating the app will work now
 		org.openntf.domino.Session session = createSession(ctx);
 		if (session != null) {
 			createDatabase(ctx, session);

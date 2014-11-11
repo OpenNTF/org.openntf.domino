@@ -10,7 +10,7 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 /**
  * This class is specified as com.ibm.xsp.adapter.serviceFactory to trigger a "autostart" on server start.
  * 
- * It also creates a HTTP-Service. The HttpService that delegates the call to the other services.
+ * This triggers the Activator that does the rest of the the startup process
  * 
  * @author Roland Praml, FOCONIS AG
  * 
@@ -18,16 +18,16 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 public class OpenntfServiceFactory implements IServiceFactory {
 
 	public OpenntfServiceFactory() {
-		System.out.println("Openntf-Factory loaded");
+		System.out.println("Openntf-Factory loaded - but disabled");
 	}
 
 	@Override
 	public HttpService[] getServices(final LCDEnvironment paramLCDEnvironment) {
 		// We need this for proper XOTS working. But the service does NOTHING
-		HttpService[] ret = new HttpService[1];
-		ret[0] = new OpenntfHttpService(paramLCDEnvironment);
-		return ret;
-		//return null;
+		//		HttpService[] ret = new HttpService[1];
+		//		ret[0] = new OpenntfHttpService(paramLCDEnvironment);
+		//		return ret;
+		return null;
 	}
 
 }

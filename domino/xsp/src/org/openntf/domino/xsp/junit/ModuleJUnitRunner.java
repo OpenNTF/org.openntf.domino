@@ -34,7 +34,7 @@ public class ModuleJUnitRunner extends XspJUnitRunner {
 		super.startUp();
 		NSFComponentModule module = null;
 		try {
-			module = ModuleLoader.loadModule(db);
+			module = ModuleLoader.loadModule(db, false);
 		} catch (ServletException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

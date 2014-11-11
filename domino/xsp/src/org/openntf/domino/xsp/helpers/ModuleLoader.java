@@ -1,5 +1,7 @@
 package org.openntf.domino.xsp.helpers;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 
 import org.openntf.domino.Database;
@@ -8,11 +10,16 @@ import org.openntf.domino.utils.Factory;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
+import com.ibm.designer.runtime.domino.adapter.preload.PreloadRequest;
+import com.ibm.designer.runtime.domino.adapter.preload.PreloadResponse;
+import com.ibm.designer.runtime.domino.adapter.preload.PreloadSession;
+import com.ibm.designer.runtime.domino.adapter.util.PageNotFoundException;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NSFService;
 
 public enum ModuleLoader {
 	;
+
 	private static NSFService nsfservice_;
 
 	/**
@@ -36,7 +43,7 @@ public enum ModuleLoader {
 		return nsfservice_;
 	}
 
-	public static NSFComponentModule loadModule(final Database db) throws ServletException {
+	public static NSFComponentModule loadModule(final Database db, final boolean ensureRefresh) throws ServletException {
 		String dbPath = db.getFilePath().replace('\\', '/');
 		dbPath = NSFService.FILE_CASE_INSENSITIVE ? dbPath.toLowerCase() : dbPath;
 		if (!StringUtil.isEmpty(db.getServer())) {
@@ -44,11 +51,33 @@ public enum ModuleLoader {
 				dbPath = db.getServer() + "!!" + dbPath;
 			}
 		}
-		return loadModule(dbPath);
+		return loadModule(dbPath, ensureRefresh);
 	}
 
-	public static NSFComponentModule loadModule(final String modName) throws ServletException {
-		return getNsfService().loadModule(modName);
+	public static NSFComponentModule loadModule(final String modName, final boolean ensureRefresh) throws ServletException {
+		NSFComponentModule module = getNsfService().loadModule(modName);
+		if (module == null)
+			return null;
+
+		if (ensureRefresh) {
+			// The component module is SO weird. You cannot precheck with "shouldRefresh" as it returns always false for the next 2 seconds.
+			// So we ALWAYS do a simple request, to ensure that the module is fresh
+			final String path = "/" + module.getModuleName() + "/.ibmmodres/dummyservlet";
+			final PreloadSession session = new PreloadSession();
+			final PreloadRequest request = new PreloadRequest("", "", path);
+			final PreloadResponse response = new PreloadResponse();
+			try {
+				getNsfService().doService("", path, session, request, response);
+			} catch (PageNotFoundException pnfe) {
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			module = getNsfService().loadModule(modName);
+		}
+
+		module.updateLastModuleAccess();
+		return module;
 	}
 
 }

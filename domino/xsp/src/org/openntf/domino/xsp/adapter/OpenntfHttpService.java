@@ -43,7 +43,7 @@ public class OpenntfHttpService extends HttpService {
 			}
 			INSTANCE = this;
 			// here is the right place to initialize things on server start
-			Factory.startup();
+			//Factory.startup();
 
 			//XotsDaemon.getInstance().start();
 		} catch (Throwable t) {
