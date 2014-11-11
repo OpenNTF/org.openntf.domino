@@ -76,8 +76,8 @@ public enum Factory {
 	 * 
 	 */
 	public enum SessionMode {
-		DEFAULT(0, "DEFAULT"), TRUSTED(1, "TRUSTED"), FULL_ACCESS(2, "FULL_ACCESS");
-		static int SIZE = 3;
+		DEFAULT(0, "DEFAULT"), TRUSTED(1, "TRUSTED"), FULL_ACCESS(2, "FULL_ACCESS"), SESSION_AS_SIGNER(3, "SESSION_AS_SIGNER");
+		static int SIZE = 4;
 		int index;
 		String alias;
 
@@ -194,6 +194,8 @@ public enum Factory {
 
 	private static List<Runnable> terminateHooks = new ArrayList<Runnable>();
 	private static List<Runnable> shutdownHooks = new ArrayList<Runnable>();
+
+	private static String localServerName;
 
 	private static ThreadVariables getThreadVariables() {
 		ThreadVariables tv = threadVariables_.get();
@@ -781,6 +783,15 @@ public enum Factory {
 	}
 
 	/**
+	 * Gets the trusted session.
+	 * 
+	 * @return the trusted session
+	 */
+	public static org.openntf.domino.Session getSessionAsSigner() {
+		return getSession(SessionMode.SESSION_AS_SIGNER);
+	}
+
+	/**
 	 * 
 	 * @param mode
 	 * @return
@@ -1096,6 +1107,7 @@ public enum Factory {
 
 			File iniFile;
 			try {
+				localServerName = session.getUserName();
 				iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
 			} catch (NotesException e) {
 				System.out.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
@@ -1120,6 +1132,7 @@ public enum Factory {
 			defaultSessionFactories[SessionMode.DEFAULT.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
 			defaultSessionFactories[SessionMode.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
 			defaultSessionFactories[SessionMode.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+			defaultSessionFactories[SessionMode.SESSION_AS_SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
 			defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
 			started = true;
 			System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
@@ -1587,8 +1600,7 @@ public enum Factory {
 	}
 
 	public static String getLocalServerName() {
-		// TODO Auto-generated method stub
-		return "CN=srv-01-xdev1/OU=srv/O=FOCONIS"; // TODO RPr
+		return localServerName;
 	}
 
 }

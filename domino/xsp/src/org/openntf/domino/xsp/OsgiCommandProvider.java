@@ -122,12 +122,12 @@ public class OsgiCommandProvider implements CommandProvider {
 		if (StringUtil.isEmpty(cmd)) {
 			// TODO what does ODA?
 		} else if (cmp(cmd, "stop", 3)) {
-			Activator.stopOda();
+			ODAPlatform.stop();
 		} else if (cmp(cmd, "start", 3)) {
-			Activator.startOda();
+			ODAPlatform.start();
 		} else if (cmp(cmd, "restart", 1)) {
-			Activator.stopOda();
-			Activator.startOda();
+			ODAPlatform.stop();
+			ODAPlatform.start();
 		}
 	}
 
@@ -149,6 +149,7 @@ public class OsgiCommandProvider implements CommandProvider {
 						Object obj = cls.newInstance();
 						ci.println("Success: " + obj);
 						if (obj instanceof Runnable) {
+							//((Runnable) obj).run();
 							XotsDaemon.queue((Runnable) obj);
 						}
 					} catch (Throwable e) {
@@ -158,7 +159,8 @@ public class OsgiCommandProvider implements CommandProvider {
 					}
 				}
 			});
-			XotsDaemon.queue(runner);
+			runner.run();
+			//XotsDaemon.queue(runner);
 
 		} catch (Throwable e) {
 			StringWriter errors = new StringWriter();

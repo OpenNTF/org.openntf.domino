@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
-import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
@@ -43,9 +43,7 @@ public class OpenntfHttpService extends HttpService {
 			}
 			INSTANCE = this;
 			// here is the right place to initialize things on server start
-			//Factory.startup();
-
-			//XotsDaemon.getInstance().start();
+			ODAPlatform.start();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -54,7 +52,7 @@ public class OpenntfHttpService extends HttpService {
 	@Override
 	public void destroyService() {
 		// XotsDaemon.getInstance().stop();
-		Factory.shutdown();
+		ODAPlatform.stop();
 		super.destroyService();
 		INSTANCE = null;
 	}

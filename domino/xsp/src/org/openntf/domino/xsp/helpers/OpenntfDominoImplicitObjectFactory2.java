@@ -13,6 +13,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionMode;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspLibrary;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
@@ -297,7 +298,6 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		// See if the factory already has an explicit session set (e.g. in Xots)
 		//FIXME: NTF We need something more specific here. Back-to-back REST calls can sometimes be serviced by the same thread.
 		session = Factory.getSession_unchecked();
-
 		// If we don't have a pre-established session, look for the standard XSP one
 		if (session == null) {
 			lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
@@ -307,6 +307,9 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			if (rawSession != null) {
 				try {
 					rawSession.isConvertMIME();
+					Factory.setSession(rawSession, SessionMode.DEFAULT);
+					// TODO RPr: Should we add session as signer also?
+
 					session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
 					//					System.out.println("DEBUG: New session created in thread " + Thread.currentThread().getId() + ": "
 					//							+ ctx.getExternalContext().getRequestPathInfo());
@@ -477,7 +480,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			System.out.println("DEBUG: Beginning creation of implicit objects...");
 		}
 		// TODO RPr: I enabled the "setClassLoader" here
-		//		Factory.init();
+		Factory.initThread();
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
 		// hopefully locating the app will work now
@@ -516,7 +519,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	@Override
 	public void destroyImplicitObjects(final FacesContext paramFacesContext) {
 		//		System.out.println("TEMP DEBUG: destroyImplicitObjects called.");
-		//		Factory.terminate();	//TODO NTF keep here?
+		Factory.termThread();	//TODO NTF keep here?
 	}
 
 	/*
