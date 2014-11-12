@@ -136,13 +136,9 @@ public enum OneMillionScratchTest {
 	}
 
 	/**
-	 * @param args
-	 *            ======= }
-	 * 
-	 *            /** The main method.
+	 * The main method.
 	 * 
 	 * @param args
-	 *            the arguments >>>>>>> origin/declan
 	 */
 	@SuppressWarnings("unused")
 	public static void main(final String[] args) {

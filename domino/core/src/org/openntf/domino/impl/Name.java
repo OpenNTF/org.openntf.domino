@@ -285,8 +285,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	/**
 	 * Parses the source string and sets the appropriate RFC822 values.
 	 * 
-	 * <<<<<<< HEAD
-	 * 
 	 * @param string
 	 *            RFC822 source string from which to set the appropriate RFC822 values.
 	 */

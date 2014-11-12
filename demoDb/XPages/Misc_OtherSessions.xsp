@@ -8,8 +8,9 @@
 				<xp:this.facets>
 					<xp:div xp:key="SSJSButton">
 						<xp:text escape="true" id="computedField1" loaded="false"
-							value="#{javascript:org.openntf.domino.utils.Factory.getTrustedSession();
-			org.openntf.domino.utils.Factory.getSessionWthFullAccess();}">
+							value="#{javascript:
+              //print(org.openntf.domino.utils.Factory.getTrustedSession());
+		    print(org.openntf.domino.utils.Factory.getSessionWthFullAccess());}">
 						</xp:text>
 					</xp:div>
 					<xp:div xp:key="javaButton">
