@@ -85,23 +85,23 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	private DominoFormatter formatter_; // RPr: changed to non static as this can cause thread issues
 
 	/* A lock object for "getDatabase" to prevent server crashes.
-	* it seems that the method is not thread safe. (at least if you run the code as java application)
-	* -- stack dump when crash happenes --
-	* @[ 9] 0x5c8456a3 nnotes.Panic@4+883 (604cda8c)
-	* @[10] 0x5c624a9d nnotes.OSVBlockAddr@8+109 (5e36fc00,0)
-	* @[11] 0x5c7c385b nnotes.NetCheckNotesINI@4+2715 (0)
-	* @[12] 0x5cf60378 nnotes.UAFGetAccessGroupsExtend2@12+120 (0,8,0)
-	* @[13] 0x5cf60e77 nnotes.CreateNamesListFromNamesExtend2@20+263 (0,8,604cf01c,604cf028,0)
-	* @[14] 0x5cf60fca nnotes.CreateNamesListFromNamesExtend@16+26 (0,1,604cf01c,604cf028)
-	* @[15] 0x61229378 nlsxbe.ANSession::ANSCreateUserGroupListExtended+344 (0,0,0,0)
-	* @[16] 0x611f168f nlsxbe.ANDatabase::ANDOpen+415 (0,0,0,5f01a954)
-	* @[17] 0x611fc26e nlsxbe.ANDatabase::ANDOpen+350 (0,0,0,0)
-	* @[18] 0x6122aae0 nlsxbe.ANSession::ANSFindOrCreateDBNoClean+1040 (5f01a91c,5f01a924,5f01a954,1)
-	* @[19] 0x61231854 nlsxbe.ANSession::ANSFindOrCreateDB+100 (5f01a91c,5f01a924,0,1)
-	* @[20] 0x612326e2 nlsxbe.Java_lotus_domino_local_Session_NgetDatabase@20+338 (27,5c00634d,7fec41d0,5c011fc8,0)
-	* 
-	* See also: http://www-01.ibm.com/support/docview.wss?uid=swg1LO39865 (
-	*/
+	 * it seems that the method is not thread safe. (at least if you run the code as java application)
+	 * -- stack dump when crash happenes --
+	 * @[ 9] 0x5c8456a3 nnotes.Panic@4+883 (604cda8c)
+	 * @[10] 0x5c624a9d nnotes.OSVBlockAddr@8+109 (5e36fc00,0)
+	 * @[11] 0x5c7c385b nnotes.NetCheckNotesINI@4+2715 (0)
+	 * @[12] 0x5cf60378 nnotes.UAFGetAccessGroupsExtend2@12+120 (0,8,0)
+	 * @[13] 0x5cf60e77 nnotes.CreateNamesListFromNamesExtend2@20+263 (0,8,604cf01c,604cf028,0)
+	 * @[14] 0x5cf60fca nnotes.CreateNamesListFromNamesExtend@16+26 (0,1,604cf01c,604cf028)
+	 * @[15] 0x61229378 nlsxbe.ANSession::ANSCreateUserGroupListExtended+344 (0,0,0,0)
+	 * @[16] 0x611f168f nlsxbe.ANDatabase::ANDOpen+415 (0,0,0,5f01a954)
+	 * @[17] 0x611fc26e nlsxbe.ANDatabase::ANDOpen+350 (0,0,0,0)
+	 * @[18] 0x6122aae0 nlsxbe.ANSession::ANSFindOrCreateDBNoClean+1040 (5f01a91c,5f01a924,5f01a954,1)
+	 * @[19] 0x61231854 nlsxbe.ANSession::ANSFindOrCreateDB+100 (5f01a91c,5f01a924,0,1)
+	 * @[20] 0x612326e2 nlsxbe.Java_lotus_domino_local_Session_NgetDatabase@20+338 (27,5c00634d,7fec41d0,5c011fc8,0)
+	 * 
+	 * See also: http://www-01.ibm.com/support/docview.wss?uid=swg1LO39865 (
+	 */
 	private static final Object getDB_lock = new Object();
 
 	/** The default session. */
@@ -197,11 +197,23 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 */
 	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
 		this(lotus, parent, wf, cpp_id, false);
+		//		try {
+		//			Database curDb = Factory.fromLotus(lotus.getCurrentDatabase(), Database.SCHEMA, this);
+		//			this.setCurrentDatabase(curDb);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//		}
 	}
 
 	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id,
 			final boolean isFeatureRestricted) {
 		super(lotus, null, wf, cpp_id, NOTES_SESSION);
+		//		try {
+		//			Database curDb = Factory.fromLotus(lotus.getCurrentDatabase(), Database.SCHEMA, this);
+		//			this.setCurrentDatabase(curDb);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//		}
 		featureRestricted_ = isFeatureRestricted;
 		initialize(lotus);
 	}
@@ -737,25 +749,30 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public Database getCurrentDatabase() {
 		Database result = null;
-		try {
-			if (currentDatabase_ == null) {
+		if (currentDatabase_ == null) {
+			//			System.out.println("TEMP DEBUG: currentDatabase_ is null for session " + System.identityHashCode(this) + " in thread "
+			//					+ System.identityHashCode(Thread.currentThread()) + " so we're trying to derive it...");
+			try {
 				result = fromLotus(getDelegate().getCurrentDatabase(), Database.SCHEMA, this);
-				if (result == null)
+				if (result == null) {
+					//					System.out.println("TEMP DEBUG: returning null for getCurrentDatabase() from session " + System.identityHashCode(this)
+					//							+ " in thread " + System.identityHashCode(Thread.currentThread()));
 					return null;
+				}
 				String key = result.getFilePath();
 				if (result.getServer().length() > 1) {
 					key = result.getServer() + "!!" + result.getFilePath();
 				}
 				databases_.put(key, result);
 				currentDatabase_ = result;
-			} else {
-				result = currentDatabase_;
+
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				return null;
+
 			}
-
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
+		} else {
+			result = currentDatabase_;
 		}
 		return result;
 	}
@@ -1973,6 +1990,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	@Override
 	public void setCurrentDatabase(final Database db) {
+		//		System.out.println("TEMP DEBUG: Setting current database to " + db.getApiPath() + " from session " + System.identityHashCode(this)
+		//				+ " in thread " + System.identityHashCode(Thread.currentThread()));
 		currentDatabase_ = db;
 	}
 

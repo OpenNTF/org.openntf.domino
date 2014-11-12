@@ -569,8 +569,13 @@ public enum Factory {
 		ThreadVariables tv = getThreadVariables();
 		WrapperFactory wf = tv.wrapperFactory;
 		if (wf == null) {
-			List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
-			wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
+			try {
+				List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
+				wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				wf = new org.openntf.domino.impl.WrapperFactory();
+			}
 			tv.wrapperFactory = wf;
 		}
 		return wf;
@@ -618,7 +623,15 @@ public enum Factory {
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
-		return getWrapperFactory().fromLotus(lotus, schema, parent);
+		T result = getWrapperFactory().fromLotus(lotus, schema, parent);
+		if (result instanceof org.openntf.domino.Session) {
+			ThreadVariables tv = getThreadVariables();
+			org.openntf.domino.Session check = tv.sessionHolders[SessionMode.DEFAULT.index];
+			if (check == null) {
+				setSession((org.openntf.domino.Session) result, SessionMode.DEFAULT);
+			}
+		}
+		return result;
 	}
 
 	// RPr: Should be done directly to current wrapperFactory
@@ -787,16 +800,22 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getSession(final SessionMode mode) {
 		ThreadVariables tv = getThreadVariables();
+		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
+		if (result == null) {
+			//			System.out.println("TEMP DEBUG: No session found of type " + mode.name() + " in thread "
+			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 
-		if (tv.sessionHolders[mode.index] == null) {
 			try {
 				ISessionFactory sf = tv.sessionFactories[mode.index] != null ? tv.sessionFactories[mode.index]
 						: defaultSessionFactories[mode.index];
 				if (sf != null) {
-					tv.sessionHolders[mode.index] = sf.createSession();
+					result = sf.createSession();
+					tv.sessionHolders[mode.index] = result;
 					// Per default. Session objects are not recycled by the ODA and thats OK so.
 					// this is our own session which will be recycled in terminate
-					tv.ownSessions.put(mode.alias, tv.sessionHolders[mode.index]);
+					tv.ownSessions.put(mode.alias, result);
+					//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
+					//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 				}
 			} catch (PrivilegedActionException ne) {
 				log_.log(Level.SEVERE, "Unable to get the session of type " + mode.alias
@@ -806,9 +825,11 @@ public enum Factory {
 						+ "If you are running in an Agent, make sure you start with a call to "
 						+ "Factory.setSession() and pass in your lotus.domino.Session", ne);
 			}
+		} else {
+			//			System.out.println("TEMP DEBUG: Found an existing session " + System.identityHashCode(result) + " of type " + mode.name()
+			//					+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 		}
-		return tv.sessionHolders[mode.index];
-
+		return result;
 	}
 
 	/**
@@ -829,7 +850,8 @@ public enum Factory {
 	 */
 	public static void setSession(final lotus.domino.Session session, final SessionMode mode) {
 		if (session instanceof org.openntf.domino.Session) {
-			throw new UnsupportedOperationException("You should not set an org.openntf.domino.session as Session");
+			getThreadVariables().sessionHolders[mode.index] = (org.openntf.domino.Session) session;
+			//			throw new UnsupportedOperationException("You should not set an org.openntf.domino.session as Session");
 		}
 		getThreadVariables().sessionHolders[mode.index] = fromLotus(session, Session.SCHEMA, null);
 	}
@@ -936,6 +958,10 @@ public enum Factory {
 		if (tv.serviceLocator == null) {
 			tv.serviceLocator = ServiceLocatorFinder.findServiceLocator();
 		}
+		if (tv.serviceLocator == null) {
+			throw new IllegalStateException("No service locator available so we cannot find the application services for "
+					+ serviceClazz.getName());
+		}
 
 		return tv.serviceLocator.findApplicationServices(serviceClazz);
 	}
@@ -980,6 +1006,9 @@ public enum Factory {
 		if (threadVariables_.get() != null) {
 			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly terminated or initialized twice");
 		}
+		//		System.out.println("TEMP DEBUG: Factory thread initializing.");
+		//		Throwable t = new Throwable();
+		//		t.printStackTrace();
 		threadVariables_.set(new ThreadVariables());
 	}
 
@@ -993,7 +1022,9 @@ public enum Factory {
 			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly initalized or terminated twice");
 			return;
 		}
-
+		//		System.out.println("TEMP DEBUG: Factory thread terminating.");
+		//		Throwable trace = new Throwable();
+		//		trace.printStackTrace();
 		try {
 
 			for (Runnable term : terminateHooks) {

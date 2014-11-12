@@ -577,6 +577,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						for (MIMEEntity currEntity : currEntitySet)
 							((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 					}
+				} else {
+					log_.log(Level.FINE, "A request was made to close MIMEEntity " + entityItemName
+							+ " but that entity isn't currently open");
 				}
 			}
 			boolean ret = false;
@@ -780,7 +783,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Set<MIMEEntity> entityGroup = openMIMEEntities.get(lcName);
 			if (entityGroup == null) {
 				entityGroup = new FastSet<MIMEEntity>();
-				openMIMEEntities.put(itemName, entityGroup);
+				openMIMEEntities.put(lcName, entityGroup);
 			}
 			entityGroup.add(wrapped);
 		}
@@ -1542,7 +1545,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			if (convertMime)
 				getAncestorSession().setConvertMime(false);
 			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName, false);
-
 			if (openMIMEEntities.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");
 				log_.warning("Accessing two different MIME items at once can cause a server crash!" + openMIMEEntities.keySet());
@@ -1829,7 +1831,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean hasItem(final String name) {
-		checkMimeOpen();
+		if (checkMimeOpen()) {
+			System.out.println("DEBUG: MimeEntity found open while checking for item name " + name);
+		}
 		try {
 			if (name == null) {
 				return false;
@@ -3271,8 +3275,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3518,13 +3522,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3556,13 +3560,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");

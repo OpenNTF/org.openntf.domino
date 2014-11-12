@@ -8,9 +8,7 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsBaseTasklet;
-import org.openntf.domino.xots.XotsDaemon;
 
-import com.ibm.designer.runtime.Application;
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.application.DesignerApplicationEx;
 import com.ibm.xsp.application.events.ApplicationListener2;
@@ -22,8 +20,11 @@ public class XotsApplicationListener implements ApplicationListener2 {
 	@Override
 	public void applicationCreated(final ApplicationEx app) {
 		if (app instanceof DesignerApplicationEx) {
-			Application designerApp = ((DesignerApplicationEx) app).getDesignerApplication();
-			XotsDaemon.queue(new XotsRefresher(designerApp.getAppName()));
+			//NTF The following code block destroys all XPages execution on the server
+			//   At this time, I don't know why.
+
+			//			Application designerApp = ((DesignerApplicationEx) app).getDesignerApplication();
+			//			XotsDaemon.queue(new XotsRefresher(designerApp.getAppName()));
 		}
 	}
 
@@ -34,8 +35,11 @@ public class XotsApplicationListener implements ApplicationListener2 {
 	@Override
 	public void applicationRefreshed(final ApplicationEx app) {
 		if (app instanceof DesignerApplicationEx) {
-			Application designerApp = ((DesignerApplicationEx) app).getDesignerApplication();
-			XotsDaemon.queue(new XotsRefresher(designerApp.getAppName()));
+			//NTF The following code block destroys all XPages execution on the server
+			//   At this time, I don't know why.
+
+			//			Application designerApp = ((DesignerApplicationEx) app).getDesignerApplication();
+			//			XotsDaemon.queue(new XotsRefresher(designerApp.getAppName()));
 		}
 	}
 

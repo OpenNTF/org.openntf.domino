@@ -277,7 +277,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * Constructor
 	 */
 	public OpenntfDominoImplicitObjectFactory2() {
-		// System.out.println("Created implicit object factory 2");
+		System.out.println("Created implicit object factory 2");
 	}
 
 	/**
@@ -364,6 +364,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			}
 			if (rawDatabase != null) {
 				database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
+				session.setCurrentDatabase(database);
 				//				Factory.setNoRecycle(database, true);
 				localMap.put(dbKey, database);
 			} else {
@@ -473,10 +474,11 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		if (!isAppLibrarySet(ctx))
 			return;
 		if (isAppDebug(ctx)) {
-			System.out.println("DEBUG: Beginning creation of implicit objects...");
+			System.out.println("DEBUG: Beginning creation of OpenNTF implicit objects...");
 		}
 		// TODO RPr: I enabled the "setClassLoader" here
 		//		Factory.init();
+		Factory.initThread();
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
 		// hopefully locating the app will work now
@@ -492,7 +494,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					+ Thread.currentThread().getId() + " servicing a request for " + ctx.getExternalContext().getRequestPathInfo());
 		}
 		if (isAppDebug(ctx)) {
-			System.out.println("DEBUG: Done creating implicit objects.");
+			System.out.println("DEBUG: Done creating OpenNTF implicit objects.");
 		}
 	}
 
@@ -513,9 +515,12 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @see com.ibm.xsp.el.ImplicitObjectFactory#destroyImplicitObjects(javax.faces.context.FacesContext)
 	 */
 	@Override
-	public void destroyImplicitObjects(final FacesContext paramFacesContext) {
+	public void destroyImplicitObjects(final FacesContext ctx) {
 		//		System.out.println("TEMP DEBUG: destroyImplicitObjects called.");
 		//		Factory.terminate();	//TODO NTF keep here?
+		if (!isAppLibrarySet(ctx))
+			return;
+		Factory.termThread();
 	}
 
 	/*
