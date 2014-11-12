@@ -57,13 +57,9 @@ public class Create200KBenchmark {
 	}
 
 	/**
-	 * <<<<<<< HEAD
+	 * The main method.
 	 * 
 	 * @param args
-	 *            ======= The main method.
-	 * 
-	 * @param args
-	 *            the arguments >>>>>>> origin/declan
 	 */
 	public static void main(final String[] args) {
 		DominoThread dt = new DominoThread(new DocCreator(), "Create One Million Docs");
