@@ -368,7 +368,6 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			if (rawDatabase != null) {
 				database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
 				//				Factory.setNoRecycle(database, true);
-
 				localMap.put(dbKey, database);
 			} else {
 				System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
