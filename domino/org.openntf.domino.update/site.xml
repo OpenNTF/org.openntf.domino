@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/org.openntf.domino.feature_1.5.0.201411061419.jar" id="org.openntf.domino.feature" version="1.5.0.201411061419">
-      <category name="org.openntf.domino"/>
-   </feature>
-   <category-def name="org.openntf.domino" label="OpenNTF Domino API"/>
-</site>
