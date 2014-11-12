@@ -52,6 +52,7 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NamedSessionFactory;
@@ -575,7 +576,7 @@ public enum Factory {
 				List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
 				wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
 			} catch (Throwable t) {
-				t.printStackTrace();
+				log_.log(Level.WARNING, "Getting default WrapperFactory", t);
 				wf = new org.openntf.domino.impl.WrapperFactory();
 			}
 			tv.wrapperFactory = wf;
@@ -1154,6 +1155,20 @@ public enum Factory {
 				scanner.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("Cannot read notes.ini. Giving up");
+				e.printStackTrace();
+			}
+
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						Logging.getInstance().startUp();
+						return null;
+					}
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
 				e.printStackTrace();
 			}
 

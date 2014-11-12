@@ -9,3 +9,8 @@ de.foconis.test/history.txt
 /org.openntf.domino.designer.sdk
 /org.openntf.domino.plugin
 /org.openntf.domino.xsp.update
+domino/org.openntf.domino.updatesite/features/
+domino/org.openntf.domino.updatesite/plugins/
+domino/org.openntf.domino.updatesite/artifacts.jar
+domino/org.openntf.domino.updatesite/content.jar
+domino/externals/asm/.project
