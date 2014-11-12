@@ -92,14 +92,13 @@ public class OpenntfHttpService extends HttpService {
 	public boolean doService(final String contextPath, final String path, final HttpSessionAdapter httpSession,
 			final HttpServletRequestAdapter httpRequest, final HttpServletResponseAdapter httpResponse) throws ServletException,
 			IOException {
-
-		//FIXME We really should have a registry of the paths that are using the API so we only
+		System.out.println("DEBUG: The OpenntfHttpService has received an HttpRequest!");
 		return false;
 	}
 
 	@Override
 	public int getPriority() {
-		return 1000; // the higher the later this serice will queried 
+		return 1000; // the higher the later this service will queried 
 	}
 
 	/*

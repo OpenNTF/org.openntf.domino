@@ -24,10 +24,11 @@ public abstract class AbstractDominoRunnable extends Observable implements XotsT
 
 	private volatile boolean shouldStop_ = false;
 	private Thread runningThread_;
+	private ISessionFactory sessionFactory_;
 
 	@Override
 	public ISessionFactory getSessionFactory() {
-		return null;
+		return sessionFactory_;
 	}
 
 	@Override

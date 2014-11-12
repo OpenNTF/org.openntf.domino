@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: JUnit for XPages
 Bundle-SymbolicName: org.openntf.junit4xpages;singleton:=true
 Bundle-Activator: org.openntf.junit4xpages.Activator
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 4.11.0.qualifier
 Bundle-Vendor: Foconis AG
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: com.ibm.xsp.domino,
