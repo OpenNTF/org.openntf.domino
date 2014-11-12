@@ -38,7 +38,6 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.RichTextStyle.BoldStyle;
 import org.openntf.domino.email.DominoEmail;
 import org.openntf.domino.helpers.DocumentScanner;
-import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -57,11 +56,10 @@ public class Utils {
 
 	}
 
-	public static String doChecks(DateTime dt1, DateTime dt2) {
+	public static String doChecks(final DateTime dt1, final DateTime dt2) {
 		Factory.getSession().boogie();
 		StringBuilder s = new StringBuilder();
-		s.append("Comparing Date 1 " + dt1.toJavaDate().toString() + " and Date 2 " + dt2.toJavaDate().toString()
-				+ "<br/>");
+		s.append("Comparing Date 1 " + dt1.toJavaDate().toString() + " and Date 2 " + dt2.toJavaDate().toString() + "<br/>");
 		if (dt1.isBefore(dt2)) {
 			s.append("Date 1 before Date 2");
 		} else {
@@ -104,7 +102,7 @@ public class Utils {
 		return dmp.diff_prettyHtml(ll);
 	}
 
-	public static void handleException(Throwable e) {
+	public static void handleException(final Throwable e) {
 		FacesContext.getCurrentInstance().addMessage("", new FacesMessage(e.getLocalizedMessage()));
 	}
 
@@ -162,7 +160,7 @@ public class Utils {
 		XspOpenLogUtil.getXspOpenLogItem().logEvent(null, "Test message", Level.FINE, doc);
 	}
 
-	public static void transactionTest(boolean successOrFail) {
+	public static void transactionTest(final boolean successOrFail) {
 		StringBuilder sb = new StringBuilder();
 		Database db = Factory.getSession().getCurrentDatabase();
 		Utils.addAllListeners(db);
@@ -226,11 +224,11 @@ public class Utils {
 		return retVal_;
 	}
 
-	public static void addAllListeners(Database currDb) {
+	public static void addAllListeners(final Database currDb) {
 		currDb.addListener(new TestDocumentListener());
 	}
 
-	public static void XSPUtilsTest(DominoDocument doc) {
+	public static void XSPUtilsTest(final DominoDocument doc) {
 		Document beDoc = XspUtils.getBEDoc(doc);
 		String unid = beDoc.getUniversalID();
 		ExtLibUtil.getViewScope().put("javaTest", "Document UNID is " + unid);
@@ -246,7 +244,7 @@ public class Utils {
 		rts.setBold(BoldStyle.ISBN_9780133258936);
 	}
 
-	public static void sendMail(String p_HTML) {
+	public static void sendMail(final String p_HTML) {
 		DominoEmail myEmail = new DominoEmail();
 		ArrayList<String> to = new ArrayList<String>();
 		to.add("paulswithers@hotmail.co.uk");
@@ -292,7 +290,7 @@ public class Utils {
 	public static void runXotsTasklet() {
 		ExtLibUtil.getApplicationScope().put("MessageFromXots", "Initial  (set from Util)");
 		XotsBasic testRun = new org.openntf.domino.xotsTests.XotsBasic();
-		testRun.setSessionType(DominoSessionType.NATIVE);
+		//testRun.setSessionType(DominoSessionType.NATIVE);
 		testRun.queue();
 		ExtLibUtil.getApplicationScope().put("MessageFromXotsConstructor", "Should be complete now (set from util)");
 	}
