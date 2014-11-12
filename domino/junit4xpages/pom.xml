@@ -13,6 +13,7 @@
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 	</build>
+	<version>4.11.0.qualifier</version>
 	<organization>
 		<name>OpenNTF</name>
 		<url>http://www.openntf.org</url>
