@@ -11,6 +11,10 @@ import org.openntf.domino.ext.Session.Fixes;
 public class NativeSessionFactory extends AbstractSessionFactory {
 	private static final long serialVersionUID = 1L;
 
+	public NativeSessionFactory() {
+		super();
+	}
+
 	public NativeSessionFactory(final Session source) {
 		super(source);
 	}

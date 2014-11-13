@@ -9,6 +9,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class SimpleTest implements Runnable {
 	public static void main(final String[] args) {
@@ -25,7 +26,7 @@ public class SimpleTest implements Runnable {
 	public void run() {
 		Factory.enableCounters(true, false);
 
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 		Database d = s.getDatabase("", "names.nsf");
 		List<String> ids = new ArrayList<String>();
 

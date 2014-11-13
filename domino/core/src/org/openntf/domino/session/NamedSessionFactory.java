@@ -12,6 +12,11 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 	private static final long serialVersionUID = 1L;
 	final private String runAs_;
 
+	public NamedSessionFactory(final String runAs) {
+		super();
+		runAs_ = runAs;
+	}
+
 	public NamedSessionFactory(final org.openntf.domino.Session source) {
 		super(source);
 		runAs_ = source.getEffectiveUserName();
@@ -55,6 +60,12 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 			}
 		}, acc_);
 		return fromLotus(raw);
+	}
+
+	@Override
+	public ISessionFactory getNamedFactory(final String userName) {
+
+		return new NamedSessionFactory(this, userName);
 	}
 
 }

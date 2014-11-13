@@ -15,6 +15,7 @@ import org.openntf.domino.design.IconNote;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.junit.TestProps;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class SessionTestEx {
@@ -22,7 +23,7 @@ public class SessionTestEx {
 	@Test
 	public void TestNativeSession() {
 
-		Session sess = Factory.getSession();
+		Session sess = Factory.getSession(SessionType.CURRENT);
 		assertFalse(sess.isTrustedSession());
 		assertFalse(sess.isAnonymous());
 		assertFalse(sess.isRestricted());
@@ -39,7 +40,7 @@ public class SessionTestEx {
 
 	@Test
 	public void TestTrustedSession() {
-		Session sess = Factory.getTrustedSession();
+		Session sess = Factory.getSession(SessionType.TRUSTED);
 		assertTrue(sess.isTrustedSession());
 		assertFalse(sess.isAnonymous());
 		assertFalse(sess.isRestricted());
@@ -78,7 +79,7 @@ public class SessionTestEx {
 	@Test
 	public void TestFullAccessSession() {
 		//Session master = Factory.fromLotus(masterSession, Session.SCHEMA, null);
-		Session normal = Factory.getSession();
+		Session normal = Factory.getSession(SessionType.CURRENT);
 		//Session sess = Factory.getNamedSession("CN=Theo Tester/OU=test/O=FOCONIS", true);
 		Session sess = Factory.getNamedSession(TestProps.SESSION_USER, false);
 		//assertNotSame(master, sess);

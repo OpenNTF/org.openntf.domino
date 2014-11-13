@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.iterators;
 
+import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.openntf.domino.ViewEntry;
@@ -12,7 +13,7 @@ import org.openntf.domino.ViewNavigator;
  * @author Nathan T. Freeman
  * 
  */
-public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry> {
+public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewNavigatorEntryIterator.class.getName());
 
@@ -23,18 +24,6 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	private transient ViewEntry currentEntry_;
 	private transient ViewEntry nextEntry_;
 
-	/** The started_. */
-	private boolean started_;
-
-	/** The done_. */
-	private boolean done_;
-
-	/** The count_. */
-	private int count_ = 0;
-
-	/** The current index_. */
-	private int currentIndex_ = 0;
-
 	/**
 	 * Instantiates a new view entry iterator.
 	 * 
@@ -42,9 +31,7 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	 *            the navigator
 	 */
 	public ViewNavigatorEntryIterator(final ViewNavigator navigator) {
-		super(navigator);
 		navigator_ = navigator;
-		//		// TODO replace this with a less-expensive operation
 	}
 
 	public ViewNavigator getNavigator() {

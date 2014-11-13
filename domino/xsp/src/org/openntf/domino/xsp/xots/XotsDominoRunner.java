@@ -19,7 +19,7 @@ import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.thread.AbstractDominoRunner;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.commons.util.ThreadLock;
 import com.ibm.commons.util.ThreadLockManager;
@@ -154,7 +154,7 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 					// As soon as we are in a xspnsf, we do not have a SessionFactory!
 
 					if (sessionFactory == null) {
-						Factory.setSession(ctx.getCurrentSession(), SessionMode.DEFAULT);
+						Factory.setSession(ctx.getCurrentSession(), SessionType.DEFAULT);
 					}
 
 					System.out.println("Loading Class from NSF:" + url);
@@ -164,15 +164,15 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 					Session signerSession = ctx.getSessionAsSigner(true);
 
 					if (signerSession != null) {
-						Factory.setSession(signerSession, SessionMode.SESSION_AS_SIGNER);
+						Factory.setSession(signerSession, SessionType.SESSION_AS_SIGNER);
 						System.out.println("Code signer is " + signerSession.getUserName());
 					} else {
-						Factory.setSession(null, SessionMode.SESSION_AS_SIGNER);
+						Factory.setSession(null, SessionType.SESSION_AS_SIGNER);
 					}
 
 				} else {
-					Factory.setSessionFactory(sessionFactory, SessionMode.DEFAULT);
-					Factory.setSessionFactory(sessionFactory, SessionMode.SESSION_AS_SIGNER);
+					Factory.setSessionFactory(sessionFactory, SessionType.DEFAULT);
+					Factory.setSessionFactory(sessionFactory, SessionType.SESSION_AS_SIGNER);
 				}
 			}
 

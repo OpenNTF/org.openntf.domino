@@ -6,7 +6,6 @@ import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -18,12 +17,8 @@ import org.openntf.domino.utils.Factory.SessionType;
 public class DominoRunner extends AbstractDominoRunner {
 	private static final Logger log_ = Logger.getLogger(DominoRunner.class.getName());
 
-	public <T> DominoRunner(final Callable<T> callable, final ISessionFactory sessionFactory) {
-		super(callable, sessionFactory);
-	}
-
-	public DominoRunner(final Runnable runnable, final ISessionFactory sessionFactory) {
-		super(runnable, sessionFactory);
+	public <T> DominoRunner(final Callable<T> callable) {
+		super(callable);
 	}
 
 	public DominoRunner(final Runnable runnable) {
@@ -44,7 +39,7 @@ public class DominoRunner extends AbstractDominoRunner {
 
 		try {
 			Factory.setClassLoader(runCl);
-			Factory.setSessionFactory(sessionFactory, SessionType.DEFAULT);
+			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
 			AccessControlContext runContext = getAccessControlContext();
 			if (runContext == null) {
 				super.runNotes();

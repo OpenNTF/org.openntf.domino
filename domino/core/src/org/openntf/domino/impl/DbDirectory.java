@@ -555,6 +555,11 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
+			if (log_.isLoggable(java.util.logging.Level.FINE)) {
+				Throwable t = new Throwable();
+				log_.log(java.util.logging.Level.FINE, "DbDirectory for server " + name_ + "had been recycled and was auto-restored.", t);
+			}
+
 			setDelegate(dir, 0);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);

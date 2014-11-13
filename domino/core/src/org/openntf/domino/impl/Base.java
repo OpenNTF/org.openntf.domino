@@ -396,7 +396,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	void setDelegate(final D delegate, final long cppId) {
 		if (delegate != null) {
 			getFactory().recacheLotusObject(delegate_, delegate, this, parent_);
-			if (log_.isLoggable(Level.FINE)) {
+			if (log_.isLoggable(Level.FINEST)) {
 				log_.log(Level.FINE, "Object of " + this.getClass().getName() + " was recached. Changes may be lost", new Throwable());
 			}
 		}

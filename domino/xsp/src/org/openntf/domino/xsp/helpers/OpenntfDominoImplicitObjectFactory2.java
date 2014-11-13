@@ -13,7 +13,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspLibrary;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
@@ -307,7 +307,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			if (rawSession != null) {
 				try {
 					rawSession.isConvertMIME();
-					Factory.setSession(rawSession, SessionMode.DEFAULT);
+					Factory.setSession(rawSession, SessionType.DEFAULT);
 					// TODO RPr: Should we add session as signer also?
 
 					session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);

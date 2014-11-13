@@ -62,6 +62,7 @@ import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.commons.util.StringUtil;
 
@@ -130,7 +131,6 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	protected final String _logFormName = "LogEvent";
 	protected String _logDbName = "";
 	protected String _thisDatabase;
-	protected String _thisServer;
 	protected String _thisAgent;
 	protected Boolean _logSuccess = true;
 	protected String _accessLevel;
@@ -222,16 +222,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	@Override
 	public String getThisServer() {
-		if (_thisServer == null) {
-			try {
-				_thisServer = Factory.getSession().getServerName();
-				if (_thisServer == null)
-					_thisServer = "";
-			} catch (Exception e) {
-				debugPrint(e);
-			}
-		}
-		return _thisServer;
+		return Factory.getLocalServerName();
 	}
 
 	/**
@@ -259,7 +250,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public Database getLogDb() {
 		if (_logDb == null) {
 			try {
-				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
+				_logDb = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), getLogDbName(), false);
 			} catch (Exception e) {
 				debugPrint(e);
 			}

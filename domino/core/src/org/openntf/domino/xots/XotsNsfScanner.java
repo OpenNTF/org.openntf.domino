@@ -14,12 +14,13 @@ import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.model.Context;
 import org.openntf.domino.thread.model.Schedule;
 import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.SessionType;
+import org.openntf.domino.thread.model.XotsSessionType;
 import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
-@XotsTasklet(session = SessionType.NATIVE, scope = Scope.NONE, context = Context.XOTS)
+@XotsTasklet(session = XotsSessionType.NATIVE, scope = Scope.NONE, context = Context.XOTS)
 /**
  * A Runnable that scans for tasklet classes on a specified server
  * 
@@ -52,7 +53,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	 * Scans all databases on the specified server
 	 */
 	public void scan() {
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT); // Returns a XotsSessionType.NATIVE
 		DbDirectory dir = session.getDbDirectory(getServerName());
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
 		for (Database db : dir) {

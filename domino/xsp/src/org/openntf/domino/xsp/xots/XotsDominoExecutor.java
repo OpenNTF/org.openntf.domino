@@ -7,7 +7,7 @@ import org.openntf.domino.thread.AbstractDominoRunner;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.thread.DominoRunner;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -27,11 +27,11 @@ public class XotsDominoExecutor extends DominoExecutor {
 		NSFComponentModule module = ctx == null ? null : ctx.getModule();
 
 		if (module == null) {
-			ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+			ISessionFactory sf = Factory.getSessionFactory(SessionType.DEFAULT);
 			return new DominoRunner(runnable, sf);
 		} else {
 			// TODO we must clone the session here
-			ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+			ISessionFactory sf = Factory.getSessionFactory(SessionType.DEFAULT);
 			return new XotsDominoRunner(module, runnable, sf);
 		}
 	}
@@ -45,11 +45,11 @@ public class XotsDominoExecutor extends DominoExecutor {
 		NSFComponentModule module = ctx == null ? null : ctx.getModule();
 
 		if (module == null) {
-			ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+			ISessionFactory sf = Factory.getSessionFactory(SessionType.DEFAULT);
 			return new DominoRunner(callable, sf).asCallable(callable);
 		} else {
 			// TODO we must clone the session here
-			ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+			ISessionFactory sf = Factory.getSessionFactory(SessionType.DEFAULT);
 			return new XotsDominoRunner(module, callable, sf).asCallable(callable);
 		}
 	}

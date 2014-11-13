@@ -3,16 +3,15 @@ package org.openntf.domino.thread;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import lotus.domino.AgentBase;
-import lotus.domino.NotesException;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.session.ISessionFactory;
-import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.thread.model.Context;
 import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.SessionType;
+import org.openntf.domino.thread.model.XotsSessionType;
 import org.openntf.domino.thread.model.XotsTasklet;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * A Wrapper for runnables
@@ -23,11 +22,11 @@ public class AbstractDominoRunner extends DominoThread {
 	private static final Logger log_ = Logger.getLogger(AbstractDominoRunner.class.getName());
 
 	/** the context when this object was created */
-	protected ISessionFactory sessionFactory;
+	//protected ISessionFactory sessionFactory;
 
-	protected String runAs;
 	protected Scope scope;
 	protected Context context;
+	protected ISessionFactory sessionFactory;
 
 	protected static class CallableToRunnable<T> implements Runnable {
 		private final Callable<T> callable_;
@@ -49,10 +48,6 @@ public class AbstractDominoRunner extends DominoThread {
 	}
 
 	public AbstractDominoRunner(final Runnable runnable) {
-		this(runnable, null); // CHECKME: should we use AccessController.getContext()
-	}
-
-	public AbstractDominoRunner(final Runnable runnable, final ISessionFactory sessionFactory) {
 		super(runnable);
 		if (runnable instanceof NotesThread) {
 			throw new IllegalStateException("Cannot wrap the NotesThread " + runnable.getClass().getName() + " into a DominoRunner");
@@ -60,11 +55,10 @@ public class AbstractDominoRunner extends DominoThread {
 		if (runnable instanceof AbstractDominoRunner) {
 			throw new IllegalStateException("Cannot wrap the DominoRunner " + runnable.getClass().getName() + " into a DominoRunner");
 		}
-		this.sessionFactory = sessionFactory;
 		init(runnable);
 	}
 
-	public <T> AbstractDominoRunner(final Callable<T> callable, final ISessionFactory sessionFactory) {
+	public <T> AbstractDominoRunner(final Callable<T> callable) {
 		super(new CallableToRunnable<T>(callable));
 		if (callable instanceof NotesThread) {
 			throw new IllegalStateException("Cannot wrap the NotesThread " + callable.getClass().getName() + " into a DominoRunner");
@@ -74,7 +68,6 @@ public class AbstractDominoRunner extends DominoThread {
 			throw new IllegalStateException("Cannot wrap the WrappedCallable " + ((WrappedCallable) callable).wrapper.getClass().getName()
 					+ " into a DominoRunner");
 		}
-		this.sessionFactory = sessionFactory;
 		init(callable);
 	}
 
@@ -94,37 +87,53 @@ public class AbstractDominoRunner extends DominoThread {
 
 		if (runnable instanceof XotsTasklet.Interface) {
 			XotsTasklet.Interface dominoRunnable = (XotsTasklet.Interface) runnable;
-			ISessionFactory sf = dominoRunnable.getSessionFactory();
-			if (sf != null) {
-				sessionFactory = sf;
-			}
+			sessionFactory = dominoRunnable.getSessionFactory();
 			scope = dominoRunnable.getScope();
-			runAs = dominoRunnable.getRunAs();
 			context = dominoRunnable.getContext();
 		}
 
-		lotus.domino.Session currentSession = AgentBase.getAgentSession();
-		if (currentSession != null) {
-			if (runAs == null) {
-				try {
-					runAs = currentSession.getEffectiveUserName();
-				} catch (NotesException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 		XotsTasklet annot = runnable.getClass().getAnnotation(XotsTasklet.class);
 		if (annot != null) {
-			if (annot.session() == SessionType.NATIVE) {
-				sessionFactory = new NativeSessionFactory(sessionFactory);
+			if (sessionFactory == null) {
+				switch (annot.session()) {
+				case CLONE:
+					sessionFactory = Factory.getSessionFactory(SessionType.CURRENT);
+					break;
+				case CLONE_FULL_ACCESS:
+					sessionFactory = Factory.getSessionFactory(SessionType.CURRENT_FULL_ACCESS);
+					break;
+
+				case FULL_ACCESS:
+					sessionFactory = Factory.getSessionFactory(SessionType.FULL_ACCESS);
+					break;
+
+				case NATIVE:
+					sessionFactory = Factory.getSessionFactory(SessionType.NATIVE);
+					break;
+
+				case NONE:
+					sessionFactory = null;
+					break;
+
+				case SIGNER:
+					sessionFactory = Factory.getSessionFactory(SessionType.SIGNER);
+					break;
+
+				case SIGNER_FULL_ACCESS:
+					sessionFactory = Factory.getSessionFactory(SessionType.SIGNER_FULL_ACCESS);
+					break;
+
+				case TRUSTED:
+					sessionFactory = Factory.getSessionFactory(SessionType.TRUSTED);
+					break;
+
+				default:
+					break;
+				}
+				if ((annot.session() != XotsSessionType.NONE) && sessionFactory == null) {
+					throw new IllegalStateException("Could not create a Fatory for " + annot.session());
+				}
 			}
-			//			if (sessionType == null) {
-			//				sessionType = annot.session();
-			//			}
-			//			if (sessionType == null) {
-			//				sessionType = SessionType.DEFAULT;
-			//			}
 
 			if (context == null) {
 				context = annot.context();

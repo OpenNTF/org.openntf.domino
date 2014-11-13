@@ -10,6 +10,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class Create200K {
 	private static final Logger log_ = Logger.getLogger(Create200K.class.getName());
@@ -20,7 +21,7 @@ public class Create200K {
 		public void run() {
 			Document doc = null;
 			System.out.println("START Creation of Documents");
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Set<Document> docset = new HashSet<Document>();
 			Database db = s.getDatabase("", "OneMillion.nsf", true);
 			if (!db.isOpen()) {

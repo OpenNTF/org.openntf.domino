@@ -1057,6 +1057,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
 	public void recycle() {
 		//		System.out.println("Recycle called on document " + getNoteID());
 		closeMIMEEntities(false, null);

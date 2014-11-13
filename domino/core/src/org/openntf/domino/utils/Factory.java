@@ -825,46 +825,45 @@ public enum Factory {
 		return getWrapperFactory().toLotus(base);
 	}
 
-	// RPr: currently completely disabled, so that I can fix the rest of my code ;)
-	//	/**
-	//	 * Gets the session.
-	//	 * 
-	//	 * @return the session
-	//	 */
-	//	@Deprecated
-	//	public static org.openntf.domino.Session getSession() {
-	//		return getSession(SessionType.CURRENT);
-	//	}
-	//
-	//	/**
-	//	 * Gets the session full access.
-	//	 * 
-	//	 * @return the session full access
-	//	 */
-	//	@Deprecated
-	//	public static org.openntf.domino.Session getSessionFullAccess() {
-	//		return getSession(SessionType.FULL_ACCESS);
-	//	}
-	//
-	//	/**
-	//	 * Gets the trusted session.
-	//	 * 
-	//	 * @return the trusted session
-	//	 */
-	//	@Deprecated
-	//	public static org.openntf.domino.Session getTrustedSession() {
-	//		return getSession(SessionType.TRUSTED);
-	//	}
-	//
-	//	/**
-	//	 * Gets the trusted session.
-	//	 * 
-	//	 * @return the trusted session
-	//	 */
-	//	@Deprecated
-	//	public static org.openntf.domino.Session getSessionAsSigner() {
-	//		return getSession(SessionType.SIGNER);
-	//	}
+	/**
+	 * Gets the session.
+	 * 
+	 * @return the session
+	 */
+	@Deprecated
+	public static org.openntf.domino.Session getSession() {
+		return getSession(SessionType.CURRENT);
+	}
+
+	/**
+	 * Gets the session full access.
+	 * 
+	 * @return the session full access
+	 */
+	@Deprecated
+	public static org.openntf.domino.Session getSessionFullAccess() {
+		return getSession(SessionType.FULL_ACCESS);
+	}
+
+	/**
+	 * Gets the trusted session.
+	 * 
+	 * @return the trusted session
+	 */
+	@Deprecated
+	public static org.openntf.domino.Session getTrustedSession() {
+		return getSession(SessionType.TRUSTED);
+	}
+
+	/**
+	 * Gets the trusted session.
+	 * 
+	 * @return the trusted session
+	 */
+	@Deprecated
+	public static org.openntf.domino.Session getSessionAsSigner() {
+		return getSession(SessionType.SIGNER);
+	}
 
 	/**
 	 * 

@@ -22,6 +22,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class MassDeleteDocumentsScratchTest {
@@ -31,7 +32,7 @@ public class MassDeleteDocumentsScratchTest {
 	@Test
 	public void run() {
 
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 		Database source = s.getDatabase("", TARGET, true);
 
 		System.out.println("-- START --");

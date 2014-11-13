@@ -20,6 +20,13 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 
 	private String currentApiPath_;
 
+	public AbstractSessionFactory() {
+
+		this(Fixes.values(), 		// it is always a good idea to enable ALL fixes
+				AutoMime.WRAP_32K,	// CHECKME RPr: this is the best choice for FOCONIS. For others, too?
+				null); 				// All the default sessionfactories do not have a contextDB
+	}
+
 	public AbstractSessionFactory(final Fixes[] fixes, final AutoMime autoMime, final String apiPath) {
 		fixes_ = fixes;
 		autoMime_ = autoMime;
