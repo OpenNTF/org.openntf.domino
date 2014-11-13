@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: jsr305
+Bundle-SymbolicName: jsr305
+Bundle-Version: 1.0.0.qualifier
+Export-Package: javax.annotation,
+ javax.annotation.concurrent,
+ javax.annotation.meta
+Bundle-ClassPath: .

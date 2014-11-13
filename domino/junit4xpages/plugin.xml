@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!-- needed to appear in designer -->
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.junit4xpages.Library"
+            type="com.ibm.xsp.Library">
+      </service>
+   </extension>
+</plugin>
