@@ -58,6 +58,8 @@ import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
+import org.openntf.domino.thread.model.XotsSessionType;
+import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;
@@ -75,13 +77,64 @@ public enum Factory {
 	 * @author Roland Praml, FOCONIS AG
 	 * 
 	 */
-	public enum SessionMode {
-		DEFAULT(0, "DEFAULT"), TRUSTED(1, "TRUSTED"), FULL_ACCESS(2, "FULL_ACCESS"), SESSION_AS_SIGNER(3, "SESSION_AS_SIGNER");
-		static int SIZE = 4;
+	public enum SessionType {
+		/**
+		 * The current session. This means:
+		 * 
+		 * <ul>
+		 * <li>The current XPage session, if you are IN a XPage-Thread. This is equivalent to the "session" SSJS variable</li>
+		 * <li>The current XOTS session, if you are IN a XOTS-Thread. <br>
+		 * This is either the session that {@link XotsTasklet.Interface#getSessionFactory()} can create (if the Runnable implements that
+		 * interface and provide a Factory)<br>
+		 * or the session, you specified for that runnable with the {@link XotsTasklet#session()} annotation. See {@link XotsSessionType}
+		 * for available types.
+		 * </ul>
+		 * <b>The Method will fail, if you are running in a wrongly set up Thread</b><br>
+		 * (But there should be only XPage-Threads or XOTS-Threads. TODO RPr: and maybe DominoTheads)
+		 */
+		CURRENT(0, "CURRENT"),
+
+		/**
+		 * Returns a session with full access. This is a named session (name is equal to {@link #CURRENT}s session name) but with full
+		 * access rights. {@link #FULL_ACCESS} may provide the same session as {@link #CURRENT} if the Runnable was annotated with a
+		 * *_FULL_ACCESS {@link XotsSessionType}
+		 */
+		CURRENT_FULL_ACCESS(1, "CURRENT_FULL_ACCESS"),
+
+		/**
+		 * Returns a named session as signer. The code-signer is either the server (if the runnable is not inside an NSF) or the signer of
+		 * that runnable. <br>
+		 * <b>Note 1:</b> This session becomes invalid, if you the classloader gets tainted by loading classes that are signed by different
+		 * users! <br/>
+		 * <b>Note 2:</b> Due a bug, we return always SessionAsSigner (@see http://www.mydominolab.com/2011/10/xpages-sessionassigner.html)
+		 */
+		SIGNER(2, "SIGNER"),
+
+		/**
+		 * This is currently the SAME session as {@link #SIGNER} due a Bug in XPages.
+		 */
+		SIGNER_FULL_ACCESS(3, "SIGNER_FULL_ACCESS"),
+
+		/**
+		 * Returns a NATIVE session
+		 */
+		NATIVE(4, "NATIVE"),
+
+		/**
+		 * Returns a TRUSTED session (This does not yet work!)
+		 */
+		TRUSTED(5, "TRUSTED"),
+
+		/**
+		 * Returns a Session with full access.
+		 */
+		FULL_ACCESS(6, "FULL_ACCESS");
+
+		static int SIZE = 7;
 		int index;
 		String alias;
 
-		SessionMode(final int index, final String alias) {
+		SessionType(final int index, final String alias) {
 			this.index = index;
 			this.alias = alias;
 		}
@@ -156,10 +209,10 @@ public enum Factory {
 		private Locale userLocale;
 
 		/** the factories can create a new session */
-		public ISessionFactory[] sessionFactories = new ISessionFactory[SessionMode.SIZE];
+		public ISessionFactory[] sessionFactories = new ISessionFactory[SessionType.SIZE];
 
 		/** the sessions are stored in the sessionHolder */
-		private Session[] sessionHolders = new Session[SessionMode.SIZE];
+		private Session[] sessionHolders = new Session[SessionType.SIZE];
 
 		public INamedSessionFactory namedSessionFactory;
 		public INamedSessionFactory namedSessionFullAccessFactory;
@@ -172,7 +225,7 @@ public enum Factory {
 			wrapperFactory = null;
 			classLoader = null;
 			serviceLocator = null;
-			for (int i = 0; i < SessionMode.SIZE; i++) {
+			for (int i = 0; i < SessionType.SIZE; i++) {
 				sessionHolders[i] = null;
 				sessionFactories[i] = null;
 			}
@@ -183,7 +236,7 @@ public enum Factory {
 		}
 	}
 
-	private static ISessionFactory[] defaultSessionFactories = new ISessionFactory[SessionMode.SIZE];
+	private static ISessionFactory[] defaultSessionFactories = new ISessionFactory[SessionType.SIZE];
 	private static INamedSessionFactory defaultNamedSessionFactory;
 	private static INamedSessionFactory defaultNamedSessionFullAccessFactory;
 
@@ -626,11 +679,16 @@ public enum Factory {
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
 		T result = getWrapperFactory().fromLotus(lotus, schema, parent);
+
 		if (result instanceof org.openntf.domino.Session) {
 			ThreadVariables tv = getThreadVariables();
-			org.openntf.domino.Session check = tv.sessionHolders[SessionMode.DEFAULT.index];
+			org.openntf.domino.Session check = tv.sessionHolders[SessionType.CURRENT.index];
 			if (check == null) {
-				setSession((org.openntf.domino.Session) result, SessionMode.DEFAULT);
+				// TODO RPr: I have really objections to this.
+				// Setting the first session as default session is NOT nice
+				log_.log(Level.WARNING, "WARNING! Setting the Session " + result
+						+ " as CURRENT session. This means you run in a wrong initialized thread", new Throwable());
+				setSession((org.openntf.domino.Session) result, SessionType.CURRENT);
 			}
 		}
 		return result;
@@ -767,49 +825,53 @@ public enum Factory {
 		return getWrapperFactory().toLotus(base);
 	}
 
-	/**
-	 * Gets the session.
-	 * 
-	 * @return the session
-	 */
-
-	public static org.openntf.domino.Session getSession() {
-		return getSession(SessionMode.DEFAULT);
-	}
-
-	/**
-	 * Gets the session full access.
-	 * 
-	 * @return the session full access
-	 */
-	public static org.openntf.domino.Session getSessionFullAccess() {
-		return getSession(SessionMode.FULL_ACCESS);
-	}
-
-	/**
-	 * Gets the trusted session.
-	 * 
-	 * @return the trusted session
-	 */
-	public static org.openntf.domino.Session getTrustedSession() {
-		return getSession(SessionMode.TRUSTED);
-	}
-
-	/**
-	 * Gets the trusted session.
-	 * 
-	 * @return the trusted session
-	 */
-	public static org.openntf.domino.Session getSessionAsSigner() {
-		return getSession(SessionMode.SESSION_AS_SIGNER);
-	}
+	// RPr: currently completely disabled, so that I can fix the rest of my code ;)
+	//	/**
+	//	 * Gets the session.
+	//	 * 
+	//	 * @return the session
+	//	 */
+	//	@Deprecated
+	//	public static org.openntf.domino.Session getSession() {
+	//		return getSession(SessionType.CURRENT);
+	//	}
+	//
+	//	/**
+	//	 * Gets the session full access.
+	//	 * 
+	//	 * @return the session full access
+	//	 */
+	//	@Deprecated
+	//	public static org.openntf.domino.Session getSessionFullAccess() {
+	//		return getSession(SessionType.FULL_ACCESS);
+	//	}
+	//
+	//	/**
+	//	 * Gets the trusted session.
+	//	 * 
+	//	 * @return the trusted session
+	//	 */
+	//	@Deprecated
+	//	public static org.openntf.domino.Session getTrustedSession() {
+	//		return getSession(SessionType.TRUSTED);
+	//	}
+	//
+	//	/**
+	//	 * Gets the trusted session.
+	//	 * 
+	//	 * @return the trusted session
+	//	 */
+	//	@Deprecated
+	//	public static org.openntf.domino.Session getSessionAsSigner() {
+	//		return getSession(SessionType.SIGNER);
+	//	}
 
 	/**
 	 * 
 	 * @param mode
 	 * @return
 	 */
-	public static org.openntf.domino.Session getSession(final SessionMode mode) {
+	public static org.openntf.domino.Session getSession(final SessionType mode) {
 		ThreadVariables tv = getThreadVariables();
 		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
 		if (result == null) {
@@ -848,9 +910,9 @@ public enum Factory {
 	 * 
 	 * @return the session
 	 */
-	public static org.openntf.domino.Session getSession_unchecked() {
+	public static org.openntf.domino.Session getSession_unchecked(final SessionType type) {
 		ThreadVariables tv = threadVariables_.get();
-		return tv == null ? null : tv.sessionHolders[SessionMode.DEFAULT.index];
+		return tv == null ? null : tv.sessionHolders[type.index];
 	}
 
 	/**
@@ -859,7 +921,7 @@ public enum Factory {
 	 * @param session
 	 * @param mode
 	 */
-	public static void setSession(final lotus.domino.Session session, final SessionMode mode) {
+	public static void setSession(final lotus.domino.Session session, final SessionType mode) {
 		if (session instanceof org.openntf.domino.Session) {
 			getThreadVariables().sessionHolders[mode.index] = (org.openntf.domino.Session) session;
 			//			throw new UnsupportedOperationException("You should not set an org.openntf.domino.session as Session");
@@ -867,11 +929,11 @@ public enum Factory {
 		getThreadVariables().sessionHolders[mode.index] = fromLotus(session, Session.SCHEMA, null);
 	}
 
-	public static void setSessionFactory(final ISessionFactory sessionFactory, final SessionMode mode) {
+	public static void setSessionFactory(final ISessionFactory sessionFactory, final SessionType mode) {
 		getThreadVariables().sessionFactories[mode.index] = sessionFactory;
 	}
 
-	public static ISessionFactory getSessionFactory(final SessionMode mode) {
+	public static ISessionFactory getSessionFactory(final SessionType mode) {
 		ThreadVariables tv = threadVariables_.get();
 		if (tv == null) {
 			return defaultSessionFactories[mode.index];
@@ -880,34 +942,31 @@ public enum Factory {
 	}
 
 	/**
-	 * Sets the current session
-	 * 
-	 * @param session
-	 *            the lotus session
+	 * // * Sets the current session // * // * @param session // * the lotus session //
 	 */
-	public static void setSession(final lotus.domino.Session session) {
-		setSession(session, SessionMode.DEFAULT);
-	}
-
-	/**
-	 * Sets the current trusted session
-	 * 
-	 * @param session
-	 *            the lotus session
-	 */
-	public static void setTrustedSession(final lotus.domino.Session session) {
-		setSession(session, SessionMode.TRUSTED);
-	}
-
-	/**
-	 * Sets the current session with full access
-	 * 
-	 * @param session
-	 *            the lotus session
-	 */
-	public static void setSessionFullAccess(final lotus.domino.Session session) {
-		setSession(session, SessionMode.FULL_ACCESS);
-	}
+	//	public static void setSession(final lotus.domino.Session session) {
+	//		setSession(session, SessionType.DEFAULT);
+	//	}
+	//
+	//	/**
+	//	 * Sets the current trusted session
+	//	 * 
+	//	 * @param session
+	//	 *            the lotus session
+	//	 */
+	//	public static void setTrustedSession(final lotus.domino.Session session) {
+	//		setSession(session, SessionType.TRUSTED);
+	//	}
+	//
+	//	/**
+	//	 * Sets the current session with full access
+	//	 * 
+	//	 * @param session
+	//	 *            the lotus session
+	//	 */
+	//	public static void setSessionFullAccess(final lotus.domino.Session session) {
+	//		setSession(session, SessionType.FULL_ACCESS);
+	//	}
 
 	//	/**
 	//	 * clears the current session
@@ -917,16 +976,18 @@ public enum Factory {
 	//	}
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
-	/**
-	 * Returns the session's current database if available. Does never create a session.
-	 * 
-	 * @see #getSession_unchecked()
-	 * @return The session's current database
-	 */
-	public static Database getDatabase_unchecked() {
-		Session sess = getSession_unchecked();
-		return (sess == null) ? null : sess.getCurrentDatabase();
-	}
+
+	// RPr: use getSession_unchecked().getCurrentDatabase
+	//	/**
+	//	 * Returns the session's current database if available. Does never create a session.
+	//	 * 
+	//	 * @see #getSession_unchecked()
+	//	 * @return The session's current database
+	//	 */
+	//	public static Database getDatabase_unchecked() {
+	//		Session sess = getSession_unchecked(SessionType.CURRENT);
+	//		return (sess == null) ? null : sess.getCurrentDatabase();
+	//	}
 
 	// RPr: I think it is a better idea to set the currentDatabase on the currentSesssion
 
@@ -1160,11 +1221,34 @@ public enum Factory {
 			Fixes[] fixes = Fixes.values(); // it is always a good idea to enable ALL fixes
 			AutoMime automime = AutoMime.WRAP_32K; // CHECKME RPr: this is the best choice for FOCONIS. For others, too?
 			String contextDatabase = null; // All the default sessionfactories do not have a contextDB
-			defaultSessionFactories[SessionMode.DEFAULT.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
-			defaultSessionFactories[SessionMode.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
-			defaultSessionFactories[SessionMode.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
-			defaultSessionFactories[SessionMode.SESSION_AS_SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+
+			// There is NO(!) Default SessionFactory for the current session. you have to set it!
+			defaultSessionFactories[SessionType.CURRENT.index] = null;
+
+			// for CURRENT_FULL_ACCESS, we create a named session with full access set to true
+			defaultSessionFactories[SessionType.CURRENT_FULL_ACCESS.index] = new ISessionFactory() {
+
+				@Override
+				public Session createSession() throws PrivilegedActionException {
+					Session current = Factory.getSession(SessionType.CURRENT);
+					return getNamedSession(current.getEffectiveUserName(), true);
+				}
+			};
+
+			// In XPages environment, this factory will not be used!
+			defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+
+			// In XPages environment, this factory will not be used!
+			defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+
+			// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
+			defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+			defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
+			defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+
 			defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
+			defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+
 			started = true;
 			System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
 		}
@@ -1208,7 +1292,7 @@ public enum Factory {
 	public static Locale getInternalLocale() {
 		Locale ret = null;
 		// are we in context of an NotesSession? Try to figure out the current database.
-		Session sess = getSession_unchecked();
+		Session sess = getSession_unchecked(SessionType.CURRENT);
 		Database db = (sess == null) ? null : sess.getCurrentDatabase();
 		if (db != null)
 			ret = db.getLocale();
@@ -1326,11 +1410,10 @@ public enum Factory {
 			result = (org.openntf.domino.Session) base;
 		} else if (base == null) {
 			throw new NullPointerException("Base object cannot be null");
-		} else {
+		}
+		if (result == null) {
 			throw new UndefinedDelegateTypeException("Couldn't find session for object of type " + base.getClass().getName());
 		}
-		if (result == null)
-			result = getSession(); // last ditch, get the primary Session;
 		return result;
 	}
 

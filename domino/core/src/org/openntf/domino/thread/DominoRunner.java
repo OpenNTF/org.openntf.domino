@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * A Wrapper for runnables
@@ -44,7 +44,7 @@ public class DominoRunner extends AbstractDominoRunner {
 
 		try {
 			Factory.setClassLoader(runCl);
-			Factory.setSessionFactory(sessionFactory, SessionMode.DEFAULT);
+			Factory.setSessionFactory(sessionFactory, SessionType.DEFAULT);
 			AccessControlContext runContext = getAccessControlContext();
 			if (runContext == null) {
 				super.runNotes();

@@ -22,7 +22,7 @@ import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * A ThreadPoolExecutor for Domino runnables. It sets up a shutdown hook for proper termination. There should be maximum one instance of
@@ -274,7 +274,7 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 		if (runnable instanceof AbstractDominoRunner) {
 			return runnable;
 		}
-		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+		ISessionFactory sf = Factory.getSessionFactory(SessionType.DEFAULT);
 		return new DominoRunner(runnable, sf);
 	}
 
@@ -282,7 +282,7 @@ public class DominoExecutor extends ScheduledThreadPoolExecutor {
 		if (callable instanceof AbstractDominoRunner.WrappedCallable) {
 			return callable;
 		}
-		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+		ISessionFactory sf = Factory.getSessionFactory(SessionType.DEFAULT);
 		return new DominoRunner(callable, sf).asCallable(callable);
 	}
 }

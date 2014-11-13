@@ -439,20 +439,13 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 	}
 
 	@Override
-	protected lotus.domino.ACL getDelegate() {
-		lotus.domino.ACL d = super.getDelegate();
-		if (isDead(d)) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	public void resurrect() {
+	protected void resurrect() {
 		try {
 			lotus.domino.Database db = toLotus(getParent());
 			lotus.domino.ACL d = db.getACL();
 			setDelegate(d, 0);
-			getFactory().recacheLotusObject(d, this, parent_);
+			// Recaching is done in setDelegate now
+			//getFactory().recacheLotusObject(d, this, parent_);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

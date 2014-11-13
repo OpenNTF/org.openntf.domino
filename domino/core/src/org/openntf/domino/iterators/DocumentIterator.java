@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.iterators;
 
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +34,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DocumentIterator.
  */
-public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.Document> {
+public class DocumentIterator implements Iterator<org.openntf.domino.Document> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DocumentIterator.class.getName());
 	/** The index_. */
@@ -43,6 +44,8 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	private final int[] idArray_;
 
 	private String currentNoteid_;
+
+	private DocumentCollection collection_;
 
 	// /** The current_. */
 	// private transient Document current_;
@@ -54,7 +57,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 *            the collection
 	 */
 	public DocumentIterator(final DocumentCollection collection) {
-		super(collection);
+		collection_ = collection;
 		idArray_ = getCollectionIds(collection);
 	}
 
@@ -74,7 +77,6 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 				NoteCollection nc = null;
 				try {
 					Database db = collection.getParent();
-					setDatabase(db);
 					nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
 					if (nc.getCount() > 0) {
 						result = nc.getNoteIDs();
@@ -120,6 +122,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 		if (getIdArray() == null) {
 			// Most commonly if no match found
@@ -133,6 +136,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * 
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	public Document next() {
 		Document result = null;
 		if (hasNext()) {
@@ -140,7 +144,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 			setIndex(getIndex() + 1);
 			// Base.recycle(current_);
 			try {
-				Database db = getDatabase();
+				Database db = collection_.getAncestorDatabase();
 				lotus.domino.Document doc = db.getDocumentByID(currentNoteid_);
 				if (doc instanceof org.openntf.domino.Document) {
 					result = (org.openntf.domino.Document) doc;
@@ -160,9 +164,10 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * 
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		try {
-			((lotus.domino.DocumentCollection) getCollection()).subtract(currentNoteid_);
+			((lotus.domino.DocumentCollection) collection_).subtract(currentNoteid_);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

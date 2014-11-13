@@ -31,6 +31,7 @@ import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * @author Nathan T. Freeman
@@ -141,9 +142,9 @@ public class IndexDatabase implements IScannerStateManager {
 	public Database getIndexDb() {
 		if (indexDb_ == null) {
 			if (indexApiPath_ != null) {
-				indexDb_ = Factory.getSession().getDatabase(indexApiPath_);
+				indexDb_ = Factory.getSession(SessionType.CURRENT).getDatabase(indexApiPath_);
 			} else {
-				indexDb_ = Factory.getSession().getCurrentDatabase();
+				indexDb_ = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 			}
 		}
 		return indexDb_;

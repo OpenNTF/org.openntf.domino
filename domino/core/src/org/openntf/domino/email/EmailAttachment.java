@@ -8,6 +8,7 @@ import java.io.InputStream;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * @author withersp
@@ -32,6 +33,10 @@ public class EmailAttachment implements IEmailAttachment {
 
 	}
 
+	private String atUnique() {
+		return Factory.getSession(SessionType.CURRENT).evaluate("@Unique").toString();
+	}
+
 	/**
 	 * Creates an EmailAttachment object from an attachment in a Document
 	 * 
@@ -50,7 +55,7 @@ public class EmailAttachment implements IEmailAttachment {
 			setInlineImage(isInlineImage);
 			setUnid(doc.getUniversalID());
 			setDbPath(doc.getParentDatabase().getFilePath());
-			setContentId(Factory.getSession().evaluate("@Unique").toString());
+			setContentId(atUnique());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -99,7 +104,7 @@ public class EmailAttachment implements IEmailAttachment {
 			setPath(filePath);
 			setFileName(fileName);
 			setInlineImage(isInlineImage);
-			setContentId(Factory.getSession().evaluate("@Unique").toString());
+			setContentId(atUnique());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -147,7 +152,7 @@ public class EmailAttachment implements IEmailAttachment {
 			setInputStream(inputStream);
 			setFileName(fileName);
 			setInlineImage(isInlineImage);
-			setContentId(Factory.getSession().evaluate("@Unique").toString());
+			setContentId(atUnique());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -170,7 +175,7 @@ public class EmailAttachment implements IEmailAttachment {
 			setBytes(bytes);
 			setFileName(fileName);
 			setInlineImage(isInlineImage);
-			setContentId(Factory.getSession().evaluate("@Unique").toString());
+			setContentId(atUnique());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}

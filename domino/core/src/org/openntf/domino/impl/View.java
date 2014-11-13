@@ -2591,31 +2591,14 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return getDocument().hasItem("$Collection");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getDelegate()
-	 */
 	@Override
-	protected lotus.domino.View getDelegate() {
-		lotus.domino.View view = super.getDelegate();
-		try {
-			view.getHttpURL();
-		} catch (NotesException e) {
-			resurrect();
-		} catch (NullPointerException npe) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
+	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		Database db = getAncestorDatabase();
 		try {
 			lotus.domino.Database d = toLotus(db);
 			lotus.domino.View view = d.getView(name_);
 			setDelegate(view, 0);
-			getFactory().recacheLotusObject(d, this, parent_);
+			// getFactory().recacheLotusObject(d, this, parent_);
 			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
 			view.setAutoUpdate(false);
 			//			}

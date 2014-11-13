@@ -11,6 +11,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /*----------------------------------------------------------------------------*/
 public class RawMessageProviderDBImpl extends RawMessageProvider {
@@ -80,7 +81,7 @@ public class RawMessageProviderDBImpl extends RawMessageProvider {
 			if (iDB == null) {
 				if (iDBPath == null)
 					return;
-				Session s = Factory.getSession_unchecked();
+				Session s = Factory.getSession_unchecked(SessionType.CURRENT);
 				if (s == null || (iDB = s.getDatabase(iDBServer, iDBPath)) == null) {
 					System.err.println("RawMessageProviderDBImpl: Can't open DB " + iDBServer + "!!" + iDBPath);
 					return;

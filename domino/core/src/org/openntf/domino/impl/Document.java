@@ -1361,7 +1361,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					if (i < sz * 2)
 						break;
 					Vector<lotus.domino.DateRange> aux = new Vector<lotus.domino.DateRange>(sz);
-					lotus.domino.Session rawsession = toLotus(Factory.getSession());
+					lotus.domino.Session rawsession = toLotus(getAncestorSession());
 					for (i = 0; i < sz; i++) {
 						lotus.domino.DateTime dts = (lotus.domino.DateTime) vGIV.elementAt(2 * i);
 						lotus.domino.DateTime dte = (lotus.domino.DateTime) vGIV.elementAt(2 * i + 1);
@@ -3275,8 +3275,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3472,16 +3472,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	protected lotus.domino.Document getDelegate() {
-		// checkMimeOpen(); RPr: This is not needed here (just to tweak my grep command)
-		lotus.domino.Document d = super.getDelegate();
-		if (isDead(d)) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	private void resurrect() {
+	protected void resurrect() {
 		openMIMEEntities.clear();
 		if (noteid_ != null) {
 			try {
@@ -3512,7 +3503,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				setDelegate(d, 0);
-				getFactory().recacheLotusObject(d, this, parent_);
+				//getFactory().recacheLotusObject(d, this, parent_);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
@@ -3522,13 +3513,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3560,13 +3551,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
