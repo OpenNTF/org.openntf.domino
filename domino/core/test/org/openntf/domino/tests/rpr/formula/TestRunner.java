@@ -31,6 +31,7 @@ public class TestRunner extends TestRunnerStdIn {
 	@SuppressWarnings({ "null", "unchecked" })
 	@Override
 	public void run() {
+		Factory.enableCounters(true, false);
 		try {
 			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
 			ASTNode n = null;
@@ -101,7 +102,6 @@ public class TestRunner extends TestRunnerStdIn {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Factory.terminate();
-		System.out.println(Factory.dumpCounters(true));
+
 	}
 }

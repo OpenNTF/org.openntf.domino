@@ -15,20 +15,20 @@
  */
 package org.openntf.domino.thread;
 
+import java.util.logging.Logger;
+
 import lotus.domino.NotesThread;
+
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DominoThread.
  */
 public class DominoThread extends NotesThread {
+	private static final Logger log_ = Logger.getLogger(DominoThread.class.getName());
 	private transient Runnable runnable_;
-	protected Status status_ = Status.NONE;
 	protected int nativeId_;
-
-	public enum Status {
-		NONE, INITIALIZED, RUNNING, TERMINATED
-	}
 
 	/**
 	 * Instantiates a new domino thread.
@@ -81,10 +81,6 @@ public class DominoThread extends NotesThread {
 		return runnable_;
 	}
 
-	public Status getStatus() {
-		return status_;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -104,33 +100,23 @@ public class DominoThread extends NotesThread {
 	}
 
 	@Override
-	public void interrupt() {
-		//		System.out.println("ALERT! Thread interrupted!");
-		//		termThread();
-		super.interrupt();
-	}
-
-	@Override
 	public void initThread() {
 		super.initThread();
-		//		System.out.println("DEBUG: Initialized a " + toString());
+		log_.fine("DEBUG: Initializing a " + toString());
+		Factory.initThread();
 	}
 
 	@Override
 	public void termThread() {
-		System.out.println("DEBUG: Terminating a " + toString());
+		log_.fine("DEBUG: Terminating a " + toString());
+		Factory.termThread();
 		super.termThread();
 	}
 
 	@Override
 	public String toString() {
-		return (getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this) + ") native: " + this
-				.getNativeThreadID());
+		return (getClass().getSimpleName() + ": " + this.getId() + //
+				getRunnable() == null ? "" : ("( Runnable: " + getRunnable().getClass().getName() + ") ") + " native: "
+				+ this.getNativeThreadID());
 	}
-
-	//	public synchronized void start(final ClassLoader loader) {
-	//		setContextClassLoader(loader);
-	//		start();
-	//	}
-
 }

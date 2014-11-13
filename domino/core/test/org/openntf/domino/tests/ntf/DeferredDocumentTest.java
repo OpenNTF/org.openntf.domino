@@ -1,31 +1,43 @@
 package org.openntf.domino.tests.ntf;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xots.XotsDaemon;
 
+@RunWith(DominoJUnitRunner.class)
 public class DeferredDocumentTest extends AbstractDominoRunnable {
 	private static int THREAD_COUNT = 1;
 
-	public static void main(final String[] args) {
-		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new DeferredDocumentTest());
-		}
-		de.shutdown();
-	}
+	//	public static void main(final String[] args) {
+	//		Factory.startup();
+	//
+	//		DominoExecutor executor = new DominoExecutor(50);
+	//		XotsDaemon.start(executor);
+	//
+	//		for (int i = 0; i < THREAD_COUNT; i++) {
+	//			XotsDaemon.queue(new DeferredDocumentTest());
+	//		}
+	//
+	//		Factory.shutdown();
+	//	}
 
-	public DeferredDocumentTest() {
-		this.setSessionType(DominoSessionType.NATIVE);
-		// whatever you might want to do in your constructor, but stay away from Domino objects
+	@Test
+	public void testDeferredDocuments() {
+		for (int i = 0; i < THREAD_COUNT; i++) {
+			XotsDaemon.queue(new DeferredDocumentTest());
+		}
 	}
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession();
 		long collectionBuildNS = 0l;
 		long documentBuildNS = 0l;
 		long documentPageNS = 0l;

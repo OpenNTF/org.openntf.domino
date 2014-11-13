@@ -11,7 +11,9 @@ import javolution.util.FastMap;
 
 import org.openntf.domino.graph2.DElementStore;
 
-public class DConfiguration implements org.openntf.domino.graph2.DConfiguration {
+import com.tinkerpop.frames.FramedGraphConfiguration;
+
+public class DConfiguration extends FramedGraphConfiguration implements org.openntf.domino.graph2.DConfiguration {
 	private static final Logger log_ = Logger.getLogger(DConfiguration.class.getName());
 	private Long defaultElementStoreKey_ = null;
 	private Map<Long, DElementStore> elementStoreMap_;

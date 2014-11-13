@@ -8,56 +8,37 @@ package org.openntf.domino.tests.eknori;
  Thread MassCopyDocumentsScratchTest auto-recycled 5523389 lotus references during run. 
  Then recycled 36999 lotus references on completion and had 0 recycle errors
  */
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
 
-public enum MassCopyDocumentsScratchTest {
-	INSTANCE;
+@RunWith(DominoJUnitRunner.class)
+public class MassCopyDocumentsScratchTest {
+	private static final String SOURCE = "OneMillion.nsf";
+	private static final String TARGET = "target.nsf";
 
-	private MassCopyDocumentsScratchTest() {
-		// TODO Auto-generated constructor stub
-	}
+	@Test
+	public void run() {
 
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            the arguments
-	 */
-	public static void main(final String[] args) {
+		long start = System.nanoTime();
+		Session s = Factory.getSession();
+		Database source = s.getDatabase("", SOURCE, true);
+		Database target = s.getDatabase("", TARGET, true);
 
-		DominoThread dt = new DominoThread(new Doer(), "MassCopyDocumentsScratchTest");
-		dt.start();
+		System.out.println("-- START --");
 
-	}
-
-	static class Doer implements Runnable {
-		private static final String SOURCE = "OneMillion.nsf";
-		private static final String TARGET = "target.nsf";
-
-		@Override
-		public void run() {
-
-			long start = System.nanoTime();
-			Session s = Factory.getSession();
-			Database source = s.getDatabase("", SOURCE, true);
-			Database target = s.getDatabase("", TARGET, true);
-
-			System.out.println("-- START --");
-
-			for (Document doc : source.getAllDocuments()) {
-				doc.copyToDatabase(target);
-			}
-
-			System.out.println("-- STOP --");
-
-			long elapsed = System.nanoTime() - start;
-			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
-
+		for (Document doc : source.getAllDocuments()) {
+			doc.copyToDatabase(target);
 		}
+
+		System.out.println("-- STOP --");
+
+		long elapsed = System.nanoTime() - start;
+		System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 
 	}
 

@@ -41,19 +41,6 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		org.openntf.domino.EmbeddedObject {
 
 	/**
-	 * Instantiates a new embedded object.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (Document) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

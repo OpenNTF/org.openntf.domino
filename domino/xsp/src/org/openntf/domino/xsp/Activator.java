@@ -2,11 +2,16 @@ package org.openntf.domino.xsp;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.osgi.framework.console.CommandProvider;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import com.ibm.commons.Platform;
 import com.ibm.commons.util.StringUtil;
@@ -25,8 +30,27 @@ public class Activator extends Plugin {
 	public static Activator instance;
 
 	private static String version;
+	private ServiceRegistration consoleCommandService;
 
 	//private static BundleContext context;
+
+	/**
+	 * Registers the AmgrCommandProvider to handle commands
+	 * 
+	 * @param bundle
+	 * 
+	 * @param bundleContext
+	 */
+	private void registerCommandProvider(final BundleContext bundleContext) {
+		CommandProvider cp = new OsgiCommandProvider();
+		Bundle bundle = bundleContext.getBundle();
+		Dictionary<String, Object> cpDictionary = new Hashtable<String, Object>(7);
+		cpDictionary.put("service.vendor", bundle.getHeaders().get("Bundle-Vendor"));
+		cpDictionary.put("service.ranking", new Integer(Integer.MIN_VALUE));
+		cpDictionary.put("service.pid", bundle.getBundleId() + "." + cp.getClass().getName());
+
+		consoleCommandService = bundleContext.registerService(CommandProvider.class.getName(), cp, cpDictionary);
+	}
 
 	/**
 	 * Gets the current Activator instance
@@ -287,25 +311,34 @@ public class Activator extends Plugin {
 		return getEnvironmentStringsAsString(PLUGIN_ID);
 	}
 
-	//	/*
-	//	 * (non-Javadoc)
-	//	 * 
-	//	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
-	//	 */
-	//	@Override
-	//	public void start(final BundleContext bundleContext) throws Exception {
-	//		Activator.context = bundleContext;
-	//		super.start(bundleContext);
-	//	}
-	//
-	//	/*
-	//	 * (non-Javadoc)
-	//	 * 
-	//	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	//	 */
-	//	@Override
-	//	public void stop(final BundleContext bundleContext) throws Exception {
-	//		Activator.context = null;
-	//	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
+	 */
+	@Override
+	public void start(final BundleContext bundleContext) throws Exception {
+		super.start(bundleContext);
+
+		registerCommandProvider(bundleContext);
+
+		//startOda();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	@Override
+	public void stop(final BundleContext bundleContext) throws Exception {
+		if (consoleCommandService != null) {
+			consoleCommandService.unregister();
+			consoleCommandService = null;
+		}
+		//stopOda();
+		super.stop(bundleContext);
+	}
 
 }

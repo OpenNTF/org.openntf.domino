@@ -20,26 +20,12 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 /**
  * The Class RichTextStyle.
  */
 public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle, Session> implements
 		org.openntf.domino.RichTextStyle {
-
-	/**
-	 * Instantiates a new rich text style.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.
@@ -239,6 +225,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	@Override
 	public void setBold(final BoldStyle ISBN) {
 		try {
 			getDelegate().setBold(ISBN.getValue());

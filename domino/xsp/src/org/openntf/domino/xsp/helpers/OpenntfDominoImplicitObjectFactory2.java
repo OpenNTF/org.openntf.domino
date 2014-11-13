@@ -1,10 +1,6 @@
 package org.openntf.domino.xsp.helpers;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,9 +13,10 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionMode;
 import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.XspLibrary;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
-import org.openntf.formula.FunctionFactory;
 
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
@@ -32,7 +29,7 @@ import com.ibm.xsp.util.TypedUtil;
  */
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactory {
-
+	private static boolean debugAll = false;
 	// NTF The reason the Factory2 version exists is because we were testing moving the "global" settings like
 	// godmode and marcel to the xsp.properties and making them per-Application rather than server-wide.
 	private static Boolean GODMODE;
@@ -85,6 +82,45 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			}
 		}
 		return GODMODE.booleanValue();
+	}
+
+	/**
+	 * common code to test if a flag is set in the Xsp properties
+	 * 
+	 * @param ctx
+	 * @param flagName
+	 *            use upperCase for flagName, e.g. RAID
+	 * @return
+	 */
+	private static boolean isAppLibrarySet(final FacesContext ctx) {
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_XspLibrary");
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty("xsp.library.depends");
+			if (envs != null) {
+				for (String s : envs) {
+					//					System.out.println("TEMP DEBUG: library " + s);
+					if (s.equals(XspLibrary.LIBRARY_ID)) {
+						current = Boolean.TRUE;
+						//						OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
+						//						if (service != null) {
+						//							service.activate((HttpServletRequest) ctx.getExternalContext().getRequest());
+						//						}
+					}
+				}
+			} else {
+				//				System.out.println("TEMP DEBUG: no library dependencies found");
+			}
+			if (current == Boolean.FALSE) {
+				//				OpenntfHttpService service = OpenntfHttpService.getCurrentInstance();
+				//				if (service != null) {
+				//					service.deactivate((HttpServletRequest) ctx.getExternalContext().getRequest());
+				//				}
+			}
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_XspLibrary", current);
+		}
+		return (Boolean) current;
 	}
 
 	/**
@@ -223,6 +259,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	private static boolean isAppDebug(final FacesContext ctx) {
+		if (debugAll)
+			return true;
 		return isAppFlagSet(ctx, "RAID");
 	}
 
@@ -240,7 +278,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * Constructor
 	 */
 	public OpenntfDominoImplicitObjectFactory2() {
-		// System.out.println("Created implicit object factory 2");
+		System.out.println("Created implicit object factory 2");
 	}
 
 	/**
@@ -258,8 +296,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 
 		// See if the factory already has an explicit session set (e.g. in Xots)
+		//FIXME: NTF We need something more specific here. Back-to-back REST calls can sometimes be serviced by the same thread.
 		session = Factory.getSession_unchecked();
-
 		// If we don't have a pre-established session, look for the standard XSP one
 		if (session == null) {
 			lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
@@ -267,8 +305,21 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 				rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
 			}
 			if (rawSession != null) {
-				session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+				try {
+					rawSession.isConvertMIME();
+					Factory.setSession(rawSession, SessionMode.DEFAULT);
+					// TODO RPr: Should we add session as signer also?
+
+					session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+					//					System.out.println("DEBUG: New session created in thread " + Thread.currentThread().getId() + ": "
+					//							+ ctx.getExternalContext().getRequestPathInfo());
+				} catch (Exception ne) {
+					System.out.println("DEBUG: Session invalid in request from " + ctx.getExternalContext().getRequestContextPath());
+				}
 			}
+		} else {
+			//			System.out.println("DEBUG: Session already present when we went to create it in thread " + Thread.currentThread().getId()
+			//					+ ": " + ctx.getExternalContext().getRequestPathInfo());
 		}
 
 		if (session != null) {
@@ -316,8 +367,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			}
 			if (rawDatabase != null) {
 				database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
-				Factory.setNoRecycle(database, true);
-
+				session.setCurrentDatabase(database);
+				//				Factory.setNoRecycle(database, true);
 				localMap.put(dbKey, database);
 			} else {
 				System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
@@ -404,14 +455,14 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 */
 	public void createLogHolder(final FacesContextEx ctx) {
 		if (isAppDebug(ctx)) {
-			System.out.println("Beginning creation of log holder...");
+			System.out.println("DEBUG: Beginning creation of log holder...");
 		}
 		if (Activator.isAPIEnabled()) {
 			Map<String, Object> localMap = TypedUtil.getSessionMap(ctx.getExternalContext());
 			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
 			localMap.put("openLogBean", ol_);
 			if (isAppDebug(ctx)) {
-				System.out.println("Created log holder...");
+				System.out.println("DEBUG: Created log holder...");
 			}
 		}
 	}
@@ -423,69 +474,29 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 */
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
+		if (!isAppLibrarySet(ctx))
+			return;
 		if (isAppDebug(ctx)) {
-			System.out.println("Beginning creation of implicit objects...");
+			System.out.println("DEBUG: Beginning creation of OpenNTF implicit objects...");
 		}
 		// TODO RPr: I enabled the "setClassLoader" here
+		Factory.initThread();
+		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
-
-		final ApplicationEx app = ctx.getApplicationEx();
-		final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
-
-		Factory.setServiceLocator(new Factory.AppServiceLocator() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-				List<T> ret = (List<T>) cache.get(serviceClazz);
-
-				if (ret == null) {
-					ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-						@Override
-						public List<T> run() {
-							return app.findServices(serviceClazz.getName());
-						}
-					});
-					if (Comparable.class.isAssignableFrom(serviceClazz)) {
-						Collections.sort((List<? extends Comparable>) ret);
-					}
-					cache.put(serviceClazz, ret);
-				}
-				return ret;
-			}
-		});
-
-		FunctionFactory.setServiceLocator(new FunctionFactory.AppServiceLocator() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-				List<T> ret = (List<T>) cache.get(serviceClazz);
-
-				if (ret == null) {
-					ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-						@Override
-						public List<T> run() {
-							return app.findServices(serviceClazz.getName());
-						}
-					});
-					if (Comparable.class.isAssignableFrom(serviceClazz)) {
-						Collections.sort((List<? extends Comparable>) ret);
-					}
-					cache.put(serviceClazz, ret);
-				}
-				return ret;
-			}
-		});
-
+		// hopefully locating the app will work now
 		org.openntf.domino.Session session = createSession(ctx);
-		createDatabase(ctx, session);
-		createUserScope(ctx, session);
-		createIdentityScope(ctx, session);
-		createServerScope(ctx, session);
-		createLogHolder(ctx);
+		if (session != null) {
+			createDatabase(ctx, session);
+			createUserScope(ctx, session);
+			createIdentityScope(ctx, session);
+			createServerScope(ctx, session);
+			createLogHolder(ctx);
+		} else {
+			System.out.println("WARNING: session object returned during implicitobject creation failed for thread "
+					+ Thread.currentThread().getId() + " servicing a request for " + ctx.getExternalContext().getRequestPathInfo());
+		}
 		if (isAppDebug(ctx)) {
-			System.out.println("Done creating implicit objects.");
+			System.out.println("DEBUG: Done creating OpenNTF implicit objects.");
 		}
 	}
 
@@ -506,9 +517,11 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @see com.ibm.xsp.el.ImplicitObjectFactory#destroyImplicitObjects(javax.faces.context.FacesContext)
 	 */
 	@Override
-	public void destroyImplicitObjects(final FacesContext paramFacesContext) {
-		// TODO Auto-generated method stub
-
+	public void destroyImplicitObjects(final FacesContext ctx) {
+		//		System.out.println("TEMP DEBUG: destroyImplicitObjects called.");
+		if (!isAppLibrarySet(ctx))
+			return;
+		Factory.termThread();
 	}
 
 	/*

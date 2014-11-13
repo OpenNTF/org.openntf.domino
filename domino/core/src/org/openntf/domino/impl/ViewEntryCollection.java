@@ -36,19 +36,6 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		org.openntf.domino.ViewEntryCollection {
 
 	/**
-	 * Instantiates a new view entry collection.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final org.openntf.domino.View parent) {
-		super(delegate, parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
@@ -590,6 +577,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
+	@Override
 	public void stampAll(final Map<String, Object> map) {
 		for (org.openntf.domino.ViewEntry entry : this) {
 			entry.getDocument().putAll(map);

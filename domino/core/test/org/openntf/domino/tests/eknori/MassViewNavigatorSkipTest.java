@@ -22,69 +22,54 @@ package org.openntf.domino.tests.eknori;
  ?? seems not to have any effect.
 
  */
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
 
-public enum MassViewNavigatorSkipTest {
-	INSTANCE;
+@RunWith(DominoJUnitRunner.class)
+public class MassViewNavigatorSkipTest {
 
-	private MassViewNavigatorSkipTest() {
-		// TODO Auto-generated constructor stub
-	}
+	private static final String TARGET = "target.nsf";
+	private static final String VIEW = "Persons";
 
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            the arguments
-	 */
-	public static void main(final String[] args) {
-		DominoThread dt = new DominoThread(new Doer(), "MassViewEntryCollectionTest");
-		dt.start();
-	}
+	@Test
+	public void run() {
 
-	static class Doer implements Runnable {
-		private static final String TARGET = "target.nsf";
-		private static final String VIEW = "Persons";
+		Session s = Factory.getSession();
+		Database source = s.getDatabase("", TARGET, true);
+		View view = source.getView(VIEW);
+		System.out.println("-- START --");
+		long start = System.nanoTime();
 
-		@Override
-		public void run() {
+		if (null != view) {
+			view.setAutoUpdate(false);
 
-			Session s = Factory.getSession();
-			Database source = s.getDatabase("", TARGET, true);
-			View view = source.getView(VIEW);
-			System.out.println("-- START --");
-			long start = System.nanoTime();
+			System.out.println(view.getEntryCount());
 
-			if (null != view) {
-				view.setAutoUpdate(false);
+			ViewNavigator nav = view.createViewNav();
+			// nav.setCacheSize(400);
+			nav.skip(1000000);
 
-				System.out.println(view.getEntryCount());
+			System.out.println("CacheSize: " + nav.getCacheSize());
 
-				ViewNavigator nav = view.createViewNav();
-				// nav.setCacheSize(400);
-				nav.skip(1000000);
-
-				System.out.println("CacheSize: " + nav.getCacheSize());
-
-				view.setAutoUpdate(true);
-				ViewEntry entry = null;
-				entry = nav.getFirst();
-				while (null != entry) {
-					entry = nav.getNext(entry);
-				}
+			view.setAutoUpdate(true);
+			ViewEntry entry = null;
+			entry = nav.getFirst();
+			while (null != entry) {
+				entry = nav.getNext(entry);
 			}
-
-			long elapsed = System.nanoTime() - start;
-			System.out.println("-- STOP --");
-			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
-
 		}
+
+		long elapsed = System.nanoTime() - start;
+		System.out.println("-- STOP --");
+		System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
+
 	}
 
 }

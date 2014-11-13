@@ -39,19 +39,6 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	//private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
 
 	/**
-	 * Instantiates a new rich text table.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextTable(final lotus.domino.RichTextTable delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (RichTextItem) parent);
-	}
-
-	/**
 	 * Instantiates a new outline.
 	 * 
 	 * @param delegate

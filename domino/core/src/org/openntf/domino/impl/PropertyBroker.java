@@ -8,15 +8,9 @@ import org.openntf.domino.NotesProperty;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
 		org.openntf.domino.PropertyBroker {
-
-	@Deprecated
-	public PropertyBroker(final lotus.domino.PropertyBroker delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.

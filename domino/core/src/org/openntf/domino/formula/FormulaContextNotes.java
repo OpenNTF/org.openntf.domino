@@ -9,7 +9,6 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Terminatable;
 import org.openntf.formula.EvaluateException;
 import org.openntf.formula.FormulaContext;
 import org.openntf.formula.Formulas;
@@ -20,9 +19,9 @@ public class FormulaContextNotes extends FormulaContext {
 
 	static {
 		// this is not yet nice, but we assume that this context is always used in Domino/XPage environment
-		Factory.onTerminate(new Terminatable() {
+		Factory.addTerminateHook(new Runnable() {
 			@Override
-			public void terminate() {
+			public void run() {
 				Formulas.terminate();
 			}
 		});

@@ -332,4 +332,8 @@ public interface Document {
 	public byte[] readBinaryChunk(String name, int chunk);
 
 	public byte[] readBinary(String name);
+
+	public List<?> getItemSeriesValues(CharSequence name);
+
+	public <T> T getItemSeriesValues(CharSequence name, Class<?> T);
 }

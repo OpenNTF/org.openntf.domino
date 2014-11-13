@@ -99,7 +99,7 @@ public class OpenLogHandler extends Handler {
 					}
 				}
 			}
-			org.openntf.domino.Session session = Factory.getSession();
+			org.openntf.domino.Session session = Factory.getSession_unchecked();
 			if (session != null) {
 				ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
 			}

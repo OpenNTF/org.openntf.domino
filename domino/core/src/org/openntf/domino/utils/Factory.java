@@ -16,22 +16,21 @@
 package org.openntf.domino.utils;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileNotFoundException;
+import java.net.URL;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.ServiceLoader;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
@@ -39,21 +38,30 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesException;
+import lotus.notes.NotesThread;
+
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
-import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
-import org.openntf.domino.logging.Logging;
-import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.session.INamedSessionFactory;
+import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.session.NamedSessionFactory;
+import org.openntf.domino.session.NativeSessionFactory;
+import org.openntf.domino.session.SessionFullAccessFactory;
+import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.service.IServiceLocator;
+import org.openntf.service.ServiceLocatorFinder;
 
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
@@ -61,132 +69,245 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
-	public interface AppServiceLocator {
-		public <T> List<T> findApplicationServices(final Class<T> serviceClazz);
-	}
-
 	/**
-	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
-	 */
-	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>();
-
-	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
-
-	private static ThreadLocal<AppServiceLocator> currentServiceLocator_ = new ThreadLocal<AppServiceLocator>();
-
-	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
-
-	private static ThreadLocal<Session> currentSessionFullAccessHolder_ = new ThreadLocal<Session>();
-
-	private static ThreadLocal<Session> currentTrustedSessionHolder_ = new ThreadLocal<Session>();
-
-	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
-
-	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
-	// private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
-
-	/**
-	 * setup the environment and loggers
+	 * An identifier for the different session types, the factory can create
 	 * 
-	 * @author praml
+	 * @author Roland Praml, FOCONIS AG
 	 * 
 	 */
-	private static class SetupJob implements Runnable {
-		@Override
-		public void run() {
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-						String progpath = System.getProperty("notes.binary");
-						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-						if (!iniFile.exists()) {
-							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-							progpath = System.getProperty("user.dir");
-							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-						}
-						if (!iniFile.exists()) {
-							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-							progpath = System.getProperty("java.home");
-							if (progpath.endsWith("jvm")) {
-								iniFile = new File(progpath + System.getProperty("file.separator") + ".."
-										+ System.getProperty("file.separator") + "notes.ini");
-							} else {
-								iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	public enum SessionMode {
+		DEFAULT(0, "DEFAULT"), TRUSTED(1, "TRUSTED"), FULL_ACCESS(2, "FULL_ACCESS"), SESSION_AS_SIGNER(3, "SESSION_AS_SIGNER");
+		static int SIZE = 4;
+		int index;
+		String alias;
 
-							}
-						}
-						if (!iniFile.exists()) {
-							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
-							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-						}
-						if (!iniFile.exists()) {
-							//							System.out.println("Inifile still not found on user.dir path: " + progpath);
-							if (progpath.contains("framework")) {
-								String pp2 = progpath.replace("framework", "");
-								iniFile = new File(pp2 + "notes.ini");
-								//								System.out.println("Attempting to use path: " + pp2);
-								if (!iniFile.exists()) {
-									System.out
-											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
-									for (Object rawName : System.getProperties().keySet()) {
-										if (rawName instanceof String) {
-											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
-										}
-									}
-								}
-							}
-						}
-
-						Scanner scanner = new Scanner(iniFile);
-						scanner.useDelimiter("\n|\r\n");
-						loadEnvironment(scanner);
-						scanner.close();
-						return null;
-					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
-			}
-
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						Logging.getInstance().startUp();
-						return null;
-					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
-			}
+		SessionMode(final int index, final String alias) {
+			this.index = index;
+			this.alias = alias;
 		}
 	}
 
-	static {
-		SetupJob job = new SetupJob();
-		job.run();
-		//		TrustedDispatcher td = new TrustedDispatcher();
-		//		td.process(job);
-		//		System.out.println("DEBUG: SetupJob dispatched");
-		//		td.stop(false);
+	/**
+	 * Container Class for all statistic counters
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 */
+	private static class Counters {
+
+		/** The lotus counter. */
+		private final Counter lotus;
+
+		/** The recycle err counter. */
+		private final Counter recycleErr;
+
+		/** The auto recycle counter. */
+		private final Counter autoRecycle;
+
+		/** The manual recycle counter. */
+		private final Counter manualRecycle;
+
+		private boolean countPerThread_;
+
+		private Map<Class<?>, Counter> classes;
+
+		/**
+		 * Returns a counter for a certain class
+		 * 
+		 * @param clazz
+		 *            the class
+		 * @return a counter for the class
+		 */
+		public Counter forClass(final Class<?> clazz) {
+			Counter ret = classes.get(clazz);
+			if (ret == null) {
+				ret = new Counter(countPerThread_);
+				classes.put(clazz, ret);
+			}
+			return ret;
+		}
+
+		Counters(final boolean countPerThread) {
+			countPerThread_ = countPerThread;
+			lotus = new Counter(countPerThread);
+			recycleErr = new Counter(countPerThread);
+			autoRecycle = new Counter(countPerThread);
+			manualRecycle = new Counter(countPerThread);
+			classes = new ConcurrentHashMap<Class<?>, Counter>();
+		}
 	}
+
+	/**
+	 * We have so many threadLocals here, so that it is worth to handle them all in a container class.
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 */
+	private static class ThreadVariables {
+		private WrapperFactory wrapperFactory;
+
+		private ClassLoader classLoader;
+
+		private IServiceLocator serviceLocator;
+
+		/**
+		 * Support for different Locale
+		 */
+		private Locale userLocale;
+
+		/** the factories can create a new session */
+		public ISessionFactory[] sessionFactories = new ISessionFactory[SessionMode.SIZE];
+
+		/** the sessions are stored in the sessionHolder */
+		private Session[] sessionHolders = new Session[SessionMode.SIZE];
+
+		public INamedSessionFactory namedSessionFactory;
+		public INamedSessionFactory namedSessionFullAccessFactory;
+
+		/** These sessions will be recycled at the end of that thread. Key = UserName of session */
+		public Map<String, Session> ownSessions = new HashMap<String, Session>();
+
+		/** clear the object */
+		private void clear() {
+			wrapperFactory = null;
+			classLoader = null;
+			serviceLocator = null;
+			for (int i = 0; i < SessionMode.SIZE; i++) {
+				sessionHolders[i] = null;
+				sessionFactories[i] = null;
+			}
+			userLocale = null;
+			namedSessionFactory = null;
+			namedSessionFullAccessFactory = null;
+			terminateHooks.clear();
+		}
+	}
+
+	private static ISessionFactory[] defaultSessionFactories = new ISessionFactory[SessionMode.SIZE];
+	private static INamedSessionFactory defaultNamedSessionFactory;
+	private static INamedSessionFactory defaultNamedSessionFullAccessFactory;
+
+	/**
+	 * Holder for variables that are different per thread
+	 */
+	private static ThreadLocal<ThreadVariables> threadVariables_ = new ThreadLocal<ThreadVariables>();
+
+	private static List<Runnable> terminateHooks = new ArrayList<Runnable>();
+	private static List<Runnable> shutdownHooks = new ArrayList<Runnable>();
+
+	private static String localServerName;
+
+	private static ThreadVariables getThreadVariables() {
+		ThreadVariables tv = threadVariables_.get();
+		if (tv == null)
+			throw new IllegalStateException(Factory.class.getName() + " is not initialized for this thread!");
+		return tv;
+	}
+
+	// RPr: I have objections in this type of setup (locating the correct notes.ini is NOT trivial)
+	//	/**
+	//	 * setup the environment and loggers
+	//	 * 
+	//	 * @author praml
+	//	 * 
+	//	 */
+	//	private static class SetupJob implements Runnable {
+	//		@Override
+	//		public void run() {
+	//			try {
+	//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+	//					@Override
+	//					public Object run() throws Exception {
+	//						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
+	//						String progpath = System.getProperty("notes.binary");
+	//						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//						if (!iniFile.exists()) {
+	//							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+	//							progpath = System.getProperty("user.dir");
+	//							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//						}
+	//						if (!iniFile.exists()) {
+	//							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+	//							progpath = System.getProperty("java.home");
+	//							if (progpath.endsWith("jvm")) {
+	//								iniFile = new File(progpath + System.getProperty("file.separator") + ".."
+	//										+ System.getProperty("file.separator") + "notes.ini");
+	//							} else {
+	//								iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//
+	//							}
+	//						}
+	//						if (!iniFile.exists()) {
+	//							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+	//							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	//						}
+	//						if (!iniFile.exists()) {
+	//							//							System.out.println("Inifile still not found on user.dir path: " + progpath);
+	//							if (progpath.contains("framework")) {
+	//								String pp2 = progpath.replace("framework", "");
+	//								iniFile = new File(pp2 + "notes.ini");
+	//								//								System.out.println("Attempting to use path: " + pp2);
+	//								if (!iniFile.exists()) {
+	//									System.out
+	//											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+	//									for (Object rawName : System.getProperties().keySet()) {
+	//										if (rawName instanceof String) {
+	//											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
+	//										}
+	//									}
+	//								}
+	//							}
+	//						}
+	//
+	//						Scanner scanner = new Scanner(iniFile);
+	//						scanner.useDelimiter("\n|\r\n");
+	//						loadEnvironment(scanner);
+	//						scanner.close();
+	//						return null;
+	//					}
+	//				});
+	//			} catch (AccessControlException e) {
+	//				e.printStackTrace();
+	//			} catch (PrivilegedActionException e) {
+	//				e.printStackTrace();
+	//			}
+	//
+	//			try {
+	//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+	//					@Override
+	//					public Object run() throws Exception {
+	//						Logging.getInstance().startUp();
+	//						return null;
+	//					}
+	//				});
+	//			} catch (AccessControlException e) {
+	//				e.printStackTrace();
+	//			} catch (PrivilegedActionException e) {
+	//				e.printStackTrace();
+	//			}
+	//		}
+	//	}
+	//
+	//	static {
+	//		SetupJob job = new SetupJob();
+	//		job.run();
+	//		//		TrustedDispatcher td = new TrustedDispatcher();
+	//		//		td.process(job);
+	//		//		System.out.println("DEBUG: SetupJob dispatched");
+	//		//		td.stop(false);
+	//	}
 
 	private static Map<String, String> ENVIRONMENT;
 	@SuppressWarnings("unused")
-	private static boolean session_init = false;
-	private static boolean jar_init = false;
+	//private static boolean session_init = false;
+	//private static boolean jar_init = false;
+	private static boolean started = false;
 
 	/**
 	 * load the configuration
 	 * 
 	 */
-	public static void loadEnvironment(/*final lotus.domino.Session session, */final Scanner scanner) {
+	private static void loadEnvironment(final Scanner scanner) {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<String, String>();
 		}
@@ -202,62 +323,52 @@ public enum Factory {
 				}
 			}
 			//			System.out.println("DEBUG: Added " + keyCount + " environment variables to avoid using a session");
-			session_init = true;
 		}
-		//		if (session != null && !session_init) {
-		//			try {
-		//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-		//					@Override
-		//					public Object run() throws Exception {
-		//						try {
-		//							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
-		//							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
-		//							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
-		//							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
-		//							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
-		//							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
-		//						} catch (NotesException ne) {
-		//							ne.printStackTrace();
-		//						}
-		//						return null;
-		//					}
-		//				});
-		//			} catch (AccessControlException e) {
-		//				e.printStackTrace();
-		//			} catch (PrivilegedActionException e) {
-		//				e.printStackTrace();
-		//			}
-		//			session_init = true;
-		//		}
-		if (!jar_init) {
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						try {
-							ClassLoader cl = Thread.currentThread().getContextClassLoader();
-							InputStream inputStream = cl.getResourceAsStream("META-INF/MANIFEST.MF");
-							if (inputStream != null) {
-								Manifest mani;
-								mani = new Manifest(inputStream);
-								Attributes attrib = mani.getMainAttributes();
-								ENVIRONMENT.put("version", attrib.getValue("Implementation-Version"));
-								ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
-								ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					try {
+						ClassLoader cl = Thread.currentThread().getContextClassLoader();
+						// we MUST use the Factory-classloader to find the correct MANIFEST
+						Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
+						while (resources.hasMoreElements()) {
+
+							Manifest manifest = new Manifest(resources.nextElement().openStream());
+							// check that this is your manifest and do what you need or get the next one
+							Attributes attrib = manifest.getMainAttributes();
+
+							String bundleName = attrib.getValue("Bundle-SymbolicName");
+							if (bundleName != null) {
+								int pos;
+								if ((pos = bundleName.indexOf(';')) != -1) {
+									bundleName = bundleName.substring(0, pos);
+								}
+								if ("org.openntf.domino".equals(bundleName)) {
+									ENVIRONMENT.put("version", attrib.getValue("Implementation-Version"));
+									ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
+									ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+									return null;
+								}
 							}
-						} catch (Exception e) {
-							e.printStackTrace();
+
 						}
-						return null;
+
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
-			}
-			jar_init = true;
+					return null;
+				}
+			});
+		} catch (AccessControlException e) {
+			e.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
 		}
+		if (!ENVIRONMENT.containsKey("version")) {
+			ENVIRONMENT.put("version", "0.0.0.unknown");
+		}
+
 	}
 
 	public static String getEnvironment(final String key) {
@@ -294,41 +405,16 @@ public enum Factory {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
-	/** The Constant TRACE_COUNTERS. */
-	private static final boolean TRACE_COUNTERS = false;
-	/** use a separate counter in each thread */
-	private static final boolean COUNT_PER_THREAD = false;
-
 	/** The lotus counter. */
-	private static Counter lotusCounter = new Counter(COUNT_PER_THREAD);
+	private static Counters counters;
 
-	/** The recycle err counter. */
-	private static Counter recycleErrCounter = new Counter(COUNT_PER_THREAD);
-
-	/** The auto recycle counter. */
-	private static Counter autoRecycleCounter = new Counter(COUNT_PER_THREAD);
-
-	/** The manual recycle counter. */
-	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
-
-	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
-		private static final long serialVersionUID = 1L;
-
-		/* (non-Javadoc)
-		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
-		 */
-		@Override
-		public Counter get(final Object key) {
-			// TODO Auto-generated method stub
-			Counter ret = super.get(key);
-			if (ret == null) {
-				ret = new Counter(COUNT_PER_THREAD);
-				put((Class<?>) key, ret);
-			}
-			return ret;
+	public static void enableCounters(final boolean enable, final boolean perThread) {
+		if (enable) {
+			counters = new Counters(perThread);
+		} else {
+			counters = null;
 		}
-
-	};
+	}
 
 	/**
 	 * Gets the lotus count.
@@ -336,16 +422,16 @@ public enum Factory {
 	 * @return the lotus count
 	 */
 	public static int getLotusCount() {
-		return lotusCounter.intValue();
+		return counters == null ? 0 : counters.lotus.intValue();
 	}
 
 	/**
 	 * Count a created lotus element.
 	 */
 	public static void countLotus(final Class<?> c) {
-		if (TRACE_COUNTERS) {
-			lotusCounter.increment();
-			objectCounter.get(c).increment();
+		if (counters != null) {
+			counters.lotus.increment();
+			counters.forClass(c).increment();
 		}
 	}
 
@@ -355,15 +441,15 @@ public enum Factory {
 	 * @return the recycle error count
 	 */
 	public static int getRecycleErrorCount() {
-		return recycleErrCounter.intValue();
+		return counters == null ? 0 : counters.recycleErr.intValue();
 	}
 
 	/**
 	 * Count recycle error.
 	 */
 	public static void countRecycleError(final Class<?> c) {
-		if (TRACE_COUNTERS)
-			recycleErrCounter.increment();
+		if (counters != null)
+			counters.recycleErr.increment();
 	}
 
 	/**
@@ -372,7 +458,7 @@ public enum Factory {
 	 * @return the auto recycle count
 	 */
 	public static int getAutoRecycleCount() {
-		return autoRecycleCounter.intValue();
+		return counters == null ? 0 : counters.autoRecycle.intValue();
 	}
 
 	/**
@@ -381,9 +467,9 @@ public enum Factory {
 	 * @return the int
 	 */
 	public static int countAutoRecycle(final Class<?> c) {
-		if (TRACE_COUNTERS) {
-			objectCounter.get(c).decrement();
-			return autoRecycleCounter.increment();
+		if (counters != null) {
+			counters.forClass(c).decrement();
+			return counters.autoRecycle.increment();
 		} else {
 			return 0;
 		}
@@ -395,16 +481,16 @@ public enum Factory {
 	 * @return the manual recycle count
 	 */
 	public static int getManualRecycleCount() {
-		return manualRecycleCounter.intValue();
+		return counters == null ? 0 : counters.manualRecycle.intValue();
 	}
 
 	/**
 	 * Count a manual recycle
 	 */
 	public static int countManualRecycle(final Class<?> c) {
-		if (TRACE_COUNTERS) {
-			objectCounter.get(c).decrement();
-			return manualRecycleCounter.increment();
+		if (counters != null) {
+			counters.forClass(c).decrement();
+			return counters.manualRecycle.increment();
 		} else {
 			return 0;
 		}
@@ -416,7 +502,11 @@ public enum Factory {
 	 * @return The current active object count
 	 */
 	public static int getActiveObjectCount() {
-		return lotusCounter.intValue() - autoRecycleCounter.intValue() - manualRecycleCounter.intValue();
+		if (counters != null) {
+			return counters.lotus.intValue() - counters.autoRecycle.intValue() - counters.manualRecycle.intValue();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -478,11 +568,17 @@ public enum Factory {
 	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
-		WrapperFactory wf = currentWrapperFactory.get();
+		ThreadVariables tv = getThreadVariables();
+		WrapperFactory wf = tv.wrapperFactory;
 		if (wf == null) {
-			List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
-			wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
-			currentWrapperFactory.set(wf);
+			try {
+				List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
+				wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				wf = new org.openntf.domino.impl.WrapperFactory();
+			}
+			tv.wrapperFactory = wf;
 		}
 		return wf;
 	}
@@ -493,30 +589,33 @@ public enum Factory {
 	 * @return The active WrapperFactory
 	 */
 	public static WrapperFactory getWrapperFactory_unchecked() {
-		return currentWrapperFactory.get();
+		ThreadVariables tv = threadVariables_.get();
+		return tv == null ? null : threadVariables_.get().wrapperFactory;
 	}
 
-	/**
-	 * Set/changes the wrapperFactory for this thread
-	 * 
-	 * @param wf
-	 *            The new WrapperFactory
-	 */
-	public static void setWrapperFactory(final WrapperFactory wf) {
-		currentWrapperFactory.set(wf);
-	}
+	// RPr: A setter is normally not needed. The wrapperFactory should be configure with an application service!
+	//	/**
+	//	 * Set/changes the wrapperFactory for this thread
+	//	 * 
+	//	 * @param wf
+	//	 *            The new WrapperFactory
+	//	 */
+	//	public static void setWrapperFactory(final WrapperFactory wf) {
+	//		currentWrapperFactory.set(wf);
+	//	}
 
 	// --- session handling 
 
-	@SuppressWarnings("rawtypes")
-	@Deprecated
-	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
-	}
+	//	@SuppressWarnings("rawtypes")
+	//	@Deprecated
+	//	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
+	//		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+	//	}
 
-	public static void setNoRecycle(final Base<?> base, final boolean value) {
-		getWrapperFactory().setNoRecycle(base, value);
-	}
+	//This should not be deeded any more
+	//public static void setNoRecycle(final Base<?> base, final boolean value) {
+	//	getWrapperFactory().setNoRecycle(base, value);
+	//}
 
 	/*
 	 * (non-JavaDoc)
@@ -526,12 +625,21 @@ public enum Factory {
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
-		return getWrapperFactory().fromLotus(lotus, schema, parent);
+		T result = getWrapperFactory().fromLotus(lotus, schema, parent);
+		if (result instanceof org.openntf.domino.Session) {
+			ThreadVariables tv = getThreadVariables();
+			org.openntf.domino.Session check = tv.sessionHolders[SessionMode.DEFAULT.index];
+			if (check == null) {
+				setSession((org.openntf.domino.Session) result, SessionMode.DEFAULT);
+			}
+		}
+		return result;
 	}
 
-	public static boolean recacheLotus(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
-		return getWrapperFactory().recacheLotusObject(lotus, wrapper, parent);
-	}
+	// RPr: Should be done directly to current wrapperFactory
+	//	public static boolean recacheLotus(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+	//		return getWrapperFactory().recacheLotusObject(lotus, wrapper, parent);
+	//	}
 
 	/**
 	 * From lotus wraps a given lotus collection in an org.openntf.domino collection
@@ -579,58 +687,59 @@ public enum Factory {
 		return getWrapperFactory().fromLotusAsVector(lotusColl, schema, parent);
 	}
 
-	/**
-	 * From lotus.
-	 * 
-	 * @deprecated Use {@link #fromLotus(lotus.domino.Base, FactorySchema, Base)} instead
-	 * 
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param lotus
-	 *            the lotus
-	 * @param T
-	 *            the t
-	 * @param parent
-	 *            the parent
-	 * @return the t
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Deprecated
-	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends Base> T, final Base parent) {
-		return (T) getWrapperFactory().fromLotus(lotus, (FactorySchema) null, parent);
-	}
-
-	/**
-	 * From lotus.
-	 * 
-	 * @deprecated Use {@link #fromLotus(Collection, FactorySchema, Base)} instead
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param lotusColl
-	 *            the lotus coll
-	 * @param T
-	 *            the t
-	 * @param parent
-	 *            the parent
-	 * @return the collection
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Deprecated
-	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends Base> T, final Base<?> parent) {
-		return getWrapperFactory().fromLotus(lotusColl, (FactorySchema) null, parent);
-	}
-
-	/**
-	 * @deprecated Use {@link #fromLotusAsVector(Collection, FactorySchema, Base)}
-	 */
-	@Deprecated
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Vector<T> fromLotusAsVector(final Collection<?> lotusColl, final Class<? extends org.openntf.domino.Base> T,
-			final org.openntf.domino.Base<?> parent) {
-		return getWrapperFactory().fromLotusAsVector(lotusColl, (FactorySchema) null, parent);
-	}
+	// RPr: Deprecated, so I commented this out
+	//	/**
+	//	 * From lotus.
+	//	 * 
+	//	 * @deprecated Use {@link #fromLotus(lotus.domino.Base, FactorySchema, Base)} instead
+	//	 * 
+	//	 * 
+	//	 * @param <T>
+	//	 *            the generic type
+	//	 * @param lotus
+	//	 *            the lotus
+	//	 * @param T
+	//	 *            the t
+	//	 * @param parent
+	//	 *            the parent
+	//	 * @return the t
+	//	 */
+	//	@SuppressWarnings({ "rawtypes", "unchecked" })
+	//	@Deprecated
+	//	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends Base> T, final Base parent) {
+	//		return (T) getWrapperFactory().fromLotus(lotus, (FactorySchema) null, parent);
+	//	}
+	//
+	//	/**
+	//	 * From lotus.
+	//	 * 
+	//	 * @deprecated Use {@link #fromLotus(Collection, FactorySchema, Base)} instead
+	//	 * 
+	//	 * @param <T>
+	//	 *            the generic type
+	//	 * @param lotusColl
+	//	 *            the lotus coll
+	//	 * @param T
+	//	 *            the t
+	//	 * @param parent
+	//	 *            the parent
+	//	 * @return the collection
+	//	 */
+	//	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//	@Deprecated
+	//	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends Base> T, final Base<?> parent) {
+	//		return getWrapperFactory().fromLotus(lotusColl, (FactorySchema) null, parent);
+	//	}
+	//
+	//	/**
+	//	 * @deprecated Use {@link #fromLotusAsVector(Collection, FactorySchema, Base)}
+	//	 */
+	//	@Deprecated
+	//	@SuppressWarnings({ "unchecked", "rawtypes" })
+	//	public static <T> Vector<T> fromLotusAsVector(final Collection<?> lotusColl, final Class<? extends org.openntf.domino.Base> T,
+	//			final org.openntf.domino.Base<?> parent) {
+	//		return getWrapperFactory().fromLotusAsVector(lotusColl, (FactorySchema) null, parent);
+	//	}
 
 	/**
 	 * Wrap column values.
@@ -663,28 +772,73 @@ public enum Factory {
 	 * 
 	 * @return the session
 	 */
+
 	public static org.openntf.domino.Session getSession() {
-		org.openntf.domino.Session result = currentSessionHolder_.get();
+		return getSession(SessionMode.DEFAULT);
+	}
+
+	/**
+	 * Gets the session full access.
+	 * 
+	 * @return the session full access
+	 */
+	public static org.openntf.domino.Session getSessionFullAccess() {
+		return getSession(SessionMode.FULL_ACCESS);
+	}
+
+	/**
+	 * Gets the trusted session.
+	 * 
+	 * @return the trusted session
+	 */
+	public static org.openntf.domino.Session getTrustedSession() {
+		return getSession(SessionMode.TRUSTED);
+	}
+
+	/**
+	 * Gets the trusted session.
+	 * 
+	 * @return the trusted session
+	 */
+	public static org.openntf.domino.Session getSessionAsSigner() {
+		return getSession(SessionMode.SESSION_AS_SIGNER);
+	}
+
+	/**
+	 * 
+	 * @param mode
+	 * @return
+	 */
+	public static org.openntf.domino.Session getSession(final SessionMode mode) {
+		ThreadVariables tv = getThreadVariables();
+		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
 		if (result == null) {
+			//			System.out.println("TEMP DEBUG: No session found of type " + mode.name() + " in thread "
+			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+
 			try {
-				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
-				getTrustedSession();
-				getSessionFullAccess();
-				Factory.setNoRecycle(result, false);  // We have created the session, so we recycle it
-			} catch (Exception ne) {
-				try {
-					result = XSPUtil.getCurrentSession();
-				} catch (Throwable t) {
-					t.printStackTrace();
+				ISessionFactory sf = tv.sessionFactories[mode.index] != null ? tv.sessionFactories[mode.index]
+						: defaultSessionFactories[mode.index];
+				if (sf != null) {
+					result = sf.createSession();
+					tv.sessionHolders[mode.index] = result;
+					// Per default. Session objects are not recycled by the ODA and thats OK so.
+					// this is our own session which will be recycled in terminate
+					tv.ownSessions.put(mode.alias, result);
+					//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
+					//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 				}
+			} catch (PrivilegedActionException ne) {
+				log_.log(Level.SEVERE, "Unable to get the session of type " + mode.alias
+						+ ". This probably means that you are running in an unsupported configuration "
+						+ "or you forgot to set up your context at the start of the operation. "
+						+ "If you're running in XPages, check the xsp.properties of your database. "
+						+ "If you are running in an Agent, make sure you start with a call to "
+						+ "Factory.setSession() and pass in your lotus.domino.Session", ne);
 			}
-			setSession(result);
-		}
-		if (result == null) {
-			System.out
-					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
-			Throwable t = new Throwable();
-			t.printStackTrace();
+		} else {
+			//			System.out.println("TEMP DEBUG: Found an existing session " + System.identityHashCode(result) + " of type " + mode.name()
+			//					+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 		}
 		return result;
 	}
@@ -695,41 +849,72 @@ public enum Factory {
 	 * @return the session
 	 */
 	public static org.openntf.domino.Session getSession_unchecked() {
-		return currentSessionHolder_.get();
+		ThreadVariables tv = threadVariables_.get();
+		return tv == null ? null : tv.sessionHolders[SessionMode.DEFAULT.index];
+	}
+
+	/**
+	 * Sets the session for a certain sessionMode
+	 * 
+	 * @param session
+	 * @param mode
+	 */
+	public static void setSession(final lotus.domino.Session session, final SessionMode mode) {
+		if (session instanceof org.openntf.domino.Session) {
+			getThreadVariables().sessionHolders[mode.index] = (org.openntf.domino.Session) session;
+			//			throw new UnsupportedOperationException("You should not set an org.openntf.domino.session as Session");
+		}
+		getThreadVariables().sessionHolders[mode.index] = fromLotus(session, Session.SCHEMA, null);
+	}
+
+	public static void setSessionFactory(final ISessionFactory sessionFactory, final SessionMode mode) {
+		getThreadVariables().sessionFactories[mode.index] = sessionFactory;
+	}
+
+	public static ISessionFactory getSessionFactory(final SessionMode mode) {
+		ThreadVariables tv = threadVariables_.get();
+		if (tv == null) {
+			return defaultSessionFactories[mode.index];
+		}
+		return tv.sessionFactories[mode.index];
 	}
 
 	/**
 	 * Sets the current session
 	 * 
+	 * @param session
+	 *            the lotus session
 	 */
 	public static void setSession(final lotus.domino.Session session) {
-		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+		setSession(session, SessionMode.DEFAULT);
 	}
 
 	/**
 	 * Sets the current trusted session
 	 * 
 	 * @param session
+	 *            the lotus session
 	 */
 	public static void setTrustedSession(final lotus.domino.Session session) {
-		currentTrustedSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
+		setSession(session, SessionMode.TRUSTED);
 	}
 
 	/**
 	 * Sets the current session with full access
 	 * 
 	 * @param session
+	 *            the lotus session
 	 */
 	public static void setSessionFullAccess(final lotus.domino.Session session) {
-		currentSessionFullAccessHolder_.set(fromLotus(session, Session.SCHEMA, null));
+		setSession(session, SessionMode.FULL_ACCESS);
 	}
 
-	/**
-	 * clears the current session
-	 */
-	public static void clearSession() {
-		currentSessionHolder_.set(null);
-	}
+	//	/**
+	//	 * clears the current session
+	//	 */
+	//	public static void clearSession() {
+	//		threadVariables.get().sessionHolder = null;
+	//	}
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
 	/**
@@ -756,7 +941,8 @@ public enum Factory {
 	//	}
 
 	public static ClassLoader getClassLoader() {
-		if (currentClassLoader_.get() == null) {
+		ThreadVariables tv = getThreadVariables();
+		if (tv.classLoader == null) {
 			ClassLoader loader = null;
 			try {
 				loader = AccessController.doPrivileged(new PrivilegedExceptionAction<ClassLoader>() {
@@ -772,125 +958,241 @@ public enum Factory {
 			}
 			setClassLoader(loader);
 		}
-		return currentClassLoader_.get();
+		return tv.classLoader;
 	}
-
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, List> nonOSGIServicesCache;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
-		AppServiceLocator serviceLocator = currentServiceLocator_.get();
-		if (serviceLocator != null) {
-			return serviceLocator.findApplicationServices(serviceClazz);
+		ThreadVariables tv = getThreadVariables();
+
+		if (tv.serviceLocator == null) {
+			tv.serviceLocator = ServiceLocatorFinder.findServiceLocator();
+		}
+		if (tv.serviceLocator == null) {
+			throw new IllegalStateException("No service locator available so we cannot find the application services for "
+					+ serviceClazz.getName());
 		}
 
-		// this is the non OSGI case:
-		if (nonOSGIServicesCache == null)
-			nonOSGIServicesCache = new HashMap<Class, List>();
-
-		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
-		if (ret == null) {
-			ret = new ArrayList<T>();
-			nonOSGIServicesCache.put(serviceClazz, ret);
-
-			ClassLoader cl = getClassLoader();
-			if (cl != null) {
-				ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
-				Iterator<T> it = loader.iterator();
-				while (it.hasNext()) {
-					ret.add(it.next());
-				}
-			}
-			if (Comparable.class.isAssignableFrom(serviceClazz)) {
-				Collections.sort((List<? extends Comparable>) ret);
-			}
-		}
-		return ret;
+		return tv.serviceLocator.findApplicationServices(serviceClazz);
 	}
 
 	public static void setClassLoader(final ClassLoader loader) {
-		if (loader != null) {
-			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
+		getThreadVariables().classLoader = loader;
+	}
+
+	// avoid clear methods
+	//	public static void clearWrapperFactory() {
+	//		currentWrapperFactory.remove();
+	//	}
+	//
+	//	public static void clearClassLoader() {
+	//		currentClassLoader_.remove();
+	//	}
+	//
+	//	public static void clearServiceLocator() {
+	//		currentServiceLocator_.remove();
+	//	}
+	//
+	//	public static void clearDominoGraph() {
+	//		DominoGraph.clearDocumentCache();
+	//	}
+	//
+	//	public static void clearNoteCoordinateBuffer() {
+	//		NoteCoordinate.clearLocals();
+	//	}
+	//
+	//	public static void clearBubbleExceptions() {
+	//		DominoUtils.setBubbleExceptions(null);
+	//	}
+
+	/**
+	 * Begin with a clear environment. Initialize this thread
+	 * 
+	 */
+	public static void initThread() { // RPr: Method was deliberately renamed
+		if (!started) {
+			throw new IllegalStateException("Factory is not yet statetd");
 		}
-		//		currentLoadedClasses_.get().clear();
-		currentClassLoader_.set(loader);
-	}
-
-	public static void setServiceLocator(final AppServiceLocator locator) {
-		currentServiceLocator_.set(locator);
-	}
-
-	public static void clearWrapperFactory() {
-		currentWrapperFactory.remove();
-	}
-
-	public static void clearClassLoader() {
-		currentClassLoader_.remove();
-	}
-
-	public static void clearServiceLocator() {
-		currentServiceLocator_.remove();
-	}
-
-	public static void clearDominoGraph() {
-		DominoGraph.clearDocumentCache();
-	}
-
-	public static void clearNoteCoordinateBuffer() {
-		NoteCoordinate.clearLocals();
-	}
-
-	public static void clearBubbleExceptions() {
-		DominoUtils.setBubbleExceptions(null);
+		if (threadVariables_.get() != null) {
+			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly terminated or initialized twice");
+		}
+		//		System.out.println("TEMP DEBUG: Factory thread initializing.");
+		//		Throwable t = new Throwable();
+		//		t.printStackTrace();
+		threadVariables_.set(new ThreadVariables());
 	}
 
 	/**
-	 * Begin with a clear environment
+	 * terminate the current thread.
 	 */
-	public static void init() {
-		// TODO Auto-generated method stub
+	@SuppressWarnings("deprecation")
+	public static void termThread() { // RPr: Method was deliberately renamed
+		ThreadVariables tv = threadVariables_.get();
+		if (tv == null) {
+			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly initalized or terminated twice");
+			return;
+		}
+		//		System.out.println("TEMP DEBUG: Factory thread terminating.");
+		//		Throwable trace = new Throwable();
+		//		trace.printStackTrace();
+		try {
 
+			for (Runnable term : terminateHooks) {
+				term.run();
+			}
+			if (tv.wrapperFactory != null) {
+				tv.wrapperFactory.terminate();
+			}
+			//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
+			DominoUtils.setBubbleExceptions(null);
+			DominoGraph.clearDocumentCache();
+			// The last step is to recycle ALL own sessions
+			for (Session sess : tv.ownSessions.values()) {
+				if (sess != null) {
+					sess.recycle();
+				}
+			}
+		} catch (Throwable t) {
+			log_.log(Level.SEVERE, "An error occured while terminating the factory", t);
+		} finally {
+			tv.clear();
+			threadVariables_.set(null);
+			System.gc();
+		}
+		if (counters != null) {
+			System.out.println(dumpCounters(true));
+		}
 	}
 
-	public static lotus.domino.Session terminate() {
-		lotus.domino.Session result = null;
-		WrapperFactory wf = getWrapperFactory();
-		if (currentSessionHolder_.get() != null) {
-			result = wf.toLotus(currentSessionHolder_.get());
+	private static File getConfigFileFallback() {
+		String progpath = System.getProperty("notes.binary");
+		File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		if (!iniFile.exists()) {
+			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+			progpath = System.getProperty("user.dir");
+			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 		}
-		for (Terminatable callback : onTerminate_) {
-			callback.terminate();
+		if (!iniFile.exists()) {
+			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
+			progpath = System.getProperty("java.home");
+			if (progpath.endsWith("jvm")) {
+				iniFile = new File(progpath + System.getProperty("file.separator") + ".." + System.getProperty("file.separator")
+						+ "notes.ini");
+			} else {
+				iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+
+			}
 		}
-		clearSession();
-		@SuppressWarnings("unused")
-		long termCount = wf.terminate();
-		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
-		clearBubbleExceptions();
-		clearDominoGraph();
-		clearWrapperFactory();
-		clearClassLoader();
-		clearUserLocale();
-		clearServiceLocator();
-		return result;
+		if (!iniFile.exists()) {
+			progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		}
+		if (!iniFile.exists()) {
+			//							System.out.println("Inifile still not found on user.dir path: " + progpath);
+			if (progpath.contains("framework")) {
+				String pp2 = progpath.replace("framework", "");
+				iniFile = new File(pp2 + "notes.ini");
+				//								System.out.println("Attempting to use path: " + pp2);
+				if (!iniFile.exists()) {
+					System.out.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+					for (Object rawName : System.getProperties().keySet()) {
+						if (rawName instanceof String) {
+							System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
+						}
+					}
+				}
+			}
+		}
+		return iniFile;
 	}
 
-	/**
-	 * Support for different Locale
-	 */
-	private static ThreadLocal<Locale> userLocale_ = new ThreadLocal<Locale>();
+	public static void startup() {
+
+		synchronized (Factory.class) {
+
+			NotesThread.sinitThread();
+			try {
+				lotus.domino.Session sess = lotus.domino.NotesFactory.createSession();
+				try {
+					startup(sess);
+				} finally {
+					sess.recycle();
+				}
+			} catch (NotesException e) {
+				e.printStackTrace();
+			} finally {
+				NotesThread.stermThread();
+			}
+		}
+	}
+
+	public static void startup(final lotus.domino.Session session) {
+		synchronized (Factory.class) {
+			if (session instanceof org.openntf.domino.Session) {
+				throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
+			}
+			if (started) {
+				System.out.println("OpenNTF Domino API is already started. Cannot start it again");
+			}
+
+			File iniFile;
+			try {
+				localServerName = session.getUserName();
+				iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
+			} catch (NotesException e) {
+				System.out.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
+				iniFile = getConfigFileFallback();
+			}
+
+			System.out.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
+
+			try {
+				Scanner scanner = new Scanner(iniFile);
+				scanner.useDelimiter("\n|\r\n");
+				loadEnvironment(scanner);
+				scanner.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Cannot read notes.ini. Giving up");
+				e.printStackTrace();
+			}
+
+			Fixes[] fixes = Fixes.values(); // it is always a good idea to enable ALL fixes
+			AutoMime automime = AutoMime.WRAP_32K; // CHECKME RPr: this is the best choice for FOCONIS. For others, too?
+			String contextDatabase = null; // All the default sessionfactories do not have a contextDB
+			defaultSessionFactories[SessionMode.DEFAULT.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+			defaultSessionFactories[SessionMode.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
+			defaultSessionFactories[SessionMode.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+			defaultSessionFactories[SessionMode.SESSION_AS_SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+			defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
+			started = true;
+			System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+		}
+	}
+
+	public static synchronized void shutdown() {
+		synchronized (Factory.class) {
+			System.out.println("Shutting down the OpenNTF Domino API... ");
+			Runnable[] copy = shutdownHooks.toArray(new Runnable[shutdownHooks.size()]);
+			for (Runnable term : copy) {
+				System.out.println("* shutting down " + term);
+				try {
+					term.run();
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			System.out.println("... OpenNTF Domino API shut down");
+			started = false;
+		}
+	}
 
 	public static void setUserLocale(final Locale loc) {
-		userLocale_.set(loc);
+		getThreadVariables().userLocale = loc;
 	}
 
 	public static Locale getUserLocale() {
-		return userLocale_.get();
-	}
-
-	private static void clearUserLocale() {
-		userLocale_.set(null);
+		return getThreadVariables().userLocale;
 	}
 
 	/**
@@ -938,7 +1240,7 @@ public enum Factory {
 	 * 
 	 */
 	public static String dumpCounters(final boolean details) {
-		if (!TRACE_COUNTERS)
+		if (counters == null)
 			return "Counters are disabled";
 		StringBuilder sb = new StringBuilder();
 		sb.append("LotusCount: ");
@@ -953,9 +1255,9 @@ public enum Factory {
 		sb.append(" ActiveObjects: ");
 		sb.append(getActiveObjectCount());
 
-		if (!objectCounter.isEmpty() && details) {
+		if (!counters.classes.isEmpty() && details) {
 			sb.append("\n=== The following objects were left in memory ===");
-			for (Entry<Class<?>, Counter> e : objectCounter.entrySet()) {
+			for (Entry<Class<?>, Counter> e : counters.classes.entrySet()) {
 				int i = e.getValue().intValue();
 				if (i != 0) {
 					sb.append("\n" + i + "\t" + e.getKey().getName());
@@ -965,93 +1267,49 @@ public enum Factory {
 		return sb.toString();
 	}
 
-	/**
-	 * Gets the session full access.
-	 * 
-	 * @return the session full access
-	 */
-	public static org.openntf.domino.Session getSessionFullAccess() {
-		org.openntf.domino.Session result = currentSessionFullAccessHolder_.get();
-		if (result == null) {
+	public static org.openntf.domino.Session getNamedSession(final String name, final boolean fullAccess) {
+		ThreadVariables tv = getThreadVariables();
+		Session sess = tv.ownSessions.get(name);
+		if (sess == null) {
 			try {
-				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
-						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
-					}
-				});
-				if (tmpResult instanceof org.openntf.domino.Session) {
-					result = (org.openntf.domino.Session) tmpResult;
-					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
-					setSessionFullAccess(result);
+				INamedSessionFactory sf = null;
+
+				if (fullAccess) {
+					sf = tv.namedSessionFullAccessFactory != null ? tv.namedSessionFullAccessFactory : defaultNamedSessionFullAccessFactory;
+				} else {
+					sf = tv.namedSessionFactory != null ? tv.namedSessionFactory : defaultNamedSessionFactory;
 				}
+				if (sf != null) {
+					sess = sf.createSession(name);
+				}
+				tv.ownSessions.put(name, sess);
 			} catch (PrivilegedActionException e) {
-				DominoUtils.handleException(e);
-			}
-			if (result == null) {
-				System.out
-						.println("SEVERE: Unable to get default session with full access. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation.");
-				Throwable t = new Throwable();
-				t.printStackTrace();
+				log_.log(Level.SEVERE, "Unable to create named session for '" + name + "'", e);
 			}
 		}
-		return result;
+		return sess;
+
 	}
 
-	/**
-	 * Gets the trusted session.
-	 * 
-	 * @return the trusted session
-	 */
-	public static org.openntf.domino.Session getTrustedSession() {
-		org.openntf.domino.Session result = currentTrustedSessionHolder_.get();
-		if (result == null) {
-			try {
-				Object tmpResult = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-						return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
-					}
-				});
-				if (tmpResult instanceof org.openntf.domino.Session) {
-					result = (org.openntf.domino.Session) tmpResult;
-					Factory.setNoRecycle(result, false); // We have created the session, so we recycle it
-					setTrustedSession(result);
-				}
-			} catch (PrivilegedActionException e) {
-				DominoUtils.handleException(e);
-			}
-			if (result == null) {
-				System.out
-						.println("SEVERE: Unable to get default trusted session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation.");
-				Throwable t = new Throwable();
-				t.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Gets the parent database.
-	 * 
-	 * @param base
-	 *            the base
-	 * @return the parent database
-	 */
-	@Deprecated
-	public static Database getParentDatabase(final Base<?> base) {
-		if (base instanceof org.openntf.domino.Database) {
-			return (org.openntf.domino.Database) base;
-		} else if (base instanceof DatabaseDescendant) {
-			return ((DatabaseDescendant) base).getAncestorDatabase();
-		} else if (base == null) {
-			throw new NullPointerException("Base object cannot be null");
-		} else {
-			throw new UndefinedDelegateTypeException("Couldn't find session for object of type " + base.getClass().getName());
-		}
-	}
+	//	/**
+	//	 * Gets the parent database.
+	//	 * 
+	//	 * @param base
+	//	 *            the base
+	//	 * @return the parent database
+	//	 */
+	//	@Deprecated
+	//	public static Database getParentDatabase(final Base<?> base) {
+	//		if (base instanceof org.openntf.domino.Database) {
+	//			return (org.openntf.domino.Database) base;
+	//		} else if (base instanceof DatabaseDescendant) {
+	//			return ((DatabaseDescendant) base).getAncestorDatabase();
+	//		} else if (base == null) {
+	//			throw new NullPointerException("Base object cannot be null");
+	//		} else {
+	//			throw new UndefinedDelegateTypeException("Couldn't find session for object of type " + base.getClass().getName());
+	//		}
+	//	}
 
 	/**
 	 * Gets the session.
@@ -1342,12 +1600,38 @@ public enum Factory {
 	}
 
 	/**
-	 * This will call the terminate-function of the callback on every "terminate" call. (Across threads!) The callback must handle this with
-	 * threadlocals itself. See DateTime for an example
+	 * Add a hook that will run on the next "terminate" call
 	 * 
+	 * @param hook
+	 *            the hook that should run on next terminate
 	 */
-	public static void onTerminate(final Terminatable callback) {
-		onTerminate_.add(callback);
+	public static void addTerminateHook(final Runnable hook) {
+		terminateHooks.add(hook);
+	}
+
+	public static void removeTerminateHook(final Runnable hook) {
+		terminateHooks.remove(hook);
+	}
+
+	/**
+	 * Add a hook that will run on shutdown
+	 */
+	public static void addShutdownHook(final Runnable hook) {
+		shutdownHooks.add(hook);
+	}
+
+	/**
+	 * Remove a shutdown hook
+	 * 
+	 * @param hook
+	 *            the hook that should be removed
+	 */
+	public static void removeShutdownHook(final Runnable hook) {
+		shutdownHooks.remove(hook);
+	}
+
+	public static String getLocalServerName() {
+		return localServerName;
 	}
 
 }

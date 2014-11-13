@@ -86,68 +86,6 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
-	/**
-	 * Instantiates a new db directory.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent) {
-		super(delegate, parent);
-		try {
-			name_ = delegate.getName();
-			clusterName_ = delegate.getClusterName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		//dbHolderSet_ = new ConcurrentSkipListSet<DatabaseMetaData>(DatabaseMetaData.FILEPATH_COMPARATOR);
-		type_ = Type.TEMPLATE_CANDIDATE;
-	}
-
-	@Deprecated
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final Type type) {
-		super(delegate, parent);
-		try {
-			name_ = delegate.getName();
-			clusterName_ = delegate.getClusterName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		//dbHolderSet_ = new ConcurrentSkipListSet<DatabaseMetaData>(DatabaseMetaData.FILEPATH_COMPARATOR);
-		type_ = type;
-	}
-
-	@Deprecated
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final boolean sortByLastModified) {
-		super(delegate, parent);
-		try {
-			name_ = delegate.getName();
-			clusterName_ = delegate.getClusterName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		if (sortByLastModified)
-			comparator_ = DatabaseMetaData.LASTMOD_COMPARATOR;
-		type_ = Type.TEMPLATE_CANDIDATE;
-	}
-
-	@Deprecated
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final Type type, final boolean sortByLastModified) {
-		super(delegate, parent);
-		try {
-			name_ = delegate.getName();
-			clusterName_ = delegate.getClusterName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		if (sortByLastModified)
-			comparator_ = DatabaseMetaData.LASTMOD_COMPARATOR;
-		type_ = type;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */

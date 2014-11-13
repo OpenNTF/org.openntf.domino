@@ -6,7 +6,6 @@ package org.openntf.domino.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,8 +29,9 @@ public class LogGeneratorOpenLog {
 
 	/*-------------------------------------------------------------*/
 	private static final String _logFormName = "LogEvent";
-	private static final String _xotsDemonClassName = "org.openntf.domino.xots.XotsDaemon";
-	private static final String _xotsDemonToQueueMethodName = "addToQueue";
+
+	//	private static final String _xotsDemonClassName = "org.openntf.domino.xots.XotsDaemon";
+	//	private static final String _xotsDemonToQueueMethodName = "addToQueue";
 
 	/*-------------------------------------------------------------*/
 	class OL_LogRecord {
@@ -78,29 +78,31 @@ public class LogGeneratorOpenLog {
 
 	/*-------------------------------------------------------------*/
 	public static LinkedBlockingQueue<LogGeneratorOpenLog.OL_EntryToWrite> _olQueue = null;
-	private static boolean _xInitDone = false;
+
+	//	private static boolean _xInitDone = false;
 
 	/*-------------------------------------------------------------*/
-	private static void doStaticStartUp() {
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		try {
-			Class<?> xotsDemonClass = Class.forName(_xotsDemonClassName, true, loader);
-			Method xotsDemonToQueueMethod = xotsDemonClass.getMethod(_xotsDemonToQueueMethodName, Runnable.class);
-			LogTaskletOpenLog tol = new LogTaskletOpenLog();
-			_olQueue = new LinkedBlockingQueue<LogGeneratorOpenLog.OL_EntryToWrite>();
-			xotsDemonToQueueMethod.invoke(null, tol);
-		} catch (Exception e) {
-			System.out.println("Can't make Xots-LogDB-Thread: " + e.getMessage());
-			_olQueue = null;
-		} finally {
-			_xInitDone = true;
-		}
-	}
+	//	private static void doStaticStartUp() {
+	//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	//		try {
+	//			Class<?> xotsDemonClass = Class.forName(_xotsDemonClassName, true, loader);
+	//			Method xotsDemonToQueueMethod = xotsDemonClass.getMethod(_xotsDemonToQueueMethodName, Runnable.class);
+	//			LogTaskletOpenLog tol = new LogTaskletOpenLog();
+	//			_olQueue = new LinkedBlockingQueue<LogGeneratorOpenLog.OL_EntryToWrite>();
+	//			xotsDemonToQueueMethod.invoke(null, tol);
+	//		} catch (Exception e) {
+	//			System.out.println("Can't make Xots-LogDB-Thread: " + e.getMessage());
+	//			_olQueue = null;
+	//		} finally {
+	//			_xInitDone = true;
+	//		}
+	//	}
 
 	/*-------------------------------------------------------------*/
+	// TODO RPR: remove synchronized
 	synchronized void log(final Session sess, LogRecord logRec, final LogRecordAdditionalInfo lrai) {
-		if (!_xInitDone)
-			doStaticStartUp();
+		//		if (!_xInitDone)
+		//			doStaticStartUp();
 		OL_LogRecord ollr = new OL_LogRecord(logRec, lrai.getExceptionDetails(), lrai.getLastWrappedDocs());
 		Exception localExc = null;
 		try {

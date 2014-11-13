@@ -22,6 +22,7 @@ public class TestRunnerStdIn implements Runnable {
 
 	@Override
 	public void run() {
+		Factory.enableCounters(true, false);
 		try {
 
 			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
@@ -52,8 +53,7 @@ public class TestRunnerStdIn implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Factory.terminate();
-		System.out.println(Factory.dumpCounters(true));
+
 	}
 
 }

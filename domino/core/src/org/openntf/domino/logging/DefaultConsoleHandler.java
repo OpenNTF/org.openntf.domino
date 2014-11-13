@@ -78,19 +78,6 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		super.close();
 	}
 
-	/**
-	 * Calls the publish method of the parent ConsoleHandler class
-	 * 
-	 * Called from publish method via a PrivilegedAction to avoid access issues
-	 * 
-	 * @param record
-	 *            LogRecord to be outputted
-	 * @since org.openntf.domino 1.0.0
-	 */
-	private void superPub(final LogRecord record) {
-		super.publish(record);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -109,7 +96,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
-						DefaultConsoleHandler.this.superPub(record);
+						DefaultConsoleHandler.super.publish(record);
 						return null;
 					}
 				});

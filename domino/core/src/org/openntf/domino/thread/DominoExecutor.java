@@ -3,10 +3,8 @@
  */
 package org.openntf.domino.thread;
 
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,259 +12,233 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
-import org.openntf.domino.thread.model.IDominoRunnable;
+import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionMode;
 
 /**
- * @author Nathan T. Freeman
+ * A ThreadPoolExecutor for Domino runnables. It sets up a shutdown hook for proper termination. There should be maximum one instance of
+ * DominoExecutor, otherwise concurrency won't work
  * 
+ * @author Nathan T. Freeman
  */
 @Incomplete
-public class DominoExecutor extends ThreadPoolExecutor {
+public class DominoExecutor extends ScheduledThreadPoolExecutor {
 
-	public static enum ThreadCleaner implements Runnable {
-		INSTANCE;
-		private Set<DominoExecutor> executors_ = Collections.synchronizedSet(new HashSet<DominoExecutor>());
-
-		private ThreadCleaner() {
-			try {
-				final Runnable r = this;
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						Thread cleanerThread = new Thread(r);
-						//						System.out.println("DEBUG: CleanerThread created");
-						Runtime.getRuntime().addShutdownHook(cleanerThread);
-						//						System.out.println("DEBUG: Shutdown hook added");
-						return null;
-					}
-				});
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-		}
-
-		@Override
-		public void run() {
-			clean();
-		}
-
-		public void clean() {
-			System.out.println("DEBUG: Running ThreadCleaner...");
-			Object[] copy = executors_.toArray();
-			for (Object raw : copy) {
-				try {
-					if (raw instanceof DominoExecutor) {
-						DominoExecutor executor = (DominoExecutor) raw;
-						executor.shutdownNow();
-					}
-				} catch (Throwable t) {
-					t.printStackTrace();
-				}
-			}
-		}
-
-		public synchronized void addExecutor(final DominoExecutor executor) {
-			executors_.add(executor);
-		}
-
-		public synchronized DominoExecutor removeExecutor(final DominoExecutor executor) {
-			executors_.remove(executor);
-			return executor;
-		}
-
-	}
-
-	public static class OpenSecurityManager extends SecurityManager {
-		public OpenSecurityManager() {
-		}
-	}
-
-	public static class OpenRunnable implements Runnable {
-		protected final Runnable runnable_;
-		protected ClassLoader loader_;
-
-		public OpenRunnable(final Runnable runnable) {
-			runnable_ = runnable;
-		}
-
-		public OpenRunnable(final Runnable runnable, final ClassLoader loader) {
-			runnable_ = runnable;
-			loader_ = loader;
-		}
-
-		public void setClassLoader(final ClassLoader loader) {
-			loader_ = loader;
-		}
-
-		@Override
-		public void run() {
-			if (null != loader_) {
-				System.out.println("DEBUG: setting ClassLoader to a " + loader_.getClass().getName() + " for a "
-						+ runnable_.getClass().getName());
-				Thread.currentThread().setContextClassLoader(loader_);
-			}
-			runnable_.run();
-		}
-	}
-
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
+
+	protected List<Runnable> deferred = new ArrayList<Runnable>();
 	private Set<IDominoListener> listeners_;
 
-	public static BlockingQueue<Runnable> getBlockingQueue(final int size) {
+	// the shutdown-hook for proper termination
+	protected Runnable shutdownHook = new Runnable() {
+		@Override
+		public void run() {
+			shutdownNow();
+		}
+	};
+
+	private static BlockingQueue<Runnable> getBlockingQueue(final int size) {
 		return new LinkedBlockingQueue<Runnable>(size);
 	}
 
 	protected void init() {
-
-	}
-
-	public DominoExecutor() {
-		this(50);
+		Factory.addShutdownHook(shutdownHook);
 	}
 
 	public DominoExecutor(final int corePoolSize) {
-		this(corePoolSize, corePoolSize);
-	}
-
-	public DominoExecutor(final int corePoolSize, final int maximumPoolSize) {
-		this(corePoolSize, maximumPoolSize, 60l);
-	}
-
-	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime) {
-		this(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, getBlockingQueue(maximumPoolSize));
-	}
-
-	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit paramTimeUnit,
-			final BlockingQueue<Runnable> runnableQueue) {
-		this(corePoolSize, maximumPoolSize, keepAliveTime, paramTimeUnit, runnableQueue, new DominoThreadFactory());
-	}
-
-	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
-			final BlockingQueue<Runnable> runnableQueue, final DominoThreadFactory threadFactory) {
-		super(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, threadFactory);
-		ThreadCleaner.INSTANCE.addExecutor(this);
+		super(corePoolSize);
 		init();
 	}
 
-	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
-			final BlockingQueue<Runnable> runnableQueue, final RejectedExecutionHandler paramRejectedExecutionHandler) {
-		this(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, new DominoThreadFactory(),
-				paramRejectedExecutionHandler);
-	}
-
-	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
-			final BlockingQueue<Runnable> runnableQueue, final DominoThreadFactory threadFactory,
-			final RejectedExecutionHandler paramRejectedExecutionHandler) {
-		super(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, threadFactory, paramRejectedExecutionHandler);
-		ThreadCleaner.INSTANCE.addExecutor(this);
-		init();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.ThreadPoolExecutor#getThreadFactory()
+	/**
+	 * Returns a list of all
+	 * 
+	 * @return
 	 */
-	@Override
-	public DominoThreadFactory getThreadFactory() {
-		ThreadFactory result = super.getThreadFactory();
-		if (!(result instanceof DominoThreadFactory)) {
-			result = new DominoThreadFactory();
-			this.setThreadFactory(result);
-		}
-		return (DominoThreadFactory) result;
+	public List<Runnable> getRunningTasks() {
+		List<Runnable> ret = new ArrayList<Runnable>();
+		ret.addAll(getQueue());
+		ret.addAll(deferred);
+		return ret;
 	}
+
+	//
+	//	/* (non-Javadoc)
+	//	 * @see java.util.concurrent.ThreadPoolExecutor#execute(java.lang.Runnable)
+	//	 */
+	//	@Override
+	//	public void execute(final Runnable runnable) {
+	//		//		DominoRunnableWrapper wrappedRunnable;
+	//		//		Runnable realRunnable;
+	//		//
+	//		//		if (runnable instanceof DominoRunnableWrapper) {
+	//		//			wrappedRunnable = (DominoRunnableWrapper) runnable;
+	//		//			realRunnable = wrappedRunnable.getRunnable();
+	//		//		} else {
+	//		//			realRunnable = runnable;
+	//		//			wrappedRunnable = wrap(runnable);
+	//		//		}
+	//		//		System.out.println("DominoExecutor: EXEC: " + runnable.getClass().getName());
+	//		//		super.execute(wrappedRunnable);
+	//		//	return runnable;
+	//
+	//		//			Class<? extends Runnable> cls = runnable.getClass();
+	//		//			boolean isSingleton = cls.isAnnotationPresent(Singleton.class);
+	//		//			boolean isRejectingRunnable = runnable instanceof RejectingRunnable;
+	//		//	
+	//		//			if (isSingleton || isRejectingRunnable) {
+	//		//				synchronized (this) {
+	//		//					for (Runnable running : getQueue()) {
+	//		//						// If the runnable is declared as singleton, we must not enqueue it, if it is already present
+	//		//						if (isSingleton && running.getClass().equals(cls)) {
+	//		//							throw new RejectedExecutionException();
+	//		//						}
+	//		//	
+	//		//						// if the runnable implements RejectingRunnable, we check if it may run with others
+	//		//						if (isRejectingRunnable) {
+	//		//							if (!((RejectingRunnable) runnable).checkReject(unwrap(running))) {
+	//		//								throw new RejectedExecutionException();
+	//		//							}
+	//		//						}
+	//		//					}
+	//		//					super.execute(wrap(runnable));
+	//		//				}
+	//		//			} else {
+	//		//				super.execute(wrap(runnable));
+	//		//			}
+	//	}
 
 	/* (non-Javadoc)
 	 * @see java.util.concurrent.ThreadPoolExecutor#beforeExecute(java.lang.Thread, java.lang.Runnable)
 	 */
+
 	@Override
-	protected void beforeExecute(final Thread t, final Runnable r) {
-		super.beforeExecute(t, r);
-		if (r instanceof IDominoRunnable) {
-			ClassLoader loader = ((IDominoRunnable) r).getContextClassLoader();
-			if (loader != null) {
-				t.setContextClassLoader(loader);
+	protected void afterExecute(final Runnable runnable, final Throwable paramThrowable) {
+		super.afterExecute(runnable, paramThrowable);
+
+		synchronized (deferred) {
+			if (!deferred.isEmpty() && !isShutdown()) {
+				Iterator<Runnable> it = deferred.iterator();
+				while (it.hasNext()) {
+					try {
+						// try to execute the next possible deferred
+						execute(it.next());
+						it.remove();
+					} catch (RejectedExecutionException ex) {
+
+					}
+				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.ThreadPoolExecutor#afterExecute(java.lang.Runnable, java.lang.Throwable)
-	 */
 	@Override
-	protected void afterExecute(final Runnable r, final Throwable t) {
-		super.afterExecute(r, t);
+	public void execute(final Runnable task) {
+		super.execute(wrap(task));
 	}
 
 	@Override
-	public boolean isTerminating() {
-		return super.isTerminating();
+	public boolean remove(final Runnable task) {
+		return super.remove(wrap(task));
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.ThreadPoolExecutor#execute(java.lang.Runnable)
-	 */
 	@Override
-	public void execute(Runnable runnable) {
-		if (runnable instanceof OpenRunnable) {
+	public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final long delay, final TimeUnit unit) {
+		// TODO Auto-generated method stub
+		return super.schedule(callable, delay, unit);
+	}
 
-		} else if (runnable instanceof DominoNativeRunner) {
-			final ClassLoader loader = ((DominoNativeRunner) runnable).getClassLoader();
-			runnable = new OpenRunnable(runnable);
-			((OpenRunnable) runnable).setClassLoader(loader);
-		} else if (runnable instanceof IDominoRunnable) {
-			DominoSessionType type = ((IDominoRunnable) runnable).getSessionType();
-			final ClassLoader loader = ((IDominoRunnable) runnable).getContextClassLoader();
-			if (type == DominoSessionType.NATIVE) {
-				DominoNativeRunner nativeRunner = new DominoNativeRunner(runnable, loader);
-				runnable = new OpenRunnable(nativeRunner);
-				((OpenRunnable) runnable).setClassLoader(loader);
-			} else {
-				System.out.println("DEBUG: IDominoRunnable has session type " + type.name());
+	@Override
+	public ScheduledFuture<?> schedule(final Runnable command, final long delay, final TimeUnit unit) {
+		return super.schedule(wrap(command), delay, unit);
+	}
+
+	@Override
+	public ScheduledFuture<?> scheduleAtFixedRate(final Runnable command, final long initialDelay, final long period, final TimeUnit unit) {
+		// TODO Auto-generated method stub
+		return super.scheduleAtFixedRate(wrap(command), initialDelay, period, unit);
+	}
+
+	@Override
+	public ScheduledFuture<?> scheduleWithFixedDelay(final Runnable command, final long initialDelay, final long delay, final TimeUnit unit) {
+		// TODO Auto-generated method stub
+		return super.scheduleWithFixedDelay(wrap(command), initialDelay, delay, unit);
+	}
+
+	@Override
+	public <T> Future<T> submit(final Callable<T> task) {
+		// TODO Auto-generated method stub
+		return super.submit(wrap(task));
+	}
+
+	@Override
+	public <T> Future<T> submit(final Runnable task, final T result) {
+		// TODO Auto-generated method stub
+		return super.submit(wrap(task), result);
+	}
+
+	@Override
+	public Future<?> submit(final Runnable task) {
+		// TODO Auto-generated method stub
+		return super.submit(wrap(task));
+	}
+
+	/**
+	 * Queue the given runnable. In contrast to "execute", queue will ensure that the runnable will run at a later time
+	 * 
+	 * @param runnable
+	 * @return
+	 */
+	public boolean queue(final Runnable runnable) {
+		try {
+			execute(runnable);
+			//schedule(runnable, 30, TimeUnit.SECONDS);
+			return true;
+		} catch (RejectedExecutionException ex) {
+			// if we are shutting down, don't queue anything
+			if (isShutdown()) {
+				throw ex;
+			}
+			// otherwise we will add the runnable to the deferred list
+			synchronized (deferred) {
+				deferred.add(runnable);
 			}
 		}
-		if (runnable instanceof Future) {
-			super.execute(runnable);
-		} else {
-			//			System.out.println("Would have submitted a " + runnable.getClass().getName());
-
-			//			super.submit(runnable);
-			super.execute(runnable);
-		}
+		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.AbstractExecutorService#newTaskFor(java.util.concurrent.Callable)
-	 */
-	@Override
-	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
-		return new DominoFutureTask<T>(callable);
-	}
+	//	/* (non-Javadoc)
+	//	 * @see java.util.concurrent.AbstractExecutorService#newTaskFor(java.util.concurrent.Callable)
+	//	 */
+	//	@Override
+	//	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
+	//		return new DominoFutureTask<T>(callable);
+	//	}
+	//
+	//	/* (non-Javadoc)
+	//	 * @see java.util.concurrent.AbstractExecutorService#newTaskFor(java.lang.Runnable, java.lang.Object)
+	//	 */
+	//	@Override
+	//	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
+	//		return new DominoFutureTask<T>(runnable, value);
+	//	}
 
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.AbstractExecutorService#newTaskFor(java.lang.Runnable, java.lang.Object)
-	 */
-	@Override
-	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
-		return new DominoFutureTask<T>(runnable, value);
-	}
-
-	/* (non-Javadoc)
-	 * @see java.util.concurrent.ThreadPoolExecutor#awaitTermination(long, java.util.concurrent.TimeUnit)
-	 */
-	@Override
-	public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-		return super.awaitTermination(timeout, unit);
-	}
+	//	/* (non-Javadoc)
+	//	 * @see java.util.concurrent.ThreadPoolExecutor#awaitTermination(long, java.util.concurrent.TimeUnit)
+	//	 */
+	//	@Override
+	//	public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
+	//		return super.awaitTermination(timeout, unit);
+	//	}
 
 	@Incomplete
 	//these can't use the IDominoListener interface. Will need to put something new together for that.
@@ -287,14 +259,30 @@ public class DominoExecutor extends ThreadPoolExecutor {
 
 	@Override
 	public void shutdown() {
-		ThreadCleaner.INSTANCE.removeExecutor(this);
+		Factory.removeShutdownHook(shutdownHook);
 		super.shutdown();
 	}
 
 	@Override
 	public List<Runnable> shutdownNow() {
-		ThreadCleaner.INSTANCE.removeExecutor(this);
-		return super.shutdownNow();
+		List<Runnable> ret = super.shutdownNow();
+		Factory.removeShutdownHook(shutdownHook);
+		return ret;
 	}
 
+	protected Runnable wrap(final Runnable runnable) {
+		if (runnable instanceof AbstractDominoRunner) {
+			return runnable;
+		}
+		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+		return new DominoRunner(runnable, sf);
+	}
+
+	protected <T> Callable<T> wrap(final Callable<T> callable) {
+		if (callable instanceof AbstractDominoRunner.WrappedCallable) {
+			return callable;
+		}
+		ISessionFactory sf = Factory.getSessionFactory(SessionMode.DEFAULT);
+		return new DominoRunner(callable, sf).asCallable(callable);
+	}
 }

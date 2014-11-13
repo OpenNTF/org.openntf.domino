@@ -360,7 +360,15 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return result;
 	}
 
-	private org.openntf.domino.Database getDatabase() {
+	protected String getServerName() {
+		return server_;
+	}
+
+	protected String getDatabasePath() {
+		return filepath_;
+	}
+
+	protected org.openntf.domino.Database getDatabase() {
 		return getRawSession().getDatabase(server_, filepath_);
 	}
 
@@ -418,9 +426,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		// + " even though createOnFail was true. This should be guaranteed to return a real document!");
 		// }
 		if (result == null && createOnFail) {
-			log_.log(Level.SEVERE,
-					"We are about to return a null result even though createOnFail was true. We should ALWAYS return a Document in that case. For key: "
-							+ String.valueOf(id) + " in database " + String.valueOf(filepath_));
+			String message = "We are about to return a null result even though createOnFail was true. We should ALWAYS return a Document in that case. For key: "
+					+ String.valueOf(id) + " in database " + String.valueOf(filepath_);
+			log_.log(Level.SEVERE, message);
+			System.out.println(message);
 			new RuntimeException().printStackTrace();
 		}
 		return result;

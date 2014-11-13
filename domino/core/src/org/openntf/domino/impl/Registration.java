@@ -25,7 +25,6 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,19 +32,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class Registration extends Base<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
 		org.openntf.domino.Registration {
-
-	/**
-	 * Instantiates a new registration.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Registration(final lotus.domino.Registration delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-	}
 
 	/**
 	 * Instantiates a new registration.

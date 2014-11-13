@@ -31,23 +31,10 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class RichTextNavigator.
  */
 public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
-org.openntf.domino.RichTextNavigator {
+		org.openntf.domino.RichTextNavigator {
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(RichTextNavigator.class.getName());
-
-	/**
-	 * Instantiates a new rich text navigator.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (RichTextItem) parent);
-	}
 
 	/**
 	 * Instantiates a new outline.

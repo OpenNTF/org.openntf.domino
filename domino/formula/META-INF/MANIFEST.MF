@@ -18,6 +18,8 @@ Export-Package: org.openntf.formula,
  org.openntf.formula.ast,
  org.openntf.formula.function,
  org.openntf.formula.impl,
- org.openntf.formula.parse
+ org.openntf.formula.parse,
+ org.openntf.service
 Bundle-ClassPath: .
-Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1"
+Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1",
+ org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional

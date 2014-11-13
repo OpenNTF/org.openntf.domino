@@ -14,6 +14,8 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.utils.DominoFormatter;
 
 import com.ibm.icu.util.Calendar;
 
@@ -218,6 +220,13 @@ public interface Session {
 	public boolean isFixEnabled(Fixes fix);
 
 	/**
+	 * Returns all enabled fixes on that session
+	 * 
+	 * @return a set with all enabled fixes
+	 */
+	public Fixes[] getEnabledFixes();
+
+	/**
 	 * Enables / disables a specific Khan-mode fix for the current Session object.
 	 * 
 	 * <p>
@@ -394,4 +403,21 @@ public interface Session {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setCurrentDatabase(final Database db);
+
+	/**
+	 * Returns a Domino Formatter
+	 * 
+	 * @return the formatter
+	 */
+	DominoFormatter getFormatter();
+
+	/**
+	 * Sets the sessionFactory of this session. You can pass SessionFactories across threads. (same as a SessionCloner)
+	 * 
+	 * @param sessionFactory
+	 *            the session factory that has constructed this session
+	 */
+	public void setSessionFactory(ISessionFactory nativeSessionFactory);
+
+	public ISessionFactory getSessionFactory();
 }

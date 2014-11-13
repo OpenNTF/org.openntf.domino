@@ -25,7 +25,6 @@ import org.openntf.domino.ReplicationEntry;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -33,19 +32,6 @@ import org.openntf.domino.utils.Factory;
  */
 public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
 		org.openntf.domino.Replication {
-
-	/**
-	 * Instantiates a new replication.
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 */
-	@Deprecated
-	public Replication(final lotus.domino.Replication delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getParentDatabase(parent));
-	}
 
 	/**
 	 * Instantiates a new outline.
