@@ -50,11 +50,16 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	private static final long serialVersionUID = 1L;
 	private static final int RENDER_RESPONSE = 6;
 
+	public XspOpenLogPhaseListener() {
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void beforePhase(final PhaseEvent event) {
 		try {
@@ -90,6 +95,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	 * 
 	 * @see javax.faces.event.PhaseListener#afterPhase(javax.faces.event.PhaseEvent)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void afterPhase(final PhaseEvent event) {
 		try {
@@ -311,6 +317,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	 * 
 	 * @see javax.faces.event.PhaseListener#getPhaseId()
 	 */
+	@Override
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}
