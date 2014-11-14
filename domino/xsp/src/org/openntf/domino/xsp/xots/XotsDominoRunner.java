@@ -132,10 +132,17 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 	 */
 	private void runWithinModule(final NotesContext ctx, final NSFComponentModule codeModule) throws ServletException, NotesException {
 		// First we set up the classloader
-		Thread thread = Thread.currentThread();
-		ClassLoader oldCl = thread.getContextClassLoader();
-		ClassLoader mcl = codeModule.getModuleClassLoader();
-		thread.setContextClassLoader(mcl);
+		final Thread thread = Thread.currentThread();
+		final ClassLoader mcl = codeModule.getModuleClassLoader();
+		final ClassLoader oldCl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+			@Override
+			public ClassLoader run() {
+				ClassLoader tmpCl = thread.getContextClassLoader();
+				thread.setContextClassLoader(mcl);
+				return tmpCl;
+			}
+		});
 
 		try {
 			// next initialize the context with a FakeHttpRequest. This is neccessary so that internal things
@@ -194,7 +201,13 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 			//						System.out.println("XotsDominoRunner: WARNING: " + getRunnable().getClass().getName() + " is tainted!");
 			//					}
 		} finally {
-			thread.setContextClassLoader(oldCl);
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
+				@Override
+				public Object run() {
+					thread.setContextClassLoader(oldCl);
+					return null;
+				}
+			});
 		}
 	}
 

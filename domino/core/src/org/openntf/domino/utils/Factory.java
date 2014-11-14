@@ -876,7 +876,8 @@ public enum Factory {
 		if (tv == null) {
 			return defaultSessionFactories[mode.index];
 		}
-		return tv.sessionFactories[mode.index];
+		return defaultSessionFactories[mode.index];
+		//return tv.sessionFactories[mode.index];
 	}
 
 	/**
