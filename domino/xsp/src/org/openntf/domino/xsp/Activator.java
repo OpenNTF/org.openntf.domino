@@ -33,6 +33,7 @@ public class Activator extends Plugin {
 	public static Activator instance;
 
 	private static String version;
+	private static boolean debugAll;
 	private ServiceRegistration consoleCommandService;
 
 	//private static BundleContext context;
@@ -203,6 +204,7 @@ public class Activator extends Plugin {
 	 * @return boolean whether or not enabled
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
+	@Deprecated
 	public static boolean isAPIEnabled() {
 		return isAPIEnabled(FacesContext.getCurrentInstance());
 	}
@@ -242,6 +244,44 @@ public class Activator extends Plugin {
 			t.printStackTrace();
 		}
 		return cacheSetting("isAPIEnabled", appMap, retVal_).booleanValue();
+	}
+
+	/**
+	 * Gets whether the marcel flag is enabled for the application
+	 * 
+	 * @param ctx
+	 *            FacesContext
+	 * @return boolean
+	 * @since org.openntf.domino.xsp 3.0.0
+	 */
+	public static boolean isAppMimeFriendly(final FacesContext ctx) {
+		return Activator.isAppFlagSet(ctx, "MARCEL");
+	}
+
+	/**
+	 * Gets whether the khan flag is enabled for the application
+	 * 
+	 * @param ctx
+	 *            FacesContext
+	 * @return boolean
+	 * @since org.openntf.domino.xsp 3.0.0
+	 */
+	public static boolean isAppAllFix(final FacesContext ctx) {
+		return Activator.isAppFlagSet(ctx, "KHAN");
+	}
+
+	/**
+	 * Ggets whether the raid flag is enabled for the application
+	 * 
+	 * @param ctx
+	 *            FacesContext
+	 * @return boolean
+	 * @since org.openntf.domino.xsp 3.0.0
+	 */
+	public static boolean isAppDebug(final FacesContext ctx) {
+		if (debugAll)
+			return true;
+		return Activator.isAppFlagSet(ctx, "RAID");
 	}
 
 	/**
@@ -340,11 +380,7 @@ public class Activator extends Plugin {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
-
 		registerCommandProvider(bundleContext);
-
-		//startOda();
-
 	}
 
 	/*
@@ -438,7 +474,7 @@ public class Activator extends Plugin {
 	 * @return AutoMime
 	 * @since org.openntf.domino.xsp 5.0.0
 	 */
-	private static AutoMime getAppAutoMime(final FacesContext ctx) {
+	public static AutoMime getAppAutoMime(final FacesContext ctx) {
 		Map<String, Object> appMap = getAppMap(ctx);
 
 		AutoMime retVal_ = getCachedSetting("getAppAutoMime", appMap, AutoMime.class);
@@ -463,5 +499,9 @@ public class Activator extends Plugin {
 		}
 
 		return cacheSetting("getAppAutoMime", appMap, retVal_);
+	}
+
+	public static boolean isAppGodMode(final FacesContext ctx) {
+		return Activator.isAppFlagSet(ctx, "GODMODE");
 	}
 }

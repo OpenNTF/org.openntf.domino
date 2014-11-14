@@ -2,16 +2,23 @@ package org.openntf.domino.xsp.helpers;
 
 import javax.faces.context.FacesContext;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.AbstractSessionFactory;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.Activator;
 
 import com.ibm.domino.xsp.module.nsf.NotesContext;
+import com.ibm.xsp.DominoXspContributor;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.RequestCustomizerFactory;
 import com.ibm.xsp.context.RequestParameters;
+import com.ibm.xsp.domino.el.DominoImplicitObjectFactory;
+import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.event.FacesContextListener;
+import com.ibm.xsp.factory.FactoryLookup;
 
 public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 
@@ -26,12 +33,19 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 		Factory.initThread();
 		Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
 
-		// Technically, there exist only ONE sessionAsSigner. This is a bug in NotesContext
-		// So we ask first for the Full-Access session
-		// We can't set the sessionAsSigner here, because it is too early!
-
-		//Factory.setSession(notesContext.getSessionAsSigner(true), SessionType.SIGNER_FULL_ACCESS);
-		//Factory.setSession(notesContext.getSessionAsSigner(false), SessionType.SIGNER);
+		Session session = Factory.getSession(SessionType.CURRENT);
+		if (session != null) {
+			session.setAutoMime(Activator.getAppAutoMime(ctx));
+			if (Activator.isAppMimeFriendly(ctx))
+				session.setConvertMIME(false); // this should be always the case in XPages env
+			if (Activator.isAppAllFix(ctx)) {
+				for (Fixes fix : Fixes.values()) {
+					session.setFixEnable(fix, true);
+				}
+			}
+			if (Activator.isAppFlagSet(ctx, "BUBBLEEXCEPTIONS"))
+				DominoUtils.setBubbleExceptions(true);
+		}
 
 		AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);
 		AbstractSessionFactory sessionAsSigner2 = new XPageSignerSessionFactory(notesContext, true);
@@ -44,10 +58,8 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 
 		FacesContextEx ctxEx = (FacesContextEx) ctx;
 		ctxEx.addRequestListener(new FacesContextListener() {
-
 			@Override
 			public void beforeRenderingPhase(final FacesContext paramFacesContext) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
@@ -55,6 +67,22 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 				Factory.termThread();
 			}
 		});
+
+		// set up  ObjectFactoriy if godMode is enabled
+		if (Activator.isAppFlagSet(ctx, "GODMODE")) {
+			@SuppressWarnings("deprecation")
+			FactoryLookup lookup = ctxEx.getApplicationEx().getFactoryLookup();
+
+			ImplicitObjectFactory iof = (ImplicitObjectFactory) lookup.getFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY);
+
+			if (iof instanceof DominoImplicitObjectFactory) {
+				if (Activator.isAppDebug(ctx)) {
+					System.out.println("Changing the DominoImplicitObjectFactory");
+				}
+				iof = new OpenntfGodModeImplicitObjectFactory(iof);
+				lookup.setFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY, iof);
+			}
+		}
 
 	}
 }
