@@ -8,6 +8,4 @@ public interface INamedSessionFactory {
 
 	public Session createSession(String userName) throws PrivilegedActionException;
 
-	public ISessionFactory getNamedFactory(String userName);
-
 }

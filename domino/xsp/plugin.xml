@@ -29,6 +29,8 @@
    </extension>
    
    
+   
+   
      <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.designer.runtime.extensions.JavaScriptProvider" class="org.openntf.domino.xsp.script.OpenDomJavaScriptExtension" />
    </extension>
@@ -49,6 +51,8 @@
 		<service class="org.openntf.domino.xsp.xots.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
 	</extension>
   
-
+	<extension point="com.ibm.commons.Extension">
+		<service class="org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer" type="com.ibm.xsp.RequestParameters"/>
+	</extension>
 
 </plugin>

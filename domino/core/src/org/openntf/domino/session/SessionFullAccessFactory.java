@@ -66,11 +66,7 @@ public class SessionFullAccessFactory extends AbstractSessionFactory implements 
 				}
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw);
 	}
 
-	@Override
-	public ISessionFactory getNamedFactory(final String userName) {
-		return new SessionFullAccessFactory(this, userName);
-	}
 }

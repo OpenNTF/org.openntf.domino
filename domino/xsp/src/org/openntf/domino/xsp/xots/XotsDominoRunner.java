@@ -5,17 +5,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessControlContext;
 import java.security.AccessController;
-import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
 
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.thread.AbstractDominoRunner;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -27,8 +24,6 @@ import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
-import com.ibm.xsp.servlet.local.LocalHttpServletRequest;
-import com.ibm.xsp.servlet.local.LocalHttpSession;
 
 /**
  * This runner runs a runnable inside a module.
@@ -78,13 +73,8 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 		return null;
 	}
 
-	public <T> XotsDominoRunner(final NSFComponentModule module, final Callable<T> callable, final ISessionFactory sessionFactory) {
-		super(callable, sessionFactory);
-		module_ = module;
-	}
-
-	public XotsDominoRunner(final NSFComponentModule module, final Runnable runnable, final ISessionFactory sessionFactory) {
-		super(runnable, sessionFactory);
+	public <T> XotsDominoRunner(final NSFComponentModule module, final Callable<T> callable) {
+		super(callable);
 		module_ = module;
 	}
 
@@ -106,6 +96,15 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 		final NotesContext ctx = new NotesContext(module_);
 		NotesContext.initThread(ctx);
 		try {
+
+			if (sessionFactory != null) {
+				Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+
+				org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
+
+				Factory.getNamedSessionFactory(true).createSession(current.getEffectiveUserName());
+				Factory.setSessionFactory(sessionFactory, SessionType.CURRENT_FULL_ACCESS);
+			}
 			NSFComponentModule codeModule = module_.getTemplateModule() == null ? module_ : module_.getTemplateModule();
 			codeModule.updateLastModuleAccess();
 			// RPr: In my opinion, This is the proper way how to run runnables in a different thread
@@ -153,26 +152,20 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 					// Set up the "TopLevelXPageSigner == Signer of the runnable
 					// As soon as we are in a xspnsf, we do not have a SessionFactory!
 
-					if (sessionFactory == null) {
-						Factory.setSession(ctx.getCurrentSession(), SessionType.DEFAULT);
-					}
-
 					System.out.println("Loading Class from NSF:" + url);
 					ctx.setSignerSessionRights("WEB-INF/classes/" + str);
+
 					// TODO: RPr: There is a bug: you can decide if you want to use "sessionAsSigner" or "sessionAsSignerFullAccess"
 					// But you cannot use both simultaneously!
 					Session signerSession = ctx.getSessionAsSigner(true);
-
 					if (signerSession != null) {
-						Factory.setSession(signerSession, SessionType.SESSION_AS_SIGNER);
+						Factory.setSession(signerSession, SessionType.SIGNER);
+						Factory.setSession(signerSession, SessionType.SIGNER_FULL_ACCESS);
 						System.out.println("Code signer is " + signerSession.getUserName());
 					} else {
-						Factory.setSession(null, SessionType.SESSION_AS_SIGNER);
+						Factory.setSession(null, SessionType.SIGNER);
+						Factory.setSession(null, SessionType.SIGNER_FULL_ACCESS);
 					}
-
-				} else {
-					Factory.setSessionFactory(sessionFactory, SessionType.DEFAULT);
-					Factory.setSessionFactory(sessionFactory, SessionType.SESSION_AS_SIGNER);
 				}
 			}
 
@@ -195,29 +188,6 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 			//					}
 		} finally {
 			thread.setContextClassLoader(oldCl);
-		}
-	}
-
-	private static class FakeHttpRequest extends LocalHttpServletRequest {
-		HttpSession session = new LocalHttpSession();
-
-		public FakeHttpRequest() {
-			super(null, null);
-		}
-
-		@Override
-		public Principal getUserPrincipal() {
-			return new Principal() {
-				@Override
-				public String getName() {
-					return (Factory.getLocalServerName());
-				}
-			};
-		}
-
-		@Override
-		public HttpSession getSession(final boolean paramBoolean) {
-			return session;
 		}
 	}
 }

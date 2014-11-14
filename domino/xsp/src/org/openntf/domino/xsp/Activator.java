@@ -4,11 +4,14 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.openntf.domino.AutoMime;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -201,7 +204,25 @@ public class Activator extends Plugin {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public static boolean isAPIEnabled() {
-		boolean retVal_ = Boolean.FALSE;
+		return isAPIEnabled(FacesContext.getCurrentInstance());
+	}
+
+	/**
+	 * Checks whether or not the API is enabled for the current database
+	 * 
+	 * @param ctx
+	 *            the current FacesContext
+	 * @return boolean whether or not enabled
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
+	public static boolean isAPIEnabled(final FacesContext ctx) {
+		Map<String, Object> appMap = getAppMap(ctx);
+
+		Boolean retVal_ = getCachedSetting("isAPIEnabled", appMap, Boolean.class);
+		if (retVal_ != null) {
+			return retVal_.booleanValue();
+		}
+		retVal_ = Boolean.FALSE;
 		try {
 			String[] envs = Activator.getXspProperty("xsp.library.depends");
 			if (envs != null) {
@@ -220,7 +241,7 @@ public class Activator extends Plugin {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-		return retVal_;
+		return cacheSetting("isAPIEnabled", appMap, retVal_).booleanValue();
 	}
 
 	/**
@@ -341,4 +362,106 @@ public class Activator extends Plugin {
 		super.stop(bundleContext);
 	}
 
+	private static <T> T getCachedSetting(final String key, final Map<String, Object> appMap, final Class<T> clazz) {
+		if (appMap == null) {
+			return null;
+		}
+		return (T) appMap.get(Activator.class.getName().concat("_").concat(key));
+	}
+
+	private static <T> T cacheSetting(final String key, final Map<String, Object> appMap, final T value) {
+		if (appMap == null) {
+			return value;
+		}
+		appMap.put(Activator.class.getName().concat("_").concat(key), value);
+		return value;
+	}
+
+	// moved code from the ImplicitObjectFactory to a more common place:
+	/**
+	 * Gets the application map, allowing us to track Xsp Properties enabled per application
+	 * 
+	 * @param ctx
+	 * @return Map<String, Object>
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
+
+	private static Map<String, Object> getAppMap(final FacesContext ctx) {
+		if (ctx == null)
+			return null; //new HashMap<String, Object>();
+		ExternalContext ec = ctx.getExternalContext();
+		if (ec == null)
+			return null; //new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Map<String, Object> result = ec.getApplicationMap();
+		return result;
+	}
+
+	/**
+	 * common code to test if a flag is set in the Xsp properties
+	 * 
+	 * @param ctx
+	 * @param flagName
+	 *            use upperCase for flagName, e.g. RAID
+	 * @return
+	 */
+	public static boolean isAppFlagSet(final FacesContext ctx, final String flagName) {
+		Map<String, Object> appMap = getAppMap(ctx);
+
+		String key = "isAppFlagSet:".concat(flagName);
+
+		Boolean retVal_ = getCachedSetting(key, appMap, Boolean.class);
+		if (retVal_ != null) {
+			return retVal_.booleanValue();
+		}
+		retVal_ = Boolean.FALSE;
+		try {
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase(flagName)) {
+						retVal_ = Boolean.TRUE;
+					}
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return cacheSetting(key, appMap, retVal_).booleanValue();
+	}
+
+	/**
+	 * Gets the AutoMime option enabled for the application, an instance of the enum {@link AutoMime}
+	 * 
+	 * @param ctx
+	 *            FacesContext
+	 * @return AutoMime
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
+	private static AutoMime getAppAutoMime(final FacesContext ctx) {
+		Map<String, Object> appMap = getAppMap(ctx);
+
+		AutoMime retVal_ = getCachedSetting("getAppAutoMime", appMap, AutoMime.class);
+		if (retVal_ != null) {
+			return retVal_;
+		}
+		retVal_ = AutoMime.WRAP_ALL;
+		try {
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("automime32k")) {
+						retVal_ = AutoMime.WRAP_32K;
+					}
+					if (s.equalsIgnoreCase("automimenone")) {
+						retVal_ = AutoMime.WRAP_NONE;
+					}
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		return cacheSetting("getAppAutoMime", appMap, retVal_);
+	}
 }

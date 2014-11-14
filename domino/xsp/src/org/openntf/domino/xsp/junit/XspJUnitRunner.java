@@ -4,10 +4,7 @@ import lotus.notes.NotesThread;
 
 import org.junit.runners.model.InitializationError;
 import org.openntf.domino.junit.DominoJUnitRunner;
-import org.openntf.domino.thread.DominoExecutor;
-import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.ODAPlatform;
-import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.bootstrap.BootstrapEnvironment;
@@ -36,8 +33,8 @@ public class XspJUnitRunner extends DominoJUnitRunner {
 
 		ODAPlatform.start();
 		NotesThread.sinitThread();
-		DominoExecutor executor = new XotsDominoExecutor(50);
-		XotsDaemon.start(executor);
+		//		DominoExecutor executor = new XotsDominoExecutor(50);
+		//		XotsDaemon.start(executor);
 	}
 
 	@Override

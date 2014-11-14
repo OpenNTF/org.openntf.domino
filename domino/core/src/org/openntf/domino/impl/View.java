@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,7 @@ import org.openntf.domino.utils.Factory;
  * The Class View.
  */
 public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
-
+	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private List<DominoColumnInfo> columnInfo_;
 	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
 	private Map<String, DominoColumnInfo> columnInfoMap_;
@@ -676,22 +677,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
-	 */
-	@Override
-	public ViewNavigator createViewNavFromCategory(final String categoryName) {
-		try {
-			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -729,6 +714,22 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		}
 		return null;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
+	 */
+	@Override
+	public ViewNavigator createViewNavFromCategory(final String categoryName) {
+		try {
+			getDelegate().setAutoUpdate(false);
+			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 	/*
@@ -2598,6 +2599,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			lotus.domino.Database d = toLotus(db);
 			lotus.domino.View view = d.getView(name_);
 			setDelegate(view, 0);
+			if (log_.isLoggable(java.util.logging.Level.FINE)) {
+				Throwable t = new Throwable();
+				log_.log(java.util.logging.Level.FINE, "ACL of Database " + getParent()
+						+ "had been recycled and was auto-restored. Changes may have been lost.", t);
+			}
 			// getFactory().recacheLotusObject(d, this, parent_);
 			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
 			view.setAutoUpdate(false);

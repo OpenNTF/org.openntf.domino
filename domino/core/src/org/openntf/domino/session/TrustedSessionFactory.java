@@ -43,7 +43,7 @@ public class TrustedSessionFactory extends AbstractSessionFactory {
 				}
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw);
 	}
 
 }

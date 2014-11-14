@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
+import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -61,6 +62,7 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
+import org.openntf.domino.helpers.SessionHolder;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
@@ -1701,38 +1703,87 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getDelegate()
-	 */
 	@Override
-	protected lotus.domino.Session getDelegate() {
-		lotus.domino.Session session = super.getDelegate();
-		if (isDead(session)) {
-			Session sessionImpl = (Session) org.openntf.domino.utils.Factory.getSession();
-			if (sessionImpl != null) {
-				lotus.domino.Session sessionLotus = sessionImpl.delegate_;
-				if (sessionLotus != null) {
-					setDelegate(sessionLotus, 0);
-				} else {
-					throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
-				}
-			} else {
-				throw new UnableToAcquireSessionException("Factory could not return a default Session");
-			}
-		} else if (session == null) {
-			throw new UnableToAcquireSessionException(
-					"This session has a null value for its delegate. How was it created in the first place?");
+	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
+
+		Session sessionImpl = null;
+		try {
+			sessionImpl = (Session) getSessionFactory().createSession();
+		} catch (PrivilegedActionException e) {
+			throw new UnableToAcquireSessionException("SessionFactory could not return a Session", e);
 		}
-		return super.getDelegate();
+		if (sessionImpl == null) {
+			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
+		}
+		getFactory().setNoRecycle(sessionImpl, false);
+
+		lotus.domino.Session d = sessionImpl.delegate_;
+		if (d == null) {
+			throw new UnableToAcquireSessionException("The created Session does not have a valid delegate");
+		}
+		//d.open();
+		setDelegate(d, 0);
+		//getFactory().recacheLotusObject(d, this, parent_);
+		if (log_.isLoggable(java.util.logging.Level.FINE)) {
+			Throwable t = new Throwable();
+			StackTraceElement[] elements = t.getStackTrace();
+			log_.log(java.util.logging.Level.FINE, "Session " + sessionImpl
+					+ "had been recycled and was auto-restored. Changes may have been lost.");
+
+			log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+					+ elements[1].getLineNumber() + ")");
+			log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+					+ elements[2].getLineNumber() + ")");
+			log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
+					+ elements[3].getLineNumber() + ")");
+			log_.log(java.util.logging.Level.FINE,
+					"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
+
+		}
+
 	}
+
+	//	/*
+	//	 * (non-Javadoc)
+	//	 * 
+	//	 * @see org.openntf.domino.impl.Base#getDelegate()
+	//	 */
+	//	@Override
+	//	protected lotus.domino.Session getDelegate() {
+	//		lotus.domino.Session session = super.getDelegate();
+	//		if (isDead(session)) {
+	//			log_.log(Level.WARNING, "Dead session found. Will try to recreate it.");
+	//			try {
+	//				Session sessionImpl = (Session) getSessionFactory().createSession();
+	//				if (sessionImpl != null) {
+	//					lotus.domino.Session sessionLotus = sessionImpl.delegate_;
+	//					if (sessionLotus != null) {
+	//						getFactory().recacheLotusObject(sessionLotus, this, null);
+	//						setDelegate(sessionLotus, 0);
+	//					} else {
+	//						throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
+	//					}
+	//				} else {
+	//					throw new UnableToAcquireSessionException("Factory could not return a default Session");
+	//				}
+	//			} catch (PrivilegedActionException e) {
+	//
+	//			}
+	//		} else if (session == null) {
+	//			throw new UnableToAcquireSessionException(
+	//					"This session has a null value for its delegate. How was it created in the first place?");
+	//		}
+	//		return super.getDelegate();
+	//	}
 
 	private IDominoEventFactory eventFactory_;
 
 	private AutoMime isAutoMime_;
 
 	private ISessionFactory sessionFactory_;
+
+	private SessionHolder sessionHolder_;
 
 	/*
 	 * (non-Javadoc)
@@ -2012,15 +2063,22 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return fixes_.toArray(new Fixes[fixes_.size()]);
 	}
 
-	@Override
 	public void setSessionFactory(final ISessionFactory sessionFactory) {
 		sessionFactory_ = sessionFactory;
 
 	}
 
-	@Override
 	public ISessionFactory getSessionFactory() {
 		// TODO Auto-generated method stub
 		return sessionFactory_;
+	}
+
+	@Override
+	public SessionHolder getSessionHolder() {
+		// TODO Auto-generated method stub
+		if (sessionHolder_ == null) {
+			return new SessionHolder(this, getSessionFactory());
+		}
+		return sessionHolder_;
 	}
 }

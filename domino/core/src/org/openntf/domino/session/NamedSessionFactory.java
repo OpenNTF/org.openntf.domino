@@ -59,13 +59,7 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 				}
 			}
 		}, acc_);
-		return fromLotus(raw);
-	}
-
-	@Override
-	public ISessionFactory getNamedFactory(final String userName) {
-
-		return new NamedSessionFactory(this, userName);
+		return wrapSession(raw);
 	}
 
 }

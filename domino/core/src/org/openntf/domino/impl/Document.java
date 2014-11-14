@@ -3496,7 +3496,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							} catch (NotesException ne) {
 								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
 										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text, ne);
 							}
 						}
 					} else {
@@ -3505,28 +3505,35 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 				setDelegate(d, 0);
 				//getFactory().recacheLotusObject(d, this, parent_);
-				shouldResurrect_ = false;
-				if (log_.isLoggable(Level.FINE)) {
-					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
-							+ " had been recycled and was auto-restored. Changes may have been lost.");
+				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
-						Throwable t = new Throwable();
-						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+						log_.log(Level.FINER, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+								+ " was rollbacked.");
 					}
-					log_.log(Level.FINE,
-							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+				} else {
+					if (log_.isLoggable(Level.FINE)) {
+						Throwable t = new Throwable();
+						log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+								+ " had been recycled and was auto-restored. Changes may have been lost.", t);
+					}
+					//					StackTraceElement[] elements = t.getStackTrace();
+					//					log_.log(Level.FINER,
+					//							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+					//							+ ")");
+					//					log_.log(Level.FINER,
+					//								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+					//										+ ")");
+					//						log_.log(Level.FINER,
+					//								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+					//										+ ")");
+					//					}
+					//					log_.log(Level.FINE,
+					//							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
+			} finally {
+				shouldResurrect_ = false;
 			}
 		} else if (null != unid_) {
 			//NTF we have a unid but no noteid because this was a deferred document using a unid

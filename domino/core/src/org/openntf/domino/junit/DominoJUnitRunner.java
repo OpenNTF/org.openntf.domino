@@ -7,9 +7,13 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.openntf.domino.session.NamedSessionFactory;
+import org.openntf.domino.session.NativeSessionFactory;
+import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.XotsDaemon;
 
 /**
@@ -22,24 +26,29 @@ import org.openntf.domino.xots.XotsDaemon;
  */
 public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 
+	protected String runAs;
+
 	public DominoJUnitRunner(final Class<?> testClass) throws InitializationError {
 		super(testClass);
+		RunTestAs runTestAs = testClass.getAnnotation(RunTestAs.class);
+		if (runTestAs != null)
+			runAs = runTestAs.value();
 	}
 
-	static {
-		// TODO RPr: remove this code
-		NotesThread.sinitThread();
-		Factory.class.getName();
-		// wait some millis until setup job is complete
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		NotesThread.stermThread();
-
-	}
+	//	static {
+	//		// TODO RPr: remove this code
+	//		NotesThread.sinitThread();
+	//		Factory.class.getName();
+	//		// wait some millis until setup job is complete
+	//		try {
+	//			Thread.sleep(100);
+	//		} catch (InterruptedException e1) {
+	//			// TODO Auto-generated catch block
+	//			e1.printStackTrace();
+	//		}
+	//		NotesThread.stermThread();
+	//
+	//	}
 
 	protected void startUp() {
 		System.out.println("Setting up the domino test environment");
@@ -82,8 +91,19 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
+
+		String name = null;
+
+		RunTestAs runTestAs = method.getAnnotation(RunTestAs.class);
+		if (runTestAs != null) {
+			name = runTestAs.value();
+		}
+		if (name == null) {
+			name = runAs;
+		}
 		// TODO Auto-generated method stub
 		Factory.initThread();
+		setupSessions(runAs);
 		DominoUtils.setBubbleExceptions(true); // Test MUST bubble up exceptions!
 		try {
 			super.runChild(method, notifier);
@@ -92,4 +112,14 @@ public class DominoJUnitRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
+	private void setupSessions(final String name) {
+
+		if (name == null) {
+			Factory.setSessionFactory(new NativeSessionFactory(), SessionType.CURRENT);
+			Factory.setSessionFactory(new SessionFullAccessFactory(), SessionType.CURRENT_FULL_ACCESS);
+		} else {
+			Factory.setSessionFactory(new NamedSessionFactory(name), SessionType.CURRENT);
+			Factory.setSessionFactory(new SessionFullAccessFactory(name), SessionType.CURRENT_FULL_ACCESS);
+		}
+	}
 }

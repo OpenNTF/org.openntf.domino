@@ -680,17 +680,17 @@ public enum Factory {
 			final FactorySchema<T, D, P> schema, final P parent) {
 		T result = getWrapperFactory().fromLotus(lotus, schema, parent);
 
-		if (result instanceof org.openntf.domino.Session) {
-			ThreadVariables tv = getThreadVariables();
-			org.openntf.domino.Session check = tv.sessionHolders[SessionType.CURRENT.index];
-			if (check == null) {
-				// TODO RPr: I have really objections to this.
-				// Setting the first session as default session is NOT nice
-				log_.log(Level.WARNING, "WARNING! Setting the Session " + result
-						+ " as CURRENT session. This means you run in a wrong initialized thread", new Throwable());
-				setSession((org.openntf.domino.Session) result, SessionType.CURRENT);
-			}
-		}
+		//		if (result instanceof org.openntf.domino.Session) {
+		//			ThreadVariables tv = getThreadVariables();
+		//			org.openntf.domino.Session check = tv.sessionHolders[SessionType.CURRENT.index];
+		//			if (check == null) {
+		//				// TODO RPr: I have really objections to this.
+		//				// Setting the first session as default session is NOT nice
+		//				log_.log(Level.WARNING, "WARNING! Setting the Session " + result
+		//						+ " as CURRENT session. This means you run in a wrong initialized thread", new Throwable());
+		//				setSession((org.openntf.domino.Session) result, SessionType.CURRENT);
+		//			}
+		//		}
 		return result;
 	}
 
@@ -878,8 +878,7 @@ public enum Factory {
 			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 
 			try {
-				ISessionFactory sf = tv.sessionFactories[mode.index] != null ? tv.sessionFactories[mode.index]
-						: defaultSessionFactories[mode.index];
+				ISessionFactory sf = getSessionFactory(mode);
 				if (sf != null) {
 					result = sf.createSession();
 					tv.sessionHolders[mode.index] = result;
@@ -934,7 +933,7 @@ public enum Factory {
 
 	public static ISessionFactory getSessionFactory(final SessionType mode) {
 		ThreadVariables tv = threadVariables_.get();
-		if (tv == null) {
+		if (tv == null || tv.sessionFactories[mode.index] == null) {
 			return defaultSessionFactories[mode.index];
 		}
 		return tv.sessionFactories[mode.index];
@@ -1224,13 +1223,17 @@ public enum Factory {
 			// There is NO(!) Default SessionFactory for the current session. you have to set it!
 			defaultSessionFactories[SessionType.CURRENT.index] = null;
 
-			// for CURRENT_FULL_ACCESS, we create a named session with full access set to true
+			// For CURRENT_FULL_ACCESS, we return a named session with full access = true
 			defaultSessionFactories[SessionType.CURRENT_FULL_ACCESS.index] = new ISessionFactory() {
+				private static final long serialVersionUID = 1L;
+
+				private String getName() {
+					return Factory.getSession(SessionType.CURRENT).getEffectiveUserName();
+				}
 
 				@Override
 				public Session createSession() throws PrivilegedActionException {
-					Session current = Factory.getSession(SessionType.CURRENT);
-					return getNamedSession(current.getEffectiveUserName(), true);
+					return Factory.getNamedSession(getName(), true);
 				}
 			};
 
@@ -1350,22 +1353,27 @@ public enum Factory {
 		return sb.toString();
 	}
 
+	public static INamedSessionFactory getNamedSessionFactory(final boolean fullAccess) {
+		ThreadVariables tv = getThreadVariables();
+		if (fullAccess) {
+			return tv.namedSessionFullAccessFactory != null ? tv.namedSessionFullAccessFactory : defaultNamedSessionFullAccessFactory;
+		} else {
+			return tv.namedSessionFactory != null ? tv.namedSessionFactory : defaultNamedSessionFactory;
+		}
+
+	}
+
 	public static org.openntf.domino.Session getNamedSession(final String name, final boolean fullAccess) {
 		ThreadVariables tv = getThreadVariables();
-		Session sess = tv.ownSessions.get(name);
+		String key = name.toLowerCase() + (fullAccess ? ":full" : ":normal");
+		Session sess = tv.ownSessions.get(key);
 		if (sess == null) {
 			try {
-				INamedSessionFactory sf = null;
-
-				if (fullAccess) {
-					sf = tv.namedSessionFullAccessFactory != null ? tv.namedSessionFullAccessFactory : defaultNamedSessionFullAccessFactory;
-				} else {
-					sf = tv.namedSessionFactory != null ? tv.namedSessionFactory : defaultNamedSessionFactory;
-				}
+				INamedSessionFactory sf = getNamedSessionFactory(fullAccess);
 				if (sf != null) {
 					sess = sf.createSession(name);
 				}
-				tv.ownSessions.put(name, sess);
+				tv.ownSessions.put(key, sess);
 			} catch (PrivilegedActionException e) {
 				log_.log(Level.SEVERE, "Unable to create named session for '" + name + "'", e);
 			}
