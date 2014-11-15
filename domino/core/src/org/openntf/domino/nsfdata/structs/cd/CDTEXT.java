@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the start of a run of text in a rich-text field. (editods.h)
@@ -12,41 +11,31 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDTEXT extends CDRecord {
 
-	static {
-		addFixed("FontID", FONTID.class);
+	public final FONTID FontID = inner(new FONTID());
 
+	static {
 		addVariableString("Text", "getTextLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDTEXT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDTEXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FontID");
-	}
-
-	public void setFontId(final FONTID font) {
-		setStructElement("FontID", font);
-	}
-
 	public String getText() {
-		return (String) getStructElement("Text");
+		return (String) getVariableElement("Text");
 	}
 
 	public void setText(final String text) {
-		int resultSize = setStructElement("Text", text);
-		getSignature().setDataLength(resultSize + getFixedStructSize());
+		int resultSize = setVariableElement("Text", text);
+		getSignature().setDataLength((int) (resultSize + getStructSize()));
 	}
 
 	public int getTextLength() {
-		return (int) (getDataLength() - FONTID.SIZE);
+		return (int) (getDataLength() - FontID.getStructSize());
 	}
 
 	@Override
@@ -57,6 +46,6 @@ public class CDTEXT extends CDRecord {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Font ID: " + getFontId() + ", Text: " + getText() + "]";
+		return "[" + getClass().getSimpleName() + ", Font ID: " + FontID + ", Text: " + getText() + "]";
 	}
 }

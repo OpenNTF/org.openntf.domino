@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines a resource within a database. There may be many resources defined within a particular database. A resource can be
@@ -114,7 +113,7 @@ public class CDRESOURCE extends CDRecord {
 		}
 	}
 
-	public static enum Type {
+	public static enum ResourceType {
 		EMPTY((short) 0), URL((short) 1), NOTELINK((short) 2), NAMEDELEMENT((short) 3),
 		/**
 		 * Currently not written to disk only used in RESOURCELINK
@@ -131,7 +130,7 @@ public class CDRESOURCE extends CDRecord {
 		NAMEDITEMELEMENT((short) 6),
 		/**
 		 * Sitemaps/Outlines use the same type identifiers as resource links. However, there are some types that are special to an outline,
-		 * and we want to reserve an upper range for thos special types.
+		 * and we want to reserve an upper range for those special types.
 		 * 
 		 * For now, reserve the entire upper range 32,000 and up for them. The IDs are started at MAXWORD and work their way down.
 		 */
@@ -139,7 +138,7 @@ public class CDRESOURCE extends CDRecord {
 
 		private final short value_;
 
-		private Type(final short value) {
+		private ResourceType(final short value) {
 			value_ = value;
 		}
 
@@ -147,17 +146,17 @@ public class CDRESOURCE extends CDRecord {
 			return value_;
 		}
 
-		public static Type valueOf(final short typeCode) {
-			for (Type type : values()) {
+		public static ResourceType valueOf(final short typeCode) {
+			for (ResourceType type : values()) {
 				if (type.getValue() == typeCode) {
 					return type;
 				}
 			}
-			throw new IllegalArgumentException("No matching Type found for type code " + typeCode);
+			throw new IllegalArgumentException("No matching ResourceType found for type code " + typeCode);
 		}
 	}
 
-	public static enum ResourceClass {
+	public static enum ResourceClassType {
 		UNKNOWN((short) 0), DOCUMENT((short) 1), VIEW((short) 2), FORM((short) 3), NAVIGATOR((short) 4), DATABASE((short) 5),
 		FRAMESET((short) 6), PAGE((short) 7), IMAGE((short) 8), ICON((short) 9), HELPABOUT((short) 10), HELPUSING((short) 11),
 		SERVER((short) 12), APPLET((short) 13),
@@ -183,7 +182,7 @@ public class CDRESOURCE extends CDRecord {
 
 		private final short value_;
 
-		private ResourceClass(final short value) {
+		private ResourceClassType(final short value) {
 			value_ = value;
 		}
 
@@ -191,8 +190,8 @@ public class CDRESOURCE extends CDRecord {
 			return value_;
 		}
 
-		public static ResourceClass valueOf(final short typeCode) {
-			for (ResourceClass type : values()) {
+		public static ResourceClassType valueOf(final short typeCode) {
+			for (ResourceClassType type : values()) {
 				if (type.getValue() == typeCode) {
 					return type;
 				}
@@ -202,24 +201,34 @@ public class CDRESOURCE extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixed("Type", Short.class);
-		addFixed("ResourceClass", Short.class);
-		addFixedUnsigned("Length1", Short.class);
-		addFixedUnsigned("ServerHintLength", Short.class);
-		addFixedUnsigned("FileHintLength", Short.class);
-		addFixedArray("Reserved", Byte.class, 8);
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	/**
+	 * Use getType for access.
+	 */
+	@Deprecated
+	public final Unsigned16 Type = new Unsigned16();
+	/**
+	 * Use getResourceClass for access.
+	 */
+	@Deprecated
+	public final Unsigned16 ResourceClass = new Unsigned16();
+	public final Unsigned16 Length1 = new Unsigned16();
+	public final Unsigned16 ServerHintLength = new Unsigned16();
+	public final Unsigned16 FileHintLength = new Unsigned16();
+	public final Unsigned8[] Reserved = array(new Unsigned8[8]);
 
-		addVariableString("ServerHint", "getServerHintLength");
-		addVariableString("FileHint", "getFileHintLength");
-		addVariableData("Data1", "getLength1");
+	static {
+		addVariableString("ServerHint", "ServerHintLength");
+		addVariableString("FileHint", "FileHintLength");
+		addVariableData("Data1", "Length1");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDRESOURCE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDRESOURCE(final SIG signature, final ByteBuffer data) {
@@ -227,59 +236,22 @@ public class CDRESOURCE extends CDRecord {
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
+		return Flag.valuesOf((int) Flags.get());
 	}
 
-	public Type getType() {
-		return Type.valueOf((Short) getStructElement("Type"));
+	public ResourceType getType() {
+		return ResourceType.valueOf((short) Type.get());
 	}
 
-	public ResourceClass getResourceClass() {
-		return ResourceClass.valueOf((Short) getStructElement("ResourceClass"));
-	}
-
-	/**
-	 * meaning depends on Type
-	 */
-	public int getLength1() {
-		return (Integer) getStructElement("Length1");
-	}
-
-	/**
-	 * @return length of the server hint
-	 */
-	public int getServerHintLength() {
-		return (Integer) getStructElement("ServerHintLength");
-	}
-
-	/**
-	 * @return length of the file hint
-	 */
-	public int getFileHintLength() {
-		return (Integer) getStructElement("FileHintLength");
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
-	}
-
-	public String getServerHint() {
-		return (String) getStructElement("ServerHint");
-	}
-
-	public String getFileHint() {
-		return (String) getStructElement("FileHint");
-	}
-
-	public byte[] getData1() {
-		return (byte[]) getStructElement("Data1");
+	public ResourceClassType getResourceClass() {
+		return ResourceClassType.valueOf((short) ResourceClass.get());
 	}
 
 	// TODO add remaining data
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Flags: " + getFlags() + ", Type: " + getType() + ", ResourceClass: "
-				+ getResourceClass() + ", ServerHint: " + getServerHint() + ", FileHint: " + getFileHint() + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ", Flags: " + getFlags() + ", Type: " + getType() + ", ResourceClass: "
+	//				+ getResourceClass() + ", ServerHint: " + getServerHint() + ", FileHint: " + getFileHint() + "]";
+	//	}
 }

@@ -1,6 +1,7 @@
 package org.openntf.domino.nsfdata.structs;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * This structure allows access to the fields within a FONTID. Overlay this structure onto the FontID field to set or read the font
@@ -17,63 +18,24 @@ import java.nio.ByteBuffer;
  *
  */
 public class FONTID extends AbstractStruct {
-	public static final int SIZE = 4;
-
-	static {
-		addFixed("Face", Byte.class);
-		addFixed("Attrib", Byte.class);
-		addFixed("Color", Byte.class);
-		addFixedUnsigned("PointSize", Byte.class);
-	}
+	public final Unsigned8 Face = new Unsigned8();
+	public final Unsigned8 Attrib = new Unsigned8();
+	public final Unsigned8 Color = new Unsigned8();
+	public final Unsigned8 PointSize = new Unsigned8();
 
 	public FONTID() {
 		super();
+		getByteBuffer().order(ByteOrder.nativeOrder());
 	}
 
 	public FONTID(final ByteBuffer data) {
 		super(data);
-	}
-
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
-	public byte getFace() {
-		return (Byte) getStructElement("Face");
-	}
-
-	public void setFace(final byte face) {
-		setStructElement("Face", face);
-	}
-
-	public byte getAttrib() {
-		return (Byte) getStructElement("Attrib");
-	}
-
-	public void setAttrib(final byte attrib) {
-		setStructElement("Attrib", attrib);
-	}
-
-	public byte getColor() {
-		return (Byte) getStructElement("Color");
-	}
-
-	public void setColor(final byte color) {
-		setStructElement("Color", color);
-	}
-
-	public short getPointSize() {
-		return (Short) getStructElement("PointSize");
-	}
-
-	public void setPointSize(final short size) {
-		setStructElement("PointSize", size);
+		getByteBuffer().order(ByteOrder.nativeOrder());
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Face=" + getFace() + ", Attrib=" + getAttrib() + ", Color=" + getColor()
-				+ ", PointSize=" + getPointSize() + "]";
+		return "[" + getClass().getSimpleName() + ": Face=" + Face.get() + ", Attrib=" + Attrib.get() + ", Color=" + Color.get()
+				+ ", PointSize=" + PointSize.get() + "]";
 	}
 }

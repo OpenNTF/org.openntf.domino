@@ -14,7 +14,6 @@ import org.openntf.domino.nsfdata.structs.NFMT;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.TFMT;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines the structure of a CDFIELD record in the $Body item of a form note. Each CDFIELD record defines the attributes of one field
@@ -22,7 +21,7 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDFIELD extends CDRecord {
-	public static enum ListDelim {
+	public static enum ListDelimiter {
 		SPACE((short) 0x0001), COMMA((short) 0x0002), SEMICOLON((short) 0x0004), NEWLINE((short) 0x0008), BLANKLINE((short) 0x0010),
 		D_SPACE((short) 0x1000), D_COMMA((short) 0x2000), D_SEMICOLON((short) 0x3000), D_NEWLINE((short) 0x4000),
 		D_BLANKLINE((short) 0x5000);
@@ -32,7 +31,7 @@ public class CDFIELD extends CDRecord {
 
 		private final short value_;
 
-		private ListDelim(final short value) {
+		private ListDelimiter(final short value) {
 			value_ = value;
 		}
 
@@ -40,9 +39,9 @@ public class CDFIELD extends CDRecord {
 			return value_;
 		}
 
-		public static Set<ListDelim> valuesOf(final int flags) {
-			Set<ListDelim> result = EnumSet.noneOf(ListDelim.class);
-			for (ListDelim flag : values()) {
+		public static Set<ListDelimiter> valuesOf(final int flags) {
+			Set<ListDelimiter> result = EnumSet.noneOf(ListDelimiter.class);
+			for (ListDelimiter flag : values()) {
 				if ((flag.getValue() & flags) > 0) {
 					result.add(flag);
 				}
@@ -171,185 +170,107 @@ public class CDFIELD extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("Flags", Short.class);
-		addFixed("DataType", Short.class);
-		addFixed("ListDelim", Short.class);
-		addFixed("NumberFormat", NFMT.class);
-		addFixed("TimeFormat", TFMT.class);
-		addFixed("FontID", FONTID.class);
-		addFixedUnsigned("DVLength", Short.class);
-		addFixedUnsigned("ITLength", Short.class);
-		addFixedUnsigned("TabOrder", Short.class);
-		addFixedUnsigned("IVLength", Short.class);
-		addFixedUnsigned("NameLength", Short.class);
-		addFixedUnsigned("DescLength", Short.class);
-		addFixedUnsigned("TextValueLength", Short.class);
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 Flags = new Unsigned16();
+	// TODO map this to an enum (it's a bit weird, I think)
+	public final Unsigned16 DataType = new Unsigned16();
+	/**
+	 * Use getListDelim for access.
+	 */
+	@Deprecated
+	public final Unsigned16 ListDelim = new Unsigned16();
+	public final NFMT NumberFormat = inner(new NFMT());
+	public final TFMT TimeFormat = inner(new TFMT());
+	public final FONTID FontID = inner(new FONTID());
+	public final Unsigned16 DVLength = new Unsigned16();
+	public final Unsigned16 ITLength = new Unsigned16();
+	public final Unsigned16 TabOrder = new Unsigned16();
+	public final Unsigned16 IVLength = new Unsigned16();
+	public final Unsigned16 NameLength = new Unsigned16();
+	public final Unsigned16 DescLength = new Unsigned16();
+	public final Unsigned16 TextValueLength = new Unsigned16();
 
-		addVariableData("DV", "getDVLength");
-		addVariableData("IT", "getITLength");
-		addVariableData("IV", "getIVLength");
-		addVariableString("Name", "getNameLength");
-		addVariableString("Desc", "getDescLength");
+	static {
+		addVariableData("DV", "DVLength");
+		addVariableData("IT", "ITLength");
+		addVariableData("IV", "IVLength");
+		addVariableString("Name", "NameLength");
+		addVariableString("Desc", "DescLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDFIELD(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDFIELD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	/**
-	 * @return Field Flags (see Fxxx)
-	 */
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Short) getStructElement("Flags"));
+		return Flag.valuesOf((short) Flags.get());
 	}
 
-	/**
-	 * @return Alleged NSF Data Type
-	 */
-	public short getDataType() {
-		// TODO Fix this
-		//		return FieldType.valueOf((Short) getStructElement("DataType"));
-		return (Short) getStructElement("DataType");
-	}
-
-	/**
-	 * @return List Delimiters
-	 */
-	public Set<ListDelim> getListDelim() {
-		// TODO make this properly distinguish betwee display and input formats
-		return ListDelim.valuesOf((Short) getStructElement("ListDelim"));
-	}
-
-	/**
-	 * @return Number format, if applicable
-	 */
-	public NFMT getNumberFormat() {
-		return (NFMT) getStructElement("NumberFormat");
-	}
-
-	/**
-	 * @return Time format, if applicable
-	 */
-	public TFMT getTimeFormat() {
-		return (TFMT) getStructElement("TimeFormat");
-	}
-
-	/**
-	 * @return Displayed font
-	 */
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FontID");
-	}
-
-	/**
-	 * @return Default Value Formula length
-	 */
-	public int getDVLength() {
-		return (Integer) getStructElement("DVLength");
-	}
-
-	/**
-	 * @return Input Translation Formula length
-	 */
-	public int getITLength() {
-		return (Integer) getStructElement("ITLength");
-	}
-
-	/**
-	 * @return Order in tabbing sequence
-	 */
-	public int getTabOrder() {
-		return (Integer) getStructElement("TabOrder");
-	}
-
-	/**
-	 * @return Input Validity Check Formula length
-	 */
-	public int getIVLength() {
-		return (Integer) getStructElement("IVLength");
-	}
-
-	/**
-	 * @return NSF Item Name
-	 */
-	public int getNameLength() {
-		return (Integer) getStructElement("NameLength");
-	}
-
-	/**
-	 * @return Length of the description of the item
-	 */
-	public int getDescLength() {
-		return (Integer) getStructElement("DescLength");
-	}
-
-	/**
-	 * @return Length of the text list of valid text values
-	 */
-	public int getTextValueLength() {
-		return (Integer) getStructElement("TextValueLength");
+	public Set<ListDelimiter> getListDelim() {
+		// TODO make this properly distinguish between display and input formats
+		return ListDelimiter.valuesOf((short) ListDelim.get());
 	}
 
 	public NSFCompiledFormula getDefaultValueFormula() {
-		int length = getDVLength();
+		int length = DVLength.get();
 		if (length > 0) {
-			return new NSFCompiledFormula((byte[]) getStructElement("DV"));
+			return new NSFCompiledFormula((byte[]) getVariableElement("DV"));
 		} else {
 			return null;
 		}
 	}
 
 	public NSFCompiledFormula getInputTranslationFormula() {
-		int length = getITLength();
+		int length = ITLength.get();
 
 		if (length > 0) {
-			return new NSFCompiledFormula((byte[]) getStructElement("IT"));
+			return new NSFCompiledFormula((byte[]) getVariableElement("IT"));
 		} else {
 			return null;
 		}
 	}
 
 	public NSFCompiledFormula getInputValidationFormula() {
-		int length = getIVLength();
+		int length = IVLength.get();
 
 		if (length > 0) {
-			return new NSFCompiledFormula((byte[]) getStructElement("IV"));
+			return new NSFCompiledFormula((byte[]) getVariableElement("IV"));
 		} else {
 			return null;
 		}
 	}
 
 	public String getItemName() {
-		return (String) getStructElement("Name");
+		return (String) getVariableElement("Name");
 	}
 
 	public String getDescription() {
-		return (String) getStructElement("Desc");
+		return (String) getVariableElement("Desc");
 	}
 
 	/**
 	 * @return For non-keyword fields, null; for static-keyword fields, a List<String>; for formula-keyword fields, an NSFCompiledFormula
 	 */
 	public Object getTextValues() {
-		int totalLength = getTextValueLength();
+		int totalLength = TextValueLength.get();
 
 		if (totalLength > 0) {
 			// TODO see how this works with actual values
-			int preceding = getDVLength() + getITLength() + getIVLength() + (getNameLength() & 0xFFFF) + getDescLength();
+			int preceding = DVLength.get() + ITLength.get() + IVLength.get() + (NameLength.get() & 0xFFFF) + DescLength.get();
 
 			ByteBuffer data = getData().duplicate();
 			data.order(ByteOrder.LITTLE_ENDIAN);
 			data.position(data.position() + 32 + preceding);
 			data.limit(data.position() + 2);
 			LIST list = new LIST(data);
-			int listEntries = list.getListEntries() & 0xFFFF;
+			int listEntries = list.ListEntries.get();
 
 			data = getData().duplicate();
 			data.order(ByteOrder.LITTLE_ENDIAN);
@@ -377,13 +298,13 @@ public class CDFIELD extends CDRecord {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", DataType=" + getDataType() + ", ListDelim=" + getListDelim()
-				+ ", NumberFormat=" + getNumberFormat() + ", TimeFormat=" + getTimeFormat() + ", FontID=" + getFontId() + ", DVLength="
-				+ getDVLength() + ", ITLength=" + getITLength() + ", TabOrder=" + getTabOrder() + ", DefaultValueFormula="
-				+ getDefaultValueFormula() + ", InputTranslationFormula=" + getInputTranslationFormula() + ", InputValidationFormula="
-				+ getInputValidationFormula() + ", ItemName=" + getItemName() + ", Description=" + getDescription() + ", TextValues="
-				+ getTextValues() + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", DataType=" + getDataType() + ", ListDelim=" + getListDelim()
+	//				+ ", NumberFormat=" + getNumberFormat() + ", TimeFormat=" + getTimeFormat() + ", FontID=" + getFontId() + ", DVLength="
+	//				+ getDVLength() + ", ITLength=" + getITLength() + ", TabOrder=" + getTabOrder() + ", DefaultValueFormula="
+	//				+ getDefaultValueFormula() + ", InputTranslationFormula=" + getInputTranslationFormula() + ", InputValidationFormula="
+	//				+ getInputValidationFormula() + ", ItemName=" + getItemName() + ", Description=" + getDescription() + ", TextValues="
+	//				+ getTextValues() + "]";
+	//	}
 }

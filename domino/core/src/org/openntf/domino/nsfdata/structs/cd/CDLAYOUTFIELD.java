@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A field in a layout region of a form is defined by a CDLAYOUTFIELD record. This record must be between a CDLAYOUT record and a
@@ -103,58 +102,28 @@ public class CDLAYOUTFIELD extends CDRecord {
 	}
 
 	public static enum FieldType {
-		TEXT((byte) 0), CHECK((byte) 1), RADIO((byte) 2), LIST((byte) 3), COMBO((byte) 4);
-
-		private final byte value_;
-
-		private FieldType(final byte value) {
-			value_ = value;
-		}
-
-		public byte getValue() {
-			return value_;
-		}
-
-		public static FieldType valueOf(final byte typeCode) {
-			for (FieldType type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching FieldType found for type code " + typeCode);
-		}
+		TEXT, CHECK, RADIO, LIST, COMBO;
 	}
 
-	static {
-		addFixed("ElementHeader", ELEMENTHEADER.class);
-		addFixed("Flags", Integer.class);
-		addFixed("bFieldType", Byte.class);
-		addFixedArray("Reserved", Byte.class, 15);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final ELEMENTHEADER ElementHeader = inner(new ELEMENTHEADER());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Enum8<FieldType> bFieldType = new Enum8<FieldType>(FieldType.values());
+	public final Unsigned8[] Reserved = array(new Unsigned8[15]);
 
 	public CDLAYOUTFIELD(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDLAYOUTFIELD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public ELEMENTHEADER getElementHeader() {
-		return (ELEMENTHEADER) getStructElement("ElementHeader");
-	}
-
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
+		return Flag.valuesOf((int) Flags.get());
 	}
 
-	public FieldType getFieldType() {
-		return FieldType.valueOf((Byte) getStructElement("bFieldType"));
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
-	}
 }

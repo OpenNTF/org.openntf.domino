@@ -8,14 +8,23 @@ import java.nio.ByteBuffer;
  *
  */
 public class NFMT extends AbstractStruct {
-	public static final int SIZE = 4;
-
-	static {
-		addFixedUnsigned("Digits", Byte.class);
-		addFixed("Format", Byte.class);
-		addFixed("Attributes", Byte.class);
-		addFixed("Unused", Byte.class);
+	public static enum NumFormat {
+		GENERAL, FIXED, SCIENTIFIC, CURRENCY, BYTES
 	}
+
+	/**
+	 * Number of decimal digits
+	 */
+	public final Unsigned8 Digits = new Unsigned8();
+	/**
+	 * Display Format
+	 */
+	public final Enum8<NumFormat> Format = new Enum8<NumFormat>(NumFormat.values());
+	/**
+	 * Display Attributes
+	 */
+	public final Unsigned8 Attributes = new Unsigned8();
+	public final Unsigned8 Unused = new Unsigned8();
 
 	public NFMT() {
 		super();
@@ -25,41 +34,14 @@ public class NFMT extends AbstractStruct {
 		super(data);
 	}
 
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
-	/**
-	 * @return Number of decimal digits
-	 */
-	public short getDigits() {
-		return (Short) getStructElement("Digits");
-	}
-
-	/**
-	 * @return Display Format
-	 */
-	public byte getFormat() {
+	public short getAttributes() {
 		// TODO make enum
-		return (Byte) getStructElement("Format");
-	}
-
-	/**
-	 * @return Display Attributes
-	 */
-	public byte getAttributes() {
-		// TODO make enum
-		return (Byte) getStructElement("Attributes");
-	}
-
-	public byte getUnused() {
-		return (Byte) getStructElement("Unused");
+		return Attributes.get();
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Digits: " + getDigits() + ", Format: " + getFormat() + ", Attributes: "
+		return "[" + getClass().getSimpleName() + ", Digits: " + Digits.get() + ", Format: " + Format.get() + ", Attributes: "
 				+ getAttributes() + "]";
 	}
 }

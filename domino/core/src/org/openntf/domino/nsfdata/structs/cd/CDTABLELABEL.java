@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record further defines information for a table. (editods.h)
@@ -39,16 +38,20 @@ public class CDTABLELABEL extends CDRecord {
 		}
 	}
 
-	static {
-		addFixedArray("Label", Byte.class, 128);
-		addFixedArray("Reserved", Short.class, 3);
-		addFixed("Flags", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	/**
+	 * Use getLabel for access.
+	 */
+	@Deprecated
+	public final Unsigned8[] Label = array(new Unsigned8[128]);
+	public final Unsigned16[] Reserved = array(new Unsigned16[3]);
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 Flags = new Unsigned16();
 
 	public CDTABLELABEL(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDTABLELABEL(final SIG signature, final ByteBuffer data) {
@@ -56,15 +59,11 @@ public class CDTABLELABEL extends CDRecord {
 	}
 
 	public String getLabel() {
-		return ODSUtils.fromLMBCS((byte[]) getStructElement("Label"));
-	}
-
-	public short[] getReserved() {
-		return (short[]) getStructElement("Reserved");
+		return ODSUtils.fromLMBCS(Label);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Short) getStructElement("Flags"));
+		return Flag.valuesOf((short) Flags.get());
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record allows for additional information to be provided for a graphic. (editods.h)
@@ -12,44 +11,17 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDVERTICALALIGN extends CDRecord {
-	public static enum Alignment {
-		BASELINE((short) 0), CENTER((short) 1), TOP((short) 2), BOTTOM((short) 5);
-
-		private final short value_;
-
-		private Alignment(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static Alignment valueOf(final short typeCode) {
-			for (Alignment type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Alignment found for type code " + typeCode);
-		}
+	public static enum AlignmentType {
+		BASELINE, CENTER, TOP, UNUSED3, UNUSED4, BOTTOM
 	}
 
-	static {
-		addFixed("Alignment", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final Enum16<AlignmentType> Alignment = new Enum16<AlignmentType>(AlignmentType.values());
 
 	public CDVERTICALALIGN(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDVERTICALALIGN(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	public Alignment getAlignment() {
-		return Alignment.valueOf((Short) getStructElement("Alignment"));
 	}
 }

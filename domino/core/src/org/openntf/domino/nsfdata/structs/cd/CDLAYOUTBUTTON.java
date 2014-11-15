@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A button in a layout region of a form is defined by a CDLAYOUTBUTTON record. This record must be between a CDLAYOUT record and a
@@ -18,31 +17,24 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDLAYOUTBUTTON extends CDRecord {
 
-	static {
-		addFixed("ElementHeader", ELEMENTHEADER.class);
-		addFixed("Flags", Integer.class);
-		addFixedArray("Reserved", Byte.class, 16);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final ELEMENTHEADER ElementHeader = inner(new ELEMENTHEADER());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned8[] Reserved = array(new Unsigned8[16]);
 
 	public CDLAYOUTBUTTON(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDLAYOUTBUTTON(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public ELEMENTHEADER getElementHeader() {
-		return (ELEMENTHEADER) getStructElement("ElementHeader");
-	}
-
 	public Set<?> getFlags() {
 		return Collections.emptySet();
 	}
 
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
-	}
 }

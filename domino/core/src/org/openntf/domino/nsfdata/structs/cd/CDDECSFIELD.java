@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record gives information pertaining to data connection resource information in a field or form. (editods.h)
@@ -37,22 +36,24 @@ public class CDDECSFIELD extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("Flags", Short.class);
-		addFixedUnsigned("ExternalNameLength", Short.class);
-		addFixedUnsigned("MetadataNameLength", Short.class);
-		addFixedUnsigned("DCRNameLength", Short.class);
-		addFixedArray("Spare", Short.class, 8);
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 Flags = new Unsigned16();
+	public final Unsigned16 ExternalNameLength = new Unsigned16();
+	public final Unsigned16 MetadataNameLength = new Unsigned16();
+	public final Unsigned16 DCRNameLength = new Unsigned16();
+	public final Unsigned16[] Spare = array(new Unsigned16[8]);
 
-		addVariableString("ExternalName", "getExternalNameLength");
-		addVariableString("MetadataName", "getMetadataNameLength");
-		addVariableString("DCRName", "getDCRNameLength");
+	static {
+		addVariableString("ExternalName", "ExternalNameLength");
+		addVariableString("MetadataName", "MetadataNameLength");
+		addVariableString("DCRName", "DCRNameLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDDECSFIELD(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDDECSFIELD(final SIG signature, final ByteBuffer data) {
@@ -60,34 +61,18 @@ public class CDDECSFIELD extends CDRecord {
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Short) getStructElement("Flags"));
-	}
-
-	public int getExternalNameLength() {
-		return (Integer) getStructElement("ExternalNameLength");
-	}
-
-	public int getMetadataNameLength() {
-		return (Integer) getStructElement("MetadataNameLength");
-	}
-
-	public int getDCRNameLength() {
-		return (Integer) getStructElement("DCRNameLength");
-	}
-
-	public short[] getSpare() {
-		return (short[]) getStructElement("Spare");
+		return Flag.valuesOf((short) Flags.get());
 	}
 
 	public String getExternalName() {
-		return (String) getStructElement("ExternalName");
+		return (String) getVariableElement("ExternalName");
 	}
 
 	public String getMetadataName() {
-		return (String) getStructElement("MetadataName");
+		return (String) getVariableElement("MetadataName");
 	}
 
 	public String getDCRName() {
-		return (String) getStructElement("DCRName");
+		return (String) getVariableElement("DCRName");
 	}
 }

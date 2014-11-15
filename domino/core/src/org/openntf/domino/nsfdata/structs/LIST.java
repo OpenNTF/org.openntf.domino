@@ -8,12 +8,7 @@ import java.nio.ByteBuffer;
  *
  */
 public class LIST extends AbstractStruct {
-
-	public static final int SIZE = 2;
-
-	static {
-		addFixedUnsigned("ListEntries", Short.class);
-	}
+	public final Unsigned16 ListEntries = new Unsigned16();
 
 	public LIST() {
 		super();
@@ -21,18 +16,5 @@ public class LIST extends AbstractStruct {
 
 	public LIST(final ByteBuffer data) {
 		super(data);
-	}
-
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
-	public int getListEntries() {
-		return (Integer) getStructElement("ListEntries");
-	}
-
-	public void setListEntries(final int entryCount) {
-		setStructElement("ListEntries", entryCount);
 	}
 }
