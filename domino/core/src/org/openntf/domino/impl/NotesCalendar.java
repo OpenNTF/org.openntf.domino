@@ -33,7 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class NotesCalendar.
  */
 public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
-		org.openntf.domino.NotesCalendar {
+org.openntf.domino.NotesCalendar {
 
 	/**
 	 * Instantiates a new outline.
@@ -406,15 +406,16 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 		}
 	}
 
-	//		/* (non-Javadoc)
-	//		 * @see org.openntf.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
-	//		 */
-	//		public String getApptunidFromUID(final String arg0, final boolean arg1) {
-	//			try {
-	//				return getDelegate().getApptunidFromUID(arg0, arg1);
-	//			} catch (NotesException e) {
-	//				DominoUtils.handleException(e);
-	//				return null;
-	//			}
-	//		}
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.NotesCalendar#getApptunidFromUID(java.lang.String, boolean)
+	 */
+	@Override
+	public String getApptunidFromUID(final String arg0, final boolean arg1) {
+		try {
+			return getDelegate().getApptunidFromUID(arg0, arg1);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
 }
