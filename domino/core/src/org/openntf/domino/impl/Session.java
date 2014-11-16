@@ -882,9 +882,10 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	public org.openntf.domino.Database getDatabase(final String apiPath) {
 		String server = "";
 		String dbpath = apiPath;
-		if (apiPath.indexOf("!!") > -1) {
-			server = apiPath.substring(0, apiPath.indexOf("!!"));
-			dbpath = apiPath.substring(apiPath.indexOf("!!") + 2);
+		int sep;
+		if ((sep = apiPath.indexOf("!!")) > -1) {
+			server = apiPath.substring(0, sep);
+			dbpath = apiPath.substring(sep + 2);
 		}
 		return getDatabase(server, dbpath);
 	}

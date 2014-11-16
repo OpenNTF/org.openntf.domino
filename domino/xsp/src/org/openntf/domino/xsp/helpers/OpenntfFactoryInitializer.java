@@ -69,7 +69,7 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 		});
 
 		// set up  ObjectFactoriy if godMode is enabled
-		if (Activator.isAppFlagSet(ctx, "GODMODE")) {
+		if (Activator.isAppGodMode(ctx)) {
 			@SuppressWarnings("deprecation")
 			FactoryLookup lookup = ctxEx.getApplicationEx().getFactoryLookup();
 

@@ -23,13 +23,14 @@ public class OpenDomJavaScriptExtension implements JavaScriptProvider {
 	public void registerWrappers(final JSContext context) {
 		WrapperOpenDomino.register(context);
 
+		// RPr: Don't know exactly why we do that
 		try {
-			DominoNABNamePickerData dd = new DominoNABNamePickerData();
+			new DominoNABNamePickerData();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		try {
-			OpenntfNABNamePickerData d = new OpenntfNABNamePickerData();
+			new OpenntfNABNamePickerData();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
