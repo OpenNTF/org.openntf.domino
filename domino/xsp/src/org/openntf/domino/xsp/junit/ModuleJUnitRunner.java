@@ -98,6 +98,7 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 		}
 		Thread.currentThread().setContextClassLoader(oldCl);
 		oldCl = null;
+		Factory.termThread();
 		NotesContext.termThread();
 
 	}

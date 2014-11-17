@@ -29,10 +29,12 @@ public enum ModuleLoader {
 	 */
 	public static NSFService getNsfService() {
 		if (nsfservice_ == null) {
-			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-				if (service instanceof NSFService) {
-					nsfservice_ = (NSFService) service;
-					break;
+			if (LCDEnvironment.getInstance() != null) {
+				for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+					if (service instanceof NSFService) {
+						nsfservice_ = (NSFService) service;
+						break;
+					}
 				}
 			}
 			if (nsfservice_ == null) {
@@ -62,7 +64,7 @@ public enum ModuleLoader {
 		if (ensureRefresh) {
 			// The component module is SO weird. You cannot precheck with "shouldRefresh" as it returns always false for the next 2 seconds.
 			// So we ALWAYS do a simple request, to ensure that the module is fresh
-			final String path = "/" + module.getModuleName() + "/dummyrequest/to/trigger/refresh";
+			final String path = "/" + module.getModuleName() + "/Test2.xsp"; //dummyrequest/to/trigger/refresh";
 			final PreloadSession session = new PreloadSession();
 			final PreloadRequest request = new PreloadRequest("", "", path);
 			final PreloadResponse response = new PreloadResponse();

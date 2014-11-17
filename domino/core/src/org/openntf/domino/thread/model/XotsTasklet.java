@@ -45,10 +45,10 @@ public @interface XotsTasklet {
 		public void stop(final boolean force);
 	}
 
-	XotsSessionType session();
+	XotsSessionType session() default XotsSessionType.CLONE;
 
-	Scope scope();
+	Scope scope() default Scope.APPLICATION;
 
-	Context context();
+	Context context() default Context.XOTS;
 
 }

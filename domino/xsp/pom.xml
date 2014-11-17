@@ -11,7 +11,7 @@
 	<packaging>eclipse-plugin</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory> 
 	</build>
 	<organization>
 		<name>OpenNTF</name>

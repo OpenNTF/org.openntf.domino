@@ -13,7 +13,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.IconNote;
 import org.openntf.domino.junit.DominoJUnitRunner;
-import org.openntf.domino.junit.TestProps;
+import org.openntf.domino.junit.TestEnv;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -29,10 +29,10 @@ public class SessionFactory {
 		assertFalse(sess.isTrustedSession());
 		assertFalse(sess.isAnonymous());
 		assertFalse(sess.isRestricted());
-		assertEquals(TestProps.SESSION_USER, sess.getUserName());
-		assertEquals(TestProps.SESSION_USER, sess.getEffectiveUserName());
+		assertEquals(TestEnv.SESSION_USER, sess.getUserName());
+		assertEquals(TestEnv.SESSION_USER, sess.getEffectiveUserName());
 
-		Database nab = sess.getDatabase(TestProps.REMOTE_TRUSTED_SERVER, "names.nsf");
+		Database nab = sess.getDatabase(TestEnv.REMOTE_TRUSTED_SERVER, "names.nsf");
 		assertNotNull(nab);
 
 		IconNote icn = nab.getDesign().getIconNote();
@@ -51,10 +51,10 @@ public class SessionFactory {
 		System.out.println("Native Session User name      " + sess.getUserName());
 		System.out.println("Native Session Effective name " + sess.getEffectiveUserName());
 
-		assertEquals(TestProps.SESSION_USER, sess.getUserName());
-		assertEquals(TestProps.SESSION_USER, sess.getEffectiveUserName());
+		assertEquals(TestEnv.SESSION_USER, sess.getUserName());
+		assertEquals(TestEnv.SESSION_USER, sess.getEffectiveUserName());
 
-		Database nab = sess.getDatabase(TestProps.REMOTE_UNTRUSTED_SERVER, "names.nsf");
+		Database nab = sess.getDatabase(TestEnv.REMOTE_UNTRUSTED_SERVER, "names.nsf");
 		assertNotNull(nab);
 
 		IconNote icn = nab.getDesign().getIconNote();
@@ -71,7 +71,7 @@ public class SessionFactory {
 		System.out.println("Named Session User name      " + sess.getUserName());
 		System.out.println("Named Session Effective name " + sess.getEffectiveUserName());
 
-		Database db = sess.getDatabase(TestProps.SESSION_USER, "Testdocuments.nsf");
+		Database db = sess.getDatabase(TestEnv.SESSION_USER, "Testdocuments.nsf");
 
 		Document doc = db.createDocument();
 		doc.replaceItemValue("Test", "Test");
@@ -84,18 +84,18 @@ public class SessionFactory {
 	public void TestFullAccessSession() {
 		//Session master = Factory.fromLotus(masterSession, Session.SCHEMA, null);
 		Session normal = Factory.getSession(SessionType.CURRENT);
-		Session sess = Factory.getNamedSession(TestProps.SESSION_USER, false);
+		Session sess = Factory.getNamedSession(TestEnv.SESSION_USER, false);
 
 		assertNotSame(normal, sess);
 		assertFalse(sess.isTrustedSession());
 		assertFalse(sess.isAnonymous());
-		assertEquals(TestProps.SESSION_USER, sess.getUserName());
+		assertEquals(TestEnv.SESSION_USER, sess.getUserName());
 
-		Database db = sess.getDatabase(TestProps.SESSION_USER, "names.nsf");
+		Database db = sess.getDatabase(TestEnv.SESSION_USER, "names.nsf");
 		assertNotNull(db);
 		System.out.println("Documents in " + db + ": " + db.getAllDocuments().size());
 
-		db = sess.getDatabase(TestProps.REMOTE_UNTRUSTED_SERVER, "names.nsf");
+		db = sess.getDatabase(TestEnv.REMOTE_UNTRUSTED_SERVER, "names.nsf");
 		assertNotNull(db);
 		System.out.println("Documents in " + db + ": " + db.getAllDocuments().size());
 

@@ -357,11 +357,22 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 					@Override
 					public java.lang.Class<?> loadClass(final String className) throws ClassNotFoundException {
 						try {
-							return bundle.loadClass(className);
-						} catch (ClassNotFoundException cnf) {
 							return super.loadClass(className);
+						} catch (ClassNotFoundException cnf) {
+							return bundle.loadClass(className);
 						}
 					}
+
+					@Override
+					public URL getResource(final String resName) {
+						// TODO Auto-generated method stub
+						URL ret = super.getResource(resName);
+						if (ret == null) {
+							ret = bundle.getResource(arg0);
+						}
+						return ret;
+					}
+
 				};
 				//Thread.currentThread().setContextClassLoader(classLoader);
 			}

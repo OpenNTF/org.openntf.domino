@@ -48,6 +48,11 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 		currentApiPath_ = sf.currentApiPath_;
 	}
 
+	public AbstractSessionFactory apiPath(final String apiPath) {
+		currentApiPath_ = apiPath;
+		return this;
+	}
+
 	protected Session wrapSession(final lotus.domino.Session raw) {
 		org.openntf.domino.impl.Session sess = (org.openntf.domino.impl.Session) Factory.fromLotus(raw, Session.SCHEMA, null);
 		sess.setSessionFactory(this);
