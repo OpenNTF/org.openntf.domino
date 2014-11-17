@@ -1,11 +1,13 @@
 package org.openntf.domino.xsp.junit;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import javax.servlet.ServletException;
 
+import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openntf.domino.Session;
+import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
@@ -13,6 +15,7 @@ import org.openntf.domino.xsp.helpers.ModuleLoader;
 import org.openntf.domino.xsp.helpers.XPageSessionFactory;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
@@ -24,20 +27,31 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class ModuleJUnitRunner extends XspJUnitRunner {
-	private String db;
-	private ClassLoader oldCl;
+public class ModuleJUnitRunner extends DominoJUnitRunner {
 
 	public ModuleJUnitRunner(final Class<?> testClass) throws InitializationError {
 		super(testClass);
-		System.out.println(testClass);
-		db = testClass.getAnnotation(Module.class).value();
 	}
+
+	private ClassLoader oldCl;
 
 	@Override
 	protected void startUp() {
-		// TODO Auto-generated method stub
+		if (!Factory.isStarted()) {
+			fail("Factory is not initialized. Probalby you do not run this test with @OsgiTest");
+		}
 		super.startUp();
+	}
+
+	@Override
+	protected void beforeTest(final FrameworkMethod method) {
+		String db = getDatabase(method);
+
+		if (StringUtil.isEmpty(db)) {
+			super.beforeTest(method);
+			return;
+		}
+
 		assertNotNull(db);
 		NSFComponentModule module = null;
 		try {
@@ -49,9 +63,14 @@ public class ModuleJUnitRunner extends XspJUnitRunner {
 		assertNotNull(module);
 		NotesContext ctx = new NotesContext(module);
 		NotesContext.initThread(ctx);
-		Session s = Factory.getSession();
-		System.out.println(s);
-		FakeHttpRequest req = new FakeHttpRequest("Roland Praml");
+
+		Factory.initThread();
+
+		String runAs = getRunAs(method);
+		if (StringUtil.isEmpty(runAs)) {
+			runAs = Factory.getLocalServerName();
+		}
+		FakeHttpRequest req = new FakeHttpRequest(runAs);
 		try {
 			ctx.initRequest(req);
 		} catch (java.lang.NoSuchFieldError nfe) {
@@ -66,16 +85,21 @@ public class ModuleJUnitRunner extends XspJUnitRunner {
 		Thread.currentThread().setContextClassLoader(module.getModuleClassLoader());
 
 		ISessionFactory sf = new XPageSessionFactory(ctx.getCurrentSession(), false);
-		ISessionFactory sfFull = new XPageSessionFactory(ctx.getSessionAsSignerFullAdmin(), true);
+		//ISessionFactory sfFull = new XPageSessionFactory(ctx.getSessionAsSignerFullAdmin(), true);
 		Factory.setSessionFactory(sf, SessionType.CURRENT);
-		Factory.setSessionFactory(sfFull, SessionType.CURRENT_FULL_ACCESS);
+		//Factory.setSessionFactory(sfFull, SessionType.CURRENT_FULL_ACCESS);
 	}
 
 	@Override
-	protected void tearDown() {
+	protected void afterTest(final FrameworkMethod method) {
+		if (oldCl == null) {
+			super.tearDown();
+			return;
+		}
 		Thread.currentThread().setContextClassLoader(oldCl);
+		oldCl = null;
 		NotesContext.termThread();
-		super.tearDown();
+
 	}
 
 }
