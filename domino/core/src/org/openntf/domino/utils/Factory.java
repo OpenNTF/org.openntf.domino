@@ -382,7 +382,7 @@ public enum Factory {
 				@Override
 				public Object run() throws Exception {
 					try {
-						ClassLoader cl = Thread.currentThread().getContextClassLoader();
+						ClassLoader cl = Factory.class.getClassLoader();
 						// we MUST use the Factory-classloader to find the correct MANIFEST
 						Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
 						while (resources.hasMoreElements()) {
@@ -398,7 +398,7 @@ public enum Factory {
 									bundleName = bundleName.substring(0, pos);
 								}
 								if ("org.openntf.domino".equals(bundleName)) {
-									ENVIRONMENT.put("version", attrib.getValue("Implementation-Version"));
+									ENVIRONMENT.put("version", attrib.getValue("Bundle-Version"));
 									ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
 									ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
 									return null;
@@ -1073,8 +1073,12 @@ public enum Factory {
 		if (!started) {
 			throw new IllegalStateException("Factory is not yet statetd");
 		}
+		if (log_.isLoggable(Level.FINER)) {
+			log_.log(Level.FINER, "Factory.initThread()", new Throwable());
+		}
 		if (threadVariables_.get() != null) {
-			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly terminated or initialized twice");
+			log_.log(Level.SEVERE, "WARNING - Thread " + Thread.currentThread().getName()
+					+ " was not correctly terminated or initialized twice", new Throwable());
 		}
 		//		System.out.println("TEMP DEBUG: Factory thread initializing.");
 		//		Throwable t = new Throwable();
@@ -1087,9 +1091,13 @@ public enum Factory {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void termThread() { // RPr: Method was deliberately renamed
+		if (log_.isLoggable(Level.FINER)) {
+			log_.log(Level.FINER, "Factory.termThread()", new Throwable());
+		}
 		ThreadVariables tv = threadVariables_.get();
 		if (tv == null) {
-			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly initalized or terminated twice");
+			log_.log(Level.SEVERE, "WARNING - Thread " + Thread.currentThread().getName()
+					+ " was not correctly initalized or terminated twice", new Throwable());
 			return;
 		}
 		//		System.out.println("TEMP DEBUG: Factory thread terminating.");
@@ -1186,91 +1194,91 @@ public enum Factory {
 		}
 	}
 
-	public static void startup(final lotus.domino.Session session) {
-		synchronized (Factory.class) {
-			if (session instanceof org.openntf.domino.Session) {
-				throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
-			}
-			if (started) {
-				System.out.println("OpenNTF Domino API is already started. Cannot start it again");
-			}
-
-			File iniFile;
-			try {
-				localServerName = session.getUserName();
-				iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
-			} catch (NotesException e) {
-				System.out.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
-				iniFile = getConfigFileFallback();
-			}
-
-			System.out.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
-
-			try {
-				Scanner scanner = new Scanner(iniFile);
-				scanner.useDelimiter("\n|\r\n");
-				loadEnvironment(scanner);
-				scanner.close();
-			} catch (FileNotFoundException e) {
-				System.out.println("Cannot read notes.ini. Giving up");
-				e.printStackTrace();
-			}
-
-			Fixes[] fixes = Fixes.values(); // it is always a good idea to enable ALL fixes
-			AutoMime automime = AutoMime.WRAP_32K; // CHECKME RPr: this is the best choice for FOCONIS. For others, too?
-			String contextDatabase = null; // All the default sessionfactories do not have a contextDB
-
-			// There is NO(!) Default SessionFactory for the current session. you have to set it!
-			defaultSessionFactories[SessionType.CURRENT.index] = null;
-
-			// For CURRENT_FULL_ACCESS, we return a named session with full access = true
-			defaultSessionFactories[SessionType.CURRENT_FULL_ACCESS.index] = new ISessionFactory() {
-				private static final long serialVersionUID = 1L;
-
-				private String getName() {
-					return Factory.getSession(SessionType.CURRENT).getEffectiveUserName();
-				}
-
-				@Override
-				public Session createSession() throws PrivilegedActionException {
-					return Factory.getNamedSession(getName(), true);
-				}
-			};
-
-			// In XPages environment, this factory will not be used!
-			defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
-
-			// In XPages environment, this factory will not be used!
-			defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
-
-			// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
-			defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
-			defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
-			defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
-
-			defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
-			defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(fixes, automime, contextDatabase);
-
-			started = true;
-			System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+	public static synchronized void startup(final lotus.domino.Session session) {
+		if (session instanceof org.openntf.domino.Session) {
+			throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
 		}
+		if (started) {
+			System.out.println("OpenNTF Domino API is already started. Cannot start it again");
+		}
+
+		File iniFile;
+		try {
+			localServerName = session.getUserName();
+			iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
+		} catch (NotesException e) {
+			System.out.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
+			iniFile = getConfigFileFallback();
+		}
+
+		System.out.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
+
+		try {
+			Scanner scanner = new Scanner(iniFile);
+			scanner.useDelimiter("\n|\r\n");
+			loadEnvironment(scanner);
+			scanner.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Cannot read notes.ini. Giving up");
+			e.printStackTrace();
+		}
+
+		Fixes[] fixes = Fixes.values(); // it is always a good idea to enable ALL fixes
+		AutoMime automime = AutoMime.WRAP_32K; // CHECKME RPr: this is the best choice for FOCONIS. For others, too?
+		String contextDatabase = null; // All the default sessionfactories do not have a contextDB
+
+		// There is NO(!) Default SessionFactory for the current session. you have to set it!
+		defaultSessionFactories[SessionType.CURRENT.index] = null;
+
+		// For CURRENT_FULL_ACCESS, we return a named session with full access = true
+		defaultSessionFactories[SessionType.CURRENT_FULL_ACCESS.index] = new ISessionFactory() {
+			private static final long serialVersionUID = 1L;
+
+			private String getName() {
+				return Factory.getSession(SessionType.CURRENT).getEffectiveUserName();
+			}
+
+			@Override
+			public Session createSession() throws PrivilegedActionException {
+				return Factory.getNamedSession(getName(), true);
+			}
+		};
+
+		// In XPages environment, this factory will not be used!
+		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+
+		// In XPages environment, this factory will not be used!
+		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+
+		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
+		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
+		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+
+		defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
+		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+
+		started = true;
+		System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
 	}
 
 	public static synchronized void shutdown() {
-		synchronized (Factory.class) {
-			System.out.println("Shutting down the OpenNTF Domino API... ");
-			Runnable[] copy = shutdownHooks.toArray(new Runnable[shutdownHooks.size()]);
-			for (Runnable term : copy) {
-				System.out.println("* shutting down " + term);
-				try {
-					term.run();
-				} catch (Throwable t) {
-					t.printStackTrace();
-				}
+		System.out.println("Shutting down the OpenNTF Domino API... ");
+		Runnable[] copy = shutdownHooks.toArray(new Runnable[shutdownHooks.size()]);
+		for (Runnable term : copy) {
+			System.out.println("* shutting down " + term);
+			try {
+				term.run();
+			} catch (Throwable t) {
+				t.printStackTrace();
 			}
-			System.out.println("... OpenNTF Domino API shut down");
-			started = false;
 		}
+		System.out.println("... OpenNTF Domino API shut down");
+		started = false;
+	}
+
+	public static boolean isStarted() {
+		return started;
 	}
 
 	public static void setUserLocale(final Locale loc) {
