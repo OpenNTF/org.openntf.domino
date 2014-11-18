@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.openntf.domino.utils.Factory.SessionType;
+
 public enum OpenNTFvLegacyBenchmark {
 	INSTANCE;
 
@@ -21,7 +23,7 @@ public enum OpenNTFvLegacyBenchmark {
 	private static final String dbPath = "events4.nsf";
 
 	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
-		"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
+			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
 	public static class LegacyDoer implements Runnable {
 		int nameCount = 0;
@@ -333,7 +335,7 @@ public enum OpenNTFvLegacyBenchmark {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSessionFullAccess();
+			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSession(SessionType.FULL_ACCESS);
 			org.openntf.domino.Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			org.openntf.domino.Database db = s.getDatabase(server, dbPath);

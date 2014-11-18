@@ -12,6 +12,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * @author withersp
@@ -39,7 +40,7 @@ public class ViewCheckUniqueTest {
 		Database d = null;
 		NotesThread.sinitThread();
 		try {
-			s = Factory.getSession();
+			s = Factory.getSession(SessionType.CURRENT);
 			d = s.getDatabase("heracles/intec-pw", "OpenNTF\\OpenNTFDomino.nsf");
 			ViewCheckUniqueTest a = new ViewCheckUniqueTest(s, d);
 			a.NotesMain();

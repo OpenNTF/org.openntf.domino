@@ -10,6 +10,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class DocumentJsonScratchTest {
 	private static final Logger log_ = Logger.getLogger(DocumentJsonScratchTest.class.getName());
@@ -26,7 +27,7 @@ public class DocumentJsonScratchTest {
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			int docCount = 0;
 
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Database db = s.getDatabase("", "names.nsf");
 			for (Document doc : db.getAllDocuments()) {
 				String json = doc.toJson(false);

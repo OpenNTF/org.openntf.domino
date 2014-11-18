@@ -2,6 +2,7 @@ package org.openntf.domino.xots;
 
 import java.util.concurrent.TimeUnit;
 
+@Deprecated
 public abstract class XotsAbstractScheduledTasklet extends XotsBaseTasklet implements XotsIScheduledTasklet {
 	private static final long serialVersionUID = 1L;
 	private Schedule schedule_;

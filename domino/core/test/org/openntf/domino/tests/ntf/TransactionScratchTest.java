@@ -18,6 +18,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum TransactionScratchTest {
 	INSTANCE;
@@ -115,7 +116,7 @@ public enum TransactionScratchTest {
 
 			// if (false) {
 			long start = System.nanoTime();
-			Session s = Factory.getSessionFullAccess();
+			Session s = Factory.getSession(SessionType.FULL_ACCESS);
 			RunContext rc = Factory.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();

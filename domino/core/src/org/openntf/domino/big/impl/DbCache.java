@@ -8,6 +8,7 @@ import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class DbCache extends ThreadLocal<Object> {
 	private final FastMap<Long, Database> dbMap_ = new FastMap<Long, Database>();	//note: not Thread-safe yet.
@@ -30,7 +31,7 @@ public class DbCache extends ThreadLocal<Object> {
 	}
 
 	public Database getDatabase(final long dbid, final String server) {
-		return getDatabase(dbid, server, Factory.getSession());
+		return getDatabase(dbid, server, Factory.getSession(SessionType.CURRENT));
 	}
 
 	public Database getDatabase(final long dbid, final String server, final Session session) {

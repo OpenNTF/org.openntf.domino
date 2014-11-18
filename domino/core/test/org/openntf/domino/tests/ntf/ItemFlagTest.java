@@ -7,6 +7,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class ItemFlagTest extends AbstractDominoRunnable {
 	private static int THREAD_COUNT = 1;
@@ -21,7 +22,7 @@ public class ItemFlagTest extends AbstractDominoRunnable {
 
 	@Override
 	public void run() {
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		long collectionBuildNS = 0l;
 		long documentBuildNS = 0l;
 		long documentPageNS = 0l;

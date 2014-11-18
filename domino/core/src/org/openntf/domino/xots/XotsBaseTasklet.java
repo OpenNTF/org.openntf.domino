@@ -3,6 +3,7 @@ package org.openntf.domino.xots;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 
 @SuppressWarnings("serial")
+@Deprecated
 public abstract class XotsBaseTasklet extends AbstractDominoRunnable {
 	private String signer;
 
@@ -17,11 +18,6 @@ public abstract class XotsBaseTasklet extends AbstractDominoRunnable {
 		//			}
 		//		}
 		System.out.println("The Signer of " + this.getClass().getName() + " is " + signer);
-	}
-
-	@Override
-	public String getSigner() {
-		return signer;
 	}
 
 }

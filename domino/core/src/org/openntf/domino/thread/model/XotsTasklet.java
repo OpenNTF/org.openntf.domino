@@ -14,9 +14,8 @@ public @interface XotsTasklet {
 
 		public ISessionFactory getSessionFactory();
 
-		public String getRunAs();
-
-		public String getSigner();
+		//use a named session factory instead
+		//public String getRunAs();
 
 		public Scope getScope();
 
@@ -36,15 +35,20 @@ public @interface XotsTasklet {
 
 		//public DominoExecutionContext getDominoExecutionContext();
 
+		/**
+		 * Set the thread. Needed to interrupt
+		 * 
+		 * @param thread
+		 */
 		public void setCurrentThread(Thread thread);
 
 		public void stop(final boolean force);
 	}
 
-	SessionType session();
+	XotsSessionType session() default XotsSessionType.CLONE;
 
-	Scope scope();
+	Scope scope() default Scope.APPLICATION;
 
-	Context context();
+	Context context() default Context.XOTS;
 
 }

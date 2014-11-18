@@ -2,7 +2,7 @@ package org.openntf.domino.junit;
 
 import lotus.domino.Session;
 
-public enum TestProps {
+public enum TestEnv {
 	;
 	/** The username of the master session */
 	public static String SESSION_USER;
@@ -21,7 +21,9 @@ public enum TestProps {
 		SESSION_USER = sess.getUserName();
 		EFFECTIVE_USER = sess.getEffectiveUserName();
 		RUNS_ON_SERVER = sess.isOnServer();
-		System.out.println("Test isOnServer = " + RUNS_ON_SERVER + ", user = " + SESSION_USER + " effective " + EFFECTIVE_USER);
-
 	}
+
+	public static lotus.domino.Session session;
+
+	public static lotus.domino.Database database;
 }

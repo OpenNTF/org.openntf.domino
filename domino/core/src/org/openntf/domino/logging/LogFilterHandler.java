@@ -18,6 +18,7 @@ import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.formula.EvaluateException;
 import org.openntf.formula.FormulaContext;
 import org.openntf.formula.Formulas;
@@ -367,7 +368,7 @@ public class LogFilterHandler extends Handler {
 
 		/* We have to ask Session - that's not cheap */
 		try {
-			Session sess = Factory.getSession_unchecked();
+			Session sess = Factory.getSession_unchecked(SessionType.CURRENT);
 			if (sess == null) // then we can't evaluate the condition
 				return false;
 			if (fce._condContUserName && !publishDocMap.containsKey(LogConfig.cUserName))

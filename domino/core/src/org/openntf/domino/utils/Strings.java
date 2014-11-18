@@ -35,6 +35,7 @@ import org.openntf.arpa.ISO;
 import org.openntf.domino.Document;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * String Utilities
@@ -248,7 +249,7 @@ public enum Strings {
 	 * @see #generateRecordID()
 	 */
 	public static String generateRecordID() {
-		return Strings.getSpawnedRecordID(Factory.getSession());
+		return Strings.getSpawnedRecordID(Factory.getSession(SessionType.CURRENT));
 	}
 
 	/**

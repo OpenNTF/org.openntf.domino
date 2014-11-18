@@ -27,6 +27,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 
@@ -112,7 +113,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	@Override
 	protected Session findParent(final lotus.domino.DateRange delegate) {
 		if (delegate == null) {
-			return Factory.getSession(); // the current Session
+			return Factory.getSession(SessionType.CURRENT); // the current Session - it does not matter to which session this 
 		}
 		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
@@ -360,6 +361,6 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Deprecated
 	public DateRange() {
-		super(null, Factory.getSession(), null, 0, NOTES_DATERNG);
+		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_DATERNG);
 	}
 }

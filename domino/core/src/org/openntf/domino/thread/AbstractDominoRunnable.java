@@ -41,16 +41,6 @@ public abstract class AbstractDominoRunnable extends Observable implements XotsT
 		return null;
 	}
 
-	@Override
-	public String getRunAs() {
-		return null;
-	}
-
-	@Override
-	public String getSigner() {
-		return null;
-	}
-
 	/**
 	 * Method should be queried in loops to determine if we should stop
 	 * 

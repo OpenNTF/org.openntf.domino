@@ -15,7 +15,8 @@
  */
 package org.openntf.domino.iterators;
 
-import org.openntf.domino.Base;
+import java.util.Iterator;
+
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.utils.DominoUtils;
@@ -24,7 +25,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewEntryIterator.
  */
-public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
+public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/** The current entry_. */
 	private transient ViewEntry currentEntry_;
@@ -37,9 +38,11 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 
 	/** The count_. */
 	private int count_ = 0;
-	
+
 	/** The current index_. */
 	private int currentIndex_ = 0;
+
+	private ViewEntryCollection collection_;
 
 	/**
 	 * Instantiates a new view entry iterator.
@@ -48,26 +51,26 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 *            the collection
 	 */
 	public ViewEntryIterator(final ViewEntryCollection collection) {
-		super(collection);
+		collection_ = collection;
 
 		// TODO replace this with a less-expensive operation
 		count_ = collection.getCount();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.iterators.AbstractDominoIterator#getCollection()
-	 */
-	@Override
-	public ViewEntryCollection getCollection() {
-		ViewEntryCollection result = null;
-		Base<?> collection = super.getCollection();
-		if (collection instanceof ViewEntryCollection) {
-			result = (ViewEntryCollection) collection;
-		}
-		return result;
-	}
+	//	/*
+	//	 * (non-Javadoc)
+	//	 * 
+	//	 * @see org.openntf.domino.iterators.AbstractDominoIterator#getCollection()
+	//	 */
+	//	@Override
+	//	public ViewEntryCollection getCollection() {
+	//		ViewEntryCollection result = null;
+	//		Base<?> collection = super.getCollection();
+	//		if (collection instanceof ViewEntryCollection) {
+	//			result = (ViewEntryCollection) collection;
+	//		}
+	//		return result;
+	//	}
 
 	/**
 	 * Gets the current entry.
@@ -83,6 +86,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 		return currentIndex_ < count_;
 	}
@@ -110,12 +114,13 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * 
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public ViewEntry next() {
 		ViewEntry result = null;
 		ViewEntry currentEntry = getCurrentEntry();
 		try {
-			result = ((currentEntry == null) ? getCollection().getFirstEntry() : getCollection().getNextEntry(currentEntry));
+			result = ((currentEntry == null) ? collection_.getFirstEntry() : collection_.getNextEntry(currentEntry));
 			currentIndex_++;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
@@ -130,6 +135,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * 
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		// NOOP
 	}

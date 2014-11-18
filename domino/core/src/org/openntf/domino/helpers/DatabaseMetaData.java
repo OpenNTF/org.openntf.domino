@@ -61,6 +61,7 @@ public class DatabaseMetaData implements Serializable {
 	private String designTemplateName_;
 	private double size_;
 	private String categories_;
+	private SessionHolder sessionHolder;
 
 	//private int fileFormat_;
 	//private double limitRevisions;
@@ -137,8 +138,9 @@ public class DatabaseMetaData implements Serializable {
 	@Deprecated
 	public final static Comparator<DatabaseMetaData> LASTMOD_COMPARATOR = new LastModComparator();
 
-	public DatabaseMetaData(final lotus.domino.Database db) throws NotesException {
+	public DatabaseMetaData(final lotus.domino.Database db, final SessionHolder sh) throws NotesException {
 
+		sessionHolder = sh;
 		templateName_ = db.getTemplateName();
 		designTemplateName_ = db.getDesignTemplateName();
 		fileName_ = db.getFileName();
@@ -2314,7 +2316,7 @@ public class DatabaseMetaData implements Serializable {
 		@Override
 		public DatabaseHolder getDatabaseHolder() {
 			if (databaseHolder_ == null) {
-				databaseHolder_ = new DatabaseHolder(this);
+				databaseHolder_ = new DatabaseHolder(this, sessionHolder);
 			}
 			return databaseHolder_;
 		}

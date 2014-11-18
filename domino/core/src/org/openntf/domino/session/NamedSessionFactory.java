@@ -12,6 +12,11 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 	private static final long serialVersionUID = 1L;
 	final private String runAs_;
 
+	public NamedSessionFactory(final String runAs) {
+		super();
+		runAs_ = runAs;
+	}
+
 	public NamedSessionFactory(final org.openntf.domino.Session source) {
 		super(source);
 		runAs_ = source.getEffectiveUserName();
@@ -42,19 +47,23 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				synchronized (SecurityManager.class) {
-					SecurityManager oldSm = System.getSecurityManager();
-					System.setSecurityManager(null);
-					try {
-						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
-
-					} finally {
-						System.setSecurityManager(oldSm);
-					}
-				}
+				return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				// it is too dangerous to disable the SM temporary.
+				// it might happen that an other thread runs while we create the session
+				// and queries the SM -> bang.
+				//				synchronized (SecurityManager.class) {
+				//					SecurityManager oldSm = System.getSecurityManager();
+				//					System.setSecurityManager(null);
+				//					try {
+				//						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				//
+				//					} finally {
+				//						System.setSecurityManager(oldSm);
+				//					}
+				//				}
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw);
 	}
 
 }

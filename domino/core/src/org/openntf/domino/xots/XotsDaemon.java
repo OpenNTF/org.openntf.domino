@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.thread.DominoExecutor;
 
 /*
@@ -29,7 +30,7 @@ public class XotsDaemon implements Observer {
 		super();
 	}
 
-	public static List<Runnable> getRunningTasks() {
+	public static List<DominoFutureTask> getRunningTasks() {
 		if (!isStarted())
 			return Collections.emptyList();
 		return INSTANCE.executor_.getRunningTasks();
@@ -126,14 +127,24 @@ public class XotsDaemon implements Observer {
 	//		}
 	//	}
 
-	public static boolean queue(final Runnable runnable) {
+	public static Future<?> queue(final Runnable runnable) {
 		if (!isStarted()) {
 			throw new IllegalStateException("XotsService is not started");
 		}
 		if (runnable instanceof Observable) {
 			((Observable) runnable).addObserver(INSTANCE);
 		}
-		return INSTANCE.executor_.queue(runnable);
+		return INSTANCE.executor_.submit(runnable);
+	}
+
+	public static <T> Future<T> queue(final Runnable runnable, final T result) {
+		if (!isStarted()) {
+			throw new IllegalStateException("XotsService is not started");
+		}
+		if (runnable instanceof Observable) {
+			((Observable) runnable).addObserver(INSTANCE);
+		}
+		return INSTANCE.executor_.submit(runnable, result);
 	}
 
 	public static <T> Future<T> queue(final Callable<T> callable) {
@@ -206,4 +217,5 @@ public class XotsDaemon implements Observer {
 		//			}
 		//		}
 	}
+
 }

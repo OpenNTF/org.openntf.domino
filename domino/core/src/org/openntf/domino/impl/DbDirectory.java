@@ -38,9 +38,9 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.helpers.DbDirectoryTree;
+import org.openntf.domino.helpers.SessionHolder;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -62,6 +62,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 	private Comparator<DatabaseMetaData> comparator_ = DatabaseMetaData.FILEPATH_COMPARATOR;
 
+	private SessionHolder sessionHolder_;
+
 	/**
 	 * Instantiates a new DbDirectory.
 	 * 
@@ -76,6 +78,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 */
 	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
 		super(delegate, parent, wf, cppId, NOTES_SERVER);
+		sessionHolder_ = parent.getSessionHolder();
 		try {
 			name_ = delegate.getName();
 			clusterName_ = delegate.getClusterName();
@@ -182,7 +185,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 					}
 				}
 
-				dbMetaDataSet_.add(new DatabaseMetaData(rawdb));
+				dbMetaDataSet_.add(new DatabaseMetaData(rawdb, sessionHolder_));
 
 				if (wasOpen) {
 					getFactory().fromLotus(rawdb, Database.SCHEMA, getAncestorSession());
@@ -546,29 +549,17 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return this.getParent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getDelegate()
-	 */
 	@Override
-	protected lotus.domino.DbDirectory getDelegate() {
-		lotus.domino.DbDirectory dir = super.getDelegate();
-		try {
-			dir.getClusterName();
-			//			dir.isHonorShowInOpenDatabaseDialog();
-		} catch (NotesException e) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	void resurrect() {
-		Session rawSessionUs = Factory.getSession();
-		lotus.domino.Session rawSession = toLotus(rawSessionUs);
+	protected void resurrect() {
+		lotus.domino.Session rawSession = toLotus(getParent());
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
+			if (log_.isLoggable(java.util.logging.Level.FINE)) {
+				Throwable t = new Throwable();
+				log_.log(java.util.logging.Level.FINE, "DbDirectory for server " + name_ + "had been recycled and was auto-restored.", t);
+			}
+
 			setDelegate(dir, 0);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
@@ -606,7 +597,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public boolean add(final Database db) {
 		try {
-			return getMetaDataSet().add(new DatabaseMetaData(db));
+			return getMetaDataSet().add(new DatabaseMetaData(db, sessionHolder_));
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return false;
@@ -637,7 +628,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public boolean contains(final Object obj) {
 		if (obj instanceof Database) {
 			try {
-				return getMetaDataSet().contains(new DatabaseMetaData((Database) obj));
+				return getMetaDataSet().contains(new DatabaseMetaData((Database) obj, sessionHolder_));
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 				return false;
@@ -666,7 +657,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public boolean remove(final Object obj) {
 		if (obj instanceof Database) {
 			try {
-				return getMetaDataSet().remove(new DatabaseMetaData((Database) obj));
+				return getMetaDataSet().remove(new DatabaseMetaData((Database) obj, sessionHolder_));
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 				return false;
@@ -694,7 +685,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		for (Object obj : objs) {
 			if (obj instanceof Database) {
 				try {
-					holders.add(new DatabaseMetaData((Database) obj));
+					holders.add(new DatabaseMetaData((Database) obj, sessionHolder_));
 				} catch (NotesException ne) {
 					DominoUtils.handleException(ne);
 					return false;

@@ -299,29 +299,31 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	}
 
 	@Override
-	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
-		boolean returnVal = false;
+	public void recacheLotusObject(final lotus.domino.Base oldLotus, final lotus.domino.Base newLotus, final Base<?> wrapper,
+			final Base<?> parent) {
 		long[] prevent_recycling = new long[2];
-		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(lotus);
+		long old_cppKey = org.openntf.domino.impl.Base.getLotusId(oldLotus);
+
+		// TODO: Should we remove oldLotus from cache?
+		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(newLotus);
 		prevent_recycling[1] = org.openntf.domino.impl.Base.getLotusId(parent);
-		Base<?> result = referenceCache.get(cpp_key, Base.class);
 
-		if (result == null) {
-			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
-			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
-			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
+		referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
+		referenceCache.put(cpp_key, wrapper, newLotus);
 
-			result = wrapper;
-
-			referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
-
-			referenceCache.put(cpp_key, result, lotus);
-			returnVal = true;
-		} else {	//NTF not sure what to do in this case. Don't even know what this means...
-			log_.log(Level.FINE, "Re-wrapping a lotus object " + lotus.getClass().getName()
-					+ " that is already in the queue. This may indicate a logic problem.");
-		}
-		return returnVal;
+		//		Base<?> result = referenceCache.get(cpp_key, Base.class);
+		//
+		//		if (result == null) {
+		//			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
+		//			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
+		//			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
+		//
+		//			returnVal = true;
+		//		} else {	//NTF not sure what to do in this case. Don't even know what this means...
+		//			log_.log(Level.FINE, "Re-wrapping a lotus object " + lotus.getClass().getName()
+		//					+ " that is already in the queue. This may indicate a logic problem.");
+		//		}
+		//		return returnVal;
 	}
 
 	@Override
