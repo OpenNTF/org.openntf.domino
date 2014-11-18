@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.thread.DominoExecutor;
 
 /*
@@ -29,7 +30,7 @@ public class XotsDaemon implements Observer {
 		super();
 	}
 
-	public static List<Runnable> getRunningTasks() {
+	public static List<DominoFutureTask> getRunningTasks() {
 		if (!isStarted())
 			return Collections.emptyList();
 		return INSTANCE.executor_.getRunningTasks();
@@ -216,4 +217,5 @@ public class XotsDaemon implements Observer {
 		//			}
 		//		}
 	}
+
 }

@@ -25,7 +25,6 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.xots.XotsDominoFutureTask;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
@@ -138,29 +137,29 @@ public class OsgiCommandProvider implements CommandProvider {
 			ci.println("DEBUG: Opening module: " + moduleName);
 			NSFComponentModule module = ModuleLoader.loadModule(moduleName, true);
 
-			Runnable runner = new XotsDominoFutureTask<Object>(module, new Runnable() {
-				@Override
-				public void run() {
-					try {
-						ci.println("DEBUG: loading class: " + className);
-						ClassLoader mcl = Thread.currentThread().getContextClassLoader();
-						Class cls = mcl.loadClass(className);
-						ci.println("DEBUG: creating instance of: " + cls);
-						Object obj = cls.newInstance();
-						ci.println("Success: " + obj);
-						if (obj instanceof Runnable) {
-							//((Runnable) obj).run();
-							XotsDaemon.queue((Runnable) obj);
-						}
-					} catch (Throwable e) {
-						StringWriter errors = new StringWriter();
-						e.printStackTrace(new PrintWriter(errors));
-						ci.println(errors);
-					}
-				}
-			}, null);
-			runner.run();
-			XotsDaemon.queue(runner);
+			//			Runnable runner = new XotsDominoFutureTask<Object>(module, new Runnable() {
+			//				@Override
+			//				public void run() {
+			//					try {
+			//						ci.println("DEBUG: loading class: " + className);
+			//						ClassLoader mcl = Thread.currentThread().getContextClassLoader();
+			//						Class cls = mcl.loadClass(className);
+			//						ci.println("DEBUG: creating instance of: " + cls);
+			//						Object obj = cls.newInstance();
+			//						ci.println("Success: " + obj);
+			//						if (obj instanceof Runnable) {
+			//							//((Runnable) obj).run();
+			//							XotsDaemon.queue((Runnable) obj);
+			//						}
+			//					} catch (Throwable e) {
+			//						StringWriter errors = new StringWriter();
+			//						e.printStackTrace(new PrintWriter(errors));
+			//						ci.println(errors);
+			//					}
+			//				}
+			//			}, null);
+			//			runner.run();
+			//			XotsDaemon.queue(runner);
 
 		} catch (Throwable e) {
 			StringWriter errors = new StringWriter();

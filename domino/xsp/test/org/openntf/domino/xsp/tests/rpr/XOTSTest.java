@@ -2,6 +2,7 @@ package org.openntf.domino.xsp.tests.rpr;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openntf.domino.junit.SessionDb;
 import org.openntf.domino.junit.SessionUser;
+import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.thread.model.XotsSessionType;
 import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.utils.Factory;
@@ -120,5 +122,38 @@ public class XOTSTest {
 		System.out.println("Tasklist 5: " + XotsDaemon.getRunningTasks());
 		Thread.sleep(1000);
 		System.out.println("Tasklist 6: " + XotsDaemon.getRunningTasks());
+	}
+
+	private static class HighLoadTest implements Runnable {
+		private int i;
+
+		public HighLoadTest(final int i) {
+			this.i = i;
+		}
+
+		@Override
+		public void run() {
+			//System.out.println("Thread " + i);
+
+		}
+
+	}
+
+	@Test
+	public void testHighLoad() throws InterruptedException {
+		for (int i = 0; i < 1000; i++) {
+			XotsDaemon.queue(new HighLoadTest(i));
+		}
+		Collection<DominoFutureTask> lst1 = null;
+		do {
+			lst1 = XotsDaemon.getRunningTasks();
+			System.out.println("--- TASK LIST ---");
+			for (DominoFutureTask task : lst1) {
+				System.out.println(task);
+			}
+
+			Thread.sleep(1000);
+		} while (!lst1.isEmpty());
+
 	}
 }
