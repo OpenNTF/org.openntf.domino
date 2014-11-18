@@ -25,7 +25,7 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.xots.XotsDominoRunner;
+import org.openntf.domino.xsp.xots.XotsDominoFutureTask;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
@@ -138,7 +138,7 @@ public class OsgiCommandProvider implements CommandProvider {
 			ci.println("DEBUG: Opening module: " + moduleName);
 			NSFComponentModule module = ModuleLoader.loadModule(moduleName, true);
 
-			Runnable runner = new XotsDominoRunner(module, new Runnable() {
+			Runnable runner = new XotsDominoFutureTask<Object>(module, new Runnable() {
 				@Override
 				public void run() {
 					try {
@@ -158,9 +158,9 @@ public class OsgiCommandProvider implements CommandProvider {
 						ci.println(errors);
 					}
 				}
-			});
+			}, null);
 			runner.run();
-			//XotsDaemon.queue(runner);
+			XotsDaemon.queue(runner);
 
 		} catch (Throwable e) {
 			StringWriter errors = new StringWriter();

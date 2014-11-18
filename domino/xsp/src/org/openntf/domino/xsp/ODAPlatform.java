@@ -15,6 +15,7 @@ import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xsp.helpers.XPageSessionFactory;
 import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.IServiceLocatorFactory;
@@ -100,6 +101,8 @@ public enum ODAPlatform {
 		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
 		Factory.startup();
 
+		// Setup the named factories 4 XPages
+		Factory.setNamedFactories4XPages(new XPageSessionFactory(false), new XPageSessionFactory(true));
 		verifyIGetEntryByKey();
 
 		DominoExecutor executor = new XotsDominoExecutor(50);

@@ -34,6 +34,8 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 	private lotus.domino.Session mastersession;
 	private boolean factoryShutdown;
 
+	//private boolean ownSM;
+
 	@Override
 	protected void startUp() {
 		NotesThread.sinitThread();
@@ -44,6 +46,11 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 		} catch (NotesException ne) {
 			ne.printStackTrace();
 		}
+		// RPr: Did not figure out, how to set up a proper SM
+		//		if (System.getSecurityManager() == null) {
+		//			new lotus.notes.AgentSecurityManager();
+		//			ownSM = true;
+		//		}
 		if (!Factory.isStarted()) {
 
 			Factory.startup();
@@ -65,6 +72,16 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 			XotsDaemon.stop(600); // 10 minutes should be enough for tests
 			Factory.shutdown();
 		}
+		//		if (ownSM) {
+		//			AccessController.doPrivileged(new PrivilegedAction<Object>() {
+		//
+		//				@Override
+		//				public Object run() {
+		//					System.setSecurityManager(null);
+		//					return null;
+		//				}
+		//			});
+		//		}
 		NotesThread.stermThread();
 	}
 

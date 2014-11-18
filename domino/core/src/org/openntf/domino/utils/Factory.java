@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 import lotus.notes.NotesThread;
 
-import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
@@ -50,7 +49,6 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
@@ -1223,10 +1221,6 @@ public enum Factory {
 			e.printStackTrace();
 		}
 
-		Fixes[] fixes = Fixes.values(); // it is always a good idea to enable ALL fixes
-		AutoMime automime = AutoMime.WRAP_32K; // CHECKME RPr: this is the best choice for FOCONIS. For others, too?
-		String contextDatabase = null; // All the default sessionfactories do not have a contextDB
-
 		// There is NO(!) Default SessionFactory for the current session. you have to set it!
 		defaultSessionFactories[SessionType.CURRENT.index] = null;
 
@@ -1245,21 +1239,26 @@ public enum Factory {
 		};
 
 		// In XPages environment, this factory will not be used!
-		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
+		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory();
 
 		// In XPages environment, this factory will not be used!
-		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory();
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
-		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(fixes, automime, contextDatabase);
-		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(fixes, automime, contextDatabase);
-		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory();
+		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory();
+		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory();
 
-		defaultNamedSessionFactory = new NamedSessionFactory(fixes, automime, contextDatabase);
-		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(fixes, automime, contextDatabase);
+		defaultNamedSessionFactory = new NamedSessionFactory((String) null);
+		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory();
 
 		started = true;
 		System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+	}
+
+	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
+		defaultNamedSessionFactory = normal;
+		defaultNamedSessionFullAccessFactory = fullaccess;
 	}
 
 	public static synchronized void shutdown() {

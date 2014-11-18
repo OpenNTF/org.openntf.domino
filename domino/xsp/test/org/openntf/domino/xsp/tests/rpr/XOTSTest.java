@@ -14,6 +14,8 @@ import org.openntf.domino.junit.SessionDb;
 import org.openntf.domino.junit.SessionUser;
 import org.openntf.domino.thread.model.XotsSessionType;
 import org.openntf.domino.thread.model.XotsTasklet;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
 import org.openntf.junit4xpages.OsgiTest;
@@ -54,9 +56,13 @@ public class XOTSTest {
 	@XotsTasklet(session = XotsSessionType.CLONE)
 	private static class SessionPassingCallable implements Callable<String> {
 		@Override
-		public String call() throws Exception {
-			NotesContext ctx = NotesContext.getCurrent();
-			return ctx.getCurrentSession().getEffectiveUserName();
+		public String call() {
+			try {
+				return Factory.getSession(SessionType.CURRENT).getEffectiveUserName();
+			} catch (Throwable t) {
+				t.printStackTrace();
+				return t.getMessage();
+			}
 		}
 
 	}
@@ -64,11 +70,55 @@ public class XOTSTest {
 	@Test
 	@SessionUser("CN=Roland Praml/OU=01/OU=int/O=FOCONIS")
 	public void testSessionPassing() throws InterruptedException, ExecutionException, NotesException {
-		NotesContext ctx = NotesContext.getCurrent();
 
-		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", ctx.getCurrentSession().getEffectiveUserName());
+		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 		Future<String> future = XotsDaemon.queue(new SessionPassingCallable());
 
 		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", future.get());
+	}
+
+	@Test
+	public void testLongRunningRunnable() throws InterruptedException {
+		XotsDaemon.queue(new Callable<String>() {
+
+			@Override
+			public String call() {
+				// TODO Auto-generated method stub
+				System.out.println("Long callable started");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println("Long callable finished");
+				return "DONE";
+			}
+		});
+
+		XotsDaemon.queue(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				System.out.println("Long runnable started");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				System.out.println("Long runnable finished");
+			}
+		});
+		System.out.println("Tasklist 1: " + XotsDaemon.getRunningTasks());
+		Thread.sleep(1000);
+		System.out.println("Tasklist 2: " + XotsDaemon.getRunningTasks());
+		Thread.sleep(1000);
+		System.out.println("Tasklist 3: " + XotsDaemon.getRunningTasks());
+		Thread.sleep(1000);
+		System.out.println("Tasklist 4: " + XotsDaemon.getRunningTasks());
+		Thread.sleep(1000);
+		System.out.println("Tasklist 5: " + XotsDaemon.getRunningTasks());
+		Thread.sleep(1000);
+		System.out.println("Tasklist 6: " + XotsDaemon.getRunningTasks());
 	}
 }

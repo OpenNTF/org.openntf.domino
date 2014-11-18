@@ -7,6 +7,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.session.AbstractSessionFactory;
+import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -14,7 +15,7 @@ import com.ibm.designer.runtime.domino.bootstrap.util.StringUtil;
 import com.ibm.domino.napi.c.NotesUtil;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 
-public class XPageSessionFactory extends AbstractSessionFactory {
+public class XPageSessionFactory extends AbstractSessionFactory implements INamedSessionFactory {
 	ThreadLocal<lotus.domino.Session> session = new ThreadLocal<lotus.domino.Session>();
 	private boolean fullAccess_;
 	private String runAs_;
@@ -37,6 +38,15 @@ public class XPageSessionFactory extends AbstractSessionFactory {
 		fullAccess_ = fullAccess;
 	}
 
+	public XPageSessionFactory(final boolean fullAccess) {
+		fullAccess_ = fullAccess;
+	}
+
+	public XPageSessionFactory(final String runAs, final boolean fullAccess) {
+		fullAccess_ = fullAccess;
+		runAs_ = runAs;
+	}
+
 	@Override
 	public Session createSession() throws PrivilegedActionException {
 		// TODO Auto-generated method stub
@@ -54,6 +64,18 @@ public class XPageSessionFactory extends AbstractSessionFactory {
 			return Factory.fromLotus(rawSession, Session.SCHEMA, null);
 		}
 		return null;
+	}
+
+	@Override
+	public Session createSession(final String userName) throws PrivilegedActionException {
+		try {
+			long userHandle = NotesUtil.createUserNameList(userName);
+			lotus.domino.Session rawSession = XSPNative.createXPageSessionExt(userName, userHandle, false, true, fullAccess_);
+			return wrapSession(rawSession);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 }

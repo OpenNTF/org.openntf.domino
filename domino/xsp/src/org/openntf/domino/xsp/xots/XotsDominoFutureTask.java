@@ -13,10 +13,13 @@ import javax.servlet.ServletException;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.openntf.domino.thread.AbstractDominoRunner;
+import org.openntf.domino.thread.AbstractDominoFutureTask;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.xsp.helpers.InvalidSessionFactory;
+import org.openntf.domino.xsp.helpers.XPageSessionFactory;
+import org.openntf.domino.xsp.helpers.XPageSignerSessionFactory;
 
 import com.ibm.commons.util.ThreadLock;
 import com.ibm.commons.util.ThreadLockManager;
@@ -33,7 +36,7 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class XotsDominoRunner extends AbstractDominoRunner {
+public class XotsDominoFutureTask<T> extends AbstractDominoFutureTask<T> {
 
 	public NSFComponentModule module_;
 
@@ -73,13 +76,13 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 		return null;
 	}
 
-	public <T> XotsDominoRunner(final NSFComponentModule module, final Callable<T> callable) {
+	public XotsDominoFutureTask(final NSFComponentModule module, final Callable<T> callable) {
 		super(callable);
 		module_ = module;
 	}
 
-	public XotsDominoRunner(final NSFComponentModule module, final Runnable runnable) {
-		super(runnable);
+	public XotsDominoFutureTask(final NSFComponentModule module, final Runnable runnable, final T result) {
+		super(runnable, result);
 		module_ = module;
 	}
 
@@ -145,10 +148,10 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 
 			if (mcl instanceof ModuleClassLoader) {
 				URLClassLoader dcl = (URLClassLoader) ((ModuleClassLoader) mcl).getDynamicClassLoader();
-				String className = getRunnable().getClass().getName();
+				String className = wrappedObject.getClass().getName();
 				String str = className.replace('.', '/') + ".class";
 				URL url = dcl.findResource(str);
-				if (url.getProtocol().startsWith("xspnsf")) {
+				if (url != null && url.getProtocol().startsWith("xspnsf")) {
 					// Set up the "TopLevelXPageSigner == Signer of the runnable
 					// As soon as we are in a xspnsf, we do not have a SessionFactory!
 
@@ -159,13 +162,17 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 					// But you cannot use both simultaneously!
 					Session signerSession = ctx.getSessionAsSigner(true);
 					if (signerSession != null) {
-						Factory.setSession(signerSession, SessionType.SIGNER);
-						Factory.setSession(signerSession, SessionType.SIGNER_FULL_ACCESS);
-						System.out.println("Code signer is " + signerSession.getUserName());
+						Factory.setSessionFactory(new XPageSignerSessionFactory(ctx, false), SessionType.SIGNER);
+						Factory.setSessionFactory(new XPageSignerSessionFactory(ctx, true), SessionType.SIGNER_FULL_ACCESS);
 					} else {
-						Factory.setSession(null, SessionType.SIGNER);
-						Factory.setSession(null, SessionType.SIGNER_FULL_ACCESS);
+						// do not setup signer sessions if it is not properly signed!
+						Factory.setSessionFactory(new InvalidSessionFactory(), SessionType.SIGNER);
+						Factory.setSessionFactory(new InvalidSessionFactory(), SessionType.SIGNER_FULL_ACCESS);
 					}
+				} else {
+					// The code is not part from an NSF, so it resides on the server
+					Factory.setSessionFactory(new XPageSessionFactory(Factory.getLocalServerName(), false), SessionType.SIGNER);
+					Factory.setSessionFactory(new XPageSessionFactory(Factory.getLocalServerName(), true), SessionType.SIGNER_FULL_ACCESS);
 				}
 			}
 
@@ -178,7 +185,7 @@ public class XotsDominoRunner extends AbstractDominoRunner {
 				AccessController.doPrivileged(new PrivilegedAction<Object>() {
 					@Override
 					public Object run() {
-						XotsDominoRunner.super.runNotes();
+						XotsDominoFutureTask.super.runNotes();
 						return null;
 					}
 				}, runContext);

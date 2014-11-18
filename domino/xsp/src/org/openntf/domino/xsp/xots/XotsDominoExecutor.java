@@ -1,10 +1,9 @@
 package org.openntf.domino.xsp.xots;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.RunnableFuture;
 
-import org.openntf.domino.thread.AbstractDominoRunner;
 import org.openntf.domino.thread.DominoExecutor;
-import org.openntf.domino.thread.DominoRunner;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -16,32 +15,27 @@ public class XotsDominoExecutor extends DominoExecutor {
 	}
 
 	@Override
-	protected Runnable wrap(final Runnable runnable) {
-		if (runnable instanceof AbstractDominoRunner) {
-			return runnable;
-		}
+	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
 		NotesContext ctx = NotesContext.getCurrentUnchecked();
 		NSFComponentModule module = ctx == null ? null : ctx.getModule();
 
 		if (module == null) {
-			return new DominoRunner(runnable);
+			return super.newTaskFor(callable);
 		} else {
-			return new XotsDominoRunner(module, runnable);
+			return new XotsDominoFutureTask(module, callable);
 		}
+
 	}
 
 	@Override
-	protected <T> Callable<T> wrap(final Callable<T> callable) {
-		if (callable instanceof AbstractDominoRunner.WrappedCallable) {
-			return callable;
-		}
+	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T result) {
 		NotesContext ctx = NotesContext.getCurrentUnchecked();
 		NSFComponentModule module = ctx == null ? null : ctx.getModule();
 
 		if (module == null) {
-			return new DominoRunner(callable).asCallable(callable);
+			return super.newTaskFor(runnable, result);
 		} else {
-			return new XotsDominoRunner(module, callable).asCallable(callable);
+			return new XotsDominoFutureTask(module, runnable, result);
 		}
 	}
 

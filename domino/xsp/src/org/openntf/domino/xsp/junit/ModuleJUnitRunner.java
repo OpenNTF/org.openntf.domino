@@ -60,7 +60,7 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		assertNotNull(module);
+		assertNotNull("Module " + db + " does not exist or is locked by server process", module);
 		NotesContext ctx = new NotesContext(module);
 		NotesContext.initThread(ctx);
 

@@ -47,16 +47,20 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				synchronized (SecurityManager.class) {
-					SecurityManager oldSm = System.getSecurityManager();
-					System.setSecurityManager(null);
-					try {
-						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
-
-					} finally {
-						System.setSecurityManager(oldSm);
-					}
-				}
+				return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				// it is too dangerous to disable the SM temporary.
+				// it might happen that an other thread runs while we create the session
+				// and queries the SM -> bang.
+				//				synchronized (SecurityManager.class) {
+				//					SecurityManager oldSm = System.getSecurityManager();
+				//					System.setSecurityManager(null);
+				//					try {
+				//						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				//
+				//					} finally {
+				//						System.setSecurityManager(oldSm);
+				//					}
+				//				}
 			}
 		}, acc_);
 		return wrapSession(raw);

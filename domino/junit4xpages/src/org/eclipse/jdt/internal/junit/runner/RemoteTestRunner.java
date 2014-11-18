@@ -251,6 +251,7 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 				osgiClassPaths.add(c.getProtectionDomain().getCodeSource().getLocation());
 			}
 		}
+
 		if (osgiClassPaths.isEmpty())
 			return false;
 		StringBuilder sb = new StringBuilder();
@@ -353,13 +354,18 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 				String bundleName = System.getProperty("junit4xpages.bundle", "org.openntf.domino.xsp");
 				final Bundle bundle = org.eclipse.core.runtime.Platform.getBundle(bundleName);
 
-				classLoader = new URLClassLoader(urls, getClass().getClassLoader()) {
+				classLoader = new URLClassLoader(urls, null) {
 					@Override
 					public java.lang.Class<?> loadClass(final String className) throws ClassNotFoundException {
+						Class<?> ret;
 						try {
-							return super.loadClass(className);
+							ret = super.loadClass(className);
+							//System.out.println("super.loadClass(" + className + ")");
+							return ret;
 						} catch (ClassNotFoundException cnf) {
-							return bundle.loadClass(className);
+							ret = bundle.loadClass(className);
+							//System.out.println("bundle.loadClass(" + className + ")");
+							return ret;
 						}
 					}
 
@@ -368,13 +374,12 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 						// TODO Auto-generated method stub
 						URL ret = super.getResource(resName);
 						if (ret == null) {
-							ret = bundle.getResource(arg0);
+							ret = bundle.getResource(resName);
 						}
 						return ret;
 					}
 
 				};
-				//Thread.currentThread().setContextClassLoader(classLoader);
 			}
 		}
 		return classLoader;
@@ -622,6 +627,7 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 
 		long testStartTime = System.currentTimeMillis();
 		execution.run(suites);
+
 		notifyListenersOfTestEnd(execution, testStartTime);
 	}
 
@@ -765,7 +771,11 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 				// interrupt reader thread so that we don't block on close
 				// on a lock held by the BufferedReader
 				// fix for bug: 38955
-				fReaderThread.interrupt();
+				try {
+					fReaderThread.interrupt();
+				} catch (java.lang.NullPointerException NPE) {
+					// Bug in NotesAgentManager - throws a NPE if there is no ThreadGroup present
+				}
 			}
 			if (fReader != null) {
 				fReader.close();
