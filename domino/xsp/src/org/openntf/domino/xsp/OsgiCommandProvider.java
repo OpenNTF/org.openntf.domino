@@ -19,16 +19,21 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
+import org.junit.internal.TextListener;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
+import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.XotsDaemon;
-import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.xots.XotsDominoRunner;
+import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 
 /**
  * 
@@ -77,6 +82,7 @@ public class OsgiCommandProvider implements CommandProvider {
 		addHeader("XOTS commands", sb);
 		addCommand("xots tasks", "(filter)", "Show currently running tasks", sb);
 		addCommand("xots schedule", "(filter)", "Show all scheduled tasks", sb);
+		addCommand("junit <package> <testclass>", "Run the JUnit runnable", sb);
 		addCommand("oda stop", "Stop the ODA-API", sb);
 		addCommand("oda start", "Start the ODA-API", sb);
 		addCommand("oda restart", "ReStart the ODA-API", sb);
@@ -109,11 +115,28 @@ public class OsgiCommandProvider implements CommandProvider {
 			// TODO what does XOTS?
 		} else if (cmp(cmd, "tasks", 1)) { // tasks
 			ci.println("XOTS task list:");
-			ci.println(XotsDaemon.getRunningTasks());
+			ci.println(XotsDaemon.getTasks(false));
 		} else if (cmp(cmd, "schedule", 1)) {
 			ci.println("XOTS schedule list:");
+			ci.println(XotsDaemon.getTasks(true));
 		} else if (cmp(cmd, "run", 1)) {
 			xotsRun(ci);
+		}
+	}
+
+	public void _junit(final CommandInterpreter ci) throws ClassNotFoundException {
+		final Bundle bundle = Platform.getBundle(ci.nextArgument());
+		Class<?> testclass = bundle.loadClass(ci.nextArgument());
+
+		JUnitCore runner = new org.junit.runner.JUnitCore();
+		RunListener listener = new TextListener(System.out);
+		runner.addListener(listener);
+
+		Result result = runner.run(testclass);
+		if (result.wasSuccessful()) {
+			ci.println("SUCCESS");
+		} else {
+			ci.print("FAILURE - " + result.getFailureCount() + " failed");
 		}
 	}
 
@@ -132,35 +155,59 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	private void xotsRun(final CommandInterpreter ci) {
-		String moduleName = ci.nextArgument();
-		final String className = ci.nextArgument();
 		try {
-			ci.println("DEBUG: Opening module: " + moduleName);
-			NSFComponentModule module = ModuleLoader.loadModule(moduleName, true);
+			String moduleName = ci.nextArgument();
+			String className = ci.nextArgument();
+			if (moduleName.startsWith("bundle:")) {
+				final Bundle bundle = Platform.getBundle(moduleName.substring(7));
+				Class clazz = bundle.loadClass(className);
+				// Security check: only run tasklets!
+				if (!clazz.isAnnotationPresent(Tasklet.class)) {
+					ci.println(className + " does not annotate @Tasklet. Cannot run");
+				} else if (Callable.class.isAssignableFrom(clazz)) {
+					Callable<?> callable = (Callable<?>) clazz.newInstance();
+					XotsDaemon.queue(callable);
 
-			Runnable runner = new XotsDominoRunner(module, new Runnable() {
-				@Override
-				public void run() {
-					try {
-						ci.println("DEBUG: loading class: " + className);
-						ClassLoader mcl = Thread.currentThread().getContextClassLoader();
-						Class cls = mcl.loadClass(className);
-						ci.println("DEBUG: creating instance of: " + cls);
-						Object obj = cls.newInstance();
-						ci.println("Success: " + obj);
-						if (obj instanceof Runnable) {
-							//((Runnable) obj).run();
-							XotsDaemon.queue((Runnable) obj);
-						}
-					} catch (Throwable e) {
-						StringWriter errors = new StringWriter();
-						e.printStackTrace(new PrintWriter(errors));
-						ci.println(errors);
-					}
+				} else if (Runnable.class.isAssignableFrom(clazz)) {
+					Runnable runnable = (Runnable) clazz.newInstance();
+					XotsDaemon.queue(runnable);
+					return;
+				} else {
+					ci.println("Could not run " + className + ", as this is no valid tasklet definition");
 				}
-			});
-			runner.run();
-			//XotsDaemon.queue(runner);
+			} else {
+				//XotsDaemon.queue(
+			}
+		} catch (Exception e) {
+			ci.printStackTrace(e);
+		}
+		try {
+			//ci.println("DEBUG: Opening module: " + moduleName);
+			//ModuleLoader.loadModule(moduleName, true);
+
+			//			Runnable runner = new XotsDominoFutureTask<Object>(module, new Runnable() {
+			//				@Override
+			//				public void run() {
+			//					try {
+			//						ci.println("DEBUG: loading class: " + className);
+			//						ClassLoader mcl = Thread.currentThread().getContextClassLoader();
+			//						Class cls = mcl.loadClass(className);
+			//						ci.println("DEBUG: creating instance of: " + cls);
+			//						Object obj = cls.newInstance();
+			//						ci.println("Success: " + obj);
+			//						if (obj instanceof Runnable) {
+			//							//((Runnable) obj).run();
+			//							XotsDaemon.queue((Runnable) obj);
+			//						}
+			//					} catch (Throwable e) {
+			//						StringWriter errors = new StringWriter();
+			//						e.printStackTrace(new PrintWriter(errors));
+			//						ci.println(errors);
+			//					}
+			//				}
+			//			}, null);
+			//			runner.run();
+			//			XotsDaemon.queue(runner);
 
 		} catch (Throwable e) {
 			StringWriter errors = new StringWriter();

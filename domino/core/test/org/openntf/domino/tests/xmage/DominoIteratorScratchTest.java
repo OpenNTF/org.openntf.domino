@@ -10,6 +10,8 @@ import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum DominoIteratorScratchTest {
 	INSTANCE;
@@ -77,10 +79,10 @@ public enum DominoIteratorScratchTest {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			if (s == null) {
 				try {
-					s = Factory.getTrustedSession();
+					s = Factory.getSession(SessionType.TRUSTED);
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}

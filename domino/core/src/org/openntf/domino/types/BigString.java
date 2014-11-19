@@ -38,6 +38,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 		return delegate_;
 	}
 
+	@Override
 	public char charAt(final int index) {
 		return getDelegate().charAt(index);
 	}
@@ -50,6 +51,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 		return getDelegate().compareToIgnoreCase(string);
 	}
 
+	@Override
 	public int compareTo(final BigString string) {
 		return getDelegate().compareTo(string.getDelegate());
 	}
@@ -80,7 +82,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 		return getDelegate().getBytes();
 	}
 
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public void getBytes(final int start, final int end, final byte[] data, final int index) {
 		getDelegate().getBytes(start, end, data, index);
 	}
@@ -134,6 +136,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 		return getDelegate().lastIndexOf(subString, start);
 	}
 
+	@Override
 	public int length() {
 		return getDelegate().length();
 	}
@@ -229,6 +232,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 		return getDelegate().split(expr, max);
 	}
 
+	@Override
 	public CharSequence subSequence(final int start, final int end) {
 		delegate_ = getDelegate().substring(start, end);
 		return this;

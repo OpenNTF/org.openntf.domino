@@ -3,7 +3,6 @@ package org.openntf.domino.helpers;
 import java.io.Serializable;
 
 import org.openntf.domino.Database;
-import org.openntf.domino.utils.Factory;
 
 /**
  * DatabaseHolder is a serializable object, so you can use this object to store a Database across several XPage-Requests
@@ -15,6 +14,7 @@ public class DatabaseHolder implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected transient Database internalDb;
+	protected SessionHolder sessionHolder;
 	public String apiPath;
 
 	/**
@@ -22,8 +22,9 @@ public class DatabaseHolder implements Serializable {
 	 * 
 	 * @param db
 	 */
-	public DatabaseHolder(final Database db) {
+	public DatabaseHolder(final Database db, final SessionHolder sh) {
 		internalDb = db;
+		sessionHolder = sh;
 		apiPath = db.getApiPath();
 	}
 
@@ -34,7 +35,7 @@ public class DatabaseHolder implements Serializable {
 	 */
 	public Database getDatabase() {
 		if (internalDb == null || internalDb.isDead()) {
-			internalDb = Factory.getSession().getDatabase(apiPath);
+			internalDb = sessionHolder.getSession().getDatabase(apiPath);
 		}
 		return internalDb;
 	}

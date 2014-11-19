@@ -7,6 +7,10 @@ Bundle-SymbolicName: org.openntf.domino;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Implementation-Title: OpenNTF Domino API
+Implementation-Version: 1.5.0.qualifier
+Implementation-Vendor: OpenNTF
+Implementation-Vendor-URL: http://www.openntf.org
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
  org.openntf.domino,
@@ -43,19 +47,12 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.schema.types,
  org.openntf.domino.session,
  org.openntf.domino.thread,
- org.openntf.domino.thread.model,
  org.openntf.domino.transactions,
  org.openntf.domino.types,
  org.openntf.domino.utils,
  org.openntf.domino.utils.xml,
  org.openntf.domino.xots,
  org.openntf.domino.xots.events
-Implementation-Title: OpenNTF Domino API
-Implementation-Version: 1.0.0_20140416093417
-Implementation-Vendor: OpenNTF
-Implementation-Vendor-URL: http://www.openntf.org
-Built-By: praml
-Build-Date: 20140416093417
 Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  javolution;bundle-version="6.1.0";visibility:=reexport,

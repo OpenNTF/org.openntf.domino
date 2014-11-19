@@ -19,6 +19,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum BigDominoAPIScratchTest {
 	INSTANCE;
@@ -129,7 +130,7 @@ public enum BigDominoAPIScratchTest {
 		public void run() {
 			long start = System.nanoTime();
 
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			RunContext rc = Factory.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();

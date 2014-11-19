@@ -29,6 +29,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -59,7 +60,7 @@ public class MassCreateDocumentsScratchTest {
 	 */
 	@Test
 	public void run() {
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 
 		Database db = s.getDatabase("", TARGET, true);
 

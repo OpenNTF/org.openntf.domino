@@ -14,7 +14,7 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
-import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.helpers.SessionHolder;
 import org.openntf.domino.utils.DominoFormatter;
 
 import com.ibm.icu.util.Calendar;
@@ -417,7 +417,9 @@ public interface Session {
 	 * @param sessionFactory
 	 *            the session factory that has constructed this session
 	 */
-	public void setSessionFactory(ISessionFactory nativeSessionFactory);
+	//public void setSessionFactory(ISessionFactory nativeSessionFactory);
 
-	public ISessionFactory getSessionFactory();
+	//public ISessionFactory getSessionFactory();
+
+	public SessionHolder getSessionHolder();
 }

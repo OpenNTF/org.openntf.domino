@@ -19,6 +19,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * OpenLogHandler class
@@ -99,7 +100,8 @@ public class OpenLogHandler extends Handler {
 					}
 				}
 			}
-			org.openntf.domino.Session session = Factory.getSession_unchecked();
+			// CHECKME RPr: Is native session a good choice here?
+			org.openntf.domino.Session session = Factory.getSession(SessionType.NATIVE);
 			if (session != null) {
 				ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
 			}

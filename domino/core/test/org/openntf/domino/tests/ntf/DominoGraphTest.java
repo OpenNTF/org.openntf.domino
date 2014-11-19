@@ -6,6 +6,7 @@ import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.blueprints.Vertex;
 
@@ -26,7 +27,7 @@ public enum DominoGraphTest {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			Session s = Factory.getSessionFullAccess();
+			Session s = Factory.getSession(SessionType.FULL_ACCESS);
 			Database db = s.getDatabase(server, dbPath);
 			DominoGraph graph = new DominoGraph(db);
 			for (int i = 1; i <= 10000; i++) {

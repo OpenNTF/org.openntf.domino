@@ -15,11 +15,13 @@ import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xsp.helpers.XPageSessionFactory;
 import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.IServiceLocatorFactory;
 import org.openntf.service.ServiceLocatorFinder;
 
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.xsp.application.ApplicationEx;
 
@@ -35,33 +37,58 @@ public enum ODAPlatform {
 				public IServiceLocator run() {
 					ApplicationFactory aFactory = (ApplicationFactory) FactoryFinder
 							.getFactory("javax.faces.application.ApplicationFactory");
-					if (aFactory == null)
-						return null;
-					final ApplicationEx app_ = (ApplicationEx) aFactory.getApplication();
-					if (app_ == null)
-						return null;
-					return new IServiceLocator() {
-						final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+					final ApplicationEx app_ = aFactory == null ? null : (ApplicationEx) aFactory.getApplication();
 
-						@Override
-						public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-							List<T> ret = (List<T>) cache.get(serviceClazz);
+					if (app_ == null) {
+						return new IServiceLocator() {
+							final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
 
-							if (ret == null) {
-								ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
-									@Override
-									public List<T> run() {
-										return app_.findServices(serviceClazz.getName());
+							@Override
+							public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+								List<T> ret = (List<T>) cache.get(serviceClazz);
+
+								if (ret == null) {
+									ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+										@Override
+										public List<T> run() {
+											return (List<T>) ExtensionManager.findApplicationServices(null, Thread.currentThread()
+													.getContextClassLoader(), serviceClazz.getName());
+										}
+									});
+									if (Comparable.class.isAssignableFrom(serviceClazz)) {
+										Collections.sort((List<? extends Comparable>) ret);
 									}
-								});
-								if (Comparable.class.isAssignableFrom(serviceClazz)) {
-									Collections.sort((List<? extends Comparable>) ret);
+									cache.put(serviceClazz, ret);
 								}
-								cache.put(serviceClazz, ret);
+								return ret;
 							}
-							return ret;
-						}
-					};
+						};
+
+					} else {
+
+						return new IServiceLocator() {
+							final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+
+							@Override
+							public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+								List<T> ret = (List<T>) cache.get(serviceClazz);
+
+								if (ret == null) {
+									ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+										@Override
+										public List<T> run() {
+											return app_.findServices(serviceClazz.getName());
+										}
+									});
+									if (Comparable.class.isAssignableFrom(serviceClazz)) {
+										Collections.sort((List<? extends Comparable>) ret);
+									}
+									cache.put(serviceClazz, ret);
+								}
+								return ret;
+							}
+						};
+					}
 
 				}
 			});
@@ -74,6 +101,8 @@ public enum ODAPlatform {
 		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
 		Factory.startup();
 
+		// Setup the named factories 4 XPages
+		Factory.setNamedFactories4XPages(new XPageSessionFactory(false), new XPageSessionFactory(true));
 		verifyIGetEntryByKey();
 
 		DominoExecutor executor = new XotsDominoExecutor(50);
@@ -82,7 +111,7 @@ public enum ODAPlatform {
 	}
 
 	public static void stop() {
-		XotsDaemon.stop(600);
+		XotsDaemon.stop(15);
 		Factory.shutdown();
 
 	}
