@@ -155,23 +155,37 @@ public @interface Tasklet {
 
 	public enum Context {
 		/**
-		 * Run in XOTS Context
+		 * Run the Tasklet in Plugin context (this does NOT open/lock a module, and the code of that Tasklet MUST not reside in the NSF)
 		 */
-		XOTS,
+		PLUGIN,
+
+		/**
+		 * Run in Default Context. This means in MODULE, if there is one running or in PLUGIN-Context if not
+		 */
+		DEFAULT,
+
+		/**
+		 * Run the Tasklet in Module context (this does NOT work outside OSGI-Environment)
+		 */
+		MODULE,
+
 		/**
 		 * Run in XSP Context: with access to the Xsp dependencies, but without any context (faces or otherwise)
 		 */
+		@Deprecated
 		XSPBARE,
 
 		/**
 		 * would be "it's running with access to the scoped variables within it's environment." So that would set up access to
 		 * ApplicationScoped, ServerScope, IdentityScope in it
 		 */
+		@Deprecated
 		XSPSCOPED,
 		/**
 		 * would force the Tasklet to run in the same NSFComponentModule context as any given Xpage this would force the Application to be
 		 * activated, thus triggering ApplicationListeners, for instance
 		 */
+		@Deprecated
 		XSPFORCE
 	}
 
@@ -179,6 +193,12 @@ public @interface Tasklet {
 
 	Tasklet.Scope scope() default Tasklet.Scope.APPLICATION;
 
-	Tasklet.Context context() default Tasklet.Context.XOTS;
+	Tasklet.Context context() default Tasklet.Context.DEFAULT;
 
+	/**
+	 * Defines if this tasklet is public. I.e. is runnable/scheduleable with "xots run"
+	 * 
+	 * @return
+	 */
+	boolean isPublic() default false;
 }

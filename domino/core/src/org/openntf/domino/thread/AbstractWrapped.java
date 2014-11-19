@@ -120,7 +120,7 @@ public abstract class AbstractWrapped<T> {
 				context = annot.context();
 			}
 			if (context == null) {
-				context = Tasklet.Context.XOTS;
+				context = Tasklet.Context.DEFAULT;
 			}
 
 			if (scope == null) {

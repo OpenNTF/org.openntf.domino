@@ -13,7 +13,7 @@ import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-@Tasklet(session = Tasklet.Session.NATIVE, scope = Tasklet.Scope.NONE, context = Tasklet.Context.XOTS)
+@Tasklet(session = Tasklet.Session.NATIVE, scope = Tasklet.Scope.NONE, context = Tasklet.Context.PLUGIN, isPublic = true)
 /**
  * A Runnable that scans for tasklet classes on a specified server
  * 
