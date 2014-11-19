@@ -160,18 +160,18 @@ public class OsgiCommandProvider implements CommandProvider {
 			String className = ci.nextArgument();
 			if (moduleName.startsWith("bundle:")) {
 				final Bundle bundle = Platform.getBundle(moduleName.substring(7));
-				Class clazz = bundle.loadClass(className);
-				// Security check: only run tasklets!
-				if (!clazz.isAnnotationPresent(Tasklet.class)) {
-					ci.println(className + " does not annotate @Tasklet. Cannot run");
+				Class<?> clazz = bundle.loadClass(className);
+
+				// Security check: only run public tasklets!
+				Tasklet annot = clazz.getAnnotation(Tasklet.class);
+				if (annot == null || !annot.isPublic()) {
+					ci.println(className + " does not annotate @Tasklet(isPublic=true). Cannot run");
 				} else if (Callable.class.isAssignableFrom(clazz)) {
 					Callable<?> callable = (Callable<?>) clazz.newInstance();
 					XotsDaemon.queue(callable);
-
 				} else if (Runnable.class.isAssignableFrom(clazz)) {
 					Runnable runnable = (Runnable) clazz.newInstance();
 					XotsDaemon.queue(runnable);
-					return;
 				} else {
 					ci.println("Could not run " + className + ", as this is no valid tasklet definition");
 				}
