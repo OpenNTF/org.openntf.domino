@@ -1,7 +1,6 @@
 package org.openntf.domino.xots;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -11,16 +10,10 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.model.Context;
-import org.openntf.domino.thread.model.Schedule;
-import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.XotsSessionType;
-import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-@Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
-@XotsTasklet(session = XotsSessionType.NATIVE, scope = Scope.NONE, context = Context.XOTS)
+@Tasklet(session = Tasklet.Session.NATIVE, scope = Tasklet.Scope.NONE, context = Tasklet.Context.XOTS)
 /**
  * A Runnable that scans for tasklet classes on a specified server
  * 
@@ -46,7 +39,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	public void run() {
 		scan();
 		System.out.println("Current XOTS Classes:");
-		System.out.println(XotsScheduler.INSTANCE);
+		//System.out.println(XotsScheduler.INSTANCE);
 	}
 
 	/**
@@ -59,7 +52,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 		for (Database db : dir) {
 			try {
 				if (!scanDatabase(db)) {
-					XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+					//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
@@ -77,7 +70,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	public void scan(final Database db) {
 		try {
 			if (!scanDatabase(db)) {
-				XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+				//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

@@ -32,7 +32,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 	@Test
 	public void testDeferredDocuments() {
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			XotsDaemon.queue(new DeferredDocumentTest());
+			XotsDaemon.getInstance().submit(new DeferredDocumentTest());
 		}
 	}
 

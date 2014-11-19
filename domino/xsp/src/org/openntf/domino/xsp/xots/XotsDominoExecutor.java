@@ -5,7 +5,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
 import java.util.concurrent.Callable;
 
 import javax.servlet.ServletException;
@@ -13,6 +12,8 @@ import javax.servlet.ServletException;
 import lotus.domino.Session;
 
 import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.thread.AbstractWrapped.WrappedCallable;
+import org.openntf.domino.thread.AbstractWrapped.WrappedRunnable;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -29,6 +30,123 @@ import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XotsDominoExecutor extends DominoExecutor {
+
+	/**
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 * @param <V>
+	 */
+	protected class XotsWrappedCallable<V> extends WrappedCallable<V> {
+
+		private NSFComponentModule module_;
+
+		public XotsWrappedCallable(final NSFComponentModule module, final Callable<V> wrappedObject) {
+			super(wrappedObject);
+			module_ = module;
+		}
+
+		@Override
+		public V call() throws Exception {
+			return callOrRun(module_, bubbleException, sessionFactory, getWrappedTask(), null);
+		}
+	}
+
+	/**
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 */
+	protected static class XotsWrappedRunnable extends WrappedRunnable {
+
+		private NSFComponentModule module_;
+
+		public XotsWrappedRunnable(final NSFComponentModule module, final Runnable wrappedObject) {
+			super(wrappedObject);
+			module_ = module;
+		}
+
+		@Override
+		public void run() {
+			callOrRun(module_, bubbleException, sessionFactory, null, getWrappedTask());
+		}
+	}
+
+	/**
+	 * Common code for the wrappers
+	 * 
+	 * @param module
+	 * @param bubbleException
+	 * @param sessionFactory
+	 * @param callable
+	 * @param runnable
+	 * @return
+	 */
+	private static <V> V callOrRun(final NSFComponentModule module, final boolean bubbleException, final ISessionFactory sessionFactory,
+			final Callable<V> callable, final Runnable runnable) {
+
+		if (module == null && module.isDestroyed()) {
+			throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run");
+		}
+		module.updateLastModuleAccess();
+		final NotesContext ctx = new NotesContext(module);
+		NotesContext.initThread(ctx);
+
+		try {
+			DominoUtils.setBubbleExceptions(bubbleException);
+			Factory.initThread();
+			try {
+				// Set up the session
+				if (sessionFactory != null) {
+					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+
+					org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
+
+					Factory.getNamedSessionFactory(true).createSession(current.getEffectiveUserName());
+					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT_FULL_ACCESS);
+				}
+				NSFComponentModule codeModule = module.getTemplateModule() == null ? module : module.getTemplateModule();
+				codeModule.updateLastModuleAccess();
+
+				// RPr: In my opinion, This is the proper way how to run runnables in a different thread
+				ThreadLock readLock = getLockManager(codeModule).getReadLock();
+				try {
+					readLock.acquire(); // we want to read data from the module, so lock it!
+
+					// set up the classloader
+					ClassLoader mcl = codeModule.getModuleClassLoader();
+					ClassLoader oldCl = switchClassLoader(mcl);
+					try {
+						if (callable != null) {
+							initModule(ctx, mcl, callable);
+							return callable.call();
+						} else {
+							initModule(ctx, mcl, runnable);
+							runnable.run();
+							return null;
+						}
+					} finally {
+						switchClassLoader(oldCl);
+					}
+				} finally {
+					readLock.release();
+				}
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				return null;
+			} finally {
+				Factory.termThread();
+			}
+		} finally {
+			if (Thread.currentThread().isInterrupted()) {
+				// if the thread was interrupted, we must not call 
+				// NotesContext.termThread() as this causes a server crash
+				lotus.domino.NotesThread.stermThread();
+			} else {
+				NotesContext.termThread();
+			}
+		}
+	}
 
 	public XotsDominoExecutor(final int corePoolSize) {
 		super(corePoolSize);
@@ -73,46 +191,13 @@ public class XotsDominoExecutor extends DominoExecutor {
 	/**
 	 * Helper for WrappedCallable/WrappedRunnable
 	 * 
-	 * @param module
-	 * @return
-	 */
-	static NotesContext initNotesContext(final NSFComponentModule module) {
-		if (module == null && module.isDestroyed()) {
-			throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run");
-		}
-		module.updateLastModuleAccess();
-		final NotesContext ctx = new NotesContext(module);
-		NotesContext.initThread(ctx);
-		return ctx;
-	}
-
-	/**
-	 * Helper for WrappedCallable/WrappedRunnable
-	 * 
-	 * @param sessionFactory
-	 * @throws PrivilegedActionException
-	 */
-	static void initSessionFactory(final ISessionFactory sessionFactory) throws PrivilegedActionException {
-		if (sessionFactory != null) {
-			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
-
-			org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
-
-			Factory.getNamedSessionFactory(true).createSession(current.getEffectiveUserName());
-			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT_FULL_ACCESS);
-		}
-	}
-
-	/**
-	 * Helper for WrappedCallable/WrappedRunnable
-	 * 
 	 * @param ctx
 	 * @param mcl
 	 * @param wrapper
 	 * @throws ServletException
 	 */
 
-	static void initModule(final NotesContext ctx, final ClassLoader mcl, final WrappedAbstract<?> wrapper) throws ServletException {
+	private static void initModule(final NotesContext ctx, final ClassLoader mcl, final Object wrappedObject) throws ServletException {
 		// next initialize the context with a FakeHttpRequest. This is neccessary so that internal things
 		// like session-creation and so on work properly
 		ctx.initRequest(new FakeHttpRequest());
@@ -121,7 +206,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 
 		if (mcl instanceof ModuleClassLoader) {
 			URLClassLoader dcl = (URLClassLoader) ((ModuleClassLoader) mcl).getDynamicClassLoader();
-			String className = wrapper.getWrappedObject().getClass().getName();
+			String className = wrappedObject.getClass().getName();
 			String str = className.replace('.', '/') + ".class";
 			URL url = dcl.findResource(str);
 			if (url != null && url.getProtocol().startsWith("xspnsf")) {
@@ -152,107 +237,27 @@ public class XotsDominoExecutor extends DominoExecutor {
 		Factory.setClassLoader(mcl);
 	}
 
+	/**
+	 * Changes the
+	 * 
+	 * @param codeModule
+	 * @return
+	 */
+	private static ClassLoader switchClassLoader(final ClassLoader newClassLoader) {
+		return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+			@Override
+			public ClassLoader run() {
+				Thread thread = Thread.currentThread();
+				ClassLoader oldCl = thread.getContextClassLoader();
+				thread.setContextClassLoader(newClassLoader);
+				return oldCl;
+			}
+		});
+
+	}
+
 	// ------------------------------
-	protected class XotsWrappedCallable<V> extends WrappedCallable<V> {
-
-		private NSFComponentModule module_;
-
-		public XotsWrappedCallable(final NSFComponentModule module, final Callable<V> wrappedObject) {
-			super(wrappedObject);
-			module_ = module;
-		}
-
-		@Override
-		public V call() throws Exception {
-			NotesContext ctx = initNotesContext(module_);
-			try {
-				DominoUtils.setBubbleExceptions(bubbleException);
-				Factory.initThread();
-				try {
-					initSessionFactory(sessionFactory);
-					NSFComponentModule codeModule = module_.getTemplateModule() == null ? module_ : module_.getTemplateModule();
-					codeModule.updateLastModuleAccess();
-					// RPr: In my opinion, This is the proper way how to run runnables in a different thread
-					ThreadLock readLock = getLockManager(codeModule).getReadLock();
-					try {
-						readLock.acquire(); // we want to read data from the module, so lock it!
-
-						// First we set up the classloader
-						Thread thread = Thread.currentThread();
-						ClassLoader oldCl = thread.getContextClassLoader();
-						ClassLoader mcl = codeModule.getModuleClassLoader();
-						thread.setContextClassLoader(mcl);
-						try {
-							initModule(ctx, mcl, this);
-							return getWrappedObject().call();
-						} finally {
-							thread.setContextClassLoader(oldCl);
-						}
-					} finally {
-						readLock.release();
-					}
-				} finally {
-					Factory.termThread();
-				}
-			} catch (Exception e) {
-				DominoUtils.handleException(e);
-				return null;
-			} finally {
-				NotesContext.termThread();
-			}
-
-		}
-	}
-
-	protected class XotsWrappedRunnable extends WrappedRunnable {
-
-		private NSFComponentModule module_;
-
-		public XotsWrappedRunnable(final NSFComponentModule module, final Runnable wrappedObject) {
-			super(wrappedObject);
-			module_ = module;
-		}
-
-		@Override
-		public void run() {
-			NotesContext ctx = initNotesContext(module_);
-			try {
-				DominoUtils.setBubbleExceptions(bubbleException);
-				Factory.initThread();
-				try {
-					initSessionFactory(sessionFactory);
-					NSFComponentModule codeModule = module_.getTemplateModule() == null ? module_ : module_.getTemplateModule();
-					codeModule.updateLastModuleAccess();
-					// RPr: In my opinion, This is the proper way how to run runnables in a different thread
-					ThreadLock readLock = getLockManager(codeModule).getReadLock();
-					try {
-						readLock.acquire(); // we want to read data from the module, so lock it!
-
-						// First we set up the classloader
-						Thread thread = Thread.currentThread();
-						ClassLoader oldCl = thread.getContextClassLoader();
-						ClassLoader mcl = codeModule.getModuleClassLoader();
-						thread.setContextClassLoader(mcl);
-						try {
-							initModule(ctx, mcl, this);
-							getWrappedObject().run();
-						} finally {
-							thread.setContextClassLoader(oldCl);
-						}
-					} finally {
-						readLock.release();
-					}
-				} finally {
-					Factory.termThread();
-				}
-			} catch (Exception e) {
-				DominoUtils.handleException(e);
-			} finally {
-				NotesContext.termThread();
-			}
-
-		}
-	}
 
 	protected NSFComponentModule getCurrentModule() {
 		NotesContext ctx = NotesContext.getCurrentUnchecked();

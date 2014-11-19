@@ -1,4 +1,4 @@
-package org.openntf.domino.thread.model;
+package org.openntf.domino.xots;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -4,8 +4,13 @@
 package org.openntf.domino.thread;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
@@ -18,36 +23,53 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
-import javolution.util.FastSet;
-
-import lotus.domino.NotesThread;
+import javolution.util.FastMap;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
-import org.openntf.domino.session.ISessionFactory;
-import org.openntf.domino.thread.model.Context;
-import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.XotsSessionType;
-import org.openntf.domino.thread.model.XotsTasklet;
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.thread.AbstractWrapped.WrappedCallable;
+import org.openntf.domino.thread.AbstractWrapped.WrappedRunnable;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionType;
 
 /**
- * A ThreadPoolExecutor for Domino runnables. It sets up a shutdown hook for proper termination. There should be maximum one instance of
- * DominoExecutor, otherwise concurrency won't work
+ * A ThreadPoolExecutor for Domino runnables. It sets up a shutdown hook for proper termination.
+ * 
+ * 
+ * The <code>DominoExecutor.schedule</code> schedules a Runnable or a Callable for execution. The Runnable/Callable is wrapped in a
+ * {@link WrappedRunnable} (i.e. {@link WrappedCallable}) which is responsible for proper Thread setUp/tearDown.<br>
+ * 
+ * The Wrapped Runnable is wrapped again in a {@link DominoFutureTask} which observes the Runnable and keeps track of some status
+ * information.<br>
+ * 
+ * 
+ * <b>This class should not be used directly. Use XotsDaemon.getInstance() instead</b>
  * 
  * @author Nathan T. Freeman
+ * @author Roland Praml
  */
 @Incomplete
 public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor {
 	public enum TaskState {
-		QUEUED, RUNNING, DONE
+		/** The Task is Queued and will be executed next */
+
+		QUEUED,
+
+		/** The Task is sleeping and will be executed further */
+		SLEEPING,
+
+		/** The Task is currently running */
+		RUNNING,
+
+		/** The Task is finished */
+		DONE,
+
+		ERROR
 	}
 
 	private static final Logger log_ = Logger.getLogger(AbstractDominoExecutor.class.getName());
 
-	protected Set<DominoFutureTask<?>> tasks = new FastSet<DominoFutureTask<?>>().atomic();
+	/** This list contains ALL tasks */
+	protected Map<Long, DominoFutureTask<?>> tasks = new FastMap<Long, DominoFutureTask<?>>().atomic();
 
 	private Set<IDominoListener> listeners_;
 
@@ -58,23 +80,45 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		@Override
 		public void run() {
 			shutdownNow();
+			System.out.println("Executing shutdown hook");
+			Factory.removeShutdownHook(shutdownHook);
+			try {
+				for (int i = 5; i > 0; i--) {
+					if (!awaitTermination(10, TimeUnit.SECONDS)) {
+						if (i > 0) {
+							System.out.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds");
+						} else {
+							System.out.println("Could not terminate java threads... giving up. Server may crash now.");
+						}
+					}
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	};
 
+	/**
+	 * Creates a new {@link AbstractDominoExecutor}. Specify the
+	 * 
+	 * @param corePoolSize
+	 */
 	public AbstractDominoExecutor(final int corePoolSize) {
-		super(corePoolSize);//new WorkQueue());
+		super(corePoolSize);
 		Factory.addShutdownHook(shutdownHook);
 	}
 
 	/**
-	 * A Wrapper for runnables
+	 * A FutureTask for {@link WrappedCallable}s and {@link WrappedRunnable}s. It is nearly identical with
+	 * {@link ScheduledThreadPoolExecutor.ScheduledFutureTask} But ScheduledFutureTask is private, so that we cannot inherit
 	 * 
 	 * @author Roland Praml, FOCONIS AG
 	 */
-	public class DominoFutureTask<T> extends FutureTask<T> implements Delayed, RunnableScheduledFuture<T> {
+	public class DominoFutureTask<T> extends FutureTask<T> implements Delayed, RunnableScheduledFuture<T>, Observer {
 
 		// the period. Values > 0: fixed rate. Values < 0: fixed delay
-		private Object wrappedObject;
+		private Object wrappedTask;
 		private long period;
 
 		// The next runtime;
@@ -82,13 +126,33 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 		private long sequenceNumber = sequencer.incrementAndGet();
 		private TaskState state = TaskState.QUEUED;
+		private Object objectState;
 
-		public synchronized void setState(final TaskState s) {
+		/**
+		 * Sets the new state of this Thread
+		 * 
+		 * @param s
+		 */
+		synchronized void setState(final TaskState s) {
 			state = s;
 		}
 
+		/**
+		 * Returns the State of this task
+		 * 
+		 * @return the {@link TaskState}
+		 */
 		public synchronized TaskState getState() {
 			return state;
+		}
+
+		/**
+		 * Returns the ID for this task
+		 * 
+		 * @return the Id
+		 */
+		public long getId() {
+			return sequenceNumber;
 		}
 
 		public DominoFutureTask(final WrappedCallable<T> callable, final long time) {
@@ -96,7 +160,10 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			this.period = 0;
 			this.time = time;
 
-			wrappedObject = callable.getWrappedObject();
+			wrappedTask = callable.getWrappedTask();
+			if (wrappedTask instanceof Observable) {
+				((Observable) wrappedTask).addObserver(this);
+			}
 		}
 
 		public DominoFutureTask(final WrappedRunnable runnable, final T result, final long time) {
@@ -104,7 +171,10 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			this.period = 0;
 			this.time = time;
 
-			wrappedObject = runnable.getWrappedObject();
+			wrappedTask = runnable.getWrappedTask();
+			if (wrappedTask instanceof Observable) {
+				((Observable) wrappedTask).addObserver(this);
+			}
 		}
 
 		public DominoFutureTask(final WrappedRunnable runnable, final T result, final long time, final long period) {
@@ -112,7 +182,10 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			this.period = period;
 			this.time = time;
 
-			wrappedObject = runnable.getWrappedObject();
+			wrappedTask = runnable.getWrappedTask();
+			if (wrappedTask instanceof Observable) {
+				((Observable) wrappedTask).addObserver(this);
+			}
 		}
 
 		@Override
@@ -140,6 +213,29 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			} else {
 				super.run();
 			}
+		}
+
+		/**
+		 * Cancels the FutureTask. Tries also to cancel the inner task. If this is a periodic task, it will stop
+		 */
+		@Override
+		public boolean cancel(final boolean mayInterruptIfRunning) {
+			if (super.cancel(mayInterruptIfRunning)) {
+				if (wrappedTask instanceof AbstractDominoRunnable) {
+					((AbstractDominoRunnable) wrappedTask).stop(mayInterruptIfRunning);
+				}
+				if (wrappedTask instanceof AbstractDominoCallable) {
+					((AbstractDominoCallable<?>) wrappedTask).stop(mayInterruptIfRunning);
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		public void setError(final Throwable t) {
+			period = 0;
+			state = TaskState.ERROR;
 		}
 
 		@Override
@@ -171,141 +267,25 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		@Override
 		public String toString() {
 			// TODO increment Period/Time 
-			return sequenceNumber + "State: " + getState() + " Task: " + wrappedObject;
+			return sequenceNumber + "State: " + getState() + " Task: " + wrappedTask + " objectState: " + objectState;
 		}
 
-	}
-
-	protected abstract class WrappedAbstract<T> {
-		protected T wrappedObject;
-
-		protected Scope scope;
-		protected Context context;
-		protected ISessionFactory sessionFactory;
-		protected boolean bubbleException;
-
-		/**
-		 * Determines the sessionType under which the current runnable should run. The first non-null value of the following list is
-		 * returned
-		 * <ul>
-		 * <li>If the runnable implements <code>IDominoRunnable</code>: result of <code>getSessionType</code></li>
-		 * <li>the value of {@link SessionType} Annotation</li>
-		 * <li>DominoSessionType.DEFAULT</li>
-		 * </ul>
-		 * 
-		 * @param runnable
-		 *            the runnable to determine the DominoSessionType
-		 * @return the DominoSessionType
-		 */
-		protected WrappedAbstract(final T runnable) {
-			wrappedObject = runnable;
-			// some security checks...
-			if (runnable instanceof NotesThread) {
-				// RPr: I'm not sure if this should be allowed anyway...
-				throw new IllegalStateException("Cannot wrap the NotesThread " + runnable.getClass().getName() + " into a DominoRunner");
-			}
-			if (runnable instanceof DominoFutureTask) {
-				// RPr: don't know if this is possible
-				throw new IllegalStateException("Cannot wrap the WrappedCallable " + runnable.getClass().getName() + " into a DominoRunner");
-			}
-			if (runnable instanceof WrappedAbstract) {
-				// RPr: don't know if this is possible
-				throw new IllegalStateException("Cannot wrap the WrappedCallable " + runnable.getClass().getName() + " into a DominoRunner");
-			}
-			if (runnable instanceof XotsTasklet.Interface) {
-				XotsTasklet.Interface dominoRunnable = (XotsTasklet.Interface) runnable;
-				sessionFactory = dominoRunnable.getSessionFactory();
-				scope = dominoRunnable.getScope();
-				context = dominoRunnable.getContext();
-			}
-			bubbleException = DominoUtils.getBubbleExceptions();
-			XotsTasklet annot = runnable.getClass().getAnnotation(XotsTasklet.class);
-			if (annot != null) {
-				System.out.println("XotsTasklet.session " + annot.session());
-				if (sessionFactory == null) {
-					switch (annot.session()) {
-					case CLONE:
-						sessionFactory = Factory.getSessionFactory(SessionType.CURRENT);
-						break;
-					case CLONE_FULL_ACCESS:
-						sessionFactory = Factory.getSessionFactory(SessionType.CURRENT_FULL_ACCESS);
-						break;
-
-					case FULL_ACCESS:
-						sessionFactory = Factory.getSessionFactory(SessionType.FULL_ACCESS);
-						break;
-
-					case NATIVE:
-						sessionFactory = Factory.getSessionFactory(SessionType.NATIVE);
-						break;
-
-					case NONE:
-						sessionFactory = null;
-						break;
-
-					case SIGNER:
-						sessionFactory = Factory.getSessionFactory(SessionType.SIGNER);
-						break;
-
-					case SIGNER_FULL_ACCESS:
-						sessionFactory = Factory.getSessionFactory(SessionType.SIGNER_FULL_ACCESS);
-						break;
-
-					case TRUSTED:
-						sessionFactory = Factory.getSessionFactory(SessionType.TRUSTED);
-						break;
-
-					default:
-						break;
-					}
-					if ((annot.session() != XotsSessionType.NONE) && sessionFactory == null) {
-						throw new IllegalStateException("Could not create a Fatory for " + annot.session());
-					}
-				}
-
-				if (context == null) {
-					context = annot.context();
-				}
-				if (context == null) {
-					context = Context.XOTS;
-				}
-
-				if (scope == null) {
-					scope = annot.scope();
-				}
-				if (scope == null) {
-					scope = Scope.NONE;
-				}
-			}
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@Override
+		public void update(final Observable arg0, final Object arg1) {
+			objectState = arg1;
 		}
 
-		public T getWrappedObject() {
-			return wrappedObject;
-		}
-	}
-
-	protected abstract class WrappedCallable<V> extends WrappedAbstract<Callable<V>> implements Callable<V> {
-
-		public WrappedCallable(final Callable<V> runnable) {
-			super(runnable);
-			this.wrappedObject = runnable;
-		}
-
-	}
-
-	protected abstract class WrappedRunnable extends WrappedAbstract<Runnable> implements Runnable {
-
-		public WrappedRunnable(final Runnable wrappedObject) {
-			super(wrappedObject);
+		public Object getWrappedTask() {
+			return wrappedTask;
 		}
 
 	}
 
 	// Oracle/SUN made this package private
-	private static final long NANO_ORIGIN = System.nanoTime();
 
 	protected final long now() {
-		return System.nanoTime() - NANO_ORIGIN;
+		return System.nanoTime();
 	}
 
 	protected long triggerTime(final long delay) {
@@ -329,85 +309,119 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	// --- end duplicate stuff
 
 	/**
-	 * Returns a list of all
+	 * Returns a list of all tasks sortet by next execution time or Sequence number
 	 * 
 	 * @return
 	 */
-	public List<DominoFutureTask> getRunningTasks() {
+	public List<DominoFutureTask> getTasks(final boolean sortByExecDate) {
 		ArrayList<DominoFutureTask> ret = new ArrayList<DominoFutureTask>();
 
-		for (DominoFutureTask task : tasks) {
+		for (DominoFutureTask task : tasks.values()) {
 			ret.add(task);
+		}
+		if (sortByExecDate) {
+			Collections.sort(ret);
+		} else {
+			Collections.sort(ret, new Comparator<DominoFutureTask>() {
+				@Override
+				public int compare(final DominoFutureTask o1, final DominoFutureTask o2) {
+					if (o1.sequenceNumber < o2.sequenceNumber) {
+						return -1;
+					} else if (o1.sequenceNumber == o2.sequenceNumber) {
+						return 0;
+					} else {
+						return 1;
+					}
+				}
+			});
 		}
 		return ret;
 	}
 
+	/**
+	 * Retrun a Task with the given ID. May return null if the task is no longer in queue.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public DominoFutureTask<?> getTask(final long id) {
+		return tasks.get(id);
+	}
+
 	@Override
-	protected void beforeExecute(final Thread paramThread, final Runnable runnable) {
-		super.beforeExecute(paramThread, runnable);
-		//running.add((RunnableScheduledFuture<?>) runnable);
-		//running.put(paramRunnable, "Started at: " + new Date());
+	protected void beforeExecute(final Thread thread, final Runnable runnable) {
+		super.beforeExecute(thread, runnable);
 		if (runnable instanceof DominoFutureTask) {
 			DominoFutureTask<?> task = (DominoFutureTask<?>) runnable;
+			thread.setName("XOTS: " + task.getWrappedTask().getClass().getName() + " - " + new Date());
 			task.setState(TaskState.RUNNING);
+		} else {
+			thread.setName("XOTS: #" + thread.getId());
 		}
 	}
 
 	@Override
-	protected void afterExecute(final Runnable runnable, final Throwable paramThrowable) {
-		super.afterExecute(runnable, paramThrowable);
+	protected void afterExecute(final Runnable runnable, final Throwable error) {
+		super.afterExecute(runnable, error);
 
 		if (runnable instanceof DominoFutureTask) {
 			DominoFutureTask<?> task = (DominoFutureTask<?>) runnable;
 			if (task.isDone()) {
-				task.setState(TaskState.DONE);
-				tasks.remove(task);
-			} else {
-				task.setState(TaskState.QUEUED);
+				if (error == null) {
+					task.setState(TaskState.DONE);
+				} else {
+					task.setState(TaskState.ERROR);
+				}
+				tasks.remove(task.sequenceNumber);
 			}
 		}
 
 	}
 
-	@Incomplete
-	//these can't use the IDominoListener interface. Will need to put something new together for that.
-	public void addListener(final IDominoListener listener) {
-		if (listeners_ == null) {
-			listeners_ = new LinkedHashSet<IDominoListener>();
-		}
-		listeners_.add(listener);
-	}
+	//	@Incomplete
+	//	//these can't use the IDominoListener interface. Will need to put something new together for that.
+	//	public void addListener(final IDominoListener listener) {
+	//		if (listeners_ == null) {
+	//			listeners_ = new LinkedHashSet<IDominoListener>();
+	//		}
+	//		listeners_.add(listener);
+	//	}
+	//
+	//	@Incomplete
+	//	public IDominoListener removeListener(final IDominoListener listener) {
+	//		if (listeners_ != null) {
+	//			listeners_.remove(listener);
+	//		}
+	//		return listener;
+	//	}
 
-	@Incomplete
-	public IDominoListener removeListener(final IDominoListener listener) {
-		if (listeners_ != null) {
-			listeners_.remove(listener);
-		}
-		return listener;
-	}
+	//	@Override
+	//	public void shutdown() {
+	//		//Factory.removeShutdownHook(shutdownHook);
+	//		super.shutdown();
+	//	}
+	//
+	//	@Override
+	//	public List<Runnable> shutdownNow() {
+	//		List<Runnable> ret = super.shutdownNow();
+	//		//Factory.removeShutdownHook(shutdownHook);
+	//		return ret;
+	//	}
 
-	@Override
-	public void shutdown() {
-		Factory.removeShutdownHook(shutdownHook);
-		super.shutdown();
-	}
-
-	@Override
-	public List<Runnable> shutdownNow() {
-		List<Runnable> ret = super.shutdownNow();
-		Factory.removeShutdownHook(shutdownHook);
-		return ret;
-	}
-
-	protected <V> RunnableScheduledFuture<V> queue(final RunnableScheduledFuture<V> future) {
+	public <V> RunnableScheduledFuture<V> queue(final RunnableScheduledFuture<V> future) {
 		if (isShutdown()) {
 			throw new RejectedExecutionException();
 		}
 		if (getPoolSize() < getCorePoolSize()) {
 			prestartCoreThread();
 		}
+
 		if (future instanceof DominoFutureTask) {
-			tasks.add((DominoFutureTask) future);
+			DominoFutureTask dft = (DominoFutureTask) future;
+			tasks.put(dft.sequenceNumber, dft);
+			if (dft.time > now()) {
+				dft.setState(TaskState.SLEEPING);
+			}
 		}
 		super.getQueue().add(future);
 		return future;

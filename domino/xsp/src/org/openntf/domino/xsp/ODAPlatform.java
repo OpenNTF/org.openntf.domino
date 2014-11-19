@@ -111,7 +111,7 @@ public enum ODAPlatform {
 	}
 
 	public static void stop() {
-		XotsDaemon.stop(600);
+		XotsDaemon.stop(15);
 		Factory.shutdown();
 
 	}

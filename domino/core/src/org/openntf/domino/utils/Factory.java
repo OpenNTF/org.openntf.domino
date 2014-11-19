@@ -56,8 +56,6 @@ import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
-import org.openntf.domino.thread.model.XotsSessionType;
-import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;

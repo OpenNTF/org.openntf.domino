@@ -9,16 +9,14 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.openntf.domino.session.ISessionFactory;
-import org.openntf.domino.thread.model.Context;
-import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.XotsTasklet;
+import org.openntf.domino.xots.Tasklet;
 
 /**
  * An observable callable implementation
  * 
  * @author Nathan T. Freeman
  */
-public abstract class AbstractDominoCallable<T> extends Observable implements XotsTasklet.Interface, Callable<T>, Serializable {
+public abstract class AbstractDominoCallable<T> extends Observable implements Tasklet.Interface, Callable<T>, Serializable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoCallable.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -32,12 +30,12 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Xo
 	}
 
 	@Override
-	public Context getContext() {
+	public Tasklet.Context getContext() {
 		return null;
 	}
 
 	@Override
-	public Scope getScope() {
+	public Tasklet.Scope getScope() {
 		return null;
 	}
 
