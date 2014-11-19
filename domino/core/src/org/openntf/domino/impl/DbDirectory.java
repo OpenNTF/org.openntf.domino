@@ -185,7 +185,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 					}
 				}
 
-				dbMetaDataSet_.add(new DatabaseMetaData(rawdb, sessionHolder_));
+				dbMetaDataSet_.add(new DatabaseMetaData(rawdb));
 
 				if (wasOpen) {
 					getFactory().fromLotus(rawdb, Database.SCHEMA, getAncestorSession());
@@ -597,7 +597,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public boolean add(final Database db) {
 		try {
-			return getMetaDataSet().add(new DatabaseMetaData(db, sessionHolder_));
+			return getMetaDataSet().add(new DatabaseMetaData(db));
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return false;
@@ -628,7 +628,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public boolean contains(final Object obj) {
 		if (obj instanceof Database) {
 			try {
-				return getMetaDataSet().contains(new DatabaseMetaData((Database) obj, sessionHolder_));
+				return getMetaDataSet().contains(new DatabaseMetaData((Database) obj));
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 				return false;
@@ -657,7 +657,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public boolean remove(final Object obj) {
 		if (obj instanceof Database) {
 			try {
-				return getMetaDataSet().remove(new DatabaseMetaData((Database) obj, sessionHolder_));
+				return getMetaDataSet().remove(new DatabaseMetaData((Database) obj));
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 				return false;
@@ -685,7 +685,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		for (Object obj : objs) {
 			if (obj instanceof Database) {
 				try {
-					holders.add(new DatabaseMetaData((Database) obj, sessionHolder_));
+					holders.add(new DatabaseMetaData((Database) obj));
 				} catch (NotesException ne) {
 					DominoUtils.handleException(ne);
 					return false;

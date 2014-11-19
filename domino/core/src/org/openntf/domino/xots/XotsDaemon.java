@@ -137,6 +137,16 @@ public class XotsDaemon implements Observer {
 		return INSTANCE.executor_.submit(runnable);
 	}
 
+	public static Future<?> queue(final Runnable runnable, final int i) {
+		if (!isStarted()) {
+			throw new IllegalStateException("XotsService is not started");
+		}
+		if (runnable instanceof Observable) {
+			((Observable) runnable).addObserver(INSTANCE);
+		}
+		return INSTANCE.executor_.submit(runnable);
+	}
+
 	public static <T> Future<T> queue(final Runnable runnable, final T result) {
 		if (!isStarted()) {
 			throw new IllegalStateException("XotsService is not started");

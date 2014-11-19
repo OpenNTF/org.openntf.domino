@@ -174,33 +174,47 @@ public class XotsDominoExecutor extends DominoExecutor {
 					codeModule.updateLastModuleAccess();
 					// RPr: In my opinion, This is the proper way how to run runnables in a different thread
 					ThreadLock readLock = getLockManager(codeModule).getReadLock();
+					readLock.acquire(); // we want to read data from the module, so lock it!
 					try {
-						readLock.acquire(); // we want to read data from the module, so lock it!
 
 						// First we set up the classloader
-						Thread thread = Thread.currentThread();
-						ClassLoader oldCl = thread.getContextClassLoader();
-						ClassLoader mcl = codeModule.getModuleClassLoader();
-						thread.setContextClassLoader(mcl);
+						final Thread thread = Thread.currentThread();
+						final ClassLoader mcl = codeModule.getModuleClassLoader();
+						final ClassLoader oldCl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+							@Override
+							public ClassLoader run() {
+								ClassLoader oldCl = thread.getContextClassLoader();
+								thread.setContextClassLoader(mcl);
+								return oldCl;
+							}
+						});
 						try {
 							initModule(ctx, mcl, this);
 							return getWrappedObject().call();
 						} finally {
-							thread.setContextClassLoader(oldCl);
+							AccessController.doPrivileged(new PrivilegedAction<Object>() {
+
+								@Override
+								public Object run() {
+									thread.setContextClassLoader(oldCl);
+									return null;
+								}
+
+							});
 						}
 					} finally {
 						readLock.release();
 					}
+				} catch (Exception e) {
+					DominoUtils.handleException(e);
+					return null;
 				} finally {
 					Factory.termThread();
 				}
-			} catch (Exception e) {
-				DominoUtils.handleException(e);
-				return null;
 			} finally {
 				NotesContext.termThread();
 			}
-
 		}
 	}
 
@@ -225,28 +239,43 @@ public class XotsDominoExecutor extends DominoExecutor {
 					codeModule.updateLastModuleAccess();
 					// RPr: In my opinion, This is the proper way how to run runnables in a different thread
 					ThreadLock readLock = getLockManager(codeModule).getReadLock();
+					readLock.acquire(); // we want to read data from the module, so lock it!
 					try {
-						readLock.acquire(); // we want to read data from the module, so lock it!
 
 						// First we set up the classloader
-						Thread thread = Thread.currentThread();
-						ClassLoader oldCl = thread.getContextClassLoader();
-						ClassLoader mcl = codeModule.getModuleClassLoader();
-						thread.setContextClassLoader(mcl);
+						final Thread thread = Thread.currentThread();
+						final ClassLoader mcl = codeModule.getModuleClassLoader();
+						final ClassLoader oldCl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+							@Override
+							public ClassLoader run() {
+								ClassLoader oldCl = thread.getContextClassLoader();
+								thread.setContextClassLoader(mcl);
+								return oldCl;
+							}
+						});
 						try {
 							initModule(ctx, mcl, this);
 							getWrappedObject().run();
 						} finally {
-							thread.setContextClassLoader(oldCl);
+							AccessController.doPrivileged(new PrivilegedAction<Object>() {
+
+								@Override
+								public Object run() {
+									thread.setContextClassLoader(oldCl);
+									return null;
+								}
+
+							});
 						}
 					} finally {
 						readLock.release();
 					}
+				} catch (Exception e) {
+					DominoUtils.handleException(e);
 				} finally {
 					Factory.termThread();
 				}
-			} catch (Exception e) {
-				DominoUtils.handleException(e);
 			} finally {
 				NotesContext.termThread();
 			}

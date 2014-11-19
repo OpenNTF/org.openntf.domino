@@ -13,30 +13,33 @@ import org.openntf.domino.Database;
 public class DatabaseHolder implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	protected transient Database internalDb;
 	protected SessionHolder sessionHolder;
 	public String apiPath;
 
-	/**
-	 * create a new Holder for this database
-	 * 
-	 * @param db
-	 */
-	public DatabaseHolder(final Database db, final SessionHolder sh) {
-		internalDb = db;
-		sessionHolder = sh;
-		apiPath = db.getApiPath();
+	private transient ThreadLocal<Database> threadDatabase = new ThreadLocal<Database>();
+
+	public DatabaseHolder(final Database delegate) {
+		threadDatabase.set(delegate);
+		sessionHolder = delegate.getAncestorSession().getSessionHolder();
+		apiPath = delegate.getApiPath();
 	}
 
-	/**
-	 * get or reopen the database from the current session
-	 * 
-	 * @return the database
-	 */
 	public Database getDatabase() {
-		if (internalDb == null || internalDb.isDead()) {
-			internalDb = sessionHolder.getSession().getDatabase(apiPath);
+
+		synchronized (this) {
+			if (threadDatabase == null) {
+				threadDatabase = new ThreadLocal<Database>();
+			}
 		}
-		return internalDb;
+
+		Database ret = threadDatabase.get();
+		if (ret == null || ret.isDead()) {
+			ret = sessionHolder.getSession().getDatabase(apiPath);
+			threadDatabase.set(ret);
+			return ret;
+		} else {
+			return ret;
+		}
 	}
+
 }

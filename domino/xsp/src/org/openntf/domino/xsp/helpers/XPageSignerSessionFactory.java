@@ -20,7 +20,7 @@ public class XPageSignerSessionFactory extends AbstractSessionFactory {
 	@Override
 	public Session createSession() throws PrivilegedActionException {
 		lotus.domino.Session rawSession = notesContext_.getSessionAsSigner(fullAccess_);
-		return wrapSession(rawSession);
+		return wrapSession(rawSession, false); //contextDB is set in notesContext
 	}
 
 }
