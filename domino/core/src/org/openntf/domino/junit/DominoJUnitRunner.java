@@ -15,7 +15,7 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xots.Xots;
 
 /**
  * A Testrunner to run JUnit tests with proper set up of ODA.
@@ -55,7 +55,7 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 
 			Factory.startup();
 			DominoExecutor executor = new DominoExecutor(50);
-			XotsDaemon.start(executor);
+			Xots.start(executor);
 			factoryShutdown = true;
 		}
 	}
@@ -69,7 +69,7 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 			e.printStackTrace();
 		}
 		if (factoryShutdown) {
-			XotsDaemon.stop(600); // 10 minutes should be enough for tests
+			Xots.stop(120); // 10 minutes should be enough for tests
 			Factory.shutdown();
 		}
 		//		if (ownSM) {

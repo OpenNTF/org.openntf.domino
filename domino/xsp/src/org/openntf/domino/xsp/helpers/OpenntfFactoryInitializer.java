@@ -8,6 +8,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.xsp.DominoXspContributor;
@@ -21,66 +22,79 @@ import com.ibm.xsp.factory.FactoryLookup;
 
 public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 
-	@Override
-	public void initializeParameters(final FacesContext ctx, final RequestParameters req) {
+	/**
+	 * Shared code, needed also for XOTS
+	 * 
+	 * @param ctx
+	 *            the FacesContext - may be null
+	 * @param ctxClassLoader
+	 */
+	public static boolean initializeFromContext(final FacesContext ctx, final ClassLoader ctxClassLoader) {
 		if (!Activator.isAPIEnabled(ctx)) {
-			return;
+			return false;
 		}
-
 		final NotesContext notesContext = NotesContext.getCurrent();
 
 		Factory.initThread();
-		Fixes[] fixes = Activator.isAppAllFix(ctx) ? Fixes.values() : null;
+		Fixes[] fixes = ODAPlatform.isAppAllFix(null) ? Fixes.values() : null;
 
 		//Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
-		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, Activator.getAppAutoMime(ctx)), SessionType.CURRENT);
+		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, ODAPlatform.getAppAutoMime(null)), SessionType.CURRENT);
 
-		// In XPages, convertMime should be always false
-		//		Session session = Factory.getSession(SessionType.CURRENT);
-		//		if (session != null) {
-		//			if (Activator.isAppMimeFriendly(ctx))
-		//				session.setConvertMIME(false); // this should be always the case in XPages env
-		//		}
-
-		if (Activator.isAppFlagSet(ctx, "BUBBLEEXCEPTIONS"))
+		if (ODAPlatform.isAppFlagSet(null, "BUBBLEEXCEPTIONS"))
 			DominoUtils.setBubbleExceptions(true);
 
 		AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);
 		AbstractSessionFactory sessionAsSigner2 = new XPageSignerSessionFactory(notesContext, true);
 		Factory.setSessionFactory(sessionAsSigner1, SessionType.SIGNER);
 		Factory.setSessionFactory(sessionAsSigner2, SessionType.SIGNER_FULL_ACCESS);
+		Factory.setClassLoader(ctxClassLoader);
 
-		// TODO RPr: This is probably the wrong locale. See ViewHandler.calculateLocale
-		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
-		Factory.setClassLoader(ctx.getContextClassLoader());
+		if (ctx != null) {
 
-		FacesContextEx ctxEx = (FacesContextEx) ctx;
-		ctxEx.addRequestListener(new FacesContextListener() {
-			@Override
-			public void beforeRenderingPhase(final FacesContext paramFacesContext) {
-			}
+			// TODO RPr: This is probably the wrong locale. See ViewHandler.calculateLocale
+			Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 
-			@Override
-			public void beforeContextReleased(final FacesContext paramFacesContext) {
-				Factory.termThread();
-			}
-		});
+			// set up  ObjectFactory in Chain mode - (if godMode is enabled)
+			if (ODAPlatform.isAppGodMode(null)) {
+				@SuppressWarnings("deprecation")
+				FactoryLookup lookup = ((FacesContextEx) ctx).getApplicationEx().getFactoryLookup();
 
-		// set up  ObjectFactoriy if godMode is enabled
-		if (Activator.isAppGodMode(ctx)) {
-			@SuppressWarnings("deprecation")
-			FactoryLookup lookup = ctxEx.getApplicationEx().getFactoryLookup();
+				ImplicitObjectFactory iof = (ImplicitObjectFactory) lookup.getFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY);
 
-			ImplicitObjectFactory iof = (ImplicitObjectFactory) lookup.getFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY);
-
-			if (iof instanceof DominoImplicitObjectFactory) {
-				if (Activator.isAppDebug(ctx)) {
-					System.out.println("Changing the DominoImplicitObjectFactory");
+				if (iof instanceof DominoImplicitObjectFactory) {
+					if (ODAPlatform.isAppDebug(null)) {
+						System.out.println("Changing the DominoImplicitObjectFactory");
+					}
+					iof = new OpenntfGodModeImplicitObjectFactory(iof);
+					lookup.setFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY, iof);
 				}
-				iof = new OpenntfGodModeImplicitObjectFactory(iof);
-				lookup.setFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY, iof);
 			}
 		}
+		return true;
+	}
+
+	@Override
+	public void initializeParameters(final FacesContext ctx, final RequestParameters req) {
+		if (initializeFromContext(ctx, ctx.getContextClassLoader())) {
+
+			((FacesContextEx) ctx).addRequestListener(new FacesContextListener() {
+				@Override
+				public void beforeRenderingPhase(final FacesContext paramFacesContext) {
+				}
+
+				@Override
+				public void beforeContextReleased(final FacesContext paramFacesContext) {
+					Factory.termThread();
+				}
+			});
+		}
+		// In XPages, convertMime should be always false
+		//		Session session = Factory.getSession(SessionType.CURRENT);
+		//		if (session != null) {
+		//			if (Activator.isAppMimeFriendly(ctx))
+		//				session.setConvertMIME(false); // this should be always the case in XPages env
+		//		}
 
 	}
 }

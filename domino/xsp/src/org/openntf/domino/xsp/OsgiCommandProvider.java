@@ -35,6 +35,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
+import org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.StringUtil;
@@ -186,7 +187,14 @@ public class OsgiCommandProvider implements CommandProvider {
 					ci.println("Could not find class " + className + " in bundle " + bundleName);
 					return;
 				}
-				runXotsClass(ci, clazz, clazz.getClassLoader());
+				ClassLoader cLoader = clazz.getClassLoader();
+				OpenntfFactoryInitializer.initializeFromContext(null, cLoader); 	// Factory.initThread is done here
+				try {
+					runXotsClass(ci, clazz, cLoader);
+				} finally {
+					Factory.termThread();
+				}
+
 			} else {
 				// -- Load the class from module
 				module = ModuleLoader.loadModule(moduleName, true);
@@ -206,7 +214,13 @@ public class OsgiCommandProvider implements CommandProvider {
 						ci.println("Could not find class " + className);
 						return;
 					}
-					runXotsClass(ci, clazz, module.getModuleClassLoader());
+					ClassLoader cLoader = module.getModuleClassLoader();
+					OpenntfFactoryInitializer.initializeFromContext(null, cLoader); 	// Factory.initThread is done here
+					try {
+						runXotsClass(ci, clazz, cLoader);
+					} finally {
+						Factory.termThread();
+					}
 				} finally {
 					NotesContext.termThread();
 					ctx = null;

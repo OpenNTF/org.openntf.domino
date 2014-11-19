@@ -11,7 +11,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
 
 import com.ibm.xsp.application.ApplicationEx;
@@ -39,7 +39,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	 */
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		if (!Activator.isAPIEnabled(ctx))
+		if (!ODAPlatform.isAPIEnabled(null))
 			return;
 
 		Session session = Factory.getSession(SessionType.CURRENT);
@@ -55,7 +55,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		ecMap.put("serverScope", getServerMap(ctx));
 
 		// Attach NSA
-		if (Activator.isAppFlagSet(ctx, "nsa")) {
+		if (ODAPlatform.isAppFlagSet(null, "nsa")) {
 			Application app = ctx.getApplication();
 			if (app instanceof ApplicationEx) {
 				NSA.INSTANCE.registerApplication((ApplicationEx) app);
