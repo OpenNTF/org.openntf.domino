@@ -18,6 +18,8 @@ import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.xots.Tasklet;
+import org.openntf.domino.xots.Tasklet.Context;
 import org.openntf.domino.xsp.helpers.InvalidSessionFactory;
 import org.openntf.domino.xsp.helpers.XPageSessionFactory;
 import org.openntf.domino.xsp.helpers.XPageSignerSessionFactory;
@@ -268,20 +270,46 @@ public class XotsDominoExecutor extends DominoExecutor {
 
 	@Override
 	protected <V> WrappedCallable<V> wrap(final Callable<V> inner) {
+		if (inner instanceof WrappedCallable)
+			return (WrappedCallable<V>) inner;
+
 		NSFComponentModule module = getCurrentModule();
-		if (module == null) {
+		Tasklet annot = inner.getClass().getAnnotation(Tasklet.class);
+		if (annot == null || annot.context() == Context.DEFAULT) {
+			if (module == null) {
+				return super.wrap(inner);
+			} else {
+				return new XotsWrappedCallable<V>(module, inner);
+			}
+		} else if (annot.context() == Context.PLUGIN) {
 			return super.wrap(inner);
 		} else {
+			if (module == null) {
+				throw new NullPointerException("No module is running");
+			}
 			return new XotsWrappedCallable<V>(module, inner);
 		}
 	}
 
 	@Override
 	protected WrappedRunnable wrap(final Runnable inner) {
+		if (inner instanceof WrappedRunnable)
+			return (WrappedRunnable) inner;
+
 		NSFComponentModule module = getCurrentModule();
-		if (module == null) {
+		Tasklet annot = inner.getClass().getAnnotation(Tasklet.class);
+		if (annot == null || annot.context() == Context.DEFAULT) {
+			if (module == null) {
+				return super.wrap(inner);
+			} else {
+				return new XotsWrappedRunnable(module, inner);
+			}
+		} else if (annot.context() == Context.PLUGIN) {
 			return super.wrap(inner);
 		} else {
+			if (module == null) {
+				throw new NullPointerException("No module is running");
+			}
 			return new XotsWrappedRunnable(module, inner);
 		}
 	}

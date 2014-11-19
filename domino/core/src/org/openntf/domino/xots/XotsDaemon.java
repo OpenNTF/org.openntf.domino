@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.thread.DominoExecutor;
+import org.openntf.domino.utils.Factory;
 
 /*
  * This class and package is intended to become the space for the XPages implementation
@@ -60,7 +61,7 @@ public class XotsDaemon {
 	public static synchronized void start(final DominoExecutor executor) {
 		if (isStarted())
 			throw new IllegalStateException("XotsDaemon is already started");
-		System.out.println("[OpenNTF API] Starting XotsDaemon...");
+		Factory.println(XotsDaemon.class, "Starting...");
 
 		executor_ = executor;
 	}
@@ -76,21 +77,22 @@ public class XotsDaemon {
 
 	public static synchronized void stop(int wait) {
 		if (isStarted()) {
-			System.out.println("[OpenNTF API] Stopping XotsDaemon...");
+			Factory.println(XotsDaemon.class, "Stopping XotsDaemon...");
+
 			executor_.shutdown();
 			long running;
 			try {
 				while ((running = executor_.getActiveCount()) > 0 && wait-- > 0) {
-					System.out.println("[OpenNTF API] There are " + running + " tasks running... waiting " + wait + " seconds.");
+					Factory.println(XotsDaemon.class, "There are " + running + " tasks running... waiting " + wait + " seconds.");
 					Thread.sleep(1000);
 				}
 			} catch (InterruptedException e) {
 			}
 
 			if (executor_.getActiveCount() > 0) {
-				System.out.println("[OpenNTF API] The following Threads did not terminate gracefully:");
+				Factory.println(XotsDaemon.class, "he following Threads did not terminate gracefully:");
 				for (DominoFutureTask task : executor_.getTasks(false)) {
-					System.out.println("[OpenNTF API] * " + task);
+					Factory.println(XotsDaemon.class, "* " + task);
 				}
 
 			}
@@ -98,20 +100,20 @@ public class XotsDaemon {
 			try {
 				for (int i = 60; i > 0; i -= 10) {
 					if (executor_.getActiveCount() > 0) {
-						System.out.println("[OpenNTF API] Trying to interrupt them and waiting again " + i + " seconds.");
+						Factory.println(XotsDaemon.class, "Trying to interrupt them and waiting again " + i + " seconds.");
 						executor_.shutdownNow();
 					}
 					if (executor_.awaitTermination(10, TimeUnit.SECONDS)) {
 						executor_ = null;
-						System.out.println("[OpenNTF API] XotsDaemon stopped.");
+						Factory.println(XotsDaemon.class, "XotsDaemon stopped.");
 						return;
 					}
 				}
 			} catch (InterruptedException e) {
 			}
-			System.out.println("[OpenNTF API] WARNING: Could not stop XotsDaemon!");
+			Factory.println(XotsDaemon.class, "WARNING: Could not stop XotsDaemon!");
 		} else {
-			System.out.println("[OpenNTF API] XotsDaemon not running");
+			Factory.println(XotsDaemon.class, "XotsDaemon not running");
 		}
 	}
 
@@ -152,145 +154,4 @@ public class XotsDaemon {
 		return null;
 
 	}
-
-	//	public synchronized static void publishEvent(final IDominoEvent event) {
-	//		INSTANCE.fireEvent(event);
-	//	}
-
-	//
-	//	@Override
-	//	protected TrustedExecutor getExecutor() {
-	//		if (intimidator_ == null) {
-	//			intimidator_ = new XotsExecutor(this);
-	//		}
-	//		return intimidator_;
-	//	}
-
-	//	@Override
-	//	protected TrustedScheduledExecutor getScheduledExecutor() {
-	//		if (vengeance_ == null) {
-	//			vengeance_ = new XotsScheduledExecutor(this);
-	//		}
-	//		return vengeance_;
-	//	}
-
-	//	public void scan(final String serverName) {
-	//		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
-	//		scanner.addObserver(this);
-	//		scanner.scan();
-	//	}
-	//
-	//	public void schedule(final Class<? extends Runnable> taskClass) throws IllegalAccessException, InstantiationException {
-	//		Schedule schedule = taskClass.getAnnotation(Schedule.class);
-	//		if (schedule != null) {
-	//			TimeUnit unit = schedule.timeunit();
-	//			long freq = schedule.frequency();
-	//			System.out.println("DEBUG: found a tasklet " + taskClass.getName() + " set to run every " + freq + " " + unit.name());
-	//			Runnable runnable = taskClass.newInstance();
-	//			getScheduledExecutor().schedule(runnable, freq, unit);
-	//		}
-	//	}
-
-	//	public void schedule(final Runnable runnable) throws IllegalAccessException, InstantiationException {
-	//		Class<? extends Runnable> taskClass = runnable.getClass();
-	//		Schedule schedule = taskClass.getAnnotation(Schedule.class);
-	//		if (schedule != null) {
-	//			TimeUnit unit = schedule.timeunit();
-	//			long freq = schedule.frequency();
-	//			System.out.println("DEBUG: found a tasklet " + taskClass.getName() + " set to run every " + freq + " " + unit.name());
-	//			getScheduledExecutor().schedule(runnable, freq, unit);
-	//		}
-	//	}
-	//
-	//	public static Future<?> queue(final Runnable runnable) {
-	//		if (!isStarted()) {
-	//			throw new IllegalStateException("XotsService is not started");
-	//		}
-	//		if (runnable instanceof Observable) {
-	//			((Observable) runnable).addObserver(INSTANCE);
-	//		}
-	//		return INSTANCE.executor_.submit(runnable);
-	//	}
-	//
-	//	public static <T> Future<T> queue(final Runnable runnable, final T result) {
-	//		if (!isStarted()) {
-	//			throw new IllegalStateException("XotsService is not started");
-	//		}
-	//		if (runnable instanceof Observable) {
-	//			((Observable) runnable).addObserver(INSTANCE);
-	//		}
-	//		return INSTANCE.executor_.submit(runnable, result);
-	//	}
-	//
-	//	public static <T> Future<T> queue(final Callable<T> callable) {
-	//		if (!isStarted()) {
-	//			throw new IllegalStateException("XotsService is not started");
-	//		}
-	//		if (callable instanceof Observable) {
-	//			((Observable) callable).addObserver(INSTANCE);
-	//		}
-	//		return INSTANCE.executor_.submit(callable);
-	//	}
-	//
-	//	public void fireEvent(final IDominoEvent event) {
-	//		//		for (Class<?> clazz : XotsService.getInstance().getLoadedClasses()) {
-	//		//			if (XotsITriggeredTasklet.class.isAssignableFrom(clazz) && Runnable.class.isAssignableFrom(clazz)) {
-	//		//				// Then look to see if the annotation exists and matches this event
-	//		//				Trigger trigger = clazz.getAnnotation(Trigger.class);
-	//		//				if (trigger != null) {
-	//		//					String value = trigger.value();
-	//		//					if (value != null) {
-	//		//						// TODO Handle DB events
-	//		//						if (event instanceof CustomNamedEvent) {
-	//		//							String eventName = ((CustomNamedEvent) event).getName();
-	//		//							if (value.equals(eventName)) {
-	//		//								try {
-	//		//									Runnable runnable = (Runnable) clazz.newInstance();
-	//		//									queue(new TriggerRunnable((XotsITriggeredTasklet) runnable, event), clazz.getClassLoader());
-	//		//								} catch (InstantiationException e) {
-	//		//									DominoUtils.handleException(e);
-	//		//								} catch (IllegalAccessException e) {
-	//		//									DominoUtils.handleException(e);
-	//		//								}
-	//		//							}
-	//		//						}
-	//		//					}
-	//		//				}
-	//		//			}
-	//		//		}
-	//	}
-	//
-	//	//	private static class TriggerRunnable extends AbstractDominoRunnable {
-	//	//		private static final long serialVersionUID = 1L;
-	//	//
-	//	//		private final IDominoEvent event_;
-	//	//		private final XotsITriggeredTasklet tasklet_;
-	//	//
-	//	//		public TriggerRunnable(final XotsITriggeredTasklet tasklet, final IDominoEvent event) {
-	//	//			event_ = event;
-	//	//			tasklet_ = tasklet;
-	//	//		}
-	//	//
-	//	//		@Override
-	//	//		public void run() {
-	//	//			tasklet_.handleEvent(event_);
-	//	//		}
-	//	//
-	//	//		@Override
-	//	//		public DominoSessionType getSessionType() {
-	//	//			return DominoSessionType.NATIVE;
-	//	//		}
-	//	//	}
-	//
-	//	@SuppressWarnings({ "unchecked", "rawtypes" })
-	//	@Override
-	//	public void update(final Observable arg0, final Object arg1) {
-	//		System.out.println("Call from observable " + arg0);
-	//		//		if (arg0 instanceof XotsNsfScanner) {
-	//		//			if (arg1 instanceof Set) {
-	//		//				taskletClasses_ = (Set) arg1;
-	//		//			}
-	//		//		}
-	//	}
-
 }

@@ -1,6 +1,7 @@
 package org.openntf.domino.xots;
 
 import java.io.Serializable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -24,8 +25,11 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	private static final long serialVersionUID = 1L;
 	private static final Logger log_ = Logger.getLogger(XotsNsfScanner.class.getName());
 
-	private final boolean TRACE = false;
 	private final String serverName_;
+
+	public XotsNsfScanner() {
+		serverName_ = "";
+	}
 
 	public XotsNsfScanner(final String serverName) {
 		serverName_ = serverName;
@@ -37,9 +41,9 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 
 	@Override
 	public void run() {
+		Factory.println(this, "Scan started");
 		scan();
-		System.out.println("Current XOTS Classes:");
-		//System.out.println(XotsScheduler.INSTANCE);
+		Factory.println(this, "Scan stopped");
 	}
 
 	/**
@@ -98,8 +102,8 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			if (icon != null) {
 				String[] xotsClassNames = icon.getXotsClassNames();
 				if (xotsClassNames != null && xotsClassNames.length > 0) {
-					if (TRACE) {
-						System.out.println("TRACE: Adding Xots Tasklets for database " + db.getApiPath());
+					if (log_.isLoggable(Level.FINE)) {
+						log_.fine("Adding Xots Tasklets for database " + db.getApiPath());
 					}
 
 					//					String dbPath = db.getFilePath().replace('\\', '/');

@@ -80,20 +80,18 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		@Override
 		public void run() {
 			shutdownNow();
-			System.out.println("Executing shutdown hook");
 			Factory.removeShutdownHook(shutdownHook);
 			try {
 				for (int i = 5; i > 0; i--) {
 					if (!awaitTermination(10, TimeUnit.SECONDS)) {
 						if (i > 0) {
-							System.out.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds");
+							Factory.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds");
 						} else {
-							System.out.println("Could not terminate java threads... giving up. Server may crash now.");
+							Factory.println("Could not terminate java threads... giving up. Server may crash now.");
 						}
 					}
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

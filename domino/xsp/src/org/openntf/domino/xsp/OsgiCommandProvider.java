@@ -17,7 +17,10 @@ package org.openntf.domino.xsp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
@@ -31,9 +34,12 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xsp.helpers.ModuleLoader;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
+import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 /**
  * 
@@ -158,25 +164,115 @@ public class OsgiCommandProvider implements CommandProvider {
 		try {
 			String moduleName = ci.nextArgument();
 			String className = ci.nextArgument();
-			if (moduleName.startsWith("bundle:")) {
-				final Bundle bundle = Platform.getBundle(moduleName.substring(7));
-				Class<?> clazz = bundle.loadClass(className);
 
-				// Security check: only run public tasklets!
-				Tasklet annot = clazz.getAnnotation(Tasklet.class);
-				if (annot == null || !annot.isPublic()) {
-					ci.println(className + " does not annotate @Tasklet(isPublic=true). Cannot run");
-				} else if (Callable.class.isAssignableFrom(clazz)) {
-					Callable<?> callable = (Callable<?>) clazz.newInstance();
-					XotsDaemon.queue(callable);
-				} else if (Runnable.class.isAssignableFrom(clazz)) {
-					Runnable runnable = (Runnable) clazz.newInstance();
-					XotsDaemon.queue(runnable);
-				} else {
-					ci.println("Could not run " + className + ", as this is no valid tasklet definition");
+			Class<?> clazz = null;
+			NSFComponentModule module = null;
+			NotesContext ctx = null;
+			if (moduleName.startsWith("bundle:")) {
+				// -- Load the class from bundle
+				String bundleName = moduleName.substring(7);
+				final Bundle bundle = Platform.getBundle(bundleName);
+				if (bundle == null) {
+					ci.println("Could not find bundle " + bundleName);
+					return;
+				}
+
+				try {
+					clazz = bundle.loadClass(className);
+				} catch (ClassNotFoundException e) {
+				}
+
+				if (clazz == null) {
+					ci.println("Could not find class " + className + " in bundle " + bundleName);
+					return;
 				}
 			} else {
-				//XotsDaemon.queue(
+				// -- Load the class from module
+				module = ModuleLoader.loadModule(moduleName, true);
+				ctx = new NotesContext(module);
+				NotesContext.initThread(ctx);
+				try {
+					if (module == null) {
+						ci.println("Could not find module " + moduleName);
+						return;
+					}
+					try {
+						clazz = module.getModuleClassLoader().loadClass(className);
+					} catch (ClassNotFoundException e) {
+					}
+
+					if (clazz == null) {
+						ci.println("Could not find class " + className);
+						return;
+					}
+				} finally {
+					NotesContext.termThread();
+					ctx = null;
+				}
+			}
+
+			Tasklet annot = clazz.getAnnotation(Tasklet.class);
+			if (annot == null || !annot.isPublic()) {
+				ci.println(className + " does not annotate @Tasklet(isPublic=true). Cannot run");
+				return;
+			}
+
+			List<String> args = new ArrayList<String>();
+
+			String arg;
+			while ((arg = ci.nextArgument()) != null) {
+				args.add(arg);
+			}
+
+			Class<?> ctorClasses[] = new Class<?>[args.size()];
+			for (int i = 0; i < ctorClasses.length; i++) {
+				ctorClasses[i] = String.class;
+			}
+			Object ctorArgs[] = new Object[0];
+
+			Constructor<?> cTor = null;
+			try {
+				cTor = clazz.getConstructor(ctorClasses);
+				ctorArgs = args.toArray();
+			} catch (NoSuchMethodException nsme1) {
+				try {
+					cTor = clazz.getConstructor(new Class<?>[] { String[].class });
+					ctorArgs = new Object[] { args.toArray() };
+				} catch (NoSuchMethodException nsme2) {
+
+				}
+			}
+			if (cTor == null) {
+				ci.println(className + " has no constructor for " + ctorClasses.length + " String argument(s)");
+				return;
+			}
+
+			Thread thread = Thread.currentThread();
+			ClassLoader oldCl = thread.getContextClassLoader();
+			try {
+				if (clazz.getClassLoader() != null) {
+					ci.println("Creating " + clazz.getSimpleName() + ". Switching classloader from " + oldCl + " to "
+							+ clazz.getClassLoader());
+					thread.setContextClassLoader(clazz.getClassLoader());
+				}
+
+				ctx = new NotesContext(module);
+				NotesContext.initThread(ctx);
+				try {
+					if (Callable.class.isAssignableFrom(clazz)) {
+						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
+						XotsDaemon.queue(callable);
+					} else if (Runnable.class.isAssignableFrom(clazz)) {
+						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
+						XotsDaemon.queue(runnable);
+					} else {
+						ci.println("Could not run " + className + ", as this is no runnable or callable class");
+					}
+				} finally {
+					NotesContext.termThread();
+				}
+			} finally {
+				thread.setContextClassLoader(oldCl);
 			}
 		} catch (Exception e) {
 			ci.printStackTrace(e);
@@ -214,5 +310,27 @@ public class OsgiCommandProvider implements CommandProvider {
 			e.printStackTrace(new PrintWriter(errors));
 			ci.println(errors);
 		}
+	}
+
+	private Class<?> loadClassFromModule(final CommandInterpreter ci, final String bundleName, final String className) {
+
+		final Bundle bundle = Platform.getBundle(bundleName);
+		if (bundle == null) {
+			ci.println("Could not find " + bundleName);
+			return null;
+		}
+
+		Class<?> clazz = null;
+		try {
+			clazz = bundle.loadClass(className);
+		} catch (ClassNotFoundException e) {
+		}
+
+		if (clazz == null) {
+			ci.println("Could not find class " + className);
+			return null;
+		}
+		return clazz;
+
 	}
 }
