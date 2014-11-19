@@ -581,7 +581,7 @@ public enum Factory {
 	//		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	//	}
 
-	//This should not be deeded any more
+	//This should not be needed any more
 	//public static void setNoRecycle(final Base<?> base, final boolean value) {
 	//	getWrapperFactory().setNoRecycle(base, value);
 	//}
@@ -835,13 +835,14 @@ public enum Factory {
 	 * @param session
 	 * @param mode
 	 */
-	public static void setSession(final lotus.domino.Session session, final SessionType mode) {
-		if (session instanceof org.openntf.domino.Session) {
-			getThreadVariables().sessionHolders[mode.index] = (org.openntf.domino.Session) session;
-			//			throw new UnsupportedOperationException("You should not set an org.openntf.domino.session as Session");
-		}
-		getThreadVariables().sessionHolders[mode.index] = fromLotus(session, Session.SCHEMA, null);
-	}
+	//	public static void setSession(final lotus.domino.Session session, final SessionType mode) {
+	//		if (session instanceof org.openntf.domino.Session) {
+	//			getThreadVariables().sessionHolders[mode.index] = (org.openntf.domino.Session) session;
+	//			//			throw new UnsupportedOperationException("You should not set an org.openntf.domino.session as Session");
+	//		} else {
+	//			getThreadVariables().sessionHolders[mode.index] = fromLotus(session, Session.SCHEMA, null);
+	//		}
+	//	}
 
 	public static void setSessionFactory(final ISessionFactory sessionFactory, final SessionType mode) {
 		getThreadVariables().sessionFactories[mode.index] = sessionFactory;

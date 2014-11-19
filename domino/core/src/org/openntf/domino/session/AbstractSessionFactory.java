@@ -53,15 +53,21 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 		return this;
 	}
 
-	protected Session wrapSession(final lotus.domino.Session raw) {
+	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
 		org.openntf.domino.impl.Session sess = (org.openntf.domino.impl.Session) Factory.fromLotus(raw, Session.SCHEMA, null);
 		sess.setSessionFactory(this);
+		sess.setNoRecycle(!selfCreated);
 
-		for (Fixes fix : fixes_) {
-			sess.setFixEnable(fix, true);
+		if (fixes_ != null) {
+			for (Fixes fix : fixes_) {
+				sess.setFixEnable(fix, true);
+			}
 		}
 		sess.setAutoMime(autoMime_);
-		if (currentApiPath_ != null) {
+
+		sess.setConvertMIME(false);
+
+		if (selfCreated && currentApiPath_ != null) {
 			Database db = sess.getCurrentDatabase();
 			if (db == null) {
 				db = sess.getDatabase(currentApiPath_);

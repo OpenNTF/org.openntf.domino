@@ -3591,7 +3591,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public DatabaseHolder getDatabaseHolder() {
 		if (databaseHolder_ == null) {
-			databaseHolder_ = new DatabaseHolder(this, getParent().getSessionHolder());
+			databaseHolder_ = new DatabaseHolder(this);
 		}
 		return databaseHolder_;
 	}

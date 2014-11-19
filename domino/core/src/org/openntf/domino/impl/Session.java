@@ -2066,20 +2066,31 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	public void setSessionFactory(final ISessionFactory sessionFactory) {
 		sessionFactory_ = sessionFactory;
-
 	}
 
 	public ISessionFactory getSessionFactory() {
-		// TODO Auto-generated method stub
 		return sessionFactory_;
 	}
 
 	@Override
 	public SessionHolder getSessionHolder() {
-		// TODO Auto-generated method stub
 		if (sessionHolder_ == null) {
 			return new SessionHolder(this, getSessionFactory());
 		}
 		return sessionHolder_;
+	}
+
+	// this is needed for factories that provide an external session
+	boolean noRecycle;
+
+	public void setNoRecycle(final boolean value) {
+		noRecycle = value;
+	}
+
+	@Override
+	public void recycle() {
+		if (noRecycle)
+			return;
+		super.recycle();
 	}
 }
