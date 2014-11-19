@@ -68,6 +68,21 @@ public enum Factory {
 	;
 
 	/**
+	 * Printer class (will be modified by XSP-environment), so that the Factory prints directly to Console (so no "HTTP JVM" Prefix is
+	 * there)
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 */
+	public static class Printer {
+		public void println(final String s) {
+			System.out.println(s);
+		}
+	}
+
+	public static Printer printer = new Printer();
+
+	/**
 	 * An identifier for the different session types, the factory can create
 	 * 
 	 * @author Roland Praml, FOCONIS AG
@@ -1634,15 +1649,15 @@ public enum Factory {
 	}
 
 	public static void println(final Object x) {
-
+		printer.println("[ODA] " + x);
 	}
 
 	public static void println(final Object source, final Object x) {
 		if (source == null) {
-			System.out.println("[ODA] " + x);
+			printer.println("[ODA] " + x);
 		} else {
 			Class<?> cls = source instanceof Class ? (Class<?>) source : source.getClass();
-			System.out.println("[ODA::" + cls.getSimpleName() + "] " + x);
+			printer.println("[ODA::" + cls.getSimpleName() + "] " + x);
 		}
 	}
 

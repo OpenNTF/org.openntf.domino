@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
@@ -25,7 +26,6 @@ import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpSessionAdapter;
  * 
  */
 public class OpenntfHttpService extends HttpService {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfHttpService.class.getName());
 	private static OpenntfHttpService INSTANCE;
 
@@ -35,7 +35,17 @@ public class OpenntfHttpService extends HttpService {
 
 	public OpenntfHttpService(final LCDEnvironment lcdEnv) {
 		super(lcdEnv);
-		System.out.println("Openntf-Service loaded");
+		try {
+			Factory.printer = new Factory.Printer() {
+				@Override
+				public void println(final String s) {
+					com.ibm.domino.xsp.bridge.http.engine.XspCmdEnvironment.console(s);
+				}
+			};
+		} catch (Exception e) {
+			log_.warning("Could not set up console printer");
+		}
+		// System.out.println("Openntf-Service loaded");
 		try {
 			//this.services = lcdEnv.getServices();
 			if (INSTANCE != null) {
@@ -92,7 +102,7 @@ public class OpenntfHttpService extends HttpService {
 	public boolean doService(final String contextPath, final String path, final HttpSessionAdapter httpSession,
 			final HttpServletRequestAdapter httpRequest, final HttpServletResponseAdapter httpResponse) throws ServletException,
 			IOException {
-		System.out.println("DEBUG: The OpenntfHttpService has received an HttpRequest!");
+		Factory.println(this, "DEBUG: The OpenntfHttpService has received an HttpRequest!");
 		return false;
 	}
 

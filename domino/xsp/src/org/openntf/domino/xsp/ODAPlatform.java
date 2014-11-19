@@ -163,7 +163,7 @@ public enum ODAPlatform {
 		try {
 			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
 		} catch (BackendBridgeSanityCheckException allGood) {
-			System.out.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
+			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -171,10 +171,9 @@ public enum ODAPlatform {
 			// the view to the position that is listed in the stack trace above "getViewEntryByKeyWithOptions"
 		}
 		// if you do not get an exception, you will have to debug it with "step into"
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("Operation of BackendBridge.getViewEntryByKeyWithOptions FAILED");
-		System.out.println("Please read the comments in " + Activator.class.getName());
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
+		Factory.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions FAILED");
+		Factory.println("Please read the comments in " + ODAPlatform.class.getName());
+		Factory.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 }

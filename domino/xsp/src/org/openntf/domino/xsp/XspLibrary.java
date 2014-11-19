@@ -43,7 +43,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	 * Constructor
 	 */
 	public XspLibrary() {
-		System.out.println("Loading org.openntf.domino.xsp library");
+		// System.out.println("Loading org.openntf.domino.xsp library");
 	}
 
 	/*

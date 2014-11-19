@@ -38,7 +38,7 @@ public enum ModuleLoader {
 				}
 			}
 			if (nsfservice_ == null) {
-				System.out.println("WARNING: Setting up our own NSFService.");
+				Factory.println("WARNING: Setting up our own NSFService. (This may happen in a test environment, but should NOT happen on a server)");
 				nsfservice_ = new NSFService(LCDEnvironment.getInstance());
 			}
 		}
@@ -64,7 +64,7 @@ public enum ModuleLoader {
 		if (ensureRefresh) {
 			// The component module is SO weird. You cannot precheck with "shouldRefresh" as it returns always false for the next 2 seconds.
 			// So we ALWAYS do a simple request, to ensure that the module is fresh
-			final String path = "/" + module.getModuleName() + "/Test2.xsp"; //dummyrequest/to/trigger/refresh";
+			final String path = "/" + module.getModuleName() + "/dummyrequest/to/trigger/refresh";
 			final PreloadSession session = new PreloadSession();
 			final PreloadRequest request = new PreloadRequest("", "", path);
 			final PreloadResponse response = new PreloadResponse();
@@ -72,6 +72,8 @@ public enum ModuleLoader {
 				getNsfService().doService("", path, session, request, response);
 			} catch (PageNotFoundException pnfe) {
 				// Thats ok (unless someone really creates a resource with name dummyrequest/to/trigger/refresh)
+			} catch (com.ibm.xsp.acl.NoAccessSignal nas) {
+				// Thats ok. (refresh should be done anyway)
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -15,14 +15,13 @@
  */
 package org.openntf.domino.xsp;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Platform;
@@ -32,6 +31,7 @@ import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
@@ -186,6 +186,7 @@ public class OsgiCommandProvider implements CommandProvider {
 					ci.println("Could not find class " + className + " in bundle " + bundleName);
 					return;
 				}
+				runXotsClass(ci, clazz, clazz.getClassLoader());
 			} else {
 				// -- Load the class from module
 				module = ModuleLoader.loadModule(moduleName, true);
@@ -205,15 +206,25 @@ public class OsgiCommandProvider implements CommandProvider {
 						ci.println("Could not find class " + className);
 						return;
 					}
+					runXotsClass(ci, clazz, module.getModuleClassLoader());
 				} finally {
 					NotesContext.termThread();
 					ctx = null;
 				}
 			}
 
+		} catch (Exception e) {
+			ci.printStackTrace(e);
+		}
+
+	}
+
+	private void runXotsClass(final CommandInterpreter ci, final Class<?> clazz, final ClassLoader ctxCl) {
+		Factory.initThread();
+		try {
 			Tasklet annot = clazz.getAnnotation(Tasklet.class);
 			if (annot == null || !annot.isPublic()) {
-				ci.println(className + " does not annotate @Tasklet(isPublic=true). Cannot run");
+				ci.println(clazz.getName() + " does not annotate @Tasklet(isPublic=true). Cannot run.");
 				return;
 			}
 
@@ -243,21 +254,16 @@ public class OsgiCommandProvider implements CommandProvider {
 				}
 			}
 			if (cTor == null) {
-				ci.println(className + " has no constructor for " + ctorClasses.length + " String argument(s)");
+				ci.println(clazz.getName() + " has no constructor for " + ctorClasses.length + " String argument(s)");
 				return;
 			}
 
 			Thread thread = Thread.currentThread();
 			ClassLoader oldCl = thread.getContextClassLoader();
 			try {
-				if (clazz.getClassLoader() != null) {
-					ci.println("Creating " + clazz.getSimpleName() + ". Switching classloader from " + oldCl + " to "
-							+ clazz.getClassLoader());
-					thread.setContextClassLoader(clazz.getClassLoader());
+				if (ctxCl != null) {
+					thread.setContextClassLoader(ctxCl);
 				}
-
-				ctx = new NotesContext(module);
-				NotesContext.initThread(ctx);
 				try {
 					if (Callable.class.isAssignableFrom(clazz)) {
 						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
@@ -266,49 +272,17 @@ public class OsgiCommandProvider implements CommandProvider {
 						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
 						XotsDaemon.queue(runnable);
 					} else {
-						ci.println("Could not run " + className + ", as this is no runnable or callable class");
+						ci.println("Could not run " + clazz.getName() + ", as this is no runnable or callable class");
 					}
-				} finally {
-					NotesContext.termThread();
+				} catch (Exception ex) {
+					log_.log(Level.SEVERE, "Could not run " + clazz.getName(), ex);
+					ci.println("ERROR: " + ex.getMessage());
 				}
 			} finally {
 				thread.setContextClassLoader(oldCl);
 			}
-		} catch (Exception e) {
-			ci.printStackTrace(e);
-		}
-		try {
-			//ci.println("DEBUG: Opening module: " + moduleName);
-			//ModuleLoader.loadModule(moduleName, true);
-
-			//			Runnable runner = new XotsDominoFutureTask<Object>(module, new Runnable() {
-			//				@Override
-			//				public void run() {
-			//					try {
-			//						ci.println("DEBUG: loading class: " + className);
-			//						ClassLoader mcl = Thread.currentThread().getContextClassLoader();
-			//						Class cls = mcl.loadClass(className);
-			//						ci.println("DEBUG: creating instance of: " + cls);
-			//						Object obj = cls.newInstance();
-			//						ci.println("Success: " + obj);
-			//						if (obj instanceof Runnable) {
-			//							//((Runnable) obj).run();
-			//							XotsDaemon.queue((Runnable) obj);
-			//						}
-			//					} catch (Throwable e) {
-			//						StringWriter errors = new StringWriter();
-			//						e.printStackTrace(new PrintWriter(errors));
-			//						ci.println(errors);
-			//					}
-			//				}
-			//			}, null);
-			//			runner.run();
-			//			XotsDaemon.queue(runner);
-
-		} catch (Throwable e) {
-			StringWriter errors = new StringWriter();
-			e.printStackTrace(new PrintWriter(errors));
-			ci.println(errors);
+		} finally {
+			Factory.termThread();
 		}
 	}
 
