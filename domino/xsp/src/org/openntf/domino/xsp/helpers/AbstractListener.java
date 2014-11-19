@@ -1,12 +1,12 @@
 package org.openntf.domino.xsp.helpers;
 
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 
 /**
  * AbstractListener class
  */
 public abstract class AbstractListener {
-	private final static boolean _debug = Activator.isDebug();
+	private final static boolean _debug = ODAPlatform.isDebug();
 
 	/**
 	 * Prints a message to the server console

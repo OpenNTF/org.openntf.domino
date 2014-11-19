@@ -7,7 +7,6 @@ import org.openntf.domino.session.AbstractSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -30,7 +29,7 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 	 * @param ctxClassLoader
 	 */
 	public static boolean initializeFromContext(final FacesContext ctx, final ClassLoader ctxClassLoader) {
-		if (!Activator.isAPIEnabled(ctx)) {
+		if (!ODAPlatform.isAPIEnabled()) {
 			return false;
 		}
 		final NotesContext notesContext = NotesContext.getCurrent();
@@ -41,7 +40,7 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 		//Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
 		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, ODAPlatform.getAppAutoMime(null)), SessionType.CURRENT);
 
-		if (ODAPlatform.isAppFlagSet(null, "BUBBLEEXCEPTIONS"))
+		if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS"))
 			DominoUtils.setBubbleExceptions(true);
 
 		AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);

@@ -12,6 +12,7 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.FileResource;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class JSR223Tasklet extends AbstractDominoRunnable {
 	private static final long serialVersionUID = 1L;
@@ -32,7 +33,7 @@ public class JSR223Tasklet extends AbstractDominoRunnable {
 
 	@Override
 	public void run() {
-		Database database = Factory.getSession().getDatabase(databasePath_);
+		Database database = Factory.getSession(SessionType.CURRENT).getDatabase(databasePath_);
 
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByExtension(scriptExt_);

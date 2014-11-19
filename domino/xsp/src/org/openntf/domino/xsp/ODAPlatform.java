@@ -230,7 +230,7 @@ public enum ODAPlatform {
 	 * @return String property value or an empty string
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
-	public static String getXspPropertyAsString(Application app, final String propertyName) {
+	public static String getXspPropertyAsString(final String propertyName, Application app) {
 		String result = "";
 		try {
 			if (app == null)
@@ -266,9 +266,9 @@ public enum ODAPlatform {
 	 * @return String array of property, split on commas
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static String[] getXspProperty(final Application app, final String propertyName) {
+	public static String[] getXspProperty(final String propertyName, final Application app) {
 		try {
-			String setting = getXspPropertyAsString(app, propertyName);
+			String setting = getXspPropertyAsString(propertyName, app);
 			if (StringUtil.isNotEmpty(setting)) {
 				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) {
 					return StringUtil.splitString(setting, ',');
@@ -302,7 +302,7 @@ public enum ODAPlatform {
 		Boolean retVal_ = (Boolean) app.getObject(IS_API_ENABLED);
 		if (retVal_ == null) {
 			retVal_ = Boolean.FALSE;
-			for (String s : getXspProperty(app, "xsp.library.depends")) {
+			for (String s : getXspProperty("xsp.library.depends", app)) {
 				if (s.equalsIgnoreCase("org.openntf.domino.xsp.XspLibrary")) {
 					retVal_ = Boolean.TRUE;
 					break;
@@ -322,7 +322,7 @@ public enum ODAPlatform {
 	 *            use upperCase for flagName, e.g. RAID
 	 * @return true if the flag is set
 	 */
-	public static boolean isAppFlagSet(Application app, final String flagName) {
+	public static boolean isAppFlagSet(final String flagName, Application app) {
 		if (app == null)
 			app = Application.get();
 
@@ -333,7 +333,7 @@ public enum ODAPlatform {
 		Boolean retVal_ = (Boolean) app.getObject(key);
 		if (retVal_ == null) {
 			retVal_ = Boolean.FALSE;
-			for (String s : getXspProperty(app, Activator.PLUGIN_ID)) {
+			for (String s : getXspProperty(Activator.PLUGIN_ID, app)) {
 				if (s.equalsIgnoreCase(flagName)) {
 					retVal_ = Boolean.TRUE;
 					break;
@@ -365,7 +365,7 @@ public enum ODAPlatform {
 		if (retVal_ == null) {
 			retVal_ = AutoMime.WRAP_ALL;
 
-			for (String s : getXspProperty(app, Activator.PLUGIN_ID)) {
+			for (String s : getXspProperty(Activator.PLUGIN_ID, app)) {
 				if (s.equalsIgnoreCase("automime32k")) {
 					retVal_ = AutoMime.WRAP_32K;
 					break;
@@ -389,7 +389,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	public static boolean isAppAllFix(final Application app) {
-		return isAppFlagSet(app, "KHAN");
+		return isAppFlagSet("KHAN", app);
 	}
 
 	/**
@@ -403,7 +403,7 @@ public enum ODAPlatform {
 	public static boolean isAppDebug(final Application app) {
 		if (debugAll)
 			return true;
-		return isAppFlagSet(app, "RAID");
+		return isAppFlagSet("RAID", app);
 	}
 
 	/**
@@ -416,7 +416,7 @@ public enum ODAPlatform {
 	 */
 
 	public static boolean isAppGodMode(final Application app) {
-		return isAppFlagSet(app, "GODMODE");
+		return isAppFlagSet("GODMODE", app);
 	}
 
 	/**
@@ -428,7 +428,7 @@ public enum ODAPlatform {
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	public static boolean isAppMimeFriendly(final Application app) {
-		return isAppFlagSet(app, "MARCEL");
+		return isAppFlagSet("MARCEL", app);
 	}
 
 	/**
@@ -439,5 +439,17 @@ public enum ODAPlatform {
 	 */
 	public static boolean isDebug() {
 		return _debug;
+	}
+
+	public static String getXspPropertyAsString(final String propertyName) {
+		return getXspPropertyAsString(propertyName, null);
+	}
+
+	public static boolean isAPIEnabled() {
+		return isAPIEnabled(null);
+	}
+
+	public static boolean isAppFlagSet(final String flagName) {
+		return isAppFlagSet(flagName, null);
 	}
 }

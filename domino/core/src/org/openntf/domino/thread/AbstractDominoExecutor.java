@@ -311,18 +311,18 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	 * 
 	 * @return
 	 */
-	public List<DominoFutureTask> getTasks(final boolean sortByExecDate) {
-		ArrayList<DominoFutureTask> ret = new ArrayList<DominoFutureTask>();
+	public List<DominoFutureTask<?>> getTasks(final boolean sortByExecDate) {
+		ArrayList<DominoFutureTask<?>> ret = new ArrayList<DominoFutureTask<?>>();
 
-		for (DominoFutureTask task : tasks.values()) {
+		for (DominoFutureTask<?> task : tasks.values()) {
 			ret.add(task);
 		}
 		if (sortByExecDate) {
 			Collections.sort(ret);
 		} else {
-			Collections.sort(ret, new Comparator<DominoFutureTask>() {
+			Collections.sort(ret, new Comparator<DominoFutureTask<?>>() {
 				@Override
-				public int compare(final DominoFutureTask o1, final DominoFutureTask o2) {
+				public int compare(final DominoFutureTask<?> o1, final DominoFutureTask<?> o2) {
 					if (o1.sequenceNumber < o2.sequenceNumber) {
 						return -1;
 					} else if (o1.sequenceNumber == o2.sequenceNumber) {
@@ -415,7 +415,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 
 		if (future instanceof DominoFutureTask) {
-			DominoFutureTask dft = (DominoFutureTask) future;
+			DominoFutureTask<?> dft = (DominoFutureTask<?>) future;
 			tasks.put(dft.sequenceNumber, dft);
 			if (dft.time > now()) {
 				dft.setState(TaskState.SLEEPING);

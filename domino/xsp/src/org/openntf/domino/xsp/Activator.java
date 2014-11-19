@@ -140,7 +140,7 @@ public class Activator extends Plugin {
 	 */
 	@Deprecated
 	public static String getXspPropertyAsString(final String propertyName) {
-		return ODAPlatform.getXspPropertyAsString(null, propertyName);
+		return ODAPlatform.getXspPropertyAsString(propertyName, null);
 	}
 
 	/**

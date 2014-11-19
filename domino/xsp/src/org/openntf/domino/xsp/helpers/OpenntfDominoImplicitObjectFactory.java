@@ -55,7 +55,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		ecMap.put("serverScope", getServerMap(ctx));
 
 		// Attach NSA
-		if (ODAPlatform.isAppFlagSet(null, "nsa")) {
+		if (ODAPlatform.isAppFlagSet("nsa")) {
 			Application app = ctx.getApplication();
 			if (app instanceof ApplicationEx) {
 				NSA.INSTANCE.registerApplication((ApplicationEx) app);

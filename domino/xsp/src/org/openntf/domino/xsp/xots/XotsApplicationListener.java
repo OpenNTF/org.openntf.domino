@@ -8,6 +8,7 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.application.DesignerApplicationEx;
@@ -62,7 +63,7 @@ public class XotsApplicationListener implements ApplicationListener2 {
 
 		@Override
 		public void run() {
-			Session session = Factory.getSession();
+			Session session = Factory.getSession(SessionType.CURRENT);
 			Database db = session.getDatabase(appName_);
 			DatabaseDesign design = db.getDesign();
 			IconNote icon = design.getIconNote();

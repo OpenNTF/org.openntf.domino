@@ -49,7 +49,7 @@ public class Xots {
 	 * @param sortByExecDate
 	 * @return
 	 */
-	public static List<DominoFutureTask> getTasks(final boolean sortByExecDate) {
+	public static List<DominoFutureTask<?>> getTasks(final boolean sortByExecDate) {
 		if (!isStarted())
 			return Collections.emptyList();
 		return executor_.getTasks(sortByExecDate);
@@ -91,7 +91,7 @@ public class Xots {
 
 			if (executor_.getActiveCount() > 0) {
 				Factory.println(Xots.class, "he following Threads did not terminate gracefully:");
-				for (DominoFutureTask task : executor_.getTasks(false)) {
+				for (DominoFutureTask<?> task : executor_.getTasks(false)) {
 					Factory.println(Xots.class, "* " + task);
 				}
 

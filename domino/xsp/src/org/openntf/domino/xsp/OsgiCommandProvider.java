@@ -33,7 +33,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
-import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
 import org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer;
 import org.osgi.framework.Bundle;
@@ -122,10 +122,10 @@ public class OsgiCommandProvider implements CommandProvider {
 			// TODO what does XOTS?
 		} else if (cmp(cmd, "tasks", 1)) { // tasks
 			ci.println("XOTS task list:");
-			ci.println(XotsDaemon.getTasks(false));
+			ci.println(Xots.getTasks(false));
 		} else if (cmp(cmd, "schedule", 1)) {
 			ci.println("XOTS schedule list:");
-			ci.println(XotsDaemon.getTasks(true));
+			ci.println(Xots.getTasks(true));
 		} else if (cmp(cmd, "run", 1)) {
 			xotsRun(ci);
 		}
@@ -281,10 +281,10 @@ public class OsgiCommandProvider implements CommandProvider {
 				try {
 					if (Callable.class.isAssignableFrom(clazz)) {
 						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
-						XotsDaemon.queue(callable);
+						Xots.queue(callable);
 					} else if (Runnable.class.isAssignableFrom(clazz)) {
 						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
-						XotsDaemon.queue(runnable);
+						Xots.queue(runnable);
 					} else {
 						ci.println("Could not run " + clazz.getName() + ", as this is no runnable or callable class");
 					}
