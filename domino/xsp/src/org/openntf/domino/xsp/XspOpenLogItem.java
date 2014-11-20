@@ -88,6 +88,7 @@ import org.openntf.domino.RichTextItem;
 import org.openntf.domino.logging.BaseOpenLogItem;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.XSPUtil;
 
 import com.ibm.commons.util.StringUtil;
@@ -165,7 +166,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public static String getLogExpireDate() {
 		if (StringUtil.isEmpty(_logExpireDate)) {
-			_logExpireDate = Activator.getXspPropertyAsString("xsp.openlog.expireDate");
+			_logExpireDate = ODAPlatform.getXspPropertyAsString("xsp.openlog.expireDate");
 		}
 		return _logExpireDate;
 	}
@@ -176,7 +177,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public String getLogEmail() {
 		try {
 			if (StringUtil.isEmpty(logEmail_)) {
-				logEmail_ = Activator.getXspPropertyAsString("xsp.openlog.email");
+				logEmail_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.email");
 			}
 			return logEmail_;
 		} catch (Throwable t) {
@@ -192,7 +193,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public String getLogDbName() {
 		try {
 			if (StringUtil.isEmpty(logDbName_)) {
-				String logDbName_ = Activator.getXspPropertyAsString("xsp.openlog.filepath");
+				String logDbName_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath");
 				if (StringUtil.isEmpty(logDbName_)) {
 					super.setLogDbName("OpenLog.nsf");
 				} else if ("[CURRENT]".equals(logDbName_.toUpperCase())) {
@@ -211,7 +212,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	@Override
 	public Boolean getSuppressEventStack() {
 		try {
-			String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.suppressEventStack");
+			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.suppressEventStack");
 			if (StringUtil.isEmpty(dummyVar)) {
 				setSuppressEventStack(true);
 				return true;
@@ -238,7 +239,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public Boolean getDisplayError() {
 		try {
-			String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.displayError");
+			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.displayError");
 			if (StringUtil.isEmpty(dummyVar)) {
 				setDisplayError(true);
 			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
@@ -267,7 +268,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public String getDisplayErrorGeneric() {
 		try {
 			if (null == displayErrorGeneric_) {
-				displayErrorGeneric_ = Activator.getXspPropertyAsString("xsp.openlog.genericErrorMessage");
+				displayErrorGeneric_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.genericErrorMessage");
 			}
 			return displayErrorGeneric_;
 		} catch (Throwable t) {
@@ -278,7 +279,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 	private String getDefaultDebugLevel() {
 		try {
-			String defaultLevel_ = Activator.getXspPropertyAsString("xsp.openlog.debugLevel");
+			String defaultLevel_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.debugLevel");
 			if (StringUtil.isEmpty(defaultLevel_)) {
 				defaultLevel_ = "2";
 			}
@@ -351,7 +352,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			RichTextItem rtitem;
 			Database docDb;
 
-			if (!StringUtil.equals(super.getCurrentDatabasePath(), Factory.getSession().getCurrentDatabase().getFilePath())) {
+			if (!StringUtil.equals(super.getCurrentDatabasePath(), Factory.getSession(SessionType.CURRENT).getCurrentDatabase()
+					.getFilePath())) {
 				reinitialiseSettings();
 			}
 
@@ -414,8 +416,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
-			logDoc.replaceItemValue("LogUserName", Factory.getSession().getUserName());
-			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession().getEffectiveUserName());
+			logDoc.replaceItemValue("LogUserName", Factory.getSession(SessionType.CURRENT).getUserName());
+			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 			logDoc.replaceItemValue("LogAccessLevel", getAccessLevel());
 			logDoc.replaceItemValue("LogUserRoles", getUserRoles());
 			logDoc.replaceItemValue("LogClientVersion", getClientVersion());

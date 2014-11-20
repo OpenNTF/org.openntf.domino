@@ -47,7 +47,6 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.schema.types,
  org.openntf.domino.session,
  org.openntf.domino.thread,
- org.openntf.domino.thread.model,
  org.openntf.domino.transactions,
  org.openntf.domino.types,
  org.openntf.domino.utils,
@@ -61,6 +60,7 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
  com.ibm.commons.icu;bundle-version="9.0.1",
  com.ibm.icu.base;bundle-version="3.8.1",
- org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional
+ org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
+ com.ibm.notes.java.api;bundle-version="9.0.1";resolution:=optional
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

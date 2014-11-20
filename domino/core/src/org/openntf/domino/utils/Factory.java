@@ -56,8 +56,6 @@ import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
-import org.openntf.domino.thread.model.XotsSessionType;
-import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;
@@ -68,6 +66,21 @@ import org.openntf.service.ServiceLocatorFinder;
  */
 public enum Factory {
 	;
+
+	/**
+	 * Printer class (will be modified by XSP-environment), so that the Factory prints directly to Console (so no "HTTP JVM" Prefix is
+	 * there)
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 */
+	public static class Printer {
+		public void println(final String s) {
+			System.out.println(s);
+		}
+	}
+
+	public static Printer printer = new Printer();
 
 	/**
 	 * An identifier for the different session types, the factory can create
@@ -255,99 +268,6 @@ public enum Factory {
 		return tv;
 	}
 
-	// RPr: I have objections in this type of setup (locating the correct notes.ini is NOT trivial)
-	//	/**
-	//	 * setup the environment and loggers
-	//	 * 
-	//	 * @author praml
-	//	 * 
-	//	 */
-	//	private static class SetupJob implements Runnable {
-	//		@Override
-	//		public void run() {
-	//			try {
-	//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-	//					@Override
-	//					public Object run() throws Exception {
-	//						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-	//						String progpath = System.getProperty("notes.binary");
-	//						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-	//						if (!iniFile.exists()) {
-	//							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-	//							progpath = System.getProperty("user.dir");
-	//							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-	//						}
-	//						if (!iniFile.exists()) {
-	//							//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-	//							progpath = System.getProperty("java.home");
-	//							if (progpath.endsWith("jvm")) {
-	//								iniFile = new File(progpath + System.getProperty("file.separator") + ".."
-	//										+ System.getProperty("file.separator") + "notes.ini");
-	//							} else {
-	//								iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-	//
-	//							}
-	//						}
-	//						if (!iniFile.exists()) {
-	//							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
-	//							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-	//						}
-	//						if (!iniFile.exists()) {
-	//							//							System.out.println("Inifile still not found on user.dir path: " + progpath);
-	//							if (progpath.contains("framework")) {
-	//								String pp2 = progpath.replace("framework", "");
-	//								iniFile = new File(pp2 + "notes.ini");
-	//								//								System.out.println("Attempting to use path: " + pp2);
-	//								if (!iniFile.exists()) {
-	//									System.out
-	//											.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
-	//									for (Object rawName : System.getProperties().keySet()) {
-	//										if (rawName instanceof String) {
-	//											System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
-	//										}
-	//									}
-	//								}
-	//							}
-	//						}
-	//
-	//						Scanner scanner = new Scanner(iniFile);
-	//						scanner.useDelimiter("\n|\r\n");
-	//						loadEnvironment(scanner);
-	//						scanner.close();
-	//						return null;
-	//					}
-	//				});
-	//			} catch (AccessControlException e) {
-	//				e.printStackTrace();
-	//			} catch (PrivilegedActionException e) {
-	//				e.printStackTrace();
-	//			}
-	//
-	//			try {
-	//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-	//					@Override
-	//					public Object run() throws Exception {
-	//						Logging.getInstance().startUp();
-	//						return null;
-	//					}
-	//				});
-	//			} catch (AccessControlException e) {
-	//				e.printStackTrace();
-	//			} catch (PrivilegedActionException e) {
-	//				e.printStackTrace();
-	//			}
-	//		}
-	//	}
-	//
-	//	static {
-	//		SetupJob job = new SetupJob();
-	//		job.run();
-	//		//		TrustedDispatcher td = new TrustedDispatcher();
-	//		//		td.process(job);
-	//		//		System.out.println("DEBUG: SetupJob dispatched");
-	//		//		td.stop(false);
-	//	}
-
 	private static Map<String, String> ENVIRONMENT;
 	@SuppressWarnings("unused")
 	//private static boolean session_init = false;
@@ -369,11 +289,9 @@ public enum Factory {
 				if (i > 0) {
 					String key = nextLine.substring(0, i).toLowerCase();
 					String value = nextLine.substring(i + 1);
-					//					System.out.println("DEBUG " + key + " : " + value);
 					ENVIRONMENT.put(key, value);
 				}
 			}
-			//			System.out.println("DEBUG: Added " + keyCount + " environment variables to avoid using a session");
 		}
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -1161,10 +1079,10 @@ public enum Factory {
 				iniFile = new File(pp2 + "notes.ini");
 				//								System.out.println("Attempting to use path: " + pp2);
 				if (!iniFile.exists()) {
-					System.out.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
+					Factory.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
 					for (Object rawName : System.getProperties().keySet()) {
 						if (rawName instanceof String) {
-							System.out.println((String) rawName + " = " + System.getProperty((String) rawName));
+							Factory.println((String) rawName + " = " + System.getProperty((String) rawName));
 						}
 					}
 				}
@@ -1198,7 +1116,7 @@ public enum Factory {
 			throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
 		}
 		if (started) {
-			System.out.println("OpenNTF Domino API is already started. Cannot start it again");
+			Factory.println("OpenNTF Domino API is already started. Cannot start it again");
 		}
 
 		File iniFile;
@@ -1206,11 +1124,11 @@ public enum Factory {
 			localServerName = session.getUserName();
 			iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
 		} catch (NotesException e) {
-			System.out.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
+			Factory.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
 			iniFile = getConfigFileFallback();
 		}
 
-		System.out.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
+		Factory.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
 
 		try {
 			Scanner scanner = new Scanner(iniFile);
@@ -1218,7 +1136,7 @@ public enum Factory {
 			loadEnvironment(scanner);
 			scanner.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("Cannot read notes.ini. Giving up");
+			Factory.println("Cannot read notes.ini. Giving up");
 			e.printStackTrace();
 		}
 
@@ -1254,7 +1172,7 @@ public enum Factory {
 		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory();
 
 		started = true;
-		System.out.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+		Factory.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
 	}
 
 	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
@@ -1263,17 +1181,16 @@ public enum Factory {
 	}
 
 	public static synchronized void shutdown() {
-		System.out.println("Shutting down the OpenNTF Domino API... ");
+		Factory.println("Shutting down the OpenNTF Domino API... ");
 		Runnable[] copy = shutdownHooks.toArray(new Runnable[shutdownHooks.size()]);
 		for (Runnable term : copy) {
-			System.out.println("* shutting down " + term);
 			try {
 				term.run();
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
-		System.out.println("... OpenNTF Domino API shut down");
+		Factory.println("OpenNTF Domino API shut down");
 		started = false;
 	}
 
@@ -1730,6 +1647,19 @@ public enum Factory {
 
 	public static String getLocalServerName() {
 		return localServerName;
+	}
+
+	public static void println(final Object x) {
+		printer.println("[ODA] " + x);
+	}
+
+	public static void println(final Object source, final Object x) {
+		if (source == null) {
+			printer.println("[ODA] " + x);
+		} else {
+			Class<?> cls = source instanceof Class ? (Class<?>) source : source.getClass();
+			printer.println("[ODA::" + cls.getSimpleName() + "] " + x);
+		}
 	}
 
 }
