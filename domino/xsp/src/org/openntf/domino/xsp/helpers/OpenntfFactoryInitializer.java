@@ -28,11 +28,7 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 	 *            the FacesContext - may be null
 	 * @param ctxClassLoader
 	 */
-	public static boolean initializeFromContext(final FacesContext ctx, final ClassLoader ctxClassLoader) {
-		if (!ODAPlatform.isAPIEnabled()) {
-			return false;
-		}
-		final NotesContext notesContext = NotesContext.getCurrent();
+	public static void initializeFromContext(final FacesContext ctx, final ClassLoader ctxClassLoader) {
 
 		Factory.initThread();
 		Fixes[] fixes = ODAPlatform.isAppAllFix(null) ? Fixes.values() : null;
@@ -40,13 +36,17 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 		//Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
 		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, ODAPlatform.getAppAutoMime(null)), SessionType.CURRENT);
 
-		if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS"))
+		if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS")) {
 			DominoUtils.setBubbleExceptions(true);
+		}
+		NotesContext notesContext = NotesContext.getCurrentUnchecked();
+		if (notesContext != null) {
 
-		AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);
-		AbstractSessionFactory sessionAsSigner2 = new XPageSignerSessionFactory(notesContext, true);
-		Factory.setSessionFactory(sessionAsSigner1, SessionType.SIGNER);
-		Factory.setSessionFactory(sessionAsSigner2, SessionType.SIGNER_FULL_ACCESS);
+			AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);
+			AbstractSessionFactory sessionAsSigner2 = new XPageSignerSessionFactory(notesContext, true);
+			Factory.setSessionFactory(sessionAsSigner1, SessionType.SIGNER);
+			Factory.setSessionFactory(sessionAsSigner2, SessionType.SIGNER_FULL_ACCESS);
+		}
 		Factory.setClassLoader(ctxClassLoader);
 
 		if (ctx != null) {
@@ -70,24 +70,24 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 				}
 			}
 		}
-		return true;
 	}
 
 	@Override
 	public void initializeParameters(final FacesContext ctx, final RequestParameters req) {
-		if (initializeFromContext(ctx, ctx.getContextClassLoader())) {
-
-			((FacesContextEx) ctx).addRequestListener(new FacesContextListener() {
-				@Override
-				public void beforeRenderingPhase(final FacesContext paramFacesContext) {
-				}
-
-				@Override
-				public void beforeContextReleased(final FacesContext paramFacesContext) {
-					Factory.termThread();
-				}
-			});
+		if (!ODAPlatform.isAPIEnabled()) {
+			return;
 		}
+		initializeFromContext(ctx, ctx.getContextClassLoader());
+		((FacesContextEx) ctx).addRequestListener(new FacesContextListener() {
+			@Override
+			public void beforeRenderingPhase(final FacesContext paramFacesContext) {
+			}
+
+			@Override
+			public void beforeContextReleased(final FacesContext paramFacesContext) {
+				Factory.termThread();
+			}
+		});
 		// In XPages, convertMime should be always false
 		//		Session session = Factory.getSession(SessionType.CURRENT);
 		//		if (session != null) {

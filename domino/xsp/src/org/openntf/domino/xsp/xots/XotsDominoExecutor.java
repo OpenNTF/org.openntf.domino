@@ -6,6 +6,8 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
@@ -32,6 +34,7 @@ import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XotsDominoExecutor extends DominoExecutor {
+	private static final Logger log_ = Logger.getLogger(XotsDominoExecutor.class.getName());
 
 	/**
 	 * 
@@ -70,7 +73,12 @@ public class XotsDominoExecutor extends DominoExecutor {
 
 		@Override
 		public void run() {
-			callOrRun(module_, bubbleException, sessionFactory, null, getWrappedTask());
+
+			try {
+				callOrRun(module_, bubbleException, sessionFactory, null, getWrappedTask());
+			} catch (Exception e) {
+				log_.log(Level.SEVERE, "Could not execute " + module_.getModuleName() + "/" + getWrappedTask().getClass(), e);
+			}
 		}
 	}
 
@@ -85,7 +93,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * @return
 	 */
 	private static <V> V callOrRun(final NSFComponentModule module, final boolean bubbleException, final ISessionFactory sessionFactory,
-			final Callable<V> callable, final Runnable runnable) {
+			final Callable<V> callable, final Runnable runnable) throws Exception {
 
 		if (module == null && module.isDestroyed()) {
 			throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run");
@@ -202,7 +210,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 	private static void initModule(final NotesContext ctx, final ClassLoader mcl, final Object wrappedObject) throws ServletException {
 		// next initialize the context with a FakeHttpRequest. This is neccessary so that internal things
 		// like session-creation and so on work properly
-		ctx.initRequest(new FakeHttpRequest());
+
 		// RPr:
 		// You may ask what I do here: ReLoading the module again from the MCL triggers signature checking.
 

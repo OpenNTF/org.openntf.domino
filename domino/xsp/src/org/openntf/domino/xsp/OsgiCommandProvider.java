@@ -36,6 +36,7 @@ import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
 import org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer;
+import org.openntf.domino.xsp.xots.FakeHttpRequest;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.StringUtil;
@@ -188,18 +189,17 @@ public class OsgiCommandProvider implements CommandProvider {
 					return;
 				}
 				ClassLoader cLoader = clazz.getClassLoader();
-				OpenntfFactoryInitializer.initializeFromContext(null, cLoader); 	// Factory.initThread is done here
-				try {
-					runXotsClass(ci, clazz, cLoader);
-				} finally {
-					Factory.termThread();
-				}
+
+				runXotsClass(ci, clazz, cLoader);
 
 			} else {
 				// -- Load the class from module
 				module = ModuleLoader.loadModule(moduleName, true);
 				ctx = new NotesContext(module);
 				NotesContext.initThread(ctx);
+				// CHECKME which username should we use? Server
+				ctx.initRequest(new FakeHttpRequest(Factory.getLocalServerName()));
+
 				try {
 					if (module == null) {
 						ci.println("Could not find module " + moduleName);
@@ -215,12 +215,7 @@ public class OsgiCommandProvider implements CommandProvider {
 						return;
 					}
 					ClassLoader cLoader = module.getModuleClassLoader();
-					OpenntfFactoryInitializer.initializeFromContext(null, cLoader); 	// Factory.initThread is done here
-					try {
-						runXotsClass(ci, clazz, cLoader);
-					} finally {
-						Factory.termThread();
-					}
+					runXotsClass(ci, clazz, cLoader);
 				} finally {
 					NotesContext.termThread();
 					ctx = null;
@@ -234,7 +229,7 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	private void runXotsClass(final CommandInterpreter ci, final Class<?> clazz, final ClassLoader ctxCl) {
-		Factory.initThread();
+		OpenntfFactoryInitializer.initializeFromContext(null, ctxCl); 	// Factory.initThread is done here
 		try {
 			Tasklet annot = clazz.getAnnotation(Tasklet.class);
 			if (annot == null || !annot.isPublic()) {

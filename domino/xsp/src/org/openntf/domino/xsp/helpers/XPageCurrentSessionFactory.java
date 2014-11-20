@@ -2,14 +2,16 @@ package org.openntf.domino.xsp.helpers;
 
 import java.security.PrivilegedActionException;
 
+import javax.servlet.ServletException;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Session;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.session.AbstractSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.xsp.xots.FakeHttpRequest;
 
 import com.ibm.designer.runtime.domino.bootstrap.util.StringUtil;
 import com.ibm.domino.napi.c.NotesUtil;
@@ -21,10 +23,15 @@ public class XPageCurrentSessionFactory extends AbstractSessionFactory {
 
 	public XPageCurrentSessionFactory(final Fixes[] fixes, final AutoMime autoMime) {
 		super(fixes, autoMime, null);
-
+		init();
 	}
 
 	public XPageCurrentSessionFactory() {
+		super();
+		init();
+	}
+
+	private void init() {
 		final lotus.domino.Session rawSession = NotesContext.getCurrent().getCurrentSession();
 		try {
 			runAs_ = rawSession.getEffectiveUserName();
@@ -44,20 +51,26 @@ public class XPageCurrentSessionFactory extends AbstractSessionFactory {
 
 	@Override
 	public Session createSession() throws PrivilegedActionException {
+		if (runAs_ == null) {
+			throw new NullPointerException("No username set");
+		}
 		NotesContext ctx = NotesContext.getCurrentUnchecked();
-		lotus.domino.Session rawSession = ctx == null ? null : ctx.getCurrentSession();
-
-		if (rawSession == null || Base.isDead(rawSession)) {
+		if (ctx != null) {
 			try {
-				long userHandle = NotesUtil.createUserNameList(runAs_);
-				rawSession = XSPNative.createXPageSession(runAs_, userHandle, false, true);
-				return wrapSession(rawSession, true);
-			} catch (Exception e) {
+				ctx.initRequest(new FakeHttpRequest(runAs_));
+			} catch (ServletException e) {
 				DominoUtils.handleException(e);
 				return null;
 			}
-		} else {
-			return wrapSession(rawSession, false);
+			return wrapSession(ctx.getCurrentSession(), false);
+		}
+		try {
+			long userHandle = NotesUtil.createUserNameList(runAs_);
+			return wrapSession(XSPNative.createXPageSession(runAs_, userHandle, false, true), true);
+
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
 		}
 	}
 

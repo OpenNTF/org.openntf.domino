@@ -303,7 +303,7 @@ public enum ODAPlatform {
 		if (retVal_ == null) {
 			retVal_ = Boolean.FALSE;
 			for (String s : getXspProperty("xsp.library.depends", app)) {
-				if (s.equalsIgnoreCase("org.openntf.domino.xsp.XspLibrary")) {
+				if (s.equalsIgnoreCase(XspLibrary.LIBRARY_ID)) {
 					retVal_ = Boolean.TRUE;
 					break;
 				}
