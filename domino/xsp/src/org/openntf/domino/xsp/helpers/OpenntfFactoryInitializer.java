@@ -35,7 +35,7 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 		//Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
 		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, Activator.getAppAutoMime(ctx)), SessionType.CURRENT);
 
-		// In XPages, convertMime should be always false
+		// In XPages, convertMime should always be false.
 		//		Session session = Factory.getSession(SessionType.CURRENT);
 		//		if (session != null) {
 		//			if (Activator.isAppMimeFriendly(ctx))
