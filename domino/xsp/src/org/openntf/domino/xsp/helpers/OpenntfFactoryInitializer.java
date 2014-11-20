@@ -88,7 +88,7 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 				Factory.termThread();
 			}
 		});
-		// In XPages, convertMime should be always false
+		// In XPages, convertMime should always be false
 		//		Session session = Factory.getSession(SessionType.CURRENT);
 		//		if (session != null) {
 		//			if (Activator.isAppMimeFriendly(ctx))

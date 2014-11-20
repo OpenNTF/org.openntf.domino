@@ -1,6 +1,7 @@
 package org.openntf.domino.xots;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -11,6 +12,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
+@Inherited
 public @interface Tasklet {
 	public interface Interface {
 
