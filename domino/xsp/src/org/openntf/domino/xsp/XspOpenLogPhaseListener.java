@@ -35,6 +35,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder.EventError;
 
 import com.ibm.jscript.InterpretException;
@@ -55,6 +56,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	 * 
 	 * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void beforePhase(final PhaseEvent event) {
 		try {
@@ -66,7 +68,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 					XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
 				}
 				if (null != sessScope.get("openLogBean")) {
-					if (!Activator.isAPIEnabled()) {
+					if (!ODAPlatform.isAPIEnabled()) {
 						return;
 					}
 					// sessionScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
@@ -90,6 +92,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	 * 
 	 * @see javax.faces.event.PhaseListener#afterPhase(javax.faces.event.PhaseEvent)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void afterPhase(final PhaseEvent event) {
 		try {
@@ -100,7 +103,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 					processUncaughtException(r);
 
 				} else if (null != sessScope.get("openLogBean")) {
-					if (!Activator.isAPIEnabled()) {
+					if (!ODAPlatform.isAPIEnabled()) {
 						return;
 					}
 					// sessionScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
@@ -124,7 +127,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 							Document passedDoc = null;
 							if (!"".equals(error.getUnid())) {
 								try {
-									Database currDb = Factory.getSession().getCurrentDatabase();
+									Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 									passedDoc = currDb.getDocumentByUNID(error.getUnid());
 								} catch (Exception e) {
 									msg = msg + "\n\nCould not retrieve document but UNID was passed: " + error.getUnid();
@@ -145,7 +148,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 							Document passedDoc = null;
 							if (!"".equals(eventObj.getUnid())) {
 								try {
-									Database currDb = Factory.getSession().getCurrentDatabase();
+									Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 									passedDoc = currDb.getDocumentByUNID(eventObj.getUnid());
 								} catch (Exception e) {
 									msg = msg + "\n\nCould not retrieve document but UNID was passed: " + eventObj.getUnid();
@@ -311,6 +314,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	 * 
 	 * @see javax.faces.event.PhaseListener#getPhaseId()
 	 */
+	@Override
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}

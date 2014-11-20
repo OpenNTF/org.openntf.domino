@@ -8,7 +8,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
@@ -34,7 +34,7 @@ public class OpenntfGodModeImplicitObjectFactory implements ImplicitObjectFactor
 
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		if (!Activator.isAPIEnabled(ctx))
+		if (!ODAPlatform.isAPIEnabled())
 			return;
 
 		Session session = Factory.getSession(SessionType.CURRENT);

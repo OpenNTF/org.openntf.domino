@@ -14,7 +14,6 @@ import com.ibm.xsp.library.AbstractXspLibrary;
  */
 public class XspLibrary extends AbstractXspLibrary {
 	public final static String LIBRARY_ID = XspLibrary.class.getName();
-	public final static String LIBRARY_BEAN_PREFIX = "org.openntf.domino.xsp";
 	private static Boolean GLOBAL;
 	private List<ExtlibPluginConfig> plugins;
 
@@ -27,7 +26,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	private static boolean isGlobal() {
 		if (GLOBAL == null) {
 			GLOBAL = Boolean.FALSE;
-			String[] envs = Activator.getEnvironmentStrings();
+			String[] envs = ODAPlatform.getEnvironmentStrings(Activator.PLUGIN_ID);
 			if (envs != null) {
 				for (String s : envs) {
 					if (s.equalsIgnoreCase("global")) {
@@ -43,7 +42,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	 * Constructor
 	 */
 	public XspLibrary() {
-		System.out.println("Loading org.openntf.domino.xsp library");
+		// System.out.println("Loading org.openntf.domino.xsp library");
 	}
 
 	/*

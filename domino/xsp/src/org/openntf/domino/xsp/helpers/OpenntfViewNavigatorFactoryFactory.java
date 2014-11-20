@@ -5,9 +5,7 @@ package org.openntf.domino.xsp.helpers;
 
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
-
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.xsp.model.domino.ViewNavigatorEx;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
@@ -92,7 +90,7 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		public ViewNavigatorEx createNavigator() {
 			ViewNavigatorEx result = super.createNavigator();
 			if (result instanceof NOIViewNavigatorEx9 || result instanceof NOIViewNavigatorEx) {
-				if (Activator.isAppGodMode(FacesContext.getCurrentInstance())) {
+				if (ODAPlatform.isAppGodMode(null)) {
 					// FacesContext ctx = FacesContext.getCurrentInstance();
 					// if (ctx instanceof DominoFacesContext) {
 					// DominoFacesContext impl = (DominoFacesContext) ctx;

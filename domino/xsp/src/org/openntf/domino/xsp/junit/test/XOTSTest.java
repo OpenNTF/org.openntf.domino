@@ -19,7 +19,7 @@ import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
-import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
 import org.openntf.junit4xpages.OsgiTest;
@@ -34,7 +34,7 @@ public class XOTSTest {
 
 	//@Test
 	public void testCallable() throws InterruptedException, ExecutionException {
-		Future<String> future = XotsDaemon.queue(new Callable<String>() {
+		Future<String> future = Xots.queue(new Callable<String>() {
 			@Override
 			public String call() throws Exception {
 				return "SUCCESS";
@@ -47,7 +47,7 @@ public class XOTSTest {
 	//@Test
 	public void testModule() throws InterruptedException, ExecutionException {
 
-		Future<NSFComponentModule> future = XotsDaemon.queue(new Callable<NSFComponentModule>() {
+		Future<NSFComponentModule> future = Xots.queue(new Callable<NSFComponentModule>() {
 			@Override
 			public NSFComponentModule call() throws Exception {
 				return NotesContext.getCurrent().getModule();
@@ -76,14 +76,14 @@ public class XOTSTest {
 	public void testSessionPassing() throws InterruptedException, ExecutionException, NotesException {
 
 		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
-		Future<String> future = XotsDaemon.queue(new SessionPassingCallable());
+		Future<String> future = Xots.queue(new SessionPassingCallable());
 
 		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", future.get());
 	}
 
 	//@Test
 	public void testLongRunningRunnable() throws InterruptedException {
-		XotsDaemon.queue(new Callable<String>() {
+		Xots.queue(new Callable<String>() {
 
 			@Override
 			public String call() {
@@ -99,7 +99,7 @@ public class XOTSTest {
 			}
 		});
 
-		XotsDaemon.queue(new Runnable() {
+		Xots.queue(new Runnable() {
 
 			@Override
 			public void run() {
@@ -113,17 +113,17 @@ public class XOTSTest {
 				System.out.println("Long runnable finished");
 			}
 		});
-		System.out.println("Tasklist 1: " + XotsDaemon.getTasks(false));
+		System.out.println("Tasklist 1: " + Xots.getTasks(false));
 		Thread.sleep(1000);
-		System.out.println("Tasklist 2: " + XotsDaemon.getTasks(false));
+		System.out.println("Tasklist 2: " + Xots.getTasks(false));
 		Thread.sleep(1000);
-		System.out.println("Tasklist 3: " + XotsDaemon.getTasks(false));
+		System.out.println("Tasklist 3: " + Xots.getTasks(false));
 		Thread.sleep(1000);
-		System.out.println("Tasklist 4: " + XotsDaemon.getTasks(false));
+		System.out.println("Tasklist 4: " + Xots.getTasks(false));
 		Thread.sleep(1000);
-		System.out.println("Tasklist 5: " + XotsDaemon.getTasks(false));
+		System.out.println("Tasklist 5: " + Xots.getTasks(false));
 		Thread.sleep(1000);
-		System.out.println("Tasklist 6: " + XotsDaemon.getTasks(false));
+		System.out.println("Tasklist 6: " + Xots.getTasks(false));
 	}
 
 	private static class HighLoadTest implements Runnable {
@@ -144,13 +144,13 @@ public class XOTSTest {
 	//@Test
 	public void testHighLoad() throws InterruptedException {
 		for (int i = 0; i < 1000; i++) {
-			XotsDaemon.queue(new HighLoadTest(i));
+			Xots.queue(new HighLoadTest(i));
 		}
-		Collection<DominoFutureTask> lst1 = null;
+		Collection<DominoFutureTask<?>> lst1 = null;
 		do {
-			lst1 = XotsDaemon.getTasks(false);
+			lst1 = Xots.getTasks(false);
 			System.out.println("--- TASK LIST ---");
-			for (DominoFutureTask task : lst1) {
+			for (DominoFutureTask<?> task : lst1) {
 				System.out.println(task);
 			}
 
@@ -162,13 +162,13 @@ public class XOTSTest {
 	@Test
 	public void testDelayed() throws InterruptedException {
 		for (int i = 0; i < 5; i++) {
-			XotsDaemon.getInstance().schedule(new HighLoadTest(i), 5 * i, TimeUnit.SECONDS);
+			Xots.getInstance().schedule(new HighLoadTest(i), 5 * i, TimeUnit.SECONDS);
 		}
-		Collection<DominoFutureTask> lst1 = null;
+		Collection<DominoFutureTask<?>> lst1 = null;
 		do {
-			lst1 = XotsDaemon.getTasks(false);
+			lst1 = Xots.getTasks(false);
 			System.out.println("--- TASK LIST ---");
-			for (DominoFutureTask task : lst1) {
+			for (DominoFutureTask<?> task : lst1) {
 				System.out.println(task);
 			}
 
@@ -198,7 +198,7 @@ public class XOTSTest {
 
 	//@Test
 	public void testEndless() throws InterruptedException {
-		XotsDaemon.queue(new EndlessTest());
+		Xots.queue(new EndlessTest());
 		Thread.sleep(1000);
 		ODAPlatform.stop();
 		ODAPlatform.start();

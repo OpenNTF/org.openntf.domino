@@ -80,20 +80,18 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		@Override
 		public void run() {
 			shutdownNow();
-			System.out.println("Executing shutdown hook");
 			Factory.removeShutdownHook(shutdownHook);
 			try {
 				for (int i = 5; i > 0; i--) {
 					if (!awaitTermination(10, TimeUnit.SECONDS)) {
 						if (i > 0) {
-							System.out.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds");
+							Factory.println("Could not terminate java threads... Still waiting " + (i * 10) + " seconds");
 						} else {
-							System.out.println("Could not terminate java threads... giving up. Server may crash now.");
+							Factory.println("Could not terminate java threads... giving up. Server may crash now.");
 						}
 					}
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -313,18 +311,18 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	 * 
 	 * @return
 	 */
-	public List<DominoFutureTask> getTasks(final boolean sortByExecDate) {
-		ArrayList<DominoFutureTask> ret = new ArrayList<DominoFutureTask>();
+	public List<DominoFutureTask<?>> getTasks(final boolean sortByExecDate) {
+		ArrayList<DominoFutureTask<?>> ret = new ArrayList<DominoFutureTask<?>>();
 
-		for (DominoFutureTask task : tasks.values()) {
+		for (DominoFutureTask<?> task : tasks.values()) {
 			ret.add(task);
 		}
 		if (sortByExecDate) {
 			Collections.sort(ret);
 		} else {
-			Collections.sort(ret, new Comparator<DominoFutureTask>() {
+			Collections.sort(ret, new Comparator<DominoFutureTask<?>>() {
 				@Override
-				public int compare(final DominoFutureTask o1, final DominoFutureTask o2) {
+				public int compare(final DominoFutureTask<?> o1, final DominoFutureTask<?> o2) {
 					if (o1.sequenceNumber < o2.sequenceNumber) {
 						return -1;
 					} else if (o1.sequenceNumber == o2.sequenceNumber) {
@@ -417,7 +415,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 
 		if (future instanceof DominoFutureTask) {
-			DominoFutureTask dft = (DominoFutureTask) future;
+			DominoFutureTask<?> dft = (DominoFutureTask<?>) future;
 			tasks.put(dft.sequenceNumber, dft);
 			if (dft.time > now()) {
 				dft.setState(TaskState.SLEEPING);

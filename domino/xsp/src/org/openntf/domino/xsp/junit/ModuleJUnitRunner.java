@@ -62,7 +62,7 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 		}
 		assertNotNull("Module " + db + " does not exist or is locked by server process", module);
 		NotesContext ctx = new NotesContext(module);
-		NotesContext.initThread(ctx);
+		NotesContext.initThread(ctx); // Request is initialized later
 
 		Factory.initThread();
 

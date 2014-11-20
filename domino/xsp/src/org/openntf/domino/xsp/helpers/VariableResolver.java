@@ -4,7 +4,7 @@ import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
 
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.xsp.util.Delegation;
 
@@ -14,7 +14,7 @@ import com.ibm.xsp.util.Delegation;
 public class VariableResolver extends javax.faces.el.VariableResolver {
 	protected final javax.faces.el.VariableResolver _resolver;
 	@SuppressWarnings("unused")
-	private final static boolean _debug = Activator.isDebug();
+	private final static boolean _debug = ODAPlatform.isDebug();
 
 	/**
 	 * Constructor
