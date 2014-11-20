@@ -2,6 +2,8 @@ package org.openntf.domino.graph2.annotations;
 
 import java.lang.reflect.Method;
 
+import org.openntf.domino.graph2.DVertex;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -43,29 +45,52 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 				Edge e = vertex.getEdges(incidence.direction(), incidence.label()).iterator().next();
 				return framedGraph.frame(e, returnType);
 			}
-		} else if (ClassUtilities.isAddMethod(method)) {
+		} else if (AnnotationUtilities.isFindMethod(method)) {
+			System.out.println("DEBUG: Invoking AdjacencyUnique FIND method");
+			Edge resultEdge = null;
+			Vertex argVertex = ((VertexFrame) arguments[0]).asVertex();
 			switch (incidence.direction()) {
 			case OUT:
-				Vertex outVertex = vertex;
-				Vertex inVertex = ((VertexFrame) arguments[0]).asVertex();
-				Iterable<Edge> outedges = outVertex.getEdges(Direction.OUT, incidence.label());	//FIXME NTF Correct direction?
-				for (Edge edge : outedges) {
-					Vertex v = edge.getVertex(Direction.IN);
-					if (v.getId().equals(inVertex.getId())) {
-						return framedGraph.frame(edge, method.getReturnType());
-					}
+				DVertex outVertex = (DVertex) vertex;
+				DVertex inVertex = (DVertex) argVertex;
+				resultEdge = outVertex.findInEdge(inVertex, incidence.label());
+				if (resultEdge != null) {
+					return framedGraph.frame(resultEdge, method.getReturnType());
+				}
+			case IN:
+				inVertex = (DVertex) vertex;
+				outVertex = (DVertex) argVertex;
+				resultEdge = inVertex.findOutEdge(outVertex, incidence.label());
+				if (resultEdge != null) {
+					return framedGraph.frame(resultEdge, method.getReturnType());
+				}
+			case BOTH:
+				inVertex = (DVertex) vertex;
+				outVertex = (DVertex) argVertex;
+				resultEdge = inVertex.findEdge(outVertex, incidence.label());
+				if (resultEdge != null) {
+					return framedGraph.frame(resultEdge, method.getReturnType());
+				}
+			}
+		} else if (ClassUtilities.isAddMethod(method)) {
+			Edge resultEdge = null;
+			Vertex argVertex = ((VertexFrame) arguments[0]).asVertex();
+			switch (incidence.direction()) {
+			case OUT:
+				DVertex outVertex = (DVertex) vertex;
+				DVertex inVertex = (DVertex) argVertex;
+				resultEdge = outVertex.findInEdge(inVertex, incidence.label());
+				if (resultEdge != null) {
+					return framedGraph.frame(resultEdge, method.getReturnType());
 				}
 				Edge e1 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
 				return framedGraph.frame(e1, method.getReturnType());
 			case IN:
-				inVertex = vertex;
-				outVertex = ((VertexFrame) arguments[0]).asVertex();
-				Iterable<Edge> inedges = outVertex.getEdges(Direction.OUT, incidence.label());	//FIXME NTF Correct direction?
-				for (Edge edge : inedges) {
-					Vertex v = edge.getVertex(Direction.IN);
-					if (v.getId().equals(inVertex.getId())) {
-						return framedGraph.frame(edge, method.getReturnType());
-					}
+				inVertex = (DVertex) vertex;
+				outVertex = (DVertex) argVertex;
+				resultEdge = inVertex.findOutEdge(outVertex, incidence.label());
+				if (resultEdge != null) {
+					return framedGraph.frame(resultEdge, method.getReturnType());
 				}
 				Edge e2 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
 				return framedGraph.frame(e2, method.getReturnType());

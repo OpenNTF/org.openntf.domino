@@ -63,6 +63,27 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	@Override
+	public <F> F getVertex(final Object id, final Class<F> kind) {
+		DGraph base = (DGraph) this.getBaseGraph();
+		org.openntf.domino.graph2.DElementStore store = null;
+		if (id instanceof NoteCoordinate) {
+			store = base.findElementStore(id);
+		} else {
+			String typeid = getTypedId(id);
+			if (typeid == null) {
+				store = base.findElementStore(kind);
+			} else {
+				store = base.findElementStore(typeid);
+			}
+		}
+		Vertex vertex = store.getVertex(id);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			initializer.initElement(kind, this, vertex);
+		}
+		return this.frame(vertex, kind);
+	}
+
+	@Override
 	public <F> F addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label, final Direction direction,
 			final Class<F> kind) {
 		DGraph base = (DGraph) this.getBaseGraph();

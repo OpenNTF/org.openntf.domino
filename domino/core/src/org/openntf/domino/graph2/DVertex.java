@@ -6,6 +6,7 @@ package org.openntf.domino.graph2;
 import java.util.Set;
 
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * @author nfreeman
@@ -29,5 +30,11 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 	public Set<String> getOutEdgeLabels();
 
 	public Set<Edge> getEdges(final String... labels);
+
+	public Edge findInEdge(final Vertex otherVertex, final String label);
+
+	public Edge findOutEdge(final Vertex otherVertex, final String label);
+
+	public Edge findEdge(final Vertex otherVertex, final String label);
 
 }

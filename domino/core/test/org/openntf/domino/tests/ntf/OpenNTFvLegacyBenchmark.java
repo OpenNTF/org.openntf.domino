@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.openntf.domino.junit.TestRunnerUtil;
+
 public enum OpenNTFvLegacyBenchmark {
 	INSTANCE;
 
@@ -21,7 +23,7 @@ public enum OpenNTFvLegacyBenchmark {
 	private static final String dbPath = "events4.nsf";
 
 	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
-		"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
+			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
 	public static class LegacyDoer implements Runnable {
 		int nameCount = 0;
@@ -377,22 +379,8 @@ public enum OpenNTFvLegacyBenchmark {
 	}
 
 	public static void main(final String[] args) {
-		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new OpenNTFDoer());
-		}
-		de.shutdown();
-
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			lotus.domino.NotesThread nthread = new lotus.domino.NotesThread(new LegacyDoer(), "Legacy " + i);
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			nthread.start();
-		}
-
+		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, THREAD_COUNT);
+		TestRunnerUtil.runAsNotesThread(LegacyDoer.class, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }
