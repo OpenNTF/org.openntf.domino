@@ -63,7 +63,7 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 				//				}
 			}
 		}, acc_);
-		return wrapSession(raw);
+		return wrapSession(raw, true);
 	}
 
 }

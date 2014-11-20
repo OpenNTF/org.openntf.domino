@@ -17,7 +17,13 @@ public class SessionHolder implements Serializable {
 		factory_ = sessionFactory;
 	}
 
-	Session getSession() {
+	public Session getSession() {
+
+		synchronized (this) {
+			if (threadSession == null) {
+				threadSession = new ThreadLocal<Session>();
+			}
+		}
 
 		Session ret = threadSession.get();
 		if (ret == null || ret.isDead()) {

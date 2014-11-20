@@ -58,7 +58,7 @@ public class SessionFullAccessFactory extends AbstractSessionFactory implements 
 				return lotus.domino.local.Session.createSessionWithFullAccess(userName);
 			}
 		}, acc_);
-		return wrapSession(raw);
+		return wrapSession(raw, true);
 	}
 
 }

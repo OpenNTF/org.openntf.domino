@@ -47,6 +47,6 @@ public class NativeSessionFactory extends AbstractSessionFactory {
 				//				}
 			}
 		}, acc_);
-		return wrapSession(raw);
+		return wrapSession(raw, true);
 	}
 }

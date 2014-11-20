@@ -2,7 +2,6 @@ package org.openntf.domino.xsp.helpers;
 
 import javax.faces.context.FacesContext;
 
-import org.openntf.domino.Session;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.AbstractSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
@@ -31,21 +30,20 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 		final NotesContext notesContext = NotesContext.getCurrent();
 
 		Factory.initThread();
-		Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
+		Fixes[] fixes = Activator.isAppAllFix(ctx) ? Fixes.values() : null;
 
-		Session session = Factory.getSession(SessionType.CURRENT);
-		if (session != null) {
-			session.setAutoMime(Activator.getAppAutoMime(ctx));
-			if (Activator.isAppMimeFriendly(ctx))
-				session.setConvertMIME(false); // this should be always the case in XPages env
-			if (Activator.isAppAllFix(ctx)) {
-				for (Fixes fix : Fixes.values()) {
-					session.setFixEnable(fix, true);
-				}
-			}
-			if (Activator.isAppFlagSet(ctx, "BUBBLEEXCEPTIONS"))
-				DominoUtils.setBubbleExceptions(true);
-		}
+		//Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
+		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, Activator.getAppAutoMime(ctx)), SessionType.CURRENT);
+
+		// In XPages, convertMime should be always false
+		//		Session session = Factory.getSession(SessionType.CURRENT);
+		//		if (session != null) {
+		//			if (Activator.isAppMimeFriendly(ctx))
+		//				session.setConvertMIME(false); // this should be always the case in XPages env
+		//		}
+
+		if (Activator.isAppFlagSet(ctx, "BUBBLEEXCEPTIONS"))
+			DominoUtils.setBubbleExceptions(true);
 
 		AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);
 		AbstractSessionFactory sessionAsSigner2 = new XPageSignerSessionFactory(notesContext, true);

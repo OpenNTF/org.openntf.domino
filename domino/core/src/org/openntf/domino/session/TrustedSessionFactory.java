@@ -45,7 +45,7 @@ public class TrustedSessionFactory extends AbstractSessionFactory {
 				//				}
 			}
 		}, acc_);
-		return wrapSession(raw);
+		return wrapSession(raw, true);
 	}
 
 }
