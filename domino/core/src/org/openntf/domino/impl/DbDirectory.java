@@ -38,7 +38,6 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.helpers.DbDirectoryTree;
-import org.openntf.domino.helpers.SessionHolder;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -62,8 +61,6 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 	private Comparator<DatabaseMetaData> comparator_ = DatabaseMetaData.FILEPATH_COMPARATOR;
 
-	private SessionHolder sessionHolder_;
-
 	/**
 	 * Instantiates a new DbDirectory.
 	 * 
@@ -78,7 +75,6 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 */
 	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
 		super(delegate, parent, wf, cppId, NOTES_SERVER);
-		sessionHolder_ = parent.getSessionHolder();
 		try {
 			name_ = delegate.getName();
 			clusterName_ = delegate.getClusterName();
@@ -497,6 +493,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Database openDatabaseByReplicaID(final String replicaId) {
 		return getAncestorSession().getDatabaseByReplicaID(getName(), replicaId);

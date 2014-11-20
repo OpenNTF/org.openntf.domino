@@ -89,11 +89,17 @@ public class Graph2Test implements Runnable {
 	private static final String ACT_PB = "Paul Blake";	//Greedo
 	private static final String ACT_DLW = "Denis Lawson";	//wedge
 
+	@SuppressWarnings("unused")
 	private static final String directedBy = "DirectedBy";
+	@SuppressWarnings("unused")
 	private static final String appearsIn = "AppearsIn";
+	@SuppressWarnings("unused")
 	private static final String portrays = "Portrays";
+	@SuppressWarnings("unused")
 	private static final String starring = "Starring";
+	@SuppressWarnings("unused")
 	private static final String spawns = "Spawns";
+	@SuppressWarnings("unused")
 	private static final String kills = "Kills";
 
 	public static void main(final String[] args) {
@@ -131,6 +137,7 @@ public class Graph2Test implements Runnable {
 		String edgeId = "80257D6D0035E02A";
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
+		@SuppressWarnings("unused")
 		Session session = this.getSession();
 
 		try {
@@ -165,6 +172,7 @@ public class Graph2Test implements Runnable {
 
 			Movie empireMovie = framedGraph.addVertex(movieId + MV_ESB, Movie.class);
 			empireMovie.setTitle(MV_ESB);
+			@SuppressWarnings("unused")
 			Vertex empire = empireMovie.asVertex();
 
 			Movie jediMovie = framedGraph.addVertex(movieId + MV_RoJ, Movie.class);

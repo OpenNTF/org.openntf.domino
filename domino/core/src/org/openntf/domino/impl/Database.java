@@ -3530,14 +3530,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private DatabaseHolder databaseHolder_;
 
 	private NoteCollection getInternalNoteCollection() {
-		if (null == intNC_) {
+		if (null == intNC_ || isDead(intNC_)) {
 			intNC_ = this.createNoteCollection(false);
-		} else {
-			try {
-				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
-			} catch (NotesException ne) {
-				intNC_ = this.createNoteCollection(false);
-			}
+			//		} else {
+			//			try {
+			//				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
+			//			} catch (NotesException ne) {
+			//				intNC_ = this.createNoteCollection(false);
+			//			}
 		}
 		return intNC_;
 	}

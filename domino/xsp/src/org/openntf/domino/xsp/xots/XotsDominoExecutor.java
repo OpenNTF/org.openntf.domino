@@ -95,7 +95,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 	private static <V> V callOrRun(final NSFComponentModule module, final boolean bubbleException, final ISessionFactory sessionFactory,
 			final Callable<V> callable, final Runnable runnable) throws Exception {
 
-		if (module == null && module.isDestroyed()) {
+		if (module == null || module.isDestroyed()) {
 			throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run");
 		}
 		module.updateLastModuleAccess();

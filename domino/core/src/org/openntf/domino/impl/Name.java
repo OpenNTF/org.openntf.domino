@@ -37,7 +37,7 @@ import org.openntf.domino.utils.Strings;
 /**
  * The Class Name.
  */
-@SuppressWarnings("deprecation")
+
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name, Comparable<Name> {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;

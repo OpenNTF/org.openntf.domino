@@ -31,6 +31,8 @@ public enum DominoAPIScratchTest {
 			doChecks(dt, dt2);
 			dt.adjustHour(-1);
 			doChecks(dt, dt2);
+			start = System.nanoTime() - start;
+			System.out.println("Time: " + start + "ns");
 		}
 	}
 

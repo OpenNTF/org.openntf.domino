@@ -127,6 +127,7 @@ public class XOTSTest {
 	}
 
 	private static class HighLoadTest implements Runnable {
+		@SuppressWarnings("unused")
 		private int i;
 
 		public HighLoadTest(final int i) {
@@ -178,6 +179,7 @@ public class XOTSTest {
 	}
 
 	public static class EndlessTest extends AbstractDominoRunnable {
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void run() {
