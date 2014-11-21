@@ -304,6 +304,12 @@ public enum Strings {
 		return ISO.toProperCase(string);
 	}
 
+	public static boolean isBlankString(final String string) {
+		if (string == null)
+			return true;
+		return ISO.isBlankString(string);
+	}
+
 	/**
 	 * Determines if a string is null or blank
 	 * 
@@ -319,6 +325,16 @@ public enum Strings {
 			if (string == null)
 				return true;
 			throw new RuntimeException("Cannot check for blankness on a non-null object of type " + string.getClass().getName());
+		}
+	}
+
+	public static boolean isHexadecimalString(final Object string) {
+		if (string instanceof CharSequence) {
+			return isHexadecimalString(((CharSequence) string).toString());
+		} else {
+			if (string == null)
+				return false;
+			throw new RuntimeException("Cannot check for hexidecimal on a non-null object of type " + string.getClass().getName());
 		}
 	}
 

@@ -50,6 +50,7 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NamedSessionFactory;
@@ -549,7 +550,7 @@ public enum Factory {
 					wf = new org.openntf.domino.impl.WrapperFactory();
 				}
 			} catch (Throwable t) {
-				t.printStackTrace();
+				log_.log(Level.WARNING, "Getting default WrapperFactory", t);
 				wf = new org.openntf.domino.impl.WrapperFactory();
 			}
 			tv.wrapperFactory = wf;
@@ -1177,12 +1178,29 @@ public enum Factory {
 		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory();
 
 		started = true;
+
 		Factory.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+
+		// Start up logging
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					Logging.getInstance().startUp();
+					return null;
+				}
+			});
+		} catch (AccessControlException e) {
+			e.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
 		defaultNamedSessionFactory = normal;
 		defaultNamedSessionFullAccessFactory = fullaccess;
+
 	}
 
 	public static synchronized void shutdown() {

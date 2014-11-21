@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.junit.TestRunnerUtil;
 
 public enum OpenNTFvLegacyBenchmark {
 	INSTANCE;
@@ -335,7 +335,7 @@ public enum OpenNTFvLegacyBenchmark {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSession(SessionType.FULL_ACCESS);
+			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSessionFullAccess();
 			org.openntf.domino.Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			org.openntf.domino.Database db = s.getDatabase(server, dbPath);
@@ -379,22 +379,8 @@ public enum OpenNTFvLegacyBenchmark {
 	}
 
 	public static void main(final String[] args) {
-		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new OpenNTFDoer());
-		}
-		de.shutdown();
-
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			lotus.domino.NotesThread nthread = new lotus.domino.NotesThread(new LegacyDoer(), "Legacy " + i);
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			nthread.start();
-		}
-
+		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, THREAD_COUNT);
+		TestRunnerUtil.runAsNotesThread(LegacyDoer.class, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }
