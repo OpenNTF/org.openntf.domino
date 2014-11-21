@@ -122,7 +122,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		// The next runtime;
 		private long time = 0;
 
-		private long sequenceNumber = sequencer.incrementAndGet();
+		public long sequenceNumber = sequencer.incrementAndGet();
 		private TaskState state = TaskState.QUEUED;
 		private Object objectState;
 
@@ -311,27 +311,16 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	 * 
 	 * @return
 	 */
-	public List<DominoFutureTask<?>> getTasks(final boolean sortByExecDate) {
+	public List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
 		ArrayList<DominoFutureTask<?>> ret = new ArrayList<DominoFutureTask<?>>();
 
 		for (DominoFutureTask<?> task : tasks.values()) {
 			ret.add(task);
 		}
-		if (sortByExecDate) {
+		if (comparator == null) {
 			Collections.sort(ret);
 		} else {
-			Collections.sort(ret, new Comparator<DominoFutureTask<?>>() {
-				@Override
-				public int compare(final DominoFutureTask<?> o1, final DominoFutureTask<?> o2) {
-					if (o1.sequenceNumber < o2.sequenceNumber) {
-						return -1;
-					} else if (o1.sequenceNumber == o2.sequenceNumber) {
-						return 0;
-					} else {
-						return 1;
-					}
-				}
-			});
+			Collections.sort(ret, comparator);
 		}
 		return ret;
 	}
@@ -406,7 +395,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	//		return ret;
 	//	}
 
-	public <V> RunnableScheduledFuture<V> queue(final RunnableScheduledFuture<V> future) {
+	protected <V> RunnableScheduledFuture<V> queue(final RunnableScheduledFuture<V> future) {
 		if (isShutdown()) {
 			throw new RejectedExecutionException();
 		}

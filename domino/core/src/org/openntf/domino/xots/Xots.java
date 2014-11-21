@@ -1,8 +1,8 @@
 package org.openntf.domino.xots;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +20,18 @@ public class Xots {
 
 	;
 
+	public static Comparator<DominoFutureTask<?>> TASKS_BY_ID = new Comparator<DominoFutureTask<?>>() {
+		@Override
+		public int compare(final DominoFutureTask<?> o1, final DominoFutureTask<?> o2) {
+			if (o1.sequenceNumber < o2.sequenceNumber) {
+				return -1;
+			} else if (o1.sequenceNumber == o2.sequenceNumber) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+	};
 	//private Set<TaskletDefinition> tasklets_ = new HashSet<TaskletDefinition>();
 
 	// This is our Threadpool that will execute all Runnables
@@ -37,22 +49,22 @@ public class Xots {
 		super();
 	}
 
-	public static ScheduledExecutorService getInstance() {
+	public static ScheduledExecutorService getService() {
 		if (!isStarted()) {
-			throw new IllegalStateException("XotsService is not started");
+			throw new IllegalStateException("Xots is not started");
 		}
 		return executor_;
 	}
 
 	/**
 	 * 
-	 * @param sortByExecDate
+	 * @param comparator
 	 * @return
 	 */
-	public static List<DominoFutureTask<?>> getTasks(final boolean sortByExecDate) {
+	public static List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
 		if (!isStarted())
 			return Collections.emptyList();
-		return executor_.getTasks(sortByExecDate);
+		return executor_.getTasks(comparator);
 	}
 
 	/**
@@ -61,7 +73,7 @@ public class Xots {
 	public static synchronized void start(final DominoExecutor executor) {
 		if (isStarted())
 			throw new IllegalStateException("XotsDaemon is already started");
-		Factory.println(Xots.class, "Starting XotsService with " + executor.getCorePoolSize() + " core threads.");
+		Factory.println(Xots.class, "Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
 
 		executor_ = executor;
 	}
@@ -77,7 +89,7 @@ public class Xots {
 
 	public static synchronized void stop(int wait) {
 		if (isStarted()) {
-			Factory.println(Xots.class, "Stopping XotsDaemon...");
+			Factory.println(Xots.class, "Stopping XPages OSGi Tasklet Service...");
 
 			executor_.shutdown();
 			long running;
@@ -91,7 +103,7 @@ public class Xots {
 
 			if (executor_.getActiveCount() > 0) {
 				Factory.println(Xots.class, "he following Threads did not terminate gracefully:");
-				for (DominoFutureTask<?> task : executor_.getTasks(false)) {
+				for (DominoFutureTask<?> task : executor_.getTasks(null)) {
 					Factory.println(Xots.class, "* " + task);
 				}
 
@@ -105,39 +117,19 @@ public class Xots {
 					}
 					if (executor_.awaitTermination(10, TimeUnit.SECONDS)) {
 						executor_ = null;
-						Factory.println(Xots.class, "XotsDaemon stopped.");
+						Factory.println(Xots.class, " XPages OSGi Tasklet Service stopped.");
 						return;
 					}
 				}
 			} catch (InterruptedException e) {
 			}
-			Factory.println(Xots.class, "WARNING: Could not stop XotsDaemon!");
+			Factory.println(Xots.class, "WARNING: Could not stop  XPages OSGi Tasklet Service!");
 		} else {
-			Factory.println(Xots.class, "XotsDaemon not running");
+			Factory.println(Xots.class, " XPages OSGi Tasklet Service not running");
 		}
 	}
 
 	// ---- delegate methods
-
-	/**
-	 * Submits the callable to the executor for immediate execution
-	 * 
-	 * @param callable
-	 * @return
-	 */
-	public static <T> Future<T> queue(final Callable<T> callable) {
-		return getInstance().submit(callable);
-	}
-
-	/**
-	 * Submits the runnable to the executor for immediate execution
-	 * 
-	 * @param callable
-	 * @return
-	 */
-	public static Future<?> queue(final Runnable callable) {
-		return getInstance().submit(callable);
-	}
 
 /**
 	 * Registers a new tasklet for periodic execution

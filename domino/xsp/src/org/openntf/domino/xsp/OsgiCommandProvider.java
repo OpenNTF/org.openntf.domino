@@ -123,10 +123,10 @@ public class OsgiCommandProvider implements CommandProvider {
 			// TODO what does XOTS?
 		} else if (cmp(cmd, "tasks", 1)) { // tasks
 			ci.println("XOTS task list:");
-			ci.println(Xots.getTasks(false));
+			ci.println(Xots.getTasks(null));
 		} else if (cmp(cmd, "schedule", 1)) {
 			ci.println("XOTS schedule list:");
-			ci.println(Xots.getTasks(true));
+			ci.println(Xots.getTasks(Xots.TASKS_BY_ID));
 		} else if (cmp(cmd, "run", 1)) {
 			xotsRun(ci);
 		}
@@ -276,10 +276,10 @@ public class OsgiCommandProvider implements CommandProvider {
 				try {
 					if (Callable.class.isAssignableFrom(clazz)) {
 						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
-						Xots.queue(callable);
+						Xots.getService().submit(callable);
 					} else if (Runnable.class.isAssignableFrom(clazz)) {
 						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
-						Xots.queue(runnable);
+						Xots.getService().submit(runnable);
 					} else {
 						ci.println("Could not run " + clazz.getName() + ", as this is no runnable or callable class");
 					}
