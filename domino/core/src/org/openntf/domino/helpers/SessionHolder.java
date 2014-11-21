@@ -8,6 +8,7 @@ import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 public class SessionHolder implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private transient ThreadLocal<Session> threadSession = new ThreadLocal<Session>();
 	private ISessionFactory factory_;

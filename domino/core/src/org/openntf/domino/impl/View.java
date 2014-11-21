@@ -124,13 +124,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
-	private String notesUrl_;
 	private String name_;
 	private String flags_;
 
 	private void initialize(final lotus.domino.View delegate) {
 		try {
-			notesUrl_ = delegate.getNotesURL();
 			name_ = delegate.getName();
 		} catch (NotesException e) {
 			e.printStackTrace();
@@ -1260,7 +1258,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		try {
 			Object domKey = toDominoFriendly(key, this, recycleThis);
 			if (domKey instanceof java.util.Vector) {
-				return fromLotus(getDelegate().getDocumentByKey((java.util.Vector) domKey, exact), Document.SCHEMA, getAncestorDatabase());
+				return fromLotus(getDelegate().getDocumentByKey((java.util.Vector<?>) domKey, exact), Document.SCHEMA,
+						getAncestorDatabase());
 			} else {
 				return fromLotus(getDelegate().getDocumentByKey(domKey, exact), Document.SCHEMA, getAncestorDatabase());
 			}
@@ -2549,7 +2548,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 
 			if (columnValuesIndex_ == 65535) {
 				// resolve the constant values (with the openntf session, to get proper dateTime values!)
-				Vector v = column.getAncestorSession().evaluate(column.getFormula());
+				Vector<?> v = column.getAncestorSession().evaluate(column.getFormula());
 				constantValue_ = v.get(0);
 			} else {
 				constantValue_ = null;
@@ -2801,11 +2800,13 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getDocumentByKey(key, exact);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Document getFirstDocumentByKey(final Vector keys) {
 		return this.getDocumentByKey(keys);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Document getFirstDocumentByKey(final Vector keys, final boolean exact) {
 		return this.getDocumentByKey(keys, exact);
@@ -2821,11 +2822,13 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getEntryByKey(key, exact);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntry getFirstEntryByKey(final Vector keys) {
 		return this.getEntryByKey(keys);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact) {
 		return this.getEntryByKey(keys, exact);

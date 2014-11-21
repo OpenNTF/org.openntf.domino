@@ -840,7 +840,6 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				}
 				if (isDbCached_ && result != null) {
 					databases_.put(key, result);
-					String altKey = "";
 					if (isDbRepId) {
 						databases_.put(result.getApiPath(), result);
 					} else {
@@ -2087,6 +2086,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		noRecycle = value;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void recycle() {
 		if (noRecycle)

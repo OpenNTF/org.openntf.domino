@@ -101,6 +101,7 @@ public class DominoEmail implements IEmail {
 	 * RPr: New Constructor. Should specify Session on creation
 	 * 
 	 * @param sess
+	 *            the session of that email
 	 */
 	public DominoEmail(final Session sess) {
 		currSess_ = sess;

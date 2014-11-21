@@ -136,13 +136,14 @@ public interface WrapperFactory {
 	/**
 	 * This method is called if a Notes-object was recovered
 	 * 
-	 * @param oldLotus
 	 * @param newLotus
+	 *            the new lotus object
 	 * @param wrapper
+	 *            the wrapper that wraps the new lotus object now
 	 * @param parent
+	 *            the parent object of the wrapper
 	 */
-	public void recacheLotusObject(final lotus.domino.Base oldLotus, final lotus.domino.Base newLotus, final Base<?> wrapper,
-			final Base<?> parent);
+	public void recacheLotusObject(final lotus.domino.Base newLotus, final Base<?> wrapper, final Base<?> parent);
 
 	/**
 	 * Returns the last Documents (max. 10) which where wrapped in the current thread

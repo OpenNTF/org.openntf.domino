@@ -687,7 +687,7 @@ public interface Database extends Base {
 	/**
 	 * Returns a DatabaseHolder object, which is serializable
 	 * 
-	 * @return
+	 * @return a DatabaseHolder
 	 */
 	DatabaseHolder getDatabaseHolder();
 

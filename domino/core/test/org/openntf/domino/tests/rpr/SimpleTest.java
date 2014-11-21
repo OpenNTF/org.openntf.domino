@@ -65,6 +65,9 @@ public class SimpleTest implements Runnable {
 				doc2 = null;
 				d = null;
 			}
+			if (doc1 == null && doc2 == null && doc3 == null) {
+				// NOP - just ensure access to doc1..3 
+			}
 			//System.out.println(doc1 + "" + doc2 + "" + doc3);
 		}
 

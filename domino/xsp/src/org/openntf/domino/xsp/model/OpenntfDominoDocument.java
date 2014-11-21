@@ -66,6 +66,14 @@ public class OpenntfDominoDocument extends DominoDocument implements AsDocMap {
 
 	}
 
+	/*
+	 * retruns generic class now 
+	 */
+	@Override
+	public Class<?> getType(final Object arg0) {
+		return super.getType(arg0);
+	}
+
 	/**
 	 * Default constructor.
 	 */
