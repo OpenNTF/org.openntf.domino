@@ -269,7 +269,7 @@ public enum Factory {
 	}
 
 	private static Map<String, String> ENVIRONMENT;
-	@SuppressWarnings("unused")
+
 	//private static boolean session_init = false;
 	//private static boolean jar_init = false;
 	private static boolean started = false;
@@ -519,7 +519,7 @@ public enum Factory {
 		try {
 			Class<?> BCLClass = Class.forName("com.ibm.domino.http.bootstrap.BootstrapClassLoader");
 			if (BCLClass != null) {
-				ClassLoader cl = (ClassLoader) BCLClass.getMethod("getSharedClassLoader", null).invoke(null, null);
+				ClassLoader cl = (ClassLoader) BCLClass.getMethod("getSharedClassLoader").invoke(null);
 				if ("com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader".equals(cl.getClass().getName())) {
 					result = RunContext.XPAGES_OSGI;
 				}
@@ -542,7 +542,12 @@ public enum Factory {
 		if (wf == null) {
 			try {
 				List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
-				wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
+				if (wfList.size() > 0) {
+					// We need a NEW wrapperFactory for each instance.
+					wf = wfList.get(0).getClass().newInstance();
+				} else {
+					wf = new org.openntf.domino.impl.WrapperFactory();
+				}
 			} catch (Throwable t) {
 				t.printStackTrace();
 				wf = new org.openntf.domino.impl.WrapperFactory();
