@@ -34,7 +34,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	private static class DominoWrappedCallable<V> extends WrappedCallable<V> {
 
 		public DominoWrappedCallable(final Callable<V> runnable) {
-			super(runnable);
+			init(runnable);
 		}
 
 		@Override
@@ -53,7 +53,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	private static class DominoWrappedRunnable extends WrappedRunnable {
 
 		public DominoWrappedRunnable(final java.lang.Runnable runnable) {
-			super(runnable);
+			init(runnable);
 		}
 
 		@Override

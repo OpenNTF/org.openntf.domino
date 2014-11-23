@@ -1,4 +1,4 @@
-package org.openntf.domino.xsp.helpers;
+package org.openntf.domino.xsp.session;
 
 import java.security.PrivilegedActionException;
 
@@ -6,10 +6,7 @@ import javax.servlet.ServletException;
 
 import lotus.domino.NotesException;
 
-import org.openntf.domino.AutoMime;
 import org.openntf.domino.Session;
-import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.session.AbstractSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
 
@@ -18,20 +15,13 @@ import com.ibm.domino.napi.c.NotesUtil;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
-public class XPageCurrentSessionFactory extends AbstractSessionFactory {
-	private String runAs_;
+public class XPageCurrentSessionFactory extends AbstractXPageSessionFactory {
 
-	public XPageCurrentSessionFactory(final Fixes[] fixes, final AutoMime autoMime) {
-		super(fixes, autoMime, null);
-		init();
-	}
+	private static final long serialVersionUID = 1L;
+	private String runAs_;
 
 	public XPageCurrentSessionFactory() {
 		super();
-		init();
-	}
-
-	private void init() {
 		final lotus.domino.Session rawSession = NotesContext.getCurrent().getCurrentSession();
 		try {
 			runAs_ = rawSession.getEffectiveUserName();

@@ -20,11 +20,6 @@ import com.ibm.xsp.util.TypedUtil;
  */
 @SuppressWarnings("unchecked")
 public class OpenntfGodModeImplicitObjectFactory implements ImplicitObjectFactory {
-	private final String[][] implicitObjectList//
-	= { { "database", Database.class.getName() }, //
-			{ "session", Session.class.getName() }, //
-			{ "sessionAsSigner", Session.class.getName() }, //
-			{ "sessionAsSignerWithFullAccess", Session.class.getName() } };
 
 	protected ImplicitObjectFactory delegate;
 
@@ -34,28 +29,29 @@ public class OpenntfGodModeImplicitObjectFactory implements ImplicitObjectFactor
 
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		if (!ODAPlatform.isAPIEnabled())
-			return;
-
-		Session session = Factory.getSession(SessionType.CURRENT);
-		Database db = session.getCurrentDatabase();
-		Map<String, Object> ecMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-
 		// first call the delegate. There may be more than the 2 objects in future that we overwrite in the next step
 		delegate.createImplicitObjects(ctx);
-		// overwrite the IBM objects
-		ecMap.put("session", session);
-		ecMap.put("database", db);
+		if (ODAPlatform.isAPIEnabled()) {
+
+			Session session = Factory.getSession(SessionType.CURRENT);
+			Database db = session.getCurrentDatabase();
+			Map<String, Object> ecMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+
+			// overwrite the IBM objects
+			ecMap.put("session", session);
+			ecMap.put("database", db);
+		}
 	}
 
 	@Override
 	public Object getDynamicImplicitObject(final FacesContextEx ctx, final String objectName) {
-		if ("sessionAsSignerWithFullAccess".equals(objectName)) {
-			return Factory.getSession(SessionType.SIGNER_FULL_ACCESS);
-		} else if ("sessionAsSigner".equals(objectName)) {
-			return Factory.getSession(SessionType.SIGNER);
+		if (ODAPlatform.isAPIEnabled()) {
+			if ("sessionAsSignerWithFullAccess".equals(objectName)) {
+				return Factory.getSession(SessionType.SIGNER_FULL_ACCESS);
+			} else if ("sessionAsSigner".equals(objectName)) {
+				return Factory.getSession(SessionType.SIGNER);
+			}
 		}
-
 		return delegate.getDynamicImplicitObject(ctx, objectName);
 	}
 
@@ -66,8 +62,6 @@ public class OpenntfGodModeImplicitObjectFactory implements ImplicitObjectFactor
 
 	@Override
 	public String[][] getImplicitObjectList() {
-		if (delegate != null)
-			return delegate.getImplicitObjectList();
-		return implicitObjectList;
+		return delegate.getImplicitObjectList();
 	}
 }

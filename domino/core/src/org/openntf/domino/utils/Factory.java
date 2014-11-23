@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 import lotus.notes.NotesThread;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
@@ -49,6 +50,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -67,6 +69,15 @@ import org.openntf.service.ServiceLocatorFinder;
  */
 public enum Factory {
 	;
+	/**
+	 * Enables Thread support (sharing Notes-objects across threads). But you _SHOULD_ really avoid this! Neiter the ODA is tested, nor IBM
+	 * recommend this. You should read the paragraph <a
+	 * href="http://www-01.ibm.com/support/knowledgecenter/SSVRGU_8.5.3/com.ibm.designer.domino.main.doc/H_NOTESTHREAD_CLASS_JAVA.html"
+	 * >Multithreading issues</a> before changing the value.
+	 * 
+	 * TODO RPr: make notes.ini setting.
+	 */
+	public static boolean ENABLE_THREAD_SUPPORT = false;
 
 	/**
 	 * Printer class (will be modified by XSP-environment), so that the Factory prints directly to Console (so no "HTTP JVM" Prefix is
@@ -1163,19 +1174,24 @@ public enum Factory {
 			}
 		};
 
-		// In XPages environment, this factory will not be used!
-		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory();
+		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
+		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
-		// In XPages environment, this factory will not be used!
-		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory();
+		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
+		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
-		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory();
-		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory();
-		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory();
+		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
+		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
-		defaultNamedSessionFactory = new NamedSessionFactory((String) null);
-		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory();
+		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
+		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+
+		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
+		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+
+		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
+		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		started = true;
 

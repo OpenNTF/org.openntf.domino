@@ -209,7 +209,7 @@ public enum DominoAPIScratchTest {
 	}
 
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new Doer(), THREAD_COUNT);
+		TestRunnerUtil.runAsDominoThread(new Doer(), TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }

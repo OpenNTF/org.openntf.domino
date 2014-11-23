@@ -142,8 +142,7 @@ public class Xots {
 	 * @return
 	 */
 	public static Future<?> registerTasklet(final String moduleName, final String className, final String... cron) {
-		//CronExpression
-		return null;
+		return executor_.registerTasklet(moduleName, className, cron);
 
 	}
 }

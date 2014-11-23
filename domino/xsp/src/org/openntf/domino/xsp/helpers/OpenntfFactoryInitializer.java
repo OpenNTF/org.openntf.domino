@@ -2,14 +2,13 @@ package org.openntf.domino.xsp.helpers;
 
 import javax.faces.context.FacesContext;
 
-import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.session.AbstractSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.ODAPlatform;
+import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
+import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
 
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.xsp.DominoXspContributor;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.RequestCustomizerFactory;
@@ -31,22 +30,17 @@ public class OpenntfFactoryInitializer extends RequestCustomizerFactory {
 	public static void initializeFromContext(final FacesContext ctx, final ClassLoader ctxClassLoader) {
 
 		Factory.initThread();
-		Fixes[] fixes = ODAPlatform.isAppAllFix(null) ? Fixes.values() : null;
-
 		//Factory.setSession(notesContext.getCurrentSession(), SessionType.CURRENT);
-		Factory.setSessionFactory(new XPageCurrentSessionFactory(fixes, ODAPlatform.getAppAutoMime(null)), SessionType.CURRENT);
+		// set up the sessionFactories for three XPage-types
+
+		Factory.setSessionFactory(new XPageCurrentSessionFactory(), SessionType.CURRENT);
+		Factory.setSessionFactory(new XPageSignerSessionFactory(false), SessionType.SIGNER);
+		Factory.setSessionFactory(new XPageSignerSessionFactory(true), SessionType.SIGNER_FULL_ACCESS);
 
 		if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS")) {
 			DominoUtils.setBubbleExceptions(true);
 		}
-		NotesContext notesContext = NotesContext.getCurrentUnchecked();
-		if (notesContext != null) {
 
-			AbstractSessionFactory sessionAsSigner1 = new XPageSignerSessionFactory(notesContext, false);
-			AbstractSessionFactory sessionAsSigner2 = new XPageSignerSessionFactory(notesContext, true);
-			Factory.setSessionFactory(sessionAsSigner1, SessionType.SIGNER);
-			Factory.setSessionFactory(sessionAsSigner2, SessionType.SIGNER_FULL_ACCESS);
-		}
 		Factory.setClassLoader(ctxClassLoader);
 
 		if (ctx != null) {

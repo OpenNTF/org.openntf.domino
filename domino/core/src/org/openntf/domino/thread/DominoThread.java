@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -29,12 +31,14 @@ public class DominoThread extends NotesThread {
 	private static final Logger log_ = Logger.getLogger(DominoThread.class.getName());
 	private transient Runnable runnable_;
 	protected int nativeId_;
+	private final ISessionFactory sessionFactory_;
 
 	/**
 	 * Instantiates a new domino thread.
 	 */
 	public DominoThread() {
 		// TODO Auto-generated constructor stub
+		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
 
 	/**
@@ -46,6 +50,7 @@ public class DominoThread extends NotesThread {
 	public DominoThread(final Runnable runnable) {
 		super();
 		runnable_ = runnable;
+		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
 
 	/**
@@ -57,11 +62,13 @@ public class DominoThread extends NotesThread {
 	public DominoThread(final Runnable runnable, final String name) {
 		super(name);
 		runnable_ = runnable;
+		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
 
 	public DominoThread(final AbstractDominoRunnable runnable) {
 		super();
 		runnable_ = runnable;
+		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
 
 	/**
@@ -75,6 +82,7 @@ public class DominoThread extends NotesThread {
 	public DominoThread(final AbstractDominoRunnable runnable, final String threadName) {
 		super(threadName);
 		runnable_ = runnable;
+		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
 
 	public Runnable getRunnable() {
@@ -104,6 +112,7 @@ public class DominoThread extends NotesThread {
 		super.initThread();
 		log_.fine("DEBUG: Initializing a " + toString());
 		Factory.initThread();
+		Factory.setSessionFactory(sessionFactory_, SessionType.CURRENT);
 	}
 
 	@Override
