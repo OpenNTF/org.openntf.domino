@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faces-config>
+	<factory>
+		<faces-context-factory>org.openntf.domino.xsp.adapter.ODAFacesContextFactory</faces-context-factory>
+	</factory>
 	<managed-bean>
 		<managed-bean-name>LogReader</managed-bean-name>
 		<managed-bean-class>org.openntf.domino.xsp.readers.LogReader</managed-bean-class>
