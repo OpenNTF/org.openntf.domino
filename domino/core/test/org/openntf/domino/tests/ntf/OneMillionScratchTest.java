@@ -22,6 +22,7 @@ import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @SuppressWarnings("deprecation")
 public enum OneMillionScratchTest {
@@ -40,7 +41,7 @@ public enum OneMillionScratchTest {
 			int nameCount = 0;
 			int docCount = 0;
 			int dateCount = 0;
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());

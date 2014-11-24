@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.junit.Test;
-import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.xots.Xots;
 
 public abstract class ThreadedTest implements Callable<String> {
 
@@ -17,7 +17,7 @@ public abstract class ThreadedTest implements Callable<String> {
 		Future<String> futures[] = new Future[threadCount];
 		int i;
 		for (i = 0; i < threadCount; i++) {
-			futures[i] = XotsDaemon.queue(this.getClass().newInstance());
+			futures[i] = Xots.getService().submit(this.getClass().newInstance());
 		}
 		for (i = 0; i < threadCount; i++) {
 			assertEquals("SUCCESS", futures[i].get());

@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.iterators;
 
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +26,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DocumentIterator.
  */
-public class NoteIterator extends AbstractDominoIterator<String> {
+public class NoteIterator implements Iterator<String> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(NoteIterator.class.getName());
 
@@ -35,6 +36,8 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	/** The id array_. */
 	private int[] idArray_;
 
+	private NoteCollection collection_;
+
 	/**
 	 * Instantiates a new document iterator.
 	 * 
@@ -42,7 +45,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 *            the collection
 	 */
 	public NoteIterator(final NoteCollection collection) {
-		super(collection);
+		collection_ = collection;
 		setIdArray(getCollectionIds(collection));
 	}
 
@@ -98,6 +101,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 		if (getIdArray() == null) {
 			// Most commonly if no match found
@@ -111,6 +115,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 * 
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	public String next() {
 		String result = null;
 		if (hasNext()) {
@@ -125,6 +130,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 * 
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		// NOOP
 	}

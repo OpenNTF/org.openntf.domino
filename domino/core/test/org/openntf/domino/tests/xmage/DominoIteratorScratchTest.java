@@ -10,6 +10,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum DominoIteratorScratchTest {
 	INSTANCE;
@@ -77,13 +78,9 @@ public enum DominoIteratorScratchTest {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			if (s == null) {
-				try {
-					s = Factory.getTrustedSession();
-				} catch (Throwable t) {
-					t.printStackTrace();
-				}
+				s = Factory.getSession(SessionType.TRUSTED);
 			}
 			String server = s.getServerName();
 			DbDirectory dbDirectory = s.getDbDirectory(server);
@@ -101,16 +98,19 @@ public enum DominoIteratorScratchTest {
 					}
 
 					DateTime toxic = database.getCreated();
-					dateCount++;
+					if (toxic != null)
+						dateCount++;
 
 					for (ACLEntry entry : database.getACL()) {
 						Name entryName = entry.getNameObject();
-						nameCount++;
+						if (entryName != null)
+							nameCount++;
 					}
 
 					// if (database.getAllDocuments().getCount() > 0) {
 					for (Document doc : database.getAllDocuments()) {
-						docCount++;
+						if (doc != null)
+							docCount++;
 					}
 					// }
 

@@ -15,6 +15,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class MassCopyDocumentsScratchTest {
@@ -25,7 +26,7 @@ public class MassCopyDocumentsScratchTest {
 	public void run() {
 
 		long start = System.nanoTime();
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 		Database source = s.getDatabase("", SOURCE, true);
 		Database target = s.getDatabase("", TARGET, true);
 

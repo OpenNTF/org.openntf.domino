@@ -1049,23 +1049,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	}
 
 	@Override
-	protected lotus.domino.Item getDelegate() {
-		lotus.domino.Item item = super.getDelegate();
-		try {
-			item.isEncrypted();
-		} catch (NotesException recycleSucks) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	private void resurrect() {
+	protected void resurrect() {
 		if (name_ != null) {
 			try {
 				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
 				setDelegate(item, 0);
-				getFactory().recacheLotusObject(d, this, parent_);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");

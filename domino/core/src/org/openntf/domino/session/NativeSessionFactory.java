@@ -11,6 +11,10 @@ import org.openntf.domino.ext.Session.Fixes;
 public class NativeSessionFactory extends AbstractSessionFactory {
 	private static final long serialVersionUID = 1L;
 
+	public NativeSessionFactory() {
+		super();
+	}
+
 	public NativeSessionFactory(final Session source) {
 		super(source);
 	}
@@ -28,18 +32,21 @@ public class NativeSessionFactory extends AbstractSessionFactory {
 		lotus.domino.Session raw = AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				synchronized (SecurityManager.class) {
-					SecurityManager oldSm = System.getSecurityManager();
-					System.setSecurityManager(null);
-					try {
-						return lotus.domino.local.Session.createSession();
-					} finally {
-						System.setSecurityManager(oldSm);
-					}
-				}
+				return lotus.domino.local.Session.createSession();
+				// it is too dangerous to disable the SM temporary.
+				// it might happen that an other thread runs while we create the session
+				// and queries the SM -> bang.
+				//				synchronized (SecurityManager.class) {
+				//					SecurityManager oldSm = System.getSecurityManager();
+				//					System.setSecurityManager(null);
+				//					try {
+				//						return lotus.domino.local.Session.createSession();
+				//					} finally {
+				//						System.setSecurityManager(oldSm);
+				//					}
+				//				}
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw, true);
 	}
-
 }

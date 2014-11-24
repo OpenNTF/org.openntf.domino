@@ -17,12 +17,13 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.Resurrectable;
 
 /**
  * The Interface MIMEHeader.
  */
 public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, org.openntf.domino.ext.MIMEHeader,
-		DocumentDescendant {
+		DocumentDescendant, Resurrectable {
 
 	public static class Schema extends FactorySchema<MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> {
 		@Override

@@ -2,7 +2,7 @@ package org.openntf.domino.xsp.helpers;
 
 import javax.faces.context.FacesContext;
 
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.ODAPlatform;
 
 import com.ibm.xsp.event.FacesContextListener;
 
@@ -12,7 +12,7 @@ import com.ibm.xsp.event.FacesContextListener;
 public class ContextListener extends AbstractListener implements FacesContextListener {
 	public final static boolean ATTACH_LISTENER = true; // change this to false if you don't want to bother.
 
-	private final static boolean _debug = Activator.isDebug();
+	private final static boolean _debug = ODAPlatform.isDebug();
 	static {
 		if (_debug)
 			System.out.println(ContextListener.class.getName() + " loaded");

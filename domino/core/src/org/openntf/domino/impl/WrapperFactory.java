@@ -53,6 +53,8 @@ import org.openntf.domino.types.FactorySchema;
  */
 public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
+	public Thread correctThread = Thread.currentThread();
+
 	public static final int LWDCSIZE = 10;
 
 	private static class LastWrappedDocCache {
@@ -299,29 +301,13 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	}
 
 	@Override
-	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
-		boolean returnVal = false;
+	public void recacheLotusObject(final lotus.domino.Base newLotus, final Base<?> wrapper, final Base<?> parent) {
 		long[] prevent_recycling = new long[2];
-		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(lotus);
+		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(newLotus);
 		prevent_recycling[1] = org.openntf.domino.impl.Base.getLotusId(parent);
-		Base<?> result = referenceCache.get(cpp_key, Base.class);
 
-		if (result == null) {
-			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
-			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
-			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
-
-			result = wrapper;
-
-			referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
-
-			referenceCache.put(cpp_key, result, lotus);
-			returnVal = true;
-		} else {	//NTF not sure what to do in this case. Don't even know what this means...
-			log_.log(Level.FINE, "Re-wrapping a lotus object " + lotus.getClass().getName()
-					+ " that is already in the queue. This may indicate a logic problem.");
-		}
-		return returnVal;
+		referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
+		referenceCache.put(cpp_key, wrapper, newLotus);
 	}
 
 	@Override
@@ -342,7 +328,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 */
 
 	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
-		// TODO Auto-generated method stub
+		if (Thread.currentThread() != correctThread) {
+			throw new IllegalStateException("It seems that Notes-Objects are used across threads!");
+		}
 
 		if (lotus instanceof lotus.domino.Name) {
 			return new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, (Session) parent, this, cpp);

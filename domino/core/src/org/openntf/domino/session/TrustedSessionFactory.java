@@ -11,6 +11,10 @@ import org.openntf.domino.ext.Session.Fixes;
 public class TrustedSessionFactory extends AbstractSessionFactory {
 	private static final long serialVersionUID = 1L;
 
+	public TrustedSessionFactory() {
+		super();
+	}
+
 	public TrustedSessionFactory(final Session source) {
 		super(source);
 	}
@@ -28,18 +32,20 @@ public class TrustedSessionFactory extends AbstractSessionFactory {
 		lotus.domino.Session raw = AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				synchronized (SecurityManager.class) {
-					SecurityManager oldSm = System.getSecurityManager();
-					System.setSecurityManager(null);
-					try {
-						return lotus.domino.local.Session.createTrustedSession();
-					} finally {
-						System.setSecurityManager(oldSm);
-					}
-				}
+				return lotus.domino.local.Session.createTrustedSession();
+				// RPr: We should NEVER disable the SM
+				//				synchronized (SecurityManager.class) {
+				//					SecurityManager oldSm = System.getSecurityManager();
+				//					System.setSecurityManager(null);
+				//					try {
+				//						return lotus.domino.local.Session.createTrustedSession();
+				//					} finally {
+				//						System.setSecurityManager(oldSm);
+				//					}
+				//				}
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw, true);
 	}
 
 }

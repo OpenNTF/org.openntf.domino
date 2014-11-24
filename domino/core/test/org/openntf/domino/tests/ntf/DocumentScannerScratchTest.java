@@ -14,6 +14,7 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class DocumentScannerScratchTest {
 	private static final Logger log_ = Logger.getLogger(DocumentScannerScratchTest.class.getName());
@@ -38,7 +39,7 @@ public class DocumentScannerScratchTest {
 			scanner.setTrackFieldValues(false);
 			scanner.setTrackTokenFreq(false);
 
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Database db = s.getDatabase("", "help/help9_admin.nsf");
 			System.out.println("Beginning scan of " + db.getApiPath());
 			for (Document doc : db.getAllDocuments()) {

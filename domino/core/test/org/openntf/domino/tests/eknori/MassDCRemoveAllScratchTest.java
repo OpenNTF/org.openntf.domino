@@ -15,6 +15,7 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class MassDCRemoveAllScratchTest {
@@ -24,7 +25,7 @@ public class MassDCRemoveAllScratchTest {
 	@Test
 	public void run() {
 
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 		Database source = s.getDatabase("", SOURCE, true);
 
 		System.out.println("-- START --");

@@ -40,7 +40,8 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 		if (type.isAssignableFrom(raw.getClass()))
 			return type.cast(raw);
 		if (lotus.domino.Base.class.isAssignableFrom(type)) {
-			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type, org.openntf.domino.utils.Factory.getSession());
+			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type,
+					org.openntf.domino.utils.Factory.getSession((lotus.domino.Base) raw));
 		} else {
 			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type, null);
 		}

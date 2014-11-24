@@ -23,6 +23,7 @@ import lotus.domino.ViewNavigator;
 
 import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Names;
 
 import com.ibm.commons.Platform;
@@ -770,7 +771,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 			if (null == key) {
 				return columnValues.get(0);
 			} else {
-				return Names.getNamePart(Factory.getSession(), (String) columnValues.get(0), key);
+				return Names.getNamePart(Factory.getSession(SessionType.CURRENT), (String) columnValues.get(0), key);
 			}
 		}
 
@@ -879,7 +880,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 			if (null == key) {
 				return columnValues.get(1);
 			} else {
-				return Names.getNamePart(Factory.getSession(), (String) columnValues.get(1), key);
+				return Names.getNamePart(Factory.getSession(SessionType.CURRENT), (String) columnValues.get(1), key);
 			}
 		}
 
@@ -1076,7 +1077,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 				if (null == key) {
 					return columnValues.get(1);
 				} else {
-					return Names.getNamePart(Factory.getSession(), (String) columnValues.get(1), key);
+					return Names.getNamePart(Factory.getSession(SessionType.CURRENT), (String) columnValues.get(1), key);
 				}
 			}
 		}

@@ -40,7 +40,6 @@ import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.helpers.DbDirectoryTree;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -494,6 +493,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Database openDatabaseByReplicaID(final String replicaId) {
 		return getAncestorSession().getDatabaseByReplicaID(getName(), replicaId);
@@ -546,29 +546,17 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return this.getParent();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getDelegate()
-	 */
 	@Override
-	protected lotus.domino.DbDirectory getDelegate() {
-		lotus.domino.DbDirectory dir = super.getDelegate();
-		try {
-			dir.getClusterName();
-			//			dir.isHonorShowInOpenDatabaseDialog();
-		} catch (NotesException e) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	void resurrect() {
-		Session rawSessionUs = Factory.getSession();
-		lotus.domino.Session rawSession = toLotus(rawSessionUs);
+	protected void resurrect() {
+		lotus.domino.Session rawSession = toLotus(getParent());
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
+			if (log_.isLoggable(java.util.logging.Level.FINE)) {
+				Throwable t = new Throwable();
+				log_.log(java.util.logging.Level.FINE, "DbDirectory for server " + name_ + "had been recycled and was auto-restored.", t);
+			}
+
 			setDelegate(dir, 0);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);

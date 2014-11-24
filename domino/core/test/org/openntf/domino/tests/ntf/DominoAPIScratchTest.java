@@ -20,6 +20,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum DominoAPIScratchTest {
 	INSTANCE;
@@ -159,7 +160,7 @@ public enum DominoAPIScratchTest {
 			// if (false) {
 			long start = System.nanoTime();
 
-			Session s = Factory.getSessionFullAccess();
+			Session s = Factory.getSession(SessionType.FULL_ACCESS);
 			//			this.setup(s);
 			RunContext rc = Factory.getRunContext();
 			//			System.out.println("RunContext: " + rc.toString());

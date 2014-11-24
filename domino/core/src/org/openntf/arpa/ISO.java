@@ -22,7 +22,6 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openntf.domino.logging.LogUtils;
@@ -39,7 +38,7 @@ public enum ISO {
 	 * 
 	 * @author Devin S. Olsonm (dolson@czarnowski.com)
 	 * 
-	 @see "Country Codes - ISO 3166" http://www.iso.org/iso/home/standards/country_codes.htm
+	 * @see <a href="http://www.iso.org/iso/home/standards/country_codes.htm">Country Codes - ISO 3166</a>
 	 * 
 	 */
 	public static enum ISO3166 {
@@ -226,7 +225,7 @@ public enum ISO {
 			final int length = code.length();
 			switch (length) {
 			case 2: {
-				final Matcher matcher = ISO.PatternAlpha2.matcher(code);
+				//final Matcher matcher = ISO.PatternAlpha2.matcher(code);
 				for (final ISO3166 result : ISO3166.values()) {
 					if (code.equals(result.getCode2())) {
 						return result;
@@ -235,7 +234,7 @@ public enum ISO {
 				break;
 			}
 			case 3: {
-				final Matcher matcher = ISO.PatternAlpha3.matcher(code);
+				//final Matcher matcher = ISO.PatternAlpha3.matcher(code);
 				for (final ISO3166 result : ISO3166.values()) {
 					if (code.equals(result.getCode3())) {
 						return result;

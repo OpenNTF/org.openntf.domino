@@ -18,6 +18,7 @@ import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.exception.ElementKeyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -323,7 +324,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getStoreKey();
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
 		return result;
@@ -348,7 +349,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getProxyStoreKey();
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
 		return result;

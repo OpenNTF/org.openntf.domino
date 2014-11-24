@@ -29,14 +29,16 @@ public enum ModuleLoader {
 	 */
 	public static NSFService getNsfService() {
 		if (nsfservice_ == null) {
-			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-				if (service instanceof NSFService) {
-					nsfservice_ = (NSFService) service;
-					break;
+			if (LCDEnvironment.getInstance() != null) {
+				for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+					if (service instanceof NSFService) {
+						nsfservice_ = (NSFService) service;
+						break;
+					}
 				}
 			}
 			if (nsfservice_ == null) {
-				System.out.println("WARNING: Setting up our own NSFService.");
+				Factory.println("WARNING: Setting up our own NSFService. (This may happen in a test environment, but should NOT happen on a server)");
 				nsfservice_ = new NSFService(LCDEnvironment.getInstance());
 			}
 		}
@@ -70,6 +72,8 @@ public enum ModuleLoader {
 				getNsfService().doService("", path, session, request, response);
 			} catch (PageNotFoundException pnfe) {
 				// Thats ok (unless someone really creates a resource with name dummyrequest/to/trigger/refresh)
+			} catch (com.ibm.xsp.acl.NoAccessSignal nas) {
+				// Thats ok. (refresh should be done anyway)
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

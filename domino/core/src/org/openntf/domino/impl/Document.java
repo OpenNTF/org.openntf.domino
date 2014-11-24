@@ -769,10 +769,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * This is used to track all MIMEEntities in this document. EVERY MIME-Item should be routed over this method!
 	 * 
 	 * @param lotus
-	 * @param markDirty
-	 * @return
+	 *            the lotus name
+	 * @param itemName
+	 *            the itemName
+	 * @return the wrapped and tracked {@link MIMEEntity}
 	 */
-	public MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName, final boolean markDirty) {
+	public MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName) {
 		if (lotus == null)
 			return null;
 		MIMEEntity wrapped = fromLotus(lotus, MIMEEntity.SCHEMA, this);
@@ -804,7 +806,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				itemName = "Body";
 			}
 			try {
-				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName, true);
+				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName);
 			} catch (NotesException alreadyThere) {
 				Item chk = getFirstItem(itemName);
 				if (chk != null) {
@@ -817,7 +819,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					return me;
 				}
 				closeMIMEEntities(false, itemName);
-				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName, true);
+				return fromLotusMimeEntity(getDelegate().createMIMEEntity(itemName), itemName);
 			}
 			// return fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
 		} catch (NotesException e) {
@@ -1057,6 +1059,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
 	public void recycle() {
 		//		System.out.println("Recycle called on document " + getNoteID());
 		closeMIMEEntities(false, null);
@@ -1118,6 +1121,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
@@ -1125,8 +1129,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// RPr: this should be equal to the code below.
 		MIMEEntity entity = getMIMEEntity(name);
 		if (entity == null) {
-			Object result = TypeUtils.itemValueToClass(this, name, T);
-			return (T) result;
+			return TypeUtils.itemValueToClass(this, name, T);
 		} else {
 			try {
 				return (T) Documents.getItemValueMIME(this, name, entity);
@@ -1361,7 +1364,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					if (i < sz * 2)
 						break;
 					Vector<lotus.domino.DateRange> aux = new Vector<lotus.domino.DateRange>(sz);
-					lotus.domino.Session rawsession = toLotus(Factory.getSession());
+					lotus.domino.Session rawsession = toLotus(getAncestorSession());
 					for (i = 0; i < sz; i++) {
 						lotus.domino.DateTime dts = (lotus.domino.DateTime) vGIV.elementAt(2 * i);
 						lotus.domino.DateTime dte = (lotus.domino.DateTime) vGIV.elementAt(2 * i + 1);
@@ -1544,7 +1547,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			if (convertMime)
 				getAncestorSession().setConvertMime(false);
-			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName, false);
+			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName);
 			if (openMIMEEntities.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");
 				log_.warning("Accessing two different MIME items at once can cause a server crash!" + openMIMEEntities.keySet());
@@ -3275,8 +3278,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3472,16 +3475,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	protected lotus.domino.Document getDelegate() {
-		// checkMimeOpen(); RPr: This is not needed here (just to tweak my grep command)
-		lotus.domino.Document d = super.getDelegate();
-		if (isDead(d)) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	private void resurrect() {
+	protected void resurrect() {
 		openMIMEEntities.clear();
 		if (noteid_ != null) {
 			try {
@@ -3504,7 +3498,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							} catch (NotesException ne) {
 								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
 										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text, ne);
 							}
 						}
 					} else {
@@ -3512,29 +3506,36 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				setDelegate(d, 0);
-				getFactory().recacheLotusObject(d, this, parent_);
-				shouldResurrect_ = false;
-				if (log_.isLoggable(Level.FINE)) {
-					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
-							+ " had been recycled and was auto-restored. Changes may have been lost.");
+				//getFactory().recacheLotusObject(d, this, parent_);
+				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
-						Throwable t = new Throwable();
-						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+						log_.log(Level.FINER, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+								+ " was rollbacked.");
 					}
-					log_.log(Level.FINE,
-							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+				} else {
+					if (log_.isLoggable(Level.FINE)) {
+						Throwable t = new Throwable();
+						log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+								+ " had been recycled and was auto-restored. Changes may have been lost.", t);
+					}
+					//					StackTraceElement[] elements = t.getStackTrace();
+					//					log_.log(Level.FINER,
+					//							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+					//							+ ")");
+					//					log_.log(Level.FINER,
+					//								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+					//										+ ")");
+					//						log_.log(Level.FINER,
+					//								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+					//										+ ")");
+					//					}
+					//					log_.log(Level.FINE,
+					//							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
+			} finally {
+				shouldResurrect_ = false;
 			}
 		} else if (null != unid_) {
 			//NTF we have a unid but no noteid because this was a deferred document using a unid
@@ -3560,13 +3561,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -4109,7 +4110,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				int resultMaxSize = chunkSize * chunks;
 				byte[] accumulated = new byte[resultMaxSize];
 				int actual = 0;
-				int count = 0;
+
 				for (String curChunk : chunkNames) {
 					//					System.out.println("DEBUG: Attempting binary read from " + curChunk);
 					try {
@@ -4120,7 +4121,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					} catch (Exception e) {
 						DominoUtils.handleException(e, this);
 					}
-					count++;
 				}
 				byte[] result = new byte[actual];
 				//				System.out.println("DEBUG: resulting read-in array is " + actual + " while we have an actual of " + result.length
@@ -4137,6 +4137,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<?> getItemSeriesValues(final CharSequence name) {
 		List result = new Vector();

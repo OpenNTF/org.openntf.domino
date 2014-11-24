@@ -330,15 +330,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	}
 
 	@Override
-	protected lotus.domino.MIMEHeader getDelegate() {
-		lotus.domino.MIMEHeader d = super.getDelegate();
-		if (isDead(d)) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	private void resurrect() {
+	protected void resurrect() {
 		if (headerName_ != null) {
 			try {
 				lotus.domino.MIMEEntity entity = (lotus.domino.MIMEEntity) org.openntf.domino.impl.Base.getDelegate(getAncestor());

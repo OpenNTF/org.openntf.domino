@@ -18,6 +18,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.TypeUtils;
 
 /**
@@ -232,7 +233,8 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 	private Session getSession() {
 		if (parent_ == null) {
-			parent_ = Factory.getSession();
+			// CHECKME RPr: Is that the correct session
+			parent_ = Factory.getSession(SessionType.CURRENT);
 		}
 		return parent_;
 	}

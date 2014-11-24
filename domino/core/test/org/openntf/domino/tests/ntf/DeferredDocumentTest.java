@@ -9,7 +9,8 @@ import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.xots.XotsDaemon;
+import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.xots.Xots;
 
 @RunWith(DominoJUnitRunner.class)
 public class DeferredDocumentTest extends AbstractDominoRunnable {
@@ -31,13 +32,13 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 	@Test
 	public void testDeferredDocuments() {
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			XotsDaemon.queue(new DeferredDocumentTest());
+			Xots.getService().submit(new DeferredDocumentTest());
 		}
 	}
 
 	@Override
 	public void run() {
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		long collectionBuildNS = 0l;
 		long documentBuildNS = 0l;
 		long documentPageNS = 0l;

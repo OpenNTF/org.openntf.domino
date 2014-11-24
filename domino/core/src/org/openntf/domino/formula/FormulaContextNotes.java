@@ -9,6 +9,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.formula.EvaluateException;
 import org.openntf.formula.FormulaContext;
 import org.openntf.formula.Formulas;
@@ -37,11 +38,12 @@ public class FormulaContextNotes extends FormulaContext {
 	 * @return the value
 	 */
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
-		Session session = Factory.getSession();
 
 		Database db = getDatabase();
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
+
+		Session session = Factory.getSession(db);
 
 		lotus.domino.Document rawDocument = Factory.toLotus(getDocument());
 		Document tmpDoc = null;
@@ -81,18 +83,18 @@ public class FormulaContextNotes extends FormulaContext {
 
 	@Override
 	public String getEnv(final String varNameLC) {
-		return Factory.getSession().getEnvironmentString(varNameLC);
+		return Factory.getSession(SessionType.CURRENT).getEnvironmentString(varNameLC);
 	}
 
 	@Override
 	public void setEnv(final String varName, final String value) {
-		Factory.getSession().setEnvironmentVar(varName, value);
+		Factory.getSession(SessionType.CURRENT).setEnvironmentVar(varName, value);
 	}
 
 	public Database getDatabase() {
 		Document doc = getDocument();
 		if (doc == null) {
-			return Factory.getSession().getCurrentDatabase();
+			return Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 		} else {
 			return doc.getAncestorDatabase();
 		}
