@@ -5,8 +5,6 @@ package org.openntf.domino.xsp.helpers;
 
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
-
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.XSPUtil;
@@ -41,7 +39,7 @@ public class XspUtils {
 	public static Document getBEDoc(final DominoDocument doc) {
 		Document beDoc;
 		try {
-			if (OpenntfDominoImplicitObjectFactory2.isAppGodMode(FacesContext.getCurrentInstance())) {
+			if (OpenntfDominoImplicitObjectFactory2.sIsAppGodMode()) {
 				beDoc = (Document) doc.getDocument(true);
 			} else {
 				beDoc = XSPUtil.wrap(doc.getDocument(true));

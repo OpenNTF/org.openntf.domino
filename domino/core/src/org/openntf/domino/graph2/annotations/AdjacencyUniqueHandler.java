@@ -2,6 +2,8 @@ package org.openntf.domino.graph2.annotations;
 
 import java.lang.reflect.Method;
 
+import org.openntf.domino.graph2.DVertex;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -52,30 +54,18 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 				returnValue = framedGraph.addVertex(null, returnType);
 				newVertex = ((VertexFrame) returnValue).asVertex();
 			} else {
-
 				newVertex = ((VertexFrame) arguments[0]).asVertex();
 				switch (adjacency.direction()) {
 				case OUT:
-					Vertex outVertex = vertex;
-					Vertex inVertex = newVertex;
-					Iterable<Edge> outedges = outVertex.getEdges(Direction.OUT, adjacency.label());	//FIXME NTF Correct direction?
-					for (Edge edge : outedges) {
-						Vertex v = edge.getVertex(Direction.IN);
-						if (v.getId().equals(inVertex.getId())) {
-							resultEdge = edge;
-						}
-					}
+					DVertex outVertex = (DVertex) vertex;
+					DVertex inVertex = (DVertex) newVertex;
+					System.out.println("DEBUG: Invoking AdjacencyUnique FIND method");
+					resultEdge = outVertex.findInEdge(newVertex, adjacency.label());
 					break;
 				case IN:
-					outVertex = newVertex;
-					inVertex = vertex;
-					Iterable<Edge> inedges = outVertex.getEdges(Direction.IN, adjacency.label());	//FIXME NTF Correct direction?
-					for (Edge edge : inedges) {
-						Vertex v = edge.getVertex(Direction.IN);
-						if (v.getId().equals(inVertex.getId())) {
-							resultEdge = edge;
-						}
-					}
+					outVertex = (DVertex) newVertex;
+					inVertex = (DVertex) vertex;
+					resultEdge = inVertex.findOutEdge(newVertex, adjacency.label());
 					break;
 				default:
 					throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
