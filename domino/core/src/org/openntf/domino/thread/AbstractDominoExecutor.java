@@ -14,7 +14,6 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RunnableScheduledFuture;
@@ -49,7 +48,7 @@ import org.openntf.domino.utils.Factory;
  * @author Roland Praml
  */
 @Incomplete
-public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor {
+public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor implements XotsExecutorService {
 	public enum TaskState {
 		/** The Task is Queued and will be executed next */
 
@@ -157,6 +156,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 		public DominoFutureTask(final WrappedCallable<T> callable, final Scheduler scheduler) {
 			super(callable);
+			this.wrappedTask = callable;
 			this.scheduler = scheduler;
 			// the wrappedCallable itself is not observable, but maybe its wrapped object
 			callable.addObserver(this);
@@ -164,6 +164,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 		public DominoFutureTask(final WrappedRunnable runnable, final T result, final Scheduler scheduler) {
 			super(runnable, result);
+			this.wrappedTask = runnable;
 			this.scheduler = scheduler;
 			// the wrappedCallable itself is not observable, but maybe its wrapped object
 			runnable.addObserver(this);
@@ -282,6 +283,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	 * 
 	 * @return
 	 */
+	@Override
 	public List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
 		ArrayList<DominoFutureTask<?>> ret = new ArrayList<DominoFutureTask<?>>();
 
@@ -418,7 +420,28 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	protected abstract WrappedRunnable wrap(Runnable inner);
 
-	public Future<?> registerTasklet(final String moduleName, final String className, final String... cron) {
-		throw new UnsupportedOperationException("registerTasklet");
+	protected abstract WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
+
+	@Override
+	public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final Scheduler scheduler) {
+		return queue(new DominoFutureTask<V>(wrap(callable), scheduler));
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public ScheduledFuture<?> schedule(final Runnable runnable, final Scheduler scheduler) {
+		return queue(new DominoFutureTask(wrap(runnable), null, scheduler));
+	}
+
+	@Override
+	public ScheduledFuture<?> scheduleTasklet(final String moduleName, final String className, final Scheduler scheduler,
+			final Object... ctorArgs) {
+		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), scheduler));
+	}
+
+	@Override
+	public ScheduledFuture<?> runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
+		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0L, 0L, TimeUnit.NANOSECONDS)));
+	}
+
 }

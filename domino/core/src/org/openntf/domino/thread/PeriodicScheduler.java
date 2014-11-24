@@ -9,8 +9,8 @@ public class PeriodicScheduler implements Scheduler {
 
 	public PeriodicScheduler(final long delay, final long period, final TimeUnit timeUnit) {
 		super();
-		this.time = System.nanoTime() + timeUnit.convert(delay, TimeUnit.NANOSECONDS);
-		this.period = timeUnit.convert(period, TimeUnit.NANOSECONDS);
+		this.time = System.nanoTime() + TimeUnit.NANOSECONDS.convert(delay, timeUnit);
+		this.period = TimeUnit.NANOSECONDS.convert(period, timeUnit);
 	}
 
 	@Override
@@ -36,6 +36,12 @@ public class PeriodicScheduler implements Scheduler {
 	@Override
 	public boolean isPeriodic() {
 		return period != 0L;
+	}
+
+	@Override
+	public String toString() {
+		return "delay: " + getNextExecutionTime(TimeUnit.MILLISECONDS) + " ms, period: "
+				+ TimeUnit.MILLISECONDS.convert(period, TimeUnit.NANOSECONDS);
 	}
 
 }

@@ -137,4 +137,10 @@ public class DominoExecutor extends AbstractDominoExecutor {
 		return new DominoWrappedRunnable(inner);
 	}
 
+	@Override
+	protected WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs) {
+		throw new UnsupportedOperationException("Running tasklets is not supported (requires XPage-environment)");
+		// TODO: maybe we can load the class with the design-class loader.
+	}
+
 }

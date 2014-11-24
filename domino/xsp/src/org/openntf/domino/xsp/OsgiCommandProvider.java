@@ -15,15 +15,11 @@
  */
 package org.openntf.domino.xsp;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Platform;
@@ -35,10 +31,8 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
 import org.osgi.framework.Bundle;
 
@@ -165,10 +159,10 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	private void xotsSchedule(final CommandInterpreter ci) {
-		String moduleName = ci.nextArgument();
-		String className = ci.nextArgument();
-		String cron = ci.nextArgument();
-		Xots.registerTasklet(moduleName, className, cron);
+		//		String moduleName = ci.nextArgument();
+		//		String className = ci.nextArgument();
+		//		String cron = ci.nextArgument();
+		//// 2014-11-24 RPr:Xots.registerTasklet(moduleName, className, cron);
 	}
 
 	private void xotsTasks(final CommandInterpreter ci) {
@@ -224,7 +218,7 @@ public class OsgiCommandProvider implements CommandProvider {
 				}
 				ClassLoader cLoader = clazz.getClassLoader();
 
-				runXotsClass(ci, clazz, cLoader);
+				//runXotsClass(ci, clazz, cLoader);
 
 			} else {
 				// -- Load the class from module
@@ -249,7 +243,7 @@ public class OsgiCommandProvider implements CommandProvider {
 						return;
 					}
 					ClassLoader cLoader = module.getModuleClassLoader();
-					runXotsClass(ci, clazz, cLoader);
+					//runXotsClass(ci, clazz, cLoader);
 				} finally {
 					NotesContext.termThread();
 					ctx = null;
@@ -262,71 +256,71 @@ public class OsgiCommandProvider implements CommandProvider {
 
 	}
 
-	private void runXotsClass(final CommandInterpreter ci, final Class<?> clazz, final ClassLoader ctxCl) {
-		OpenntfFactoryInitializer.initializeFromContext(null, ctxCl); 	// Factory.initThread is done here
-		try {
-			Tasklet annot = clazz.getAnnotation(Tasklet.class);
-			if (annot == null || !annot.isPublic()) {
-				ci.println(clazz.getName() + " does not annotate @Tasklet(isPublic=true). Cannot run.");
-				return;
-			}
-
-			List<String> args = new ArrayList<String>();
-
-			String arg;
-			while ((arg = ci.nextArgument()) != null) {
-				args.add(arg);
-			}
-
-			Class<?> ctorClasses[] = new Class<?>[args.size()];
-			for (int i = 0; i < ctorClasses.length; i++) {
-				ctorClasses[i] = String.class;
-			}
-			Object ctorArgs[] = new Object[0];
-
-			Constructor<?> cTor = null;
-			try {
-				cTor = clazz.getConstructor(ctorClasses);
-				ctorArgs = args.toArray();
-			} catch (NoSuchMethodException nsme1) {
-				try {
-					cTor = clazz.getConstructor(new Class<?>[] { String[].class });
-					ctorArgs = new Object[] { args.toArray() };
-				} catch (NoSuchMethodException nsme2) {
-
-				}
-			}
-			if (cTor == null) {
-				ci.println(clazz.getName() + " has no constructor for " + ctorClasses.length + " String argument(s)");
-				return;
-			}
-
-			Thread thread = Thread.currentThread();
-			ClassLoader oldCl = thread.getContextClassLoader();
-			try {
-				if (ctxCl != null) {
-					thread.setContextClassLoader(ctxCl);
-				}
-				try {
-					if (Callable.class.isAssignableFrom(clazz)) {
-						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
-						Xots.getService().submit(callable);
-					} else if (Runnable.class.isAssignableFrom(clazz)) {
-						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
-						Xots.getService().submit(runnable);
-					} else {
-						ci.println("Could not run " + clazz.getName() + ", as this is no runnable or callable class");
-					}
-				} catch (Exception ex) {
-					log_.log(Level.SEVERE, "Could not run " + clazz.getName(), ex);
-					ci.println("ERROR: " + ex.getMessage());
-				}
-			} finally {
-				thread.setContextClassLoader(oldCl);
-			}
-		} finally {
-			Factory.termThread();
-		}
-	}
+	//	private void runXotsClass(final CommandInterpreter ci, final Class<?> clazz, final ClassLoader ctxCl) {
+	//		OpenntfFactoryInitializer.initializeFromContext(null, ctxCl); 	// Factory.initThread is done here
+	//		try {
+	//			Tasklet annot = clazz.getAnnotation(Tasklet.class);
+	//			if (annot == null || !annot.isPublic()) {
+	//				ci.println(clazz.getName() + " does not annotate @Tasklet(isPublic=true). Cannot run.");
+	//				return;
+	//			}
+	//
+	//			List<String> args = new ArrayList<String>();
+	//
+	//			String arg;
+	//			while ((arg = ci.nextArgument()) != null) {
+	//				args.add(arg);
+	//			}
+	//
+	//			Class<?> ctorClasses[] = new Class<?>[args.size()];
+	//			for (int i = 0; i < ctorClasses.length; i++) {
+	//				ctorClasses[i] = String.class;
+	//			}
+	//			Object ctorArgs[] = new Object[0];
+	//
+	//			Constructor<?> cTor = null;
+	//			try {
+	//				cTor = clazz.getConstructor(ctorClasses);
+	//				ctorArgs = args.toArray();
+	//			} catch (NoSuchMethodException nsme1) {
+	//				try {
+	//					cTor = clazz.getConstructor(new Class<?>[] { String[].class });
+	//					ctorArgs = new Object[] { args.toArray() };
+	//				} catch (NoSuchMethodException nsme2) {
+	//
+	//				}
+	//			}
+	//			if (cTor == null) {
+	//				ci.println(clazz.getName() + " has no constructor for " + ctorClasses.length + " String argument(s)");
+	//				return;
+	//			}
+	//
+	//			Thread thread = Thread.currentThread();
+	//			ClassLoader oldCl = thread.getContextClassLoader();
+	//			try {
+	//				if (ctxCl != null) {
+	//					thread.setContextClassLoader(ctxCl);
+	//				}
+	//				try {
+	//					if (Callable.class.isAssignableFrom(clazz)) {
+	//						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
+	//						Xots.getService().submit(callable);
+	//					} else if (Runnable.class.isAssignableFrom(clazz)) {
+	//						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
+	//						Xots.getService().submit(runnable);
+	//					} else {
+	//						ci.println("Could not run " + clazz.getName() + ", as this is no runnable or callable class");
+	//					}
+	//				} catch (Exception ex) {
+	//					log_.log(Level.SEVERE, "Could not run " + clazz.getName(), ex);
+	//					ci.println("ERROR: " + ex.getMessage());
+	//				}
+	//			} finally {
+	//				thread.setContextClassLoader(oldCl);
+	//			}
+	//		} finally {
+	//			Factory.termThread();
+	//		}
+	//	}
 
 }

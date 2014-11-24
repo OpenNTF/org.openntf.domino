@@ -6,7 +6,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,10 +25,10 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Tasklet.Context;
-import org.openntf.domino.xots.Xots;
+import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.helpers.InvalidSessionFactory;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer;
+import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
 import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
 import org.osgi.framework.Bundle;
@@ -90,12 +89,20 @@ public class XotsDominoExecutor extends DominoExecutor {
 		}
 	}
 
-	protected static class XotsTaskletDefinition extends WrappedRunnable {
+	protected static class XotsTaskletDefinition<V> extends WrappedCallable<V> {
+		final String moduleName;
+		final String className;
+		final Object[] args;
 
-		public XotsTaskletDefinition(final String moduleName, final String className, final List<Object> args) {
+		public XotsTaskletDefinition(final String moduleName, final String className, final Object[] args) {
+			super();
+			this.moduleName = moduleName;
+			this.className = className;
+			this.args = args;
 		}
 
-		public void execute(final String moduleName, final String className, final List<Object> args) throws ServletException {
+		@Override
+		public V call() throws ServletException {
 			Class<?> clazz = null;
 			NSFComponentModule module = null;
 			NotesContext ctx = null;
@@ -114,10 +121,10 @@ public class XotsDominoExecutor extends DominoExecutor {
 					throw new IllegalArgumentException("Could not load class " + className + " in bundle " + bundleName, e);
 				}
 
-				ClassLoader cLoader = clazz.getClassLoader();
-
-				runXotsClass(clazz, cLoader, args);
-
+				return runXotsClass(clazz, clazz.getClassLoader());
+				//runXotsClass(clazz, cLoader, args);
+				//System.out.println("TODO: Should run " + clazz);
+				//return null; // exec tasklet here!
 			} else {
 				// -- Load the class from module
 				module = ModuleLoader.loadModule(moduleName, true);
@@ -132,11 +139,11 @@ public class XotsDominoExecutor extends DominoExecutor {
 					}
 					try {
 						clazz = module.getModuleClassLoader().loadClass(className);
-					} catch (ClassNotFoundException e) {
+					} catch (Exception e) {
 						throw new IllegalArgumentException("Could not load class " + className + " in module " + moduleName, e);
 					}
 
-					module.getModuleClassLoader();
+					return runXotsClass(clazz, module.getModuleClassLoader());
 				} finally {
 					NotesContext.termThread();
 					ctx = null;
@@ -144,19 +151,29 @@ public class XotsDominoExecutor extends DominoExecutor {
 			}
 		}
 
-		private void runXotsClass(final Class<?> clazz, final ClassLoader ctxCl, final List<Object> args) {
-			OpenntfFactoryInitializer.initializeFromContext(null, ctxCl); 	// Factory.initThread is done here
+		private V runXotsClass(final Class<?> clazz, final ClassLoader ctxCl) {
+			Factory.initThread();
+			Factory.setSessionFactory(new XPageCurrentSessionFactory(), SessionType.CURRENT);
+			Factory.setSessionFactory(new XPageSignerSessionFactory(false), SessionType.SIGNER);
+			Factory.setSessionFactory(new XPageSignerSessionFactory(true), SessionType.SIGNER_FULL_ACCESS);
+
+			if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS")) {
+				DominoUtils.setBubbleExceptions(true);
+			}
+
+			Factory.setClassLoader(ctxCl);
+
 			try {
 				Tasklet annot = clazz.getAnnotation(Tasklet.class);
 				if (annot == null || !annot.isPublic()) {
 					throw new IllegalStateException(clazz.getName() + " does not annotate @Tasklet(isPublic=true). Cannot run.");
 				}
 
-				Class<?> ctorClasses[] = new Class<?>[args.size()];
-				Object ctorArgs[] = new Object[args.size()];
+				Class<?> ctorClasses[] = new Class<?>[args.length];
+				Object ctorArgs[] = new Object[args.length];
 				for (int i = 0; i < ctorClasses.length; i++) {
 					Object arg;
-					ctorArgs[i] = arg = args.get(i);
+					ctorArgs[i] = arg = args[i];
 					ctorClasses[i] = arg == null ? Null.class : arg.getClass();
 				}
 
@@ -184,10 +201,11 @@ public class XotsDominoExecutor extends DominoExecutor {
 					try {
 						if (Callable.class.isAssignableFrom(clazz)) {
 							Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
-							Xots.getService().submit(callable);
+							return (V) callable.call();
 						} else if (Runnable.class.isAssignableFrom(clazz)) {
 							Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
-							Xots.getService().submit(runnable);
+							runnable.run();
+							return null;
 						} else {
 							throw new IllegalStateException("Could not run " + clazz.getName()
 									+ ", as this is no runnable or callable class");
@@ -202,12 +220,6 @@ public class XotsDominoExecutor extends DominoExecutor {
 			} finally {
 				Factory.termThread();
 			}
-		}
-
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-
 		}
 	}
 
@@ -466,6 +478,10 @@ public class XotsDominoExecutor extends DominoExecutor {
 		}
 	}
 
+	@Override
+	protected WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs) {
+		return new XotsTaskletDefinition(moduleName, className, ctorArgs);
+	}
 	//
 	//	@Override
 	//	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
