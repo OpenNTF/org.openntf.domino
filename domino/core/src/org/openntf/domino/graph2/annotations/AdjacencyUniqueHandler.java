@@ -60,12 +60,12 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 					DVertex outVertex = (DVertex) vertex;
 					DVertex inVertex = (DVertex) newVertex;
 					System.out.println("DEBUG: Invoking AdjacencyUnique FIND method");
-					resultEdge = outVertex.findInEdge(newVertex, adjacency.label());
+					resultEdge = outVertex.findOutEdge(inVertex, adjacency.label());
 					break;
 				case IN:
-					outVertex = (DVertex) newVertex;
-					inVertex = (DVertex) vertex;
-					resultEdge = inVertex.findOutEdge(newVertex, adjacency.label());
+					outVertex = (DVertex) vertex;
+					inVertex = (DVertex) newVertex;
+					resultEdge = inVertex.findInEdge(outVertex, adjacency.label());
 					break;
 				default:
 					throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
