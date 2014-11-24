@@ -1,6 +1,5 @@
 package org.openntf.domino.xsp.adapter;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.FacesException;
@@ -9,9 +8,9 @@ import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.xsp.helpers.XPageCurrentSessionFactory;
 
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.FacesContextFactoryImpl;
@@ -68,12 +67,8 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 		Factory.initThread();
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
-		NotesContext ntx = NotesContext.getCurrent();
-		if (ntx != null) {
-			Factory.setSession(ntx.getCurrentSession(), SessionMode.DEFAULT);
-		} else {
-			log_.log(Level.WARNING, "Unable to initialize Factory default session because NotesContext is not yet available");
-		}
+		//		NotesContext ntx = NotesContext.getCurrent();
+		Factory.setSessionFactory(new XPageCurrentSessionFactory(), SessionType.CURRENT);
 		if (useODAFacesContext_) {
 			ODAFacesContext localContext = new ODAFacesContext(ctx);
 			attachListener(localContext);
