@@ -11,25 +11,23 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.ODAPlatform;
-import org.openntf.domino.xsp.helpers.OpenntfGodModeImplicitObjectFactory;
 import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
 import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
 
-import com.ibm.xsp.DominoXspContributor;
 import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.FacesContextFactoryImpl;
 import com.ibm.xsp.domino.context.DominoFacesContextFactoryImpl;
-import com.ibm.xsp.domino.el.DominoImplicitObjectFactory;
-import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.event.FacesContextListener;
-import com.ibm.xsp.factory.FactoryLookup;
 
 public class ODAFacesContextFactory extends FacesContextFactory {
 	private static final Logger log_ = Logger.getLogger(ODAFacesContextFactory.class.getName());
 	private final FacesContextFactory _delegate;
 	private ContextListener _contextListener;
 
+	/**
+	 * The contextListener terminates the factory on context-release.
+	 */
 	public static class ContextListener implements FacesContextListener {
 		@Override
 		public void beforeContextReleased(final FacesContext arg0) {
@@ -38,7 +36,7 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 
 		@Override
 		public void beforeRenderingPhase(final FacesContext arg0) {
-			// TODO Auto-generated method stub
+
 		}
 	}
 
@@ -86,24 +84,7 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 		Factory.setClassLoader(ctx.getContextClassLoader());
 
 		if (ODAPlatform.isAppGodMode(null)) {
-			// set up  ObjectFactory in Chain mode - (if godMode is enabled)
-			// TODO RPr: This is a real hack, but I found no way to guarantee that our object factory is the first one
-			// (OFs are put in a HashMap where you can not predict the order)
-			@SuppressWarnings("deprecation")
-			FactoryLookup lookup = ((FacesContextEx) ctx).getApplicationEx().getFactoryLookup();
 
-			ImplicitObjectFactory delegateIof = (ImplicitObjectFactory) lookup
-					.getFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY);
-
-			if (delegateIof instanceof DominoImplicitObjectFactory) {
-				if (ODAPlatform.isAppDebug(null)) {
-					System.out.println("Changing the DominoImplicitObjectFactory");
-				}
-				lookup.setFactory(DominoXspContributor.DOMINO_IMPLICITOBJECTS_FACTORY, new OpenntfGodModeImplicitObjectFactory(delegateIof));
-			}
-		}
-
-		if (ODAPlatform.isAppFlagSet("ODAFACESCONTEXT")) {
 			ODAFacesContext localContext = new ODAFacesContext(ctx);
 			attachListener(localContext);
 			return localContext;
