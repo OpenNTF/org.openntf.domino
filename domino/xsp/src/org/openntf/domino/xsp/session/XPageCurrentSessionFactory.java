@@ -1,7 +1,5 @@
 package org.openntf.domino.xsp.session;
 
-import java.security.PrivilegedActionException;
-
 import javax.servlet.ServletException;
 
 import lotus.domino.NotesException;
@@ -56,7 +54,7 @@ public class XPageCurrentSessionFactory extends AbstractXPageSessionFactory {
 	 * @throws
 	 */
 	@Override
-	public Session createSession() throws PrivilegedActionException {
+	public Session createSession() {
 		if (runAs_ == null) {
 			throw new NullPointerException("No username set");
 		}

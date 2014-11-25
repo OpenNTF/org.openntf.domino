@@ -16,7 +16,6 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -79,7 +78,7 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 public class Session extends Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
-org.openntf.domino.Session {
+		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -1710,12 +1709,8 @@ org.openntf.domino.Session {
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 
-		Session sessionImpl = null;
-		try {
-			sessionImpl = (Session) getSessionFactory().createSession();
-		} catch (PrivilegedActionException e) {
-			throw new UnableToAcquireSessionException("SessionFactory could not return a Session", e);
-		}
+		Session sessionImpl = (Session) getSessionFactory().createSession();
+
 		if (sessionImpl == null) {
 			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
 		}

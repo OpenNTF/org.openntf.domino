@@ -810,24 +810,23 @@ public enum Factory {
 			//			System.out.println("TEMP DEBUG: No session found of type " + mode.name() + " in thread "
 			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 
-			try {
-				ISessionFactory sf = getSessionFactory(mode);
-				if (sf != null) {
-					result = sf.createSession();
-					tv.sessionHolders[mode.index] = result;
-					// Per default. Session objects are not recycled by the ODA and thats OK so.
-					// this is our own session which will be recycled in terminate
-					tv.ownSessions.put(mode.alias, result);
-					//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
-					//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
-				}
-			} catch (PrivilegedActionException ne) {
-				log_.log(Level.SEVERE, "Unable to get the session of type " + mode.alias
+			ISessionFactory sf = getSessionFactory(mode);
+			if (sf != null) {
+				result = sf.createSession();
+				tv.sessionHolders[mode.index] = result;
+				// Per default. Session objects are not recycled by the ODA and thats OK so.
+				// this is our own session which will be recycled in terminate
+				tv.ownSessions.put(mode.alias, result);
+				//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
+				//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+			}
+			if (result == null) {
+				log_.severe("Unable to get the session of type " + mode.alias
 						+ ". This probably means that you are running in an unsupported configuration "
 						+ "or you forgot to set up your context at the start of the operation. "
 						+ "If you're running in XPages, check the xsp.properties of your database. "
 						+ "If you are running in an Agent, make sure you start with a call to "
-						+ "Factory.setSession() and pass in your lotus.domino.Session", ne);
+						+ "Factory.setSession() and pass in your lotus.domino.Session");
 			}
 		} else {
 			//			System.out.println("TEMP DEBUG: Found an existing session " + System.identityHashCode(result) + " of type " + mode.name()
@@ -1169,7 +1168,7 @@ public enum Factory {
 			}
 
 			@Override
-			public Session createSession() throws PrivilegedActionException {
+			public Session createSession() {
 				return Factory.getNamedSession(getName(), true);
 			}
 		};
@@ -1213,11 +1212,11 @@ public enum Factory {
 		}
 	}
 
-	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
-		defaultNamedSessionFactory = normal;
-		defaultNamedSessionFullAccessFactory = fullaccess;
-
-	}
+	//	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
+	//		defaultNamedSessionFactory = normal;
+	//		defaultNamedSessionFullAccessFactory = fullaccess;
+	//
+	//	}
 
 	public static synchronized void shutdown() {
 		Factory.println("Shutting down the OpenNTF Domino API... ");
@@ -1332,15 +1331,11 @@ public enum Factory {
 		String key = name.toLowerCase() + (fullAccess ? ":full" : ":normal");
 		Session sess = tv.ownSessions.get(key);
 		if (sess == null) {
-			try {
-				INamedSessionFactory sf = getNamedSessionFactory(fullAccess);
-				if (sf != null) {
-					sess = sf.createSession(name);
-				}
-				tv.ownSessions.put(key, sess);
-			} catch (PrivilegedActionException e) {
-				log_.log(Level.SEVERE, "Unable to create named session for '" + name + "'", e);
+			INamedSessionFactory sf = getNamedSessionFactory(fullAccess);
+			if (sf != null) {
+				sess = sf.createSession(name);
 			}
+			tv.ownSessions.put(key, sess);
 		}
 		return sess;
 

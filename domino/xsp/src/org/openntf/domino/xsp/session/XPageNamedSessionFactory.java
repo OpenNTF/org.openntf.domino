@@ -1,7 +1,5 @@
 package org.openntf.domino.xsp.session;
 
-import java.security.PrivilegedActionException;
-
 import org.openntf.domino.Session;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
@@ -25,7 +23,7 @@ public class XPageNamedSessionFactory extends AbstractXPageSessionFactory implem
 	}
 
 	@Override
-	public Session createSession() throws PrivilegedActionException {
+	public Session createSession() {
 		if (runAs_ == null)
 			throw new NullPointerException();
 		try {
@@ -39,7 +37,7 @@ public class XPageNamedSessionFactory extends AbstractXPageSessionFactory implem
 	}
 
 	@Override
-	public Session createSession(final String userName) throws PrivilegedActionException {
+	public Session createSession(final String userName) {
 		try {
 			long userHandle = NotesUtil.createUserNameList(userName);
 			lotus.domino.Session rawSession = XSPNative.createXPageSessionExt(userName, userHandle, false, true, fullAccess_);
