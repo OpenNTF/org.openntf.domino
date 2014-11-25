@@ -3,12 +3,11 @@ package org.openntf.domino.xots;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.openntf.domino.thread.AbstractDominoExecutor;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
-import org.openntf.domino.thread.DominoExecutor;
+import org.openntf.domino.thread.XotsExecutorService;
 import org.openntf.domino.utils.Factory;
 
 /*
@@ -35,7 +34,7 @@ public class Xots {
 	//private Set<TaskletDefinition> tasklets_ = new HashSet<TaskletDefinition>();
 
 	// This is our Threadpool that will execute all Runnables
-	private static DominoExecutor executor_;
+	private static AbstractDominoExecutor executor_;
 
 	//	public void addListener(final IDominoListener listener) {
 	//		executor_.addListener(listener);
@@ -49,7 +48,7 @@ public class Xots {
 		super();
 	}
 
-	public static ScheduledExecutorService getService() {
+	public static XotsExecutorService getService() {
 		if (!isStarted()) {
 			throw new IllegalStateException("Xots is not started");
 		}
@@ -70,7 +69,7 @@ public class Xots {
 	/**
 	 * Start the XOTS with the given Executor
 	 */
-	public static synchronized void start(final DominoExecutor executor) {
+	public static synchronized void start(final AbstractDominoExecutor executor) {
 		if (isStarted())
 			throw new IllegalStateException("XotsDaemon is already started");
 		Factory.println(Xots.class, "Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
@@ -128,22 +127,21 @@ public class Xots {
 			Factory.println(Xots.class, " XPages OSGi Tasklet Service not running");
 		}
 	}
-
-	// ---- delegate methods
-
-/**
-	 * Registers a new tasklet for periodic execution
-	 * @param moduleName
-	 *            the ModuleName (i.e. DatabaseName)
-	 * @param className
-	 *            the ClassName. (Must be annotated with {@link XotsTasklet
-	 * @param onEvent
-	 * String array with events
-	 * @return
-	 */
-	public static Future<?> registerTasklet(final String moduleName, final String className, final String... cron) {
-		//CronExpression
-		return null;
-
-	}
+	//
+	//	// ---- delegate methods
+	//
+	///**
+	//	 * Registers a new tasklet for periodic execution
+	//	 * @param moduleName
+	//	 *            the ModuleName (i.e. DatabaseName)
+	//	 * @param className
+	//	 *            the ClassName. (Must be annotated with {@link XotsTasklet
+	//	 * @param onEvent
+	//	 * String array with events
+	//	 * @return
+	//	 */
+	//	public static Future<?> registerTasklet(final String moduleName, final String className, final String... cron) {
+	//		return executor_.registerTasklet(moduleName, className, cron);
+	//
+	//	}
 }

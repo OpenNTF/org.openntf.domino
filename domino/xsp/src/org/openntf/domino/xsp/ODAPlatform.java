@@ -8,7 +8,7 @@ import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.helpers.OsgiServiceLocatorFactory;
-import org.openntf.domino.xsp.helpers.XPageSessionFactory;
+import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -44,7 +44,7 @@ public enum ODAPlatform {
 		Factory.startup();
 
 		// Setup the named factories 4 XPages
-		Factory.setNamedFactories4XPages(new XPageSessionFactory(false), new XPageSessionFactory(true));
+		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 		verifyIGetEntryByKey();
 
 		int xotsTasks = 10;

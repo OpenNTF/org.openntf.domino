@@ -34,7 +34,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	private static class DominoWrappedCallable<V> extends WrappedCallable<V> {
 
 		public DominoWrappedCallable(final Callable<V> runnable) {
-			super(runnable);
+			init(runnable);
 		}
 
 		@Override
@@ -53,7 +53,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	private static class DominoWrappedRunnable extends WrappedRunnable {
 
 		public DominoWrappedRunnable(final java.lang.Runnable runnable) {
-			super(runnable);
+			init(runnable);
 		}
 
 		@Override
@@ -135,6 +135,12 @@ public class DominoExecutor extends AbstractDominoExecutor {
 		if (inner instanceof WrappedRunnable)
 			return (WrappedRunnable) inner;
 		return new DominoWrappedRunnable(inner);
+	}
+
+	@Override
+	protected WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs) {
+		throw new UnsupportedOperationException("Running tasklets is not supported (requires XPage-environment)");
+		// TODO: maybe we can load the class with the design-class loader.
 	}
 
 }

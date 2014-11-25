@@ -295,7 +295,7 @@ public class Graph2Demo implements Runnable {
 	}
 
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new Graph2Demo());
+		TestRunnerUtil.runAsDominoThread(new Graph2Demo(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public void timelog(final String message) {

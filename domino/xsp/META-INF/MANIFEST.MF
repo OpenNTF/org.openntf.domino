@@ -10,7 +10,6 @@ Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xsp,
  org.openntf.domino.xsp.adapter,
- org.openntf.domino.xsp.application,
  org.openntf.domino.xsp.components,
  org.openntf.domino.xsp.config,
  org.openntf.domino.xsp.formula,

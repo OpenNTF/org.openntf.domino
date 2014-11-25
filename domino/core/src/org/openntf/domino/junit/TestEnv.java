@@ -2,6 +2,10 @@ package org.openntf.domino.junit;
 
 import lotus.domino.Session;
 
+import org.junit.Assert;
+
+import com.ibm.commons.util.StringUtil;
+
 public enum TestEnv {
 	;
 	/** The username of the master session */
@@ -12,15 +16,21 @@ public enum TestEnv {
 
 	public static boolean RUNS_ON_SERVER;
 
-	public static String REMOTE_UNTRUSTED_SERVER = "CN=srv-01-nprod/O=FOCONIS";
+	// TODO RPR
+	public static String REMOTE_UNTRUSTED_SERVER;
 
-	public static String REMOTE_TRUSTED_SERVER = "CN=srv-01-ntest85/OU=srv/O=FOCONIS";
+	public static String REMOTE_TRUSTED_SERVER;
 
 	public static void setup(final Session sess) throws lotus.domino.NotesException {
 		// TODO Auto-generated method stub
 		SESSION_USER = sess.getUserName();
 		EFFECTIVE_USER = sess.getEffectiveUserName();
 		RUNS_ON_SERVER = sess.isOnServer();
+		REMOTE_TRUSTED_SERVER = sess.getEnvironmentString("junit_remote_trusted_server", true);
+		REMOTE_UNTRUSTED_SERVER = sess.getEnvironmentString("junit_remote_untrusted_server", true);
+		if (StringUtil.isEmpty(REMOTE_TRUSTED_SERVER) || StringUtil.isEmpty(REMOTE_UNTRUSTED_SERVER)) {
+			Assert.fail("Please set up the Notes.ini variables junit_remote_untrusted_server and junit_remote_trusted_server");
+		}
 	}
 
 	public static lotus.domino.Session session;

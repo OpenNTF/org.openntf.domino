@@ -513,7 +513,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
-		if (isDead(delegate_) && this instanceof Resurrectable) {
+		if (this instanceof Resurrectable && isDead(delegate_)) {
 			resurrect();
 		}
 		return delegate_;
