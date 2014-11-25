@@ -82,9 +82,9 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 		// TODO RPr: This is probably the wrong locale. See ViewHandler.calculateLocale
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
+		//		NotesContext ntx = NotesContext.getCurrent();
 
 		if (ODAPlatform.isAppGodMode(null)) {
-
 			ODAFacesContext localContext = new ODAFacesContext(ctx);
 			attachListener(localContext);
 			return localContext;

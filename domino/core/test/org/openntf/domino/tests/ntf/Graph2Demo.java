@@ -367,7 +367,7 @@ public class Graph2Demo implements Runnable {
 			Movie revengeMovie = framedGraph.getVertex("Revenge of the Sith", Movie.class);
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + newhopeMovie.getTitle() /*+ " " + newhopeMovie.getRaterRating(ntfUser) + " stars!"*/);
+			System.out.println("Don't miss " + newhopeMovie.getTitle() + " " + newhopeMovie.getRaterRating(ntfUser) + " stars!");
 			Iterable<Starring> starrings = newhopeMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -464,10 +464,11 @@ public class Graph2Demo implements Runnable {
 			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 
-			((org.openntf.domino.Database) crewStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			((org.openntf.domino.Database) movieStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			((org.openntf.domino.Database) characterStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			((org.openntf.domino.Database) edgeStore.getStoreDelegate()).getAllDocuments().removeAll(true);
+			//			((org.openntf.domino.Database) crewStore.getStoreDelegate()).getAllDocuments().removeAll(true);
+			//			((org.openntf.domino.Database) movieStore.getStoreDelegate()).getAllDocuments().removeAll(true);
+			//			((org.openntf.domino.Database) characterStore.getStoreDelegate()).getAllDocuments().removeAll(true);
+			//			((org.openntf.domino.Database) edgeStore.getStoreDelegate()).getAllDocuments().removeAll(true);
+			//			((org.openntf.domino.Database) usersStore.getProxyStoreDelegate()).getAllDocuments().removeAll(true);
 
 			User ntfUser = framedGraph.getVertex(nabId + ntfUnid, User.class);
 

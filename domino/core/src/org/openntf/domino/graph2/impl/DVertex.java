@@ -193,13 +193,22 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public Edge findInEdge(final Vertex otherVertex, final String label) {
-		//		System.out.println("DEBUG: Attempting to find IN edge of label " + label + " from " + getId() + " to " + otherVertex.getId());
+		System.out.println("DEBUG: Attempting to find IN edge of label " + label + " from " + getId() + " to " + otherVertex.getId());
 		DEdgeList edgeList = getInEdgeCache(label);
 		Edge result = edgeList.findEdge(otherVertex);
 		if (result != null) {
 			//			System.out.println("DEBUG: Found IN edge: " + result.getId());
 		} else {
-			//			System.out.println("DEBUG: returning null");
+			System.out.println("DEBUG: returning null");
+			System.out.println("DEBUG: Checking out edges just in case...");
+			result = findOutEdge(otherVertex, label);
+			if (result != null) {
+				System.out.println("DEBUG: AH! Found an edge in the opposite direction. You might have reversed them.");
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			} else {
+				System.out.println("DEBUG: Still no, sorry");
+			}
 			//			Throwable t = new Throwable();
 			//			t.printStackTrace();
 		}
@@ -262,10 +271,10 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		DEdgeList result = null;
 		result = inCache.get(label);
 		if (result == null) {
-			result = new DEdgeList(this).atomic();
+			result = getParent().getEdgesFromIds(this, getInEdgesSet(label));
 			inCache.put(label, result);
 		}
-		return result;
+		return result.atomic();
 	}
 
 	protected DEdgeList getOutEdgeCache(final String label) {
@@ -273,10 +282,10 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		DEdgeList result = null;
 		result = outCache.get(label);
 		if (result == null) {
-			result = new DEdgeList(this).atomic();
+			result = getParent().getEdgesFromIds(this, getOutEdgesSet(label));
 			outCache.put(label, result);
 		}
-		return result;
+		return result.atomic();
 	}
 
 	protected FastMap<String, DEdgeList> getOutEdgeCache() {

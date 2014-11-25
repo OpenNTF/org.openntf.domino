@@ -14,13 +14,13 @@ import com.tinkerpop.blueprints.Vertex;
 
 public class DEdgeList extends FastTable<Edge> {
 	private static final long serialVersionUID = 1L;
-	protected final Vertex sourceVertex_;
+	protected final DVertex sourceVertex_;
 
-	public DEdgeList(final Vertex source) {
+	public DEdgeList(final DVertex source) {
 		sourceVertex_ = source;
 	}
 
-	public DEdgeList(final Vertex source, final TableService<Edge> service) {
+	public DEdgeList(final DVertex source, final TableService<Edge> service) {
 		super(service);
 		sourceVertex_ = source;
 	}
@@ -44,25 +44,30 @@ public class DEdgeList extends FastTable<Edge> {
 		Edge result = null;
 		Object toId = toVertex.getId();
 		Object fromId = sourceVertex_.getId();
-		for (Edge edge : this) {
-			if (edge instanceof DEdge) {
-				DEdge dedge = (DEdge) edge;
-				if (toId.equals(dedge.getOtherVertexId(sourceVertex_))) {
-					result = dedge;
-					break;
-				}
-			} else {
-				Vertex inVertex = edge.getVertex(Direction.IN);
-				if (fromId.equals(inVertex.getId())) {
-					if (toId.equals(edge.getVertex(Direction.OUT))) {
+		if (this.size() > 0) {
+			for (Edge edge : this) {
+				if (edge instanceof DEdge) {
+					DEdge dedge = (DEdge) edge;
+					if (toId.equals(dedge.getOtherVertexId(sourceVertex_))) {
+						result = dedge;
+						break;
+					}
+				} else {
+					System.out.println("DEBUG: Found an Edge that's not a DEdge. It's a " + edge.getClass().getName());
+					Vertex inVertex = edge.getVertex(Direction.IN);
+					if (fromId.equals(inVertex.getId())) {
+						if (toId.equals(edge.getVertex(Direction.OUT))) {
+							result = edge;
+							break;
+						}
+					} else if (toId.equals(inVertex.getId())) {
 						result = edge;
 						break;
 					}
-				} else if (toId.equals(inVertex.getId())) {
-					result = edge;
-					break;
 				}
 			}
+		} else {
+			System.out.println("DEBUG: No edges defined in EdgeList");
 		}
 		return result;
 	}
