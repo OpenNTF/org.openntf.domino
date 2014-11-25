@@ -46,6 +46,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.thread.DominoReferenceCache;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -57,59 +58,81 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	public static final int LWDCSIZE = 10;
 
-	private static class LastWrappedDocCache {
+	//	private static class LastWrappedDocCache {
+	//
+	//		private String[] lastWrappedDocs;
+	//		private int cachedDocs;
+	//
+	//		private LastWrappedDocCache() {
+	//			lastWrappedDocs = new String[LWDCSIZE];
+	//			cachedDocs = 0;
+	//		}
+	//
+	//		private void push(final lotus.domino.Document doc, final Database db) {
+	//			String toPush;
+	//			try {
+	//				toPush = db.getApiPath() + "&" + doc.getUniversalID();
+	//			} catch (Exception e) {
+	//				System.out.println("Exception during LastWrappedDocs.push: " + e.getClass().getName());
+	//				e.printStackTrace();
+	//				return;
+	//			}
+	//			if (cachedDocs < LWDCSIZE)
+	//				cachedDocs++;
+	//			for (int i = cachedDocs - 1; i > 0; i--)
+	//				lastWrappedDocs[i] = lastWrappedDocs[i - 1];
+	//			lastWrappedDocs[0] = toPush;
+	//		}
+	//
+	//		private String[] getLastWrappedDocs() {
+	//			if (cachedDocs == 0)
+	//				return null;
+	//			String[] ret = new String[cachedDocs];
+	//			System.arraycopy(lastWrappedDocs, 0, ret, 0, cachedDocs);
+	//			return ret;
+	//		}
+	//	}
 
-		private String[] lastWrappedDocs;
-		private int cachedDocs;
-
-		private LastWrappedDocCache() {
-			lastWrappedDocs = new String[LWDCSIZE];
-			cachedDocs = 0;
-		}
-
-		private void push(final lotus.domino.Document doc, final Database db) {
-			String toPush;
-			try {
-				toPush = db.getApiPath() + "&" + doc.getUniversalID();
-			} catch (Exception e) {
-				System.out.println("Exception during LastWrappedDocs.push: " + e.getClass().getName());
-				e.printStackTrace();
-				return;
-			}
-			if (cachedDocs < LWDCSIZE)
-				cachedDocs++;
-			for (int i = cachedDocs - 1; i > 0; i--)
-				lastWrappedDocs[i] = lastWrappedDocs[i - 1];
-			lastWrappedDocs[0] = toPush;
-		}
-
-		private String[] getLastWrappedDocs() {
-			if (cachedDocs == 0)
-				return null;
-			String[] ret = new String[cachedDocs];
-			System.arraycopy(lastWrappedDocs, 0, ret, 0, cachedDocs);
-			return ret;
-		}
-	}
-
-	private static ThreadLocal<LastWrappedDocCache> lwdCache = new ThreadLocal<LastWrappedDocCache>() {
+	// we store the last 10 wrapped documents (these documents are logged)
+	private static ThreadLocal<String[]> lastWrappedDocs = new ThreadLocal<String[]>() {
 		@Override
-		protected LastWrappedDocCache initialValue() {
-			return new LastWrappedDocCache();
+		protected String[] initialValue() {
+			return new String[LWDCSIZE];
 		}
 	};
 
-	protected void cacheDoc(final lotus.domino.Document lotusDoc, final Database parent) {
-		lwdCache.get().push(lotusDoc, parent);
+	/**
+	 * Tracks the document for logging
+	 * 
+	 * @param lotusDoc
+	 * @param parent
+	 */
+	protected void trackDoc(final lotus.domino.Document lotusDoc, final Database parent) {
+		String[] arr = lastWrappedDocs.get();
+		System.arraycopy(arr, 0, arr, 1, arr.length - 1); // shift right by one
+		try {
+			arr[0] = parent.getApiPath() + "&" + lotusDoc.getUniversalID();
+		} catch (Exception e) {
+			System.out.println("Exception during WrapperFactory.trackDoc: " + e.getClass().getName());
+			e.printStackTrace();
+		}
 	}
 
 	private void clearLWDCache() {
-		lwdCache.get().cachedDocs = 0;
+		lastWrappedDocs.get()[0] = null;
 	}
 
 	@Override
 	public String[] getLastWrappedDocsInThread() {
-		return lwdCache.get().getLastWrappedDocs();
+		String[] arr = lastWrappedDocs.get();
+		for (int i = 0; i < LWDCSIZE; i++) {
+			if (arr[i] == null) {
+				String[] ret = new String[i];
+				System.arraycopy(arr, 0, ret, 0, i);
+				return ret;
+			}
+		}
+		return arr;
 	}
 
 	/** this is the holder for all other object that needs to be recycled **/
@@ -328,8 +351,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 */
 
 	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
-		if (Thread.currentThread() != correctThread) {
-			throw new IllegalStateException("It seems that Notes-Objects are used across threads!");
+		if (!Factory.ENABLE_THREAD_SUPPORT && Thread.currentThread() != correctThread) {
+			throw new IllegalStateException("It seems that Notes-Objects are used across threads! This Thread: " + Thread.currentThread()
+					+ " correct Thread: " + correctThread);
 		}
 
 		if (lotus instanceof lotus.domino.Name) {
@@ -352,7 +376,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 
 		if (lotus instanceof lotus.domino.Document) {
-			cacheDoc((lotus.domino.Document) lotus, (Database) parent);
+			trackDoc((lotus.domino.Document) lotus, (Database) parent);
 			return new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, (Database) parent, this, cpp);
 		}
 

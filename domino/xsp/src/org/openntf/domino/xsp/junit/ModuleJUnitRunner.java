@@ -12,7 +12,7 @@ import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.helpers.XPageSessionFactory;
+import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
 
 import com.ibm.commons.util.StringUtil;
@@ -84,7 +84,7 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 		oldCl = Thread.currentThread().getContextClassLoader();
 		Thread.currentThread().setContextClassLoader(module.getModuleClassLoader());
 
-		ISessionFactory sf = new XPageSessionFactory(ctx.getCurrentSession(), false);
+		ISessionFactory sf = new XPageCurrentSessionFactory();
 		//ISessionFactory sfFull = new XPageSessionFactory(ctx.getSessionAsSignerFullAdmin(), true);
 		Factory.setSessionFactory(sf, SessionType.CURRENT);
 		//Factory.setSessionFactory(sfFull, SessionType.CURRENT_FULL_ACCESS);

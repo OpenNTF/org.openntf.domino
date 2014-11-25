@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
 
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xots.Xots;
 
 /**
  * Introduces a highly configurable new logging mechanism. (Details are to be found in logconfig.properties.) If no configuration property
@@ -46,7 +46,7 @@ public class Logging {
 	}
 
 	private LogConfig _activeConfig = null;
-	private Timer _supervisor = null;
+	//private Timer _supervisor = null;
 	private static final long _supervisorInterval = 60000;	// 1 minute
 
 	public void startUp() throws IOException {
@@ -56,13 +56,21 @@ public class Logging {
 			return;
 		}
 		System.out.println("Logging: LogConfig successfully initialized from " + _logConfigPropFile);
-		_supervisor = new Timer("LoggingSupervisor", true);
-		_supervisor.schedule(new TimerTask() {
+		// TODO: if we want to access a Config-DB we can use @Tasklet here
+		Xots.getService().schedule(new Runnable() {
 			@Override
 			public void run() {
 				Logging.getInstance().lookForCfgChange();
 			}
-		}, _supervisorInterval, _supervisorInterval);
+		}, _supervisorInterval, TimeUnit.MILLISECONDS);
+
+		//		_supervisor = new Timer("LoggingSupervisor", true);
+		//		_supervisor.schedule(new TimerTask() {
+		//			@Override
+		//			public void run() {
+		//				
+		//			}
+		//		}, _supervisorInterval, _supervisorInterval);
 	}
 
 	private boolean activateCfgFromPropFile() {

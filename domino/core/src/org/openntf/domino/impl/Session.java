@@ -79,7 +79,7 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 public class Session extends Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
-		org.openntf.domino.Session {
+org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -123,6 +123,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			DEFAULT_NSF_CACHE_SIZE, 1.0f);
 
 	private transient Database currentDatabase_;
+
+	private String username_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
@@ -237,6 +239,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	private void initialize(final lotus.domino.Session session) {
 		setFixEnable(Fixes.DOC_UNID_NULLS, true);
 		try {
+			username_ = session.getEffectiveUserName();
 			formatter_ = new DominoFormatter(session.getInternational());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);

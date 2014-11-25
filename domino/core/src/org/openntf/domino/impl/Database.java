@@ -78,6 +78,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/** The path_. */
 	private String path_;
 
+	/** The apiPath */
+	private String apiPath_;
+
 	/** The replid_. */
 	private String replid_;
 
@@ -138,6 +141,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache filepath for Database due to exception: " + e.text);
 		}
+		if (server_.length() > 0) {
+			apiPath_ = server_ + "!!" + path_;
+		} else {
+			apiPath_ = path_;
+		}
+
 		try {
 			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
@@ -3437,9 +3446,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getApiPath() {
-		if (server_.length() > 0)
-			return server_ + "!!" + path_;
-		return path_;
+		return apiPath_;
 	}
 
 	private IDatabaseSchema schema_;

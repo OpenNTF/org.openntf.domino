@@ -48,7 +48,7 @@ import org.openntf.domino.utils.Factory;
  * @author Roland Praml
  */
 @Incomplete
-public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor {
+public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor implements XotsExecutorService {
 	public enum TaskState {
 		/** The Task is Queued and will be executed next */
 
@@ -117,12 +117,13 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 		// the period. Values > 0: fixed rate. Values < 0: fixed delay
 		private Object wrappedTask;
-		private long period;
+		//		private long period;
 
 		// The next runtime;
-		private long time = 0;
+		//		private long time = 0;
 
-		private long sequenceNumber = sequencer.incrementAndGet();
+		private Scheduler scheduler;
+		public long sequenceNumber = sequencer.incrementAndGet();
 		private TaskState state = TaskState.QUEUED;
 		private Object objectState;
 
@@ -153,53 +154,32 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return sequenceNumber;
 		}
 
-		public DominoFutureTask(final WrappedCallable<T> callable, final long time) {
+		public DominoFutureTask(final WrappedCallable<T> callable, final Scheduler scheduler) {
 			super(callable);
-			this.period = 0;
-			this.time = time;
-
-			wrappedTask = callable.getWrappedTask();
-			if (wrappedTask instanceof Observable) {
-				((Observable) wrappedTask).addObserver(this);
-			}
+			this.wrappedTask = callable;
+			this.scheduler = scheduler;
+			// the wrappedCallable itself is not observable, but maybe its wrapped object
+			callable.addObserver(this);
 		}
 
-		public DominoFutureTask(final WrappedRunnable runnable, final T result, final long time) {
+		public DominoFutureTask(final WrappedRunnable runnable, final T result, final Scheduler scheduler) {
 			super(runnable, result);
-			this.period = 0;
-			this.time = time;
-
-			wrappedTask = runnable.getWrappedTask();
-			if (wrappedTask instanceof Observable) {
-				((Observable) wrappedTask).addObserver(this);
-			}
-		}
-
-		public DominoFutureTask(final WrappedRunnable runnable, final T result, final long time, final long period) {
-			super(runnable, result);
-			this.period = period;
-			this.time = time;
-
-			wrappedTask = runnable.getWrappedTask();
-			if (wrappedTask instanceof Observable) {
-				((Observable) wrappedTask).addObserver(this);
-			}
+			this.wrappedTask = runnable;
+			this.scheduler = scheduler;
+			// the wrappedCallable itself is not observable, but maybe its wrapped object
+			runnable.addObserver(this);
 		}
 
 		@Override
 		public boolean isPeriodic() {
-			return period != 0L;
+			return scheduler.isPeriodic();
 		}
 
 		private void runPeriodic() {
 			boolean success = super.runAndReset();
 
 			if (success && (!isShutdown() || ((getContinueExistingPeriodicTasksAfterShutdownPolicy()) && (!isTerminating())))) {
-				long l = this.period;
-				if (l > 0L) {
-					this.time += l;
-				} else
-					this.time = triggerTime(-l);
+				scheduler.computeNextExecutionTime();
 				getQueue().add(this);
 			}
 		}
@@ -231,35 +211,31 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			}
 		}
 
-		public void setError(final Throwable t) {
-			period = 0;
-			state = TaskState.ERROR;
-		}
-
 		@Override
 		public long getDelay(final TimeUnit timeUnit) {
-			return timeUnit.convert(this.time - now(), TimeUnit.NANOSECONDS);
+			return scheduler.getDelay(timeUnit);
+		}
+
+		public long getNextExecutionTime(final TimeUnit timeUnit) {
+			return scheduler.getNextExecutionTime(timeUnit);
 		}
 
 		@Override
-		public int compareTo(final Delayed paramT) {
-			if (paramT == this)
-				return 0;
-			if ((paramT instanceof DominoFutureTask)) {
-				DominoFutureTask<?> localScheduledFutureTask = (DominoFutureTask<?>) paramT;
-				long l2 = this.time - localScheduledFutureTask.time;
-				if (l2 < 0L)
-					return -1;
-				if (l2 > 0L)
-					return 1;
-				if (this.sequenceNumber < localScheduledFutureTask.sequenceNumber) {
+		public int compareTo(final Delayed other) {
+			long delta = getDelay(TimeUnit.NANOSECONDS) - other.getDelay(TimeUnit.NANOSECONDS);
+
+			if (delta < 0L)
+				return -1;
+			if (delta > 0L)
+				return 1;
+			//delta == 0 - compare sequence numbers
+			if ((other instanceof DominoFutureTask)) {
+				if (this.sequenceNumber < ((DominoFutureTask<?>) other).sequenceNumber) {
 					return -1;
 				}
 				return 1;
 			}
-			long l1 = getDelay(TimeUnit.NANOSECONDS) - paramT.getDelay(TimeUnit.NANOSECONDS);
-
-			return l1 < 0L ? -1 : l1 == 0L ? 0 : 1;
+			return 0;
 		}
 
 		@Override
@@ -290,10 +266,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		return now() + (delay < 4611686018427387903L ? delay : overflowFree(delay));
 	}
 
-	protected long triggerTime(final long delay, final TimeUnit timeUnit) {
-		return triggerTime(timeUnit.toNanos(delay < 0L ? 0L : delay));
-	}
-
 	private long overflowFree(long paramLong) {
 		Delayed localDelayed = (Delayed) super.getQueue().peek();
 		if (localDelayed != null) {
@@ -311,27 +283,17 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	 * 
 	 * @return
 	 */
-	public List<DominoFutureTask<?>> getTasks(final boolean sortByExecDate) {
+	@Override
+	public List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
 		ArrayList<DominoFutureTask<?>> ret = new ArrayList<DominoFutureTask<?>>();
 
 		for (DominoFutureTask<?> task : tasks.values()) {
 			ret.add(task);
 		}
-		if (sortByExecDate) {
+		if (comparator == null) {
 			Collections.sort(ret);
 		} else {
-			Collections.sort(ret, new Comparator<DominoFutureTask<?>>() {
-				@Override
-				public int compare(final DominoFutureTask<?> o1, final DominoFutureTask<?> o2) {
-					if (o1.sequenceNumber < o2.sequenceNumber) {
-						return -1;
-					} else if (o1.sequenceNumber == o2.sequenceNumber) {
-						return 0;
-					} else {
-						return 1;
-					}
-				}
-			});
+			Collections.sort(ret, comparator);
 		}
 		return ret;
 	}
@@ -406,7 +368,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	//		return ret;
 	//	}
 
-	public <V> RunnableScheduledFuture<V> queue(final RunnableScheduledFuture<V> future) {
+	protected <V> RunnableScheduledFuture<V> queue(final RunnableScheduledFuture<V> future) {
 		if (isShutdown()) {
 			throw new RejectedExecutionException();
 		}
@@ -417,7 +379,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		if (future instanceof DominoFutureTask) {
 			DominoFutureTask<?> dft = (DominoFutureTask<?>) future;
 			tasks.put(dft.sequenceNumber, dft);
-			if (dft.time > now()) {
+			if (dft.getDelay(TimeUnit.NANOSECONDS) > 0) {
 				dft.setState(TaskState.SLEEPING);
 			}
 		}
@@ -427,28 +389,59 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	@Override
 	public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final long delay, final TimeUnit timeUnit) {
-		return queue(new DominoFutureTask<V>(wrap(callable), triggerTime(delay, timeUnit)));
+		return queue(new DominoFutureTask<V>(wrap(callable), new PeriodicScheduler(delay, 0L, timeUnit)));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ScheduledFuture<?> schedule(final Runnable runnable, final long delay, final TimeUnit timeUnit) {
-		return queue(new DominoFutureTask(wrap(runnable), null, triggerTime(delay, timeUnit)));
+		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, 0L, timeUnit)));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(final Runnable runnable, final long delay, final long period, final TimeUnit timeUnit) {
-		return queue(new DominoFutureTask(wrap(runnable), null, triggerTime(delay, timeUnit), triggerTime(period, timeUnit)));
+		if (period <= 0) {
+			throw new IllegalStateException("period must be > 0");
+		}
+		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, period, timeUnit)));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ScheduledFuture<?> scheduleWithFixedDelay(final Runnable runnable, final long delay, final long period, final TimeUnit timeUnit) {
-		return queue(new DominoFutureTask(wrap(runnable), null, triggerTime(delay, timeUnit), triggerTime(-period, timeUnit)));
+		if (period <= 0) {
+			throw new IllegalStateException("period must be > 0");
+		}
+		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, -period, timeUnit)));
 	}
 
 	protected abstract <V> WrappedCallable<V> wrap(Callable<V> inner);
 
 	protected abstract WrappedRunnable wrap(Runnable inner);
+
+	protected abstract WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
+
+	@Override
+	public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final Scheduler scheduler) {
+		return queue(new DominoFutureTask<V>(wrap(callable), scheduler));
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public ScheduledFuture<?> schedule(final Runnable runnable, final Scheduler scheduler) {
+		return queue(new DominoFutureTask(wrap(runnable), null, scheduler));
+	}
+
+	@Override
+	public ScheduledFuture<?> scheduleTasklet(final String moduleName, final String className, final Scheduler scheduler,
+			final Object... ctorArgs) {
+		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), scheduler));
+	}
+
+	@Override
+	public ScheduledFuture<?> runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
+		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0L, 0L, TimeUnit.NANOSECONDS)));
+	}
+
 }

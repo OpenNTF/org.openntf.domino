@@ -35,11 +35,7 @@
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.adapter.serviceFactory" class="org.openntf.domino.xsp.adapter.OpenntfServiceFactory" />
    </extension>
-   <!-- needed for Factory.initThread() / Factory.termThread() -->
-	<extension point="com.ibm.commons.Extension">
-		<service class="org.openntf.domino.xsp.helpers.OpenntfFactoryInitializer" type="com.ibm.xsp.RequestParameters"/>
-	</extension>
-	<!-- needed to register some additional factories -->
+   <!-- needed to register some additional factories -->
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.OpenntfDominoXspContributor" />
    </extension>

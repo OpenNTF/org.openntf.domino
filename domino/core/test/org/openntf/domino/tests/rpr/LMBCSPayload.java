@@ -29,7 +29,7 @@ import org.openntf.domino.utils.LMBCSUtils;
 @RunWith(DominoJUnitRunner.class)
 public class LMBCSPayload implements Runnable {
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new LMBCSPayload());
+		TestRunnerUtil.runAsDominoThread(new LMBCSPayload(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public LMBCSPayload() {

@@ -12,11 +12,6 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 	private static final long serialVersionUID = 1L;
 	final private String runAs_;
 
-	public NamedSessionFactory(final String runAs) {
-		super();
-		runAs_ = runAs;
-	}
-
 	public NamedSessionFactory(final org.openntf.domino.Session source) {
 		super(source);
 		runAs_ = source.getEffectiveUserName();
@@ -30,10 +25,6 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 	public NamedSessionFactory(final ISessionFactory source, final String runAs) {
 		super(source);
 		runAs_ = runAs;
-	}
-
-	public NamedSessionFactory(final Fixes[] fixes, final AutoMime autoMime, final String apiPath) {
-		this(fixes, autoMime, apiPath, null);
 	}
 
 	@Override

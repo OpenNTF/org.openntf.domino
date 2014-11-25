@@ -3,8 +3,10 @@ package org.openntf.domino.graph2;
 import java.util.Map;
 import java.util.Set;
 
-import com.tinkerpop.blueprints.Edge;
+import org.openntf.domino.graph2.impl.DEdgeList;
+
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
@@ -26,12 +28,16 @@ com.tinkerpop.blueprints.TransactionalGraph {
 
 	public DElementStore getDefaultElementStore();
 
-	public Set<Edge> getEdgesFromIds(final Set<String> set);
+	public DEdgeList getEdgesFromIds(Vertex source, final Set<String> set);
 
-	public Set<Edge> getEdgesFromIds(final Set<String> set, final String... labels);
+	public DEdgeList getEdgesFromIds(Vertex source, final Set<String> set, final String... labels);
 
 	public Object getStoreDelegate(DElementStore store);
 
 	public Object getProxyStoreDelegate(DElementStore store);
+
+	public Object getStoreDelegate(DElementStore store, Object provisionalKey);
+
+	public Object getProxyStoreDelegate(DElementStore store, Object provisionalKey);
 
 }

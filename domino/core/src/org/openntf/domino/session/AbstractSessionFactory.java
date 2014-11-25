@@ -20,12 +20,13 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 
 	protected String currentApiPath_;
 
-	public AbstractSessionFactory() {
-
-		this(Fixes.values(), 		// it is always a good idea to enable ALL fixes
-				AutoMime.WRAP_32K,	// CHECKME RPr: this is the best choice for FOCONIS. For others, too?
-				null); 				// All the default sessionfactories do not have a contextDB
-	}
+	// No - we should respect the settings of the App wherever it is possible
+	//	public AbstractSessionFactory() {
+	//
+	//		this(Fixes.values(), 		// it is always a good idea to enable ALL fixes
+	//				AutoMime.WRAP_32K,	// CHECKME RPr: this is the best choice for FOCONIS. For others, too?
+	//				null); 				// All the default sessionfactories do not have a contextDB
+	//	}
 
 	public AbstractSessionFactory(final Fixes[] fixes, final AutoMime autoMime, final String apiPath) {
 		fixes_ = fixes;
@@ -48,11 +49,6 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 		currentApiPath_ = sf.currentApiPath_;
 	}
 
-	public AbstractSessionFactory apiPath(final String apiPath) {
-		currentApiPath_ = apiPath;
-		return this;
-	}
-
 	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
 		org.openntf.domino.impl.Session sess = (org.openntf.domino.impl.Session) Factory.fromLotus(raw, Session.SCHEMA, null);
 		sess.setSessionFactory(this);
@@ -66,7 +62,6 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 		sess.setAutoMime(autoMime_);
 
 		sess.setConvertMIME(false);
-
 		if (selfCreated && currentApiPath_ != null) {
 			Database db = sess.getCurrentDatabase();
 			if (db == null) {

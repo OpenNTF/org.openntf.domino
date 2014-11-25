@@ -11,10 +11,6 @@ import org.openntf.domino.ext.Session.Fixes;
 public class TrustedSessionFactory extends AbstractSessionFactory {
 	private static final long serialVersionUID = 1L;
 
-	public TrustedSessionFactory() {
-		super();
-	}
-
 	public TrustedSessionFactory(final Session source) {
 		super(source);
 	}

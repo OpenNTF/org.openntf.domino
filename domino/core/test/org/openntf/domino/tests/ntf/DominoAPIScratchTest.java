@@ -18,8 +18,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
-import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.DominoExecutor;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -36,10 +35,7 @@ public enum DominoAPIScratchTest {
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
-	static class Doer extends AbstractDominoRunnable {
-		/**
-		 * 
-		 */
+	static class Doer implements Runnable {
 		private static final long serialVersionUID = 1L;
 		int nameCount = 0;
 		int docCount = 0;
@@ -210,30 +206,10 @@ public enum DominoAPIScratchTest {
 			sb.append(dateCount + " datetimes without recycling.");
 			System.out.println(sb.toString());
 		}
-
-		/* (non-Javadoc)
-		 * @see org.openntf.domino.thread.AbstractDominoRunnable#shouldStop()
-		 */
-		@Override
-		public boolean shouldStop() {
-			return false;
-		}
-
 	}
 
 	public static void main(final String[] args) {
-		DominoExecutor de = new DominoExecutor(10);
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new Doer());
-		}
-		DominoExecutor de2 = new DominoExecutor(10);
-
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de2.execute(new Doer());
-		}
-
-		de.shutdown();
-		de2.shutdown();
+		TestRunnerUtil.runAsDominoThread(new Doer(), TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }

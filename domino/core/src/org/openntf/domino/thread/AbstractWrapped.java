@@ -1,5 +1,7 @@
 package org.openntf.domino.thread;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 
 import lotus.domino.NotesThread;
@@ -20,15 +22,11 @@ import org.openntf.domino.xots.Tasklet;
  */
 public abstract class AbstractWrapped<T> {
 	public static abstract class WrappedCallable<V> extends AbstractWrapped<Callable<V>> implements Callable<V> {
-		public WrappedCallable(final Callable<V> callable) {
-			super(callable);
-		}
+
 	}
 
 	public static abstract class WrappedRunnable extends AbstractWrapped<Runnable> implements Runnable {
-		public WrappedRunnable(final Runnable runnable) {
-			super(runnable);
-		}
+
 	}
 
 	private T wrappedTask;
@@ -50,31 +48,34 @@ public abstract class AbstractWrapped<T> {
 	 *            the runnable to determine the DominoSessionType
 	 * @return the DominoSessionType
 	 */
-	protected AbstractWrapped(final T task) {
+	protected void init(final T task) {
 		wrappedTask = task;
 		// some security checks...
 		if (task instanceof NotesThread) {
 			// RPr: I'm not sure if this should be allowed anyway...
-			throw new IllegalStateException("Cannot wrap the NotesThread " + task.getClass().getName() + " into a DominoRunner");
+			throw new IllegalArgumentException("Cannot wrap the NotesThread " + task.getClass().getName() + " into a DominoRunner");
 		}
 		if (task instanceof DominoFutureTask) {
 			// RPr: don't know if this is possible
-			throw new IllegalStateException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
+			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
 		if (task instanceof AbstractWrapped) {
 			// RPr: don't know if this is possible
-			throw new IllegalStateException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
+			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
+
+		// save current bubbleExceptions settings
+		bubbleException = DominoUtils.getBubbleExceptions();
+
 		if (task instanceof Tasklet.Interface) {
 			Tasklet.Interface dominoRunnable = (Tasklet.Interface) task;
 			sessionFactory = dominoRunnable.getSessionFactory();
 			scope = dominoRunnable.getScope();
 			context = dominoRunnable.getContext();
 		}
-		bubbleException = DominoUtils.getBubbleExceptions();
 		Tasklet annot = task.getClass().getAnnotation(Tasklet.class);
+
 		if (annot != null) {
-			System.out.println("XotsTasklet.session " + annot.session());
 			if (sessionFactory == null) {
 				switch (annot.session()) {
 				case CLONE:
@@ -132,7 +133,13 @@ public abstract class AbstractWrapped<T> {
 		}
 	}
 
-	public T getWrappedTask() {
+	public void addObserver(final Observer o) {
+		if (wrappedTask instanceof Observable) {
+			((Observable) wrappedTask).addObserver(o);
+		}
+	}
+
+	protected T getWrappedTask() {
 		return wrappedTask;
 	}
 }
