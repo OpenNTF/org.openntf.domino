@@ -51,16 +51,16 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 			Vertex argVertex = ((VertexFrame) arguments[0]).asVertex();
 			switch (incidence.direction()) {
 			case OUT:
-				DVertex outVertex = (DVertex) vertex;
-				DVertex inVertex = (DVertex) argVertex;
-				resultEdge = outVertex.findInEdge(inVertex, incidence.label());
+				DVertex inVertex = (DVertex) vertex;
+				DVertex outVertex = (DVertex) argVertex;
+				resultEdge = outVertex.findOutEdge(inVertex, incidence.label());
 				if (resultEdge != null) {
 					return framedGraph.frame(resultEdge, method.getReturnType());
 				}
 			case IN:
-				inVertex = (DVertex) vertex;
-				outVertex = (DVertex) argVertex;
-				resultEdge = inVertex.findOutEdge(outVertex, incidence.label());
+				inVertex = (DVertex) argVertex;
+				outVertex = (DVertex) vertex;
+				resultEdge = inVertex.findInEdge(outVertex, incidence.label());
 				if (resultEdge != null) {
 					return framedGraph.frame(resultEdge, method.getReturnType());
 				}
@@ -77,18 +77,18 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 			Vertex argVertex = ((VertexFrame) arguments[0]).asVertex();
 			switch (incidence.direction()) {
 			case OUT:
-				DVertex outVertex = (DVertex) vertex;
-				DVertex inVertex = (DVertex) argVertex;
-				resultEdge = outVertex.findInEdge(inVertex, incidence.label());
+				DVertex inVertex = (DVertex) vertex;
+				DVertex outVertex = (DVertex) argVertex;
+				resultEdge = outVertex.findOutEdge(inVertex, incidence.label());
 				if (resultEdge != null) {
 					return framedGraph.frame(resultEdge, method.getReturnType());
 				}
 				Edge e1 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
 				return framedGraph.frame(e1, method.getReturnType());
 			case IN:
-				inVertex = (DVertex) vertex;
-				outVertex = (DVertex) argVertex;
-				resultEdge = inVertex.findOutEdge(outVertex, incidence.label());
+				inVertex = (DVertex) argVertex;
+				outVertex = (DVertex) vertex;
+				resultEdge = inVertex.findInEdge(outVertex, incidence.label());
 				if (resultEdge != null) {
 					return framedGraph.frame(resultEdge, method.getReturnType());
 				}

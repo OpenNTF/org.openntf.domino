@@ -280,7 +280,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	}
 
 	public DEdgeList getEdgesFromIds(final Vertex source, final NoteList list) {
-		DEdgeList result = new DEdgeList(source);
+		DEdgeList result = new DEdgeList((DVertex) source);
 		for (NoteCoordinate id : list) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -292,7 +292,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public DEdgeList getEdgesFromIds(final Vertex source, final Set<String> set) {
-		DEdgeList result = new DEdgeList(source);
+		DEdgeList result = new DEdgeList((DVertex) source);
 		for (String id : set) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -304,7 +304,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public DEdgeList getEdgesFromIds(final Vertex source, final Set<String> set, final String... labels) {
-		DEdgeList result = new DEdgeList(source);
+		DEdgeList result = new DEdgeList((DVertex) source);
 		for (String id : set) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
