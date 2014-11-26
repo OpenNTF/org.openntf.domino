@@ -1013,7 +1013,7 @@ public enum Factory {
 	 */
 	public static void initThread() { // RPr: Method was deliberately renamed
 		if (!started) {
-			throw new IllegalStateException("Factory is not yet statetd");
+			throw new IllegalStateException("Factory is not yet started");
 		}
 		if (threadVariables_.get() != null) {
 			log_.severe("WARNING - Thread " + Thread.currentThread().getName() + " was not correctly terminated or initialized twice");
