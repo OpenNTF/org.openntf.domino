@@ -68,7 +68,7 @@ public class Logging {
 		_supervisor.schedule(new TimerTask() {
 			@Override
 			public void run() {
-
+				Logging.getInstance().lookForCfgChange();
 			}
 		}, _supervisorInterval, _supervisorInterval);
 	}
