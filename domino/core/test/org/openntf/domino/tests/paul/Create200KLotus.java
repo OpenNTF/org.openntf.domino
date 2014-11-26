@@ -6,10 +6,10 @@ import java.util.Set;
 
 import lotus.domino.Database;
 import lotus.domino.Document;
-import lotus.domino.NotesFactory;
 import lotus.domino.Session;
 
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.TestRunnerUtil;
+import org.openntf.domino.utils.Factory;
 
 public class Create200KLotus {
 
@@ -24,7 +24,7 @@ public class Create200KLotus {
 			try {
 				Document doc = null;
 				System.out.println("START Creation of Documents:" + new Date().toString());
-				Session s = NotesFactory.createSession();
+				Session s = Factory.getSession();
 				Set<Document> docset = new HashSet<Document>();
 				Database db = s.getDatabase("", "OneMillionLotus.nsf", true);
 				if (!db.isOpen()) {
@@ -55,10 +55,9 @@ public class Create200KLotus {
 	 * The main method.
 	 * 
 	 * @param args
-	 *            the arguments 
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
-		DominoThread dt = new DominoThread(new DocCreator(), "Create One Million Docs");
-		dt.start();
+		TestRunnerUtil.runAsDominoThread(new DocCreator());
 	}
 }
