@@ -896,6 +896,20 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((Class<?>) value).getName();
 		} else if (value instanceof Enum<?>) {
 			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
+			//		} else if (value instanceof EnumSet<?>) {
+			//			EnumSet<?> set = (EnumSet<?>) value;
+			//			Vector<String> result = new Vector<String>();
+			//			for (Enum<?> e : set) {
+			//				result.add(e.getDeclaringClass().getName() + " " + e.name());
+			//			}
+			//			return result;
+			//		} else if (value instanceof Enum<?>[]) {
+			//			Enum<?>[] set = (Enum<?>[]) value;
+			//			Vector<String> result = new Vector<String>();
+			//			for (Enum<?> e : set) {
+			//				result.add(e.getDeclaringClass().getName() + " " + e.name());
+			//			}
+			//			return result;
 		} else if (value instanceof Formula) {
 			return ((Formula) value).getExpression();
 		}

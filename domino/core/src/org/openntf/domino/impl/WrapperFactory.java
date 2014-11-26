@@ -54,9 +54,20 @@ import org.openntf.domino.utils.Factory;
  */
 public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
-	public Thread correctThread = Thread.currentThread();
+	public Thread correctThread;
 
 	public static final int LWDCSIZE = 10;
+
+	public WrapperFactory() {
+	}
+
+	private Thread getCorrectThread() {
+		if (correctThread == null) {
+			correctThread = Thread.currentThread();
+			//			log_.log(Level.WARNING, "DEBUG: Initializing a WrapperFactory on thread " + correctThread.toString());
+		}
+		return correctThread;
+	}
 
 	//	private static class LastWrappedDocCache {
 	//
@@ -351,9 +362,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 */
 
 	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
-		if (!Factory.ENABLE_THREAD_SUPPORT && Thread.currentThread() != correctThread) {
-			throw new IllegalStateException("It seems that Notes-Objects are used across threads! This Thread: " + Thread.currentThread()
-					+ " correct Thread: " + correctThread);
+		if (!Factory.ENABLE_THREAD_SUPPORT && getCorrectThread().getId() != Thread.currentThread().getId()) {
+			throw new IllegalStateException("It seems that Notes-Objects are used across threads! This Thread: "
+					+ Thread.currentThread().getId() + " correct Thread: " + getCorrectThread().getId());
 		}
 
 		if (lotus instanceof lotus.domino.Name) {
@@ -533,6 +544,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	@Override
 	public long terminate() {
+		//		log_.log(Level.WARNING, "DEBUG: Terminating WrapperFactory from thread " + String.valueOf(correctThread) + " on thread "
+		//				+ Thread.currentThread().toString());
+		correctThread = null;
 		return clearCaches();
 	}
 

@@ -820,6 +820,8 @@ public enum Factory {
 					tv.ownSessions.put(mode.alias, result);
 					//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
 					//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+				} else {
+					log_.log(Level.SEVERE, "No session factory found for mode " + mode.alias);
 				}
 			} catch (PrivilegedActionException ne) {
 				log_.log(Level.SEVERE, "Unable to get the session of type " + mode.alias
@@ -1175,20 +1177,20 @@ public enum Factory {
 		};
 
 		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
 		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
-		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
 		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);

@@ -115,6 +115,9 @@ public abstract class AbstractWrapped<T> {
 				if ((annot.session() != Tasklet.Session.NONE) && sessionFactory == null) {
 					throw new IllegalStateException("Could not create a Fatory for " + annot.session());
 				}
+				if (sessionFactory != null) {
+					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+				}
 			}
 
 			if (context == null) {

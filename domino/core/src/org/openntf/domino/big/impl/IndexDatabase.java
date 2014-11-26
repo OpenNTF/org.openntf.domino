@@ -27,11 +27,10 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
+import org.openntf.domino.helpers.DatabaseHolder;
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
-import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * @author Nathan T. Freeman
@@ -59,9 +58,10 @@ public class IndexDatabase implements IScannerStateManager {
 	public static final String[] DEFAULT_STOP_WORDS_EN = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
 			.split(",");
 
-	protected transient Database indexDb_;
-	protected transient View termView_;
-	protected transient View dbView_;
+	//	protected transient Database indexDb_;
+	protected transient DatabaseHolder dbHolder_;
+	//	protected transient View termView_;
+	//	protected transient View dbView_;
 	protected Set<CharSequence> stopList_;
 	protected boolean caseSensitive_ = false;
 	protected boolean continue_ = true;
@@ -121,7 +121,8 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public IndexDatabase(final Database indexDb) {
-		indexDb_ = indexDb;
+		dbHolder_ = new DatabaseHolder(indexDb);
+		//		indexDb_ = indexDb;
 	}
 
 	public void setCaseSensitive(final boolean value) {
@@ -135,22 +136,24 @@ public class IndexDatabase implements IScannerStateManager {
 	private String indexApiPath_;
 
 	public void setDatabase(final Database indexDb) {
-		indexDb_ = indexDb;
-		indexApiPath_ = indexDb.getApiPath();
+		dbHolder_ = new DatabaseHolder(indexDb);
+		//		indexDb_ = indexDb;
+		//		indexApiPath_ = indexDb.getApiPath();
 	}
 
 	public Database getIndexDb() {
-		if (indexDb_ == null) {
-			if (indexApiPath_ != null) {
-				indexDb_ = Factory.getSession(SessionType.CURRENT).getDatabase(indexApiPath_);
-			} else {
-				indexDb_ = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
-			}
-		}
-		return indexDb_;
+		return dbHolder_.getDatabase();
+		//		if (indexDb_ == null) {
+		//			if (indexApiPath_ != null) {
+		//				indexDb_ = Factory.getSession(SessionType.CURRENT).getDatabase(indexApiPath_);
+		//			} else {
+		//				indexDb_ = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
+		//			}
+		//		}
+		//		return indexDb_;
 	}
 
-	protected void initIndexDb() {
+	protected View initIndexDb() {
 		View indexView = getIndexDb().getView(TERM_VIEW_NAME);
 		if (indexView == null) {
 			indexView = getIndexDb().createView(TERM_VIEW_NAME, "Form=\"" + TERM_FORM_NAME + "\"");
@@ -175,6 +178,7 @@ public class IndexDatabase implements IScannerStateManager {
 			titleColumn.setTitle("TITLE");
 
 		}
+		return indexView;
 	}
 
 	public Set<CharSequence> getStopList() {
@@ -192,11 +196,16 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public View getTermView() {
-		if (dbView_ == null) {
-			initIndexDb();
-			dbView_ = getIndexDb().getView(TERM_VIEW_NAME);
+		View result = null;
+		result = getIndexDb().getView(TERM_VIEW_NAME);
+		if (result == null) {
+			result = initIndexDb();
 		}
-		return dbView_;
+		return result;
+		//		if (dbView_ == null) {
+		//			dbView_ = ;
+		//		}
+		//		return dbView_;
 	}
 
 	public List<String> getTermStarts(final String startsWith, final int count) {
@@ -226,11 +235,18 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public View getDbView() {
-		if (termView_ == null) {
+		View result = null;
+		result = getIndexDb().getView(DB_VIEW_NAME);
+		if (result == null) {
 			initIndexDb();
-			termView_ = getIndexDb().getView(DB_VIEW_NAME);
+			result = getIndexDb().getView(DB_VIEW_NAME);
 		}
-		return termView_;
+		return result;
+		//		if (termView_ == null) {
+		//			initIndexDb();
+		//			termView_ = getIndexDb().getView(DB_VIEW_NAME);
+		//		}
+		//		return termView_;
 	}
 
 	public Document getDbDocument(final CharSequence dbid) {
@@ -248,7 +264,7 @@ public class IndexDatabase implements IScannerStateManager {
 		String key = caseSensitive_ ? token.toString() : token.toString().toLowerCase();
 
 		Document result = getIndexDb().getDocumentWithKey(key, true);
-		if (result.isNewNote()) {
+		if (result != null && result.isNewNote()) {
 			result.replaceItemValue("Form", TERM_FORM_NAME);
 			result.replaceItemValue(TERM_KEY_NAME, token);
 			result.save();
@@ -825,7 +841,7 @@ public class IndexDatabase implements IScannerStateManager {
 				scanner = (DocumentScanner) o;
 			} else {
 				System.out
-						.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
+				.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
 			}
 			if (status != null) {
 				//				System.out.println("DEBUG: Received update with status " + status.name());
