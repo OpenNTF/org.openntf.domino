@@ -3,7 +3,7 @@
    <description name="OpenNTF Domino API for IBM Domino Servers">
       OpenNTF Domino API for IBM Domino Servers
    </description>
-   <feature url="features/org.openntf.domino.feature.group_1.5.0.201411250838.jar" id="org.openntf.domino.feature.group" version="1.5.0.201411250838">
+   <feature url="features/org.openntf.domino.feature.group_1.5.0.201411261745.jar" id="org.openntf.domino.feature.group" version="1.5.0.201411261745">
       <category name="OpenNTF_API"/>
    </feature>
    <category-def name="OpenNTF_API" label="OpenNTF_API"/>

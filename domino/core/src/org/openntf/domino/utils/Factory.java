@@ -1007,7 +1007,7 @@ public enum Factory {
 	 */
 	public static void initThread() { // RPr: Method was deliberately renamed
 		if (!started) {
-			throw new IllegalStateException("Factory is not yet statetd");
+			throw new IllegalStateException("Factory is not yet started");
 		}
 		if (log_.isLoggable(Level.FINER)) {
 			log_.log(Level.FINER, "Factory.initThread()", new Throwable());
@@ -1177,20 +1177,20 @@ public enum Factory {
 		};
 
 		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
-				= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
-				= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
 		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
-				= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
-				= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
-				= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
 		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
