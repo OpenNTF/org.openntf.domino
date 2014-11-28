@@ -243,6 +243,8 @@ public enum Factory {
 		/** These sessions will be recycled at the end of that thread. Key = UserName of session */
 		public Map<String, Session> ownSessions = new HashMap<String, Session>();
 
+		private List<Runnable> terminateHooks;
+
 		/** clear the object */
 		private void clear() {
 			wrapperFactory = null;
@@ -255,7 +257,30 @@ public enum Factory {
 			userLocale = null;
 			namedSessionFactory = null;
 			namedSessionFullAccessFactory = null;
-			terminateHooks.clear();
+
+		}
+
+		public void removeTerminateHook(final Runnable hook) {
+			if (terminateHooks == null)
+				return;
+			terminateHooks.remove(hook);
+
+		}
+
+		public void addTerminateHook(final Runnable hook) {
+			if (terminateHooks == null) {
+				terminateHooks = new ArrayList<Runnable>();
+			}
+			terminateHooks.add(hook);
+		}
+
+		public void terminate() {
+			if (terminateHooks != null) {
+				for (Runnable hook : terminateHooks) {
+					hook.run();
+				}
+				terminateHooks = null;
+			}
 		}
 	}
 
@@ -268,7 +293,7 @@ public enum Factory {
 	 */
 	private static ThreadLocal<ThreadVariables> threadVariables_ = new ThreadLocal<ThreadVariables>();
 
-	private static List<Runnable> terminateHooks = new ArrayList<Runnable>();
+	private static List<Runnable> globalTerminateHooks = new ArrayList<Runnable>();
 	private static List<Runnable> shutdownHooks = new ArrayList<Runnable>();
 
 	private static String localServerName;
@@ -1038,9 +1063,10 @@ public enum Factory {
 		//		trace.printStackTrace();
 		try {
 
-			for (Runnable term : terminateHooks) {
+			for (Runnable term : globalTerminateHooks) {
 				term.run();
 			}
+			tv.terminate();
 			if (tv.wrapperFactory != null) {
 				tv.wrapperFactory.terminate();
 			}
@@ -1653,13 +1679,22 @@ public enum Factory {
 	 * 
 	 * @param hook
 	 *            the hook that should run on next terminate
+	 * 
 	 */
-	public static void addTerminateHook(final Runnable hook) {
-		terminateHooks.add(hook);
+	public static void addTerminateHook(final Runnable hook, final boolean global) {
+		if (global) {
+			globalTerminateHooks.add(hook);
+		} else {
+			getThreadVariables().addTerminateHook(hook);
+		}
 	}
 
-	public static void removeTerminateHook(final Runnable hook) {
-		terminateHooks.remove(hook);
+	public static void removeTerminateHook(final Runnable hook, final boolean global) {
+		if (global) {
+			globalTerminateHooks.remove(hook);
+		} else {
+			getThreadVariables().removeTerminateHook(hook);
+		}
 	}
 
 	/**

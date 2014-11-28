@@ -16,37 +16,33 @@ import org.openntf.domino.utils.Factory.SessionType;
 public @interface Tasklet {
 	public interface Interface {
 
+		/**
+		 * Returns the {@link ISessionFactory} that is used to create the Session. If <code>null</code> is returned, the
+		 * {@link Tasklet#session()} annotation counts.
+		 * 
+		 * @return a SessionFactory or null.
+		 */
 		public ISessionFactory getSessionFactory();
 
-		//use a named session factory instead
-		//public String getRunAs();
-
+		/**
+		 * Returns the {@link Context} where the Tasklet should run. If <code>null</code> is returned, the {@link Tasklet#scope()}
+		 * annotation counts.
+		 * 
+		 * @return a scope or null.
+		 */
 		public Scope getScope();
 
+		/**
+		 * Returns the {@link Context} of that tasklet. If <code>null</code> is returned, the {@link Tasklet#context()} annotation counts.
+		 * 
+		 * @return
+		 */
 		public Context getContext();
 
-		//public void setAccessControlContext(AccessControlContext context);
-
-		//public AccessControlContext getAccessControlContext();
-
-		//public void setSession(final lotus.domino.Session session);
-
-		// public org.openntf.domino.Session getSession();
-
-		//public void setRunAs(String username);
-
-		//public void setDominoExecutionContext(DominoExecutionContext tctx);
-
-		//public DominoExecutionContext getDominoExecutionContext();
-
 		/**
-		 * Set the thread. Needed to interrupt
-		 * 
-		 * @param thread
+		 * Notifies the tasklet that it should stop if possible.
 		 */
-		public void setCurrentThread(Thread thread);
-
-		public void stop(final boolean force);
+		public void stop();
 	}
 
 	/**

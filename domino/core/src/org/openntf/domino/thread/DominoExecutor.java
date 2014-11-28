@@ -34,12 +34,12 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	private static class DominoWrappedCallable<V> extends WrappedCallable<V> {
 
 		public DominoWrappedCallable(final Callable<V> runnable) {
-			init(runnable);
+			setWrappedTask(runnable);
 		}
 
 		@Override
 		public V call() throws Exception {
-			return callOrRun(getWrappedTask(), null);
+			return (V) callOrRun(getWrappedTask());
 		}
 
 	}
@@ -53,19 +53,18 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	private static class DominoWrappedRunnable extends WrappedRunnable {
 
 		public DominoWrappedRunnable(final java.lang.Runnable runnable) {
-			init(runnable);
+			setWrappedTask(runnable);
 		}
 
 		@Override
 		public void run() {
 			try {
-				callOrRun(null, getWrappedTask());
+				callOrRun(getWrappedTask());
 			} catch (Exception e) {
 				DominoUtils.setBubbleExceptions(true);
 				DominoUtils.handleException(e);
 			}
 		}
-
 	}
 
 	/**
@@ -76,7 +75,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	 * @return
 	 * @throws Exception
 	 */
-	private static <V> V callOrRun(final Callable<V> callable, final Runnable runnable) throws Exception {
+	private static Object callOrRun(final Object wrappedTask) throws Exception {
 		NotesThread.sinitThread();
 		DominoUtils.setBubbleExceptions(true); // RPr: true is always good (don't like suppressing errors at all)
 		Factory.initThread();
@@ -84,13 +83,13 @@ public class DominoExecutor extends AbstractDominoExecutor {
 			Thread thread = Thread.currentThread();
 			ClassLoader oldCl = thread.getContextClassLoader();
 
-			ClassLoader runCl = (callable != null ? callable : runnable).getClass().getClassLoader();
+			ClassLoader runCl = wrappedTask.getClass().getClassLoader();
 			thread.setContextClassLoader(runCl);
 			try {
-				if (callable != null) {
-					return callable.call();
+				if (wrappedTask instanceof Callable) {
+					return ((Callable<?>) wrappedTask).call();
 				} else {
-					runnable.run();
+					((Runnable) wrappedTask).run();
 					return null;
 				}
 			} finally {

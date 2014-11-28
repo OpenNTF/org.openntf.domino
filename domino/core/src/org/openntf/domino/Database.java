@@ -58,7 +58,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Generic database utilities
 	 * 
-	 * @Deprecated RPr: As far as I know, this was only used in the DbDirectory
+	 * @deprecated RPr: As far as I know, this was only used in the DbDirectory
 	 */
 	@Deprecated
 	public enum Utils {

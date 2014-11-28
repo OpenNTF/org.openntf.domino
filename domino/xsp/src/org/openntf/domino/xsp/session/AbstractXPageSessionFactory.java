@@ -8,6 +8,9 @@ import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.ODAPlatform;
 
+import com.ibm.domino.napi.NException;
+import com.ibm.domino.napi.c.NotesUtil;
+import com.ibm.domino.napi.c.Os;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public abstract class AbstractXPageSessionFactory implements ISessionFactory {
@@ -48,6 +51,29 @@ public abstract class AbstractXPageSessionFactory implements ISessionFactory {
 		}
 
 		return sess;
+	}
+
+	/**
+	 * Registers the userHandle for proper cleanup
+	 * 
+	 * @param userHandle
+	 * @throws NException
+	 */
+	protected long createUserNameList(final String userName) throws NException {
+		final long userHandle = NotesUtil.createUserNameList(userName);
+		if (userHandle != 0) {
+
+			Factory.addTerminateHook(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Os.OSMemFree(userHandle);
+					} catch (NException e) {
+					}
+				}
+			}, false);
+		}
+		return userHandle;
 	}
 
 	/**

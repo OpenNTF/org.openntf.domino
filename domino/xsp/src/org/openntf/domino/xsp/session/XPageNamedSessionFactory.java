@@ -4,7 +4,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-import com.ibm.domino.napi.c.NotesUtil;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 
 public class XPageNamedSessionFactory extends AbstractXPageSessionFactory implements INamedSessionFactory {
@@ -26,20 +25,13 @@ public class XPageNamedSessionFactory extends AbstractXPageSessionFactory implem
 	public Session createSession() {
 		if (runAs_ == null)
 			throw new NullPointerException();
-		try {
-			long userHandle = NotesUtil.createUserNameList(runAs_);
-			lotus.domino.Session rawSession = XSPNative.createXPageSessionExt(runAs_, userHandle, false, true, fullAccess_);
-			return wrapSession(rawSession, true);
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return createSession(runAs_);
 	}
 
 	@Override
 	public Session createSession(final String userName) {
 		try {
-			long userHandle = NotesUtil.createUserNameList(userName);
+			final long userHandle = createUserNameList(userName);
 			lotus.domino.Session rawSession = XSPNative.createXPageSessionExt(userName, userHandle, false, true, fullAccess_);
 			return wrapSession(rawSession, true);
 		} catch (Exception e) {

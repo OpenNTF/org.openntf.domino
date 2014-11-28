@@ -20,16 +20,16 @@ import org.openntf.domino.xots.Tasklet;
  * 
  * @param <T>
  */
-public abstract class AbstractWrapped<T> {
-	public static abstract class WrappedCallable<V> extends AbstractWrapped<Callable<V>> implements Callable<V> {
+public abstract class AbstractWrapped {
+	public static abstract class WrappedCallable<V> extends AbstractWrapped implements Callable<V> {
 
 	}
 
-	public static abstract class WrappedRunnable extends AbstractWrapped<Runnable> implements Runnable {
+	public static abstract class WrappedRunnable extends AbstractWrapped implements Runnable {
 
 	}
 
-	private T wrappedTask;
+	private Object wrappedTask;
 
 	protected Tasklet.Scope scope;
 	protected Tasklet.Context context;
@@ -48,8 +48,10 @@ public abstract class AbstractWrapped<T> {
 	 *            the runnable to determine the DominoSessionType
 	 * @return the DominoSessionType
 	 */
-	protected void init(final T task) {
+	protected synchronized void setWrappedTask(final Object task) {
 		wrappedTask = task;
+		if (task == null)
+			return;
 		// some security checks...
 		if (task instanceof NotesThread) {
 			// RPr: I'm not sure if this should be allowed anyway...
@@ -133,13 +135,35 @@ public abstract class AbstractWrapped<T> {
 		}
 	}
 
+	/**
+	 * Returns the wrapped task
+	 * 
+	 * @return
+	 */
+	protected synchronized Object getWrappedTask() {
+		return wrappedTask;
+	}
+
+	/**
+	 * adds an observer to the wrapped task
+	 * 
+	 * @param o
+	 */
 	public void addObserver(final Observer o) {
-		if (wrappedTask instanceof Observable) {
-			((Observable) wrappedTask).addObserver(o);
+		Object task = getWrappedTask();
+		if (task instanceof Observable) {
+			((Observable) task).addObserver(o);
 		}
 	}
 
-	protected T getWrappedTask() {
-		return wrappedTask;
+	/**
+	 * stops the wrapped task if it does implement {@link Tasklet.Interface}
+	 */
+	protected void stop() {
+		Object task = getWrappedTask();
+		if (task instanceof Tasklet.Interface) {
+			((Tasklet.Interface) task).stop();
+		}
 	}
+
 }

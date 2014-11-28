@@ -116,7 +116,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	public class DominoFutureTask<T> extends FutureTask<T> implements Delayed, RunnableScheduledFuture<T>, Observer {
 
 		// the period. Values > 0: fixed rate. Values < 0: fixed delay
-		private Object wrappedTask;
+		private AbstractWrapped wrappedTask;
 		//		private long period;
 
 		// The next runtime;
@@ -126,6 +126,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		public long sequenceNumber = sequencer.incrementAndGet();
 		private TaskState state = TaskState.QUEUED;
 		private Object objectState;
+		private Thread runner;
 
 		/**
 		 * Sets the new state of this Thread
@@ -186,10 +187,17 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 		@Override
 		public final void run() {
-			if (isPeriodic()) {
-				runPeriodic();
-			} else {
-				super.run();
+			this.runner = Thread.currentThread();
+			try {
+				if (isPeriodic()) {
+					runPeriodic();
+				} else {
+					super.run();
+				}
+			} finally {
+				synchronized (this) {
+					this.runner = null;
+				}
 			}
 		}
 
@@ -198,17 +206,19 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		 */
 		@Override
 		public boolean cancel(final boolean mayInterruptIfRunning) {
+			wrappedTask.stop();
 			if (super.cancel(mayInterruptIfRunning)) {
-				if (wrappedTask instanceof AbstractDominoRunnable) {
-					((AbstractDominoRunnable) wrappedTask).stop(mayInterruptIfRunning);
-				}
-				if (wrappedTask instanceof AbstractDominoCallable) {
-					((AbstractDominoCallable<?>) wrappedTask).stop(mayInterruptIfRunning);
-				}
 				return true;
-			} else {
-				return false;
 			}
+			if (mayInterruptIfRunning) {
+				// unfortunately subsequent calls to cancel will return false.
+				synchronized (this) {
+					if (runner != null)
+						runner.interrupt();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		@Override
