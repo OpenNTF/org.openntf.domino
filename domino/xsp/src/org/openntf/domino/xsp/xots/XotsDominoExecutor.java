@@ -30,11 +30,11 @@ import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Tasklet.Context;
 import org.openntf.domino.xsp.ODAPlatform;
-import org.openntf.domino.xsp.helpers.InvalidSessionFactory;
-import org.openntf.domino.xsp.helpers.ModuleLoader;
+import org.openntf.domino.xsp.session.InvalidSessionFactory;
 import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
 import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
+import org.openntf.domino.xsp.thread.ModuleLoader;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.ThreadLock;
@@ -159,15 +159,16 @@ public class XotsDominoExecutor extends DominoExecutor {
 				}
 				// -- Load the class from module
 				module = ModuleLoader.loadModule(moduleName, true);
+				if (module == null) {
+					throw new IllegalArgumentException("Could not find bundle " + moduleName);
+				}
 				ctx = new NotesContext(module);
 				NotesContext.initThread(ctx);
 				// CHECKME which username should we use? Server
 				ctx.initRequest(new FakeHttpRequest(Factory.getLocalServerName()));
 
 				try {
-					if (module == null) {
-						throw new IllegalArgumentException("Could not find bundle " + moduleName);
-					}
+
 					try {
 						clazz = module.getModuleClassLoader().loadClass(className);
 					} catch (Exception e) {

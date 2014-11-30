@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.xsp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -91,6 +93,14 @@ public class OsgiCommandProvider implements CommandProvider {
 		return sb.toString();
 	}
 
+	private void printThrowable(final CommandInterpreter ci, final Throwable t) {
+		StringWriter errors = new StringWriter();
+		t.printStackTrace(new PrintWriter(errors));
+		ci.println(errors.toString());
+		log_.log(Level.SEVERE, t.getMessage(), t);
+
+	}
+
 	/**
 	 * 
 	 * @param inp
@@ -112,25 +122,31 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	public void _xots(final CommandInterpreter ci) {
-		String cmd = ci.nextArgument();
-		if (StringUtil.isEmpty(cmd)) {
-			// TODO what does XOTS?
-			xotsTasks(ci);
-		} else if (cmp(cmd, "tasks", 1)) { // tasks
-			xotsTasks(ci);
-		} else if (cmp(cmd, "schedule", 1)) {
-			xotsSchedule(ci);
-		} else if (cmp(cmd, "run", 1)) {
-			xotsRun(ci);
-		} else {
-			ci.println("Unknown command: " + cmd);
+		try {
+			String cmd = ci.nextArgument();
+			if (StringUtil.isEmpty(cmd)) {
+				// TODO what does XOTS?
+				xotsTasks(ci);
+			} else if (cmp(cmd, "tasks", 1)) { // tasks
+				xotsTasks(ci);
+			} else if (cmp(cmd, "schedule", 1)) {
+				xotsSchedule(ci);
+			} else if (cmp(cmd, "run", 1)) {
+				xotsRun(ci);
+			} else {
+				ci.println("Unknown command: " + cmd);
+			}
+		} catch (Exception e) {
+			printThrowable(ci, e);
+
 		}
 	}
 
 	public void _junit(final CommandInterpreter ci) throws ClassNotFoundException {
-		String bundleName = ci.nextArgument();
-		String className = ci.nextArgument();
 		try {
+			String bundleName = ci.nextArgument();
+			String className = ci.nextArgument();
+
 			final Bundle bundle = Platform.getBundle(bundleName);
 			Class<?> testclass = bundle.loadClass(className);
 
@@ -145,22 +161,26 @@ public class OsgiCommandProvider implements CommandProvider {
 				ci.print("FAILURE - " + result.getFailureCount() + " failed");
 			}
 		} catch (Exception e) {
-			ci.println(e.getMessage());
-			log_.log(Level.SEVERE, "Error while running junit " + bundleName + " " + className, e);
+			printThrowable(ci, e);
 		}
+
 	}
 
 	public void _oda(final CommandInterpreter ci) {
-		String cmd = ci.nextArgument();
-		if (StringUtil.isEmpty(cmd)) {
-			// TODO what does ODA?
-		} else if (cmp(cmd, "stop", 3)) {
-			ODAPlatform.stop();
-		} else if (cmp(cmd, "start", 3)) {
-			ODAPlatform.start();
-		} else if (cmp(cmd, "restart", 1)) {
-			ODAPlatform.stop();
-			ODAPlatform.start();
+		try {
+			String cmd = ci.nextArgument();
+			if (StringUtil.isEmpty(cmd)) {
+				// TODO what does ODA?
+			} else if (cmp(cmd, "stop", 3)) {
+				ODAPlatform.stop();
+			} else if (cmp(cmd, "start", 3)) {
+				ODAPlatform.start();
+			} else if (cmp(cmd, "restart", 1)) {
+				ODAPlatform.stop();
+				ODAPlatform.start();
+			}
+		} catch (Exception e) {
+			printThrowable(ci, e);
 		}
 	}
 
@@ -199,19 +219,14 @@ public class OsgiCommandProvider implements CommandProvider {
 	private void xotsRun(final CommandInterpreter ci) {
 		String moduleName = ci.nextArgument();
 		String className = ci.nextArgument();
-		try {
-			List<String> args = new ArrayList<String>();
 
-			String arg;
-			while ((arg = ci.nextArgument()) != null) {
-				args.add(arg);
-			}
-			Xots.getService().runTasklet(moduleName, className, args.toArray());
+		List<String> args = new ArrayList<String>();
 
-		} catch (Exception e) {
-			ci.println(e.getMessage());
-			log_.log(Level.SEVERE, "Error while running Tasklet " + moduleName + " " + className, e);
+		String arg;
+		while ((arg = ci.nextArgument()) != null) {
+			args.add(arg);
 		}
+		Xots.getService().runTasklet(moduleName, className, args.toArray());
 
 	}
 
