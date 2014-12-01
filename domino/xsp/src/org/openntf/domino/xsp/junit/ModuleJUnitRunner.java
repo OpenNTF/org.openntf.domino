@@ -12,8 +12,8 @@ import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
-import org.openntf.domino.xsp.thread.ModuleLoader;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
+import org.openntf.domino.xsp.xots.ModuleLoader;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;

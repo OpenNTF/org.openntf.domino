@@ -18,7 +18,6 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
-import org.openntf.domino.xsp.thread.ModuleLoader;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
