@@ -51,6 +51,10 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	private static final long serialVersionUID = 1L;
 	private static final int RENDER_RESPONSE = 6;
 
+	public XspOpenLogPhaseListener() {
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

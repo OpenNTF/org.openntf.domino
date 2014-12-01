@@ -100,8 +100,7 @@ public class OpenLogHandler extends Handler {
 					}
 				}
 			}
-			// CHECKME RPr: Is native session a good choice here?
-			org.openntf.domino.Session session = Factory.getSession(SessionType.NATIVE);
+			org.openntf.domino.Session session = Factory.getSession_unchecked(SessionType.CURRENT);
 			if (session != null) {
 				ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
 			}

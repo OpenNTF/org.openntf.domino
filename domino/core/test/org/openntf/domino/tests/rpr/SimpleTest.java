@@ -14,7 +14,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 public class SimpleTest implements Runnable {
 	public static void main(final String[] args) {
 		System.out.println("START");
-		TestRunnerUtil.runAsDominoThread(new SimpleTest());
+		TestRunnerUtil.runAsDominoThread(new SimpleTest(), TestRunnerUtil.NATIVE_SESSION);
 		System.out.println("STOP");
 	}
 
@@ -64,6 +64,9 @@ public class SimpleTest implements Runnable {
 				doc2 = d.getDocumentByID(ids.get(rndIdx));
 				doc2 = null;
 				d = null;
+			}
+			if (doc1 == null && doc2 == null && doc3 == null) {
+				// NOP - just ensure access to doc1..3 
 			}
 			//System.out.println(doc1 + "" + doc2 + "" + doc3);
 		}

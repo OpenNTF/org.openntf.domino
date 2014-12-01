@@ -16,7 +16,6 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,6 +27,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesError;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.AdministrationProcess;
@@ -123,6 +123,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			DEFAULT_NSF_CACHE_SIZE, 1.0f);
 
 	private transient Database currentDatabase_;
+
+	private String username_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
@@ -237,6 +239,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	private void initialize(final lotus.domino.Session session) {
 		setFixEnable(Fixes.DOC_UNID_NULLS, true);
 		try {
+			username_ = session.getEffectiveUserName();
 			formatter_ = new DominoFormatter(session.getInternational());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -840,7 +843,6 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				}
 				if (isDbCached_ && result != null) {
 					databases_.put(key, result);
-					String altKey = "";
 					if (isDbRepId) {
 						databases_.put(result.getApiPath(), result);
 					} else {
@@ -848,8 +850,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 					}
 				}
 			} catch (NotesException e) {
-				String message = e.text;
-				if (message.contains("cannot open database")) {
+				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
 					throw new UserAccessException(
 							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
 				} else {
@@ -1708,12 +1709,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 
-		Session sessionImpl = null;
-		try {
-			sessionImpl = (Session) getSessionFactory().createSession();
-		} catch (PrivilegedActionException e) {
-			throw new UnableToAcquireSessionException("SessionFactory could not return a Session", e);
-		}
+		Session sessionImpl = (Session) getSessionFactory().createSession();
+
 		if (sessionImpl == null) {
 			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
 		}
@@ -2087,6 +2084,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		noRecycle = value;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void recycle() {
 		if (noRecycle)

@@ -44,12 +44,14 @@ public enum BigDominoAPIScratchTest {
 			for (Form form : forms) {
 				// System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
 				Document d = form.getDocument();
-				Vector v = d.getItemValue("$UpdatedBy");
+				Vector<?> v = d.getItemValue("$UpdatedBy");
 
 				Name n = db.getParent().createName((String) v.get(0));
 				String cn = n.getCommon();
-				nameCount++;
-				docCount++;
+				if (cn != null) {
+					nameCount++;
+					docCount++;
+				}
 				// System.out.println("Last Editor: " + n);
 			}
 			System.out.println("ENDING ITERATION of Forms");
@@ -69,12 +71,13 @@ public enum BigDominoAPIScratchTest {
 			DocumentCollection dc = db.getAllDocuments();
 			for (Document doc : dc) {
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<?> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						Name n = s.createName((String) o);
 						String cn = n.getCommon();
-						nameCount++;
+						if (cn != null)
+							nameCount++;
 					}
 				}
 				if (docCount % 1000 == 0) {
@@ -89,7 +92,8 @@ public enum BigDominoAPIScratchTest {
 				DateTime toxic2 = doc.getLastModified();
 				String busyWork2 = toxic2.getDateOnly();
 				// System.out.println("LastMod: " + toxic.getGMTTime());
-				dateCount++;
+				if (busyWork != null && busyWork2 != null)
+					dateCount++;
 			}
 			System.out.println("ENDING ITERATION of Documents");
 		}
@@ -104,8 +108,9 @@ public enum BigDominoAPIScratchTest {
 			System.out.println("ITERATING Second reference set");
 			for (Document doc : secondReference) {
 				DateTime created = doc.getCreated();
-				dateCount++;
 				String busyWork3 = created.getDateOnly();
+				if (busyWork3 != null)
+					dateCount++;
 			}
 		}
 
@@ -116,8 +121,9 @@ public enum BigDominoAPIScratchTest {
 			System.out.println("ITERATING Third reference set");
 			for (Document doc : thirdReference) {
 				DateTime initMod = doc.getInitiallyModified();
-				dateCount++;
 				String busyWork4 = initMod.getDateOnly();
+				if (busyWork4 != null)
+					dateCount++;
 			}
 		}
 

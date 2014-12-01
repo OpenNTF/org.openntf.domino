@@ -56,6 +56,14 @@ public class Logging {
 			return;
 		}
 		System.out.println("Logging: LogConfig successfully initialized from " + _logConfigPropFile);
+		// TODO: if we want to access a Config-DB we can use @Tasklet here
+		//		Xots.getService().schedule(new Runnable() {
+		//			@Override
+		//			public void run() {
+		//				Logging.getInstance().lookForCfgChange();
+		//			}
+		//		}, _supervisorInterval, TimeUnit.MILLISECONDS);
+
 		_supervisor = new Timer("LoggingSupervisor", true);
 		_supervisor.schedule(new TimerTask() {
 			@Override

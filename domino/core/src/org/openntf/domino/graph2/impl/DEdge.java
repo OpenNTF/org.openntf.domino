@@ -62,6 +62,15 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	}
 
 	@Override
+	public Object getOtherVertexId(final Vertex vertex) {
+		if (vertex.getId().equals(getVertexId(Direction.IN))) {
+			return getVertexId(Direction.OUT);
+		} else {
+			return getVertexId(Direction.IN);
+		}
+	}
+
+	@Override
 	public Vertex getOtherVertex(final Vertex vertex) {
 		if (vertex.getId().equals(getVertexId(Direction.IN))) {
 			return getVertex(Direction.OUT);

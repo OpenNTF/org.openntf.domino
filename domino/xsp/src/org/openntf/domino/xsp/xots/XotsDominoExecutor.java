@@ -1,10 +1,14 @@
 package org.openntf.domino.xsp.xots;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,20 +17,24 @@ import javax.servlet.ServletException;
 
 import lotus.domino.Session;
 
-import org.openntf.domino.session.ISessionFactory;
-import org.openntf.domino.thread.AbstractWrapped.WrappedCallable;
-import org.openntf.domino.thread.AbstractWrapped.WrappedRunnable;
+import org.eclipse.core.runtime.Platform;
+import org.openntf.domino.AutoMime;
+import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.thread.DominoExecutor;
+import org.openntf.domino.thread.IWrappedCallable;
+import org.openntf.domino.thread.IWrappedRunnable;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Tasklet.Context;
-import org.openntf.domino.xsp.helpers.InvalidSessionFactory;
-import org.openntf.domino.xsp.helpers.XPageSessionFactory;
-import org.openntf.domino.xsp.helpers.XPageSignerSessionFactory;
+import org.openntf.domino.xsp.session.InvalidSessionFactory;
+import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
+import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
+import org.openntf.domino.xsp.thread.ModuleLoader;
+import org.osgi.framework.Bundle;
 
-import com.ibm.commons.util.ThreadLock;
 import com.ibm.commons.util.ThreadLockManager;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
@@ -42,18 +50,19 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * 
 	 * @param <V>
 	 */
-	protected class XotsWrappedCallable<V> extends WrappedCallable<V> {
+	public static class XotsWrappedCallable<V> extends XotsWrappedTask implements IWrappedCallable<V> {
 
 		private NSFComponentModule module_;
 
 		public XotsWrappedCallable(final NSFComponentModule module, final Callable<V> wrappedObject) {
-			super(wrappedObject);
+			setWrappedTask(wrappedObject);
 			module_ = module;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public V call() throws Exception {
-			return callOrRun(module_, bubbleException, sessionFactory, getWrappedTask(), null);
+			return (V) callOrRun(module_);
 		}
 	}
 
@@ -62,20 +71,19 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * @author Roland Praml, FOCONIS AG
 	 * 
 	 */
-	protected static class XotsWrappedRunnable extends WrappedRunnable {
+	public static class XotsWrappedRunnable extends XotsWrappedTask implements IWrappedRunnable {
 
 		private NSFComponentModule module_;
 
 		public XotsWrappedRunnable(final NSFComponentModule module, final Runnable wrappedObject) {
-			super(wrappedObject);
+			setWrappedTask(wrappedObject);
 			module_ = module;
 		}
 
 		@Override
 		public void run() {
-
 			try {
-				callOrRun(module_, bubbleException, sessionFactory, null, getWrappedTask());
+				callOrRun(module_);
 			} catch (Exception e) {
 				log_.log(Level.SEVERE, "Could not execute " + module_.getModuleName() + "/" + getWrappedTask().getClass(), e);
 			}
@@ -83,79 +91,175 @@ public class XotsDominoExecutor extends DominoExecutor {
 	}
 
 	/**
-	 * Common code for the wrappers
+	 * This class is used for periodic tasks.
 	 * 
-	 * @param module
-	 * @param bubbleException
-	 * @param sessionFactory
-	 * @param callable
-	 * @param runnable
-	 * @return
+	 * @author Roland Praml, FOCONIS AG
+	 * 
+	 * @param <V>
 	 */
-	private static <V> V callOrRun(final NSFComponentModule module, final boolean bubbleException, final ISessionFactory sessionFactory,
-			final Callable<V> callable, final Runnable runnable) throws Exception {
+	protected static class XotsBundleTasklet extends XotsWrappedTask implements IWrappedCallable<Object> {
 
-		if (module == null && module.isDestroyed()) {
-			throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run");
-		}
-		module.updateLastModuleAccess();
-		final NotesContext ctx = new NotesContext(module);
-		NotesContext.initThread(ctx);
+		private String description;
 
-		try {
-			DominoUtils.setBubbleExceptions(bubbleException);
-			Factory.initThread();
+		public XotsBundleTasklet(final String bundleName, final String className, final Object[] args) {
+			super();
+			final Bundle bundle = Platform.getBundle(bundleName);
+			Class<?> clazz = null;
+
+			if (bundle == null)
+				throw new IllegalArgumentException("Could not find bundle " + bundleName);
+
 			try {
-				// Set up the session
-				if (sessionFactory != null) {
-					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+				clazz = bundle.loadClass(className);
+			} catch (ClassNotFoundException e) {
+				throw new IllegalArgumentException("Could not load class " + className + " in bundle " + bundleName, e);
+			}
 
-					org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
+			description = "bundle:" + bundleName + ":" + className;
+			Constructor<?> cTor = findConstructor(clazz, args);
 
-					Factory.getNamedSessionFactory(true).createSession(current.getEffectiveUserName());
-					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT_FULL_ACCESS);
-				}
-				NSFComponentModule codeModule = module.getTemplateModule() == null ? module : module.getTemplateModule();
-				codeModule.updateLastModuleAccess();
+			try {
+				setWrappedTask(cTor.newInstance(args));
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+			} // This WrappedCallable has no tasklet if it does NOT run
+		}
 
-				// RPr: In my opinion, This is the proper way how to run runnables in a different thread
-				ThreadLock readLock = getLockManager(codeModule).getReadLock();
+		@Override
+		public Object call() throws Exception {
+			return callOrRun(null);
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+	}
+
+	protected static class XotsModuleTasklet extends XotsWrappedTask implements IWrappedCallable<Object> {
+		private String moduleName;
+		private String className;
+		private Object[] args;
+		private ArrayList<Observer> observers;
+
+		public XotsModuleTasklet(final String moduleName, final String className, final Object... args) {
+			super();
+			this.moduleName = moduleName;
+			this.className = className;
+			this.args = args;
+			if (NotesContext.getCurrentUnchecked() == null) {
+				// perform a check if there is NO open context.
+				// if there is an open context, we cannot switch the module.
+				// maybe we can do this in a separate thread
+				NSFComponentModule module = loadModule();
+				NotesContext ctx = new NotesContext(module);
+				NotesContext.initThread(ctx);
 				try {
-					readLock.acquire(); // we want to read data from the module, so lock it!
-
-					// set up the classloader
-					ClassLoader mcl = codeModule.getModuleClassLoader();
-					ClassLoader oldCl = switchClassLoader(mcl);
+					Factory.initThread();
 					try {
-						if (callable != null) {
-							initModule(ctx, mcl, callable);
-							return callable.call();
-						} else {
-							initModule(ctx, mcl, runnable);
-							runnable.run();
-							return null;
+						ClassLoader mcl = module.getModuleClassLoader();
+						ClassLoader oldCl = switchClassLoader(mcl);
+						Factory.setClassLoader(mcl);
+						try {
+							Class<?> clazz = mcl.loadClass(className);
+							findConstructor(clazz, args); // try if we can find the constructor
+						} catch (ClassNotFoundException e) {
+							throw new IllegalArgumentException("Could not load class " + className + " in module " + moduleName, e);
+						} finally {
+							switchClassLoader(oldCl);
 						}
+					} finally {
+						Factory.termThread();
+					}
+				} finally {
+					NotesContext.termThread();
+				}
+			}
+		}
+
+		/**
+		 * loads the module
+		 * 
+		 * @return
+		 */
+		protected NSFComponentModule loadModule() {
+			try {
+				NSFComponentModule module = ModuleLoader.loadModule(moduleName, true);
+				if (module == null)
+					throw new IllegalArgumentException("Could not find bundle " + moduleName);
+				return module;
+			} catch (ServletException e) {
+				throw new RuntimeException(e);
+			}
+
+		}
+
+		@Override
+		public void addObserver(final Observer o) {
+			if (observers == null) {
+				observers = new ArrayList<Observer>();
+			}
+			observers.add(o);
+		}
+
+		@Override
+		public Object call() throws Exception {
+			NSFComponentModule module = loadModule();
+			NotesContext ctx = new NotesContext(module);
+			NotesContext.initThread(ctx);
+			try {
+				// CHECKME which username should we use? Server
+				ctx.initRequest(new FakeHttpRequest(Factory.getLocalServerName()));
+				//				ThreadLock readLock = null;
+				//
+				//				if (ODAPlatform.isAppFlagSet("LOCKXOTS", codeModule.getNotesApplication())) {
+				//					readLock = getLockManager(codeModule).getReadLock();
+				//					readLock.acquire();
+				//				}
+
+				//				try {
+				Factory.initThread();
+				try {
+					ClassLoader mcl = module.getModuleClassLoader();
+					ClassLoader oldCl = switchClassLoader(mcl);
+					Factory.setClassLoader(mcl);
+					Factory.setSessionFactory(new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null), SessionType.CURRENT);
+					DominoUtils.setBubbleExceptions(true);
+					try {
+						// Construct & set up
+						Class<?> clazz = mcl.loadClass(className);
+						Constructor<?> cTor = findConstructor(clazz, args);
+
+						setWrappedTask(cTor.newInstance(args));
+
+						Object wrappedTask = getWrappedTask();
+						if (wrappedTask instanceof Observable && observers != null) {
+							for (Observer o : observers) {
+								((Observable) wrappedTask).addObserver(o);
+							}
+						}
+						return invokeTasklet(ctx, module);
 					} finally {
 						switchClassLoader(oldCl);
 					}
 				} finally {
-					readLock.release();
+					setWrappedTask(null);
+					Factory.termThread();
 				}
-			} catch (Exception e) {
-				DominoUtils.handleException(e);
-				return null;
+				//				} finally {
+				//					if (readLock != null)
+				//						readLock.release();
+				//				}
 			} finally {
-				Factory.termThread();
-			}
-		} finally {
-			if (Thread.currentThread().isInterrupted()) {
-				// if the thread was interrupted, we must not call 
-				// NotesContext.termThread() as this causes a server crash
-				lotus.domino.NotesThread.stermThread();
-			} else {
 				NotesContext.termThread();
 			}
 		}
+
+		@Override
+		public String getDescription() {
+			return moduleName + ":" + className;
+		}
+
 	}
 
 	public XotsDominoExecutor(final int corePoolSize) {
@@ -207,7 +311,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * @throws ServletException
 	 */
 
-	private static void initModule(final NotesContext ctx, final ClassLoader mcl, final Object wrappedObject) throws ServletException {
+	static void initModule(final NotesContext ctx, final ClassLoader mcl, final Object wrappedObject) throws ServletException {
 		// next initialize the context with a FakeHttpRequest. This is neccessary so that internal things
 		// like session-creation and so on work properly
 
@@ -226,12 +330,12 @@ public class XotsDominoExecutor extends DominoExecutor {
 				System.out.println("Loading Class from NSF:" + url);
 				ctx.setSignerSessionRights("WEB-INF/classes/" + str);
 
-				// TODO: RPr: There is a bug: you can decide if you want to use "sessionAsSigner" or "sessionAsSignerFullAccess"
+				// RPr: There is a bug: you can decide if you want to use "sessionAsSigner" or "sessionAsSignerFullAccess"
 				// But you cannot use both simultaneously!
 				Session signerSession = ctx.getSessionAsSigner(true);
 				if (signerSession != null) {
-					Factory.setSessionFactory(new XPageSignerSessionFactory(ctx, false), SessionType.SIGNER);
-					Factory.setSessionFactory(new XPageSignerSessionFactory(ctx, true), SessionType.SIGNER_FULL_ACCESS);
+					Factory.setSessionFactory(new XPageSignerSessionFactory(false), SessionType.SIGNER);
+					Factory.setSessionFactory(new XPageSignerSessionFactory(true), SessionType.SIGNER_FULL_ACCESS);
 				} else {
 					// do not setup signer sessions if it is not properly signed!
 					Factory.setSessionFactory(new InvalidSessionFactory(), SessionType.SIGNER);
@@ -239,32 +343,11 @@ public class XotsDominoExecutor extends DominoExecutor {
 				}
 			} else {
 				// The code is not part from an NSF, so it resides on the server
-				Factory.setSessionFactory(new XPageSessionFactory(Factory.getLocalServerName(), false), SessionType.SIGNER);
-				Factory.setSessionFactory(new XPageSessionFactory(Factory.getLocalServerName(), true), SessionType.SIGNER_FULL_ACCESS);
+				Factory.setSessionFactory(new XPageNamedSessionFactory(Factory.getLocalServerName(), false), SessionType.SIGNER);
+				Factory.setSessionFactory(new XPageNamedSessionFactory(Factory.getLocalServerName(), true), SessionType.SIGNER_FULL_ACCESS);
 			}
 		}
-
 		Factory.setClassLoader(mcl);
-	}
-
-	/**
-	 * Changes the
-	 * 
-	 * @param codeModule
-	 * @return
-	 */
-	private static ClassLoader switchClassLoader(final ClassLoader newClassLoader) {
-		return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-
-			@Override
-			public ClassLoader run() {
-				Thread thread = Thread.currentThread();
-				ClassLoader oldCl = thread.getContextClassLoader();
-				thread.setContextClassLoader(newClassLoader);
-				return oldCl;
-			}
-		});
-
 	}
 
 	// ------------------------------
@@ -277,9 +360,9 @@ public class XotsDominoExecutor extends DominoExecutor {
 	}
 
 	@Override
-	protected <V> WrappedCallable<V> wrap(final Callable<V> inner) {
-		if (inner instanceof WrappedCallable)
-			return (WrappedCallable<V>) inner;
+	protected <V> IWrappedCallable<V> wrap(final Callable<V> inner) {
+		if (inner instanceof IWrappedCallable)
+			return (IWrappedCallable<V>) inner;
 
 		NSFComponentModule module = getCurrentModule();
 		Tasklet annot = inner.getClass().getAnnotation(Tasklet.class);
@@ -300,9 +383,9 @@ public class XotsDominoExecutor extends DominoExecutor {
 	}
 
 	@Override
-	protected WrappedRunnable wrap(final Runnable inner) {
-		if (inner instanceof WrappedRunnable)
-			return (WrappedRunnable) inner;
+	protected IWrappedRunnable wrap(final Runnable inner) {
+		if (inner instanceof IWrappedRunnable)
+			return (IWrappedRunnable) inner;
 
 		NSFComponentModule module = getCurrentModule();
 		Tasklet annot = inner.getClass().getAnnotation(Tasklet.class);
@@ -322,30 +405,13 @@ public class XotsDominoExecutor extends DominoExecutor {
 		}
 	}
 
-	//
-	//	@Override
-	//	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
-	//		NotesContext ctx = NotesContext.getCurrentUnchecked();
-	//		NSFComponentModule module = ctx == null ? null : ctx.getModule();
-	//
-	//		if (module == null) {
-	//			return super.newTaskFor(callable);
-	//		} else {
-	//			return new XotsDominoFutureTask(module, callable);
-	//		}
-	//
-	//	}
-	//
-	//	@Override
-	//	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T result) {
-	//		NotesContext ctx = NotesContext.getCurrentUnchecked();
-	//		NSFComponentModule module = ctx == null ? null : ctx.getModule();
-	//
-	//		if (module == null) {
-	//			return super.newTaskFor(runnable, result);
-	//		} else {
-	//			return new XotsDominoFutureTask(module, runnable, result);
-	//		}
-	//	}
+	@Override
+	protected IWrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs) {
+		if (moduleName.startsWith("bundle:")) {
+			return new XotsBundleTasklet(moduleName.substring(7), className, ctorArgs);
+		}
+
+		return new XotsModuleTasklet(moduleName, className, ctorArgs);
+	}
 
 }

@@ -394,8 +394,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the cpp-id
 	 */
 	void setDelegate(final D delegate, final long cppId) {
-		if (delegate != null) {
-			getFactory().recacheLotusObject(delegate_, delegate, this, parent_);
+		if (delegate_ != null && delegate_ != delegate) {
+			// an other object is set now, so we must recache that object
+			getFactory().recacheLotusObject(delegate, this, parent_);
 			if (log_.isLoggable(Level.FINEST)) {
 				log_.log(Level.FINE, "Object of " + this.getClass().getName() + " was recached. Changes may be lost", new Throwable());
 			}
@@ -512,7 +513,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
-		if (isDead(delegate_) && this instanceof Resurrectable) {
+		if (this instanceof Resurrectable && isDead(delegate_)) {
 			resurrect();
 		}
 		return delegate_;

@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.ext;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
@@ -306,6 +307,16 @@ public interface Database extends Base {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public DatabaseDesign getDesign();
+
+	/**
+	 * Returns the shared XPage Design Template (if this is a Single Copy XPage Database)
+	 * 
+	 * @return the shared XPage Design Template (or null, if this is no SCXD-DB)
+	 * @throws FileNotFoundException
+	 *             if the Template could not be found
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public org.openntf.domino.Database getXPageSharedDesignTemplate() throws FileNotFoundException;
 
 	/**
 	 * Retrieves a document by a String key.
@@ -687,7 +698,7 @@ public interface Database extends Base {
 	/**
 	 * Returns a DatabaseHolder object, which is serializable
 	 * 
-	 * @return
+	 * @return a DatabaseHolder
 	 */
 	DatabaseHolder getDatabaseHolder();
 

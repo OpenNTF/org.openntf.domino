@@ -12,7 +12,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 @RunWith(DominoJUnitRunner.class)
 public class DbHandleTest implements Runnable {
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new DbHandleTest());
+		TestRunnerUtil.runAsDominoThread(new DbHandleTest(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public DbHandleTest() {

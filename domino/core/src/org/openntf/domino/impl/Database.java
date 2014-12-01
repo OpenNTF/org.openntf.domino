@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
@@ -51,6 +52,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.design.impl.DatabaseDesign;
+import org.openntf.domino.design.impl.IconNote;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
@@ -77,6 +79,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	/** The path_. */
 	private String path_;
+
+	/** The apiPath */
+	private String apiPath_;
 
 	/** The replid_. */
 	private String replid_;
@@ -138,6 +143,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache filepath for Database due to exception: " + e.text);
 		}
+		if (server_.length() > 0) {
+			apiPath_ = server_ + "!!" + path_;
+		} else {
+			apiPath_ = path_;
+		}
+
 		try {
 			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
@@ -1032,6 +1043,23 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public DatabaseDesign getDesign() {
 		return new DatabaseDesign(this);
+	}
+
+	@Override
+	public org.openntf.domino.Database getXPageSharedDesignTemplate() throws FileNotFoundException {
+		IconNote icon = getDesign().getIconNote();
+		if (icon == null)
+			return null;
+		Document iconDoc = icon.getDocument();
+		if ("1".equals(iconDoc.getItemValueString("$XpageSharedDesign"))) {
+			String templatePath = iconDoc.getItemValueString("$XpageSharedDesignTemplate");
+			org.openntf.domino.Database template = getAncestorSession().getDatabase(templatePath);
+			if (template == null || !template.isOpen()) {
+				throw new FileNotFoundException("Could not open the XPage shared Design Template: " + templatePath);
+			}
+			return template;
+		}
+		return null;
 	}
 
 	/*
@@ -3437,9 +3465,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getApiPath() {
-		if (server_.length() > 0)
-			return server_ + "!!" + path_;
-		return path_;
+		return apiPath_;
 	}
 
 	private IDatabaseSchema schema_;
@@ -3530,14 +3556,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private DatabaseHolder databaseHolder_;
 
 	private NoteCollection getInternalNoteCollection() {
-		if (null == intNC_) {
+		if (null == intNC_ || isDead(intNC_)) {
 			intNC_ = this.createNoteCollection(false);
-		} else {
-			try {
-				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
-			} catch (NotesException ne) {
-				intNC_ = this.createNoteCollection(false);
-			}
+			//		} else {
+			//			try {
+			//				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
+			//			} catch (NotesException ne) {
+			//				intNC_ = this.createNoteCollection(false);
+			//			}
 		}
 		return intNC_;
 	}

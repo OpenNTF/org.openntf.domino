@@ -69,9 +69,9 @@ public abstract class AbstractDominoDaemon<T> extends AbstractDominoRunnable {
 					}
 					Thread.sleep(delay_);
 				} catch (InterruptedException ie) {
-					stop(false);
+					stop();
 				} catch (PrivilegedActionException e) {
-					stop(false);
+					stop();
 					log_.log(Level.SEVERE, "Error in " + this.getClass().getName(), e);
 				}
 			}

@@ -12,7 +12,7 @@ import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.xots.Tasklet;
 
 /**
- * An observable callable implementation
+ * An observable callable implementation. In your implementation you should check {@link #shouldStop()} periodically
  * 
  * @author Nathan T. Freeman
  */
@@ -40,7 +40,7 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Ta
 	}
 
 	/**
-	 * Method should be queried in loops to determine if we should stop
+	 * Returns true Method should be queried in loops to determine if we should stop
 	 * 
 	 * @return
 	 */
@@ -49,15 +49,7 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Ta
 	}
 
 	@Override
-	public void setCurrentThread(final Thread thread) {
-		runningThread_ = thread;
-	}
-
-	@Override
-	public synchronized void stop(final boolean force) {
+	public synchronized void stop() {
 		shouldStop_ = true;
-		if (force && runningThread_ != null) {
-			runningThread_.interrupt();
-		}
 	}
 }

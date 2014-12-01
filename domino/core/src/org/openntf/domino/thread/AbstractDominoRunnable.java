@@ -21,7 +21,6 @@ public abstract class AbstractDominoRunnable extends Observable implements Taskl
 	private static final long serialVersionUID = 1L;
 
 	private volatile boolean shouldStop_ = false;
-	private Thread runningThread_;
 	private ISessionFactory sessionFactory_;
 
 	@Override
@@ -49,15 +48,7 @@ public abstract class AbstractDominoRunnable extends Observable implements Taskl
 	}
 
 	@Override
-	public void setCurrentThread(final Thread thread) {
-		runningThread_ = thread;
-	}
-
-	@Override
-	public synchronized void stop(final boolean force) {
+	public synchronized void stop() {
 		shouldStop_ = true;
-		if (force && runningThread_ != null) {
-			runningThread_.interrupt();
-		}
 	}
 }

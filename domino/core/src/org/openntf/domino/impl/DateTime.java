@@ -49,7 +49,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 				lotusWorker.set(null);
 				calendar.set(null);
 			}
-		});
+		}, true);
 	}
 
 	/** The calendar */

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import com.ibm.xsp.servlet.local.LocalHttpServletRequest;
 import com.ibm.xsp.servlet.local.LocalHttpSession;
 
+@SuppressWarnings("deprecation")
 public class FakeHttpRequest extends LocalHttpServletRequest {
 	HttpSession session = new LocalHttpSession();
 	private String userName_;
