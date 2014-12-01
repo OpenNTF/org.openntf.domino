@@ -2,7 +2,6 @@ package org.openntf.domino.thread;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Callable;
 
 import lotus.domino.NotesThread;
 
@@ -20,14 +19,7 @@ import org.openntf.domino.xots.Tasklet;
  * 
  * @param <T>
  */
-public abstract class AbstractWrapped {
-	public static abstract class WrappedCallable<V> extends AbstractWrapped implements Callable<V> {
-
-	}
-
-	public static abstract class WrappedRunnable extends AbstractWrapped implements Runnable {
-
-	}
+public abstract class AbstractWrappedTask implements IWrappedTask {
 
 	private Object wrappedTask;
 
@@ -61,7 +53,7 @@ public abstract class AbstractWrapped {
 			// RPr: don't know if this is possible
 			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
-		if (task instanceof AbstractWrapped) {
+		if (task instanceof AbstractWrappedTask) {
 			// RPr: don't know if this is possible
 			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
@@ -149,6 +141,7 @@ public abstract class AbstractWrapped {
 	 * 
 	 * @param o
 	 */
+	@Override
 	public void addObserver(final Observer o) {
 		Object task = getWrappedTask();
 		if (task instanceof Observable) {
@@ -159,11 +152,16 @@ public abstract class AbstractWrapped {
 	/**
 	 * stops the wrapped task if it does implement {@link Tasklet.Interface}
 	 */
-	protected void stop() {
+	@Override
+	public void stop() {
 		Object task = getWrappedTask();
 		if (task instanceof Tasklet.Interface) {
 			((Tasklet.Interface) task).stop();
 		}
 	}
 
+	@Override
+	public String getDescription() {
+		return getWrappedTask().getClass().getName();
+	}
 }

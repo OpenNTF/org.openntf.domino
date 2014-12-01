@@ -21,14 +21,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javolution.util.FastMap;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
-import org.openntf.domino.thread.AbstractWrapped.WrappedCallable;
-import org.openntf.domino.thread.AbstractWrapped.WrappedRunnable;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -116,7 +115,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	public class DominoFutureTask<T> extends FutureTask<T> implements Delayed, RunnableScheduledFuture<T>, Observer {
 
 		// the period. Values > 0: fixed rate. Values < 0: fixed delay
-		private AbstractWrapped wrappedTask;
+		private IWrappedTask wrappedTask;
 		//		private long period;
 
 		// The next runtime;
@@ -155,7 +154,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return sequenceNumber;
 		}
 
-		public DominoFutureTask(final WrappedCallable<T> callable, final Scheduler scheduler) {
+		public DominoFutureTask(final IWrappedCallable<T> callable, final Scheduler scheduler) {
 			super(callable);
 			this.wrappedTask = callable;
 			this.scheduler = scheduler;
@@ -163,7 +162,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			callable.addObserver(this);
 		}
 
-		public DominoFutureTask(final WrappedRunnable runnable, final T result, final Scheduler scheduler) {
+		public DominoFutureTask(final IWrappedRunnable runnable, final T result, final Scheduler scheduler) {
 			super(runnable, result);
 			this.wrappedTask = runnable;
 			this.scheduler = scheduler;
@@ -195,6 +194,11 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 					super.run();
 				}
 			} finally {
+				try {
+					this.get();
+				} catch (Throwable t) {
+					log_.log(Level.WARNING, getWrappedTask().getDescription(), t);
+				}
 				synchronized (this) {
 					this.runner = null;
 				}
@@ -260,7 +264,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			objectState = arg1;
 		}
 
-		public Object getWrappedTask() {
+		public IWrappedTask getWrappedTask() {
 			return wrappedTask;
 		}
 
@@ -323,7 +327,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		super.beforeExecute(thread, runnable);
 		if (runnable instanceof DominoFutureTask) {
 			DominoFutureTask<?> task = (DominoFutureTask<?>) runnable;
-			thread.setName("XOTS: " + task.getWrappedTask().getClass().getName() + " - " + new Date());
+			thread.setName("XOTS: " + task.getWrappedTask().getDescription() + " - " + new Date());
 			task.setState(TaskState.RUNNING);
 		} else {
 			thread.setName("XOTS: #" + thread.getId());
@@ -426,11 +430,11 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, -period, timeUnit)));
 	}
 
-	protected abstract <V> WrappedCallable<V> wrap(Callable<V> inner);
+	protected abstract <V> IWrappedCallable<V> wrap(Callable<V> inner);
 
-	protected abstract WrappedRunnable wrap(Runnable inner);
+	protected abstract IWrappedRunnable wrap(Runnable inner);
 
-	protected abstract WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
+	protected abstract IWrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
 
 	@Override
 	public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final Scheduler scheduler) {

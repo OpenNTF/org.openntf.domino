@@ -1238,11 +1238,11 @@ public enum Factory {
 		}
 	}
 
-	//	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
-	//		defaultNamedSessionFactory = normal;
-	//		defaultNamedSessionFullAccessFactory = fullaccess;
-	//
-	//	}
+	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {
+		defaultNamedSessionFactory = normal;
+		defaultNamedSessionFullAccessFactory = fullaccess;
+
+	}
 
 	public static synchronized void shutdown() {
 		Factory.println("Shutting down the OpenNTF Domino API... ");

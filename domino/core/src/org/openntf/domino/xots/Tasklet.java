@@ -194,9 +194,19 @@ public @interface Tasklet {
 	Tasklet.Context context() default Tasklet.Context.DEFAULT;
 
 	/**
-	 * Defines if this tasklet is public. I.e. is runnable/scheduleable with "xots run"
+	 * specifies the schedule.
+	 * 
+	 * Examples;
+	 * <ul>
+	 * <li><code>cron:0 *&#x2F;15 02-23 * * *</code> to run the tasklet every 15 minutes between 02 and 23 o'clock. See
+	 * {@link CronExpression}</li>
+	 * <li><code>delay:45m 08:30-22:30</code> to run a periodic task with a delay of 45 minutes (45 minutes between runs) between 08:30 and
+	 * 22:30. This should be prefered to cron, because cron will start all periodic tasks in the same minute.</li>
+	 * <li><code>period:45m 08:30-22:30</code> to run a periodic task every 45 minutes between 08:30 and 22:30. This should be prefered to
+	 * cron, because cron will start all periodic tasks in the same minute.</li>
+	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)</li>
 	 * 
 	 * @return
 	 */
-	boolean isPublic() default false;
+	String[] schedule() default "";
 }

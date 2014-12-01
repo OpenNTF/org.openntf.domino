@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesError;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.AdministrationProcess;
@@ -849,8 +850,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 					}
 				}
 			} catch (NotesException e) {
-				String message = e.text;
-				if (message.contains("cannot open database")) {
+				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
 					throw new UserAccessException(
 							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
 				} else {
