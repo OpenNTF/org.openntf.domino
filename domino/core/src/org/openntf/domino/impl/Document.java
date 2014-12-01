@@ -4174,4 +4174,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return result;
 	}
 
+	@Override
+	public Map<String, List<Object>> getItemTable(final CharSequence... itemnames) {
+		return Documents.getItemTable(this, itemnames);
+	}
+
+	@Override
+	public List<Map<String, Object>> getItemTablePivot(final CharSequence... itemnames) {
+		return Documents.getItemTablePivot(this, itemnames);
+	}
+
+	public void setItemTable(final Map<String, List<Object>> table) {
+		Documents.setItemTable(this, table);
+	}
+
+	public void setItemTablePivot(final List<Map<String, Object>> pivot) {
+		Documents.setItemTablePivot(this, pivot);
+	}
+
 }

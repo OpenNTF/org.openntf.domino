@@ -23,7 +23,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -541,5 +545,73 @@ public enum Documents {
 			}
 			return document.createRichTextItem(fieldName);
 		}
+	}
+
+	public static Map<String, List<Object>> getItemTable(final Document doc, final CharSequence... itemnames) {
+		if (doc == null || itemnames == null)
+			return null;
+		Map<String, List<Object>> result = new LinkedHashMap<String, List<Object>>();
+		for (CharSequence itemname : itemnames) {
+			if (doc.hasItem(itemname.toString())) {
+				Vector<Object> v = doc.getItemValue(itemname.toString());
+				result.put(itemname.toString(), v);
+			}
+		}
+		return result;
+	}
+
+	public static void setItemTable(final Document doc, final Map<String, List<Object>> table) {
+		if (doc == null || table == null)
+			return;
+		for (String key : table.keySet()) {
+			doc.replaceItemValue(key, table.get(key));
+		}
+	}
+
+	public static void setItemTablePivot(final Document doc, final List<Map<String, Object>> pivot) {
+		//TODO NTF
+		Map<String, List<Object>> unpivot = new LinkedHashMap<String, List<Object>>();
+		for (int i = 0; i < pivot.size(); i++) {
+			Map<String, Object> curMap = pivot.get(i);
+			for (String key : curMap.keySet()) {
+				List<Object> curList = unpivot.get(key);
+				if (curList == null) {
+					curList = new ArrayList<Object>(pivot.size());
+					unpivot.put(key, curList);
+				}
+				curList.set(i, curMap.get(key));
+			}
+		}
+		setItemTable(doc, unpivot);
+	}
+
+	public static List<Map<String, Object>> getItemTablePivot(final Document doc, final CharSequence... itemnames) {
+		if (doc == null || itemnames == null)
+			return null;
+		Map<String, List<Object>> table = getItemTable(doc, itemnames);
+		if (table == null)
+			return null;
+		Set<String> keys = table.keySet();
+		int maxSize = 0;
+		for (String key : keys) {
+			List<Object> curValue = table.get(key);
+			if (curValue.size() > maxSize)
+				maxSize = curValue.size();
+		}
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>(maxSize);
+		for (int i = 0; i < maxSize; i++) {
+			Map<String, Object> map = new LinkedHashMap<String, Object>();
+			result.set(i, map);
+			for (String key : keys) {
+				List<Object> curValue = table.get(key);
+				if (curValue.size() > i) {
+					map.put(key, curValue.get(i));
+				} else {
+					map.put(key, null);
+				}
+			}
+
+		}
+		return result;
 	}
 }
