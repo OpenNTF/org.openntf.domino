@@ -1008,17 +1008,29 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public List<org.openntf.domino.EmbeddedObject> getAttachments() {
 		List<org.openntf.domino.EmbeddedObject> result = new ArrayList<org.openntf.domino.EmbeddedObject>();
-		result.addAll(getEmbeddedObjects());
-		for (Item item : getItems()) {
-			if (item instanceof RichTextItem) {
-				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
-				for (EmbeddedObject obj : objects) {
-					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
-						result.add(obj);
-					}
-				}
+
+		lotus.domino.Session rawSession = toLotus(getAncestorSession());
+		try {
+			Vector<?> attachmentNames = rawSession.evaluate("@AttachmentNames", getDelegate());
+
+			for (Object attachmentName : attachmentNames) {
+				result.add(getAttachment((String) attachmentName));
 			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 		}
+
+		//		result.addAll(getEmbeddedObjects());
+		//		for (Item item : getItems()) {
+		//			if (item instanceof RichTextItem) {
+		//				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
+		//				for (EmbeddedObject obj : objects) {
+		//					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
+		//						result.add(obj);
+		//					}
+		//				}
+		//			}
+		//		}
 		return result;
 	}
 
