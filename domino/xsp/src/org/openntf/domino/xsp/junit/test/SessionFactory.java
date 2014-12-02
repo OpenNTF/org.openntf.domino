@@ -19,8 +19,8 @@ import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.junit.TestEnv;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.xsp.thread.ModuleLoader;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
+import org.openntf.domino.xsp.xots.ModuleLoader;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;

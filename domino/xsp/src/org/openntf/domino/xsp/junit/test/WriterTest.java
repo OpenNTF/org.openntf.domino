@@ -35,6 +35,5 @@ public class WriterTest {
 		for (int i = 30; i < 40; i++) {
 			writer.send("I:" + i);
 		}
-		Thread.sleep(10000);
 	}
 }

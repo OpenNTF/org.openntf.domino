@@ -32,7 +32,6 @@ import org.openntf.domino.xots.Tasklet.Context;
 import org.openntf.domino.xsp.session.InvalidSessionFactory;
 import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
-import org.openntf.domino.xsp.thread.ModuleLoader;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.ThreadLockManager;

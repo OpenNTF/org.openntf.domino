@@ -1,4 +1,4 @@
-package org.openntf.domino.xsp.thread;
+package org.openntf.domino.xsp.xots;
 
 import java.io.IOException;
 
