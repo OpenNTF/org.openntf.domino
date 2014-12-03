@@ -9,4 +9,5 @@ public interface ISessionFactory extends Serializable {
 
 	public Session createSession() throws PrivilegedActionException;
 
+	// public String getName();
 }

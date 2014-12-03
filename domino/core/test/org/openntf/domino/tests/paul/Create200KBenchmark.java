@@ -10,6 +10,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class Create200KBenchmark {
 
@@ -23,7 +24,7 @@ public class Create200KBenchmark {
 		public void run() {
 			Document doc = null;
 			System.out.println("START Creation of Documents:" + new Date().toString());
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Set<Document> docset = new HashSet<Document>();
 			Database db = s.getDatabase("", "OneMillion.nsf", true);
 			if (!db.isOpen()) {
@@ -60,6 +61,7 @@ public class Create200KBenchmark {
 	 * The main method.
 	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(final String[] args) {
 		DominoThread dt = new DominoThread(new DocCreator(), "Create One Million Docs");

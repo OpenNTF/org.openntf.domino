@@ -40,6 +40,12 @@ public final class ServerBean extends ConcurrentHashMap<String, Object> {
 		return instance_;
 	}
 
+	/**
+	 * RPr: What is this? Loading a class from different module will throw a "ModuleClassLoader.InternalClassLoadermismatch" Exception
+	 * 
+	 * @Deprecated until someone explains me how that should work.
+	 */
+	@Deprecated
 	public void cacheObject(final String key, final String filepath, final String className) {
 		try {
 			final ServerBean thisBean = this;

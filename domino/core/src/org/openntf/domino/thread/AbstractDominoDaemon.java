@@ -16,6 +16,8 @@ import java.util.logging.Logger;
  * @author Nathan T. Freeman
  * 
  */
+// Not yet ready!
+@Deprecated
 public abstract class AbstractDominoDaemon<T> extends AbstractDominoRunnable {
 	private static final Logger log_ = Logger.getLogger(AbstractDominoDaemon.class.getName());
 	private static final long serialVersionUID = 1L;

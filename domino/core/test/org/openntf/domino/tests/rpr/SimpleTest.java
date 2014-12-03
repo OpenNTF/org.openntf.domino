@@ -9,11 +9,12 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class SimpleTest implements Runnable {
 	public static void main(final String[] args) {
 		System.out.println("START");
-		TestRunnerUtil.runAsDominoThread(new SimpleTest());
+		TestRunnerUtil.runAsDominoThread(new SimpleTest(), TestRunnerUtil.NATIVE_SESSION);
 		System.out.println("STOP");
 	}
 
@@ -25,7 +26,7 @@ public class SimpleTest implements Runnable {
 	public void run() {
 		Factory.enableCounters(true, false);
 
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 		Database d = s.getDatabase("", "names.nsf");
 		List<String> ids = new ArrayList<String>();
 
@@ -63,6 +64,9 @@ public class SimpleTest implements Runnable {
 				doc2 = d.getDocumentByID(ids.get(rndIdx));
 				doc2 = null;
 				d = null;
+			}
+			if (doc1 == null && doc2 == null && doc3 == null) {
+				// NOP - just ensure access to doc1..3 
 			}
 			//System.out.println(doc1 + "" + doc2 + "" + doc3);
 		}

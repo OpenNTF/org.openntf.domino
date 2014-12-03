@@ -78,6 +78,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/** The path_. */
 	private String path_;
 
+	/** The apiPath */
+	private String apiPath_;
+
 	/** The replid_. */
 	private String replid_;
 
@@ -138,6 +141,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache filepath for Database due to exception: " + e.text);
 		}
+		if (server_.length() > 0) {
+			apiPath_ = server_ + "!!" + path_;
+		} else {
+			apiPath_ = path_;
+		}
+
 		try {
 			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
@@ -2984,48 +2993,40 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getDelegate()
-	 */
 	@Override
-	protected lotus.domino.Database getDelegate() {
-		lotus.domino.Database db = super.getDelegate();
-		if (isDead(db)) {
-			resurrect();
-		}
-		return super.getDelegate();
+	public String toString() {
+		return (server_.length() < 1 ? "" : server_ + "!!") + path_;
 	}
 
+	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
-		Session rawSessionUs = getAncestorSession();
-		if (rawSessionUs == null) {
-			// CHECKME RPr: Why should getAncestorSession return null?
-			rawSessionUs = org.openntf.domino.utils.Factory.getSession();
-		}
-		lotus.domino.Session rawSession = toLotus(rawSessionUs);
+		lotus.domino.Session rawSession = toLotus(getParent());
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			//d.open();
 			setDelegate(d, 0);
-			getFactory().recacheLotusObject(d, this, parent_);
+			// Logging of setDelegate should be sufficient
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
-				StackTraceElement[] elements = t.getStackTrace();
-				log_.log(java.util.logging.Level.FINE, "Database " + (server_.length() < 1 ? "" : server_ + "!!") + path_
-						+ "had been recycled and was auto-restored. Changes may have been lost.");
-
-				log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
-						+ elements[1].getLineNumber() + ")");
-				log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
-						+ elements[2].getLineNumber() + ")");
-				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
-						+ elements[3].getLineNumber() + ")");
-				log_.log(java.util.logging.Level.FINE,
-						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
-
+				//				StackTraceElement[] elements = t.getStackTrace();
+				log_.log(
+						java.util.logging.Level.FINE,
+						"Database " + this + "had been recycled and was auto-restored. Changes may have been lost. " +
+						// 		RPR: I don't think that this behavior is normal (you should not try to cache a database accross requests!)
+								"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.",
+						t);
+				//
+				//				log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+				//						+ elements[1].getLineNumber() + ")");
+				//				log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+				//						+ elements[2].getLineNumber() + ")");
+				//				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
+				//						+ elements[3].getLineNumber() + ")");
+				//
+				//				THIS IS VERY DANGEROUS!			
+				//				log_.log(java.util.logging.Level.FINE,
+				//						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
+				//
 			}
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
@@ -3445,9 +3446,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getApiPath() {
-		if (server_.length() > 0)
-			return server_ + "!!" + path_;
-		return path_;
+		return apiPath_;
 	}
 
 	private IDatabaseSchema schema_;
@@ -3538,14 +3537,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private DatabaseHolder databaseHolder_;
 
 	private NoteCollection getInternalNoteCollection() {
-		if (null == intNC_) {
+		if (null == intNC_ || isDead(intNC_)) {
 			intNC_ = this.createNoteCollection(false);
-		} else {
-			try {
-				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
-			} catch (NotesException ne) {
-				intNC_ = this.createNoteCollection(false);
-			}
+			//		} else {
+			//			try {
+			//				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
+			//			} catch (NotesException ne) {
+			//				intNC_ = this.createNoteCollection(false);
+			//			}
 		}
 		return intNC_;
 	}

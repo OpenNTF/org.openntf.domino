@@ -1,4 +1,5 @@
 *.class
+*.iml
 
 org.openntf.domino.plugin/lib/domino.jar
 org.openntf.domino.plugin/lib/tinkerpop.jar

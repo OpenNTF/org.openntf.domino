@@ -133,7 +133,17 @@ public interface WrapperFactory {
 	 */
 	void setNoRecycle(final Base<?> base, boolean value);
 
-	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent);
+	/**
+	 * This method is called if a Notes-object was recovered
+	 * 
+	 * @param newLotus
+	 *            the new lotus object
+	 * @param wrapper
+	 *            the wrapper that wraps the new lotus object now
+	 * @param parent
+	 *            the parent object of the wrapper
+	 */
+	public void recacheLotusObject(final lotus.domino.Base newLotus, final Base<?> wrapper, final Base<?> parent);
 
 	/**
 	 * Returns the last Documents (max. 10) which where wrapped in the current thread

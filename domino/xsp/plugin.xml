@@ -17,26 +17,30 @@
             type="com.ibm.xsp.Library">
       </service>
    </extension>
-   <extension point="com.ibm.commons.Extension">
-         <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.OpenntfDominoXspContributor" />
-   </extension>
+   
+   <!-- RPr: In my oppinion, the ViewNavigator works correctly as all fixes are done in the backend classes now
    <extension
          point="com.ibm.commons.Extension">
       <service
             class="org.openntf.domino.xsp.helpers.OpenntfViewNavigatorFactoryFactory"
             type="com.ibm.xsp.model.domino.ViewNavigatorFactory">
       </service>
-   </extension>
+   </extension> -->
    
-   
-     <extension point="com.ibm.commons.Extension">
+    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.designer.runtime.extensions.JavaScriptProvider" class="org.openntf.domino.xsp.script.OpenDomJavaScriptExtension" />
    </extension>
    
-      <!-- needed to start automatically and to put a wrapper around "doService" to terminate the factory in each thread-->
+   <!-- needed to start automatically and initialize some core things -->
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.adapter.serviceFactory" class="org.openntf.domino.xsp.adapter.OpenntfServiceFactory" />
    </extension>
+   <!-- needed to register some additional factories -->
+   <extension point="com.ibm.commons.Extension">
+         <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.OpenntfDominoXspContributor" />
+   </extension>
+
+
    <extension
          point="com.ibm.commons.Extension">
       <service
@@ -49,6 +53,4 @@
 		<service class="org.openntf.domino.xsp.xots.XotsApplicationListener" type="com.ibm.xsp.core.events.ApplicationListener"/>
 	</extension>
   
-
-
 </plugin>

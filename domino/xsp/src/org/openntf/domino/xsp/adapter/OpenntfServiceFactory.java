@@ -18,7 +18,7 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 public class OpenntfServiceFactory implements IServiceFactory {
 
 	public OpenntfServiceFactory() {
-		System.out.println("Openntf-Factory loaded");
+		//System.out.println("Openntf-Factory loaded");
 	}
 
 	@Override

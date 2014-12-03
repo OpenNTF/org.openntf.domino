@@ -19,13 +19,13 @@ public enum CreateTestDatabase {
 	static final String FAKENAMES_NSF = "fakenames.nsf";
 
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new DbSetup());
+		TestRunnerUtil.runAsDominoThread(new DbSetup(), TestRunnerUtil.NATIVE_SESSION);
 		System.out.println("Start next thread");
 		// 1 Thread: 840 docs/sec
 		// 2 Threads: 1264 docs/sec
 		// 3 Threads: 1400 docs/sec
 		// 4 Threads: 1480 docs/sec
-		TestRunnerUtil.runAsDominoThread(new DocCreate(), 10);
+		TestRunnerUtil.runAsDominoThread(new DocCreate(), TestRunnerUtil.NATIVE_SESSION, 10);
 	}
 
 	public static class DbSetup implements Runnable {

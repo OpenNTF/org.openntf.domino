@@ -39,7 +39,6 @@ import com.ibm.commons.util.io.StreamUtil;
  * 
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseDesign.class.getName());
 
 	/*

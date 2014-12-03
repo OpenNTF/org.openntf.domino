@@ -12,6 +12,7 @@ import org.openntf.domino.Stream;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.LMBCSUtils;
 
 /**
@@ -28,7 +29,7 @@ import org.openntf.domino.utils.LMBCSUtils;
 @RunWith(DominoJUnitRunner.class)
 public class LMBCSPayload implements Runnable {
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new LMBCSPayload());
+		TestRunnerUtil.runAsDominoThread(new LMBCSPayload(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public LMBCSPayload() {
@@ -38,7 +39,7 @@ public class LMBCSPayload implements Runnable {
 	@Override
 	@Test
 	public void run() {
-		Session sess = Factory.getSession();
+		Session sess = Factory.getSession(SessionType.CURRENT);
 		boolean succ = true;
 		char[] c = new char[1];
 		int[] payloads = new int[2];

@@ -28,6 +28,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
@@ -80,7 +81,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	private static lotus.domino.DateTime generateWorker() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession());
+			lotus.domino.Session rawsession = toLotus(Factory.getSession(SessionType.CURRENT));
 			return rawsession.createDateTime(new Date());
 		} catch (Exception e) {
 			log_.log(Level.SEVERE, "Could not create the DateTime worker object. DateTime functions may not work as expected", e);
@@ -143,7 +144,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	protected Session findParent(final lotus.domino.DateTime delegate) {
 		if (delegate == null) {
-			return Factory.getSession(); // the current Session
+			return Factory.getSession(SessionType.CURRENT); // the current Session
 		}
 		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
@@ -904,7 +905,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Deprecated
 	public DateTime() {
-		super(null, Factory.getSession(), null, 0, NOTES_TIME);
+		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_TIME);
 	}
 
 	public DateTime(final String time) throws java.text.ParseException {

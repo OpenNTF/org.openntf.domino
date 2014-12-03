@@ -2,9 +2,7 @@ package org.openntf.domino.tests.ntf;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -17,8 +15,7 @@ public enum OpenNTFvLegacyBenchmark {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 3;
-	private static final int delay = 250;
+	private static final int THREAD_COUNT = 1;
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
@@ -251,7 +248,6 @@ public enum OpenNTFvLegacyBenchmark {
 			sb.append(dateCount + " datetimes with legacy API.");
 			System.out.println(sb.toString());
 		}
-
 	}
 
 	public static class OpenNTFDoer extends org.openntf.domino.thread.AbstractDominoRunnable {
@@ -335,30 +331,30 @@ public enum OpenNTFvLegacyBenchmark {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSessionFullAccess();
+			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSession();
 			org.openntf.domino.Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			org.openntf.domino.Database db = s.getDatabase(server, dbPath);
 
-			iterateForms(db);
+			//			iterateForms(db);
 			iterateAllDocuments(db);
-
-			org.openntf.domino.NoteCollection nc = db.createNoteCollection(false);
-			nc.buildCollection();
-
-			org.openntf.domino.View view = db.getView("NameMessageEventMessages");
-			List<String> keys = new ArrayList<String>();
-			keys.add("Mail");
-			keys.add("2");
-			org.openntf.domino.DocumentCollection dc = view.getAllDocumentsByKey(keys, false);
-			System.out.println("dc: " + dc.getCount());
-			StringBuilder sbc = new StringBuilder();
-			for (org.openntf.domino.Document doc : dc) {
-				sbc.append(doc.getNoteID());
-			}
-
-			org.openntf.domino.ViewEntryCollection allViewEntries = view.getAllEntries();
-			System.out.println("all view entries: " + allViewEntries.getCount());
+			//
+			//			org.openntf.domino.NoteCollection nc = db.createNoteCollection(false);
+			//			nc.buildCollection();
+			//
+			//			org.openntf.domino.View view = db.getView("NameMessageEventMessages");
+			//			List<String> keys = new ArrayList<String>();
+			//			keys.add("Mail");
+			//			keys.add("2");
+			//			org.openntf.domino.DocumentCollection dc = view.getAllDocumentsByKey(keys, false);
+			//			System.out.println("dc: " + dc.getCount());
+			//			StringBuilder sbc = new StringBuilder();
+			//			for (org.openntf.domino.Document doc : dc) {
+			//				sbc.append(doc.getNoteID());
+			//			}
+			//
+			//			org.openntf.domino.ViewEntryCollection allViewEntries = view.getAllEntries();
+			//			System.out.println("all view entries: " + allViewEntries.getCount());
 
 			long elapsed = System.nanoTime() - start;
 			StringBuilder sb = new StringBuilder();
@@ -379,7 +375,7 @@ public enum OpenNTFvLegacyBenchmark {
 	}
 
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, THREAD_COUNT);
+		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
 		TestRunnerUtil.runAsNotesThread(LegacyDoer.class, THREAD_COUNT);
 		System.out.println("Main complete");
 	}

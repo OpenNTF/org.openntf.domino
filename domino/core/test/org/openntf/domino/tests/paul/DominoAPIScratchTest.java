@@ -7,6 +7,7 @@ import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum DominoAPIScratchTest {
 	INSTANCE;
@@ -19,7 +20,7 @@ public enum DominoAPIScratchTest {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			Session s = Factory.getSession();
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Date d = new Date();
 			DateTime dt = (DateTime) s.createDateTime(d);
 			DateTime dt2 = (DateTime) s.createDateTime(d);
@@ -30,6 +31,8 @@ public enum DominoAPIScratchTest {
 			doChecks(dt, dt2);
 			dt.adjustHour(-1);
 			doChecks(dt, dt2);
+			start = System.nanoTime() - start;
+			System.out.println("Time: " + start + "ns");
 		}
 	}
 

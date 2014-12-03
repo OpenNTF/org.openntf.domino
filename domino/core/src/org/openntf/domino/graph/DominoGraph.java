@@ -23,6 +23,7 @@ import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -373,7 +374,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	public org.openntf.domino.Session getRawSession() {
-		return Factory.getSession();
+		// CHECKME: Is this correct?
+		return Factory.getSession(SessionType.CURRENT);
 	}
 
 	public org.openntf.domino.Database getRawDatabase() {

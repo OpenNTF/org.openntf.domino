@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.iterators;
 
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ import org.openntf.domino.impl.ItemVector;
  * The Class VectorIterator.
  * 
  */
-public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
+public class ItemVectorIterator implements ListIterator<Item> {
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(ItemVectorIterator.class.getName());
@@ -39,6 +40,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 
 	/** The current_. */
 	private transient Item current_;
+	private Document document_;
 
 	/**
 	 * Instantiates a new document iterator.
@@ -49,7 +51,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 *            the itemVector
 	 */
 	public ItemVectorIterator(final Document document, final ItemVector itemVector) {
-		super(document);
+		document_ = document;
 		setNames(itemVector.getNames());
 	}
 
@@ -92,7 +94,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 		if (hasNext()) {
 			String name = names_[getIndex()];
 			setIndex(getIndex() + 1);
-			current_ = ((Document) getCollection()).getFirstItem(name);
+			current_ = document_.getFirstItem(name);
 			result = current_;
 
 		}
@@ -164,7 +166,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 			int pi = previousIndex();
 			String name = names_[pi];
 			setIndex(pi);
-			current_ = ((Document) getCollection()).getFirstItem(name);
+			current_ = document_.getFirstItem(name);
 			result = current_;
 
 		}
@@ -188,6 +190,11 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 */
 	@Override
 	public void set(final Item arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void add(final Item arg0) {
 		throw new UnsupportedOperationException();
 	}
 

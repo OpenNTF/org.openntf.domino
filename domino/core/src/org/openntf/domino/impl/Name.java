@@ -30,13 +30,14 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Names;
 import org.openntf.domino.utils.Strings;
 
 /**
  * The Class Name.
  */
-@SuppressWarnings("deprecation")
+
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name, Comparable<Name> {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -48,7 +49,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 */
 	@Deprecated
 	public Name() {
-		super(null, Factory.getSession(), null, 0, NOTES_NAME);
+		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_NAME);
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	 *            String used to construct the Name object
 	 */
 	public Name(final String name) {
-		super(null, Factory.getSession(), null, 0, NOTES_NAME);
+		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_NAME);
 		this.initialize(name);
 	}
 
@@ -204,7 +205,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 			this.parseRFC82xContent(name);
 			String phrase = this.getAddr822Phrase();
 
-			Name n = (Name) Factory.getSession().createName((Strings.isBlankString(phrase)) ? name : phrase);
+			Name n = (Name) getParent().createName((Strings.isBlankString(phrase)) ? name : phrase);
 			if (null == n) {
 				throw new RuntimeException("Unable to create Name object");
 			}

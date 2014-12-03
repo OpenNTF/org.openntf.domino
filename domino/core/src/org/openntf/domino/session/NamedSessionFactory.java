@@ -27,10 +27,6 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 		runAs_ = runAs;
 	}
 
-	public NamedSessionFactory(final Fixes[] fixes, final AutoMime autoMime, final String apiPath) {
-		this(fixes, autoMime, apiPath, null);
-	}
-
 	@Override
 	public Session createSession() throws PrivilegedActionException {
 		return createSession(runAs_);
@@ -42,19 +38,23 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				synchronized (SecurityManager.class) {
-					SecurityManager oldSm = System.getSecurityManager();
-					System.setSecurityManager(null);
-					try {
-						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
-
-					} finally {
-						System.setSecurityManager(oldSm);
-					}
-				}
+				return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				// it is too dangerous to disable the SM temporary.
+				// it might happen that an other thread runs while we create the session
+				// and queries the SM -> bang.
+				//				synchronized (SecurityManager.class) {
+				//					SecurityManager oldSm = System.getSecurityManager();
+				//					System.setSecurityManager(null);
+				//					try {
+				//						return lotus.domino.local.Session.createSessionWithTokenEx(userName);
+				//
+				//					} finally {
+				//						System.setSecurityManager(oldSm);
+				//					}
+				//				}
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw, true);
 	}
 
 }

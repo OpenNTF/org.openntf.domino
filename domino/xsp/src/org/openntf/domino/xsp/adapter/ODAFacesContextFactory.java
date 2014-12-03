@@ -1,6 +1,5 @@
 package org.openntf.domino.xsp.adapter;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.FacesException;
@@ -8,10 +7,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionMode;
+import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.xsp.ODAPlatform;
+import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
+import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
 
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.FacesContextFactoryImpl;
@@ -20,10 +22,12 @@ import com.ibm.xsp.event.FacesContextListener;
 
 public class ODAFacesContextFactory extends FacesContextFactory {
 	private static final Logger log_ = Logger.getLogger(ODAFacesContextFactory.class.getName());
-	public static boolean useODAFacesContext_ = false;	//TODO NTF make this figure it out from some property setting
 	private final FacesContextFactory _delegate;
 	private ContextListener _contextListener;
 
+	/**
+	 * The contextListener terminates the factory on context-release.
+	 */
 	public static class ContextListener implements FacesContextListener {
 		@Override
 		public void beforeContextReleased(final FacesContext arg0) {
@@ -32,7 +36,7 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 
 		@Override
 		public void beforeRenderingPhase(final FacesContext arg0) {
-			// TODO Auto-generated method stub
+
 		}
 	}
 
@@ -65,16 +69,22 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 	public FacesContext getFacesContext(final Object context, final Object request, final Object response, final Lifecycle lifecycle)
 			throws FacesException {
 		FacesContext ctx = _delegate.getFacesContext(context, request, response, lifecycle);
+
 		Factory.initThread();
+		Factory.setSessionFactory(new XPageCurrentSessionFactory(), SessionType.CURRENT);
+		Factory.setSessionFactory(new XPageSignerSessionFactory(false), SessionType.SIGNER);
+		Factory.setSessionFactory(new XPageSignerSessionFactory(true), SessionType.SIGNER_FULL_ACCESS);
+
+		if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS")) {
+			DominoUtils.setBubbleExceptions(true);
+		}
+
+		// TODO RPr: This is probably the wrong locale. See ViewHandler.calculateLocale
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());
 		Factory.setClassLoader(ctx.getContextClassLoader());
-		NotesContext ntx = NotesContext.getCurrent();
-		if (ntx != null) {
-			Factory.setSession(ntx.getCurrentSession(), SessionMode.DEFAULT);
-		} else {
-			log_.log(Level.WARNING, "Unable to initialize Factory default session because NotesContext is not yet available");
-		}
-		if (useODAFacesContext_) {
+		//		NotesContext ntx = NotesContext.getCurrent();
+
+		if (ODAPlatform.isAppGodMode(null)) {
 			ODAFacesContext localContext = new ODAFacesContext(ctx);
 			attachListener(localContext);
 			return localContext;

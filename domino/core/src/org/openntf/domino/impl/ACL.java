@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -32,6 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class ACL.
  */
 public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
+	private static final Logger log_ = Logger.getLogger(ACL.class.getName());
 
 	/**
 	 * Instantiates a new acl.
@@ -439,20 +441,18 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 	}
 
 	@Override
-	protected lotus.domino.ACL getDelegate() {
-		lotus.domino.ACL d = super.getDelegate();
-		if (isDead(d)) {
-			resurrect();
-		}
-		return super.getDelegate();
-	}
-
-	public void resurrect() {
+	protected void resurrect() {
 		try {
 			lotus.domino.Database db = toLotus(getParent());
 			lotus.domino.ACL d = db.getACL();
 			setDelegate(d, 0);
-			getFactory().recacheLotusObject(d, this, parent_);
+			if (log_.isLoggable(java.util.logging.Level.FINE)) {
+				Throwable t = new Throwable();
+				log_.log(java.util.logging.Level.FINE, "ACL of Database " + getParent()
+						+ "had been recycled and was auto-restored. Changes may have been lost.", t);
+			}
+			// Recaching is done in setDelegate now
+			//getFactory().recacheLotusObject(d, this, parent_);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
