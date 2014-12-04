@@ -564,7 +564,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				}
 			}
 
-			//This has to be called BEFORE we recycle the Mime entity, otherwise the data may not be stored.
+			//// This has to be called BEFORE we recycle the Mime entity, otherwise the data may not be stored.
 			boolean ret = false;
 			if (null != entityItemName) {
 				try {
@@ -1840,7 +1840,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	public boolean hasReaders() {
 		//TODO won't that be handy?
 		for (Item item : getItems()) {
-			if (item.isReaders()) {
+			if (item != null && item.isReaders()) {
 				return true;
 			}
 		}
@@ -3299,8 +3299,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3584,13 +3584,13 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -4187,6 +4187,26 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		T result = null;
 		result = TypeUtils.vectorToClass(getItemSeriesValues(name), T, getAncestorSession());
 		return result;
+	}
+
+	@Override
+	public Map<String, List<Object>> getItemTable(final CharSequence... itemnames) {
+		return Documents.getItemTable(this, itemnames);
+	}
+
+	@Override
+	public List<Map<String, Object>> getItemTablePivot(final CharSequence... itemnames) {
+		return Documents.getItemTablePivot(this, itemnames);
+	}
+
+	@Override
+	public void setItemTable(final Map<String, List<Object>> table) {
+		Documents.setItemTable(this, table);
+	}
+
+	@Override
+	public void setItemTablePivot(final List<Map<String, Object>> pivot) {
+		Documents.setItemTablePivot(this, pivot);
 	}
 
 }

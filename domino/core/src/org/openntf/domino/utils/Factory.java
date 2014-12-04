@@ -1026,7 +1026,7 @@ public enum Factory {
 	 */
 	public static void initThread() { // RPr: Method was deliberately renamed
 		if (!started) {
-			throw new IllegalStateException("Factory is not yet statetd");
+			throw new IllegalStateException("Factory is not yet started");
 		}
 		if (log_.isLoggable(Level.FINER)) {
 			log_.log(Level.FINER, "Factory.initThread()", new Throwable());
