@@ -18,13 +18,8 @@
  */
 package org.openntf.arpa;
 
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import org.openntf.domino.logging.LogUtils;
 
 /**
  * @author dolson
@@ -345,84 +340,5 @@ public enum ISO {
 		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
 	}
 
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * EXCEPTION HANDLING based on code in org.openntf.domino.utils.DominoUtils
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
-	/**
-	 * Handle exception.
-	 * 
-	 * @param t
-	 *            the t
-	 * @return the throwable
-	 */
-	public static Throwable handleException(final Throwable t) {
-		return (ISO.handleException(t, null));
-	}
-
-	public static Throwable handleException(final Throwable t, final String details) {
-		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					if (ISO.log_.getLevel() == null) {
-						LogUtils.loadLoggerConfig(false, "");
-					}
-					if (ISO.log_.getLevel() == null) {
-						ISO.log_.setLevel(Level.WARNING);
-					}
-					return null;
-				}
-			});
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					if (LogUtils.hasAccessException(ISO.log_)) {
-						ISO.logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
-						if (!ISO.isBlankString(details)) {
-							ISO.logBackup_.log(Level.SEVERE, "DETAILS: " + details);
-						}
-					} else {
-						ISO.log_.log(Level.WARNING, t.getLocalizedMessage(), t);
-						if (!ISO.isBlankString(details)) {
-							ISO.log_.log(Level.WARNING, "DETAILS: " + details);
-						}
-					}
-					return null;
-				}
-			});
-
-		} catch (final Throwable e) {
-			e.printStackTrace();
-		}
-
-		if (ISO.getBubbleExceptions()) {
-			throw new RuntimeException(t);
-		}
-		return t;
-	}
-
-	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
-		@Override
-		protected Boolean initialValue() {
-			return Boolean.FALSE;
-		}
-	};
-
-	public static Boolean getBubbleExceptions() {
-		if (ISO.bubbleExceptions_.get() == null) {
-			ISO.setBubbleExceptions(Boolean.FALSE);
-		}
-		return ISO.bubbleExceptions_.get();
-	}
-
-	public static void setBubbleExceptions(final Boolean value) {
-		ISO.bubbleExceptions_.set(value);
-	}
 
 }

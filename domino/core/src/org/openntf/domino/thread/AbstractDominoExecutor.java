@@ -21,6 +21,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -104,13 +105,24 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		return now_;
 	}
 
+	private static ThreadFactory createThreadFactory() {
+		try {
+			return Executors.privilegedThreadFactory();
+		} catch (Throwable t) {
+			log_.log(Level.WARNING,
+					"cannot create a privilegedThreadFactory - this is the case if you run as java app or in an unsupported operation: "
+							+ t.getMessage(), t);
+			return Executors.defaultThreadFactory();
+		}
+	}
+
 	/**
 	 * Creates a new {@link AbstractDominoExecutor}. Specify the
 	 * 
 	 * @param corePoolSize
 	 */
 	public AbstractDominoExecutor(final int corePoolSize) {
-		super(corePoolSize, Executors.privilegedThreadFactory());
+		super(corePoolSize, createThreadFactory());
 		Factory.addShutdownHook(shutdownHook);
 	}
 
@@ -285,7 +297,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 
 	}
-
 
 	private long overflowFree(long paramLong) {
 		Delayed localDelayed = (Delayed) super.getQueue().peek();

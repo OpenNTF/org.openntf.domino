@@ -4,7 +4,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openntf.domino.utils.DominoUtils;
 
 /**
  * A Testrunner to run JUnit tests with proper set up of ODA.
@@ -82,7 +81,6 @@ public abstract class AbstractJUnitRunner extends BlockJUnit4ClassRunner {
 	@Override
 	protected void runChild(final FrameworkMethod method, final RunNotifier notifier) {
 		beforeTest(method);
-		DominoUtils.setBubbleExceptions(true); // Test MUST bubble up exceptions!
 		try {
 			super.runChild(method, notifier);
 		} finally {

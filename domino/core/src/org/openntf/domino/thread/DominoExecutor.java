@@ -4,10 +4,10 @@
 package org.openntf.domino.thread;
 
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
-import org.openntf.domino.utils.DominoUtils;
 
 /**
  * A ThreadPoolExecutor for Domino runnables. It sets up a shutdown hook for proper termination. There should be maximum one instance of
@@ -55,9 +55,8 @@ public class DominoExecutor extends AbstractDominoExecutor {
 		public void run() {
 			try {
 				callOrRun();
-			} catch (Exception e) {
-				DominoUtils.setBubbleExceptions(true);
-				DominoUtils.handleException(e);
+			} catch (Throwable t) {
+				log_.log(Level.WARNING, getDescription() + " - " + t.getMessage(), t);
 			}
 		}
 	}

@@ -33,6 +33,8 @@ public class DominoThread extends NotesThread {
 	protected int nativeId_;
 	private final ISessionFactory sessionFactory_;
 
+	private Factory.ThreadConfig sourceThreadConfig = Factory.getThreadConfig();
+
 	/**
 	 * The shutdown hook is executed if the thread is still running before the Factory is shut down.
 	 */
@@ -182,7 +184,7 @@ public class DominoThread extends NotesThread {
 		super.initThread();
 		nativeId_ = this.getNativeThreadID();
 		log_.fine("DEBUG: Initializing a " + toString());
-		Factory.initThread();
+		Factory.initThread(sourceThreadConfig);
 		Factory.setSessionFactory(sessionFactory_, SessionType.CURRENT);
 
 		Factory.addShutdownHook(shutdownHook);

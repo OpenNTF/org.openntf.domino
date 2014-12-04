@@ -8,8 +8,6 @@ import lotus.domino.NotesThread;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openntf.domino.AutoMime;
-import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
@@ -92,20 +90,14 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 		try {
 			String runAs = getRunAs(method);
 			String db = getDatabase(method);
-			Factory.initThread();
+			Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 			if (runAs == null) {
-				Factory.setSessionFactory(new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, db),//
-						SessionType.CURRENT);
-
-				Factory.setSessionFactory(new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, db),//
-						SessionType.CURRENT_FULL_ACCESS);
+				Factory.setSessionFactory(new NativeSessionFactory(db), SessionType.CURRENT);
+				Factory.setSessionFactory(new SessionFullAccessFactory(db), SessionType.CURRENT_FULL_ACCESS);
 
 			} else {
-				Factory.setSessionFactory(new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, db, runAs),//
-						SessionType.CURRENT);
-
-				Factory.setSessionFactory(new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, db, runAs),
-						SessionType.CURRENT_FULL_ACCESS);
+				Factory.setSessionFactory(new NamedSessionFactory(db, runAs), SessionType.CURRENT);
+				Factory.setSessionFactory(new SessionFullAccessFactory(db, runAs), SessionType.CURRENT_FULL_ACCESS);
 			}
 
 			TestEnv.session = Factory.getSession(SessionType.CURRENT);

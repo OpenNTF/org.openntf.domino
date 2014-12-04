@@ -160,6 +160,25 @@ public enum Factory {
 		}
 	}
 
+	public static class ThreadConfig {
+		public final Fixes[] fixes;
+		public final AutoMime autoMime;
+		public final boolean bubbleExceptions;
+
+		public ThreadConfig(final Fixes[] fixes, final AutoMime autoMime, final boolean bubbleExceptions) {
+			super();
+			this.fixes = fixes;
+			this.autoMime = autoMime;
+			this.bubbleExceptions = bubbleExceptions;
+		}
+
+	}
+
+	// this thread config wraps everything and squelches errors (does not change default behavior 
+	public static ThreadConfig PERMISSIVE_THREAD_CONFIG = new ThreadConfig(Fixes.values(), AutoMime.WRAP_ALL, false);
+
+	public static ThreadConfig STRICT_THREAD_CONFIG = new ThreadConfig(Fixes.values(), AutoMime.WRAP_32K, true);
+
 	/**
 	 * Container Class for all statistic counters
 	 * 
@@ -242,6 +261,12 @@ public enum Factory {
 
 		private List<Runnable> terminateHooks;
 
+		private ThreadConfig threadConfig;
+
+		public ThreadVariables(final ThreadConfig tc) {
+			threadConfig = tc;
+		}
+
 		/** clear the object */
 		private void clear() {
 			wrapperFactory = null;
@@ -300,6 +325,13 @@ public enum Factory {
 		if (tv == null)
 			throw new IllegalStateException(Factory.class.getName() + " is not initialized for this thread!");
 		return tv;
+	}
+
+	public static ThreadConfig getThreadConfig() {
+		ThreadVariables tv = threadVariables_.get();
+		if (tv == null)
+			return PERMISSIVE_THREAD_CONFIG;
+		return tv.threadConfig;
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -1024,7 +1056,7 @@ public enum Factory {
 	 * Begin with a clear environment. Initialize this thread
 	 * 
 	 */
-	public static void initThread() { // RPr: Method was deliberately renamed
+	public static void initThread(final ThreadConfig tc) { // RPr: Method was deliberately renamed
 		if (!started) {
 			throw new IllegalStateException("Factory is not yet started");
 		}
@@ -1038,7 +1070,7 @@ public enum Factory {
 		//		System.out.println("TEMP DEBUG: Factory thread initializing.");
 		//		Throwable t = new Throwable();
 		//		t.printStackTrace();
-		threadVariables_.set(new ThreadVariables());
+		threadVariables_.set(new ThreadVariables(tc));
 	}
 
 	/**
@@ -1197,24 +1229,18 @@ public enum Factory {
 			}
 		};
 
-		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		String defaultApiPath = null; // maybe we set this to ODA.nsf
 
-		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		// In XPages environment, these factories will be replaced 
+		defaultNamedSessionFactory = new NamedSessionFactory(defaultApiPath);
+		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
-		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-
-		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
-		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-
-		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-
-		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
-		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
 
 		started = true;
 
