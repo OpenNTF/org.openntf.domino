@@ -1,5 +1,6 @@
 package org.openntf.domino.helpers;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,6 +36,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.events.IDominoListener;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
@@ -296,6 +298,10 @@ public class DatabaseMetaData implements Serializable {
 		protected Database getDatabase() {
 			if (db_ == null) {
 				db_ = session_.getDatabase(server_, filePath_);
+				if (db_ == null) {
+					throw new UserAccessException("User " + session_.getEffectiveUserName() + " cannot open database " + filePath_
+							+ " on server " + server_ + ". Database does not exist or is probably locked by other process!");
+				}
 			}
 			return db_;
 		}
@@ -618,6 +624,15 @@ public class DatabaseMetaData implements Serializable {
 		@Override
 		public DatabaseDesign getDesign() {
 			return getDatabase().getDesign();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.openntf.domino.ext.Database#getDesign(boolean)
+		 */
+		@Override
+		public org.openntf.domino.Database getXPageSharedDesignTemplate() throws FileNotFoundException {
+			return getDatabase().getXPageSharedDesignTemplate();
 		}
 
 		/*

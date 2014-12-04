@@ -16,7 +16,6 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.security.PrivilegedActionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,6 +27,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesError;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.AdministrationProcess;
@@ -78,6 +78,7 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
+
 public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
@@ -851,8 +852,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 					}
 				}
 			} catch (NotesException e) {
-				String message = e.text;
-				if (message.contains("cannot open database")) {
+				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
 					throw new UserAccessException(
 							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
 				} else {
@@ -1711,12 +1711,8 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 
-		Session sessionImpl = null;
-		try {
-			sessionImpl = (Session) getSessionFactory().createSession();
-		} catch (PrivilegedActionException e) {
-			throw new UnableToAcquireSessionException("SessionFactory could not return a Session", e);
-		}
+		Session sessionImpl = (Session) getSessionFactory().createSession();
+
 		if (sessionImpl == null) {
 			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
 		}

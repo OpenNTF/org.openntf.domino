@@ -16,37 +16,43 @@ import org.openntf.domino.utils.Factory.SessionType;
 public @interface Tasklet {
 	public interface Interface {
 
+		/**
+		 * Returns the {@link ISessionFactory} that is used to create the Session. If <code>null</code> is returned, the
+		 * {@link Tasklet#session()} annotation counts.
+		 * 
+		 * @return a SessionFactory or null.
+		 */
 		public ISessionFactory getSessionFactory();
 
-		//use a named session factory instead
-		//public String getRunAs();
-
+		/**
+		 * Returns the {@link Context} where the Tasklet should run. If <code>null</code> is returned, the {@link Tasklet#scope()}
+		 * annotation counts.
+		 * 
+		 * @return a scope or null.
+		 */
 		public Scope getScope();
 
+		/**
+		 * Returns the {@link Context} of that tasklet. If <code>null</code> is returned, the {@link Tasklet#context()} annotation counts.
+		 * 
+		 * @return
+		 */
 		public Context getContext();
 
-		//public void setAccessControlContext(AccessControlContext context);
-
-		//public AccessControlContext getAccessControlContext();
-
-		//public void setSession(final lotus.domino.Session session);
-
-		// public org.openntf.domino.Session getSession();
-
-		//public void setRunAs(String username);
-
-		//public void setDominoExecutionContext(DominoExecutionContext tctx);
-
-		//public DominoExecutionContext getDominoExecutionContext();
+		/**
+		 * Notifies the tasklet that it should stop if possible.
+		 */
+		public void stop();
 
 		/**
-		 * Set the thread. Needed to interrupt
+		 * Returns a dynamic schedule plan. This method is only called if you specify {@literal @}Tasklet(schedule="dynamic"). Class needs a
+		 * default constructor.
 		 * 
-		 * @param thread
+		 * @return Array of schedule strings
 		 */
-		public void setCurrentThread(Thread thread);
+		public String[] getDynamicSchedule();
 
-		public void stop(final boolean force);
+		public String getDescription();
 	}
 
 	/**
@@ -198,9 +204,21 @@ public @interface Tasklet {
 	Tasklet.Context context() default Tasklet.Context.DEFAULT;
 
 	/**
-	 * Defines if this tasklet is public. I.e. is runnable/scheduleable with "xots run"
+	 * specifies the schedule.
+	 * 
+	 * Examples;
+	 * <ul>
+	 * <li><code>cron:0 *&#x2F;15 02-23 * * *</code> to run the tasklet every 15 minutes between 02 and 23 o'clock. See
+	 * {@link CronExpression}</li>
+	 * <li><code>delay:45m 08:30-22:30 MTWRFSU</code> to run a periodic task with a delay of 45 minutes (45 minutes between runs) between
+	 * 08:30 and 22:30. This should be prefered to cron, because cron will start all periodic tasks in the same minute.</li>
+	 * <li><code>period:45m 08:30-22:30 MTWRF</code> to run a periodic task every 45 minutes between 08:30 and 22:30. This should be
+	 * prefered to cron, because cron will start all periodic tasks in the same minute.</li>
+	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)</li>
+	 * <li><code>dynamic</code> get the dynamic schedule by invoking {@link Tasklet.Interface#getDynamicSchedule()} (this must be the first
+	 * and only annotation. Class must have a default constructor.)</li>
 	 * 
 	 * @return
 	 */
-	boolean isPublic() default false;
+	String[] schedule() default "";
 }

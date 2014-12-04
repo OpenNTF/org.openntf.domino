@@ -22,9 +22,9 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
-import org.openntf.domino.xots.XotsNsfScanner;
 import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
+import org.openntf.domino.xsp.xots.XotsNsfScanner;
 import org.openntf.junit4xpages.OsgiTest;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;

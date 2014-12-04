@@ -50,7 +50,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 				lotusWorker.set(null);
 				calendar.set(null);
 			}
-		});
+		}, true);
 	}
 
 	/** The calendar */

@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
@@ -51,6 +52,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.design.impl.DatabaseDesign;
+import org.openntf.domino.design.impl.IconNote;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
@@ -1042,6 +1044,23 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public DatabaseDesign getDesign() {
 		return new DatabaseDesign(this);
+	}
+
+	@Override
+	public org.openntf.domino.Database getXPageSharedDesignTemplate() throws FileNotFoundException {
+		IconNote icon = getDesign().getIconNote();
+		if (icon == null)
+			return null;
+		Document iconDoc = icon.getDocument();
+		if ("1".equals(iconDoc.getItemValueString("$XpageSharedDesign"))) {
+			String templatePath = iconDoc.getItemValueString("$XpageSharedDesignTemplate");
+			org.openntf.domino.Database template = getAncestorSession().getDatabase(templatePath);
+			if (template == null || !template.isOpen()) {
+				throw new FileNotFoundException("Could not open the XPage shared Design Template: " + templatePath);
+			}
+			return template;
+		}
+		return null;
 	}
 
 	/*

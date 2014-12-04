@@ -18,8 +18,11 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.CharBuffer;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import lotus.domino.NotesEntityResolver;
 import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
@@ -39,6 +42,8 @@ import org.xml.sax.InputSource;
  */
 public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
 		org.openntf.domino.EmbeddedObject {
+
+	protected AtomicInteger referenceCounter = new AtomicInteger();
 
 	/**
 	 * Instantiates a new outline.
@@ -62,6 +67,158 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	@Override
 	protected Document findParent(final lotus.domino.EmbeddedObject delegate) throws NotesException {
 		return fromLotus(delegate.getParent().getParent(), Document.SCHEMA, null);
+	}
+
+	private class EOReader extends Reader {
+		Reader delegateReader;
+
+		public EOReader(final Reader delegate) {
+			super();
+			this.delegateReader = delegate;
+			referenceCounter.incrementAndGet();
+		}
+
+		@Override
+		public int read(final CharBuffer paramCharBuffer) throws IOException {
+			return delegateReader.read(paramCharBuffer);
+		}
+
+		@Override
+		public int read() throws IOException {
+			return delegateReader.read();
+		}
+
+		@Override
+		public int hashCode() {
+			return delegateReader.hashCode();
+		}
+
+		@Override
+		public int read(final char[] paramArrayOfChar) throws IOException {
+			return delegateReader.read(paramArrayOfChar);
+		}
+
+		@Override
+		public int read(final char[] paramArrayOfChar, final int paramInt1, final int paramInt2) throws IOException {
+			return delegateReader.read(paramArrayOfChar, paramInt1, paramInt2);
+		}
+
+		@Override
+		public long skip(final long paramLong) throws IOException {
+			return delegateReader.skip(paramLong);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			return delegateReader.equals(obj);
+		}
+
+		@Override
+		public boolean ready() throws IOException {
+			return delegateReader.ready();
+		}
+
+		@Override
+		public boolean markSupported() {
+			return delegateReader.markSupported();
+		}
+
+		@Override
+		public void mark(final int paramInt) throws IOException {
+			delegateReader.mark(paramInt);
+		}
+
+		@Override
+		public void reset() throws IOException {
+			delegateReader.reset();
+		}
+
+		@Override
+		public void close() throws IOException {
+			delegateReader.close();
+			if (referenceCounter.decrementAndGet() == 0) {
+				EmbeddedObject.this.markInvalid();
+			}
+		}
+
+		@Override
+		public String toString() {
+			return delegateReader.toString();
+		}
+
+	}
+
+	private class EOInputStream extends InputStream {
+		private InputStream delegateStream;
+
+		public EOInputStream(final InputStream delegateStream) {
+			super();
+			this.delegateStream = delegateStream;
+			referenceCounter.incrementAndGet();
+		}
+
+		@Override
+		public int read() throws IOException {
+			return delegateStream.read();
+		}
+
+		@Override
+		public int read(final byte[] paramArrayOfByte) throws IOException {
+			return delegateStream.read(paramArrayOfByte);
+		}
+
+		@Override
+		public int read(final byte[] paramArrayOfByte, final int paramInt1, final int paramInt2) throws IOException {
+			return delegateStream.read(paramArrayOfByte, paramInt1, paramInt2);
+		}
+
+		@Override
+		public int hashCode() {
+			return delegateStream.hashCode();
+		}
+
+		@Override
+		public long skip(final long paramLong) throws IOException {
+			return delegateStream.skip(paramLong);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			return delegateStream.equals(obj);
+		}
+
+		@Override
+		public int available() throws IOException {
+			return delegateStream.available();
+		}
+
+		@Override
+		public void close() throws IOException {
+			delegateStream.close();
+			if (referenceCounter.decrementAndGet() == 0) {
+				EmbeddedObject.this.markInvalid();
+			}
+		}
+
+		@Override
+		public void mark(final int paramInt) {
+			delegateStream.mark(paramInt);
+		}
+
+		@Override
+		public void reset() throws IOException {
+			delegateStream.reset();
+		}
+
+		@Override
+		public boolean markSupported() {
+			return delegateStream.markSupported();
+		}
+
+		@Override
+		public String toString() {
+			return delegateStream.toString();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -276,14 +433,10 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	@Override
 	public Reader getReader() {
 		try {
-			return getDelegate().getReader();
+			return new EOReader(getDelegate().getReader());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-		} finally {
-			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
-				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
-			}
 		}
 	}
 
@@ -294,16 +447,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 */
 	@Override
 	public InputSource getInputSource() {
-		try {
-			return getDelegate().getInputSource();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		} finally {
-			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
-				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
-			}
-		}
+		return NotesEntityResolver.newEntityInputSource(getReader(), getAncestorDocument(), toString());
 	}
 
 	/*
@@ -314,15 +458,19 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	@Override
 	public InputStream getInputStream() {
 		try {
-			return getDelegate().getInputStream();
+			return new EOInputStream(getDelegate().getInputStream());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-		} finally {
-			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
-				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
-			}
 		}
+	}
+
+	/**
+	 * marks the object as invalid and deletes local attachments
+	 */
+	@Override
+	public void markInvalid() {
+		((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
 	}
 
 	/*

@@ -25,7 +25,7 @@ public class FormulaContextNotes extends FormulaContext {
 			public void run() {
 				Formulas.terminate();
 			}
-		});
+		}, true);
 	}
 
 	/**

@@ -4,6 +4,7 @@
 package org.openntf.domino.thread;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,14 +22,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javolution.util.FastMap;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
-import org.openntf.domino.thread.AbstractWrapped.WrappedCallable;
-import org.openntf.domino.thread.AbstractWrapped.WrappedRunnable;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -75,6 +75,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	private static final AtomicLong sequencer = new AtomicLong(0L);
 
+	protected Calendar now_ = Calendar.getInstance();
 	// the shutdown-hook for proper termination
 	protected Runnable shutdownHook = new Runnable() {
 		@Override
@@ -97,6 +98,11 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 	};
 
+	protected Calendar getNow() {
+		now_.clear();
+		return now_;
+	}
+
 	/**
 	 * Creates a new {@link AbstractDominoExecutor}. Specify the
 	 * 
@@ -116,7 +122,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	public class DominoFutureTask<T> extends FutureTask<T> implements Delayed, RunnableScheduledFuture<T>, Observer {
 
 		// the period. Values > 0: fixed rate. Values < 0: fixed delay
-		private Object wrappedTask;
+		private IWrappedTask wrappedTask;
 		//		private long period;
 
 		// The next runtime;
@@ -126,6 +132,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		public long sequenceNumber = sequencer.incrementAndGet();
 		private TaskState state = TaskState.QUEUED;
 		private Object objectState;
+		private Thread runner;
 
 		/**
 		 * Sets the new state of this Thread
@@ -154,7 +161,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return sequenceNumber;
 		}
 
-		public DominoFutureTask(final WrappedCallable<T> callable, final Scheduler scheduler) {
+		public DominoFutureTask(final IWrappedCallable<T> callable, final Scheduler scheduler) {
 			super(callable);
 			this.wrappedTask = callable;
 			this.scheduler = scheduler;
@@ -162,7 +169,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			callable.addObserver(this);
 		}
 
-		public DominoFutureTask(final WrappedRunnable runnable, final T result, final Scheduler scheduler) {
+		public DominoFutureTask(final IWrappedRunnable runnable, final T result, final Scheduler scheduler) {
 			super(runnable, result);
 			this.wrappedTask = runnable;
 			this.scheduler = scheduler;
@@ -176,20 +183,34 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 
 		private void runPeriodic() {
+
+			scheduler.eventStart(getNow());
 			boolean success = super.runAndReset();
 
 			if (success && (!isShutdown() || ((getContinueExistingPeriodicTasksAfterShutdownPolicy()) && (!isTerminating())))) {
-				scheduler.computeNextExecutionTime();
+				scheduler.eventStop(getNow());
 				getQueue().add(this);
 			}
 		}
 
 		@Override
 		public final void run() {
-			if (isPeriodic()) {
-				runPeriodic();
-			} else {
-				super.run();
+			this.runner = Thread.currentThread();
+			try {
+				if (isPeriodic()) {
+					runPeriodic();
+				} else {
+					super.run();
+				}
+			} finally {
+				try {
+					this.get();
+				} catch (Throwable t) {
+					log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.getMessage(), t);
+				}
+				synchronized (this) {
+					this.runner = null;
+				}
 			}
 		}
 
@@ -198,31 +219,39 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		 */
 		@Override
 		public boolean cancel(final boolean mayInterruptIfRunning) {
+			wrappedTask.stop();
 			if (super.cancel(mayInterruptIfRunning)) {
-				if (wrappedTask instanceof AbstractDominoRunnable) {
-					((AbstractDominoRunnable) wrappedTask).stop(mayInterruptIfRunning);
-				}
-				if (wrappedTask instanceof AbstractDominoCallable) {
-					((AbstractDominoCallable<?>) wrappedTask).stop(mayInterruptIfRunning);
-				}
 				return true;
-			} else {
-				return false;
 			}
+			if (mayInterruptIfRunning) {
+				// unfortunately subsequent calls to cancel will return false.
+				synchronized (this) {
+					if (runner != null)
+						runner.interrupt();
+					return true;
+				}
+			}
+			return false;
 		}
 
 		@Override
 		public long getDelay(final TimeUnit timeUnit) {
-			return scheduler.getDelay(timeUnit);
+			long delay = scheduler.getNextExecutionTimeInMillis() - System.currentTimeMillis();
+			return timeUnit.convert(delay, TimeUnit.MILLISECONDS);
 		}
 
-		public long getNextExecutionTime(final TimeUnit timeUnit) {
-			return scheduler.getNextExecutionTime(timeUnit);
+		public long getNextExecutionTimeInMillis() {
+			return scheduler.getNextExecutionTimeInMillis();
 		}
 
 		@Override
 		public int compareTo(final Delayed other) {
-			long delta = getDelay(TimeUnit.NANOSECONDS) - other.getDelay(TimeUnit.NANOSECONDS);
+			long delta = 0;
+			if (other instanceof DominoFutureTask<?>) {
+				delta = getNextExecutionTimeInMillis() - ((DominoFutureTask<?>) other).getNextExecutionTimeInMillis();
+			} else {
+				delta = getDelay(TimeUnit.NANOSECONDS) - other.getDelay(TimeUnit.NANOSECONDS);
+			}
 
 			if (delta < 0L)
 				return -1;
@@ -250,21 +279,12 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			objectState = arg1;
 		}
 
-		public Object getWrappedTask() {
+		public IWrappedTask getWrappedTask() {
 			return wrappedTask;
 		}
 
 	}
 
-	// Oracle/SUN made this package private
-
-	protected final long now() {
-		return System.nanoTime();
-	}
-
-	protected long triggerTime(final long delay) {
-		return now() + (delay < 4611686018427387903L ? delay : overflowFree(delay));
-	}
 
 	private long overflowFree(long paramLong) {
 		Delayed localDelayed = (Delayed) super.getQueue().peek();
@@ -313,7 +333,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		super.beforeExecute(thread, runnable);
 		if (runnable instanceof DominoFutureTask) {
 			DominoFutureTask<?> task = (DominoFutureTask<?>) runnable;
-			thread.setName("XOTS: " + task.getWrappedTask().getClass().getName() + " - " + new Date());
+			thread.setName("XOTS: " + task.getWrappedTask().getDescription() + " - " + new Date());
 			task.setState(TaskState.RUNNING);
 		} else {
 			thread.setName("XOTS: #" + thread.getId());
@@ -416,11 +436,11 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		return queue(new DominoFutureTask(wrap(runnable), null, new PeriodicScheduler(delay, -period, timeUnit)));
 	}
 
-	protected abstract <V> WrappedCallable<V> wrap(Callable<V> inner);
+	protected abstract <V> IWrappedCallable<V> wrap(Callable<V> inner);
 
-	protected abstract WrappedRunnable wrap(Runnable inner);
+	protected abstract IWrappedRunnable wrap(Runnable inner);
 
-	protected abstract WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
+	protected abstract IWrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
 
 	@Override
 	public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final Scheduler scheduler) {
@@ -441,7 +461,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	@Override
 	public ScheduledFuture<?> runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
-		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0L, 0L, TimeUnit.NANOSECONDS)));
+		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0, 0L, TimeUnit.NANOSECONDS)));
 	}
 
 }

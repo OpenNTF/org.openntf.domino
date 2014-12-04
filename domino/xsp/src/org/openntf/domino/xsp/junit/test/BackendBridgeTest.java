@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Vector;
+
 import lotus.domino.NotesException;
 
 import org.junit.After;
@@ -22,6 +24,8 @@ import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Form;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.junit.SessionDb;
 import org.openntf.domino.utils.DominoUtils;
@@ -31,6 +35,8 @@ import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
 import org.openntf.junit4xpages.OsgiTest;
 
 import com.ibm.domino.napi.c.BackendBridge;
+import com.ibm.domino.napi.c.NotesUtil;
+import com.ibm.domino.napi.c.Os;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 
 @OsgiTest
@@ -224,8 +230,23 @@ public class BackendBridgeTest {
 	}
 
 	@Test
-	public void testGetViewEntryByKeyWithOptions() {
-		fail("Not yet implemented");
+	public void testGetViewEntryByKeyWithOptions() throws NotesException {
+		Session sess = Factory.getSession(SessionType.CURRENT);
+		Database db = sess.getCurrentDatabase();
+		Vector<View> views = db.getViews();
+
+		View dummyView = views.get(0);
+		try {
+			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
+			fail("BackendBridge.getViewEntryByKeyWithOptions did not throw expected exceptions");
+		} catch (BackendBridgeSanityCheckException allGood) {
+
+		}
+		Vector<String> key = new Vector<String>();
+		key.add("a");
+		Object e = BackendBridge.getViewEntryByKeyWithOptions(dummyView, key, 2243);
+		assertTrue(e instanceof org.openntf.domino.ViewEntry);
+
 	}
 
 	@Test
@@ -270,18 +291,14 @@ public class BackendBridgeTest {
 		System.out.println("    Done.");
 	}
 
-	@Test
+	@Test(expected = UnsatisfiedLinkError.class)
 	public void testCreateXPageSession() throws Throwable {
-		System.out.println("Test: createXPageSession");
-		Session sess = Factory.getSession(SessionType.CURRENT);
-		String currUs = sess.getEffectiveUserName();
+		String userName = Factory.getLocalServerName();
+		final long userHandle = NotesUtil.createUserNameList(userName);
 		try {
-			lotus.domino.Session xs = BackendBridge.createXPageSession(currUs, 1, true, true, true, false);
-			System.out.println("    Result=" + xs);
-		} catch (Throwable t) {
-			if (!(t instanceof UnsatisfiedLinkError))
-				throw t;
-			System.out.println("    UnsatisfiedLinkError (WHY THAT???): " + t.getMessage());
+			lotus.domino.Session xs = BackendBridge.createXPageSession(userName, userHandle, true, true, true, false);
+		} finally {
+			Os.OSMemFree(userHandle);
 		}
 	}
 

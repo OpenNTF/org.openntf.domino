@@ -26,9 +26,11 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
-import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.junit4xpages.OsgiTest;
 
+import com.ibm.domino.napi.NException;
+import com.ibm.domino.napi.c.NotesUtil;
+import com.ibm.domino.napi.c.Os;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 
 @OsgiTest
@@ -87,13 +89,30 @@ public class XSPNativeTest {
 		assertEquals(sess.getCurrentDatabase().getFileName(), "log.nsf");
 	}
 
-	/**
-	 * not tested, it should work: see {@link XPageNamedSessionFactory}
-	 */
-	public void testCreateXPageSession() {
+	@Test
+	public void testCreateXPageSession() throws NException, NotesException {
+		String userName = Factory.getLocalServerName();
+		final long userHandle = NotesUtil.createUserNameList(userName);
+		try {
+			lotus.domino.Session xs = XSPNative.createXPageSession(userName, userHandle, false, true);
+			assertEquals(userName, xs.getEffectiveUserName());
+			xs.recycle();
+		} finally {
+			Os.OSMemFree(userHandle);
+		}
 	}
 
-	public void testCreateXPageSessionExt() {
+	@Test
+	public void testCreateXPageSessionExt() throws NotesException, NException {
+		String userName = Factory.getLocalServerName();
+		final long userHandle = NotesUtil.createUserNameList(userName);
+		try {
+			lotus.domino.Session xs = XSPNative.createXPageSessionExt(userName, userHandle, false, true, false);
+			assertEquals(userName, xs.getEffectiveUserName());
+			xs.recycle();
+		} finally {
+			Os.OSMemFree(userHandle);
+		}
 	}
 
 	@Test
