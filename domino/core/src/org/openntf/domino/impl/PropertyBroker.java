@@ -9,7 +9,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
+public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
 		org.openntf.domino.PropertyBroker {
 
 	/**

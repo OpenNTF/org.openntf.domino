@@ -35,8 +35,8 @@ import org.openntf.domino.utils.TypeUtils;
 /**
  * The Class DocumentCollection.
  */
-public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database> implements
-		org.openntf.domino.DocumentCollection {
+public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
+		implements org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
@@ -434,15 +434,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	void setDelegate(final lotus.domino.DocumentCollection delegate) {
+	void setDelegate(final lotus.domino.DocumentCollection delegate, final long cppId, final boolean fromResurrect) {
 		sorted_ = null;
-		super.setDelegate(delegate);
-	}
-
-	@Override
-	void setDelegate(final lotus.domino.DocumentCollection delegate, final long cppId) {
-		sorted_ = null;
-		super.setDelegate(delegate, cppId);
+		super.setDelegate(delegate, cppId, fromResurrect);
 	}
 
 	/*

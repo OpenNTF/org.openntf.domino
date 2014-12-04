@@ -24,7 +24,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextStyle.
  */
-public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle, Session> implements
+public class RichTextStyle extends BaseNonThreadSafe<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle, Session> implements
 		org.openntf.domino.RichTextStyle {
 
 	/**

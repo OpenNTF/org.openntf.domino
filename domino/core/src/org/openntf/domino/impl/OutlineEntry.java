@@ -29,7 +29,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class OutlineEntry.
  */
-public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry, Outline> implements
+public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry, Outline> implements
 		org.openntf.domino.OutlineEntry {
 
 	/**

@@ -39,7 +39,7 @@ import org.xml.sax.InputSource;
 /**
  * The Class MIMEEntity.
  */
-public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
+public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
 		org.openntf.domino.MIMEEntity {
 
 	/**

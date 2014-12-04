@@ -187,23 +187,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
-	/** The delegate_. */
-	protected transient D delegate_ = null;
-
-	/** The CPP-Object ID */
-	private transient long cpp_object;
-
-	/** The CPP-Object ID of the session */
-	private transient long cpp_session;
-
 	/**
 	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
 	 * 
 	 * @return the cpp_id
 	 */
-	public long GetCppObj() {
-		return cpp_object;
-	}
+	public abstract long GetCppObj();
 
 	/** The parent_. */
 	protected final P parent_;
@@ -213,17 +202,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * 
 	 * @return the cpp_id of the session
 	 */
-	public long GetCppSession() {
-		return cpp_session;
-	}
-
-	//	@SuppressWarnings("rawtypes")
-	//	void setParent(final P parent) {
-	//		parent_ = parent;
-	//		if (parent instanceof org.openntf.domino.impl.Base) {
-	//			cpp_session = ((org.openntf.domino.impl.Base) parent).GetCppSession();
-	//		}
-	//	}
+	public abstract long GetCppSession();
 
 	/**
 	 * Find the parent if no one was specified
@@ -303,17 +282,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * This constructor is required for special objects like Names and so on
-	 * 
-	 * @param classId
-	 */
-	protected Base(final int classId) {
-		parent_ = null;
-		factory_ = null;
-		clsid = classId;
-	}
-
-	/**
 	 * Instantiates a new base.
 	 * 
 	 * @param delegate
@@ -327,14 +295,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param classId
 	 *            the class id
 	 */
-	@SuppressWarnings("rawtypes")
 	protected Base(final D delegate, P parent, final WrapperFactory wf, final long cppId, final int classId) {
-		if (wf == null) {
-			factory_ = Factory.getWrapperFactory();
-		} else {
-			factory_ = wf;
-		}
-
+		factory_ = (wf == null) ? Factory.getWrapperFactory() : wf;
 		if (parent == null) {
 			try {
 				parent = findParent(delegate);
@@ -342,79 +304,40 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				DominoUtils.handleException(e);
 			}
 		}
-
 		// final, these will never change
 		parent_ = parent;
 		clsid = classId;
 
 		if (delegate instanceof lotus.domino.local.NotesBase) {
-			setDelegate(delegate, cppId);
+			setDelegate(delegate, cppId, false);
 		} else if (delegate != null) {
 			// normally you won't get here if you come from fromLotus
 			throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 		}
-
-		// copy the cpp_session from the parent
-		if (delegate instanceof lotus.domino.Session) {
-			cpp_session = cpp_object;
-		} else if (parent_ instanceof Base) {
-			cpp_session = ((Base) parent_).GetCppSession();
-		} else {
-			cpp_session = 0;
-		}
+		setCppSession();
 	}
 
 	protected Base(final P parent, final WrapperFactory wf, final int classId) {
-		if (wf == null) {
-			factory_ = Factory.getWrapperFactory();
-		} else {
-			factory_ = wf;
-		}
+		factory_ = (wf == null) ? Factory.getWrapperFactory() : wf;
 		parent_ = parent;
 		clsid = classId;
-		cpp_session = 0;
+		setCppSession();
 	}
 
 	/**
-	 * Sets the delegate on init or if resurrect occured
-	 * 
-	 * @param delegate
-	 *            the delegate
+	 * Sets the cppSession to that of _parent or explicitly
 	 */
-	void setDelegate(final D delegate) {
-		setDelegate(delegate, 0);
-	}
+	abstract void setCppSession();
 
 	/**
-	 * Sets the delegate on init or if resurrect occured
+	 * Sets the delegate on init or if resurrect occurred
 	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	void setDelegate(final D delegate, final long cppId) {
-		if (delegate_ != null && delegate_ != delegate) {
-			// an other object is set now, so we must recache that object
-			getFactory().recacheLotusObject(delegate, this, parent_);
-			if (log_.isLoggable(Level.FINEST)) {
-				log_.log(Level.FINE, "Object of " + this.getClass().getName() + " was recached. Changes may be lost", new Throwable());
-			}
-		}
-		delegate_ = delegate;
-		if (cppId != 0) {
-			cpp_object = cppId;
-		} else {
-			cpp_object = getLotusId(delegate);
-		}
-	}
-
-	//	void setDelegate(final D delegate, final long cppId, final boolean recache) {
-	//		setDelegate(delegate, cppId);
-	//		if (recache) {
-	//			Factory.recacheLotus(delegate, this, parent_);
-	//		}
-	//	}
+	abstract void setDelegate(final D delegate, final long cppId, boolean fromResurrect);
 
 	/**
 	 * Gets the lotus id.
@@ -513,11 +436,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
-		if (this instanceof Resurrectable && isDead(delegate_)) {
+		D ret = getDelegate_unchecked();
+		if (this instanceof Resurrectable && isDead(ret)) {
+			if (log_.isLoggable(Level.FINE))
+				log_.fine("[" + Thread.currentThread().getId() + "] Resurrecting " + getClass().getName() + " '" + super.hashCode() + "'");
 			resurrect();
+			if (log_.isLoggable(Level.FINE))
+				log_.fine("[" + Thread.currentThread().getId() + "] Resurrect " + getClass().getName() + " '" + super.hashCode() + "' done");
+			ret = getDelegate_unchecked();
 		}
-		return delegate_;
+		return ret;
 	}
+
+	protected abstract D getDelegate_unchecked();
 
 	protected void resurrect() {
 		throw new AbstractMethodError();
@@ -663,10 +594,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@Deprecated
 	@Override
 	public void recycle() {
-		if (isDead(delegate_))
+		D delegate = getDelegate_unchecked();
+		if (isDead(delegate))
 			return;
-		s_recycle(delegate_); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
-		Factory.countManualRecycle(delegate_.getClass());
+		s_recycle(delegate); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
+		Factory.countManualRecycle(delegate.getClass());
 	}
 
 	// unwrap objects
@@ -1222,7 +1154,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@Override
 	public boolean isDead() {
-		return isDead(delegate_);
+		return isDead(getDelegate_unchecked());
 	}
 
 	@Deprecated

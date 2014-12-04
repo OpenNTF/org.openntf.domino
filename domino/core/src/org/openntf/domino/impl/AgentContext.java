@@ -35,7 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AgentContext.
  */
-public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.domino.AgentContext, Session> implements
+public class AgentContext extends BaseNonThreadSafe<org.openntf.domino.AgentContext, lotus.domino.AgentContext, Session> implements
 		org.openntf.domino.AgentContext {
 
 	/* (non-Javadoc)

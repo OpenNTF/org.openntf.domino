@@ -31,8 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextDoclink.
  */
-public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink, RichTextItem> implements
-		org.openntf.domino.RichTextDoclink {
+public class RichTextDoclink extends BaseNonThreadSafe<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink, RichTextItem>
+		implements org.openntf.domino.RichTextDoclink {
 	//private static final Logger log_ = Logger.getLogger(RichTextDoclink.class.getName());
 
 	/**

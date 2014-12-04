@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Replication.
  */
-public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
+public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
 		org.openntf.domino.Replication {
 
 	/**

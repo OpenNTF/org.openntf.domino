@@ -78,7 +78,8 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
-public class Session extends Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
+
+public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
@@ -124,6 +125,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	private transient Database currentDatabase_;
 
+	@SuppressWarnings("unused")
 	private String username_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
@@ -1716,30 +1718,12 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		}
 		getFactory().setNoRecycle(sessionImpl, false);
 
-		lotus.domino.Session d = sessionImpl.delegate_;
+		lotus.domino.Session d = sessionImpl.getDelegate_unchecked();
 		if (d == null) {
 			throw new UnableToAcquireSessionException("The created Session does not have a valid delegate");
 		}
-		//d.open();
-		setDelegate(d, 0);
-		//getFactory().recacheLotusObject(d, this, parent_);
-		if (log_.isLoggable(java.util.logging.Level.FINE)) {
-			Throwable t = new Throwable();
-			StackTraceElement[] elements = t.getStackTrace();
-			log_.log(java.util.logging.Level.FINE, "Session " + sessionImpl
-					+ "had been recycled and was auto-restored. Changes may have been lost.");
-
-			log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
-					+ elements[1].getLineNumber() + ")");
-			log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
-					+ elements[2].getLineNumber() + ")");
-			log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
-					+ elements[3].getLineNumber() + ")");
-			log_.log(java.util.logging.Level.FINE,
-					"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
-
-		}
-
+		setDelegate(d, 0, true);
+		/* No special logging, since by now Session is a BaseThreadSafe */
 	}
 
 	//	/*

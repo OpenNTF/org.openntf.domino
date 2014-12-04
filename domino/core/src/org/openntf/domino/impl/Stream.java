@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Stream.
  */
-public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream, Session> implements org.openntf.domino.Stream {
+public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.domino.Stream, Session> implements org.openntf.domino.Stream {
 
 	/**
 	 * Instantiates a new outline.

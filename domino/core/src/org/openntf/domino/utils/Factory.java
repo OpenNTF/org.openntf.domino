@@ -55,6 +55,7 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.impl.BaseNonThreadSafe;
 import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
@@ -74,15 +75,6 @@ import com.ibm.commons.util.StringUtil;
  */
 public enum Factory {
 	;
-	/**
-	 * Enables Thread support (sharing Notes-objects across threads). But you _SHOULD_ really avoid this! Neiter the ODA is tested, nor IBM
-	 * recommend this. You should read the paragraph <a
-	 * href="http://www-01.ibm.com/support/knowledgecenter/SSVRGU_8.5.3/com.ibm.designer.domino.main.doc/H_NOTESTHREAD_CLASS_JAVA.html"
-	 * >Multithreading issues</a> before changing the value.
-	 * 
-	 * TODO RPr: make notes.ini setting.
-	 */
-	public static boolean ENABLE_THREAD_SUPPORT = false;
 
 	/**
 	 * Printer class (will be modified by XSP-environment), so that the Factory prints directly to Console (so no "HTTP JVM" Prefix is
@@ -573,6 +565,8 @@ public enum Factory {
 		return result;
 	}
 
+	private static WrapperFactory DEFAULT_WRAPPER_FACTORY = new org.openntf.domino.impl.WrapperFactory();
+
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
@@ -584,12 +578,10 @@ public enum Factory {
 		if (wf == null) {
 			try {
 				List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
-				if (wfList.size() > 0) {
-					// We need a NEW wrapperFactory for each instance.
-					wf = wfList.get(0).getClass().newInstance();
-				} else {
-					wf = new org.openntf.domino.impl.WrapperFactory();
-				}
+				if (wfList.size() > 0)
+					wf = wfList.get(0);
+				else
+					wf = DEFAULT_WRAPPER_FACTORY;
 			} catch (Throwable t) {
 				log_.log(Level.WARNING, "Getting default WrapperFactory", t);
 				wf = new org.openntf.domino.impl.WrapperFactory();
@@ -1089,6 +1081,7 @@ public enum Factory {
 		} finally {
 			tv.clear();
 			threadVariables_.set(null);
+			BaseNonThreadSafe.setAllowAccessAcrossThreads(false);
 			System.gc();
 		}
 		if (counters != null) {

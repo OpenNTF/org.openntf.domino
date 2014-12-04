@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javolution.util.FastMap;
 
+import org.openntf.domino.impl.BaseThreadSafe;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -144,7 +145,7 @@ public class DominoReferenceCache {
 	public long processQueue(final long[] prevent_recycling) {
 		long result = 0;
 		int counter = cache_counter.incrementAndGet();
-		if (counter % 1024 == 0) {
+		if (counter % GARBAGE_INTERVAL == 0) {
 			// We have to run GC from time to time, otherwise objects will die very late :(
 			System.gc();
 		}
@@ -186,6 +187,18 @@ public class DominoReferenceCache {
 				result++;
 		}
 		return result;
+	}
+
+	public long finishThreadSafes() {
+		long ret = 0;
+		for (DominoReference ref : map.values()) {
+			if (!(ref.get() instanceof BaseThreadSafe))
+				continue;
+			if (ref.recycle())
+				ret++;
+			map.remove(ref.getKey());
+		}
+		return ret;
 	}
 
 	/**
@@ -232,4 +245,5 @@ public class DominoReferenceCache {
 			return result; // the wrapper.
 		}
 	}
+
 }

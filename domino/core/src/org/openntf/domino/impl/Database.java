@@ -71,7 +71,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements org.openntf.domino.Database {
+public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
+		org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -3022,31 +3023,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		lotus.domino.Session rawSession = toLotus(getParent());
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
-			//d.open();
-			setDelegate(d, 0);
-			// Logging of setDelegate should be sufficient
-			if (log_.isLoggable(java.util.logging.Level.FINE)) {
-				Throwable t = new Throwable();
-				//				StackTraceElement[] elements = t.getStackTrace();
-				log_.log(
-						java.util.logging.Level.FINE,
-						"Database " + this + "had been recycled and was auto-restored. Changes may have been lost. " +
-						// 		RPR: I don't think that this behavior is normal (you should not try to cache a database accross requests!)
-								"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.",
-						t);
-				//
-				//				log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
-				//						+ elements[1].getLineNumber() + ")");
-				//				log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
-				//						+ elements[2].getLineNumber() + ")");
-				//				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
-				//						+ elements[3].getLineNumber() + ")");
-				//
-				//				THIS IS VERY DANGEROUS!			
-				//				log_.log(java.util.logging.Level.FINE,
-				//						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
-				//
-			}
+			setDelegate(d, 0, true);
+			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3329,7 +3307,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.DbDirectory rawDir = rawSess.getDbDirectory(null);
 			lotus.domino.Database rawDb = rawDir.openMailDatabase();
 			s_recycle(getDelegate());
-			this.setDelegate(rawDb, 0);
+			this.setDelegate(rawDb, 0, true);
 			rawDir.recycle();
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne, this);

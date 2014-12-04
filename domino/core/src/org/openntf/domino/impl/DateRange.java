@@ -65,8 +65,8 @@ import com.ibm.icu.util.Calendar;
  * At the moment, the second variant is implemented (without deactivation of wrapping).
  */
 
-public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements org.openntf.domino.DateRange,
-		lotus.domino.DateRange {
+public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements
+		org.openntf.domino.DateRange, lotus.domino.DateRange {
 
 	//	private java.util.Date startDate_;
 	//	private java.util.Date endDate_;
@@ -125,7 +125,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @param cppId
 	 */
 	@Override
-	void setDelegate(final lotus.domino.DateRange delegate, final long cppId) {
+	void setDelegate(final lotus.domino.DateRange delegate, final long cppId, final boolean fromResurrect) {
 		delegate_ = delegate;
 	}
 

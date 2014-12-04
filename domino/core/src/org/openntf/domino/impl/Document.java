@@ -86,7 +86,8 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
+public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
+		org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -103,6 +104,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private boolean isDirty_ = false;
 	private String noteid_;
 	private String unid_;
+	@SuppressWarnings("unused")
 	private boolean isNew_;
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
@@ -3290,7 +3292,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						org.openntf.domino.Document stashDoc = copyToDatabase(getParentDatabase());
-						setDelegate(del, 0);
+						setDelegate(del, 0, true);
 						for (Item item : stashDoc.getItems()) {
 							lotus.domino.Item delItem = del.getFirstItem(item.getName());
 							if (delItem != null) {
@@ -3308,7 +3310,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 					} else {
 						log_.log(Level.WARNING, "Resetting delegate to existing document for id " + unid);
-						setDelegate(del, 0);
+						setDelegate(del, 0, true);
 					}
 				} else {
 					getDelegate().setUniversalID(unid);
@@ -3464,7 +3466,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				result = delegate.removePermanently(true);
 				if (result) {
 					s_recycle(delegate);
-					this.setDelegate(null, 0);
+					this.setDelegate(null, 0, false);
 				}
 				break;
 			case HARD_FALSE:
@@ -3513,7 +3515,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						d = db.getDocumentByID(noteid_);
 					}
 				}
-				setDelegate(d, 0);
+				setDelegate(d, 0, true);
 				//getFactory().recacheLotusObject(d, this, parent_);
 				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
@@ -3559,7 +3561,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 					}
 				}
-				setDelegate(d, 0);
+				setDelegate(d, 0, true);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()

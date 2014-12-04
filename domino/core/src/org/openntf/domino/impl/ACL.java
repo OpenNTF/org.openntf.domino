@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ACL.
  */
-public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
+public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
 	private static final Logger log_ = Logger.getLogger(ACL.class.getName());
 
 	/**
@@ -445,7 +445,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 		try {
 			lotus.domino.Database db = toLotus(getParent());
 			lotus.domino.ACL d = db.getACL();
-			setDelegate(d, 0);
+			setDelegate(d, 0, true);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
 				log_.log(java.util.logging.Level.FINE, "ACL of Database " + getParent()

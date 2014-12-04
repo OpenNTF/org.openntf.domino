@@ -31,8 +31,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class NotesCalendarEntry.
  */
-public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEntry, lotus.domino.NotesCalendarEntry, NotesCalendar>
-		implements org.openntf.domino.NotesCalendarEntry {
+public class NotesCalendarEntry extends
+		BaseNonThreadSafe<org.openntf.domino.NotesCalendarEntry, lotus.domino.NotesCalendarEntry, NotesCalendar> implements
+		org.openntf.domino.NotesCalendarEntry {
 
 	/**
 	 * Instantiates a new outline.

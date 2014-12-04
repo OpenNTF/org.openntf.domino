@@ -28,8 +28,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Directory.
  */
-public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements org.openntf.domino.Directory {
-
+public class Directory extends BaseNonThreadSafe<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements
+		org.openntf.domino.Directory {
 
 	/**
 	 * Instantiates a new outline.

@@ -30,8 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextSection.
  */
-public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection, RichTextNavigator> implements
-		org.openntf.domino.RichTextSection {
+public class RichTextSection extends BaseNonThreadSafe<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection, RichTextNavigator>
+		implements org.openntf.domino.RichTextSection {
 	//private static final Logger log_ = Logger.getLogger(RichTextSection.class.getName());
 
 	/**
