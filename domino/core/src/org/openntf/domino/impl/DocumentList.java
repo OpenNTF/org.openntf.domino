@@ -22,8 +22,9 @@ import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.domino.DocumentCollection, org.openntf.domino.Database>
-		implements org.openntf.domino.DocumentList {
+public class DocumentList extends
+		BaseNonThreadSafe<org.openntf.domino.DocumentList, lotus.domino.DocumentCollection, org.openntf.domino.Database> implements
+		org.openntf.domino.DocumentList {
 	protected int realNidLength_;
 	/*TODO 
 	 * NTF for maximum performance, we really should track the length
@@ -237,6 +238,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		return nidList_;
 	}
 
+	@Override
 	public void addDocument(final lotus.domino.Document doc) {
 		usingList_ = true;
 		int nid = getNid(doc);
@@ -247,10 +249,12 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void addDocument(final lotus.domino.Document doc, final boolean checkDups) {
 		addDocument(doc);	//NTF - only the IIOP stuff actually supports dups in DocumentCollections anyway
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection cloneCollection() {
 		if (usingList_) {
 			return new DocumentList(TypeUtils.toIntArray(nidList_), getParent());
@@ -259,6 +263,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public boolean contains(final int noteid) {
 		if (usingList_) {
 			return getNidList().contains(noteid);
@@ -267,6 +272,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public boolean contains(final lotus.domino.Base doc) {
 		if (doc instanceof lotus.domino.Document) {
 			int nid = getNid((lotus.domino.Document) doc);
@@ -303,10 +309,12 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 
 	}
 
+	@Override
 	public boolean contains(final String noteid) {
 		return contains(Integer.valueOf(noteid, 16));
 	}
 
+	@Override
 	public void deleteDocument(final lotus.domino.Document doc) {
 		int nid = getNid(doc);
 		usingList_ = true;
@@ -316,16 +324,19 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		getNidList().removeAll(tlist);
 	}
 
+	@Override
 	@Incomplete
 	public void FTSearch(final String query) {
 		throw new UnimplementedException("FTSearch not implemented on DocumentList yet. Sorry.");
 	}
 
+	@Override
 	@Incomplete
 	public void FTSearch(final String query, final int maxDocs) {
 		throw new UnimplementedException("FTSearch not implemented on DocumentList yet. Sorry.");
 	}
 
+	@Override
 	public int getCount() {
 		if (usingList_) {
 			return getNidList().size();
@@ -334,11 +345,13 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public org.openntf.domino.Document getDocument(final lotus.domino.Document doc) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public org.openntf.domino.Document getFirstDocument() {
 		walkPos = -1;
 		if (usingList_) {
@@ -350,6 +363,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public org.openntf.domino.Document getLastDocument() {
 		if (usingList_) {
 			walkPos = getNidList().size() - 1;
@@ -362,6 +376,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public org.openntf.domino.Document getNextDocument() {
 		if (usingList_) {
 			walkNid = getNidList().get(++walkPos);
@@ -372,6 +387,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public org.openntf.domino.Document getNextDocument(final lotus.domino.Document doc) {
 		int nid = getNid(doc);
 		if (nid == walkNid) {
@@ -395,6 +411,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public org.openntf.domino.Document getNthDocument(final int n) {
 		if (usingList_) {
 			walkPos = n;
@@ -417,6 +434,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		return getAncestor();
 	}
 
+	@Override
 	public org.openntf.domino.Document getPrevDocument() {
 		if (usingList_) {
 			walkNid = getNidList().get(--walkPos);
@@ -427,6 +445,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public org.openntf.domino.Document getPrevDocument(final lotus.domino.Document doc) {
 		int nid = getNid(doc);
 		if (nid == walkNid) {
@@ -450,16 +469,19 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public String getQuery() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public DateTime getUntilTime() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public void intersect(final int noteid) {
 		if (usingList_) {
 			if (getNidList().contains(noteid)) {
@@ -500,6 +522,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void intersect(final lotus.domino.Base doc) {
 		if (doc instanceof lotus.domino.Document) {
 			int nid = getNid((lotus.domino.Document) doc);
@@ -513,11 +536,13 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void intersect(final String noteid) {
 		int nid = Integer.valueOf(noteid, 16);
 		intersect(nid);
 	}
 
+	@Override
 	public boolean isSorted() {
 		return sorted_;
 	}
@@ -526,26 +551,31 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		sorted_ = sorted;
 	}
 
+	@Override
 	@Incomplete
 	public void markAllRead() {
 		throw new UnimplementedException("Why do you care about read marks? This isn't 1998.");
 	}
 
+	@Override
 	@Incomplete
 	public void markAllRead(final String userName) {
 		throw new UnimplementedException("Why do you care about read marks? This isn't 1998.");
 	}
 
+	@Override
 	@Incomplete
 	public void markAllUnread() {
 		throw new UnimplementedException("Why do you care about read marks? This isn't 1998.");
 	}
 
+	@Override
 	@Incomplete
 	public void markAllUnread(final String userName) {
 		throw new UnimplementedException("Why do you care about read marks? This isn't 1998.");
 	}
 
+	@Override
 	public void merge(final int noteid) {
 		if (usingList_) {
 			if (!getNidList().contains(noteid))
@@ -574,6 +604,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void merge(final lotus.domino.Base doc) {
 		if (doc instanceof lotus.domino.Document) {
 			merge(getNid((lotus.domino.Document) doc));
@@ -585,10 +616,12 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void merge(final String noteid) {
 		merge(Integer.valueOf(noteid, 16));
 	}
 
+	@Override
 	public void putAllInFolder(final String folderName) {
 		// TODO Auto-generated method stub
 		// NTF it's important to create a lotus collection of some kind for this operation
@@ -599,6 +632,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 
 	}
 
+	@Override
 	public void putAllInFolder(final String folderName, final boolean createOnFail) {
 		// TODO Auto-generated method stub
 		//NTF See above
@@ -606,6 +640,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 
 	}
 
+	@Override
 	public void removeAll(final boolean force) {
 		// TODO Auto-generated method stub
 		//NTF Also important to do this with a real DocumentCollection as this is one operation in the C API
@@ -613,6 +648,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 
 	}
 
+	@Override
 	public void removeAllFromFolder(final String folderName) {
 		// TODO Auto-generated method stub
 		// NTF See putAllInFolder(String)
@@ -620,11 +656,13 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 
 	}
 
+	@Override
 	public void stampAll(final String itemName, final Object value) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public void subtract(final int noteid) {
 		if (usingList_) {
 			List<Integer> tlist = new ArrayList<Integer>();
@@ -664,6 +702,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void subtract(final lotus.domino.Base doc) {
 		if (doc instanceof lotus.domino.Document) {
 			subtract(getNid((lotus.domino.Document) doc));
@@ -675,80 +714,96 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void subtract(final String noteid) {
 		subtract(Integer.valueOf(noteid, 16));
 	}
 
+	@Override
 	public void updateAll() {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public void stampAll(final Map<String, Object> map) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 
 	}
 
+	@Override
 	public View getParentView() {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public void setParentView(final View view) {
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public DocumentCollection filter(final Object value) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public DocumentCollection filter(final Object value, final String[] itemnames) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public DocumentCollection filter(final Object value, final Collection<String> itemnames) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public DocumentCollection filter(final Map<String, Object> filterMap) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public boolean add(final org.openntf.domino.Document arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.Document> arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 
 	}
 
+	@Override
 	public boolean contains(final Object arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public boolean containsAll(final Collection<?> arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return getCount() == 0;
 	}
 
+	@Override
 	public Iterator<org.openntf.domino.Document> iterator() {
 		//NTF if the DocumentList was sorted, then we need to use a regular DocumentIterator that will
 		//walk the noteid array, because the order matters.
@@ -767,29 +822,35 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public boolean remove(final Object arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public boolean removeAll(final Collection<?> arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public boolean retainAll(final Collection<?> arg0) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	@Override
 	public int size() {
 		return getCount();
 	}
 
+	@Override
 	public Object[] toArray() {
 		return getNidList().toArray();
 	}
 
+	@Override
 	public <T> T[] toArray(final T[] arg0) {
 		return getNidList().toArray(arg0);
 	}
@@ -798,14 +859,17 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		return getParent();
 	}
 
+	@Override
 	public org.openntf.domino.Database getAncestorDatabase() {
 		return this.getParentDatabase();
 	}
 
+	@Override
 	public org.openntf.domino.Session getAncestorSession() {
 		return getAncestorDatabase().getAncestorSession();
 	}
 
+	@Override
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 		sorted_ = arg0.readBoolean();
 		walkPos = arg0.readInt();
@@ -817,6 +881,7 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		}
 	}
 
+	@Override
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
 		int[] nids = getNids();
 		arg0.writeBoolean(sorted_);

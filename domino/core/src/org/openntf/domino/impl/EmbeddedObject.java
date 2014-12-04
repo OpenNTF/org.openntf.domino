@@ -37,7 +37,7 @@ import org.xml.sax.InputSource;
 /**
  * The Class EmbeddedObject.
  */
-public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
+public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
 		org.openntf.domino.EmbeddedObject {
 
 	/**

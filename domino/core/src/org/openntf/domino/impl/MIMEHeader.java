@@ -31,7 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class MIMEHeader.
  */
-public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> implements
+public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> implements
 		org.openntf.domino.MIMEHeader {
 	private static final Logger log_ = Logger.getLogger(MIMEHeader.class.getName());
 
@@ -335,7 +335,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 			try {
 				lotus.domino.MIMEEntity entity = (lotus.domino.MIMEEntity) org.openntf.domino.impl.Base.getDelegate(getAncestor());
 				lotus.domino.MIMEHeader header = entity.getNthHeader(headerName_);
-				this.setDelegate(header);
+				this.setDelegate(header, 0, true);
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 			}

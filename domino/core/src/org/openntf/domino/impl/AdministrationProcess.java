@@ -30,8 +30,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AdministrationProcess.
  */
-public class AdministrationProcess extends Base<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session>
-		implements org.openntf.domino.AdministrationProcess {
+public class AdministrationProcess extends
+		BaseNonThreadSafe<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session> implements
+		org.openntf.domino.AdministrationProcess {
 
 	/**
 	 * Instantiates a new administration process.
@@ -1035,6 +1036,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#delegateMailFile(java.lang.String, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public String delegateMailFile(final String arg0, final Vector arg1, final Vector arg2, final Vector arg3, final Vector arg4,
 			final Vector arg5, final Vector arg6, final Vector arg7, final String arg8, final String arg9) {
@@ -1049,6 +1051,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#setEnableOutlookSupport(java.lang.String, boolean)
 	 */
+	@Override
 	public String setEnableOutlookSupport(final String arg0, final boolean arg1) {
 		try {
 			return getDelegate().setEnableOutlookSupport(arg0, arg1);

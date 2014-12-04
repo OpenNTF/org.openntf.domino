@@ -34,7 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Form.
  */
-public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
+public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
 
 	/**
 	 * Instantiates a new form.

@@ -33,7 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
+public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
 		org.openntf.domino.ViewNavigator {
 
 	/**

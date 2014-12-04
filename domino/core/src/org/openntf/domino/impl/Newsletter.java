@@ -26,7 +26,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Newsletter.
  */
-public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
+public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
 		org.openntf.domino.Newsletter {
 
 	/**

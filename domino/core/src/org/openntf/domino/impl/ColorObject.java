@@ -25,7 +25,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ColorObject.
  */
-public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
+public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
 		org.openntf.domino.ColorObject {
 
 	/**

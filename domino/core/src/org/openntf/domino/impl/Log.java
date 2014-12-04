@@ -29,7 +29,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Log.
  */
-public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session> implements org.openntf.domino.Log {
+public class Log extends BaseNonThreadSafe<org.openntf.domino.Log, lotus.domino.Log, Session> implements org.openntf.domino.Log {
 
 	/**
 	 * Instantiates a new outline.

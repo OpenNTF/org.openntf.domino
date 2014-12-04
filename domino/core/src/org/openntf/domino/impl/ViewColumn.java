@@ -31,7 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewColumn.
  */
-public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements org.openntf.domino.ViewColumn {
+public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements
+		org.openntf.domino.ViewColumn {
 
 	/**
 	 * Instantiates a new outline.

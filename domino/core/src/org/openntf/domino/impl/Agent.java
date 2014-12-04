@@ -34,7 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Agent.
  */
-public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
+public class Agent extends BaseNonThreadSafe<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
 
 	/**
 	 * Instantiates a new agent.

@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Registration.
  */
-public class Registration extends Base<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
+public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
 		org.openntf.domino.Registration {
 
 	/**

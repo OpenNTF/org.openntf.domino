@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
 /**
  * The Class Item.
  */
-public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
+public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
 	private static final Logger log_ = Logger.getLogger(Item.class.getName());
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
@@ -1054,7 +1054,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 			try {
 				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
-				setDelegate(item, 0);
+				setDelegate(item, 0, true);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");

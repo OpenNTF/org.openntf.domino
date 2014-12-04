@@ -45,7 +45,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
+public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
 		org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
@@ -557,7 +557,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 				log_.log(java.util.logging.Level.FINE, "DbDirectory for server " + name_ + "had been recycled and was auto-restored.", t);
 			}
 
-			setDelegate(dir, 0);
+			setDelegate(dir, 0, true);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

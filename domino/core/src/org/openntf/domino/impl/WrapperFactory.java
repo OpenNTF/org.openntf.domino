@@ -46,7 +46,6 @@ import org.openntf.domino.View;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.thread.DominoReferenceCache;
 import org.openntf.domino.types.FactorySchema;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -54,7 +53,13 @@ import org.openntf.domino.utils.Factory;
  */
 public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
-	public Thread correctThread = Thread.currentThread();
+	/** this is the holder for all other object that need to be recycled **/
+	private static ThreadLocal<DominoReferenceCache> referenceCache = new ThreadLocal<DominoReferenceCache>() {
+		@Override
+		protected DominoReferenceCache initialValue() {
+			return new DominoReferenceCache();
+		}
+	};
 
 	public static final int LWDCSIZE = 10;
 
@@ -135,9 +140,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return arr;
 	}
 
-	/** this is the holder for all other object that needs to be recycled **/
-	private DominoReferenceCache referenceCache = new DominoReferenceCache();
-
 	private long clearCaches() {
 		long result = 0;
 		// call gc once before processing the queues
@@ -151,7 +153,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		result = referenceCache.processQueue(null);
+		DominoReferenceCache rc = referenceCache.get();
+		result = rc.processQueue(null);
+		result += rc.finishThreadSafes();
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 		clearLWDCache();
 		return result;
@@ -180,12 +184,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	@SuppressWarnings("rawtypes")
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
 			final P parent) {
-		return fromLotus(lotus, schema, parent, null);
+		return fromLotus(lotus, schema, parent, referenceCache.get(), null);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
-			final P parent, final long[] prevent_recycling) {
+			final P parent, final DominoReferenceCache referenceCache, final long[] prevent_recycling) {
 		if (lotus == null) {
 			return null;
 		}
@@ -217,12 +221,13 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
+		DominoReferenceCache rc = referenceCache.get();
 		long[] prevent_recycling = getContainingCppIds(lotusColl);
 		Collection<T> result = new ArrayList<T>(lotusColl.size());
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
 				if (lotus instanceof lotus.domino.Base) {
-					result.add(fromLotus((D) lotus, schema, parent, prevent_recycling));
+					result.add(fromLotus((D) lotus, schema, parent, rc, prevent_recycling));
 				}
 			}
 		}
@@ -233,12 +238,13 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
+		DominoReferenceCache rc = referenceCache.get();
 		long[] prevent_recycling = getContainingCppIds(lotusColl);
 		Vector<T> result = new Vector<T>(lotusColl.size());
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
 				if (lotus instanceof lotus.domino.Base) {
-					result.add(fromLotus((D) lotus, schema, parent, prevent_recycling));
+					result.add(fromLotus((D) lotus, schema, parent, rc, prevent_recycling));
 				}
 			}
 		}
@@ -328,14 +334,14 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		long[] prevent_recycling = new long[2];
 		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(newLotus);
 		prevent_recycling[1] = org.openntf.domino.impl.Base.getLotusId(parent);
-
-		referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
-		referenceCache.put(cpp_key, wrapper, newLotus);
+		DominoReferenceCache rc = referenceCache.get();
+		rc.processQueue(prevent_recycling); // recycle all elements but not the current ones
+		rc.put(cpp_key, wrapper, newLotus);
 	}
 
 	@Override
 	public void setNoRecycle(final Base<?> base, final boolean value) {
-		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base<?, ?, ?>) base).GetCppObj(), value);
+		referenceCache.get().setNoRecycle(((org.openntf.domino.impl.Base<?, ?, ?>) base).GetCppObj(), value);
 	}
 
 	/**
@@ -351,11 +357,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 */
 
 	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
-		if (!Factory.ENABLE_THREAD_SUPPORT && Thread.currentThread() != correctThread) {
-			throw new IllegalStateException("It seems that Notes-Objects are used across threads! This Thread: " + Thread.currentThread()
-					+ " correct Thread: " + correctThread);
-		}
-
 		if (lotus instanceof lotus.domino.Name) {
 			return new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, (Session) parent, this, cpp);
 		}
@@ -365,6 +366,10 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 		if (lotus instanceof lotus.domino.DateTime) {
 			return new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, (Session) parent, this, cpp);
+		}
+
+		if (lotus instanceof lotus.domino.ViewEntry) {
+			return new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, (View) parent, this, cpp);
 		}
 
 		if (lotus instanceof lotus.domino.RichTextItem) { // items & richtextitems are used very often. 
@@ -512,9 +517,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (lotus instanceof lotus.domino.ViewColumn) {
 			return new org.openntf.domino.impl.ViewColumn((lotus.domino.ViewColumn) lotus, (org.openntf.domino.View) parent, this, cpp);
 		}
-		if (lotus instanceof lotus.domino.ViewEntry) {
-			return new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, (View) parent, this, cpp);
-		}
 		if (lotus instanceof lotus.domino.ViewEntryCollection) {
 			return new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
 					(org.openntf.domino.View) parent, this, cpp);
@@ -538,11 +540,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	@Override
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
-		return wrapColumnValues(values, session, null);
+		return wrapColumnValues(values, session, referenceCache.get(), null);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected Vector<Object> wrapColumnValues(final Collection<?> values, final Session session, final long[] prevent_recycling) {
+	protected Vector<Object> wrapColumnValues(final Collection<?> values, final Session session, final DominoReferenceCache referenceCache,
+			final long[] prevent_recycling) {
 		if (values == null) {
 			return null;
 		}
@@ -555,7 +558,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			} else if (value instanceof lotus.domino.DateTime) {
 				Object wrapped = null;
 				try {
-					wrapped = fromLotus((lotus.domino.DateTime) value, (FactorySchema) null, session, prevent_recycling);
+					wrapped = fromLotus((lotus.domino.DateTime) value, (FactorySchema) null, session, referenceCache, prevent_recycling);
 				} catch (Throwable t) {
 					if (t instanceof NotesException) {
 						String text = ((NotesException) t).text;
@@ -577,9 +580,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 					result.add(wrapped);
 				}
 			} else if (value instanceof lotus.domino.DateRange) {
-				result.add(fromLotus((lotus.domino.DateRange) value, (FactorySchema) null, session, prevent_recycling));
+				result.add(fromLotus((lotus.domino.DateRange) value, (FactorySchema) null, session, referenceCache, prevent_recycling));
 			} else if (value instanceof Collection) {
-				result.add(wrapColumnValues((Collection<?>) value, session, prevent_recycling));
+				result.add(wrapColumnValues((Collection<?>) value, session, referenceCache, prevent_recycling));
 			} else {
 				result.add(value);
 			}
