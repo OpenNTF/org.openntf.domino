@@ -58,6 +58,6 @@ public class Create200KLotus {
 	 *            the arguments
 	 */
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new DocCreator());
+		TestRunnerUtil.runAsDominoThread(new DocCreator(), TestRunnerUtil.NATIVE_SESSION);
 	}
 }
