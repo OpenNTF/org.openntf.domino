@@ -564,6 +564,30 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				}
 			}
 
+			//This has to be called BEFORE we recycle the Mime entity, otherwise the data may not be stored.
+			boolean ret = false;
+			if (null != entityItemName) {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+					if (saveChanges && !ret) {
+						if (log_.isLoggable(Level.SEVERE)) {
+							log_.log(Level.SEVERE, "closeMIMEEntities returned false for item " + entityItemName + " on doc " + getNoteID()
+									+ " in db " + getAncestorDatabase().getApiPath(), new Throwable());
+						}
+					}
+				} catch (NotesException e) {
+					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
+							+ " even though we can't find an item by that name.", e);
+
+				}
+			} else {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, null);
+				} catch (NotesException e) {
+					log_.log(Level.INFO, "Failed to close all MIMEEntities", e);
+				}
+			}
+
 			// RPR: I don't exactly remember, why we do that. As far as I know, we should
 			// ensure that every MIME item is recycled before closing.
 			if (openMIMEEntities_ != null) {
@@ -585,29 +609,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						log_.log(Level.FINE, "A request was made to close MIMEEntity " + entityItemName
 								+ " but that entity isn't currently open");
 					}
-				}
-			}
-			boolean ret = false;
-			if (null != entityItemName) {
-				try {
-					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-					if (saveChanges && !ret) {
-						if (log_.isLoggable(Level.FINE)) {
-							log_.log(Level.FINE, "closeMIMEEntities returned false for item " + entityItemName + " on doc " + getNoteID()
-									+ " in db " + getAncestorDatabase().getApiPath()
-									+ ". As far as we can tell, it always returns false so this is not useful feedback", new Throwable());
-						}
-					}
-				} catch (NotesException e) {
-					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
-							+ " even though we can't find an item by that name.", e);
-
-				}
-			} else {
-				try {
-					ret = getDelegate().closeMIMEEntities(saveChanges, null);
-				} catch (NotesException e) {
-					log_.log(Level.INFO, "Failed to close all MIMEEntities", e);
 				}
 			}
 
@@ -1009,17 +1010,29 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	@Override
 	public List<org.openntf.domino.EmbeddedObject> getAttachments() {
 		List<org.openntf.domino.EmbeddedObject> result = new ArrayList<org.openntf.domino.EmbeddedObject>();
-		result.addAll(getEmbeddedObjects());
-		for (Item item : getItems()) {
-			if (item instanceof RichTextItem) {
-				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
-				for (EmbeddedObject obj : objects) {
-					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
-						result.add(obj);
-					}
-				}
+
+		lotus.domino.Session rawSession = toLotus(getAncestorSession());
+		try {
+			Vector<?> attachmentNames = rawSession.evaluate("@AttachmentNames", getDelegate());
+
+			for (Object attachmentName : attachmentNames) {
+				result.add(getAttachment((String) attachmentName));
 			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 		}
+
+		//		result.addAll(getEmbeddedObjects());
+		//		for (Item item : getItems()) {
+		//			if (item instanceof RichTextItem) {
+		//				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
+		//				for (EmbeddedObject obj : objects) {
+		//					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
+		//						result.add(obj);
+		//					}
+		//				}
+		//			}
+		//		}
 		return result;
 	}
 

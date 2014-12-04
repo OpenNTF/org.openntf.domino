@@ -222,7 +222,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 					ClassLoader mcl = module.getModuleClassLoader();
 					ClassLoader oldCl = switchClassLoader(mcl);
 					Factory.setClassLoader(mcl);
-					Factory.setSessionFactory(new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null), SessionType.CURRENT);
+					Factory.setSessionFactory(new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, moduleName), SessionType.CURRENT);
 					DominoUtils.setBubbleExceptions(true);
 					try {
 						// Construct & set up
