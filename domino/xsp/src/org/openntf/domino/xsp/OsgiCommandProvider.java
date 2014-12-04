@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -198,22 +197,19 @@ public class OsgiCommandProvider implements CommandProvider {
 		for (DominoFutureTask<?> task : tasks) {
 			ci.println(task.getId() + "\t" + // ID
 					task.getState() + "\t" + // State
-					convertTimeUnit(task.getNextExecutionTime(TimeUnit.SECONDS)));
+					convertTimeUnit(task.getNextExecutionTimeInMillis()));
 
 		}
 	}
 
-	private String convertTimeUnit(final long sec) {
-		if (sec < 0) {
+	private String convertTimeUnit(final long millis) {
+		if (millis < 0) {
 			return "NOW!";
 		}
-		if (sec < 120) {
-			return "in " + sec + " seconds.";
+		if (millis < 1000 * 240) {
+			return "in " + (millis / 1000) + " seconds";
 		}
-		if (sec < 600) {
-			return "in " + (sec / 60) + " minutes " + (sec % 60) + " seconds.";
-		}
-		return "at " + new Date(sec * 1000);
+		return "at " + new Date(millis);
 	}
 
 	private void xotsRun(final CommandInterpreter ci) {

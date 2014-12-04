@@ -39,6 +39,11 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Ta
 		return null;
 	}
 
+	@Override
+	public String[] getDynamicSchedule() {
+		return null;
+	}
+
 	/**
 	 * Returns true Method should be queried in loops to determine if we should stop
 	 * 
@@ -51,5 +56,10 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Ta
 	@Override
 	public synchronized void stop() {
 		shouldStop_ = true;
+	}
+
+	@Override
+	public String getDescription() {
+		return getClass().getSimpleName();
 	}
 }

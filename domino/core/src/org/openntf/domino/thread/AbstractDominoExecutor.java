@@ -4,6 +4,7 @@
 package org.openntf.domino.thread;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -74,6 +75,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	private static final AtomicLong sequencer = new AtomicLong(0L);
 
+	protected Calendar now_ = Calendar.getInstance();
 	// the shutdown-hook for proper termination
 	protected Runnable shutdownHook = new Runnable() {
 		@Override
@@ -95,6 +97,11 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			}
 		}
 	};
+
+	protected Calendar getNow() {
+		now_.clear();
+		return now_;
+	}
 
 	/**
 	 * Creates a new {@link AbstractDominoExecutor}. Specify the
@@ -176,10 +183,12 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 
 		private void runPeriodic() {
+
+			scheduler.eventStart(getNow());
 			boolean success = super.runAndReset();
 
 			if (success && (!isShutdown() || ((getContinueExistingPeriodicTasksAfterShutdownPolicy()) && (!isTerminating())))) {
-				scheduler.computeNextExecutionTime();
+				scheduler.eventStop(getNow());
 				getQueue().add(this);
 			}
 		}
@@ -197,7 +206,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 				try {
 					this.get();
 				} catch (Throwable t) {
-					log_.log(Level.WARNING, getWrappedTask().getDescription(), t);
+					log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.getMessage(), t);
 				}
 				synchronized (this) {
 					this.runner = null;
@@ -227,16 +236,22 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 		@Override
 		public long getDelay(final TimeUnit timeUnit) {
-			return scheduler.getDelay(timeUnit);
+			long delay = scheduler.getNextExecutionTimeInMillis() - System.currentTimeMillis();
+			return timeUnit.convert(delay, TimeUnit.MILLISECONDS);
 		}
 
-		public long getNextExecutionTime(final TimeUnit timeUnit) {
-			return scheduler.getNextExecutionTime(timeUnit);
+		public long getNextExecutionTimeInMillis() {
+			return scheduler.getNextExecutionTimeInMillis();
 		}
 
 		@Override
 		public int compareTo(final Delayed other) {
-			long delta = getDelay(TimeUnit.NANOSECONDS) - other.getDelay(TimeUnit.NANOSECONDS);
+			long delta = 0;
+			if (other instanceof DominoFutureTask<?>) {
+				delta = getNextExecutionTimeInMillis() - ((DominoFutureTask<?>) other).getNextExecutionTimeInMillis();
+			} else {
+				delta = getDelay(TimeUnit.NANOSECONDS) - other.getDelay(TimeUnit.NANOSECONDS);
+			}
 
 			if (delta < 0L)
 				return -1;
@@ -270,15 +285,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	}
 
-	// Oracle/SUN made this package private
-
-	protected final long now() {
-		return System.nanoTime();
-	}
-
-	protected long triggerTime(final long delay) {
-		return now() + (delay < 4611686018427387903L ? delay : overflowFree(delay));
-	}
 
 	private long overflowFree(long paramLong) {
 		Delayed localDelayed = (Delayed) super.getQueue().peek();
@@ -455,7 +461,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	@Override
 	public ScheduledFuture<?> runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
-		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0L, 0L, TimeUnit.NANOSECONDS)));
+		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0, 0L, TimeUnit.NANOSECONDS)));
 	}
 
 }

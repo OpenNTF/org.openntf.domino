@@ -162,6 +162,10 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 
 	@Override
 	public String getDescription() {
-		return getWrappedTask().getClass().getName();
+		Object task = getWrappedTask();
+		if (task instanceof Tasklet.Interface) {
+			return ((Tasklet.Interface) task).getDescription();
+		}
+		return task.getClass().getSimpleName();
 	}
 }

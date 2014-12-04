@@ -2,8 +2,9 @@ package org.openntf.domino.xsp.xots;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,10 +14,12 @@ import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.exceptions.UserAccessException;
+import org.openntf.domino.thread.AbstractDominoCallable;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
+import org.openntf.domino.xots.Tasklet.Interface;
 import org.openntf.domino.xots.Xots;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
@@ -55,47 +58,61 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	@Override
 	public void run() {
 		Factory.println(this, "Scan started");
-		scan();
-		Factory.println(this, "Scan stopped");
+		List<ScheduleData> ret = scan();
+		Factory.println(this, "Scan stopped. Found tasklets: ");
+		for (ScheduleData sd : ret) {
+			Factory.println(this, sd);
+		}
 	}
 
 	/**
 	 * Scans all databases on the specified server
 	 */
-	public void scan() {
+	public List<ScheduleData> scan() {
 		Session session = Factory.getSession(SessionType.CURRENT); // Returns a XotsSessionType.NATIVE
 		DbDirectory dir = session.getDbDirectory(getServerName());
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
+		List<Future<List<ScheduleData>>> futures = new ArrayList<Future<List<ScheduleData>>>();
 		for (Database db : dir) {
 			try {
-				if (!scanDatabase(db)) {
-					//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+				Future<List<ScheduleData>> future = scanDatabase(db);
+				if (future != null) {
+					futures.add(future);
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
-		setChanged();
-		notifyObservers(null);
-	}
-
-	/**
-	 * Scan the specified database
-	 * 
-	 * @param db
-	 */
-	public void scan(final Database db) {
-		try {
-			if (!scanDatabase(db)) {
-				//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+		List<ScheduleData> ret = new ArrayList<ScheduleData>();
+		for (Future<List<ScheduleData>> future : futures) {
+			try {
+				ret.addAll(future.get());
+			} catch (Exception e) {
+				// exceptions should already been logged
 			}
-		} catch (Throwable t) {
-			t.printStackTrace();
 		}
-
 		setChanged();
 		notifyObservers(null);
+		return ret;
 	}
+
+	//	/**
+	//	 * Scan the specified database
+	//	 * 
+	//	 * @param db
+	//	 */
+	//	public void scan(final Database db) {
+	//		try {
+	//			if (!scanDatabase(db)) {
+	//				//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+	//			}
+	//		} catch (Throwable t) {
+	//			t.printStackTrace();
+	//		}
+	//
+	//		setChanged();
+	//		notifyObservers(null);
+	//	}
 
 	/**
 	 * Scans the given database for xots enabled classes
@@ -103,7 +120,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	 * @author Roland Praml, FOCONIS AG
 	 * 
 	 */
-	private static class XotsClassScanner implements Callable<Object> {
+	private static class XotsClassScanner extends AbstractDominoCallable<List<ScheduleData>> {
 		private String apiPath;
 
 		public XotsClassScanner(final String apiPath) {
@@ -112,19 +129,31 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 		}
 
 		@Override
-		public Object call() throws Exception {
+		public String getDescription() {
+			// TODO Auto-generated method stub
+			return super.getDescription() + ":" + apiPath;
+		}
+
+		@Override
+		public List<ScheduleData> call() throws Exception {
 
 			NSFComponentModule module = ModuleLoader.loadModule(apiPath, true);
 			NotesContext ctx = new NotesContext(module);
 			NotesContext.initThread(ctx);
+			List<ScheduleData> ret = new ArrayList<ScheduleData>();
+
 			try {
+				ctx.initRequest(new FakeHttpRequest(Factory.getLocalServerName()));
 				RuntimeFileSystem vfs = module.getRuntimeFileSystem();
 				Map<String, NSFResource> resources = vfs.getAllResources();
 				ClassLoader mcl = module.getModuleClassLoader();
 
+				String replicaID = ctx.getCurrentDatabase().getReplicaID();
+
 				for (NSFResource resource : resources.values()) {
 					if (resource instanceof NSFXspClassResource) {
 						String path = resource.getNSFPath();
+
 						// Check all classes, but not xsp.*
 						if (path.startsWith("WEB-INF/classes/") && path.endsWith(".class") && !path.startsWith("WEB-INF/classes/xsp/")) {
 							String className = path.substring(16, path.length() - 6).replace('/', '.');
@@ -133,10 +162,26 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 								Class<?> clazz = mcl.loadClass(className);
 								Tasklet annot = clazz.getAnnotation(Tasklet.class);
 								if (annot != null) {
-									Factory.println(this, apiPath + ": " + className + " - " + annot);
+									String[] schedDefs = annot.schedule();
+									String[] effectiveSchedDefs = null;
+
+									for (String schedDef : schedDefs) {
+										if (!schedDef.equals("")) {
+											effectiveSchedDefs = schedDefs;
+											if (schedDef.equals("dynamic")) {
+												Tasklet.Interface ti = (Interface) clazz.newInstance();
+												effectiveSchedDefs = ti.getDynamicSchedule();
+												break;
+											}
+										}
+									}
+									if (effectiveSchedDefs != null) {
+										ret.add(new ScheduleData(replicaID, className, apiPath, effectiveSchedDefs));
+									}
+
 								}
 							} catch (Exception e) {
-								System.out.println("Cannot load: " + className + ". " + e.getMessage());
+								Factory.println(this, "Cannot load: " + className + ". " + e.getMessage());
 							}
 
 						}
@@ -151,8 +196,9 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			} finally {
 				NotesContext.termThread();
 			}
-			return null;
+			return ret;
 		}
+
 	}
 
 	/**
@@ -163,7 +209,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	 * @throws
 	 * @throws ServletException
 	 */
-	protected boolean scanDatabase(final Database db) {
+	protected Future<List<ScheduleData>> scanDatabase(final Database db) {
 		//NTF Keeping JG's implementation since he made an enhancement to the IconNote class for it! :)
 		log_.finest("Scanning database " + db.getApiPath() + " for Xots Tasklets");
 
@@ -173,7 +219,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 
 			if (design.isAPIEnabled()) {
 				log_.info("ODA enabled database: " + db.getApiPath());
-				Future<Object> future = Xots.getService().submit(new XotsClassScanner(db.getApiPath()));
+				return Xots.getService().submit(new XotsClassScanner(db.getApiPath()));
 
 			}
 
@@ -212,6 +258,6 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			Factory.println(this, "WARNING: " + e.getMessage());
 			log_.log(Level.INFO, e.getMessage(), e);
 		}
-		return false;
+		return null;
 	}
 }

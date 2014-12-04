@@ -43,6 +43,16 @@ public @interface Tasklet {
 		 * Notifies the tasklet that it should stop if possible.
 		 */
 		public void stop();
+
+		/**
+		 * Returns a dynamic schedule plan. This method is only called if you specify {@literal @}Tasklet(schedule="dynamic"). Class needs a
+		 * default constructor.
+		 * 
+		 * @return Array of schedule strings
+		 */
+		public String[] getDynamicSchedule();
+
+		public String getDescription();
 	}
 
 	/**
@@ -200,11 +210,13 @@ public @interface Tasklet {
 	 * <ul>
 	 * <li><code>cron:0 *&#x2F;15 02-23 * * *</code> to run the tasklet every 15 minutes between 02 and 23 o'clock. See
 	 * {@link CronExpression}</li>
-	 * <li><code>delay:45m 08:30-22:30</code> to run a periodic task with a delay of 45 minutes (45 minutes between runs) between 08:30 and
-	 * 22:30. This should be prefered to cron, because cron will start all periodic tasks in the same minute.</li>
-	 * <li><code>period:45m 08:30-22:30</code> to run a periodic task every 45 minutes between 08:30 and 22:30. This should be prefered to
-	 * cron, because cron will start all periodic tasks in the same minute.</li>
+	 * <li><code>delay:45m 08:30-22:30 MTWRFSU</code> to run a periodic task with a delay of 45 minutes (45 minutes between runs) between
+	 * 08:30 and 22:30. This should be prefered to cron, because cron will start all periodic tasks in the same minute.</li>
+	 * <li><code>period:45m 08:30-22:30 MTWRF</code> to run a periodic task every 45 minutes between 08:30 and 22:30. This should be
+	 * prefered to cron, because cron will start all periodic tasks in the same minute.</li>
 	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)</li>
+	 * <li><code>dynamic</code> get the dynamic schedule by invoking {@link Tasklet.Interface#getDynamicSchedule()} (this must be the first
+	 * and only annotation. Class must have a default constructor.)</li>
 	 * 
 	 * @return
 	 */

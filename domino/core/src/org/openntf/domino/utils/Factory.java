@@ -15,8 +15,11 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -63,6 +66,8 @@ import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
+
+import com.ibm.commons.util.StringUtil;
 
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
@@ -1718,16 +1723,41 @@ public enum Factory {
 		return localServerName;
 	}
 
+	public static void println(String prefix, final String lines) {
+		BufferedReader reader = new BufferedReader(new StringReader(lines));
+		String line;
+		try {
+			if (StringUtil.isEmpty(prefix)) {
+				prefix = "[ODA] ";
+			} else {
+				prefix = "[ODA::" + prefix + "] ";
+			}
+			while ((line = reader.readLine()) != null) {
+				if (line.length() > 0)
+					printer.println(prefix + line);
+			}
+		} catch (IOException ioex) {
+
+		}
+	}
+
 	public static void println(final Object x) {
-		printer.println("[ODA] " + x);
+		println(null, String.valueOf(x));
 	}
 
 	public static void println(final Object source, final Object x) {
 		if (source == null) {
-			printer.println("[ODA] " + x);
+			println(null, String.valueOf(x));
 		} else {
-			Class<?> cls = source instanceof Class ? (Class<?>) source : source.getClass();
-			printer.println("[ODA::" + cls.getSimpleName() + "] " + x);
+			String prefix;
+			if (source instanceof String) {
+				prefix = (String) source;
+			} else if (source instanceof Class) {
+				prefix = ((Class<?>) source).getSimpleName();
+			} else {
+				prefix = source.getClass().getSimpleName();
+			}
+			println(prefix, String.valueOf(x));
 		}
 	}
 

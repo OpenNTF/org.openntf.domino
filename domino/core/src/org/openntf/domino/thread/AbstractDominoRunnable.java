@@ -38,6 +38,11 @@ public abstract class AbstractDominoRunnable extends Observable implements Taskl
 		return null;
 	}
 
+	@Override
+	public String[] getDynamicSchedule() {
+		return null;
+	}
+
 	/**
 	 * Method should be queried in loops to determine if we should stop
 	 * 
@@ -45,6 +50,11 @@ public abstract class AbstractDominoRunnable extends Observable implements Taskl
 	 */
 	protected synchronized boolean shouldStop() {
 		return shouldStop_;
+	}
+
+	@Override
+	public String getDescription() {
+		return getClass().getSimpleName();
 	}
 
 	@Override
