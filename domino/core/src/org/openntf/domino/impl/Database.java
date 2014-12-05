@@ -58,7 +58,6 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.helpers.DatabaseHolder;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Encapsulated;
@@ -3531,8 +3530,6 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 
 	private transient NoteCollection intNC_;
 
-	private DatabaseHolder databaseHolder_;
-
 	private NoteCollection getInternalNoteCollection() {
 		if (null == intNC_ || isDead(intNC_)) {
 			intNC_ = this.createNoteCollection(false);
@@ -3590,13 +3587,5 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		if (mySess != null)
 			mySess.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
-	}
-
-	@Override
-	public DatabaseHolder getDatabaseHolder() {
-		if (databaseHolder_ == null) {
-			databaseHolder_ = new DatabaseHolder(this);
-		}
-		return databaseHolder_;
 	}
 }

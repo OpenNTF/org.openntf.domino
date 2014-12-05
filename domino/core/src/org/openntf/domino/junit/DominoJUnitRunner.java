@@ -3,6 +3,8 @@ package org.openntf.domino.junit;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.logging.LogManager;
+
 import lotus.domino.NotesException;
 import lotus.domino.NotesThread;
 
@@ -46,6 +48,7 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 		} catch (NotesException ne) {
 			ne.printStackTrace();
 		}
+		LogManager.getLogManager().reset();
 		// RPr: Did not figure out, how to set up a proper SM
 		//		if (System.getSecurityManager() == null) {
 		//			new lotus.notes.AgentSecurityManager();

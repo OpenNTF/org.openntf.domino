@@ -32,7 +32,6 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
-import org.openntf.domino.helpers.DatabaseHolder;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
@@ -694,12 +693,5 @@ public interface Database extends Base {
 	 * @return a {@link Type} Object
 	 */
 	Type getTypeEx();
-
-	/**
-	 * Returns a DatabaseHolder object, which is serializable
-	 * 
-	 * @return a DatabaseHolder
-	 */
-	DatabaseHolder getDatabaseHolder();
 
 }

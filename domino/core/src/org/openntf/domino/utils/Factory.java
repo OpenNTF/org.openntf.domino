@@ -148,7 +148,19 @@ public enum Factory {
 		/**
 		 * Returns a Session with full access.
 		 */
-		FULL_ACCESS(6, "FULL_ACCESS");
+		FULL_ACCESS(6, "FULL_ACCESS"),
+
+		/**
+		 * for internal use only!
+		 */
+		_NAMED_internal(-1, "NAMED"),
+
+		/**
+		 * for internal use only!
+		 */
+		_NAMED_FULL_ACCESS_internal(-1, "NAMED_FULL_ACCESS"),
+
+		;
 
 		static int SIZE = 7;
 		int index;
@@ -860,13 +872,14 @@ public enum Factory {
 	public static org.openntf.domino.Session getSession(final SessionType mode) {
 		ThreadVariables tv = getThreadVariables();
 		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
-		if (result == null) {
+		if (result == null || result.isDead()) {
 			//			System.out.println("TEMP DEBUG: No session found of type " + mode.name() + " in thread "
 			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 
 			ISessionFactory sf = getSessionFactory(mode);
 			if (sf != null) {
 				result = sf.createSession();
+				result.setSessionType(mode);
 				tv.sessionHolders[mode.index] = result;
 				// Per default. Session objects are not recycled by the ODA and thats OK so.
 				// this is our own session which will be recycled in terminate
@@ -1380,10 +1393,11 @@ public enum Factory {
 		ThreadVariables tv = getThreadVariables();
 		String key = name.toLowerCase() + (fullAccess ? ":full" : ":normal");
 		Session sess = tv.ownSessions.get(key);
-		if (sess == null) {
+		if (sess == null || sess.isDead()) {
 			INamedSessionFactory sf = getNamedSessionFactory(fullAccess);
 			if (sf != null) {
 				sess = sf.createSession(name);
+				sess.setSessionType(fullAccess ? SessionType._NAMED_FULL_ACCESS_internal : SessionType._NAMED_internal);
 			}
 			tv.ownSessions.put(key, sess);
 		}

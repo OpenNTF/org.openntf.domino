@@ -16,6 +16,10 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -62,11 +66,11 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
-import org.openntf.domino.helpers.SessionHolder;
-import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 
@@ -117,13 +121,15 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	//		}
 	//	};
 
-	private boolean isDbCached_ = false;
+	// RPr: removed as this is never set to "true" and makes externalize easier
+	// private boolean isDbCached_ = false;
 	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
 
 	private LinkedHashMap<String, org.openntf.domino.Database> databases_ = new LinkedHashMap<String, org.openntf.domino.Database>(
 			DEFAULT_NSF_CACHE_SIZE, 1.0f);
 
 	private transient Database currentDatabase_;
+	private String currentDatabaseApiPath_;
 
 	@SuppressWarnings("unused")
 	private String username_;
@@ -756,7 +762,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public Database getCurrentDatabase() {
 		Database result = null;
-		if (currentDatabase_ == null) {
+		if (currentDatabaseApiPath_ == null) {
 			//			System.out.println("TEMP DEBUG: currentDatabase_ is null for session " + System.identityHashCode(this) + " in thread "
 			//					+ System.identityHashCode(Thread.currentThread()) + " so we're trying to derive it...");
 			try {
@@ -772,13 +778,15 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 				}
 				databases_.put(key, result);
 				currentDatabase_ = result;
-
+				currentDatabaseApiPath_ = result.getApiPath();
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 				return null;
 
 			}
 		} else {
+			if (currentDatabase_ == null)
+				currentDatabase_ = getDatabase(currentDatabaseApiPath_);
 			result = currentDatabase_;
 		}
 		return result;
@@ -807,21 +815,21 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
 		String key = db;
-		if (isDbCached_) {
-			try {
-				if (server == null || server.length() < 1) {
-					key = "!!" + db;
-				} else {
-					key = server + "!!" + db;
-				}
-			} catch (Exception e) {
-				StackTraceElement ste = e.getStackTrace()[0];
-				System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server)
-						+ " with filepath " + String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at "
-						+ ste.getClassName() + "." + ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
-			}
-			result = databases_.get(key);
-		}
+		//		if (isDbCached_) {
+		//			try {
+		//				if (server == null || server.length() < 1) {
+		//					key = "!!" + db;
+		//				} else {
+		//					key = server + "!!" + db;
+		//				}
+		//			} catch (Exception e) {
+		//				StackTraceElement ste = e.getStackTrace()[0];
+		//				System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server)
+		//						+ " with filepath " + String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at "
+		//						+ ste.getClassName() + "." + ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
+		//			}
+		//			result = databases_.get(key);
+		//		}
 		if (result == null) {
 			try {
 				boolean isDbRepId = DominoUtils.isReplicaId(db);
@@ -843,14 +851,14 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 					}
 					result = fromLotus(database, Database.SCHEMA, this);
 				}
-				if (isDbCached_ && result != null) {
-					databases_.put(key, result);
-					if (isDbRepId) {
-						databases_.put(result.getApiPath(), result);
-					} else {
-						databases_.put(result.getMetaReplicaID(), result);
-					}
-				}
+				//				if (isDbCached_ && result != null) {
+				//					databases_.put(key, result);
+				//					if (isDbRepId) {
+				//						databases_.put(result.getApiPath(), result);
+				//					} else {
+				//						databases_.put(result.getMetaReplicaID(), result);
+				//					}
+				//				}
 			} catch (NotesException e) {
 				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
 					throw new UserAccessException(
@@ -1707,20 +1715,39 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		return result;
 	}
 
+	private org.openntf.domino.Session recreateSession() {
+		switch (sessionType_) {
+		case _NAMED_FULL_ACCESS_internal:
+			return Factory.getNamedSession(username_, true);
+		case _NAMED_internal:
+			return Factory.getNamedSession(username_, false);
+		default:
+			return Factory.getSession(sessionType_);
+		}
+	}
+
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 
-		Session sessionImpl = (Session) getSessionFactory().createSession();
+		org.openntf.domino.Session sess = recreateSession();
 
-		if (sessionImpl == null) {
+		if (!(sess instanceof Session)) {
 			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
 		}
-		getFactory().setNoRecycle(sessionImpl, false);
 
-		lotus.domino.Session d = sessionImpl.getDelegate_unchecked();
+		getFactory().setNoRecycle(sess, false);
+
+		lotus.domino.Session d = ((Session) sess).getDelegate_unchecked();
 		if (d == null) {
 			throw new UnableToAcquireSessionException("The created Session does not have a valid delegate");
+		}
+		try {
+			if (!username_.equals(d.getEffectiveUserName())) {
+				throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:" + d.getEffectiveUserName()
+						+ ", expected:" + username_);
+			}
+		} catch (NotesException e) {
 		}
 		setDelegate(d, 0, true);
 		/* No special logging, since by now Session is a BaseThreadSafe */
@@ -1763,9 +1790,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	private AutoMime isAutoMime_;
 
-	private ISessionFactory sessionFactory_;
-
-	private SessionHolder sessionHolder_;
+	private SessionType sessionType_;
 
 	/*
 	 * (non-Javadoc)
@@ -2026,6 +2051,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		//		System.out.println("TEMP DEBUG: Setting current database to " + db.getApiPath() + " from session " + System.identityHashCode(this)
 		//				+ " in thread " + System.identityHashCode(Thread.currentThread()));
 		currentDatabase_ = db;
+		currentDatabaseApiPath_ = db.getApiPath();
 	}
 
 	@Override
@@ -2045,20 +2071,15 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		return fixes_.toArray(new Fixes[fixes_.size()]);
 	}
 
-	public void setSessionFactory(final ISessionFactory sessionFactory) {
-		sessionFactory_ = sessionFactory;
-	}
-
-	public ISessionFactory getSessionFactory() {
-		return sessionFactory_;
-	}
-
 	@Override
-	public SessionHolder getSessionHolder() {
-		if (sessionHolder_ == null) {
-			return new SessionHolder(this, getSessionFactory());
-		}
-		return sessionHolder_;
+	public void setSessionType(final SessionType sessionType) {
+		if (sessionType_ != null)
+			throw new IllegalStateException("SessionType cannot be changed");
+		sessionType_ = sessionType;
+	}
+
+	public SessionType getSessionFactory() {
+		return sessionType_;
 	}
 
 	// this is needed for factories that provide an external session
@@ -2075,4 +2096,95 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 			return;
 		super.recycle();
 	}
+
+	public Session() {
+		super(null, null, NOTES_SESSION);
+	}
+
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		// TODO Auto-generated method stub
+		if (sessionType_ == null)
+			throw new NotSerializableException("Session has no session factory");
+		out.writeInt(1); // data version
+		getCurrentDatabase(); // initializes the currentDatabaseApiPath_
+		out.writeObject(sessionType_);
+		out.writeObject(username_);
+		out.writeObject(currentDatabaseApiPath_);
+
+		out.writeObject(isAutoMime_);
+		// out.writeObject(formatter_); not needed!
+		out.writeObject(fixes_);
+		out.writeObject(eventFactory_);
+		out.writeBoolean(featureRestricted_);
+		// out.writeBoolean(noRecycle); not needed - done by factory
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		if (in.readInt() != 1)
+			throw new IllegalStateException("Data Version does not match");
+
+		sessionType_ = (SessionType) in.readObject();
+		username_ = (String) in.readObject();
+		currentDatabaseApiPath_ = (String) in.readObject();
+
+		isAutoMime_ = (AutoMime) in.readObject();
+		fixes_ = (Set<Fixes>) in.readObject();
+		eventFactory_ = (IDominoEventFactory) in.readObject();
+		featureRestricted_ = in.readBoolean();
+
+	}
+
+	protected Object readResolve() {
+		Session ret = (Session) recreateSession();
+		assertEquals(isAutoMime_, ret.isAutoMime_);
+		assertEquals(fixes_, ret.fixes_);
+		assertEquals(eventFactory_, ret.eventFactory_);
+		assertEquals(featureRestricted_, ret.featureRestricted_);
+		return ret;
+	}
+
+	private void assertEquals(final Object expected, final Object given) {
+		if (expected == null ? given != null : !expected.equals(given)) {
+			log_.warning("Deserializing different session. Given: " + given + ", expected: " + expected);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((currentDatabaseApiPath_ == null) ? 0 : currentDatabaseApiPath_.hashCode());
+		result = prime * result + ((sessionType_ == null) ? 0 : sessionType_.hashCode());
+		result = prime * result + ((username_ == null) ? 0 : username_.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Session other = (Session) obj;
+		if (currentDatabaseApiPath_ == null) {
+			if (other.currentDatabaseApiPath_ != null)
+				return false;
+		} else if (!currentDatabaseApiPath_.equals(other.currentDatabaseApiPath_))
+			return false;
+		if (sessionType_ != other.sessionType_)
+			return false;
+		if (username_ == null) {
+			if (other.username_ != null)
+				return false;
+		} else if (!username_.equals(other.username_))
+			return false;
+		return true;
+	}
+
 }

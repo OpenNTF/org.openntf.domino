@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -29,7 +30,8 @@ import com.ibm.icu.util.ULocale;
 /**
  * The Class DominoFormatter.
  */
-public class DominoFormatter extends ThreadLocal<Object> {
+public class DominoFormatter extends ThreadLocal<Object> implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFormatter.class.getName());
