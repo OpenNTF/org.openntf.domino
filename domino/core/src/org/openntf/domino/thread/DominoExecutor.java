@@ -22,6 +22,7 @@ import org.openntf.domino.utils.Factory;
  */
 @Incomplete
 public class DominoExecutor extends AbstractDominoExecutor {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
 
 	/**
@@ -109,7 +110,6 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	/**
 	 * Constructor of the DominoExecutor
 	 * 
-	 * @param corePoolSize
 	 */
 	public DominoExecutor(final int corePoolSize) {
 		super(corePoolSize);

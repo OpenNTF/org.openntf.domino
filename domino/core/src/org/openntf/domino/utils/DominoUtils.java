@@ -53,6 +53,7 @@ import org.openntf.domino.Name;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.logging.LogUtils;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
@@ -801,7 +802,7 @@ public enum DominoUtils {
 	 * @return String return value from the notes.ini
 	 */
 	public static String getDominoIniVar(final String propertyName, final String defaultValue) {
-		String newVal = Factory.getSession().getEnvironmentString(propertyName, true);
+		String newVal = Factory.getSession(SessionType.CURRENT).getEnvironmentString(propertyName, true);
 		if (!"".equals(newVal)) {
 			return newVal;
 		} else {
@@ -841,7 +842,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-			// TODO Need to work out how to get from properties file in NSF
+				// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

@@ -46,7 +46,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class DbDirectory.
  */
 public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-		org.openntf.domino.DbDirectory, Encapsulated {
+org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	/* the MetaData contains s small subset of information of a (closed) Database */
@@ -99,6 +99,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return comparator_ == DatabaseMetaData.LASTMOD_COMPARATOR;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	@Deprecated
 	public void setSortByLastModified(final boolean value) {

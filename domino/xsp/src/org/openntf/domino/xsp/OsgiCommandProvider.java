@@ -48,8 +48,10 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
 public class OsgiCommandProvider implements CommandProvider {
 	private static final String tab = "\t";
 	private static final String newline = "\r\n";
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OsgiCommandProvider.class.getName());
 
+	@SuppressWarnings("unused")
 	private Map<String, Logger> configuredLoggers = new HashMap<String, Logger>();
 
 	private void addHeader(final String title, final StringBuffer sb) {
@@ -216,7 +218,7 @@ public class OsgiCommandProvider implements CommandProvider {
 					ci.println("Could not find class " + className + " in bundle " + bundleName);
 					return;
 				}
-				ClassLoader cLoader = clazz.getClassLoader();
+				clazz.getClassLoader();
 
 				//runXotsClass(ci, clazz, cLoader);
 
@@ -242,8 +244,7 @@ public class OsgiCommandProvider implements CommandProvider {
 						ci.println("Could not find class " + className);
 						return;
 					}
-					ClassLoader cLoader = module.getModuleClassLoader();
-					//runXotsClass(ci, clazz, cLoader);
+					module.getModuleClassLoader();
 				} finally {
 					NotesContext.termThread();
 					ctx = null;

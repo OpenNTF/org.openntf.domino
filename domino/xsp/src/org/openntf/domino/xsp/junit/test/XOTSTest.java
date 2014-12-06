@@ -60,8 +60,6 @@ public class XOTSTest {
 	/**
 	 * Test if basic callable will work
 	 * 
-	 * @throws InterruptedException
-	 * @throws ExecutionException
 	 */
 	@Test
 	public void testCallable() throws InterruptedException, ExecutionException {

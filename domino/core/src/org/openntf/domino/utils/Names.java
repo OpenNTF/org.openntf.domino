@@ -606,7 +606,6 @@ public enum Names {
 	 * 
 	 * @return Name created from the specified Name. Null on error.
 	 */
-	@SuppressWarnings("deprecation")
 	public static Name createName(final Name name) {
 		try {
 			if (null == name) {
@@ -630,7 +629,6 @@ public enum Names {
 	 * 
 	 * @return Name created from the specified Name. Null on error.
 	 */
-	@SuppressWarnings("restriction")
 	public static Name createName(final lotus.domino.Name name) {
 		try {
 			if (null == name) {
@@ -679,7 +677,6 @@ public enum Names {
 	 * 
 	 * @return RFC822name created from the specified Name. Null on error.
 	 */
-	@SuppressWarnings("restriction")
 	public static RFC822name createRFC822name(final lotus.domino.Name name) {
 		try {
 
@@ -728,7 +725,6 @@ public enum Names {
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
 	 *         name.getAddr821().
 	 */
-	@SuppressWarnings("restriction")
 	public static String buildAddr822Full(final lotus.domino.Name name) {
 		try {
 			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(),
@@ -994,11 +990,11 @@ public enum Names {
 				for (final String s : searchfor) {
 					if ((!Strings.isBlankString(s)) && (!result.containsKey(s)) && (!searched.containsKey(s))) {
 						String key = s;
-						ViewEntry vent = view.getEntryByKey(key);
+						ViewEntry vent = view.getFirstEntryByKey(key);
 						if (null == vent) {
 							key = Names.getAbbreviated(session, s);
 							if ((!result.containsKey(key)) && (!searched.containsKey(key))) {
-								vent = view.getEntryByKey(key);
+								vent = view.getFirstEntryByKey(key);
 							}
 						}
 

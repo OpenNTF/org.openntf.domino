@@ -42,7 +42,6 @@ public enum XSPUtil {
 	 *            the entry
 	 * @return the view entry
 	 */
-	@SuppressWarnings("deprecation")
 	public static ViewEntry wrap(final lotus.domino.ViewEntry entry) {
 		try {
 			Object parent = entry.getParent();
@@ -97,7 +96,6 @@ public enum XSPUtil {
 	 * 
 	 * @return the current session
 	 */
-	@SuppressWarnings("deprecation")
 	public static Session getCurrentSession() {
 		try {
 			lotus.domino.Session s = (lotus.domino.Session) resolveVariable("session");
@@ -108,7 +106,7 @@ public enum XSPUtil {
 			}
 		} catch (ClassNotFoundException nfe) {
 			System.out
-					.println("Class not found exception generally indicates that the OpenNTF API has not been initialized from XPages. Please see the installation instructions.");
+			.println("Class not found exception generally indicates that the OpenNTF API has not been initialized from XPages. Please see the installation instructions.");
 			return null;
 		} catch (Exception ne) {
 			System.out.println("ALERT! Unable to find current session. Normal log handling not likely available.");
@@ -136,7 +134,6 @@ public enum XSPUtil {
 	 * 
 	 * @return the current session as signer with full access
 	 */
-	@SuppressWarnings("deprecation")
 	public static Session getCurrentSessionAsSignerWithFullAccess() {
 		try {
 			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSignerWithFullAccess"), Session.SCHEMA, null);

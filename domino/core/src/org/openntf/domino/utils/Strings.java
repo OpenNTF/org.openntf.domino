@@ -729,7 +729,6 @@ public enum Strings {
 	 * @see Dates#getTimeCode()
 	 * 
 	 */
-	@SuppressWarnings("restriction")
 	public static String getSpawnedRecordID(final lotus.domino.Name name) {
 		org.openntf.domino.Name newname = Names.createName(name);
 		return Strings.getSpawnedRecordID(newname);

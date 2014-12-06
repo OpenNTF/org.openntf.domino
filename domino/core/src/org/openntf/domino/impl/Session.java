@@ -79,7 +79,7 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 public class Session extends Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
-org.openntf.domino.Session {
+		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -124,6 +124,7 @@ org.openntf.domino.Session {
 
 	private transient Database currentDatabase_;
 
+	@SuppressWarnings("unused")
 	private String username_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);

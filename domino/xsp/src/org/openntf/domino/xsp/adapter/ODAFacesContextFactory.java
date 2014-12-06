@@ -21,6 +21,7 @@ import com.ibm.xsp.domino.context.DominoFacesContextFactoryImpl;
 import com.ibm.xsp.event.FacesContextListener;
 
 public class ODAFacesContextFactory extends FacesContextFactory {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ODAFacesContextFactory.class.getName());
 	private final FacesContextFactory _delegate;
 	private ContextListener _contextListener;

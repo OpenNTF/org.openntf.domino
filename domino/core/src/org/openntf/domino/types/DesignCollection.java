@@ -14,8 +14,9 @@ import org.openntf.domino.NoteCollection;
  * 
  */
 public class DesignCollection<T> implements Collection<T> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignCollection.class.getName());
-	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private final NoteCollection collection_;
 
 	public DesignCollection(final NoteCollection collection) {

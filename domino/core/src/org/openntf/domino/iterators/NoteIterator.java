@@ -36,6 +36,7 @@ public class NoteIterator implements Iterator<String> {
 	/** The id array_. */
 	private int[] idArray_;
 
+	@SuppressWarnings("unused")
 	private NoteCollection collection_;
 
 	/**

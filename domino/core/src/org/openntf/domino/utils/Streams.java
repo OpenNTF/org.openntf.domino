@@ -40,7 +40,6 @@ public enum Streams {
 		private int buffered;
 		private int bufferPos;
 
-		@SuppressWarnings("resource")
 		public static InputStream get(final Stream source) {
 			return source != null ? new MIMEBufferedInputStream(source) : null;
 		}
@@ -158,11 +157,10 @@ public enum Streams {
 			}
 		}
 
-		@SuppressWarnings("cast")
 		private long _skip(final long n) throws IOException {
 			int avail = buffered - bufferPos;
 			if (avail > 0) {
-				if (n < (long) avail) {
+				if (n < avail) {
 					bufferPos += n;
 					return n;
 				}

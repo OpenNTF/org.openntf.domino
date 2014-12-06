@@ -70,6 +70,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		return props_;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		//TODO NTF cached properties should be automatically reset if the base Document is known to have changed
@@ -247,7 +248,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public Object getId() {
 		if (delegateKey_ == null) {
-			Map delegate = getDelegate();
+			Map<String, Object> delegate = getDelegate();
 			if (delegate instanceof Document) {
 				//				NoteCoordinate nc
 				delegateKey_ = new NoteCoordinate((Document) delegate);

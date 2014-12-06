@@ -22,6 +22,7 @@ import org.openntf.domino.utils.DominoUtils;
  */
 @SuppressWarnings("rawtypes")
 public class EnumValuePickerData extends MapValuePickerData {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(EnumValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
 	private String enumName;
@@ -40,7 +41,6 @@ public class EnumValuePickerData extends MapValuePickerData {
 	 * @return String enum name
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
-	@SuppressWarnings("unchecked")
 	public String getEnumName() {
 		if (enumName != null) {
 			return enumName;
@@ -115,6 +115,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 	 * 
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
+	@SuppressWarnings("unchecked")
 	public void setOptions() {
 		Map<String, String> opts;
 		if (sorted) {
@@ -143,6 +144,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 	 * 
 	 * @see org.openntf.domino.xsp.helpers.MapValuePickerData#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(final FacesContext _context, final Object _state) {
 		Object _values[] = (Object[]) _state;

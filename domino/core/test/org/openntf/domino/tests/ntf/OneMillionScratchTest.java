@@ -139,7 +139,6 @@ public enum OneMillionScratchTest {
 	/**
 	 * The main method.
 	 * 
-	 * @param args
 	 */
 	@SuppressWarnings("unused")
 	public static void main(final String[] args) {

@@ -42,7 +42,6 @@ public @interface Tasklet {
 		/**
 		 * Set the thread. Needed to interrupt
 		 * 
-		 * @param thread
 		 */
 		public void setCurrentThread(Thread thread);
 
@@ -200,7 +199,6 @@ public @interface Tasklet {
 	/**
 	 * Defines if this tasklet is public. I.e. is runnable/scheduleable with "xots run"
 	 * 
-	 * @return
 	 */
 	boolean isPublic() default false;
 }

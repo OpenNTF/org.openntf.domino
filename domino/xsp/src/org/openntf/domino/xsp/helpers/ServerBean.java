@@ -20,6 +20,7 @@ import com.ibm.domino.xsp.module.nsf.NSFService;
  */
 public final class ServerBean extends ConcurrentHashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ServerBean.class.getName());
 	private final static ServerBean instance_ = new ServerBean();
 

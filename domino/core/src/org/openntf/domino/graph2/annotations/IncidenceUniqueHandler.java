@@ -15,6 +15,7 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 import com.tinkerpop.frames.structures.FramedEdgeIterable;
 
+@SuppressWarnings("deprecation")
 public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique> {
 
 	@Override
@@ -22,6 +23,7 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 		return IncidenceUnique.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final IncidenceUnique annotation, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
@@ -32,6 +34,7 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object processVertex(final IncidenceUnique incidence, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Vertex vertex) {
 		if (ClassUtilities.isGetMethod(method)) {

@@ -18,12 +18,12 @@ public class ItemType implements org.openntf.domino.big.ItemType {
 
 	public ItemType(final org.openntf.domino.Item prototype) {
 		lotusFlags_ = (byte) Item.Flags.getFlags(prototype);
-		lotusType_ = (short) prototype.getType();
+		lotusType_ = (short) prototype.getTypeEx().getValue();
 	}
 
 	public boolean validateItem(final org.openntf.domino.Item candidate) {
 		byte flags = (byte) Item.Flags.getFlags(candidate);
-		short type = (short) candidate.getType();
+		short type = (short) candidate.getTypeEx().getValue();
 		return flags == lotusFlags_ && type == lotusType_;
 	}
 

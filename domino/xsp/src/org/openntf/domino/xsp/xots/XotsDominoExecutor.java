@@ -151,6 +151,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		private V runXotsClass(final Class<?> clazz, final ClassLoader ctxCl) {
 			Factory.initThread();
 			Factory.setSessionFactory(new XPageCurrentSessionFactory(), SessionType.CURRENT);
@@ -478,6 +479,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected WrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs) {
 		return new XotsTaskletDefinition(moduleName, className, ctorArgs);

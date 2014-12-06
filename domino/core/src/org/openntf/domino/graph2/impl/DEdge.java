@@ -9,9 +9,14 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
+	private static final long serialVersionUID = 1L;
+
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DEdge.class.getName());
+	@SuppressWarnings("unused")
 	private transient Vertex in_;
 	private Object inKey_;
+	@SuppressWarnings("unused")
 	private transient Vertex out_;
 	private Object outKey_;
 	private String label_;

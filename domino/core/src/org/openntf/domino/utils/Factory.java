@@ -95,7 +95,7 @@ public enum Factory {
 	public static Printer printer = new Printer();
 
 	/**
-	 * An identifier for the different session types, the factory can create
+	 * An identifier for the different session types the factory can create.
 	 * 
 	 * @author Roland Praml, FOCONIS AG
 	 * 
@@ -801,7 +801,8 @@ public enum Factory {
 	/**
 	 * 
 	 * @param mode
-	 * @return
+	 *            The type of session to create
+	 * @return A Session object corresponding to the given type
 	 */
 	public static org.openntf.domino.Session getSession(final SessionType mode) {
 		ThreadVariables tv = getThreadVariables();
@@ -851,8 +852,6 @@ public enum Factory {
 	/**
 	 * Sets the session for a certain sessionMode
 	 * 
-	 * @param session
-	 * @param mode
 	 */
 	//	public static void setSession(final lotus.domino.Session session, final SessionType mode) {
 	//		if (session instanceof org.openntf.domino.Session) {
@@ -956,7 +955,6 @@ public enum Factory {
 		return tv.classLoader;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		ThreadVariables tv = getThreadVariables();
@@ -1177,20 +1175,20 @@ public enum Factory {
 		};
 
 		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
 		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
-		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+				= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
 
 		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
 		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);

@@ -29,6 +29,7 @@ import com.ibm.xsp.extlib.component.picker.data.SimplePickerResult;
  *         MapValuePickerData, for use with the ValuePicker control
  */
 public class MapValuePickerData extends ValueBindingObjectImpl implements IValuePickerData, Serializable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(MapValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
 	public String searchType;
@@ -213,6 +214,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	 * 
 	 * @see com.ibm.xsp.extlib.component.picker.data.IPickerData#getSourceLabels()
 	 */
+	@Override
 	public String[] getSourceLabels() {
 		return null;
 	}
@@ -222,6 +224,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	 * 
 	 * @see com.ibm.xsp.extlib.component.picker.data.IPickerData#hasCapability(int)
 	 */
+	@Override
 	public boolean hasCapability(final int capability) {
 		if (capability == IValuePickerData.CAPABILITY_LABEL || capability == IValuePickerData.CAPABILITY_SEARCHBYKEY
 				|| capability == IValuePickerData.CAPABILITY_SEARCHLIST)
@@ -236,6 +239,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	 * 
 	 * @see com.ibm.xsp.extlib.component.picker.data.IPickerData#readEntries(com.ibm.xsp.extlib.component.picker.data.IPickerOptions)
 	 */
+	@Override
 	public IPickerResult readEntries(final IPickerOptions options) {
 		String startKey = options.getStartKey();
 		String key = options.getKey();
@@ -346,6 +350,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	 * 
 	 * @see com.ibm.xsp.extlib.component.picker.data.IPickerData#loadEntries(java.lang.Object[], java.lang.String[])
 	 */
+	@Override
 	public List<IPickerEntry> loadEntries(final Object[] values, final String[] attributes) {
 		List<IPickerEntry> entries = new ArrayList<IPickerEntry>();
 		if (null != values) {
@@ -371,6 +376,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	 * 
 	 * @see com.ibm.xsp.complex.ValueBindingObjectImpl#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(final FacesContext _context, final Object _state) {
 		Object _values[] = (Object[]) _state;

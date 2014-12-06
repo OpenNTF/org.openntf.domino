@@ -70,6 +70,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	 * Scan the specified database
 	 * 
 	 * @param db
+	 *            The database to scan
 	 */
 	public void scan(final Database db) {
 		try {

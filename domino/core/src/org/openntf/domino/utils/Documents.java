@@ -101,7 +101,7 @@ public enum Documents {
 	 * @param entity
 	 *            the MIMEentity to use, may be null. If specified, it must match itemName
 	 * 
-	 * @return the serializable
+	 * @return the restored object
 	 * @throws Throwable
 	 *             the throwable
 	 */
@@ -110,17 +110,17 @@ public enum Documents {
 		Session session = doc.getAncestorSession();
 		Object result = null;
 		Stream mimeStream = session.createStream();
-		Class<?> chkClass = null;
+		//		Class<?> chkClass = null;
 		String allHeaders = entity.getHeaders();
-		MIMEHeader header = entity.getNthHeader("X-Java-Class");
-		if (header != null) {
-			String className = header.getHeaderVal();
-			//			chkClass = DominoUtils.getClass(className);
-			//			if (chkClass == null) {
-			//				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-			//						+ " so object deserialization is likely to fail...");
-			//			}
-		}
+		//		MIMEHeader header = entity.getNthHeader("X-Java-Class");
+		//		if (header != null) {
+		//			String className = header.getHeaderVal();
+		//			chkClass = DominoUtils.getClass(className);
+		//			if (chkClass == null) {
+		//				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
+		//						+ " so object deserialization is likely to fail...");
+		//			}
+		//		}
 
 		entity.getContentAsBytes(mimeStream);
 
@@ -255,7 +255,6 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	@SuppressWarnings("restriction")
 	public static void saveState(final Serializable object, final Document doc, final String itemName, boolean compress,
 			final Map<String, String> headers) throws Exception {
 		if (object == null) {

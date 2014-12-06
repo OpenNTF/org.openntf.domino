@@ -76,7 +76,6 @@ public class DocumentIterator implements Iterator<org.openntf.domino.Document> {
 			} else {
 				NoteCollection nc = null;
 				try {
-					Database db = collection.getParent();
 					nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
 					if (nc.getCount() > 0) {
 						result = nc.getNoteIDs();

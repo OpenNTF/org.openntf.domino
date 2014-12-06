@@ -84,9 +84,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/** The replid_. */
 	private String replid_;
 
+	@SuppressWarnings("unused")
 	private String basedOnTemplate_;
+	@SuppressWarnings("unused")
 	private String templateName_;
 	private Date lastModDate_;
+	@SuppressWarnings("unused")
 	private String title_;
 	private Boolean isReplicationDisabled_;
 	private AutoMime autoMime_;
@@ -3012,9 +3015,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 				log_.log(
 						java.util.logging.Level.FINE,
 						"Database " + this + "had been recycled and was auto-restored. Changes may have been lost. " +
-						// 		RPR: I don't think that this behavior is normal (you should not try to cache a database accross requests!)
+								// 		RPR: I don't think that this behavior is normal (you should not try to cache a database accross requests!)
 								"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.",
-						t);
+								t);
 				//
 				//				log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
 				//						+ elements[1].getLineNumber() + ")");

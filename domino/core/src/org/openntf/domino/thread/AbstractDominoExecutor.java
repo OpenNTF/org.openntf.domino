@@ -66,11 +66,13 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		ERROR
 	}
 
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoExecutor.class.getName());
 
 	/** This list contains ALL tasks */
 	protected Map<Long, DominoFutureTask<?>> tasks = new FastMap<Long, DominoFutureTask<?>>().atomic();
 
+	@SuppressWarnings("unused")
 	private Set<IDominoListener> listeners_;
 
 	private static final AtomicLong sequencer = new AtomicLong(0L);
@@ -100,7 +102,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	/**
 	 * Creates a new {@link AbstractDominoExecutor}. Specify the
 	 * 
-	 * @param corePoolSize
 	 */
 	public AbstractDominoExecutor(final int corePoolSize) {
 		super(corePoolSize);
@@ -244,7 +245,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return sequenceNumber + "State: " + getState() + " Task: " + wrappedTask + " objectState: " + objectState;
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public void update(final Observable arg0, final Object arg1) {
 			objectState = arg1;
@@ -279,9 +279,9 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	// --- end duplicate stuff
 
 	/**
-	 * Returns a list of all tasks sortet by next execution time or Sequence number
+	 * Returns a list of all tasks sorted by next execution time or Sequence number
 	 * 
-	 * @return
+	 * @return a List of tasks
 	 */
 	@Override
 	public List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
@@ -299,10 +299,11 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	}
 
 	/**
-	 * Retrun a Task with the given ID. May return null if the task is no longer in queue.
+	 * Return a Task with the given ID. May return null if the task is no longer in the queue.
 	 * 
 	 * @param id
-	 * @return
+	 *            The ID of the task to retrieve.
+	 * @return The task for the given ID, or null if the task is no longer in the queue.
 	 */
 	public DominoFutureTask<?> getTask(final long id) {
 		return tasks.get(id);
@@ -433,12 +434,14 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		return queue(new DominoFutureTask(wrap(runnable), null, scheduler));
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ScheduledFuture<?> scheduleTasklet(final String moduleName, final String className, final Scheduler scheduler,
 			final Object... ctorArgs) {
 		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), scheduler));
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ScheduledFuture<?> runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
 		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0L, 0L, TimeUnit.NANOSECONDS)));

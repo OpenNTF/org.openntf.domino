@@ -31,18 +31,15 @@ public class AclIterator implements Iterator<ACLEntry> {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AclIterator.class.getName());
 
-	/** The acl. */
 	private ACL acl;
 
-	/** The current entry_. */
 	private transient ACLEntry currentEntry_;
 	private transient ACLEntry nextEntry_;
+	@SuppressWarnings("unused")
 	private boolean hasChecked_ = false;
 
-	/** The started_. */
 	private boolean started_;
 
-	/** The done_. */
 	private boolean done_;
 
 	/**
