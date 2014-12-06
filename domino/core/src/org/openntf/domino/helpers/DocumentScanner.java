@@ -540,97 +540,99 @@ public class DocumentScanner extends Observable {
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
 			for (Item item : items) {
-				CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-				if (/*lastMod.after(getLastScanDate()) && */!(name.startsWith("$") && getIgnoreDollar())) {
-					try {
-						String value = null;
-						Vector<Object> values = null;
+				if (item != null) {
+					CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
+					if (/*lastMod.after(getLastScanDate()) && */!(name.startsWith("$") && getIgnoreDollar())) {
+						try {
+							String value = null;
+							Vector<Object> values = null;
 
-						switch (item.getTypeEx()) {
-						case AUTHORS:
-						case READERS:
-						case NAMES:
-						case TEXT:
-							value = item.getValueString();
-							values = item.getValues();
-							break;
-						case RICHTEXT:
-							value = ((RichTextItem) item).getUnformattedText();
-							break;
-						default:
-						}
-						if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
-							if (item.isNames()) {
-								if (values != null && !values.isEmpty()) {
-									for (Object o : values) {
-										if (o instanceof String) {
-											CharSequence parmName = caseSensitive_ ? (String) o : new CaseInsensitiveString((String) o);
-											processName(parmName, name, doc.getAncestorSession(), address);
-										}
-									}
-								}
-							} else {
-								itemCount_++;
-								if (values != null && !values.isEmpty()) {
-									for (Object o : values) {
-										if (o instanceof String) {
-											String val = (String) o;
-											Scanner s = new Scanner(val);
-											s.useDelimiter(REGEX_NONALPHANUMERIC);
-											while (s.hasNext()) {
-												CharSequence token = scrubToken(s.next(), caseSensitive_);
-												if (token != null && (token.length() > 2) && !isStopped(token)) {
-													tokenCount_++;
-													processToken(token, name, address, doc);
-												}
+							switch (item.getTypeEx()) {
+							case AUTHORS:
+							case READERS:
+							case NAMES:
+							case TEXT:
+								value = item.getValueString();
+								values = item.getValues();
+								break;
+							case RICHTEXT:
+								value = ((RichTextItem) item).getUnformattedText();
+								break;
+							default:
+							}
+							if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
+								if (item.isNames()) {
+									if (values != null && !values.isEmpty()) {
+										for (Object o : values) {
+											if (o instanceof String) {
+												CharSequence parmName = caseSensitive_ ? (String) o : new CaseInsensitiveString((String) o);
+												processName(parmName, name, doc.getAncestorSession(), address);
 											}
 										}
 									}
 								} else {
-									Scanner s = new Scanner(value);
-									s.useDelimiter(REGEX_NONALPHANUMERIC);
-									while (s.hasNext()) {
-										CharSequence token = scrubToken(s.next(), caseSensitive_);
-										if (token != null && (token.length() > 2) && !isStopped(token)) {
-											tokenCount_++;
-											processToken(token, name, address, doc);
+									itemCount_++;
+									if (values != null && !values.isEmpty()) {
+										for (Object o : values) {
+											if (o instanceof String) {
+												String val = (String) o;
+												Scanner s = new Scanner(val);
+												s.useDelimiter(REGEX_NONALPHANUMERIC);
+												while (s.hasNext()) {
+													CharSequence token = scrubToken(s.next(), caseSensitive_);
+													if (token != null && (token.length() > 2) && !isStopped(token)) {
+														tokenCount_++;
+														processToken(token, name, address, doc);
+													}
+												}
+											}
 										}
-									}
-								}
-							}
-						}
-
-						if (isTrackFieldTypes()) {
-							if (!typeMap.containsKey(name)) {
-								typeMap.put(name, item.getTypeEx());
-							}
-						}
-						if (isTrackFieldValues()) {
-							if (typeMap.get(name).equals(item.getTypeEx())) {
-								Vector<Object> vals = null;
-								vals = item.getValues();
-								if (vals != null && !vals.isEmpty()) {
-									NavigableSet<Comparable> valueSet = new ConcurrentSkipListSet<Comparable>();
-									if (!vmap.containsKey(name)) {
-										vmap.put(name, valueSet);
 									} else {
-										valueSet = vmap.get(name);
-									}
-									try {
-										java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
-										if (!c.isEmpty()) {
-											valueSet.addAll(c);
+										Scanner s = new Scanner(value);
+										s.useDelimiter(REGEX_NONALPHANUMERIC);
+										while (s.hasNext()) {
+											CharSequence token = scrubToken(s.next(), caseSensitive_);
+											if (token != null && (token.length() > 2) && !isStopped(token)) {
+												tokenCount_++;
+												processToken(token, name, address, doc);
+											}
 										}
-									} catch (Throwable t) {
-										log_.warning("Unable to convert to Comparable from " + vals.getClass().getName());
 									}
 								}
 							}
+
+							if (isTrackFieldTypes()) {
+								if (!typeMap.containsKey(name)) {
+									typeMap.put(name, item.getTypeEx());
+								}
+							}
+							if (isTrackFieldValues()) {
+								if (typeMap.get(name).equals(item.getTypeEx())) {
+									Vector<Object> vals = null;
+									vals = item.getValues();
+									if (vals != null && !vals.isEmpty()) {
+										NavigableSet<Comparable> valueSet = new ConcurrentSkipListSet<Comparable>();
+										if (!vmap.containsKey(name)) {
+											vmap.put(name, valueSet);
+										} else {
+											valueSet = vmap.get(name);
+										}
+										try {
+											java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
+											if (!c.isEmpty()) {
+												valueSet.addAll(c);
+											}
+										} catch (Throwable t) {
+											log_.warning("Unable to convert to Comparable from " + vals.getClass().getName());
+										}
+									}
+								}
+							}
+						} catch (Exception e) {
+							Database db = doc.getAncestorDatabase();
+							log_.log(Level.WARNING, "Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database "
+									+ db.getFilePath(), e);
 						}
-					} catch (Exception e) {
-						Database db = doc.getAncestorDatabase();
-						log_.log(Level.WARNING,
-								"Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database " + db.getFilePath(), e);
 					}
 				}
 			}

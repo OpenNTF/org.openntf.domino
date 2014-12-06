@@ -23,6 +23,7 @@ import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.email.IEmailAttachment.Type;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.commons.util.StringUtil;
 
@@ -91,8 +92,19 @@ public class DominoEmail implements IEmail {
 	 * http://openntf.org/XSnippets.nsf/snippet.xsp?id=create-html-mails-in-ssjs-using-mime
 	 * 
 	 */
+	@Deprecated
 	public DominoEmail() {
+		currSess_ = Factory.getSession(SessionType.CURRENT);
+	}
 
+	/**
+	 * RPr: New Constructor. Should specify Session on creation
+	 * 
+	 * @param sess
+	 *            the session of that email
+	 */
+	public DominoEmail(final Session sess) {
+		currSess_ = sess;
 	}
 
 	/**
@@ -102,9 +114,6 @@ public class DominoEmail implements IEmail {
 	 * @since org.openntf.domino 4.5.0
 	 */
 	public Session getSession() {
-		if (null == currSess_) {
-			currSess_ = Factory.getSession();
-		}
 		return currSess_;
 	}
 

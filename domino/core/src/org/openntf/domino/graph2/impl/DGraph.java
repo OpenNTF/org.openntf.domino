@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import javolution.util.FastSet;
 import javolution.util.FastTable;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.impl.DbCache;
@@ -17,6 +18,7 @@ import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.exception.ElementKeyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -277,8 +279,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		return getConfiguration().getDefaultElementStore();
 	}
 
-	public FastTable<Edge> getEdgesFromIds(final NoteList list) {
-		FastTable<Edge> result = new FastTable<Edge>();
+	public DEdgeList getEdgesFromIds(final Vertex source, final NoteList list) {
+		DEdgeList result = new DEdgeList((DVertex) source);
 		for (NoteCoordinate id : list) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -289,8 +291,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	}
 
 	@Override
-	public FastSet<Edge> getEdgesFromIds(final Set<String> set) {
-		FastSet<Edge> result = new FastSet<Edge>();
+	public DEdgeList getEdgesFromIds(final Vertex source, final Set<String> set) {
+		DEdgeList result = new DEdgeList((DVertex) source);
 		for (String id : set) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -301,8 +303,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	}
 
 	@Override
-	public Set<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
-		FastSet<Edge> result = new FastSet<Edge>();
+	public DEdgeList getEdgesFromIds(final Vertex source, final Set<String> set, final String... labels) {
+		DEdgeList result = new DEdgeList((DVertex) source);
 		for (String id : set) {
 			Edge edge = getEdge(id);
 			if (edge != null) {
@@ -322,9 +324,23 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getStoreKey();
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
+		return result;
+	}
+
+	@Override
+	public Object getStoreDelegate(final DElementStore store, final Object provisionalKey) {
+		Object result = null;
+		Session session = Factory.getSession();
+		if (provisionalKey instanceof CharSequence) {
+			String key = provisionalKey.toString();
+			result = session.getDatabase(key);
+			store.setStoreKey(((Database) result).getReplicaID());
+		} else {
+			//TODO NTF Unimplemented
+		}
 		return result;
 	}
 
@@ -333,10 +349,23 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getProxyStoreKey();
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
 		return result;
 	}
 
+	@Override
+	public Object getProxyStoreDelegate(final DElementStore store, final Object provisionalKey) {
+		Object result = null;
+		Session session = Factory.getSession();
+		if (provisionalKey instanceof CharSequence) {
+			String key = provisionalKey.toString();
+			result = session.getDatabase(key);
+			store.setProxyStoreKey(((Database) result).getReplicaID());
+		} else {
+			//TODO NTF Unimplemented
+		}
+		return result;
+	}
 }

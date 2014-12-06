@@ -61,7 +61,7 @@ public class DominoAutoboxTest implements Runnable {
 		Vector<Item> items = doc.getItems();
 		for (Item item : items) {
 			if (item.getName().equalsIgnoreCase("map")) {
-				System.out.println("map: " + item.getType());
+				System.out.println("map: " + item.getTypeEx());
 				System.out.println("map value: " + item.getText());
 			}
 		}

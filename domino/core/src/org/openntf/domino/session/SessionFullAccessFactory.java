@@ -38,23 +38,17 @@ public class SessionFullAccessFactory extends AbstractSessionFactory implements 
 
 	@Override
 	public Session createSession(final String userName) throws PrivilegedActionException {
+		if (userName != null) {
+			throw new UnsupportedOperationException("This SessionType is not (yet)supported in Domino environment");
+		}
 		lotus.domino.Session raw = AccessController.doPrivileged(new PrivilegedExceptionAction<lotus.domino.Session>() {
 
 			@Override
 			public lotus.domino.Session run() throws Exception {
-				synchronized (SecurityManager.class) {
-					SecurityManager oldSm = System.getSecurityManager();
-					System.setSecurityManager(null);
-					try {
-						return lotus.domino.local.Session.createSessionWithFullAccess(userName);
-
-					} finally {
-						System.setSecurityManager(oldSm);
-					}
-				}
+				return lotus.domino.local.Session.createSessionWithFullAccess(userName);
 			}
 		}, acc_);
-		return fromLotus(raw);
+		return wrapSession(raw, true);
 	}
 
 }

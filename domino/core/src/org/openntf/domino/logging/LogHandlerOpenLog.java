@@ -7,6 +7,7 @@ import java.util.logging.LogRecord;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * LogHandlerOpenLog class
@@ -126,7 +127,7 @@ public class LogHandlerOpenLog extends Handler implements LogHandlerUpdateIF {
 			return;
 		publishing_.set(Boolean.TRUE);
 		try {
-			Session session = Factory.getSession_unchecked();
+			Session session = Factory.getSession_unchecked(SessionType.CURRENT);
 			if (session != null) {
 				_olGenerator.log(session, record, new LogRecordAdditionalInfo(record));
 			}

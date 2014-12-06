@@ -157,66 +157,32 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	@Override
 	public void addInEdge(final Edge edge) {
-		boolean adding = false;
 		String label = edge.getLabel();
 
-		// Set<String> ins = getInEdges();
 		Set<String> ins = getInEdgesSet(label);
-		//		synchronized (ins) {
 		if (!ins.contains(edge.getId())) {
-			adding = true;
-			ins.add((String) edge.getId());
-		}
-		//		}
-		if (adding) {
 			getParent().startTransaction(this);
 			Map map = getInDirtyMap();
-			//			synchronized (map) {
 			map.put(label, true);
-			//			}
 			Set<Edge> inLabelObjs = getInEdgeCache(label);
-			//			synchronized (inLabelObjs) {
 			inLabelObjs.add(edge);
-			//			}
-
-			// inDirty_ = true;
-			// Set<Edge> inObjs = getInEdgeObjects();
-			// synchronized (inObjs) {
-			// inObjs.add(edge);
-			// }
+			ins.add((String) edge.getId());
 		}
 	}
 
 	@Override
 	public void addOutEdge(final Edge edge) {
-		boolean adding = false;
 		String label = edge.getLabel();
 
-		// Set<String> outs = getOutEdges();
 		Set<String> outs = getOutEdgesSet(label);
-		//		synchronized (outs) {
 		if (!outs.contains(edge.getId())) {
-			adding = true;
-			outs.add((String) edge.getId());
-		}
-		//		}
-		if (adding) {
 			getParent().startTransaction(this);
 			Map map = getOutDirtyMap();
-			//			synchronized (map) {
 			map.put(label, true);
-			//			}
 			Set<Edge> outLabelObjs = getOutEdgeCache(label);
-			//			synchronized (outLabelObjs) {
 			outLabelObjs.add(edge);
-			//			}
-			// outDirty_ = true;
-			// Set<Edge> outObjs = getOutEdgeObjects();
-			// synchronized (outObjs) {
-			// outObjs.add(edge);
-			// }
+			outs.add((String) edge.getId());
 		}
-		// setProperty(DominoVertex.OUT_NAME, outEdges_);
 	}
 
 	public java.util.Set<String> getBothEdges() {

@@ -6,16 +6,11 @@ package org.openntf.domino.xsp.helpers;
 import static org.openntf.domino.utils.DominoUtils.handleException;
 
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 import lotus.domino.View;
-import lotus.domino.ViewColumn;
 import lotus.domino.ViewEntry;
-
-import org.openntf.domino.utils.Factory;
 
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
@@ -39,41 +34,38 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 */
 	public OpenntfViewNavigatorEx(final ViewNavigatorFactory paramViewNavigatorFactory) {
 		super(paramViewNavigatorFactory);
-		// System.out.println("New OpentfViewNavigatorEx constructed in request id "
-		// + System.identityHashCode(FacesContext.getCurrentInstance()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ibm.xsp.model.domino.viewnavigator.AbstractNavigator#initNavigator(lotus.domino.View)
-	 */
-	@SuppressWarnings({ "unchecked", "null" })
-	@Override
-	public void initNavigator(final View paramView) throws NotesException {
-		// System.out.println("Initializing navigator for view " + paramView.getClass().getName() + ": " + paramView.getName()
-		// + " in request id " + System.identityHashCode(FacesContext.getCurrentInstance()));
-		super.initNavigator(paramView);
-
-		Vector<ViewColumn> cols = paramView.getColumns();
-
-		for (int i = 0; i < cols.size(); i++) {
-			ViewColumn col = cols.get(i);
-			org.openntf.domino.Session openNtfSession = null;
-
-			if (col.isConstant()) {
-				if (openNtfSession == null) {
-					Session sess = paramView.getParent().getParent();
-					if (sess instanceof org.openntf.domino.Session) {
-						openNtfSession = (org.openntf.domino.Session) sess;
-					} else {
-						openNtfSession = Factory.fromLotus(sess, org.openntf.domino.Session.SCHEMA, null);
-					}
-				}
-				openNtfSession.evaluate(col.getFormula());
-			}
-		}
-	}
+	/// RPr: Constant values are now handled in the {@link org.openntf.domino.impl.View.DominoColumnInfo} now
+	//	/*
+	//	 * (non-Javadoc)
+	//	 * 
+	//	 * @see com.ibm.xsp.model.domino.viewnavigator.AbstractNavigator#initNavigator(lotus.domino.View)
+	//	 */
+	//	@SuppressWarnings({ "unchecked", "null" })
+	//	@Override
+	//	public void initNavigator(final View paramView) throws NotesException {
+	//		super.initNavigator(paramView);
+	//
+	//		Vector<ViewColumn> cols = paramView.getColumns();
+	//
+	//		for (int i = 0; i < cols.size(); i++) {
+	//			ViewColumn col = cols.get(i);
+	//			org.openntf.domino.Session openNtfSession = null;
+	//
+	//			if (col.isConstant()) {
+	//				if (openNtfSession == null) {
+	//					Session sess = paramView.getParent().getParent();
+	//					if (sess instanceof org.openntf.domino.Session) {
+	//						openNtfSession = (org.openntf.domino.Session) sess;
+	//					} else {
+	//						openNtfSession = Factory.fromLotus(sess, org.openntf.domino.Session.SCHEMA, null);
+	//					}
+	//				}
+	//				openNtfSession.evaluate(col.getFormula());
+	//			}
+	//		}
+	//	}
 
 	/*
 	 * (non-Javadoc)
@@ -135,7 +127,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		return super.readEntries(paramView, paramInt1, paramInt2);
 	}
 
-	// 2014-07-16 The entry is removed completely as it will never work. See DominoViewEntryArray writeExternal/readExternal
+	// RPr: 2014-07-16 The entry is removed completely as it will never work. See DominoViewEntryArray writeExternal/readExternal
 
 	//	/**
 	//	 * Entry class

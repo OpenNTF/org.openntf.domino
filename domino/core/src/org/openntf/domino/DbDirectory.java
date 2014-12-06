@@ -19,13 +19,14 @@ import java.util.Collection;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.Resurrectable;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
  * The Interface DbDirectory.
  */
 public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory, org.openntf.domino.ext.DbDirectory,
-		Collection<org.openntf.domino.Database>, SessionDescendant {
+		Collection<org.openntf.domino.Database>, SessionDescendant, Resurrectable {
 
 	public static class Schema extends FactorySchema<DbDirectory, lotus.domino.DbDirectory, Session> {
 		@Override

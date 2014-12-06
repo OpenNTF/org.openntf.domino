@@ -1,7 +1,7 @@
 package org.openntf.domino.xots;
 
 import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -11,15 +11,10 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.AbstractDominoRunnable;
-import org.openntf.domino.thread.model.Context;
-import org.openntf.domino.thread.model.Schedule;
-import org.openntf.domino.thread.model.Scope;
-import org.openntf.domino.thread.model.SessionType;
-import org.openntf.domino.thread.model.XotsTasklet;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
-@Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
-@XotsTasklet(session = SessionType.NATIVE, scope = Scope.NONE, context = Context.XOTS)
+@Tasklet(session = Tasklet.Session.NATIVE, scope = Tasklet.Scope.NONE, context = Tasklet.Context.PLUGIN, isPublic = true)
 /**
  * A Runnable that scans for tasklet classes on a specified server
  * 
@@ -30,8 +25,11 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	private static final long serialVersionUID = 1L;
 	private static final Logger log_ = Logger.getLogger(XotsNsfScanner.class.getName());
 
-	private final boolean TRACE = false;
 	private final String serverName_;
+
+	public XotsNsfScanner() {
+		serverName_ = "";
+	}
 
 	public XotsNsfScanner(final String serverName) {
 		serverName_ = serverName;
@@ -43,22 +41,22 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 
 	@Override
 	public void run() {
+		Factory.println(this, "Scan started");
 		scan();
-		System.out.println("Current XOTS Classes:");
-		System.out.println(XotsScheduler.INSTANCE);
+		Factory.println(this, "Scan stopped");
 	}
 
 	/**
 	 * Scans all databases on the specified server
 	 */
 	public void scan() {
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT); // Returns a XotsSessionType.NATIVE
 		DbDirectory dir = session.getDbDirectory(getServerName());
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
 		for (Database db : dir) {
 			try {
 				if (!scanDatabase(db)) {
-					XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+					//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
@@ -76,7 +74,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	public void scan(final Database db) {
 		try {
 			if (!scanDatabase(db)) {
-				XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
+				//XotsScheduler.INSTANCE.unregisterTasklets(db.getApiPath());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -104,8 +102,8 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			if (icon != null) {
 				String[] xotsClassNames = icon.getXotsClassNames();
 				if (xotsClassNames != null && xotsClassNames.length > 0) {
-					if (TRACE) {
-						System.out.println("TRACE: Adding Xots Tasklets for database " + db.getApiPath());
+					if (log_.isLoggable(Level.FINE)) {
+						log_.fine("Adding Xots Tasklets for database " + db.getApiPath());
 					}
 
 					//					String dbPath = db.getFilePath().replace('\\', '/');

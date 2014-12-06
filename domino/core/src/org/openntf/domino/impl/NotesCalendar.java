@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -33,7 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class NotesCalendar.
  */
 public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
-org.openntf.domino.NotesCalendar {
+		org.openntf.domino.NotesCalendar {
 
 	/**
 	 * Instantiates a new outline.
@@ -411,11 +413,25 @@ org.openntf.domino.NotesCalendar {
 	 */
 	@Override
 	public String getApptunidFromUID(final String arg0, final boolean arg1) {
+		String result = null;
+		Class<?> klazz = getDelegate().getClass();
 		try {
-			return getDelegate().getApptunidFromUID(arg0, arg1);
-		} catch (NotesException e) {
+			Method chkMethod = klazz.getMethod("getApptunidFromUID", String.class, Boolean.TYPE);
+			try {
+				result = (String) chkMethod.invoke(getDelegate(), arg0, arg1);
+			} catch (IllegalArgumentException e) {
+				DominoUtils.handleException(e);
+			} catch (IllegalAccessException e) {
+				DominoUtils.handleException(e);
+			} catch (InvocationTargetException e) {
+				DominoUtils.handleException(e);
+			}
+		} catch (SecurityException e) {
 			DominoUtils.handleException(e);
-			return null;
+		} catch (NoSuchMethodException e) {
+			Exception noMethod = new RuntimeException("Method is not available on this version of Domino", e);
+			DominoUtils.handleException(noMethod);
 		}
+		return result;
 	}
 }

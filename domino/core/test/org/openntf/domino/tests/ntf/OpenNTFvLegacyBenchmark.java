@@ -2,11 +2,11 @@ package org.openntf.domino.tests.ntf;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
+import org.openntf.domino.junit.TestRunnerUtil;
 
 public enum OpenNTFvLegacyBenchmark {
 	INSTANCE;
@@ -15,13 +15,12 @@ public enum OpenNTFvLegacyBenchmark {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 3;
-	private static final int delay = 250;
+	private static final int THREAD_COUNT = 1;
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
 	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
-		"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
+			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
 	public static class LegacyDoer implements Runnable {
 		int nameCount = 0;
@@ -249,7 +248,6 @@ public enum OpenNTFvLegacyBenchmark {
 			sb.append(dateCount + " datetimes with legacy API.");
 			System.out.println(sb.toString());
 		}
-
 	}
 
 	public static class OpenNTFDoer extends org.openntf.domino.thread.AbstractDominoRunnable {
@@ -333,30 +331,30 @@ public enum OpenNTFvLegacyBenchmark {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSessionFullAccess();
+			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSession();
 			org.openntf.domino.Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			org.openntf.domino.Database db = s.getDatabase(server, dbPath);
 
-			iterateForms(db);
+			//			iterateForms(db);
 			iterateAllDocuments(db);
-
-			org.openntf.domino.NoteCollection nc = db.createNoteCollection(false);
-			nc.buildCollection();
-
-			org.openntf.domino.View view = db.getView("NameMessageEventMessages");
-			List<String> keys = new ArrayList<String>();
-			keys.add("Mail");
-			keys.add("2");
-			org.openntf.domino.DocumentCollection dc = view.getAllDocumentsByKey(keys, false);
-			System.out.println("dc: " + dc.getCount());
-			StringBuilder sbc = new StringBuilder();
-			for (org.openntf.domino.Document doc : dc) {
-				sbc.append(doc.getNoteID());
-			}
-
-			org.openntf.domino.ViewEntryCollection allViewEntries = view.getAllEntries();
-			System.out.println("all view entries: " + allViewEntries.getCount());
+			//
+			//			org.openntf.domino.NoteCollection nc = db.createNoteCollection(false);
+			//			nc.buildCollection();
+			//
+			//			org.openntf.domino.View view = db.getView("NameMessageEventMessages");
+			//			List<String> keys = new ArrayList<String>();
+			//			keys.add("Mail");
+			//			keys.add("2");
+			//			org.openntf.domino.DocumentCollection dc = view.getAllDocumentsByKey(keys, false);
+			//			System.out.println("dc: " + dc.getCount());
+			//			StringBuilder sbc = new StringBuilder();
+			//			for (org.openntf.domino.Document doc : dc) {
+			//				sbc.append(doc.getNoteID());
+			//			}
+			//
+			//			org.openntf.domino.ViewEntryCollection allViewEntries = view.getAllEntries();
+			//			System.out.println("all view entries: " + allViewEntries.getCount());
 
 			long elapsed = System.nanoTime() - start;
 			StringBuilder sb = new StringBuilder();
@@ -377,22 +375,8 @@ public enum OpenNTFvLegacyBenchmark {
 	}
 
 	public static void main(final String[] args) {
-		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new OpenNTFDoer());
-		}
-		de.shutdown();
-
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			lotus.domino.NotesThread nthread = new lotus.domino.NotesThread(new LegacyDoer(), "Legacy " + i);
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			nthread.start();
-		}
-
+		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+		TestRunnerUtil.runAsNotesThread(LegacyDoer.class, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }

@@ -36,6 +36,7 @@ import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.Resurrectable;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -393,11 +394,23 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the cpp-id
 	 */
 	void setDelegate(final D delegate, final long cppId) {
-		delegate_ = delegate;
-		if (cppId != 0) {
-			cpp_object = cppId;
+		if (delegate == null && cppId == 0l) {
+			delegate_ = null;
+			cpp_object = 0l;
 		} else {
-			cpp_object = getLotusId(delegate);
+			if (delegate_ != null && delegate_ != delegate) {
+				// an other object is set now, so we must recache that object
+				getFactory().recacheLotusObject(delegate, this, parent_);
+				if (log_.isLoggable(Level.FINEST)) {
+					log_.log(Level.FINE, "Object of " + this.getClass().getName() + " was recached. Changes may be lost", new Throwable());
+				}
+			}
+			delegate_ = delegate;
+			if (cppId != 0) {
+				cpp_object = cppId;
+			} else {
+				cpp_object = getLotusId(delegate);
+			}
 		}
 	}
 
@@ -505,7 +518,14 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
+		if (this instanceof Resurrectable && isDead(delegate_)) {
+			resurrect();
+		}
 		return delegate_;
+	}
+
+	protected void resurrect() {
+		throw new AbstractMethodError();
 	}
 
 	// wrap objects. Delegate this to the wrapperFactory
@@ -881,6 +901,20 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((Class<?>) value).getName();
 		} else if (value instanceof Enum<?>) {
 			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
+			//		} else if (value instanceof EnumSet<?>) {
+			//			EnumSet<?> set = (EnumSet<?>) value;
+			//			Vector<String> result = new Vector<String>();
+			//			for (Enum<?> e : set) {
+			//				result.add(e.getDeclaringClass().getName() + " " + e.name());
+			//			}
+			//			return result;
+			//		} else if (value instanceof Enum<?>[]) {
+			//			Enum<?>[] set = (Enum<?>[]) value;
+			//			Vector<String> result = new Vector<String>();
+			//			for (Enum<?> e : set) {
+			//				result.add(e.getDeclaringClass().getName() + " " + e.name());
+			//			}
+			//			return result;
 		} else if (value instanceof Formula) {
 			return ((Formula) value).getExpression();
 		}

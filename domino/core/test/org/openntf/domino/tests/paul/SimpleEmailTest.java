@@ -9,6 +9,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.email.DominoEmail;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * @author withersp
@@ -36,7 +37,7 @@ public class SimpleEmailTest {
 		Database d = null;
 		NotesThread.sinitThread();
 		try {
-			s = Factory.getSession();
+			s = Factory.getSession(SessionType.CURRENT);
 			d = s.getDatabase("heracles/intec-pw", "OpenNTF\\OpenNTFDomino.nsf");
 			SimpleEmailTest a = new SimpleEmailTest(s, d);
 			a.NotesMain();
@@ -60,7 +61,7 @@ public class SimpleEmailTest {
 			if (this.session != null) {
 				s = this.session;
 				db = this.database;
-				DominoEmail myEmail = new DominoEmail();
+				DominoEmail myEmail = new DominoEmail(s);
 				myEmail.createSimpleEmail("pwithers@intec.co.uk", "", "", "OpenNTF Domino Email",
 						"Please find attached an email from OpenNTF Domino API", "");
 			}

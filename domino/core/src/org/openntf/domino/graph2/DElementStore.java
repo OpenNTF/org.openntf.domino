@@ -35,9 +35,15 @@ public interface DElementStore extends Externalizable {
 
 	public void setStoreKey(Long key);
 
+	public void setStoreKey(CharSequence key);
+
 	public Long getProxyStoreKey();
 
 	public void setProxyStoreKey(Long key);
+
+	public void setProxyStoreKey(CharSequence key);
+
+	public void setProxyStoreDelegate(Object proxyStore);
 
 	public Vertex addVertex(Object id);
 

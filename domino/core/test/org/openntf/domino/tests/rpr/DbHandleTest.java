@@ -7,11 +7,12 @@ import org.openntf.domino.impl.Base;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class DbHandleTest implements Runnable {
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new DbHandleTest());
+		TestRunnerUtil.runAsDominoThread(new DbHandleTest(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public DbHandleTest() {
@@ -22,7 +23,7 @@ public class DbHandleTest implements Runnable {
 	public void run() {
 		Factory.enableCounters(true, false);
 		try {
-			lotus.domino.Session s = Factory.toLotus(Factory.getSession());
+			lotus.domino.Session s = Factory.toLotus(Factory.getSession(SessionType.CURRENT));
 			lotus.domino.Database d1 = s.getDatabase("", "");
 			lotus.domino.Database d2 = s.getDatabase("", "");
 			System.out.println("d1.cppId: " + Base.getLotusId(d1));

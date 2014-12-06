@@ -16,6 +16,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class MassViewEntryCollectionTest {
@@ -26,7 +27,7 @@ public class MassViewEntryCollectionTest {
 	@Test
 	public void run() {
 
-		Session s = Factory.getSession();
+		Session s = Factory.getSession(SessionType.CURRENT);
 		Database source = s.getDatabase("", TARGET, true);
 		View view = source.getView(VIEW);
 		System.out.println("-- START --");
