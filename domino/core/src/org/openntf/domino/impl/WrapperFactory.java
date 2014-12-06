@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,8 +29,6 @@ import lotus.domino.local.NotesBase;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
-import org.openntf.domino.DateRange;
-import org.openntf.domino.DateTime;
 import org.openntf.domino.Directory;
 import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
@@ -44,6 +43,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.SessionHasNoParent;
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.thread.DominoReferenceCache;
 import org.openntf.domino.types.FactorySchema;
 
@@ -602,7 +602,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 */
 	@Override
 	public DateTime createDateTime(final Date date, final Session parent) {
-		return new org.openntf.domino.impl.DateTime(date, parent, this, 0L);
+		return new org.openntf.domino.impl.DateTime(date, parent, this);
 	}
 
 	/* (non-Javadoc)
@@ -613,4 +613,29 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return new org.openntf.domino.impl.DateRange(start, end, parent, this);
 	}
 
+	@Override
+	public org.openntf.domino.DateTime createDateTime(final String dateString, final Session parent) throws ParseException {
+		return new org.openntf.domino.impl.DateTime(dateString, parent, this);
+	}
+
+	@Override
+	public org.openntf.domino.DateRange createDateRange(final String rangeString, final Session parent) throws ParseException {
+		return new org.openntf.domino.impl.DateRange(rangeString, parent, this);
+	}
+
+	@Override
+	public Document createDeferredDocument(final int noteid, final Database parent) {
+		return new org.openntf.domino.impl.Document(noteid, parent, this);
+	}
+
+	@Override
+	public Document createDeferredDocument(final String unid, final Database parent) {
+		return new org.openntf.domino.impl.Document(unid, parent, this);
+	}
+
+	@Override
+	public Database createClosedDatabase(final DatabaseMetaData metaData, final Session parent) {
+		// TODO Auto-generated method stub
+		return new org.openntf.domino.impl.Database(metaData, parent, this);
+	}
 }

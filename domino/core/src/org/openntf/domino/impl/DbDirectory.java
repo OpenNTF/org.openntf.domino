@@ -394,7 +394,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	public Database getNextDatabase() {
 		// RPr: hopefully this will work the same way as the original lotus implementation does
 		if (dbIter.hasNext())
-			return dbIter.next().getDatabase(getAncestorSession());
+			return getFactory().createClosedDatabase(dbIter.next(), getAncestorSession());
 		return null;
 		// This will never work, as the DBs in the getDbHolderSet() are in a complete different order 
 		//		try {
@@ -454,7 +454,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 
 			@Override
 			public Database next() {
-				return metaIter_.next().getDatabase(getAncestorSession());
+				return getFactory().createClosedDatabase(metaIter_.next(), getAncestorSession());
 			}
 
 			@Override
@@ -701,8 +701,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	public Object[] toArray() {
 		Object[] ret = new Object[size()];
 		int i = 0;
-		for (DatabaseMetaData dbHolder_ : getMetaDataSet()) {
-			ret[i++] = dbHolder_.getDatabase(getAncestorSession());
+		for (DatabaseMetaData metaData : getMetaDataSet()) {
+			ret[i++] = getFactory().createClosedDatabase(metaData, getAncestorSession());
 		}
 		return ret;
 	}

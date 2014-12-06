@@ -16,8 +16,9 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
+import java.io.Externalizable;
 import java.io.IOException;
-import java.io.NotSerializableException;
+import java.io.InvalidClassException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.ArrayList;
@@ -188,11 +189,11 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	//		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
 	//		super(null, null);
 	//	}
-	@Deprecated
-	@SuppressWarnings("rawtypes")
-	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
-		this(lotus, null, null, 0L);
-	}
+	//	@Deprecated
+	//	@SuppressWarnings("rawtypes")
+	//	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
+	//		this(lotus, null, null, 0L);
+	//	}
 
 	// FIXME NTF - not sure if there's a context where this makes sense...
 	/**
@@ -208,26 +209,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 *            the cpp-id
 	 */
 	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
-		this(lotus, parent, wf, cpp_id, false);
-		//		try {
-		//			Database curDb = Factory.fromLotus(lotus.getCurrentDatabase(), Database.SCHEMA, this);
-		//			this.setCurrentDatabase(curDb);
-		//		} catch (NotesException e) {
-		//			DominoUtils.handleException(e);
-		//		}
-	}
-
-	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id,
-			final boolean isFeatureRestricted) {
-		super(lotus, null, wf, cpp_id, NOTES_SESSION);
-		//		try {
-		//			Database curDb = Factory.fromLotus(lotus.getCurrentDatabase(), Database.SCHEMA, this);
-		//			this.setCurrentDatabase(curDb);
-		//		} catch (NotesException e) {
-		//			DominoUtils.handleException(e);
-		//		}
-		featureRestricted_ = isFeatureRestricted;
+		super(lotus, parent, wf, cpp_id, NOTES_SESSION);
 		initialize(lotus);
+		featureRestricted_ = false; // currently not implemented
 	}
 
 	/* (non-Javadoc)
@@ -2097,26 +2081,37 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		super.recycle();
 	}
 
+	//-------------- Externalize/Deexternalize stuff ------------------
+	private static final int EXTERNALVERSIONUID = 20141205;
+
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
+	 */
+	@Deprecated
 	public Session() {
 		super(null, null, NOTES_SESSION);
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
-		// TODO Auto-generated method stub
-		if (sessionType_ == null)
-			throw new NotSerializableException("Session has no session factory");
-		out.writeInt(1); // data version
+		super.writeExternal(out);
+		out.writeInt(EXTERNALVERSIONUID); // data version
+
 		getCurrentDatabase(); // initializes the currentDatabaseApiPath_
-		out.writeObject(sessionType_);
+		if (sessionType_ == null) {
+			log_.warning("Serializing a session without a sessionType");
+			out.writeObject(SessionType.CURRENT);
+		} else {
+			out.writeObject(sessionType_);
+		}
 		out.writeObject(username_);
 		out.writeObject(currentDatabaseApiPath_);
 
 		out.writeObject(isAutoMime_);
-		// out.writeObject(formatter_); not needed!
 		out.writeObject(fixes_);
 		out.writeObject(eventFactory_);
 		out.writeBoolean(featureRestricted_);
+		// out.writeObject(formatter_); not needed!
 		// out.writeBoolean(noRecycle); not needed - done by factory
 
 	}
@@ -2124,8 +2119,11 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-		if (in.readInt() != 1)
-			throw new IllegalStateException("Data Version does not match");
+		super.readExternal(in);
+
+		int version = in.readInt();
+		if (version != EXTERNALVERSIONUID)
+			throw new InvalidClassException("Cannot read dataversion " + version);
 
 		sessionType_ = (SessionType) in.readObject();
 		username_ = (String) in.readObject();
@@ -2140,23 +2138,17 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	protected Object readResolve() {
 		Session ret = (Session) recreateSession();
-		assertEquals(isAutoMime_, ret.isAutoMime_);
-		assertEquals(fixes_, ret.fixes_);
-		assertEquals(eventFactory_, ret.eventFactory_);
-		assertEquals(featureRestricted_, ret.featureRestricted_);
+		readResolveCheck(isAutoMime_, ret.isAutoMime_);
+		readResolveCheck(fixes_, ret.fixes_);
+		readResolveCheck(eventFactory_, ret.eventFactory_);
+		readResolveCheck(featureRestricted_, ret.featureRestricted_);
 		return ret;
-	}
-
-	private void assertEquals(final Object expected, final Object given) {
-		if (expected == null ? given != null : !expected.equals(given)) {
-			log_.warning("Deserializing different session. Given: " + given + ", expected: " + expected);
-		}
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((currentDatabaseApiPath_ == null) ? 0 : currentDatabaseApiPath_.hashCode());
 		result = prime * result + ((sessionType_ == null) ? 0 : sessionType_.hashCode());
 		result = prime * result + ((username_ == null) ? 0 : username_.hashCode());
@@ -2165,25 +2157,33 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (!super.equals(obj)) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (!(obj instanceof Session)) {
 			return false;
+		}
 		Session other = (Session) obj;
 		if (currentDatabaseApiPath_ == null) {
-			if (other.currentDatabaseApiPath_ != null)
+			if (other.currentDatabaseApiPath_ != null) {
 				return false;
-		} else if (!currentDatabaseApiPath_.equals(other.currentDatabaseApiPath_))
+			}
+		} else if (!currentDatabaseApiPath_.equals(other.currentDatabaseApiPath_)) {
 			return false;
-		if (sessionType_ != other.sessionType_)
+		}
+		if (sessionType_ != other.sessionType_) {
 			return false;
+		}
 		if (username_ == null) {
-			if (other.username_ != null)
+			if (other.username_ != null) {
 				return false;
-		} else if (!username_.equals(other.username_))
+			}
+		} else if (!username_.equals(other.username_)) {
 			return false;
+		}
 		return true;
 	}
 

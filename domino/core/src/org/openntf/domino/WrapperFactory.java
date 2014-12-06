@@ -3,10 +3,12 @@
  */
 package org.openntf.domino;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
+import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.types.FactorySchema;
 
 /**
@@ -110,21 +112,45 @@ public interface WrapperFactory {
 	/**
 	 * Wraps a Java-Date into a DateTime object
 	 * 
-	 * @param start
+	 * @param date
+	 *            the {@link Date}
 	 * @param parent
+	 *            the parent session (may be null)
 	 * @return The resulant DateTime
 	 */
-	DateTime createDateTime(Date start, Session parent);
+	DateTime createDateTime(Date date, Session parent);
+
+	/**
+	 * Converts a string into a DateTime object
+	 * 
+	 * @param date
+	 *            a valid (notes) date string
+	 * @return The resulant DateTime
+	 */
+
+	DateTime createDateTime(String dateString, Session parent) throws ParseException;
 
 	/**
 	 * Wraps start and end Java-Date into a DateRange object
 	 * 
 	 * @param start
+	 *            the start{@link Date}
 	 * @param end
+	 *            the end{@link Date}
 	 * @param parent
+	 *            the parent session (may be null)
 	 * @return The resultant DateRange
 	 */
 	DateRange createDateRange(Date start, Date end, Session parent);
+
+	/**
+	 * Converts a date range string into a DateRange
+	 * 
+	 * @param rangeString
+	 * @return The resulant DateTime
+	 * @throws ParseException
+	 */
+	DateRange createDateRange(String rangeString, Session parent) throws ParseException;
 
 	/**
 	 * Disables autorecycle for that element. By default, AutoRecycle for Session and AgentContext is always disabled
@@ -151,5 +177,11 @@ public interface WrapperFactory {
 	 * @return null if there aren't any, array of correct size, if there are
 	 */
 	public String[] getLastWrappedDocsInThread();
+
+	Document createDeferredDocument(int noteid, Database parent);
+
+	Document createDeferredDocument(String unid, Database parent);
+
+	Database createClosedDatabase(DatabaseMetaData metaData, Session parent);
 
 }

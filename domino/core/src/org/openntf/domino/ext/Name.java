@@ -26,4 +26,5 @@ public interface Name {
 	 */
 	public java.util.Collection<String> getGroups(String serverName);
 
+	public org.openntf.domino.Name clone();
 }

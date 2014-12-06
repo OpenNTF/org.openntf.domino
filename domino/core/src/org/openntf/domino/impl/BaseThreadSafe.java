@@ -31,7 +31,7 @@ import org.openntf.domino.types.Resurrectable;
  *            the parent type
  * 
  */
-public class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
+public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
 		extends Base<T, D, P> implements Resurrectable {
 
 	/** The Constant log_. */
@@ -145,4 +145,6 @@ public class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotu
 		ds._cppSession = cppSession;
 	}
 
+	@Override
+	protected abstract void resurrect();
 }

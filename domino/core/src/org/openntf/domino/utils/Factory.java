@@ -628,7 +628,7 @@ public enum Factory {
 					wf = DEFAULT_WRAPPER_FACTORY;
 			} catch (Throwable t) {
 				log_.log(Level.WARNING, "Getting default WrapperFactory", t);
-				wf = new org.openntf.domino.impl.WrapperFactory();
+				wf = DEFAULT_WRAPPER_FACTORY;
 			}
 			tv.wrapperFactory = wf;
 		}

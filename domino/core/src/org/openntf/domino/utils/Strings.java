@@ -731,8 +731,7 @@ public enum Strings {
 	 */
 	@SuppressWarnings("restriction")
 	public static String getSpawnedRecordID(final lotus.domino.Name name) {
-		org.openntf.domino.Name newname = Names.createName(name);
-		return Strings.getSpawnedRecordID(newname);
+		return Strings.getSpawnedRecordID(Factory.fromLotus(name, Name.SCHEMA, null));
 	}
 
 	/**
@@ -755,7 +754,7 @@ public enum Strings {
 				throw new IllegalArgumentException("Session is null");
 			}
 
-			return Strings.getSpawnedRecordID(new org.openntf.domino.impl.Name(session));
+			return Strings.getSpawnedRecordID(session.createName(session.getEffectiveUserName()));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);

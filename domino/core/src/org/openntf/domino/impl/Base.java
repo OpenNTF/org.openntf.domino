@@ -15,6 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -195,7 +199,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public abstract long GetCppObj();
 
 	/** The parent_. */
-	protected final P parent_;
+	protected P parent_;
 
 	/**
 	 * returns the cpp-session id. Needed for some BackendBridge functions
@@ -1182,6 +1186,64 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@Deprecated
 	Vector getStringArrayProperty(final int paramInt) {
 		throw new NotImplementedException();
+	}
+
+	private static final int EXTERNALVERSIONUID = 20141205; // The current date (when it was implemented)
+
+	protected void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeInt(EXTERNALVERSIONUID);
+		out.writeObject(parent_);
+		// factory is final and unchangeable
+		// I also do not know if serializing listeners will make sense, so I don't do it
+	}
+
+	protected void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		int version = in.readInt();
+
+		if (version != EXTERNALVERSIONUID)
+			throw new InvalidClassException("Cannot read dataversion " + version);
+		parent_ = (P) in.readObject();
+
+	}
+
+	protected void readResolveCheck(final Object expected, final Object given) {
+		if (expected == null ? given != null : !expected.equals(given)) {
+			log_.warning("Deserializing different " + getClass().getSimpleName() + ". Given: " + given + ", expected: " + expected);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + clsid;
+		result = prime * result + ((parent_ == null) ? 0 : parent_.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Base)) {
+			return false;
+		}
+		Base other = (Base) obj;
+		if (clsid != other.clsid) {
+			return false;
+		}
+		if (parent_ == null) {
+			if (other.parent_ != null) {
+				return false;
+			}
+		} else if (!parent_.equals(other.parent_)) {
+			return false;
+		}
+		return true;
 	}
 
 }

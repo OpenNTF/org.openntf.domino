@@ -96,4 +96,5 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	 */
 	public void setLocalTime(Calendar calendar);
 
+	public org.openntf.domino.DateTime clone();
 }

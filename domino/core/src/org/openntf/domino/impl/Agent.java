@@ -15,7 +15,14 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -29,12 +36,17 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+
+import com.ibm.commons.util.StringUtil;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Agent.
  */
-public class Agent extends BaseNonThreadSafe<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
+public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
+	private static final Logger log_ = Logger.getLogger(Agent.class.getName());
+	private String names_;
 
 	/**
 	 * Instantiates a new agent.
@@ -50,6 +62,7 @@ public class Agent extends BaseNonThreadSafe<org.openntf.domino.Agent, lotus.dom
 	 */
 	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Database parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_MACRO);
+		initialize(delegate);
 
 	}
 
@@ -59,6 +72,24 @@ public class Agent extends BaseNonThreadSafe<org.openntf.domino.Agent, lotus.dom
 	@Override
 	protected Database findParent(final lotus.domino.Agent delegate) throws NotesException {
 		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
+	}
+
+	protected void initialize(final lotus.domino.Agent delegate) {
+
+		try {
+			names_ = delegate.getName();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+
+	}
+
+	private static String sGetUniversalID(final lotus.domino.Agent agent) {
+		try {
+			return agent.getNotesURL();
+		} catch (NotesException e) {
+			return "";
+		}
 	}
 
 	/*
@@ -789,6 +820,94 @@ public class Agent extends BaseNonThreadSafe<org.openntf.domino.Agent, lotus.dom
 
 	private IDominoEvent generateEvent(final EnumEvent event, final Object payload) {
 		return getAncestorDatabase().generateEvent(event, this, payload);
+	}
+
+	@Override
+	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		Database db = getAncestorDatabase();
+		try {
+
+			lotus.domino.Agent view = recreateAgent();
+			setDelegate(view, 0, true);
+			/* No special logging, since by now View is a BaseThreadSafe */
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	//-------------- Externalize  stuff ------------------
+	private static final int EXTERNALVERSIONUID = 20141205;
+
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
+	 */
+	@Deprecated
+	public Agent() {
+		super(null, null, NOTES_MACRO);
+	}
+
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		super.writeExternal(out);
+		out.writeInt(EXTERNALVERSIONUID); // data version
+
+		out.writeObject(names_);
+
+	}
+
+	@Override
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		super.readExternal(in);
+
+		int version = in.readInt();
+		if (version != EXTERNALVERSIONUID)
+			throw new InvalidClassException("Cannot read dataversion " + version);
+
+		names_ = (String) in.readObject();
+
+	}
+
+	private lotus.domino.Agent recreateAgent() throws NotesException {
+		lotus.domino.Database d = toLotus(getAncestorDatabase());
+		String[] agNames = StringUtil.splitString(names_, '|');
+
+		lotus.domino.Agent ret = d.getAgent(agNames[0]);
+		if (ret == null) {
+			throw new IllegalStateException("agent '" + agNames[0] + "' not found in " + getAncestorDatabase());
+		}
+		if (!names_.equals(ret.getName())) {
+			// try aliases!
+			lotus.domino.Agent candidate = null;
+			for (String agName : agNames) {
+				lotus.domino.Agent ag = d.getAgent(agName);
+				if (candidate == null && ag != null && names_.equals(ag.getName())) {
+					candidate = ag;
+					break;
+				} else if (!ret.equals(ag)) {
+					// wrap every view, so that it gets recycled
+					Factory.fromLotus(ag, Agent.SCHEMA, getAncestorDatabase());
+					// we MUST iterate to the end and not break!
+				}
+			}
+			if (candidate != null) {
+				log_.log(Level.WARNING, "The agent name '" + agNames[0] + "' is not unique in " + getAncestorDatabase() + ". View1: "
+						+ candidate.getName() + ", View2:" + ret.getName());
+				Factory.fromLotus(ret, Agent.SCHEMA, getAncestorDatabase());
+				ret = candidate;
+			}
+
+		}
+		return ret;
+	}
+
+	protected Object readResolve() {
+		// TODO: The Agent name may not be acourate enough, if the view is not unique
+		try {
+			return Factory.fromLotus(recreateAgent(), Agent.SCHEMA, getAncestorDatabase());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return this;
+		}
 	}
 
 }

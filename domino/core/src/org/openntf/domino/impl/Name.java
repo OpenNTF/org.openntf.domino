@@ -39,11 +39,11 @@ import org.openntf.domino.utils.Strings;
  */
 
 public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
-		Comparable<Name> {
+		Comparable<Name>, Cloneable {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
-	private boolean Hierarchical;
+	private boolean _hierarchical;
 
 	/*
 	 * Deprecated, but needed for Externalization
@@ -53,52 +53,52 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_NAME);
 	}
 
-	/**
-	 * Optional Constructor
-	 * 
-	 * @param session
-	 *            Session used for Name processing
-	 */
-	public Name(final Session session) {
-		super(null, session, null, 0, NOTES_NAME);
-		this.initialize(session.getEffectiveUserName());
-	}
+	//	/**
+	//	 * Optional Constructor
+	//	 * 
+	//	 * @param session
+	//	 *            Session used for Name processing
+	//	 */
+	//	public Name(final Session session) {
+	//		super(null, session, null, 0, NOTES_NAME);
+	//		this.initialize(session.getEffectiveUserName());
+	//	}
 
-	/**
-	 * Optional Constructor to clone a name
-	 * 
-	 * @param name
-	 *            the name to clone
-	 */
-	public Name(final Session session, final lotus.domino.Name name) throws NotesException {
-		super(null, session, null, 0, NOTES_NAME);
-		this.initialize(name);
-	}
+	//	/**
+	//	 * Optional Constructor to clone a name
+	//	 * 
+	//	 * @param name
+	//	 *            the name to clone
+	//	 */
+	//	public Name(final Session session, final lotus.domino.Name name) throws NotesException {
+	//		super(null, session, null, 0, NOTES_NAME);
+	//		this.initialize(name);
+	//	}
 
-	/**
-	 * Optional Constructor
-	 * 
-	 * @param session
-	 *            Session used for Name processing
-	 * 
-	 * @param name
-	 *            String used to construct the Name object
-	 */
-	public Name(final Session session, final String name) {
-		super(null, session, null, 0, NOTES_NAME);
-		this.initialize(name);
-	}
+	//	/**
+	//	 * Optional Constructor
+	//	 * 
+	//	 * @param session
+	//	 *            Session used for Name processing
+	//	 * 
+	//	 * @param name
+	//	 *            String used to construct the Name object
+	//	 */
+	//	public Name(final Session session, final String name) {
+	//		super(null, session, null, 0, NOTES_NAME);
+	//		this.initialize(name);
+	//	}
 
-	/**
-	 * Optional Constructor
-	 * 
-	 * @param name
-	 *            String used to construct the Name object
-	 */
-	public Name(final String name) {
-		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_NAME);
-		this.initialize(name);
-	}
+	//	/**
+	//	 * Optional Constructor
+	//	 * 
+	//	 * @param name
+	//	 *            String used to construct the Name object
+	//	 */
+	//	public Name(final String name) {
+	//		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_NAME);
+	//		this.initialize(name);
+	//	}
 
 	/**
 	 * Instantiates a new name.
@@ -119,11 +119,25 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 		Base.s_recycle(delegate);
 	}
 
+	public Name(final String name, final Session parent, final WrapperFactory wf) {
+		super(null, parent, wf, 0, NOTES_NAME);
+		initialize(name);
+	}
+
+	/*
+	 * for clone
+	 */
+	protected Name(final NamePartsMap namePartsMap, final boolean hierarchical, final Session parent, final WrapperFactory wf) {
+		super(null, parent, wf, 0, NOTES_NAME);
+		_namePartsMap = (NamePartsMap) namePartsMap.clone();
+		_hierarchical = hierarchical;
+	}
+
 	/**
 	 * Clears the object.
 	 */
 	public void clear() {
-		this.Hierarchical = false;
+		this._hierarchical = false;
 		if (null != this._namePartsMap) {
 			this._namePartsMap.clear();
 		}
@@ -152,7 +166,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 *            Hierarchical indicator flag
 	 */
 	private void setHierarchical(final boolean arg0) {
-		this.Hierarchical = arg0;
+		this._hierarchical = arg0;
 	}
 
 	/**
@@ -265,7 +279,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 */
 	@Override
 	public boolean isHierarchical() {
-		return this.Hierarchical;
+		return this._hierarchical;
 	}
 
 	@Override
@@ -863,7 +877,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (Hierarchical ? 1231 : 1237);
+		result = prime * result + (_hierarchical ? 1231 : 1237);
 		result = prime * result + ((_namePartsMap == null) ? 0 : _namePartsMap.hashCode());
 		return result;
 	}
@@ -883,7 +897,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 			return false;
 		}
 		Name other = (Name) obj;
-		if (Hierarchical != other.Hierarchical) {
+		if (_hierarchical != other._hierarchical) {
 			return false;
 		}
 		if (_namePartsMap == null) {
@@ -975,6 +989,11 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 			DominoUtils.handleException(e);
 		}
 		return result;
+	}
+
+	@Override
+	public Name clone() {
+		return new Name(_namePartsMap, _hierarchical, getAncestorSession(), getFactory());
 	}
 
 }

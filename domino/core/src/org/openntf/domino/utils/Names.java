@@ -556,16 +556,12 @@ public enum Names {
 	 * @param source
 	 *            String from which to create a new Name object.
 	 * @return Name created from the source string. Null on error.
+	 * @deprecated use {@link Session#createName(String)}
 	 */
+
+	@Deprecated
 	public static Name createName(final Session session, final String source) {
-		try {
-			return new org.openntf.domino.impl.Name(session, source);
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
+		return session.createName(source);
 	}
 
 	/**
@@ -578,7 +574,10 @@ public enum Names {
 	 * @param itemname
 	 *            Name of the item from which the value string will be used to create the new Name object.
 	 * @return Name created from the specified item's value. Null on error.
+	 * 
+	 * @deprecated use {@link Document#getItemValueName(String)}
 	 */
+	@Deprecated
 	public static Name createName(final Session session, final Document document, final String itemname) {
 		try {
 			if (null == document) {
@@ -589,7 +588,7 @@ public enum Names {
 			}
 
 			final String string = document.getItemValueString(itemname);
-			return (Strings.isBlankString(string)) ? null : Names.createName(session, string);
+			return (Strings.isBlankString(string)) ? null : session.createName(string);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -605,15 +604,16 @@ public enum Names {
 	 *            Name object from which to construct a new Name object.
 	 * 
 	 * @return Name created from the specified Name. Null on error.
+	 * @deprecated use {@link Name#clone()} instead.
 	 */
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static Name createName(final Name name) {
 		try {
 			if (null == name) {
 				throw new IllegalArgumentException("Name is null");
 			}
 
-			return new org.openntf.domino.impl.Name(name.getParent(), name);
+			return name.clone();
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -629,16 +629,16 @@ public enum Names {
 	 *            Name object from which to construct a new Name object.
 	 * 
 	 * @return Name created from the specified Name. Null on error.
+	 * 
+	 * @deprecated use {@link Factory#fromLotus}(name, Name.SCHEMA, null) instead
 	 */
-	@SuppressWarnings("restriction")
+	@Deprecated
 	public static Name createName(final lotus.domino.Name name) {
 		try {
 			if (null == name) {
 				throw new IllegalArgumentException("Name is null");
 			}
-			Session sess = Factory.fromLotus(name.getParent(), Session.SCHEMA, null);
-			return new org.openntf.domino.impl.Name(sess, name);
-
+			return Factory.fromLotus(name, Name.SCHEMA, null);
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -679,7 +679,6 @@ public enum Names {
 	 * 
 	 * @return RFC822name created from the specified Name. Null on error.
 	 */
-	@SuppressWarnings("restriction")
 	public static RFC822name createRFC822name(final lotus.domino.Name name) {
 		try {
 
@@ -728,7 +727,6 @@ public enum Names {
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
 	 *         name.getAddr821().
 	 */
-	@SuppressWarnings("restriction")
 	public static String buildAddr822Full(final lotus.domino.Name name) {
 		try {
 			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(),
@@ -769,7 +767,7 @@ public enum Names {
 				if (checkroles.size() > 0) {
 					for (final String s : sourcenames) {
 						if (!Strings.isBlankString(s)) {
-							final Name name = new org.openntf.domino.impl.Name(session, s);
+							final Name name = session.createName(s);
 							if (!result.contains(name)) {
 								final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(database.queryAccessRoles(name
 										.getCanonical()));
@@ -994,11 +992,11 @@ public enum Names {
 				for (final String s : searchfor) {
 					if ((!Strings.isBlankString(s)) && (!result.containsKey(s)) && (!searched.containsKey(s))) {
 						String key = s;
-						ViewEntry vent = view.getEntryByKey(key);
+						ViewEntry vent = view.getFirstEntryByKey(key);
 						if (null == vent) {
 							key = Names.getAbbreviated(session, s);
 							if ((!result.containsKey(key)) && (!searched.containsKey(key))) {
-								vent = view.getEntryByKey(key);
+								vent = view.getFirstEntryByKey(key);
 							}
 						}
 

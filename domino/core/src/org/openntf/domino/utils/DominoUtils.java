@@ -110,14 +110,22 @@ public enum DominoUtils {
 	}
 
 	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
+
 		@Override
 		protected Boolean initialValue() {
+			System.out.println("INIT");
 			return Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
 		}
 	};
 
 	public static Boolean getBubbleExceptions() {
-		return bubbleExceptions_.get();
+		Boolean ret = bubbleExceptions_.get();
+		if (ret == null) {
+			ret = Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
+			bubbleExceptions_.set(ret);
+		}
+
+		return ret;
 	}
 
 	public static void setBubbleExceptions(final Boolean value) {

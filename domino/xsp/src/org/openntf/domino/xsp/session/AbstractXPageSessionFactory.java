@@ -20,7 +20,6 @@ public abstract class AbstractXPageSessionFactory implements ISessionFactory {
 
 	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
 		org.openntf.domino.impl.Session sess = (org.openntf.domino.impl.Session) Factory.fromLotus(raw, Session.SCHEMA, null);
-		sess.setSessionFactory(this);
 		sess.setNoRecycle(!selfCreated);
 
 		boolean allFix = true;

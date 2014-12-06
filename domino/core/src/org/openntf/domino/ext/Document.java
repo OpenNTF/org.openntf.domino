@@ -344,4 +344,6 @@ public interface Document {
 	public void setItemTable(final Map<String, List<Object>> table);
 
 	public void setItemTablePivot(final List<Map<String, Object>> pivot);
+
+	public Name getItemValueName(String itemName);
 }
