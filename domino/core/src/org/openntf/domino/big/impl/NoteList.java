@@ -178,7 +178,8 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	@SuppressWarnings("deprecation")
 	@Override
 	public List<NoteCoordinate> subList(final int fromIndex, final int toIndex) {
-		return delegate_.subList(fromIndex, toIndex);
+		//return delegate_.subList(fromIndex, toIndex);
+		return delegate_.subTable(fromIndex, toIndex);
 	}
 
 	@Override

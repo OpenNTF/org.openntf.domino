@@ -86,8 +86,11 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 		super(delegate, parent, wf, cppId, classId);
 	}
 
-	protected BaseThreadSafe(final P parent, final WrapperFactory wf, final int classId) {
-		super(parent, wf, classId);
+	/**
+	 * constructor for no arg child objects
+	 */
+	protected BaseThreadSafe(final int classId) {
+		super(classId);
 	}
 
 	private DelegateStruct getDelegateStruct() {
@@ -118,7 +121,7 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 		ds._delegate = delegate;
 		ds._cppObject = cppId;
 		if (fromResurrect)
-			getFactory().recacheLotusObject(delegate, this, parent_);
+			getFactory().recacheLotusObject(delegate, this, parent);
 	}
 
 	/**
@@ -136,10 +139,11 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 	void setCppSession() {
 		DelegateStruct ds = getDelegateStruct();
 		long cppSession;
+
 		if (ds._delegate instanceof lotus.domino.Session)
 			cppSession = ds._cppObject;
-		else if (parent_ instanceof Base)
-			cppSession = ((Base<?, ?, ?>) parent_).GetCppSession();
+		else if (parent instanceof Base)
+			cppSession = ((Base<?, ?, ?>) parent).GetCppSession();
 		else
 			cppSession = 0;
 		ds._cppSession = cppSession;

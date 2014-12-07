@@ -1,6 +1,5 @@
 package org.openntf.domino.tests.paul;
 
-import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
@@ -15,7 +14,6 @@ import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DFramedGraphFactory;
 import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
-import org.openntf.domino.utils.Factory;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -320,7 +318,6 @@ public class Graph2Demo implements Runnable {
 	public void run3() {
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
-		Session session = Factory.getSession();
 
 		try {
 
@@ -428,7 +425,6 @@ public class Graph2Demo implements Runnable {
 
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
-		Session session = Factory.getSession();
 
 		try {
 			timelog("Beginning graph2 test...");

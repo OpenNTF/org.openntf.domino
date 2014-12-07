@@ -150,7 +150,7 @@ public enum Names {
 			}
 
 			final String seed = (Strings.isBlankString(source)) ? session.getEffectiveUserName() : source;
-			org.openntf.domino.impl.Name name = (org.openntf.domino.impl.Name) Names.createName(session, seed);
+			org.openntf.domino.Name name = session.createName(seed);
 			return name.getNamePart(key);
 
 		} catch (final Exception e) {

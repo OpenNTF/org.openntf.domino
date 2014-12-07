@@ -37,7 +37,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 
 	}
 
-	public static class Schema extends FactorySchema<Session, lotus.domino.Session, SessionHasNoParent> {
+	public static class Schema extends FactorySchema<Session, lotus.domino.Session, WrapperFactory> {
 		@Override
 		public Class<Session> typeClass() {
 			return Session.class;
@@ -49,8 +49,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 		}
 
 		@Override
-		public Class<SessionHasNoParent> parentClass() {
-			return SessionHasNoParent.class;
+		public Class<WrapperFactory> parentClass() {
+			return WrapperFactory.class;
 		}
 	};
 

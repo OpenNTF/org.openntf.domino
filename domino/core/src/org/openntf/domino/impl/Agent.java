@@ -36,7 +36,6 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.StringUtil;
 
@@ -66,14 +65,6 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Agent delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
-	}
-
 	protected void initialize(final lotus.domino.Agent delegate) {
 
 		try {
@@ -82,14 +73,6 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 			DominoUtils.handleException(e);
 		}
 
-	}
-
-	private static String sGetUniversalID(final lotus.domino.Agent agent) {
-		try {
-			return agent.getNotesURL();
-		} catch (NotesException e) {
-			return "";
-		}
 	}
 
 	/*
@@ -129,7 +112,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	 */
 	@Override
 	public Document getDocument() {
-		return this.getParent().getDocumentByUNID(this.getUniversalID());
+		return parent.getDocumentByUNID(this.getUniversalID());
 	}
 
 	/*
@@ -200,7 +183,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	 */
 	@Override
 	public String getNoteID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getFirstNoteID();
 	}
@@ -271,8 +254,8 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -342,7 +325,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	 */
 	@Override
 	public String getUniversalID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getUNID(notes.getFirstNoteID());
 	}
@@ -798,24 +781,19 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
-	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
-	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 	private IDominoEvent generateEvent(final EnumEvent event, final Object payload) {
@@ -824,11 +802,9 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 
 	@Override
 	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		Database db = getAncestorDatabase();
 		try {
-
-			lotus.domino.Agent view = recreateAgent();
-			setDelegate(view, 0, true);
+			lotus.domino.Agent agent = resurrectAgent();
+			setDelegate(agent, 0, true);
 			/* No special logging, since by now View is a BaseThreadSafe */
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
@@ -843,7 +819,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	 */
 	@Deprecated
 	public Agent() {
-		super(null, null, NOTES_MACRO);
+		super(NOTES_MACRO);
 	}
 
 	@Override
@@ -867,7 +843,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 
 	}
 
-	private lotus.domino.Agent recreateAgent() throws NotesException {
+	private lotus.domino.Agent resurrectAgent() throws NotesException {
 		lotus.domino.Database d = toLotus(getAncestorDatabase());
 		String[] agNames = StringUtil.splitString(names_, '|');
 
@@ -885,14 +861,14 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 					break;
 				} else if (!ret.equals(ag)) {
 					// wrap every view, so that it gets recycled
-					Factory.fromLotus(ag, Agent.SCHEMA, getAncestorDatabase());
+					getFactory().fromLotus(ag, Agent.SCHEMA, getAncestorDatabase());
 					// we MUST iterate to the end and not break!
 				}
 			}
 			if (candidate != null) {
 				log_.log(Level.WARNING, "The agent name '" + agNames[0] + "' is not unique in " + getAncestorDatabase() + ". View1: "
 						+ candidate.getName() + ", View2:" + ret.getName());
-				Factory.fromLotus(ret, Agent.SCHEMA, getAncestorDatabase());
+				getFactory().fromLotus(ret, Agent.SCHEMA, getAncestorDatabase());
 				ret = candidate;
 			}
 
@@ -903,7 +879,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	protected Object readResolve() {
 		// TODO: The Agent name may not be acourate enough, if the view is not unique
 		try {
-			return Factory.fromLotus(recreateAgent(), Agent.SCHEMA, getAncestorDatabase());
+			return fromLotus(resurrectAgent(), Agent.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return this;

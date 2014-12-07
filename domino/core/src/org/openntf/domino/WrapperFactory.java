@@ -15,7 +15,7 @@ import org.openntf.domino.types.FactorySchema;
  * @author Roland Praml, Foconis AG
  * 
  */
-public interface WrapperFactory {
+public interface WrapperFactory extends Base {
 
 	/**
 	 * Wraps the lotus object in the apropriate wrapper object
@@ -107,7 +107,13 @@ public interface WrapperFactory {
 	/**
 	 * shuts down the factory
 	 */
-	long terminate();
+	@Override
+	void recycle();
+
+	void recycle(lotus.domino.Base obj);
+
+	@Override
+	void recycle(Vector vec);
 
 	/**
 	 * Wraps a Java-Date into a DateTime object

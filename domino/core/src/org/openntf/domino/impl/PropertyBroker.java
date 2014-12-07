@@ -28,14 +28,6 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 		super(delegate, parent, wf, cppId, NOTES_PROPERTYBROKER);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.PropertyBroker delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	@Override
 	public void clearProperty(final String propertyName) {
 		try {
@@ -146,7 +138,13 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

@@ -26,7 +26,6 @@ import org.openntf.domino.Form;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.junit.SessionDb;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -174,8 +173,8 @@ public class BackendBridgeTest {
 		/*
 		 * Again, it is necessary to pass a Lotus Session as 1st parameter, otherwise you run into a NullPointerException
 		 */
-		NSFComponentModule.XPagesDatabase xdb = (NSFComponentModule.XPagesDatabase) BackendBridge.setContextDatabaseContext2(
-				Base.toLotus(sess), hOdaDB, NSFComponentModule.XPagesDatabase.class);
+		NSFComponentModule.XPagesDatabase xdb = (NSFComponentModule.XPagesDatabase) BackendBridge.setContextDatabaseContext2(sess
+				.getFactory().toLotus(sess), hOdaDB, NSFComponentModule.XPagesDatabase.class);
 		System.out.println("    setContextDatabaseContext2=" + xdb);
 	}
 

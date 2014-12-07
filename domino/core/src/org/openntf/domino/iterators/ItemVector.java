@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openntf.domino.impl;
+package org.openntf.domino.iterators;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,9 +13,9 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.exceptions.UnimplementedException;
-import org.openntf.domino.iterators.ItemVectorIterator;
 import org.openntf.domino.utils.DominoUtils;
 
 /**

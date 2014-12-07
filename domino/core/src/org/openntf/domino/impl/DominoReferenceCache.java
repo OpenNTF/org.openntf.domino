@@ -13,7 +13,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.thread;
+package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.util.Map;
@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 
 import javolution.util.FastMap;
 
-import org.openntf.domino.impl.BaseThreadSafe;
 import org.openntf.domino.utils.Factory;
 
 /**

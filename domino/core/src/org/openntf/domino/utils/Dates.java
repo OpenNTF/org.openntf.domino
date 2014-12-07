@@ -23,8 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
+
+import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Item;
@@ -225,6 +229,8 @@ public enum Dates {
 	 * ***************************************************
 	 * ***************************************************
 	 */
+	private static AtomicLong timeCodeSeed = new AtomicLong(System.currentTimeMillis() / 1000);
+
 	/**
 	 * Generates a timecode.
 	 * 
@@ -235,15 +241,36 @@ public enum Dates {
 	 */
 	public static String getTimeCode() {
 		try {
-			Long ntime = Math.abs(System.nanoTime());
-			if (ntime.equals(Long.MIN_VALUE)) {
-				ntime = Long.MAX_VALUE;
-			}
 
-			final String result = Long.toString(ntime, 36).toUpperCase();
+			//			Long ntime = Math.abs(System.currentTimeMillis()); // nanoseconds is too acurate
+			//			if (ntime.equals(Long.MIN_VALUE)) {
+			//				ntime = Long.MAX_VALUE;
+			//			}
+			// if we use currentTimeMillis() we generate a 8 digit string (till May 25, 2059 - then it is nine digits)
+			//
+			// Dec 7, 2014 = I3DN8QO0
+			// if we count only the last 6 digits, we get every millisecond a new value => nearly no collisions
+			// but we have a repeat period of < 1 Month:
+			// I5000000 = Jan 16, 2015
+			// I6000000 = Feb 11, 2015
+			// I7000000 = Mar 8, 2015
+			//
+			// if we count only the first 6 digits, we get a new digit, every 1296 ms
+
+			// now we use seconds (and an intelligent shift mechanism that handles subsequent calls intelligent
+			long current = System.currentTimeMillis() / 1000;
+			long newValue = 0;
+			for (;;) {
+				newValue = timeCodeSeed.incrementAndGet();
+				if (newValue >= current)
+					break;
+				if (timeCodeSeed.compareAndSet(current, newValue))
+					break;
+			}
+			final String result = Long.toString(newValue, 36).toUpperCase(Locale.ENGLISH); // generates a 8 digit string
 			final int length = result.length();
 			if (length > 6) {
-				return result.substring(length - 6);
+				return result.substring(6 - length); // cut off the first digits
 			} else if (length < 6) {
 				return Strings.getFilledString(6 - length, '0') + result;
 			}
@@ -994,7 +1021,14 @@ public enum Dates {
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		} finally {
-			DominoUtils.incinerate(datetime, item);
+			try {
+				if (datetime != null)
+					datetime.recycle();
+				if (item != null)
+					item.recycle();
+			} catch (NotesException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return null;
@@ -1070,7 +1104,14 @@ public enum Dates {
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		} finally {
-			DominoUtils.incinerate(datetime, item);
+			try {
+				if (datetime != null)
+					datetime.recycle();
+				if (item != null)
+					item.recycle();
+			} catch (NotesException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return null;

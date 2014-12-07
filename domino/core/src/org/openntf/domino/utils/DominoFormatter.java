@@ -82,7 +82,7 @@ public class DominoFormatter extends ThreadLocal<Object> implements Serializable
 	 * @throws NotesException
 	 *             the notes exception
 	 */
-	public DominoFormatter(final lotus.domino.International intl) throws NotesException {
+	public DominoFormatter(final org.openntf.domino.International intl) throws NotesException {
 		am_ = intl.getAMString();
 		dateSep_ = intl.getDateSep();
 		pm_ = intl.getPMString();
@@ -106,7 +106,6 @@ public class DominoFormatter extends ThreadLocal<Object> implements Serializable
 		}
 
 		dateTimeFormat_ = dateOnlyFormat_ + " " + timeOnlyFormat_;
-		org.openntf.domino.impl.Base.s_recycle(intl);
 	}
 
 	private DateFormat getTimeOnlyFormat() {

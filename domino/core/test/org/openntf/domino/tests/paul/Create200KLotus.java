@@ -10,6 +10,7 @@ import lotus.domino.Session;
 
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class Create200KLotus {
 
@@ -24,7 +25,7 @@ public class Create200KLotus {
 			try {
 				Document doc = null;
 				System.out.println("START Creation of Documents:" + new Date().toString());
-				Session s = Factory.getSession();
+				Session s = Factory.getSession(SessionType.CURRENT);
 				Set<Document> docset = new HashSet<Document>();
 				Database db = s.getDatabase("", "OneMillionLotus.nsf", true);
 				if (!db.isOpen()) {

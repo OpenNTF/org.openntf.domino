@@ -124,7 +124,7 @@ public enum ODAPlatform {
 	 */
 	private static void verifyIGetEntryByKey() {
 		@SuppressWarnings("deprecation")
-		View dummyView = new org.openntf.domino.impl.View(new org.openntf.domino.impl.WrapperFactory());
+		View dummyView = new org.openntf.domino.impl.View();
 		try {
 			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
 		} catch (BackendBridgeSanityCheckException allGood) {

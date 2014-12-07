@@ -48,14 +48,6 @@ public class NotesProperty extends BaseNonThreadSafe<org.openntf.domino.NotesPro
 		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected PropertyBroker findParent(final lotus.domino.NotesProperty delegate) throws NotesException {
-		throw new IllegalArgumentException();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -169,7 +161,7 @@ public class NotesProperty extends BaseNonThreadSafe<org.openntf.domino.NotesPro
 	public Vector<Object> getValues() {
 		try {
 			// Does this even use DateTime? Who knows?
-			return Factory.wrapColumnValues(getDelegate().getValues(), this.getAncestorSession());
+			return wrapColumnValues(getDelegate().getValues(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -211,7 +203,13 @@ public class NotesProperty extends BaseNonThreadSafe<org.openntf.domino.NotesPro
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

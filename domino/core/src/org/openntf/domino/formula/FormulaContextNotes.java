@@ -8,6 +8,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.formula.EvaluateException;
@@ -43,13 +44,13 @@ public class FormulaContextNotes extends FormulaContext {
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
 
-		Session session = Factory.getSession(db);
-
-		lotus.domino.Document rawDocument = Factory.toLotus(getDocument());
+		Session session = db.getAncestorSession();
+		WrapperFactory wf = session.getFactory();
+		lotus.domino.Document rawDocument = wf.toLotus(getDocument());
 		Document tmpDoc = null;
 		if (params.length > 0) {
 			tmpDoc = db.createDocument();
-			rawDocument = Factory.toLotus(tmpDoc);
+			rawDocument = session.getFactory().toLotus(tmpDoc);
 			// fill the document
 			for (int i = 0; i < params.length; i++) {
 				try {
@@ -59,16 +60,16 @@ public class FormulaContextNotes extends FormulaContext {
 				}
 			}
 		} else {
-			rawDocument = Factory.toLotus(getDocument());
+			rawDocument = wf.toLotus(getDocument());
 		}
 
 		try {
 			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
 
-			lotus.domino.Session rawSession = Factory.toLotus(session);
+			lotus.domino.Session rawSession = wf.toLotus(session);
 
 			Vector<?> v = rawSession.evaluate(formula, rawDocument);
-			Vector<Object> wrapped = Factory.wrapColumnValues(v, session);
+			Vector<Object> wrapped = wf.wrapColumnValues(v, session);
 			rawSession.recycle(v);
 
 			return ValueHolder.valueOf(wrapped);

@@ -10,11 +10,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,7 +29,6 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.types.BigString;
 
 import com.ibm.icu.math.BigDecimal;
@@ -77,17 +73,21 @@ public enum TypeUtils {
 		}
 	}
 
-	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base<?> context)
-			throws IllegalArgumentException {
-		Map<String, Object> result = new LinkedHashMap<String, Object>();
-		synchronized (rawMap) {
-			for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
-				Object lValue = Base.toItemFriendly(entry.getValue(), context, null);
-				result.put(entry.getKey(), lValue);
-			}
-		}
-		return Collections.unmodifiableMap(result);
-	}
+	// RPr: This method is implemented wrong, you MUST NOT pass null as "recycleThis" argument, because it may created
+	// dangling DateTimes that will crash the server (if you have created too much)
+	// ==>commented out and implemented stampAll method correctly
+	//	@Deprecated
+	//	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base<?> context)
+	//			throws IllegalArgumentException {
+	//		Map<String, Object> result = new LinkedHashMap<String, Object>();
+	//		synchronized (rawMap) {
+	//			for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
+	//				Object lValue = Base.toItemFriendly(entry.getValue(), context, null);
+	//				result.put(entry.getKey(), lValue);
+	//			}
+	//		}
+	//		return Collections.unmodifiableMap(result);
+	//	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<?> T) {
@@ -127,7 +127,7 @@ public enum TypeUtils {
 		if (v == null) {
 			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
 		}
-		Session session = Factory.getSession(item);
+		Session session = item.getAncestorSession();
 		T result = null;
 		try {
 			result = collectionToClass(v, T, session);

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.impl.DocumentList;
+import org.openntf.domino.iterators.DocumentList;
 import org.openntf.domino.types.Null;
 
 public class DocumentSorter implements Externalizable {

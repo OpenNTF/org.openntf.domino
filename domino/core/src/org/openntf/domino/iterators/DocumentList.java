@@ -1,4 +1,4 @@
-package org.openntf.domino.impl;
+package org.openntf.domino.iterators;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -9,22 +9,22 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.BaseImpl;
+import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.View;
-import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.exceptions.UnimplementedException;
-import org.openntf.domino.iterators.DocumentCollectionIterator;
-import org.openntf.domino.iterators.DocumentIterator;
+import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-public class DocumentList extends
-		BaseNonThreadSafe<org.openntf.domino.DocumentList, lotus.domino.DocumentCollection, org.openntf.domino.Database> implements
-		org.openntf.domino.DocumentList {
+public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> implements org.openntf.domino.DocumentList {
 	protected int realNidLength_;
 	/*TODO 
 	 * NTF for maximum performance, we really should track the length
@@ -38,6 +38,7 @@ public class DocumentList extends
 	protected int walkPos = -1;
 	protected int walkNid = 0;
 	protected boolean sorted_ = false;
+	protected Database database;
 
 	public static int getNid(final lotus.domino.Document doc) {
 		int nid = 0;
@@ -175,18 +176,56 @@ public class DocumentList extends
 		}
 	}
 
-	public static int[] toNids(final lotus.domino.DocumentCollection collection) {
-		return org.openntf.domino.impl.DocumentCollection.toNoteIdArray(collection);
-	}
+	//
+	//	public static int[] toNids(final lotus.domino.DocumentCollection collection) {
+	//		int[] result = null;
+	//		if (collection instanceof DocumentList) {
+	//			result = ((DocumentList) collection).getNids();
+	//		} else if (collection instanceof org.openntf.domino.DocumentCollection) {
+	//			org.openntf.domino.DocumentCollection ocoll = (org.openntf.domino.DocumentCollection) collection;
+	//			if (ocoll.isSorted()) {
+	//				int size = ocoll.getCount();
+	//				result = new int[size];
+	//				int i = 0;
+	//				for (org.openntf.domino.Document doc : ocoll) {
+	//					result[i++] = Integer.valueOf(doc.getNoteID(), 16);
+	//				}
+	//			} else {
+	//				org.openntf.domino.NoteCollection nc = toLotusNoteCollection(collection);
+	//				result = nc.getNoteIDs();
+	//			}
+	//		} else {
+	//			try {
+	//				if (collection.isSorted()) {
+	//					int size = collection.getCount();
+	//					result = new int[size];
+	//					lotus.domino.Document doc = collection.getFirstDocument();
+	//					lotus.domino.Document next = null;
+	//					int i = 0;
+	//					while (doc != null) {
+	//						next = collection.getNextDocument(doc);
+	//						result[i++] = Integer.valueOf(doc.getNoteID(), 16);
+	//						doc.recycle();
+	//						doc = next;
+	//					}
+	//				} else {
+	//					org.openntf.domino.NoteCollection nc = toLotusNoteCollection(collection);
+	//					result = nc.getNoteIDs();
+	//				}
+	//			} catch (NotesException ne) {
+	//
+	//			}
+	//		}
+	//		return result;
+	//	}
 
 	public static List<Integer> toNidsList(final lotus.domino.DocumentCollection collection) {
 		if (collection instanceof DocumentList) {
 			List<Integer> list = ((DocumentList) collection).getNidList();
 			return new ArrayList<Integer>(list);
 		} else {
-			org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-			List<Integer> result = new ArrayList<Integer>();
-			int[] nids = nc.getNoteIDs();
+			int[] nids = CollectionUtils.getNoteIDs(collection);
+			List<Integer> result = new ArrayList<Integer>(nids.length);
 			for (int nid : nids) {
 				result.add(nid);
 			}
@@ -203,9 +242,7 @@ public class DocumentList extends
 		}
 	}
 
-	public DocumentList(final lotus.domino.DocumentCollection delegate, final org.openntf.domino.Database parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DOCCOLL);
+	public DocumentList(final lotus.domino.DocumentCollection delegate, final org.openntf.domino.Database parent) {
 		try {
 			setSorted(delegate.isSorted());
 		} catch (NotesException ne) {
@@ -214,7 +251,7 @@ public class DocumentList extends
 	}
 
 	public DocumentList(final int[] nids, final org.openntf.domino.Database parent) {
-		super(null, parent, null, 0l, NOTES_DOCCOLL);
+		database = parent;
 		nids_ = nids;
 	}
 
@@ -273,23 +310,23 @@ public class DocumentList extends
 	}
 
 	@Override
-	public boolean contains(final lotus.domino.Base doc) {
-		if (doc instanceof lotus.domino.Document) {
-			int nid = getNid((lotus.domino.Document) doc);
+	public boolean contains(final lotus.domino.Base base) {
+		if (base instanceof lotus.domino.Document) {
+			int nid = getNid((lotus.domino.Document) base);
 			if (usingList_) {
 				return getNidList().contains(nid);
 			} else {
 				return hasNid(nids_, nid);
 			}
-		} else if (doc instanceof lotus.domino.DocumentCollection) {
+		} else if (base instanceof lotus.domino.DocumentCollection) {
 			if (usingList_) {
-				if (getSize((lotus.domino.DocumentCollection) doc) > getNidList().size())
+				if (getSize((lotus.domino.DocumentCollection) base) > getNidList().size())
 					return false;
 			} else {
-				if (getSize((lotus.domino.DocumentCollection) doc) > nids_.length)
+				if (getSize((lotus.domino.DocumentCollection) base) > nids_.length)
 					return false;
 			}
-			int[] nids = toNids((lotus.domino.DocumentCollection) doc);
+			int[] nids = CollectionUtils.getNoteIDs((lotus.domino.DocumentCollection) base);
 			if (usingList_) {
 				List<Integer> list = new ArrayList<Integer>();
 				for (int n : nids) {
@@ -304,7 +341,7 @@ public class DocumentList extends
 				return true;
 			}
 		} else {
-			throw new IllegalArgumentException("Cannot check a DocumentList to see if it contains a " + doc.getClass().getName());
+			throw new IllegalArgumentException("Cannot check a DocumentList to see if it contains a " + base.getClass().getName());
 		}
 
 	}
@@ -431,7 +468,7 @@ public class DocumentList extends
 	 */
 	@Override
 	public org.openntf.domino.Database getParent() {
-		return getAncestor();
+		return database;
 	}
 
 	@Override
@@ -528,7 +565,7 @@ public class DocumentList extends
 			int nid = getNid((lotus.domino.Document) doc);
 			intersect(nid);
 		} else if (doc instanceof lotus.domino.DocumentCollection) {
-			int[] nids = toNids((lotus.domino.DocumentCollection) doc);
+			int[] nids = CollectionUtils.getNoteIDs((lotus.domino.DocumentCollection) doc);
 			intersect(nids);
 		} else {
 			//TODO why not a View, ViewEntryCollection, NoteCollection, Iterable<Document>, ViewEntry,
@@ -609,7 +646,7 @@ public class DocumentList extends
 		if (doc instanceof lotus.domino.Document) {
 			merge(getNid((lotus.domino.Document) doc));
 		} else if (doc instanceof lotus.domino.DocumentCollection) {
-			merge(toNids((lotus.domino.DocumentCollection) doc));
+			merge(CollectionUtils.getNoteIDs((lotus.domino.DocumentCollection) doc));
 		} else {
 			//TODO why not a View, ViewEntryCollection, NoteCollection, Iterable<Document>, ViewEntry,
 			throw new IllegalArgumentException("Cannot merge a DocumentList with a " + doc.getClass().getName());
@@ -707,7 +744,7 @@ public class DocumentList extends
 		if (doc instanceof lotus.domino.Document) {
 			subtract(getNid((lotus.domino.Document) doc));
 		} else if (doc instanceof lotus.domino.DocumentCollection) {
-			subtract(toNids((lotus.domino.DocumentCollection) doc));
+			subtract(CollectionUtils.getNoteIDs((lotus.domino.DocumentCollection) doc));
 		} else {
 			//TODO why not a View, ViewEntryCollection, NoteCollection, Iterable<Document>, ViewEntry,
 			throw new IllegalArgumentException("Cannot subtract from a DocumentList with a " + doc.getClass().getName());
@@ -813,8 +850,7 @@ public class DocumentList extends
 			return new DocumentIterator(this);
 		} else {
 			org.openntf.domino.Database db = getParentDatabase();
-			org.openntf.domino.impl.DocumentCollection mergeColl = (org.openntf.domino.impl.DocumentCollection) db
-					.createMergableDocumentCollection();
+			org.openntf.domino.DocumentCollection mergeColl = db.createMergableDocumentCollection();
 			for (int nid : getNids()) {
 				mergeColl.merge(nid);
 			}
@@ -893,4 +929,19 @@ public class DocumentList extends
 		}
 	}
 
+	@Override
+	public boolean isDead() {
+		return database.isDead();
+	}
+
+	@Override
+	@Deprecated
+	public void recycle() throws NotesException {
+	}
+
+	@Override
+	@Deprecated
+	public void recycle(final Vector arg0) throws NotesException {
+		database.recycle(arg0);
+	}
 }

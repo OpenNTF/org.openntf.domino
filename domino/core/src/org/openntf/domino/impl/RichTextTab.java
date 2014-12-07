@@ -17,12 +17,9 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
-import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -57,7 +54,6 @@ public class RichTextTab extends BaseNonThreadSafe<org.openntf.domino.RichTextTa
 	 */
 	@Override
 	public void clear() {
-		markDirty();
 		try {
 			getDelegate().clear();
 		} catch (NotesException e) {
@@ -95,37 +91,19 @@ public class RichTextTab extends BaseNonThreadSafe<org.openntf.domino.RichTextTa
 		}
 	}
 
-	void markDirty() {
-		getAncestorDocument().markDirty();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
-	 */
-	@Override
-	public Document getAncestorDocument() {
-		return ((DocumentDescendant) getAncestor()).getAncestorDocument();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
-	 */
-	@Override
-	public Database getAncestorDatabase() {
-		return this.getAncestorDocument().getAncestorDatabase();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getAncestorDocument().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

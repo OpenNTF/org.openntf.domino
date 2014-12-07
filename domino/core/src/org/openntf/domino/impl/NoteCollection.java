@@ -51,30 +51,17 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 	 */
 	public static org.openntf.domino.DocumentCollection toLotusDocumentCollection(final org.openntf.domino.NoteCollection collection) {
 		// TODO NTF - this could be more heavily optimized with a .getNoteIds(). Feel free to replace it.
-		org.openntf.domino.DocumentCollection result = null;
-		if (collection instanceof org.openntf.domino.impl.NoteCollection) {
-			org.openntf.domino.Database db = ((org.openntf.domino.impl.NoteCollection) collection).getParent();
-			result = db.createDocumentCollection();
-			if (collection.getCount() > 0) {
-				String nid = collection.getFirstNoteID();
-				while (nid != null) {
-					result.addDocument(db.getDocumentByID(nid));
-					nid = collection.getNextNoteID(nid);
-				}
+		org.openntf.domino.Database db = collection.getAncestorDatabase();
+		org.openntf.domino.DocumentCollection coll = db.createDocumentCollection();
+		if (collection.getCount() > 0) {
+			String nid = collection.getFirstNoteID();
+			while (nid != null) {
+				coll.addDocument(db.getDocumentByID(nid));
+				nid = collection.getNextNoteID(nid);
 			}
-		} else if (collection != null) {
-			org.openntf.domino.Database db = collection.getParent();
-			org.openntf.domino.DocumentCollection coll = db.createDocumentCollection();
-			if (collection.getCount() > 0) {
-				String nid = collection.getFirstNoteID();
-				while (nid != null) {
-					coll.addDocument(db.getDocumentByID(nid));
-					nid = collection.getNextNoteID(nid);
-				}
-			}
-			result = coll;
 		}
-		return result;
+
+		return coll;
 	}
 
 	/**
@@ -91,14 +78,6 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 	 */
 	public NoteCollection(final lotus.domino.NoteCollection delegate, final Database parent, final WrapperFactory wf, final long cppId) {
 		super(delegate, parent, wf, cppId, NOTES_NOTECOLLECTION);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.NoteCollection delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
 	/*
@@ -372,8 +351,8 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public org.openntf.domino.Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -1720,8 +1699,8 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	/*
@@ -1730,7 +1709,7 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -1829,6 +1808,11 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 				break;
 			}
 		}
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

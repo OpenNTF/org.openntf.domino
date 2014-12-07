@@ -45,14 +45,6 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 		super(delegate, parent, wf, cppId, NOTES_SESSION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Newsletter delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -89,8 +81,8 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -186,7 +178,13 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

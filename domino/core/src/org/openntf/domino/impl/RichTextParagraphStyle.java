@@ -20,6 +20,7 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -45,14 +46,6 @@ public class RichTextParagraphStyle extends
 	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final Session parent, final WrapperFactory wf,
 			final long cppId) {
 		super(delegate, parent, wf, cppId, NOTES_RTPSTYLE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.RichTextParagraphStyle delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/*
@@ -148,8 +141,8 @@ public class RichTextParagraphStyle extends
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -380,7 +373,13 @@ public class RichTextParagraphStyle extends
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

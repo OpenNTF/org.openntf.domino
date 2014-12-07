@@ -140,17 +140,6 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		Base.s_recycle(delegate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DateTime delegate) {
-		if (delegate == null) {
-			return Factory.getSession(SessionType.CURRENT); // the current Session
-		}
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/**
 	 * Instantiates a new date time.
 	 * 
@@ -201,7 +190,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			lotus.domino.Session rawsession = toLotus(parent);
 			lotus.domino.DateTime delegate = rawsession.createDateTime(date_);
 			delegate.convertToZone(notesZone_, dst_);
 			if (isAnyTime()) {
@@ -548,8 +537,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -837,8 +826,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -958,6 +947,11 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	public void setLocalTime(final String time, final boolean parseLenient) {
 		setLocalTime(time);
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

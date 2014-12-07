@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.junit.TestRunnerUtil;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public enum OpenNTFvLegacyBenchmark {
 	INSTANCE;
@@ -331,7 +333,7 @@ public enum OpenNTFvLegacyBenchmark {
 		@Override
 		public void run() {
 			long start = System.nanoTime();
-			org.openntf.domino.Session s = org.openntf.domino.utils.Factory.getSession();
+			org.openntf.domino.Session s = Factory.getSession(SessionType.CURRENT);
 			org.openntf.domino.Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			org.openntf.domino.Database db = s.getDatabase(server, dbPath);

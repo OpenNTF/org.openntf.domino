@@ -5,6 +5,7 @@ import java.security.AccessController;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 
@@ -28,7 +29,8 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 	}
 
 	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
-		org.openntf.domino.impl.Session sess = (org.openntf.domino.impl.Session) Factory.fromLotus(raw, Session.SCHEMA, null);
+		WrapperFactory wf = Factory.getWrapperFactory();
+		org.openntf.domino.Session sess = wf.fromLotus(raw, Session.SCHEMA, wf);
 		sess.setNoRecycle(!selfCreated);
 
 		Fixes[] fixes = Factory.getThreadConfig().fixes;

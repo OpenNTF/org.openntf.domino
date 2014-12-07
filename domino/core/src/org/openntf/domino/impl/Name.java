@@ -220,7 +220,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 			this.parseRFC82xContent(name);
 			String phrase = this.getAddr822Phrase();
 
-			Name n = (Name) getParent().createName((Strings.isBlankString(phrase)) ? name : phrase);
+			Name n = (Name) parent.createName((Strings.isBlankString(phrase)) ? name : phrase);
 			if (null == n) {
 				throw new RuntimeException("Unable to create Name object");
 			}
@@ -253,7 +253,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	@Override
 	protected lotus.domino.Name getDelegate() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			lotus.domino.Session rawsession = toLotus(parent);
 			return rawsession.createName(this.getCanonical());
 
 		} catch (NotesException ne) {
@@ -326,14 +326,6 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	@Override
 	void setDelegate(final lotus.domino.Name delegate, final long cppId, final boolean fromResurrect) {
 		delegate_ = delegate;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Name delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/**
@@ -846,8 +838,8 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -856,8 +848,8 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return this.getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -994,6 +986,11 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	@Override
 	public Name clone() {
 		return new Name(_namePartsMap, _hierarchical, getAncestorSession(), getFactory());
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

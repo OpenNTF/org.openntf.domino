@@ -206,7 +206,7 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public List<String> getTermStarts(final String startsWith, final int count) {
 		List<String> result = new ArrayList<String>();
-		ViewEntry startEntry = getTermView().getEntryByKey(startsWith, false);
+		ViewEntry startEntry = getTermView().getFirstEntryByKey(startsWith, false);
 		if (startEntry == null) {
 			if (log_.isLoggable(Level.FINE))
 				log_.log(Level.FINE, "Unable to find ViewEntry for key " + startsWith);
@@ -688,7 +688,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbids) {
-			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			Database db = session.getDatabase(serverName, dbid);
 			if (db != null) {
 				result.add(db.getTitle() + "|" + dbid);
 			}
@@ -699,7 +699,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbMap.keySet()) {
-			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			Database db = session.getDatabase(serverName, dbid);
 			if (db != null) {
 				result.add(db.getTitle() + " (" + dbMap.get(dbid) + ")|" + dbid);
 			}

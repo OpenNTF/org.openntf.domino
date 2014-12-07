@@ -10,7 +10,7 @@ import lotus.domino.NotesThread;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openntf.domino.impl.Base;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
@@ -110,14 +110,13 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 			}
 
 			if (isRunLegacy(method)) {
-				TestEnv.session = Base.toLotus(TestEnv.session);
-				TestEnv.database = Base.toLotus(TestEnv.database);
+				WrapperFactory wf = Factory.getWrapperFactory();
+				TestEnv.session = wf.toLotus(TestEnv.session);
+				TestEnv.database = wf.toLotus(TestEnv.database);
 			}
 
 		} catch (NotesException ne) {
 			ne.printStackTrace();
-			Base.s_recycle(TestEnv.session);
-			Base.s_recycle(TestEnv.database);
 			fail(ne.getMessage());
 		}
 	}
@@ -125,8 +124,9 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 	@Override
 	protected void afterTest(final FrameworkMethod method) {
 		// TODO Auto-generated method stub
-		Base.s_recycle(TestEnv.database);
-		Base.s_recycle(TestEnv.session);
+		WrapperFactory wf = Factory.getWrapperFactory();
+		wf.recycle(TestEnv.database);
+		wf.recycle(TestEnv.session);
 		TestEnv.session = null;
 		TestEnv.database = null;
 		Factory.termThread();

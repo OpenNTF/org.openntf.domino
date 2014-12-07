@@ -85,14 +85,6 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DbDirectory delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
-	}
-
 	@Override
 	@Deprecated
 	public boolean isSortByLastModified() {
@@ -102,7 +94,6 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	@Override
 	@Deprecated
 	public void setSortByLastModified(final boolean value) {
-		Comparator<DatabaseMetaData> cmp;
 		if (value) {
 			setComparator(DatabaseMetaData.LASTMOD_COMPARATOR);
 		} else {
@@ -411,8 +402,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public org.openntf.domino.Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -493,10 +484,9 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public Database openDatabaseByReplicaID(final String replicaId) {
-		return getAncestorSession().getDatabaseByReplicaID(getName(), replicaId);
+		return getAncestorSession().getDatabase(getName(), replicaId);
 	}
 
 	/*
@@ -542,13 +532,13 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	@Override
 	protected void resurrect() {
-		lotus.domino.Session rawSession = toLotus(getParent());
+		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
@@ -733,6 +723,11 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 		if (dbDirectoryTree_ == null)
 			dbDirectoryTree_ = new DbDirectoryTree(getMetaDataSet(), getAncestorSession());
 		return dbDirectoryTree_;
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

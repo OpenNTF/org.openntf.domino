@@ -47,14 +47,6 @@ public class AdministrationProcess extends
 		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.AdministrationProcess delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -501,8 +493,13 @@ public class AdministrationProcess extends
 	}
 
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 	/*
@@ -571,8 +568,8 @@ public class AdministrationProcess extends
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*

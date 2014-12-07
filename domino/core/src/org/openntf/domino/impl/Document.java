@@ -69,6 +69,7 @@ import org.openntf.domino.ext.Name;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
+import org.openntf.domino.iterators.ItemVector;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.FactorySchema;
@@ -197,7 +198,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	}
 
 	public Document(final String id, final Database parent, final WrapperFactory wf) {
-		super(parent, wf, NOTES_NOTE);
+		super(null, parent, wf, 0, NOTES_NOTE);
 		if (DominoUtils.isUnid(id)) {
 			unid_ = id;
 		} else {
@@ -210,14 +211,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	public Document(final int id, final Database parent, final WrapperFactory wf) {
 		this(Integer.toHexString(id), parent, wf);
 		//		System.out.println("Creating a deferred document for id " + id);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Document delegate) throws NotesException {
-		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
 	}
 
 	/**
@@ -459,7 +452,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			} else if (value != null) {
 				List recycleThis = new ArrayList();
 				try {
-					Object domNode = toDominoFriendly(value, this, recycleThis);
+					Object domNode = toDominoFriendly(value, getAncestorSession(), recycleThis);
 					if (getAncestorSession().isFixEnabled(Fixes.APPEND_ITEM_VALUE)) {
 						Vector current = getItemValue(name);
 						if (current == null) {
@@ -982,7 +975,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		try {
 			Vector<?> values = getDelegate().getColumnValues();
 			if (values != null) {
-				return Factory.wrapColumnValues(values, this.getAncestorSession());
+				return wrapColumnValues(values, this.getAncestorSession());
 			} else {
 				return null;
 			}
@@ -1187,7 +1180,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			Vector<?> vals;
 			try {
 				vals = getDelegate().getItemValue(name);
-				itemValue = Factory.wrapColumnValues(vals, this.getAncestorSession());
+				itemValue = wrapColumnValues(vals, this.getAncestorSession());
 			} catch (NotesException ne) {
 				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
 						+ " " + noteid_ + ": " + ne.text);
@@ -1277,7 +1270,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				DominoUtils.handleException(ne, this, "Item=" + name);
 				return null;
 			}
-			return Factory.wrapColumnValues(vals, this.getAncestorSession());
+			return wrapColumnValues(vals, this.getAncestorSession());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t, this, "Item=" + name);
 		}
@@ -1639,8 +1632,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.Document#getParentDatabase()
 	 */
 	@Override
-	public Database getParentDatabase() {
-		return getAncestor();
+	public final Database getParentDatabase() {
+		return parent;
 	}
 
 	@Override
@@ -2783,7 +2776,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					}
 				}
 				beginEdit();
-				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
+				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
 				markDirty(itemName, true);
 				if (returnItem) {
 					return fromLotus(result, Item.SCHEMA, this);
@@ -2801,7 +2794,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					if (valNode != null) { // CHECKME: Should NULL values discarded?
 						if (valNode instanceof BigString)
 							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(valNode, this, recycleThis));
+						dominoFriendly.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
 					}
 				}
 
@@ -2818,7 +2811,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					if (o != null) { // CHECKME: Should NULL values be discarded?
 						if (o instanceof BigString)
 							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(o, this, recycleThis));
+						dominoFriendly.add(toItemFriendly(o, getAncestorSession(), recycleThis));
 					}
 				}
 			} else {
@@ -2826,7 +2819,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				dominoFriendly = new Vector<Object>(1);
 				if (value instanceof BigString)
 					isNonSummary = true;
-				dominoFriendly.add(toItemFriendly(value, this, recycleThis));
+				dominoFriendly.add(toItemFriendly(value, getAncestorSession(), recycleThis));
 			}
 
 			// empty vectors are treated as "null"
@@ -3823,7 +3816,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			//
 			try {
 				// This must be done on the raw session!
-				lotus.domino.Session rawSess = Factory.toLotus(getAncestorSession());
+				lotus.domino.Session rawSess = toLotus(getAncestorSession());
 				Vector<?> v = rawSess.evaluate("@DocFields", getDelegate());
 				for (Object o : v)
 					fieldNames_.add((String) o);
@@ -3894,7 +3887,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentDatabase();
 	}
 
@@ -3904,8 +3897,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParentDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
 
 	/*
@@ -4020,7 +4013,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 
 	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
-		Database myDB = getAncestor();
+		Database myDB = getAncestorDatabase();
 		String repId = "";
 
 		if (myDB != null) {
@@ -4224,6 +4217,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			return null;
 		}
 
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

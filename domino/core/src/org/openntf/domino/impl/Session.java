@@ -25,11 +25,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesError;
@@ -57,7 +55,6 @@ import org.openntf.domino.PropertyBroker;
 import org.openntf.domino.Registration;
 import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.RichTextStyle;
-import org.openntf.domino.SessionHasNoParent;
 import org.openntf.domino.Stream;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
@@ -84,7 +81,7 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 
-public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
+public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
@@ -124,15 +121,10 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	// RPr: removed as this is never set to "true" and makes externalize easier
 	// private boolean isDbCached_ = false;
-	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
-
-	private LinkedHashMap<String, org.openntf.domino.Database> databases_ = new LinkedHashMap<String, org.openntf.domino.Database>(
-			DEFAULT_NSF_CACHE_SIZE, 1.0f);
 
 	private transient Database currentDatabase_;
 	private String currentDatabaseApiPath_;
 
-	@SuppressWarnings("unused")
 	private String username_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
@@ -149,24 +141,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		} else {
 			fixes_.remove(fix);
 		}
-	}
-
-	public void setNsfCacheSize(final int cacheSize) {
-		int currentSize = databases_.size();
-		if (cacheSize == currentSize) {
-			if (log_.isLoggable(Level.FINER)) {
-				log_.log(Level.FINER, "Cache size change to " + cacheSize + " requested but cache is already that size.");
-			}
-		} else {
-			LinkedHashMap<String, org.openntf.domino.Database> newMap = new LinkedHashMap<String, org.openntf.domino.Database>(cacheSize,
-					1.0f);
-			newMap.putAll(databases_);
-			this.databases_ = newMap;
-		}
-	}
-
-	public int getNsfCacheSize() {
-		return databases_.size();
 	}
 
 	//	/**
@@ -208,18 +182,10 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
+	public Session(final lotus.domino.Session lotus, final WrapperFactory parent, final WrapperFactory wf, final long cpp_id) {
 		super(lotus, parent, wf, cpp_id, NOTES_SESSION);
 		initialize(lotus);
 		featureRestricted_ = false; // currently not implemented
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected SessionHasNoParent findParent(final lotus.domino.Session delegate) throws NotesException {
-		return null;
 	}
 
 	/**
@@ -232,7 +198,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		setFixEnable(Fixes.DOC_UNID_NULLS, true);
 		try {
 			username_ = session.getEffectiveUserName();
-			formatter_ = new DominoFormatter(session.getInternational());
+			formatter_ = new DominoFormatter(getInternational());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -756,11 +722,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 					//							+ " in thread " + System.identityHashCode(Thread.currentThread()));
 					return null;
 				}
-				String key = result.getFilePath();
-				if (result.getServer().length() > 1) {
-					key = result.getServer() + "!!" + result.getFilePath();
-				}
-				databases_.put(key, result);
+
 				currentDatabase_ = result;
 				currentDatabaseApiPath_ = result.getApiPath();
 			} catch (NotesException e) {
@@ -798,22 +760,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		// try {
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
-		String key = db;
-		//		if (isDbCached_) {
-		//			try {
-		//				if (server == null || server.length() < 1) {
-		//					key = "!!" + db;
-		//				} else {
-		//					key = server + "!!" + db;
-		//				}
-		//			} catch (Exception e) {
-		//				StackTraceElement ste = e.getStackTrace()[0];
-		//				System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server)
-		//						+ " with filepath " + String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at "
-		//						+ ste.getClassName() + "." + ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
-		//			}
-		//			result = databases_.get(key);
-		//		}
+
 		if (result == null) {
 			try {
 				boolean isDbRepId = DominoUtils.isReplicaId(db);
@@ -1455,31 +1402,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 				// this should work now for Form, View, Document, Agent, Database
 				return fromLotus(result, null, null);
 			}
-			//			} else if (result instanceof lotus.domino.View) {
-			//				return fromLotus((lotus.domino.View) result, View.SCHEMA, null);
-			//			} else if (result instanceof lotus.domino.Form) {
-			//				lotus.domino.Form formResult = (lotus.domino.Form) result;
-			//				Database parentDb = fromLotus(formResult.getParent(), Database.SCHEMA, this);
-			//				return fromLotus(formResult, Form.SCHEMA, parentDb);
-			//
-			//			} else if (result instanceof Document) {
-			//				lotus.domino.Document docResult = (lotus.domino.Document) result;
-			//				Database parentDb = fromLotus(docResult.getParentDatabase(), Database.SCHEMA, this);
-			//				return fromLotus(docResult, Document.SCHEMA, parentDb);
-			//
-			//			} else if (result instanceof Agent) {
-			//				lotus.domino.Agent agentResult = (lotus.domino.Agent) result;
-			//				Database parentDb = fromLotus(agentResult.getParent(), Database.SCHEMA, this);
-			//				return fromLotus(agentResult, Agent.SCHEMA, parentDb);
-			//
-			//			} else if (result instanceof Database) {
-			//				lotus.domino.Database databaseResult = (lotus.domino.Database) result;
-			//				return fromLotus(databaseResult, Database.SCHEMA, this);
-			//
-			//			} else {
-			//	
-			//			}
-
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -2069,6 +1991,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	// this is needed for factories that provide an external session
 	boolean noRecycle;
 
+	@Override
 	public void setNoRecycle(final boolean value) {
 		noRecycle = value;
 	}
@@ -2089,12 +2012,13 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Deprecated
 	public Session() {
-		super(null, null, NOTES_SESSION);
+		super(NOTES_SESSION);
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
-		super.writeExternal(out);
+		//super.writeExternal(out);
+		//Session do not write SUPER
 		out.writeInt(EXTERNALVERSIONUID); // data version
 
 		getCurrentDatabase(); // initializes the currentDatabaseApiPath_
@@ -2119,8 +2043,8 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-		super.readExternal(in);
-
+		//super.readExternal(in);
+		parent = Factory.getWrapperFactory();
 		int version = in.readInt();
 		if (version != EXTERNALVERSIONUID)
 			throw new InvalidClassException("Cannot read dataversion " + version);
@@ -2187,4 +2111,8 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		return true;
 	}
 
+	@Override
+	public final WrapperFactory getFactory() {
+		return parent;
+	}
 }

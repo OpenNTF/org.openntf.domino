@@ -535,7 +535,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public EmbeddedObject embedObject(final int type, final String className, final String source, final String name) {
 		markDirty();
 		try {
-			return fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.SCHEMA, getParent());
+			return fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -595,7 +595,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return fromLotusAsVector(getDelegate().getEmbeddedObjects(), EmbeddedObject.SCHEMA, getParent());
+			return fromLotusAsVector(getDelegate().getEmbeddedObjects(), EmbeddedObject.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;

@@ -9,16 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class IMDBTest implements Runnable {
 	public static void main(final String[] args) {
@@ -477,7 +475,7 @@ public class IMDBTest implements Runnable {
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		session.setFixEnable(Fixes.REPLACE_ITEM_NULL, true);
 		session.setFixEnable(Fixes.REMOVE_ITEM, true);
 		session.setFixEnable(Fixes.CREATE_DB, true);
@@ -504,13 +502,4 @@ public class IMDBTest implements Runnable {
 		return null;
 	}
 
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
 }

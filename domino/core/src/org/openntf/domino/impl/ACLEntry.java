@@ -51,11 +51,6 @@ public class ACLEntry extends BaseNonThreadSafe<org.openntf.domino.ACLEntry, lot
 		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
 	}
 
-	@Override
-	protected ACL findParent(final lotus.domino.ACLEntry delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), ACL.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -135,8 +130,8 @@ public class ACLEntry extends BaseNonThreadSafe<org.openntf.domino.ACLEntry, lot
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public ACL getParent() {
-		return getAncestor();
+	public final ACL getParent() {
+		return parent;
 	}
 
 	/*
@@ -674,13 +669,18 @@ public class ACLEntry extends BaseNonThreadSafe<org.openntf.domino.ACLEntry, lot
 	}
 
 	@Override
-	public Database getAncestorDatabase() {
-		return getParent().getParent();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	@Override
-	public Session getAncestorSession() {
-		return getAncestorDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

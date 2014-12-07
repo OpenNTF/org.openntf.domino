@@ -11,6 +11,7 @@ import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
 import org.openntf.domino.DateTime;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
@@ -419,4 +420,23 @@ public interface Session {
 	 */
 	public void setSessionType(final SessionType sessionType);
 
+	/**
+	 * Returns the wrapperFactory for this session
+	 * 
+	 * @return the {@link WrapperFactory}
+	 */
+	public WrapperFactory getFactory();
+
+	/**
+	 * Sets this session to "no recycle". This means, a recycle call will do nothing.
+	 * 
+	 * @param noRecycle
+	 *            true = do not recycle that session
+	 */
+	public void setNoRecycle(boolean noRecycle);
+
+	/**
+	 * Recycling a session is allowed (needed to be compatible with @deprecated = error)
+	 */
+	public void recycle();
 }

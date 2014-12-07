@@ -228,8 +228,8 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public MIMEEntity getParent() {
-		return getAncestor();
+	public final MIMEEntity getParent() {
+		return parent;
 	}
 
 	/*
@@ -305,8 +305,8 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return this.getParent().getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return parent.getAncestorDocument();
 	}
 
 	/*
@@ -315,7 +315,7 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -325,7 +325,7 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
 
@@ -333,7 +333,7 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 	protected void resurrect() {
 		if (headerName_ != null) {
 			try {
-				lotus.domino.MIMEEntity entity = (lotus.domino.MIMEEntity) org.openntf.domino.impl.Base.getDelegate(getAncestor());
+				lotus.domino.MIMEEntity entity = toLotus(parent);
 				lotus.domino.MIMEHeader header = entity.getNthHeader(headerName_);
 				this.setDelegate(header, 0, true);
 			} catch (NotesException ne) {
@@ -345,6 +345,11 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 						"MIMEHeader doesn't have headerName value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

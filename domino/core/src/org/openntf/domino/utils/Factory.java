@@ -55,7 +55,6 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
-import org.openntf.domino.impl.BaseNonThreadSafe;
 import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
@@ -674,6 +673,7 @@ public enum Factory {
 	 * 
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, Base)
 	 */
+	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -716,6 +716,7 @@ public enum Factory {
 	 * @return the wrapped object
 	 */
 	@SuppressWarnings({ "rawtypes" })
+	@Deprecated
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
 		return getWrapperFactory().fromLotus(lotusColl, schema, parent);
@@ -738,6 +739,7 @@ public enum Factory {
 	 *            the parent
 	 * @return the wrapped object
 	 */
+	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -805,6 +807,7 @@ public enum Factory {
 	 *            the values
 	 * @return the java.util. vector
 	 */
+	@Deprecated
 	public static java.util.Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
 		if (values == null) {
 			log_.log(Level.WARNING, "Request to wrapColumnValues for a collection of null");
@@ -820,6 +823,7 @@ public enum Factory {
 	 *            object to unwrap
 	 * @return the unwrapped object
 	 */
+	@Deprecated
 	public static <T extends lotus.domino.Base> T toLotus(final T base) {
 		return getWrapperFactory().toLotus(base);
 	}
@@ -1110,7 +1114,7 @@ public enum Factory {
 			}
 			tv.terminate();
 			if (tv.wrapperFactory != null) {
-				tv.wrapperFactory.terminate();
+				tv.wrapperFactory.recycle();
 			}
 			//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 			DominoUtils.setBubbleExceptions(null);
@@ -1126,7 +1130,6 @@ public enum Factory {
 		} finally {
 			tv.clear();
 			threadVariables_.set(null);
-			BaseNonThreadSafe.setAllowAccessAcrossThreads(false);
 			System.gc();
 		}
 		if (counters != null) {
@@ -1432,6 +1435,7 @@ public enum Factory {
 	 *            the base
 	 * @return the session
 	 */
+	@Deprecated
 	public static Session getSession(final lotus.domino.Base base) {
 		org.openntf.domino.Session result = null;
 		if (base instanceof SessionDescendant) {
@@ -1699,7 +1703,10 @@ public enum Factory {
 	 * @param collection
 	 *            the collection
 	 * @return the org.openntf.domino. note collection
+	 * 
+	 * @deprecated this should be moved to {@link CollectionUtils}
 	 */
+	@Deprecated
 	public static org.openntf.domino.NoteCollection toNoteCollection(final lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
 		if (collection instanceof DocumentCollection) {

@@ -66,6 +66,7 @@ import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.icu.util.Calendar;
@@ -481,7 +482,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			}
 			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);
 			if (rawColl.getCount() > 0) {
-				int[] nids = org.openntf.domino.impl.DocumentCollection.toNoteIdArray(rawColl);
+				int[] nids = CollectionUtils.getNoteIDs(rawColl);
 				for (int nid : nids) {
 					rawColl.subtract(nid);
 				}
@@ -1649,8 +1650,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -3010,7 +3011,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		shadowedMetaData_ = null; // clear metaData
-		lotus.domino.Session rawSession = toLotus(getParent());
+		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			setDelegate(d, 0, true);
@@ -3026,8 +3027,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -3520,14 +3521,6 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		isReplicationDisabled_ = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Database delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
-	}
-
 	@Override
 	public AutoMime getAutoMime() {
 		if (autoMime_ == null) {
@@ -3621,9 +3614,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 
 	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
-		Session mySess = getParent();
-		if (mySess != null)
-			mySess.fillExceptionDetails(result);
+		parent.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
 	}
 
@@ -3635,7 +3626,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 */
 	@Deprecated
 	public Database() {
-		super(null, null, NOTES_DATABASE);
+		super(NOTES_DATABASE);
 	}
 
 	@Override
@@ -3653,7 +3644,6 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		super.readExternal(in);
@@ -3676,6 +3666,11 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		readResolveCheck(replid_, ret.replid_);
 		readResolveCheck(autoMime_, ret.autoMime_);
 		return ret;
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

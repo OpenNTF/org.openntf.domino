@@ -124,13 +124,9 @@ public enum OneMillionScratchTest {
 
 			View allView = db.getView("All Documents");
 			ViewEntryCollection vec = allView.getAllEntries();
-			ViewEntry entry = vec.getFirstEntry();
-			ViewEntry next = null;
-			while (entry != null) {
-				next = vec.getNextEntry(entry);
+
+			for (ViewEntry entry : vec) {
 				setAll.remove(entry.getNoteIDAsInt());
-				// entry.recycle();
-				entry = next;
 			}
 		}
 

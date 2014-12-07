@@ -26,7 +26,6 @@ import java.util.TreeMap;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
-import org.openntf.domino.utils.Factory;
 
 /**
  * This class is for simple navigation in the directory structure of a DominoServer (and is still experimental)
@@ -170,7 +169,7 @@ public class DbDirectoryTree {
 
 					@Override
 					public Database next() {
-						return Factory.getWrapperFactory().createClosedDatabase(metaIter.next(), session_);
+						return session_.getFactory().createClosedDatabase(metaIter.next(), session_);
 					}
 
 					@Override

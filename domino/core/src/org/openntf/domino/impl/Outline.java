@@ -48,14 +48,6 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Outline delegate) throws NotesException {
-		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -384,8 +376,8 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 	 * @see org.openntf.domino.Outline#getParentDatabase()
 	 */
 	@Override
-	public Database getParentDatabase() {
-		return getAncestor();
+	public final Database getParentDatabase() {
+		return parent;
 	}
 
 	/*
@@ -550,7 +542,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentDatabase();
 	}
 
@@ -560,7 +552,13 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

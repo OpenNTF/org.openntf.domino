@@ -49,14 +49,6 @@ public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEn
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Outline findParent(final lotus.domino.OutlineEntry delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Outline.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -95,7 +87,7 @@ public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEn
 	@Override
 	public Document getDocument() {
 		try {
-			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParent().getParentDatabase());
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, parent.getParentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -251,8 +243,8 @@ public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEn
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Outline getParent() {
-		return getAncestor();
+	public final Outline getParent() {
+		return parent;
 	}
 
 	/*
@@ -649,8 +641,8 @@ public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEn
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -659,8 +651,13 @@ public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEn
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }
