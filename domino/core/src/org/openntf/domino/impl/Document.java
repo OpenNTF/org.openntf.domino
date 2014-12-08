@@ -97,7 +97,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * 
 	 * @since org.openntf.domino 2.5
 	 */
-	public static enum RemoveType {
+	protected static enum RemoveType {
 		SOFT_FALSE, SOFT_TRUE, HARD_FALSE, HARD_TRUE;
 	}
 
@@ -2414,11 +2414,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return false;
 	}
 
-	public static int MAX_NATIVE_FIELD_SIZE = 32000;
-	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
-
-	//public static String MIME_BEAN_SUFFIX = "_O"; // CHECKME: is this a good idea?
-	//public static String MIME_BEAN_HINT = "$ObjectData";
+	protected static int MAX_NATIVE_FIELD_SIZE = 32000;
+	protected static int MAX_SUMMARY_FIELD_SIZE = 14000;
 
 	/*
 	 * (non-Javadoc)
@@ -2760,7 +2757,12 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 
 		Vector<Object> dominoFriendly;
-		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		List<lotus.domino.Base> recycleThis;
+		if (value instanceof String || value instanceof Number) {
+			recycleThis = null; // we don't need recycle anything of these primitives! 
+		} else {
+			recycleThis = new ArrayList<lotus.domino.Base>();
+		}
 		boolean isNonSummary = false;
 		lotus.domino.Item result;
 		try {
@@ -3031,7 +3033,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 		if (isNewNote() || isDirty()) {
 			boolean go = true;
-			go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
+			Database db = getAncestorDatabase();
+			go = !db.hasListeners() ? true : db.fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
 			if (go) {
 				writeItemInfo();
 				fieldNames_ = null;
@@ -3040,14 +3043,18 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
 						result = del.save(force, makeResponse, markRead);
-						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
-							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
-							noteid_ = del.getNoteID();
-						}
-						if (unid_ == null || !unid_.equals(del.getUniversalID())) {
-							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
-							unid_ = del.getUniversalID();
-						}
+						// complex cases are not needed unless you want to log
+						//						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
+						//							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
+						//							noteid_ = del.getNoteID();
+						//						}
+						//						if (unid_ == null || !unid_.equals(del.getUniversalID())) {
+						//							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
+						//							unid_ = del.getUniversalID();
+						//						}
+						// so we can do that in every case
+						noteid_ = del.getNoteID();
+						unid_ = del.getUniversalID();
 
 						invalidateCaches();
 					} else {

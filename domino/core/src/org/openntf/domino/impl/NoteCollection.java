@@ -42,27 +42,28 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 		org.openntf.domino.NoteCollection {
 	//private static final Logger log_ = Logger.getLogger(NoteCollection.class.getName());
 
-	/**
-	 * To lotus document collection.
-	 * 
-	 * @param collection
-	 *            the collection
-	 * @return the org.openntf.domino. document collection
-	 */
-	public static org.openntf.domino.DocumentCollection toLotusDocumentCollection(final org.openntf.domino.NoteCollection collection) {
-		// TODO NTF - this could be more heavily optimized with a .getNoteIds(). Feel free to replace it.
-		org.openntf.domino.Database db = collection.getAncestorDatabase();
-		org.openntf.domino.DocumentCollection coll = db.createDocumentCollection();
-		if (collection.getCount() > 0) {
-			String nid = collection.getFirstNoteID();
-			while (nid != null) {
-				coll.addDocument(db.getDocumentByID(nid));
-				nid = collection.getNextNoteID(nid);
-			}
-		}
-
-		return coll;
-	}
+	//	/**
+	//	 * To lotus document collection.
+	//	 * 
+	//	 * @param collection
+	//	 *            the collection
+	//	 * @return the org.openntf.domino. document collection
+	//	 */
+	//	public static org.openntf.domino.DocumentCollection toLotusDocumentCollection(final org.openntf.domino.NoteCollection collection) {
+	//		// TODO NTF - this could be more heavily optimized with a .getNoteIds(). Feel free to replace it.
+	//		org.openntf.domino.Database db = collection.getAncestorDatabase();
+	//		org.openntf.domino.DocumentCollection coll = db.createMergableDocumentCollection();
+	//		coll.merge(collection);
+	////		if (collection.getCount() > 0) {
+	////			String nid = collection.getFirstNoteID();
+	////			while (nid != null) {
+	////				coll.addDocument(db.getDocumentByID(nid));
+	////				nid = collection.getNextNoteID(nid);
+	////			}
+	////		}
+	//
+	//		return coll;
+	//	}
 
 	/**
 	 * Instantiates a new outline.

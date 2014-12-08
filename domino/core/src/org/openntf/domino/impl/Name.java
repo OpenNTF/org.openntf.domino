@@ -730,6 +730,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 * 
 	 * @see org.openntf.arpa.NamePartsMap#getIDprefix()
 	 */
+	@Override
 	public String getIDprefix() {
 		return this.getNamePartsMap().getIDprefix();
 	}
@@ -942,7 +943,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
-	public static int compare(final Name arg0, final Name arg1) {
+	protected static int compare(final Name arg0, final Name arg1) {
 		if (null == arg0) {
 			return (null == arg1) ? DominoUtils.EQUAL : DominoUtils.LESS_THAN;
 		} else if (null == arg1) {

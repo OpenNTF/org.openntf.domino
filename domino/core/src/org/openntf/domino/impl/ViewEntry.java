@@ -560,7 +560,7 @@ public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, l
 	 * @param base
 	 * @return
 	 */
-	public static lotus.domino.View getParentView(final lotus.domino.ViewEntry base) {
+	protected static lotus.domino.View getParentView(final lotus.domino.ViewEntry base) {
 		if (base == null)
 			return null;
 		try {

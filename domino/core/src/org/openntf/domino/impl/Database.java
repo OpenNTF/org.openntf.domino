@@ -401,18 +401,17 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		//			return null;
 		//		}
 		Document result = null;
-		boolean go = true;
-		go = fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
+		boolean go;
+		go = !hasListeners() ? true : fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
 		if (go) {
 			try {
-				if (!getDelegate().isOpen()) {
-					getDelegate().open();
-				}
+				open();
 				result = fromLotus(getDelegate().createDocument(), Document.SCHEMA, this);
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}
-			fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
+			if (hasListeners())
+				fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
 		}
 		//		System.out.println("Returning a newly created document in " + this.getFilePath());
 		//		try {
@@ -2301,14 +2300,19 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		}
 	}
 
+	protected transient boolean alreadyOpen_ = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 */
 	@Override
 	public boolean open() {
+		if (alreadyOpen_ && !isDead(getDelegate_unchecked()))
+			return false;
 		try {
 			boolean result = false;
+			alreadyOpen_ = true;
 			try {
 				result = getDelegate().open();
 			} catch (NotesException ne) {
@@ -3196,7 +3200,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		return getDailyModifiedNoteCount(since, noteClass);
 	}
 
-	public static final int DAILY_ARRAY_LIMIT = 31;
+	protected static final int DAILY_ARRAY_LIMIT = 31;
 
 	public int[] getDailyModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
 		Date now = new Date();

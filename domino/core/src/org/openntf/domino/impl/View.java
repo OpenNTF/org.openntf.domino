@@ -2525,7 +2525,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * 
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public static class DominoColumnInfo implements Serializable {
+	protected static class DominoColumnInfo implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private final String itemName_;
 		private final int columnValuesIndex_;
@@ -2713,8 +2713,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	'/C' Don't show empty categories
 	'/L' Disable auto-update
 	 */
-	public static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
-	public static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+	protected static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+	protected static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.View#isDisableAutoUpdate()

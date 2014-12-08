@@ -61,7 +61,7 @@ public class WrapperFactory extends BaseImpl implements org.openntf.domino.Wrapp
 		}
 	};
 
-	public static final int LWDCSIZE = 10;
+	protected static final int LAST_WRAPPED_DOC_CACHE_SIZE = 10;
 
 	//	private static class LastWrappedDocCache {
 	//
@@ -102,7 +102,7 @@ public class WrapperFactory extends BaseImpl implements org.openntf.domino.Wrapp
 	private static ThreadLocal<String[]> lastWrappedDocs = new ThreadLocal<String[]>() {
 		@Override
 		protected String[] initialValue() {
-			return new String[LWDCSIZE];
+			return new String[LAST_WRAPPED_DOC_CACHE_SIZE];
 		}
 	};
 
@@ -130,7 +130,7 @@ public class WrapperFactory extends BaseImpl implements org.openntf.domino.Wrapp
 	@Override
 	public String[] getLastWrappedDocsInThread() {
 		String[] arr = lastWrappedDocs.get();
-		for (int i = 0; i < LWDCSIZE; i++) {
+		for (int i = 0; i < LAST_WRAPPED_DOC_CACHE_SIZE; i++) {
 			if (arr[i] == null) {
 				String[] ret = new String[i];
 				System.arraycopy(arr, 0, ret, 0, i);

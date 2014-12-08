@@ -21,7 +21,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 @RunWith(DominoJUnitRunner.class)
 public class MassViewEntryCollectionTest {
 
-	private static final String TARGET = "target.nsf";
+	private static final String TARGET = "OneMillion.nsf";
 	private static final String VIEW = "Persons";
 
 	@Test
@@ -32,19 +32,19 @@ public class MassViewEntryCollectionTest {
 		View view = source.getView(VIEW);
 		System.out.println("-- START --");
 		long start = System.nanoTime();
-
+		int i = 0;
 		if (null != view) {
 			view.setAutoUpdate(false);
 
 			System.out.println(view.getEntryCount());
 
 			for (ViewEntry entry : view.getAllEntries()) {
-
+				i++;
 			}
 			/* */
 			view.setAutoUpdate(true);
 		}
-
+		System.out.println(i);
 		long elapsed = System.nanoTime() - start;
 		System.out.println("-- STOP --");
 		System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");

@@ -93,7 +93,7 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 		super(classId);
 	}
 
-	private DelegateStruct getDelegateStruct() {
+	private final DelegateStruct getDelegateStruct() {
 		if (_delegateStruct == null) {
 			_delegateStruct = new ThreadLocal<DelegateStruct>() {
 				@Override

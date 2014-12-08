@@ -143,16 +143,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		}
 	}
 
-	//	/**
-	//	 * Gets the default session.
-	//	 * 
-	//	 * @return the default session
-	//	 */
-	//	@Deprecated
-	//	public static Session getDefaultSession() {
-	//		return defaultSession.get();
-	//	}
-
 	private boolean featureRestricted_ = false;
 
 	// RPr: the only way to get a session is from the factory. so commented out

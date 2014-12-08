@@ -144,7 +144,7 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 	 * @param allow
 	 *            enables thread support (and thread problems)
 	 */
-	public static void setAllowAccessAcrossThreads(final boolean allow) {
+	protected static void setAllowAccessAcrossThreads(final boolean allow) {
 		if (!allow && _allowDirtyAccess4ThreadList == null)
 			return;
 		Thread curr = Thread.currentThread();
@@ -166,7 +166,7 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 	 *            the Thread in which the Notes object was wrapped
 	 * @return true if it is allowed
 	 */
-	public static boolean isAllowAccessAcrossThreads(final Thread t) {
+	protected static boolean isAllowAccessAcrossThreads(final Thread t) {
 		return _allowDirtyAccess4ThreadList != null && _allowDirtyAccess4ThreadList.contains(t);
 	}
 
