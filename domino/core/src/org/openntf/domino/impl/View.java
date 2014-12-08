@@ -620,23 +620,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object, int)
-	 */
-	@Override
-	public ViewNavigator createViewNavFrom(final Object entry, final int cacheSize) {
-		try {
-			Object lotusObj = toLotus(entry);
-			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -674,6 +657,23 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		}
 		return null;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object, int)
+	 */
+	@Override
+	public ViewNavigator createViewNavFrom(final Object entry, final int cacheSize) {
+		try {
+			Object lotusObj = toLotus(entry);
+			getDelegate().setAutoUpdate(false);
+			return fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 	/*
