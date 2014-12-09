@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.io.Externalizable;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Vector;
@@ -29,7 +30,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface Database.
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-		Resurrectable, SessionDescendant, ExceptionDetails {
+		Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 
 	/**
 	 * Enum to allow easy access to Schema

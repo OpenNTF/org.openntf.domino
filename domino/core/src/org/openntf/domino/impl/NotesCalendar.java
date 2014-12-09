@@ -54,14 +54,6 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.NotesCalendar delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.openntf.domino.NotesCalendar#createEntry(java.lang.String)
 	 */
 	@Override
@@ -243,8 +235,8 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -391,8 +383,8 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -434,4 +426,10 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 		}
 		return result;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

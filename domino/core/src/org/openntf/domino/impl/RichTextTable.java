@@ -148,8 +148,8 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public RichTextItem getParent() {
-		return getAncestor();
+	public final RichTextItem getParent() {
+		return parent;
 	}
 
 	/*
@@ -328,7 +328,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 	public void setRowLabels(final Vector labels) {
 		List recycleThis = new ArrayList();
 		try {
-			getDelegate().setRowLabels(toDominoFriendly(labels, this, recycleThis));
+			getDelegate().setRowLabels(toDominoFriendly(labels, getAncestorSession(), recycleThis));
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -362,8 +362,8 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return ((DocumentDescendant) this.getParent()).getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return ((DocumentDescendant) parent).getAncestorDocument();
 	}
 
 	/*
@@ -372,7 +372,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -382,7 +382,13 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

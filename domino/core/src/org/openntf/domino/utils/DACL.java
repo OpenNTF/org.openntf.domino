@@ -245,7 +245,7 @@ public enum DACL {
 	 * @return Flag indicating if the name is a member of the specified DACL for the document.
 	 */
 	public boolean contains(final Session session, final Document document, final boolean checkAllItems) {
-		return this.contains(session, document, Names.createName(session, ""), checkAllItems);
+		return this.contains(session, document, session.createName(""), checkAllItems);
 	}
 
 	/**

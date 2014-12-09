@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -27,9 +28,8 @@ import lotus.domino.NotesException;
 import lotus.domino.local.NotesBase;
 
 import org.openntf.domino.Base;
+import org.openntf.domino.BaseImpl;
 import org.openntf.domino.Database;
-import org.openntf.domino.DateRange;
-import org.openntf.domino.DateTime;
 import org.openntf.domino.Directory;
 import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
@@ -41,17 +41,17 @@ import org.openntf.domino.RichTextItem;
 import org.openntf.domino.RichTextNavigator;
 import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.Session;
-import org.openntf.domino.SessionHasNoParent;
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.thread.DominoReferenceCache;
+import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Enum Factory.
  */
-public class WrapperFactory implements org.openntf.domino.WrapperFactory {
+public class WrapperFactory extends BaseImpl implements org.openntf.domino.WrapperFactory {
 
 	/** this is the holder for all other object that need to be recycled **/
 	private static ThreadLocal<DominoReferenceCache> referenceCache = new ThreadLocal<DominoReferenceCache>() {
@@ -61,7 +61,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 	};
 
-	public static final int LWDCSIZE = 10;
+	protected static final int LAST_WRAPPED_DOC_CACHE_SIZE = 10;
 
 	//	private static class LastWrappedDocCache {
 	//
@@ -102,7 +102,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	private static ThreadLocal<String[]> lastWrappedDocs = new ThreadLocal<String[]>() {
 		@Override
 		protected String[] initialValue() {
-			return new String[LWDCSIZE];
+			return new String[LAST_WRAPPED_DOC_CACHE_SIZE];
 		}
 	};
 
@@ -130,7 +130,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	@Override
 	public String[] getLastWrappedDocsInThread() {
 		String[] arr = lastWrappedDocs.get();
-		for (int i = 0; i < LWDCSIZE; i++) {
+		for (int i = 0; i < LAST_WRAPPED_DOC_CACHE_SIZE; i++) {
 			if (arr[i] == null) {
 				String[] ret = new String[i];
 				System.arraycopy(arr, 0, ret, 0, i);
@@ -189,7 +189,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
-			final P parent, final DominoReferenceCache referenceCache, final long[] prevent_recycling) {
+			P parent, final DominoReferenceCache referenceCache, final long[] prevent_recycling) {
 		if (lotus == null) {
 			return null;
 		}
@@ -204,12 +204,20 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
 		}
 
+		if (parent == null) {
+			try {
+				parent = (P) findParent(lotus);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		}
 		// 1) These objects are not cached and returned immediately. Recycle is done inside
 		if (lotus instanceof lotus.domino.Name 					// These objects are encapsulated
 				|| lotus instanceof lotus.domino.DateRange 		// 
 				|| lotus instanceof lotus.domino.DateTime) { 	//
 
 			long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
+
 			return (T) wrapLotusObject(lotus, parent, cpp_key);
 		}
 
@@ -354,9 +362,11 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 *            {@link RichTextNavigator}, {@link RichTextRange}, {@link RichTextSection}, {@link RichTextTab}, {@link RichTextTable}
 	 * @param cpp
 	 * @return
+	 * @throws NotesException
 	 */
 
 	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
+
 		if (lotus instanceof lotus.domino.Name) {
 			return new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, (Session) parent, this, cpp);
 		}
@@ -372,7 +382,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			return new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, (View) parent, this, cpp);
 		}
 
-		if (lotus instanceof lotus.domino.RichTextItem) { // items & richtextitems are used very often. 
+		if (lotus instanceof lotus.domino.RichTextItem) { // items & richtextitems are used very often.
 			return new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, (Document) parent, this, cpp);
 		}
 
@@ -527,15 +537,185 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 
 		if (lotus instanceof lotus.domino.Session) {
-			return new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, (SessionHasNoParent) parent, this, cpp);
+			return new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, this, this, cpp);
 		}
 		throw new UndefinedDelegateTypeException(lotus == null ? "null" : lotus.getClass().getName());
 		//		return null;
 	}
 
+	protected Base<?> findParent(final lotus.domino.Base lotus) throws NotesException {
+		if (lotus instanceof lotus.domino.Name) {
+			return fromLotus(((lotus.domino.Name) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.DateRange) {
+			return fromLotus(((lotus.domino.DateRange) lotus).getParent(), Session.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.DateTime) {
+			return fromLotus(((lotus.domino.DateTime) lotus).getParent(), Session.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.ViewEntry) {
+			return fromLotus(org.openntf.domino.impl.ViewEntry.getParentView((lotus.domino.ViewEntry) lotus), View.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.RichTextItem) {
+			return fromLotus(((lotus.domino.RichTextItem) lotus).getParent(), Document.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.Item) {
+			return fromLotus(((lotus.domino.Item) lotus).getParent(), Document.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.Document) {
+			return fromLotus(((lotus.domino.Document) lotus).getParentDatabase(), Database.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.DocumentCollection) {
+			return fromLotus(((lotus.domino.DocumentCollection) lotus).getParent(), Database.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.ACL) {
+			return fromLotus(((lotus.domino.ACL) lotus).getParent(), Database.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.ACLEntry) {
+			return fromLotus(((lotus.domino.ACLEntry) lotus).getParent(), ACL.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.AdministrationProcess) {
+			return fromLotus(((lotus.domino.AdministrationProcess) lotus).getParent(), Session.SCHEMA, this);
+		}
+		if (lotus instanceof lotus.domino.Agent) {
+			return fromLotus(((lotus.domino.Agent) lotus).getParent(), Database.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.AgentContext) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.ColorObject) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Database) {
+			return fromLotus(((lotus.domino.Database) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.DbDirectory) {
+			return fromLotus(((lotus.domino.DbDirectory) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Directory) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		// it is not possible to find the parent object of these objects
+		//		if (lotus instanceof lotus.domino.DirectoryNavigator) {
+		//			return fromLotus(((lotus.domino.DirectoryNavigator) lotus).getParent(), (Directory) parent, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.MIMEEntity) {
+		//			return fromLotus(((lotus.domino.MIMEEntity) lotus).getParent(), Document.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.MIMEHeader) {
+		//			return fromLotus(((lotus.domino.MIMEHeader) lotus).getParent(), MIMEEntity.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.NotesCalendarEntry) {
+		//			return fromLotus(((lotus.domino.NotesCalendarEntry) lotus).getParent(), NotesCalendar.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.NotesCalendarNotice) {
+		//			return fromLotus(((lotus.domino.NotesCalendarNotice) lotus).getParent(), NotesCalendar.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.NotesProperty) {
+		//			return fromLotus(((lotus.domino.NotesProperty) lotus).getParent(), PropertyBroker.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.Replication) {
+		//			return fromLotus(((lotus.domino.Replication) lotus).getParent(), Database.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.ReplicationEntry) {
+		//			return fromLotus(((lotus.domino.ReplicationEntry) lotus).getParent(), Replication.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.RichTextDoclink) {
+		//			return fromLotus(((lotus.domino.RichTextDoclink) lotus).getParent(), RichTextItem.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.RichTextNavigator) {
+		//			return fromLotus(((lotus.domino.RichTextNavigator) lotus).getParent(), RichTextItem.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.RichTextRange) {
+		//			return fromLotus(((lotus.domino.RichTextRange) lotus).getParent(), RichTextItem.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.RichTextSection) {
+		//			return fromLotus(((lotus.domino.RichTextSection) lotus).getParent(), RichTextNavigator.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.RichTextTab) {
+		//			return fromLotus(((lotus.domino.RichTextTab) lotus).getParent(), RichTextParagraphStyle.SCHEMA, null);
+		//		}
+		//		if (lotus instanceof lotus.domino.RichTextTable) {
+		//			return fromLotus(((lotus.domino.RichTextTable) lotus).getParent(), RichTextItem.SCHEMA, null);
+		//		}
+		if (lotus instanceof lotus.domino.DxlExporter) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.DxlImporter) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.EmbeddedObject) {
+			return fromLotus(((lotus.domino.EmbeddedObject) lotus).getParent().getParent(), Document.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Form) {
+			return fromLotus(((lotus.domino.Form) lotus).getParent(), Database.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.International) {
+			return fromLotus(((lotus.domino.International) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Log) {
+			return fromLotus(((lotus.domino.Log) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Newsletter) {
+			return fromLotus(((lotus.domino.Newsletter) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.NoteCollection) {
+			return fromLotus(((lotus.domino.NoteCollection) lotus).getParent(), Database.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.NotesCalendar) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Outline) {
+			return fromLotus(((lotus.domino.Outline) lotus).getParentDatabase(), Database.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.OutlineEntry) {
+			return fromLotus(((lotus.domino.OutlineEntry) lotus).getParent(), Outline.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.PropertyBroker) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Registration) {
+			return fromLotus(((lotus.domino.Registration) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.RichTextParagraphStyle) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.RichTextStyle) {
+			return fromLotus(((lotus.domino.RichTextStyle) lotus).getParent(), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.Stream) {
+			return fromLotus(org.openntf.domino.impl.Base.getSession(lotus), Session.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.View) {
+			return fromLotus(((lotus.domino.View) lotus).getParent(), Database.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.ViewColumn) {
+			return fromLotus(((lotus.domino.ViewColumn) lotus).getParent(), View.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.ViewEntryCollection) {
+			return fromLotus(((lotus.domino.ViewEntryCollection) lotus).getParent(), View.SCHEMA, null);
+		}
+		if (lotus instanceof lotus.domino.ViewNavigator) {
+			return fromLotus(((lotus.domino.ViewNavigator) lotus).getParentView(), View.SCHEMA, null);
+		}
+
+		if (lotus instanceof lotus.domino.Session) {
+			return this;
+		}
+
+		throw new UnsupportedOperationException("You must specify a valid parent when creating a " + lotus.getClass().getName());
+	}
+
 	@Override
-	public long terminate() {
-		return clearCaches();
+	public void recycle() {
+		clearCaches();
 	}
 
 	@Override
@@ -558,7 +738,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			} else if (value instanceof lotus.domino.DateTime) {
 				Object wrapped = null;
 				try {
-					wrapped = fromLotus((lotus.domino.DateTime) value, (FactorySchema) null, session, referenceCache, prevent_recycling);
+					wrapped = fromLotus((lotus.domino.DateTime) value, DateTime.SCHEMA, session, referenceCache, prevent_recycling);
 				} catch (Throwable t) {
 					if (t instanceof NotesException) {
 						String text = ((NotesException) t).text;
@@ -591,10 +771,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends lotus.domino.Base> T toLotus(final T base) {
-		return (T) org.openntf.domino.impl.Base.getDelegate(base);
+		return org.openntf.domino.impl.Base.toLotus(base);
 	}
 
 	/* (non-Javadoc)
@@ -602,7 +781,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 */
 	@Override
 	public DateTime createDateTime(final Date date, final Session parent) {
-		return new org.openntf.domino.impl.DateTime(date, parent, this, 0L);
+		return new org.openntf.domino.impl.DateTime(date, parent, this);
 	}
 
 	/* (non-Javadoc)
@@ -611,6 +790,48 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	@Override
 	public DateRange createDateRange(final Date start, final Date end, final Session parent) {
 		return new org.openntf.domino.impl.DateRange(start, end, parent, this);
+	}
+
+	@Override
+	public org.openntf.domino.DateTime createDateTime(final String dateString, final Session parent) throws ParseException {
+		return new org.openntf.domino.impl.DateTime(dateString, parent, this);
+	}
+
+	@Override
+	public org.openntf.domino.DateRange createDateRange(final String rangeString, final Session parent) throws ParseException {
+		return new org.openntf.domino.impl.DateRange(rangeString, parent, this);
+	}
+
+	@Override
+	public Document createDeferredDocument(final int noteid, final Database parent) {
+		return new org.openntf.domino.impl.Document(noteid, parent, this);
+	}
+
+	@Override
+	public Document createDeferredDocument(final String unid, final Database parent) {
+		return new org.openntf.domino.impl.Document(unid, parent, this);
+	}
+
+	@Override
+	public Database createClosedDatabase(final DatabaseMetaData metaData, final Session parent) {
+		// TODO Auto-generated method stub
+		return new org.openntf.domino.impl.Database(metaData, parent, this);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void recycle(final Vector vec) {
+		org.openntf.domino.impl.Base.s_recycle(vec);
+	}
+
+	@Override
+	public void recycle(final lotus.domino.Base obj) {
+		org.openntf.domino.impl.Base.s_recycle(obj);
+	}
+
+	@Override
+	public boolean isDead() {
+		return false;
 	}
 
 }

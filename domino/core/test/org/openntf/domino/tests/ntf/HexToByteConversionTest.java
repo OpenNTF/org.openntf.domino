@@ -3,12 +3,8 @@ package org.openntf.domino.tests.ntf;
 import java.util.ArrayList;
 import java.util.List;
 
-import lotus.domino.NotesFactory;
-
-import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 public class HexToByteConversionTest implements Runnable {
 	public static void main(final String[] args) {
@@ -36,13 +32,4 @@ public class HexToByteConversionTest implements Runnable {
 		}
 	}
 
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
 }

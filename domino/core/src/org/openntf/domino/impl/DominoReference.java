@@ -13,7 +13,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.thread;
+package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;

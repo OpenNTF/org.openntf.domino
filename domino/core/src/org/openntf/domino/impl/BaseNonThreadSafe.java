@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.utils.Factory;
 
 /**
  * A common Base class for those org.openntf.domino objects, which shouldn't be shared across threads.
@@ -33,7 +34,7 @@ import org.openntf.domino.WrapperFactory;
  *            the parent type
  * 
  */
-public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
+public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
 		extends Base<T, D, P> {
 
 	/** The Constant log_. */
@@ -50,6 +51,15 @@ public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends l
 
 	/** The Thread, in which wrapper was generated */
 	private transient Thread _myThread = Thread.currentThread();
+
+	static {
+		Factory.addTerminateHook(new Runnable() {
+			@Override
+			public void run() {
+				setAllowAccessAcrossThreads(false);
+			}
+		}, true);
+	}
 
 	/**
 	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
@@ -89,8 +99,8 @@ public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends l
 		super(delegate, parent, wf, cppId, classId);
 	}
 
-	protected BaseNonThreadSafe(final P parent, final WrapperFactory wf, final int classId) {
-		super(parent, wf, classId);
+	public BaseNonThreadSafe(final int classId) {
+		super(classId);
 	}
 
 	/**
@@ -108,7 +118,7 @@ public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends l
 
 		if (fromResurrect) {
 			// an other object is set now, so we must recache that object
-			getFactory().recacheLotusObject(delegate, this, parent_);
+			getFactory().recacheLotusObject(delegate, this, parent);
 			if (log_.isLoggable(Level.FINEST)) {
 				log_.log(Level.FINE, "Object of class " + this.getClass().getName() + " was recached. Changes may be lost", new Throwable());
 			}
@@ -134,7 +144,7 @@ public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends l
 	 * @param allow
 	 *            enables thread support (and thread problems)
 	 */
-	public static void setAllowAccessAcrossThreads(final boolean allow) {
+	protected static void setAllowAccessAcrossThreads(final boolean allow) {
 		if (!allow && _allowDirtyAccess4ThreadList == null)
 			return;
 		Thread curr = Thread.currentThread();
@@ -156,7 +166,7 @@ public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends l
 	 *            the Thread in which the Notes object was wrapped
 	 * @return true if it is allowed
 	 */
-	public static boolean isAllowAccessAcrossThreads(final Thread t) {
+	protected static boolean isAllowAccessAcrossThreads(final Thread t) {
 		return _allowDirtyAccess4ThreadList != null && _allowDirtyAccess4ThreadList.contains(t);
 	}
 
@@ -175,8 +185,8 @@ public class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends l
 
 	@Override
 	void setCppSession() {
-		if (parent_ instanceof Base)	// Cannot be a Session here
-			cppSession_ = ((Base<?, ?, ?>) parent_).GetCppSession();
+		if (parent instanceof Base)	// Cannot be a Session here
+			cppSession_ = ((Base<?, ?, ?>) parent).GetCppSession();
 		else
 			cppSession_ = 0;
 

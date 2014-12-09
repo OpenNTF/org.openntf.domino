@@ -83,8 +83,8 @@ public class ReplicationEntry extends BaseNonThreadSafe<org.openntf.domino.Repli
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Replication getParent() {
-		return getAncestor();
+	public final Replication getParent() {
+		return parent;
 	}
 
 	/*
@@ -344,8 +344,8 @@ public class ReplicationEntry extends BaseNonThreadSafe<org.openntf.domino.Repli
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -354,7 +354,13 @@ public class ReplicationEntry extends BaseNonThreadSafe<org.openntf.domino.Repli
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

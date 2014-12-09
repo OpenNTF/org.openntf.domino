@@ -65,9 +65,11 @@ import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.ext.Database.Events;
+import org.openntf.domino.ext.Name;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
+import org.openntf.domino.iterators.ItemVector;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.FactorySchema;
@@ -95,7 +97,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * 
 	 * @since org.openntf.domino 2.5
 	 */
-	public static enum RemoveType {
+	protected static enum RemoveType {
 		SOFT_FALSE, SOFT_TRUE, HARD_FALSE, HARD_TRUE;
 	}
 
@@ -196,7 +198,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	}
 
 	public Document(final String id, final Database parent, final WrapperFactory wf) {
-		super(parent, wf, NOTES_NOTE);
+		super(null, parent, wf, 0, NOTES_NOTE);
 		if (DominoUtils.isUnid(id)) {
 			unid_ = id;
 		} else {
@@ -209,14 +211,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	public Document(final int id, final Database parent, final WrapperFactory wf) {
 		this(Integer.toHexString(id), parent, wf);
 		//		System.out.println("Creating a deferred document for id " + id);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Document delegate) throws NotesException {
-		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
 	}
 
 	/**
@@ -458,7 +452,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			} else if (value != null) {
 				List recycleThis = new ArrayList();
 				try {
-					Object domNode = toDominoFriendly(value, this, recycleThis);
+					Object domNode = toDominoFriendly(value, getAncestorSession(), recycleThis);
 					if (getAncestorSession().isFixEnabled(Fixes.APPEND_ITEM_VALUE)) {
 						Vector current = getItemValue(name);
 						if (current == null) {
@@ -564,6 +558,30 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				}
 			}
 
+			//// This has to be called BEFORE we recycle the Mime entity, otherwise the data may not be stored.
+			boolean ret = false;
+			if (null != entityItemName) {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+					if (saveChanges && !ret) {
+						if (log_.isLoggable(Level.SEVERE)) {
+							log_.log(Level.SEVERE, "closeMIMEEntities returned false for item " + entityItemName + " on doc " + getNoteID()
+									+ " in db " + getAncestorDatabase().getApiPath(), new Throwable());
+						}
+					}
+				} catch (NotesException e) {
+					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
+							+ " even though we can't find an item by that name.", e);
+
+				}
+			} else {
+				try {
+					ret = getDelegate().closeMIMEEntities(saveChanges, null);
+				} catch (NotesException e) {
+					log_.log(Level.INFO, "Failed to close all MIMEEntities", e);
+				}
+			}
+
 			// RPR: I don't exactly remember, why we do that. As far as I know, we should
 			// ensure that every MIME item is recycled before closing.
 			if (openMIMEEntities_ != null) {
@@ -585,29 +603,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						log_.log(Level.FINE, "A request was made to close MIMEEntity " + entityItemName
 								+ " but that entity isn't currently open");
 					}
-				}
-			}
-			boolean ret = false;
-			if (null != entityItemName) {
-				try {
-					ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-					if (saveChanges && !ret) {
-						if (log_.isLoggable(Level.FINE)) {
-							log_.log(Level.FINE, "closeMIMEEntities returned false for item " + entityItemName + " on doc " + getNoteID()
-									+ " in db " + getAncestorDatabase().getApiPath()
-									+ ". As far as we can tell, it always returns false so this is not useful feedback", new Throwable());
-						}
-					}
-				} catch (NotesException e) {
-					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
-							+ " even though we can't find an item by that name.", e);
-
-				}
-			} else {
-				try {
-					ret = getDelegate().closeMIMEEntities(saveChanges, null);
-				} catch (NotesException e) {
-					log_.log(Level.INFO, "Failed to close all MIMEEntities", e);
 				}
 			}
 
@@ -980,7 +975,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		try {
 			Vector<?> values = getDelegate().getColumnValues();
 			if (values != null) {
-				return Factory.wrapColumnValues(values, this.getAncestorSession());
+				return wrapColumnValues(values, this.getAncestorSession());
 			} else {
 				return null;
 			}
@@ -1009,17 +1004,29 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	@Override
 	public List<org.openntf.domino.EmbeddedObject> getAttachments() {
 		List<org.openntf.domino.EmbeddedObject> result = new ArrayList<org.openntf.domino.EmbeddedObject>();
-		result.addAll(getEmbeddedObjects());
-		for (Item item : getItems()) {
-			if (item instanceof RichTextItem) {
-				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
-				for (EmbeddedObject obj : objects) {
-					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
-						result.add(obj);
-					}
-				}
+
+		lotus.domino.Session rawSession = toLotus(getAncestorSession());
+		try {
+			Vector<?> attachmentNames = rawSession.evaluate("@AttachmentNames", getDelegate());
+
+			for (Object attachmentName : attachmentNames) {
+				result.add(getAttachment((String) attachmentName));
 			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 		}
+
+		//		result.addAll(getEmbeddedObjects());
+		//		for (Item item : getItems()) {
+		//			if (item instanceof RichTextItem) {
+		//				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
+		//				for (EmbeddedObject obj : objects) {
+		//					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
+		//						result.add(obj);
+		//					}
+		//				}
+		//			}
+		//		}
 		return result;
 	}
 
@@ -1173,7 +1180,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			Vector<?> vals;
 			try {
 				vals = getDelegate().getItemValue(name);
-				itemValue = Factory.wrapColumnValues(vals, this.getAncestorSession());
+				itemValue = wrapColumnValues(vals, this.getAncestorSession());
 			} catch (NotesException ne) {
 				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
 						+ " " + noteid_ + ": " + ne.text);
@@ -1263,7 +1270,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				DominoUtils.handleException(ne, this, "Item=" + name);
 				return null;
 			}
-			return Factory.wrapColumnValues(vals, this.getAncestorSession());
+			return wrapColumnValues(vals, this.getAncestorSession());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t, this, "Item=" + name);
 		}
@@ -1625,8 +1632,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.Document#getParentDatabase()
 	 */
 	@Override
-	public Database getParentDatabase() {
-		return getAncestor();
+	public final Database getParentDatabase() {
+		return parent;
 	}
 
 	@Override
@@ -1827,7 +1834,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	public boolean hasReaders() {
 		//TODO won't that be handy?
 		for (Item item : getItems()) {
-			if (item.isReaders()) {
+			if (item != null && item.isReaders()) {
 				return true;
 			}
 		}
@@ -2407,11 +2414,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return false;
 	}
 
-	public static int MAX_NATIVE_FIELD_SIZE = 32000;
-	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
-
-	//public static String MIME_BEAN_SUFFIX = "_O"; // CHECKME: is this a good idea?
-	//public static String MIME_BEAN_HINT = "$ObjectData";
+	protected static int MAX_NATIVE_FIELD_SIZE = 32000;
+	protected static int MAX_SUMMARY_FIELD_SIZE = 14000;
 
 	/*
 	 * (non-Javadoc)
@@ -2753,7 +2757,12 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 
 		Vector<Object> dominoFriendly;
-		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		List<lotus.domino.Base> recycleThis;
+		if (value instanceof String || value instanceof Number) {
+			recycleThis = null; // we don't need recycle anything of these primitives! 
+		} else {
+			recycleThis = new ArrayList<lotus.domino.Base>();
+		}
 		boolean isNonSummary = false;
 		lotus.domino.Item result;
 		try {
@@ -2769,7 +2778,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					}
 				}
 				beginEdit();
-				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
+				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
 				markDirty(itemName, true);
 				if (returnItem) {
 					return fromLotus(result, Item.SCHEMA, this);
@@ -2787,7 +2796,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					if (valNode != null) { // CHECKME: Should NULL values discarded?
 						if (valNode instanceof BigString)
 							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(valNode, this, recycleThis));
+						dominoFriendly.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
 					}
 				}
 
@@ -2804,7 +2813,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					if (o != null) { // CHECKME: Should NULL values be discarded?
 						if (o instanceof BigString)
 							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(o, this, recycleThis));
+						dominoFriendly.add(toItemFriendly(o, getAncestorSession(), recycleThis));
 					}
 				}
 			} else {
@@ -2812,7 +2821,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				dominoFriendly = new Vector<Object>(1);
 				if (value instanceof BigString)
 					isNonSummary = true;
-				dominoFriendly.add(toItemFriendly(value, this, recycleThis));
+				dominoFriendly.add(toItemFriendly(value, getAncestorSession(), recycleThis));
 			}
 
 			// empty vectors are treated as "null"
@@ -3024,7 +3033,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 		if (isNewNote() || isDirty()) {
 			boolean go = true;
-			go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
+			Database db = getAncestorDatabase();
+			go = !db.hasListeners() ? true : db.fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
 			if (go) {
 				writeItemInfo();
 				fieldNames_ = null;
@@ -3033,14 +3043,18 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
 						result = del.save(force, makeResponse, markRead);
-						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
-							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
-							noteid_ = del.getNoteID();
-						}
-						if (unid_ == null || !unid_.equals(del.getUniversalID())) {
-							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
-							unid_ = del.getUniversalID();
-						}
+						// complex cases are not needed unless you want to log
+						//						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
+						//							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
+						//							noteid_ = del.getNoteID();
+						//						}
+						//						if (unid_ == null || !unid_.equals(del.getUniversalID())) {
+						//							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
+						//							unid_ = del.getUniversalID();
+						//						}
+						// so we can do that in every case
+						noteid_ = del.getNoteID();
+						unid_ = del.getUniversalID();
 
 						invalidateCaches();
 					} else {
@@ -3809,7 +3823,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			//
 			try {
 				// This must be done on the raw session!
-				lotus.domino.Session rawSess = Factory.toLotus(getAncestorSession());
+				lotus.domino.Session rawSess = toLotus(getAncestorSession());
 				Vector<?> v = rawSess.evaluate("@DocFields", getDelegate());
 				for (Object o : v)
 					fieldNames_.add((String) o);
@@ -3880,7 +3894,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentDatabase();
 	}
 
@@ -3890,8 +3904,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParentDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
 
 	/*
@@ -4006,7 +4020,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 
 	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
-		Database myDB = getAncestor();
+		Database myDB = getAncestorDatabase();
 		String repId = "";
 
 		if (myDB != null) {
@@ -4174,6 +4188,47 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		T result = null;
 		result = TypeUtils.vectorToClass(getItemSeriesValues(name), T, getAncestorSession());
 		return result;
+	}
+
+	@Override
+	public Map<String, List<Object>> getItemTable(final CharSequence... itemnames) {
+		return Documents.getItemTable(this, itemnames);
+	}
+
+	@Override
+	public List<Map<String, Object>> getItemTablePivot(final CharSequence... itemnames) {
+		return Documents.getItemTablePivot(this, itemnames);
+	}
+
+	@Override
+	public void setItemTable(final Map<String, List<Object>> table) {
+		Documents.setItemTable(this, table);
+	}
+
+	@Override
+	public void setItemTablePivot(final List<Map<String, Object>> pivot) {
+		Documents.setItemTablePivot(this, pivot);
+	}
+
+	@Override
+	public Name getItemValueName(final String itemName) {
+		try {
+			if (Strings.isBlankString(itemName)) {
+				throw new IllegalArgumentException("Item Name is blank or null");
+			}
+
+			final String string = getItemValueString(itemName);
+			return (Strings.isBlankString(string)) ? null : getAncestorSession().createName(string);
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

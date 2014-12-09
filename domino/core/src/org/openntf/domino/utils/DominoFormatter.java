@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -29,7 +30,8 @@ import com.ibm.icu.util.ULocale;
 /**
  * The Class DominoFormatter.
  */
-public class DominoFormatter extends ThreadLocal<Object> {
+public class DominoFormatter extends ThreadLocal<Object> implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFormatter.class.getName());
@@ -80,7 +82,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 * @throws NotesException
 	 *             the notes exception
 	 */
-	public DominoFormatter(final lotus.domino.International intl) throws NotesException {
+	public DominoFormatter(final org.openntf.domino.International intl) throws NotesException {
 		am_ = intl.getAMString();
 		dateSep_ = intl.getDateSep();
 		pm_ = intl.getPMString();
@@ -104,7 +106,6 @@ public class DominoFormatter extends ThreadLocal<Object> {
 		}
 
 		dateTimeFormat_ = dateOnlyFormat_ + " " + timeOnlyFormat_;
-		org.openntf.domino.impl.Base.s_recycle(intl);
 	}
 
 	private DateFormat getTimeOnlyFormat() {

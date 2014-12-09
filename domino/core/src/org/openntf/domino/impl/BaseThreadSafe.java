@@ -31,7 +31,7 @@ import org.openntf.domino.types.Resurrectable;
  *            the parent type
  * 
  */
-public class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
+public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
 		extends Base<T, D, P> implements Resurrectable {
 
 	/** The Constant log_. */
@@ -86,11 +86,14 @@ public class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotu
 		super(delegate, parent, wf, cppId, classId);
 	}
 
-	protected BaseThreadSafe(final P parent, final WrapperFactory wf, final int classId) {
-		super(parent, wf, classId);
+	/**
+	 * constructor for no arg child objects
+	 */
+	protected BaseThreadSafe(final int classId) {
+		super(classId);
 	}
 
-	private DelegateStruct getDelegateStruct() {
+	private final DelegateStruct getDelegateStruct() {
 		if (_delegateStruct == null) {
 			_delegateStruct = new ThreadLocal<DelegateStruct>() {
 				@Override
@@ -118,7 +121,7 @@ public class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotu
 		ds._delegate = delegate;
 		ds._cppObject = cppId;
 		if (fromResurrect)
-			getFactory().recacheLotusObject(delegate, this, parent_);
+			getFactory().recacheLotusObject(delegate, this, parent);
 	}
 
 	/**
@@ -136,13 +139,16 @@ public class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotu
 	void setCppSession() {
 		DelegateStruct ds = getDelegateStruct();
 		long cppSession;
+
 		if (ds._delegate instanceof lotus.domino.Session)
 			cppSession = ds._cppObject;
-		else if (parent_ instanceof Base)
-			cppSession = ((Base<?, ?, ?>) parent_).GetCppSession();
+		else if (parent instanceof Base)
+			cppSession = ((Base<?, ?, ?>) parent).GetCppSession();
 		else
 			cppSession = 0;
 		ds._cppSession = cppSession;
 	}
 
+	@Override
+	protected abstract void resurrect();
 }

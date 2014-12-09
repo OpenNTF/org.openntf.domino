@@ -18,8 +18,6 @@ import javax.servlet.ServletException;
 import lotus.domino.Session;
 
 import org.eclipse.core.runtime.Platform;
-import org.openntf.domino.AutoMime;
-import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.thread.IWrappedCallable;
@@ -29,6 +27,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Tasklet.Context;
+import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.session.InvalidSessionFactory;
 import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
@@ -154,7 +153,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 				NotesContext ctx = new NotesContext(module);
 				NotesContext.initThread(ctx);
 				try {
-					Factory.initThread();
+					Factory.initThread(ODAPlatform.getAppThreadConfig(module.getNotesApplication()));
 					try {
 						ClassLoader mcl = module.getModuleClassLoader();
 						ClassLoader oldCl = switchClassLoader(mcl);
@@ -217,12 +216,12 @@ public class XotsDominoExecutor extends DominoExecutor {
 				//				}
 
 				//				try {
-				Factory.initThread();
+				Factory.initThread(ODAPlatform.getAppThreadConfig(module.getNotesApplication()));
 				try {
 					ClassLoader mcl = module.getModuleClassLoader();
 					ClassLoader oldCl = switchClassLoader(mcl);
 					Factory.setClassLoader(mcl);
-					Factory.setSessionFactory(new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null), SessionType.CURRENT);
+					Factory.setSessionFactory(new NativeSessionFactory(moduleName), SessionType.CURRENT);
 					DominoUtils.setBubbleExceptions(true);
 					try {
 						// Construct & set up

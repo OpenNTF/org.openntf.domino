@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -139,17 +140,6 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		Base.s_recycle(delegate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DateTime delegate) {
-		if (delegate == null) {
-			return Factory.getSession(SessionType.CURRENT); // the current Session
-		}
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/**
 	 * Instantiates a new date time.
 	 * 
@@ -162,8 +152,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DateTime(final Date date, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(null, parent, wf, cppId, NOTES_TIME);
+	public DateTime(final Date date, final Session parent, final WrapperFactory wf) {
+		super(null, parent, wf, 0L, NOTES_TIME);
 		initialize(date);
 	}
 
@@ -172,8 +162,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * 
 	 * @param dateTime
 	 */
-	protected DateTime(final DateTime orig) {
-		super(null, orig.getAncestorSession(), orig.getFactory(), 0, NOTES_TIME);
+	protected DateTime(final DateTime orig, final Session sess, final WrapperFactory wf) {
+		super(null, sess, wf, 0, NOTES_TIME);
 		dst_ = orig.dst_;
 		isDateOnly_ = orig.isDateOnly_;
 		isTimeOnly_ = orig.isTimeOnly_;
@@ -187,8 +177,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * Clones the DateTime object.
 	 */
 	@Override
-	public DateTime clone() {
-		return new DateTime(this);
+	public org.openntf.domino.DateTime clone() {
+		return new DateTime(this, getAncestorSession(), getFactory());
 	}
 
 	/*
@@ -200,7 +190,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			lotus.domino.Session rawsession = toLotus(parent);
 			lotus.domino.DateTime delegate = rawsession.createDateTime(date_);
 			delegate.convertToZone(notesZone_, dst_);
 			if (isAnyTime()) {
@@ -547,8 +537,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -836,8 +826,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -901,16 +891,24 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		out.writeLong(date_.getTime());
 	}
 
-	/*
-	 * Deprecated, but needed for Externalization
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
 	 */
 	@Deprecated
 	public DateTime() {
 		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_TIME);
 	}
 
-	public DateTime(final String time) throws java.text.ParseException {
-		this();
+	/**
+	 * Constructs a new DateTime from the given String
+	 * 
+	 * @param time
+	 *            the time string in a notes readable format
+	 * @throws java.text.ParseException
+	 *             if the time string does not match
+	 */
+	public DateTime(final String time, final Session parent, final WrapperFactory wf) throws java.text.ParseException {
+		super(null, parent, wf, 0L, NOTES_TIME);
 		try {
 			lotus.domino.DateTime worker = getWorker();
 			worker.setLocalTime(time);
@@ -949,6 +947,11 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	public void setLocalTime(final String time, final boolean parseLenient) {
 		setLocalTime(time);
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

@@ -44,14 +44,6 @@ public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObjec
 		super(delegate, parent, wf, cppId, NOTES_COLOR);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.ColorObject delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,8 +123,8 @@ public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObjec
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -223,8 +215,8 @@ public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObjec
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -259,6 +251,11 @@ public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObjec
 		String b = hex.substring(4, 6);
 
 		this.setRGB(Integer.valueOf(r, 16), Integer.valueOf(g, 16), Integer.valueOf(b, 16));
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

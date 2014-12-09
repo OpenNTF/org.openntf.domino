@@ -15,9 +15,11 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.text.ParseException;
 import java.util.Date;
 
 import lotus.domino.NotesException;
@@ -66,7 +68,7 @@ import com.ibm.icu.util.Calendar;
  */
 
 public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements
-		org.openntf.domino.DateRange, lotus.domino.DateRange {
+		org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
 
 	//	private java.util.Date startDate_;
 	//	private java.util.Date endDate_;
@@ -82,11 +84,32 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	 *            the end time
 	 * @param parent
 	 *            the session
+	 * @param wf
+	 *            the wrapperFactory
 	 */
 	public DateRange(final java.util.Date start, final java.util.Date end, final Session parent, final WrapperFactory wf) {
 		super(null, parent, null, 0L, NOTES_DATERNG);
 		startDateTime_ = getFactory().createDateTime(start, parent);
 		endDateTime_ = getFactory().createDateTime(end, parent);
+	}
+
+	/*
+	 * Constructor used for clone
+	 */
+	protected DateRange(final DateTime start, final DateTime end, final Session parent, final WrapperFactory wf) {
+		super(null, parent, null, 0L, NOTES_DATERNG);
+		startDateTime_ = start;
+		endDateTime_ = end;
+	}
+
+	public DateRange(final String range, final Session parent, final WrapperFactory wf) throws ParseException {
+		super(null, parent, null, 0L, NOTES_DATERNG);
+		int sep = range.indexOf('-');
+		if (sep == -1) {
+			throw new ParseException("'" + range + "' is not a valid date range", 0);
+		}
+		startDateTime_ = getFactory().createDateTime(range.substring(0, sep), parent);
+		endDateTime_ = getFactory().createDateTime(range.substring(sep + 1), parent);
 	}
 
 	/**
@@ -107,17 +130,6 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 		//Base.s_recycle(delegate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DateRange delegate) {
-		if (delegate == null) {
-			return Factory.getSession(SessionType.CURRENT); // the current Session - it does not matter to which session this 
-		}
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/**
 	 * The cpp-id is not used here, so we do not read it
 	 * 
@@ -135,9 +147,9 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 			lotus.domino.DateTime edt = delegate.getEndDateTime();
 			Base.s_recycle(delegate);
 			if (sdt != null)
-				startDateTime_ = fromLotus(sdt, DateTime.SCHEMA, getParent());
+				startDateTime_ = fromLotus(sdt, DateTime.SCHEMA, parent);
 			if (edt != null)
-				endDateTime_ = fromLotus(edt, DateTime.SCHEMA, getParent());
+				endDateTime_ = fromLotus(edt, DateTime.SCHEMA, parent);
 		} catch (NotesException ne) {
 			throw new RuntimeException(ne);
 		}
@@ -172,8 +184,8 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -199,11 +211,11 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	}
 
 	public void setEndDate(final java.util.Date date) {
-		endDateTime_ = getFactory().createDateTime(date, getAncestor());
+		endDateTime_ = getFactory().createDateTime(date, getAncestorSession());
 	}
 
 	public void setStartDate(final java.util.Date date) {
-		startDateTime_ = getFactory().createDateTime(date, getAncestor());
+		startDateTime_ = getFactory().createDateTime(date, getAncestorSession());
 	}
 
 	/*
@@ -213,7 +225,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	 */
 	@Override
 	public void setEndDateTime(final lotus.domino.DateTime end) {
-		endDateTime_ = fromLotus(end, DateTime.SCHEMA, getParent());
+		endDateTime_ = fromLotus(end, DateTime.SCHEMA, parent);
 	}
 
 	/*
@@ -223,7 +235,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	 */
 	@Override
 	public void setStartDateTime(final lotus.domino.DateTime start) {
-		startDateTime_ = fromLotus(start, DateTime.SCHEMA, getParent());
+		startDateTime_ = fromLotus(start, DateTime.SCHEMA, parent);
 	}
 
 	/*
@@ -234,7 +246,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	@Override
 	public void setText(final String text) {
 		lotus.domino.DateRange dr = null;
-		lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+		lotus.domino.Session rawsession = toLotus(parent);
 		try {
 			dr = rawsession.createDateRange();
 			dr.setText(text);
@@ -255,7 +267,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	@Override
 	protected lotus.domino.DateRange getDelegate() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			lotus.domino.Session rawsession = toLotus(parent);
 			lotus.domino.DateRange ret;
 			if (startDateTime_ != null && endDateTime_ != null)
 				ret = rawsession.createDateRange(startDateTime_.toJavaDate(), endDateTime_.toJavaDate());
@@ -279,8 +291,8 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -356,11 +368,22 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 		out.writeObject(endDateTime_);
 	}
 
-	/*
-	 * Deprecated, but needed for Externalization
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
 	 */
 	@Deprecated
 	public DateRange() {
 		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_DATERNG);
 	}
+
+	@Override
+	public org.openntf.domino.DateRange clone() {
+		return new DateRange(startDateTime_.clone(), endDateTime_.clone(), getAncestorSession(), getFactory());
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

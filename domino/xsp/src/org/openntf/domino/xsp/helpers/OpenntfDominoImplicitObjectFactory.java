@@ -26,40 +26,47 @@ import com.ibm.xsp.util.TypedUtil;
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 
+	public boolean implicitsDone_ = false;
+
 	private final String[][] implicitObjectList//
 	= { { "openDatabase", Database.class.getName() }, //
 			{ "openSession", Session.class.getName() }, //
 			{ "openSessionAsSigner", Session.class.getName() }, //
 			{ "openSessionAsSignerWithFullAccess", Session.class.getName() }, //
-			{ "openLogBean", XspOpenLogErrorHolder.class.getName() }, { "serverScope", Map.class.getName() }, // 
-			{ "userScope", Map.class.getName() } };
+			{ "openLogBean", XspOpenLogErrorHolder.class.getName() }, //
+			{ "serverScope", Map.class.getName() }, // a scope server wide
+			{ "identiyScope", Map.class.getName() }, // a scope per user (server wide)
+			{ "userScope", Map.class.getName() }, // a scope per user (application wide)
+
+	};
+
+	private XspOpenLogErrorHolder openLogBean_;
 
 	/**
 	 * Creates the "cheap" objects
 	 */
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		if (!ODAPlatform.isAPIEnabled(null))
-			return;
+		if (implicitsDone_) {
+			implicitsDone_ = true;
+			if (!ODAPlatform.isAPIEnabled(null))
+				return;
 
-		Session session = Factory.getSession(SessionType.CURRENT);
+			Session session = Factory.getSession(SessionType.CURRENT);
 
-		Database db = session.getCurrentDatabase();
-		Map<String, Object> ecMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			Database db = session.getCurrentDatabase();
+			Map<String, Object> ecMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 
-		ecMap.put("openSession", session);
-		ecMap.put("openDatabase", db);
+			ecMap.put("openSession", session);
+			ecMap.put("openDatabase", db);
 
-		ecMap.put("openLogBean", new XspOpenLogErrorHolder());
-		//
-		ecMap.put("serverScope", getServerMap(ctx));
-
-		// Attach NSA
-		if (ODAPlatform.isAppFlagSet("nsa")) {
-			Application app = ctx.getApplication();
-			if (app instanceof ApplicationEx) {
-				NSA.INSTANCE.registerApplication((ApplicationEx) app);
-				NSA.INSTANCE.registerSession((ApplicationEx) app, (HttpSession) ctx.getExternalContext().getSession(true));
+			// Attach NSA
+			if (ODAPlatform.isAppFlagSet("nsa")) {
+				Application app = ctx.getApplication();
+				if (app instanceof ApplicationEx) {
+					NSA.INSTANCE.registerApplication((ApplicationEx) app);
+					NSA.INSTANCE.registerSession((ApplicationEx) app, (HttpSession) ctx.getExternalContext().getSession(true));
+				}
 			}
 		}
 	}
@@ -69,20 +76,35 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		if (objectName.length() > 1) {
 
 			switch (objectName.charAt(0)) {
+			case 's':
+				if ("serverScope".equals(objectName))
+					return getServerMap(ctx);
 			case 'o':
 				if ("openSessionAsSignerWithFullAccess".equals(objectName))
 					return Factory.getSession(SessionType.SIGNER_FULL_ACCESS);
 				if ("openSessionAsSigner".equals(objectName))
 					return Factory.getSession(SessionType.SIGNER);
+				if ("openLogBean".equals(objectName))
+					return getOpenLogBean();
 				break;
 
 			case 'i':
 				if ("identyScope".equals(objectName))
-					return getIdentityScope(ctx);
+					return getUserScopeFrom(getServerMap(ctx));
+				break;
+			case 'u':
+				if ("userScope".equals(objectName))
+					return getUserScopeFrom(getApplicationMap(ctx));
 				break;
 			}
 		}
 		return null;
+	}
+
+	private XspOpenLogErrorHolder getOpenLogBean() {
+		if (openLogBean_ == null)
+			openLogBean_ = new XspOpenLogErrorHolder();
+		return openLogBean_;
 	}
 
 	@Override
@@ -99,11 +121,23 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	 * 
 	 * @param ctx
 	 *            FacesContext
-	 * @return Map<String, Object> serverScope
+	 * @return Map<String, Object> serverMap
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	private static Map<String, Object> getServerMap(final FacesContext ctx) {
 		return ServerBean.getCurrentInstance();
+	}
+
+	/**
+	 * Returns the applicationMap
+	 * 
+	 * @param ctx
+	 *            FacesContext
+	 * @return Map<String, Object> applicationMap
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
+	private static Map<String, Object> getApplicationMap(final FacesContext ctx) {
+		return ((FacesContextEx) ctx).getExternalContext().getApplicationMap();
 	}
 
 	//	/**
@@ -144,7 +178,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	//
 
 	/**
-	 * Loads the identityScope for the current user for the whole server
+	 * Loads the getUserScopeFrom for the current user for the given map
 	 * 
 	 * @param ctx
 	 *            FacesContext
@@ -153,14 +187,14 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	 * @return Map<String, Object> corresponding to identityScope global variable
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
-	private Map<String, Object> getIdentityScope(final FacesContextEx ctx) {
+	private Map<String, Object> getUserScopeFrom(final Map<String, Object> scopeMap) {
 		String key = Factory.getSession(SessionType.CURRENT).getEffectiveUserName();
 
 		Map<String, Object> userscope = null;
-		Object chk = getServerMap(ctx).get(key);
+		Object chk = scopeMap.get(key);
 		if ((chk == null) || !(chk instanceof Map)) {
 			userscope = new ConcurrentHashMap<String, Object>();
-			getServerMap(ctx).put(key, userscope);
+			scopeMap.put(key, userscope);
 		} else {
 			userscope = (Map<String, Object>) chk;
 		}

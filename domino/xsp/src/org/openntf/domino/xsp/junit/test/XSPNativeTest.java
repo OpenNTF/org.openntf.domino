@@ -20,7 +20,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.junit.SessionDb;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -83,7 +82,7 @@ public class XSPNativeTest {
 		/*
 		 * Has to be called with a Lotus Session object, since internally the Session is treated as a lotus.domino.local.Session
 		 */
-		lotus.domino.Database db = XSPNative.setContextDatabase(Base.toLotus(sess), hOdaDB);
+		lotus.domino.Database db = XSPNative.setContextDatabase(sess.getFactory().toLotus(sess), hOdaDB);
 		assertEquals(db.getFileName(), "log.nsf");
 		assertNotNull(sess.getCurrentDatabase());
 		assertEquals(sess.getCurrentDatabase().getFileName(), "log.nsf");

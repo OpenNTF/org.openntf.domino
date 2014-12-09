@@ -44,14 +44,6 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 		super(delegate, parent, wf, cppId, NOTES_DXLIMPORTER);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DxlImporter delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -482,8 +474,8 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -524,6 +516,11 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 	@Override
 	public void setInputValidationOption(final InputValidationOption option) {
 		setInputValidationOption(option.getValue());
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

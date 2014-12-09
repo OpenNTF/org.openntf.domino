@@ -4,10 +4,12 @@ import java.util.concurrent.Callable;
 
 import lotus.domino.NotesThread;
 
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class DominoWrappedTask extends AbstractWrappedTask {
+
+	private Factory.ThreadConfig sourceThreadConfig = Factory.getThreadConfig();
+
 	/**
 	 * Common method that does setUp/tearDown before executing the wrapped object
 	 * 
@@ -19,8 +21,7 @@ public class DominoWrappedTask extends AbstractWrappedTask {
 	protected Object callOrRun() throws Exception {
 
 		NotesThread.sinitThread();
-		DominoUtils.setBubbleExceptions(true); // RPr: true is always good (don't like suppressing errors at all)
-		Factory.initThread();
+		Factory.initThread(sourceThreadConfig);
 		try {
 			return invokeWrappedTask();
 		} finally {

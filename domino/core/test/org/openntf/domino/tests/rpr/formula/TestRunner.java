@@ -9,7 +9,6 @@ import java.util.List;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
@@ -82,7 +81,8 @@ public class TestRunner extends TestRunnerStdIn {
 
 			System.out.println("Result:\t" + v);
 
-			Session sess = Base.toLotus(Factory.getSession(SessionType.CURRENT));
+			org.openntf.domino.Session odaSess = Factory.getSession(SessionType.CURRENT);
+			Session sess = odaSess.getFactory().toLotus(odaSess);
 			@SuppressWarnings("unused")
 			long startEvaluate = System.currentTimeMillis();
 			try {

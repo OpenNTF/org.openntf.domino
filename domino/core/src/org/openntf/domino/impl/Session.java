@@ -16,15 +16,18 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesError;
@@ -52,7 +55,6 @@ import org.openntf.domino.PropertyBroker;
 import org.openntf.domino.Registration;
 import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.RichTextStyle;
-import org.openntf.domino.SessionHasNoParent;
 import org.openntf.domino.Stream;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
@@ -62,11 +64,11 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
-import org.openntf.domino.helpers.SessionHolder;
-import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 
@@ -79,7 +81,7 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 
-public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
+public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
@@ -117,15 +119,12 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	//		}
 	//	};
 
-	private boolean isDbCached_ = false;
-	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
-
-	private LinkedHashMap<String, org.openntf.domino.Database> databases_ = new LinkedHashMap<String, org.openntf.domino.Database>(
-			DEFAULT_NSF_CACHE_SIZE, 1.0f);
+	// RPr: removed as this is never set to "true" and makes externalize easier
+	// private boolean isDbCached_ = false;
 
 	private transient Database currentDatabase_;
+	private String currentDatabaseApiPath_;
 
-	@SuppressWarnings("unused")
 	private String username_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
@@ -144,34 +143,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		}
 	}
 
-	public void setNsfCacheSize(final int cacheSize) {
-		int currentSize = databases_.size();
-		if (cacheSize == currentSize) {
-			if (log_.isLoggable(Level.FINER)) {
-				log_.log(Level.FINER, "Cache size change to " + cacheSize + " requested but cache is already that size.");
-			}
-		} else {
-			LinkedHashMap<String, org.openntf.domino.Database> newMap = new LinkedHashMap<String, org.openntf.domino.Database>(cacheSize,
-					1.0f);
-			newMap.putAll(databases_);
-			this.databases_ = newMap;
-		}
-	}
-
-	public int getNsfCacheSize() {
-		return databases_.size();
-	}
-
-	//	/**
-	//	 * Gets the default session.
-	//	 * 
-	//	 * @return the default session
-	//	 */
-	//	@Deprecated
-	//	public static Session getDefaultSession() {
-	//		return defaultSession.get();
-	//	}
-
 	private boolean featureRestricted_ = false;
 
 	// RPr: the only way to get a session is from the factory. so commented out
@@ -182,11 +153,11 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	//		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
 	//		super(null, null);
 	//	}
-	@Deprecated
-	@SuppressWarnings("rawtypes")
-	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
-		this(lotus, null, null, 0L);
-	}
+	//	@Deprecated
+	//	@SuppressWarnings("rawtypes")
+	//	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
+	//		this(lotus, null, null, 0L);
+	//	}
 
 	// FIXME NTF - not sure if there's a context where this makes sense...
 	/**
@@ -201,35 +172,10 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
-		this(lotus, parent, wf, cpp_id, false);
-		//		try {
-		//			Database curDb = Factory.fromLotus(lotus.getCurrentDatabase(), Database.SCHEMA, this);
-		//			this.setCurrentDatabase(curDb);
-		//		} catch (NotesException e) {
-		//			DominoUtils.handleException(e);
-		//		}
-	}
-
-	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id,
-			final boolean isFeatureRestricted) {
-		super(lotus, null, wf, cpp_id, NOTES_SESSION);
-		//		try {
-		//			Database curDb = Factory.fromLotus(lotus.getCurrentDatabase(), Database.SCHEMA, this);
-		//			this.setCurrentDatabase(curDb);
-		//		} catch (NotesException e) {
-		//			DominoUtils.handleException(e);
-		//		}
-		featureRestricted_ = isFeatureRestricted;
+	public Session(final lotus.domino.Session lotus, final WrapperFactory parent, final WrapperFactory wf, final long cpp_id) {
+		super(lotus, parent, wf, cpp_id, NOTES_SESSION);
 		initialize(lotus);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected SessionHasNoParent findParent(final lotus.domino.Session delegate) throws NotesException {
-		return null;
+		featureRestricted_ = false; // currently not implemented
 	}
 
 	/**
@@ -242,7 +188,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		setFixEnable(Fixes.DOC_UNID_NULLS, true);
 		try {
 			username_ = session.getEffectiveUserName();
-			formatter_ = new DominoFormatter(session.getInternational());
+			formatter_ = new DominoFormatter(getInternational());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -756,7 +702,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public Database getCurrentDatabase() {
 		Database result = null;
-		if (currentDatabase_ == null) {
+		if (currentDatabaseApiPath_ == null) {
 			//			System.out.println("TEMP DEBUG: currentDatabase_ is null for session " + System.identityHashCode(this) + " in thread "
 			//					+ System.identityHashCode(Thread.currentThread()) + " so we're trying to derive it...");
 			try {
@@ -766,19 +712,17 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 					//							+ " in thread " + System.identityHashCode(Thread.currentThread()));
 					return null;
 				}
-				String key = result.getFilePath();
-				if (result.getServer().length() > 1) {
-					key = result.getServer() + "!!" + result.getFilePath();
-				}
-				databases_.put(key, result);
-				currentDatabase_ = result;
 
+				currentDatabase_ = result;
+				currentDatabaseApiPath_ = result.getApiPath();
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 				return null;
 
 			}
 		} else {
+			if (currentDatabase_ == null)
+				currentDatabase_ = getDatabase(currentDatabaseApiPath_);
 			result = currentDatabase_;
 		}
 		return result;
@@ -806,22 +750,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		// try {
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
-		String key = db;
-		if (isDbCached_) {
-			try {
-				if (server == null || server.length() < 1) {
-					key = "!!" + db;
-				} else {
-					key = server + "!!" + db;
-				}
-			} catch (Exception e) {
-				StackTraceElement ste = e.getStackTrace()[0];
-				System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server)
-						+ " with filepath " + String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at "
-						+ ste.getClassName() + "." + ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
-			}
-			result = databases_.get(key);
-		}
+
 		if (result == null) {
 			try {
 				boolean isDbRepId = DominoUtils.isReplicaId(db);
@@ -843,14 +772,14 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 					}
 					result = fromLotus(database, Database.SCHEMA, this);
 				}
-				if (isDbCached_ && result != null) {
-					databases_.put(key, result);
-					if (isDbRepId) {
-						databases_.put(result.getApiPath(), result);
-					} else {
-						databases_.put(result.getMetaReplicaID(), result);
-					}
-				}
+				//				if (isDbCached_ && result != null) {
+				//					databases_.put(key, result);
+				//					if (isDbRepId) {
+				//						databases_.put(result.getApiPath(), result);
+				//					} else {
+				//						databases_.put(result.getMetaReplicaID(), result);
+				//					}
+				//				}
 			} catch (NotesException e) {
 				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
 					throw new UserAccessException(
@@ -1463,31 +1392,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 				// this should work now for Form, View, Document, Agent, Database
 				return fromLotus(result, null, null);
 			}
-			//			} else if (result instanceof lotus.domino.View) {
-			//				return fromLotus((lotus.domino.View) result, View.SCHEMA, null);
-			//			} else if (result instanceof lotus.domino.Form) {
-			//				lotus.domino.Form formResult = (lotus.domino.Form) result;
-			//				Database parentDb = fromLotus(formResult.getParent(), Database.SCHEMA, this);
-			//				return fromLotus(formResult, Form.SCHEMA, parentDb);
-			//
-			//			} else if (result instanceof Document) {
-			//				lotus.domino.Document docResult = (lotus.domino.Document) result;
-			//				Database parentDb = fromLotus(docResult.getParentDatabase(), Database.SCHEMA, this);
-			//				return fromLotus(docResult, Document.SCHEMA, parentDb);
-			//
-			//			} else if (result instanceof Agent) {
-			//				lotus.domino.Agent agentResult = (lotus.domino.Agent) result;
-			//				Database parentDb = fromLotus(agentResult.getParent(), Database.SCHEMA, this);
-			//				return fromLotus(agentResult, Agent.SCHEMA, parentDb);
-			//
-			//			} else if (result instanceof Database) {
-			//				lotus.domino.Database databaseResult = (lotus.domino.Database) result;
-			//				return fromLotus(databaseResult, Database.SCHEMA, this);
-			//
-			//			} else {
-			//	
-			//			}
-
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -1707,20 +1611,39 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		return result;
 	}
 
+	private org.openntf.domino.Session recreateSession() {
+		switch (sessionType_) {
+		case _NAMED_FULL_ACCESS_internal:
+			return Factory.getNamedSession(username_, true);
+		case _NAMED_internal:
+			return Factory.getNamedSession(username_, false);
+		default:
+			return Factory.getSession(sessionType_);
+		}
+	}
+
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 
-		Session sessionImpl = (Session) getSessionFactory().createSession();
+		org.openntf.domino.Session sess = recreateSession();
 
-		if (sessionImpl == null) {
+		if (!(sess instanceof Session)) {
 			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
 		}
-		getFactory().setNoRecycle(sessionImpl, false);
 
-		lotus.domino.Session d = sessionImpl.getDelegate_unchecked();
+		getFactory().setNoRecycle(sess, false);
+
+		lotus.domino.Session d = ((Session) sess).getDelegate_unchecked();
 		if (d == null) {
 			throw new UnableToAcquireSessionException("The created Session does not have a valid delegate");
+		}
+		try {
+			if (!username_.equals(d.getEffectiveUserName())) {
+				throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:" + d.getEffectiveUserName()
+						+ ", expected:" + username_);
+			}
+		} catch (NotesException e) {
 		}
 		setDelegate(d, 0, true);
 		/* No special logging, since by now Session is a BaseThreadSafe */
@@ -1763,9 +1686,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	private AutoMime isAutoMime_;
 
-	private ISessionFactory sessionFactory_;
-
-	private SessionHolder sessionHolder_;
+	private SessionType sessionType_;
 
 	/*
 	 * (non-Javadoc)
@@ -2026,6 +1947,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		//		System.out.println("TEMP DEBUG: Setting current database to " + db.getApiPath() + " from session " + System.identityHashCode(this)
 		//				+ " in thread " + System.identityHashCode(Thread.currentThread()));
 		currentDatabase_ = db;
+		currentDatabaseApiPath_ = db.getApiPath();
 	}
 
 	@Override
@@ -2045,25 +1967,21 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		return fixes_.toArray(new Fixes[fixes_.size()]);
 	}
 
-	public void setSessionFactory(final ISessionFactory sessionFactory) {
-		sessionFactory_ = sessionFactory;
-	}
-
-	public ISessionFactory getSessionFactory() {
-		return sessionFactory_;
-	}
-
 	@Override
-	public SessionHolder getSessionHolder() {
-		if (sessionHolder_ == null) {
-			return new SessionHolder(this, getSessionFactory());
-		}
-		return sessionHolder_;
+	public void setSessionType(final SessionType sessionType) {
+		if (sessionType_ != null)
+			throw new IllegalStateException("SessionType cannot be changed");
+		sessionType_ = sessionType;
+	}
+
+	public SessionType getSessionFactory() {
+		return sessionType_;
 	}
 
 	// this is needed for factories that provide an external session
 	boolean noRecycle;
 
+	@Override
 	public void setNoRecycle(final boolean value) {
 		noRecycle = value;
 	}
@@ -2074,5 +1992,117 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		if (noRecycle)
 			return;
 		super.recycle();
+	}
+
+	//-------------- Externalize/Deexternalize stuff ------------------
+	private static final int EXTERNALVERSIONUID = 20141205;
+
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
+	 */
+	@Deprecated
+	public Session() {
+		super(NOTES_SESSION);
+	}
+
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		//super.writeExternal(out);
+		//Session do not write SUPER
+		out.writeInt(EXTERNALVERSIONUID); // data version
+
+		getCurrentDatabase(); // initializes the currentDatabaseApiPath_
+		if (sessionType_ == null) {
+			log_.warning("Serializing a session without a sessionType");
+			out.writeObject(SessionType.CURRENT);
+		} else {
+			out.writeObject(sessionType_);
+		}
+		out.writeObject(username_);
+		out.writeObject(currentDatabaseApiPath_);
+
+		out.writeObject(isAutoMime_);
+		out.writeObject(fixes_);
+		out.writeObject(eventFactory_);
+		out.writeBoolean(featureRestricted_);
+		// out.writeObject(formatter_); not needed!
+		// out.writeBoolean(noRecycle); not needed - done by factory
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		//super.readExternal(in);
+		parent = Factory.getWrapperFactory();
+		int version = in.readInt();
+		if (version != EXTERNALVERSIONUID)
+			throw new InvalidClassException("Cannot read dataversion " + version);
+
+		sessionType_ = (SessionType) in.readObject();
+		username_ = (String) in.readObject();
+		currentDatabaseApiPath_ = (String) in.readObject();
+
+		isAutoMime_ = (AutoMime) in.readObject();
+		fixes_ = (Set<Fixes>) in.readObject();
+		eventFactory_ = (IDominoEventFactory) in.readObject();
+		featureRestricted_ = in.readBoolean();
+
+	}
+
+	protected Object readResolve() {
+		Session ret = (Session) recreateSession();
+		readResolveCheck(isAutoMime_, ret.isAutoMime_);
+		readResolveCheck(fixes_, ret.fixes_);
+		readResolveCheck(eventFactory_, ret.eventFactory_);
+		readResolveCheck(featureRestricted_, ret.featureRestricted_);
+		return ret;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((currentDatabaseApiPath_ == null) ? 0 : currentDatabaseApiPath_.hashCode());
+		result = prime * result + ((sessionType_ == null) ? 0 : sessionType_.hashCode());
+		result = prime * result + ((username_ == null) ? 0 : username_.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof Session)) {
+			return false;
+		}
+		Session other = (Session) obj;
+		if (currentDatabaseApiPath_ == null) {
+			if (other.currentDatabaseApiPath_ != null) {
+				return false;
+			}
+		} else if (!currentDatabaseApiPath_.equals(other.currentDatabaseApiPath_)) {
+			return false;
+		}
+		if (sessionType_ != other.sessionType_) {
+			return false;
+		}
+		if (username_ == null) {
+			if (other.username_ != null) {
+				return false;
+			}
+		} else if (!username_.equals(other.username_)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public final WrapperFactory getFactory() {
+		return parent;
 	}
 }

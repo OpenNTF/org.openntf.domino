@@ -51,14 +51,6 @@ public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.
 		super(delegate, parent, wf, cppId, NOTES_ACL);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.ACL delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -126,13 +118,18 @@ public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.
 	}
 
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	@Override
-	public Session getAncestorSession() {
-		return this.getAncestorDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 	/*
@@ -216,8 +213,8 @@ public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -443,12 +440,12 @@ public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.
 	@Override
 	protected void resurrect() {
 		try {
-			lotus.domino.Database db = toLotus(getParent());
+			lotus.domino.Database db = toLotus(parent);
 			lotus.domino.ACL d = db.getACL();
 			setDelegate(d, 0, true);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
-				log_.log(java.util.logging.Level.FINE, "ACL of Database " + getParent()
+				log_.log(java.util.logging.Level.FINE, "ACL of Database " + parent
 						+ "had been recycled and was auto-restored. Changes may have been lost.", t);
 			}
 			// Recaching is done in setDelegate now

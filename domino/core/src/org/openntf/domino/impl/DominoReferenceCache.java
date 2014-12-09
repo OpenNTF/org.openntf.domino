@@ -13,15 +13,16 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.thread;
+package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javolution.util.FastMap;
 
-import org.openntf.domino.impl.BaseThreadSafe;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -37,6 +38,7 @@ import org.openntf.domino.utils.Factory;
  */
 
 public class DominoReferenceCache {
+	private static final Logger log_ = Logger.getLogger(DominoReferenceCache.class.getName());
 	/** The delegate map contains the value wrapped in phantomReferences) **/
 	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
 	private Map<Long, DominoReference> map = new FastMap<Long, DominoReference>();
@@ -84,7 +86,12 @@ public class DominoReferenceCache {
 	}
 
 	public void setNoRecycle(final long key, final boolean value) {
-		map.get(key).setNoRecycle(value);
+		DominoReference ref = map.get(key);
+		if (ref == null) {
+			log_.log(Level.WARNING, "Attemped to set noRecycle on a DominoReference id " + key + " that's not in the local reference cache");
+		} else {
+			ref.setNoRecycle(value);
+		}
 	}
 
 	/**

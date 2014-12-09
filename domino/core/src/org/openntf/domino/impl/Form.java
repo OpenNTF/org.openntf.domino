@@ -52,14 +52,6 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 		super(delegate, parent, wf, cppId, NOTES_FORM);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Form delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -85,7 +77,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 */
 	@Override
 	public Document getDocument() {
-		return this.getParent().getDocumentByUNID(this.getUniversalID());
+		return parent.getDocumentByUNID(this.getUniversalID());
 	}
 
 	/*
@@ -197,7 +189,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 */
 	@Override
 	public String getNoteID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getFirstNoteID();
 	}
@@ -224,8 +216,8 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -253,7 +245,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 */
 	@Override
 	public String getUniversalID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getUNID(notes.getFirstNoteID());
 	}
@@ -593,8 +585,8 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	/*
@@ -603,7 +595,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -644,6 +636,11 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

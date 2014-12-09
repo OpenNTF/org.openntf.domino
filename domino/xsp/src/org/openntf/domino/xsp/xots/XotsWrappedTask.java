@@ -45,7 +45,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 		NotesContext.initThread(ctx);
 
 		try {
-			Factory.initThread();
+			Factory.initThread(ODAPlatform.getAppThreadConfig(module.getNotesApplication()));
 			try {
 				return invokeTasklet(ctx, codeModule);
 			} catch (Exception e) {

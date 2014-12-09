@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import org.openntf.domino.utils.DominoUtils;
+
 /**
  * NamePartsMap carries the various component string values that make up a name.
  * 
@@ -660,7 +662,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 								}
 
 							} catch (final Exception e) {
-								ISO.handleException(e, "Source String: \"" + string + "\"");
+								DominoUtils.handleException(e, "Source String: \"" + string + "\"");
 							}
 
 						} else {
@@ -709,7 +711,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			return true;
 
 		} catch (final Exception e) {
-			ISO.handleException(e, "Source String: \"" + string + "\"");
+			DominoUtils.handleException(e, "Source String: \"" + string + "\"");
 		}
 
 		return false;

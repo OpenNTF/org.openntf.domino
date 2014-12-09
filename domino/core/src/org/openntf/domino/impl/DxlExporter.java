@@ -50,14 +50,6 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 		super(delegate, parent, wf, cppId, NOTES_DXLEXPORTER);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DxlExporter delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -691,7 +683,13 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

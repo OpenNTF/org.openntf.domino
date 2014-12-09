@@ -15,6 +15,11 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +50,6 @@ import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,9 +57,16 @@ import org.openntf.domino.utils.Factory;
  */
 public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
-	private List<DominoColumnInfo> columnInfo_;
-	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
-	private Map<String, DominoColumnInfo> columnInfoMap_;
+	private transient List<DominoColumnInfo> columnInfo_;
+	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
+	private transient Map<String, DominoColumnInfo> columnInfoMap_;
+	private transient String indexOptions_;
+	private transient String flags_;
+
+	private String universalId_;
+	private Vector<String> aliases_;
+	private String name_;
+
 	private static Method iGetEntryByKeyMethod;
 	static {
 		try {
@@ -106,30 +118,12 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		initialize(delegate);
 	}
 
-	/**
-	 * needed for sanity check in the plugin-activator if "iGetEntryByKey" works
-	 */
-	@Deprecated
-	public View() {
-		super(null, new org.openntf.domino.impl.WrapperFactory(), NOTES_VIEW);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.View delegate) throws NotesException {
-		if (delegate == null)
-			return null; // this is the case if we do the sanity check in plugin-activator
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
-	}
-
-	private String name_;
-	private String flags_;
-
+	@SuppressWarnings("unchecked")
 	private void initialize(final lotus.domino.View delegate) {
 		try {
+			aliases_ = delegate.getAliases();
 			name_ = delegate.getName();
+			universalId_ = delegate.getUniversalID();
 		} catch (NotesException e) {
 			e.printStackTrace();
 		}
@@ -267,7 +261,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public int FTSearchSorted(final Vector query) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis));
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -286,7 +280,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public int FTSearchSorted(final Vector query, final int maxDocs) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs);
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -305,7 +299,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public int FTSearchSorted(final Vector query, final int maxDocs, final int column) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column);
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -325,8 +319,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			final boolean variants, final boolean fuzzy) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column, ascending, exact, variants,
-					fuzzy);
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column, ascending,
+					exact, variants, fuzzy);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -345,7 +339,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public int FTSearchSorted(final Vector query, final int maxDocs, final String column) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column);
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -365,8 +359,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			final boolean variants, final boolean fuzzy) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column, ascending, exact, variants,
-					fuzzy);
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column, ascending,
+					exact, variants, fuzzy);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -615,46 +609,13 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFrom(final Object entry) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object lotusObj = toDominoFriendly(entry, this, recycleThis);
+			Object lotusObj = toDominoFriendly(entry, getAncestorSession(), recycleThis);
 			getDelegate().setAutoUpdate(false);
 			return fromLotus(getDelegate().createViewNavFrom(lotusObj), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
 			s_recycle(recycleThis);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object, int)
-	 */
-	@Override
-	public ViewNavigator createViewNavFrom(final Object entry, final int cacheSize) {
-		try {
-			Object lotusObj = toLotus(entry);
-			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.View#createViewNavFromAllUnread()
-	 */
-	@Override
-	public ViewNavigator createViewNavFromAllUnread() {
-		try {
-			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
 		}
 		return null;
 	}
@@ -695,7 +656,40 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			e.printStackTrace();
 		}
 		return null;
-	
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object, int)
+	 */
+	@Override
+	public ViewNavigator createViewNavFrom(final Object entry, final int cacheSize) {
+		try {
+			Object lotusObj = toLotus(entry);
+			getDelegate().setAutoUpdate(false);
+			return fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.View#createViewNavFromAllUnread()
+	 */
+	@Override
+	public ViewNavigator createViewNavFromAllUnread() {
+		try {
+			getDelegate().setAutoUpdate(false);
+			return fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 	/*
@@ -937,7 +931,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, this, recycleThis);
+			Object domKey = toDominoFriendly(key, getAncestorSession(), recycleThis);
 			lotus.domino.DocumentCollection lotusColl;
 			if (domKey instanceof java.util.Vector) {
 				lotusColl = getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact);
@@ -1014,7 +1008,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, this, recycleThis);
+			Object domKey = toDominoFriendly(key, getAncestorSession(), recycleThis);
 			lotus.domino.ViewEntryCollection rawColl;
 			if (domKey instanceof java.util.Vector) {
 				rawColl = getDelegate().getAllEntriesByKey((Vector<?>) domKey, exact);
@@ -1194,7 +1188,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	@Override
 	public java.util.Vector<Object> getColumnValues(final int column) {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getColumnValues(column), this.getAncestorSession());
+			return wrapColumnValues(getDelegate().getColumnValues(column), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1256,7 +1250,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 
 		try {
-			Object domKey = toDominoFriendly(key, this, recycleThis);
+			Object domKey = toDominoFriendly(key, getAncestorSession(), recycleThis);
 			if (domKey instanceof java.util.Vector) {
 				return fromLotus(getDelegate().getDocumentByKey((java.util.Vector<?>) domKey, exact), Document.SCHEMA,
 						getAncestorDatabase());
@@ -1312,7 +1306,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewEntry getEntryByKey(final Object key, final boolean exact) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, this, recycleThis);
+			Object domKey = toDominoFriendly(key, getAncestorSession(), recycleThis);
 			if (domKey instanceof java.util.Vector) {
 				return fromLotus(getDelegate().getEntryByKey((Vector<?>) domKey, exact), ViewEntry.SCHEMA, this);
 			} else {
@@ -1507,7 +1501,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 */
 	@Override
 	public String getNoteID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getFirstNoteID();
 	}
@@ -1548,8 +1542,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -2248,6 +2242,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setAliases(final String alias) {
 		try {
 			getDelegate().setAliases(alias);
+			initialize(getDelegate()); // name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2263,6 +2258,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setAliases(final Vector aliases) {
 		try {
 			getDelegate().setAliases(aliases);
+			initialize(getDelegate()); // name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2334,6 +2330,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setName(final String name) {
 		try {
 			getDelegate().setName(name);
+			initialize(getDelegate()); // name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2450,7 +2447,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 */
 	@Override
 	public Document getDocument() {
-		Database parent = this.getParent();
 		return parent.getDocumentByUNID(this.getUniversalID());
 	}
 
@@ -2460,8 +2456,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	/*
@@ -2470,7 +2466,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -2529,7 +2525,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * 
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public static class DominoColumnInfo implements Serializable {
+	protected static class DominoColumnInfo implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private final String itemName_;
 		private final int columnValuesIndex_;
@@ -2591,12 +2587,43 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return getDocument().hasItem("$Collection");
 	}
 
+	private lotus.domino.View recreateView() throws NotesException {
+		lotus.domino.Database d = toLotus(getAncestorDatabase());
+		lotus.domino.View ret = d.getView(name_);
+		if (ret == null) {
+			throw new IllegalStateException("View '" + name_ + "' not found in " + getAncestorDatabase());
+		}
+		if (!universalId_.equals(ret.getUniversalID())) {
+
+			lotus.domino.View candidate = null;
+			for (String alias : aliases_) {
+				lotus.domino.View vw = d.getView(alias);
+				if (candidate == null && vw != null && universalId_.equals(vw.getUniversalID())) {
+					candidate = vw;
+					break;
+				} else if (!ret.equals(vw)) {
+					// wrap every view, so that it gets recycled
+					getFactory().fromLotus(vw, View.SCHEMA, getAncestorDatabase());
+				}
+			}
+			if (candidate != null) {
+				log_.log(Level.WARNING,
+						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
+								+ ", View2:" + ret.getAliases());
+				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
+				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
+				ret = candidate;
+			}
+
+		}
+		return ret;
+	}
+
 	@Override
 	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		Database db = getAncestorDatabase();
 		try {
-			lotus.domino.Database d = toLotus(db);
-			lotus.domino.View view = d.getView(name_);
+
+			lotus.domino.View view = recreateView();
 			setDelegate(view, 0, true);
 			/* No special logging, since by now View is a BaseThreadSafe */
 			view.setAutoUpdate(false);
@@ -2670,8 +2697,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return flags_;
 	}
 
-	private String indexOptions_;
-
 	protected String getIndexOptions() {
 		if (indexOptions_ == null) {
 			indexOptions_ = getDocument().getItemValueString("$Index");
@@ -2688,8 +2713,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	'/C' Don't show empty categories
 	'/L' Disable auto-update
 	 */
-	public static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
-	public static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+	protected static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+	protected static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.View#isDisableAutoUpdate()
@@ -2826,6 +2851,95 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	@Override
 	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact) {
 		return this.getEntryByKey(keys, exact);
+	}
+
+	//-------------- Externalize  stuff ------------------
+	private static final int EXTERNALVERSIONUID = 20141205;
+
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
+	 */
+	@Deprecated
+	public View() {
+		super(NOTES_VIEW);
+	}
+
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		super.writeExternal(out);
+		out.writeInt(EXTERNALVERSIONUID); // data version
+
+		out.writeObject(name_);
+		out.writeObject(universalId_);
+		out.writeObject(aliases_);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		super.readExternal(in);
+
+		int version = in.readInt();
+		if (version != EXTERNALVERSIONUID)
+			throw new InvalidClassException("Cannot read dataversion " + version);
+
+		name_ = (String) in.readObject();
+		universalId_ = (String) in.readObject();
+		aliases_ = (Vector<String>) in.readObject();
+	}
+
+	protected Object readResolve() {
+		// TODO: The View name may not be acourate enough, if the view is not unique
+		try {
+			return getFactory().fromLotus(recreateView(), View.SCHEMA, getAncestorDatabase());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return this;
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((name_ == null) ? 0 : name_.hashCode());
+		result = prime * result + ((universalId_ == null) ? 0 : universalId_.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof View)) {
+			return false;
+		}
+		View other = (View) obj;
+		if (name_ == null) {
+			if (other.name_ != null) {
+				return false;
+			}
+		} else if (!name_.equals(other.name_)) {
+			return false;
+		}
+		if (universalId_ == null) {
+			if (other.universalId_ != null) {
+				return false;
+			}
+		} else if (!universalId_.equals(other.universalId_)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

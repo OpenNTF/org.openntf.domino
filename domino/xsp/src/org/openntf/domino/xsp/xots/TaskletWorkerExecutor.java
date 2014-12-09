@@ -72,24 +72,20 @@ public class TaskletWorkerExecutor<T> extends XotsModuleTasklet implements Worke
 		inner.add(t);
 	}
 
-	//	@Override
-	//	public Object call() throws Exception {
-	//		System.out.println("Start XotsQueueWriterThread");
-	//		currentElement = q.poll(2000, TimeUnit.MILLISECONDS);
-	//		for (;;) {
-	//		
-	//			super.call();
-	//		}
-	//		System.out.println("Stop XotsQueueWriterThread");
-	//		return null;
-	//	}
+	@Override
+	public Object call() throws Exception {
+		try {
+			return super.call();
+		} finally {
+			inner.stop();
+		}
+	}
 
 	@Override
 	protected Object invokeObject(final Object wrappedTask) throws Exception {
 		currentElement = q.poll(2000, TimeUnit.MILLISECONDS);
-		if (currentElement == null) {
-			inner.stop();
-		} else {
+
+		if (currentElement != null) {
 			TaskletWorker worker = (TaskletWorker) wrappedTask;
 			worker.startUp();
 			do {
@@ -97,7 +93,6 @@ public class TaskletWorkerExecutor<T> extends XotsModuleTasklet implements Worke
 				currentElement = q.poll(2000, TimeUnit.MILLISECONDS);
 			} while (currentElement != null);
 			worker.tearDown();
-			inner.stop();
 		}
 		return null;
 	}

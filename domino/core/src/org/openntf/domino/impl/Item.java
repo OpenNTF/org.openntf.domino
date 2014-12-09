@@ -83,14 +83,6 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 		initialize(delegate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Document findParent(final lotus.domino.Item delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Document.SCHEMA, null);
-	}
-
 	protected void initialize(final lotus.domino.Item delegate) {
 		// TODO Auto-generated method stub
 		String name;
@@ -177,7 +169,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 		markDirty();
 		List<lotus.domino.Base> recycleThis = new ArrayList();
 		try {
-			Vector v = toDominoFriendly(values, this, recycleThis);
+			Vector v = toDominoFriendly(values, getAncestorSession(), recycleThis);
 			getDelegate().appendToTextList(v);
 
 		} catch (NotesException e) {
@@ -197,7 +189,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
 			boolean result;
-			Object domObj = toDominoFriendly(value, this, recycleThis);
+			Object domObj = toDominoFriendly(value, getAncestorSession(), recycleThis);
 			result = getDelegate().containsValue(domObj);
 			Base.s_recycle(domObj);
 			return result;
@@ -326,7 +318,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 		try {
 			lotus.domino.DateTime dt = getDelegate().getLastModified();
 			if (dt == null) {
-				return getParent().getLastModifiedDate();
+				return parent.getLastModifiedDate();
 			} else {
 				java.util.Date jdate = dt.toJavaDate();
 				return jdate;
@@ -344,7 +336,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity() {
-		return getParent().getMIMEEntity(getName());
+		return parent.getMIMEEntity(getName());
 	}
 
 	/*
@@ -368,8 +360,8 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Document getParent() {
-		return getAncestor();
+	public final Document getParent() {
+		return parent;
 	}
 
 	/*
@@ -446,7 +438,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 				if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {
 					itemType = Type.MIME_BEAN;
 				}
-				getParent().closeMIMEEntities(false, getName());
+				parent.closeMIMEEntities(false, getName());
 			}
 		}
 
@@ -583,12 +575,12 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	public Vector<Object> getValues() {
 		// Just use the parent Doc for this, since it understands MIMEBean
 		// Check for null in case there was a problem with the parent's method
-		Vector<Object> values = this.getParent().getItemValue(this.getName());
+		Vector<Object> values = parent.getItemValue(this.getName());
 		if (values != null) {
 			return new Vector<Object>(values);
 		} else {
-			log_.log(Level.WARNING, "Item " + getName() + " in document " + getAncestorDatabase().getApiPath() + ": "
-					+ getParent().getNoteID() + " is a NULL");
+			log_.log(Level.WARNING, "Item " + getName() + " in document " + getAncestorDatabase().getApiPath() + ": " + parent.getNoteID()
+					+ " is a NULL");
 		}
 		return null;
 	}
@@ -986,7 +978,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 		markDirty();
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			java.util.Vector v = toDominoFriendly(values, this, recycleThis);
+			java.util.Vector v = toDominoFriendly(values, getAncestorSession(), recycleThis);
 			getDelegate().setValues(v);
 			s_recycle(v);
 		} catch (NotesException e) {
@@ -995,7 +987,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	}
 
 	public void setValues(final Object value) {
-		this.getParent().replaceItemValue(this.getName(), value);
+		parent.replaceItemValue(this.getName(), value);
 	}
 
 	/*
@@ -1024,8 +1016,8 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return this.getParent();
+	public final Document getAncestorDocument() {
+		return parent;
 	}
 
 	/*
@@ -1034,8 +1026,8 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -1044,8 +1036,8 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
 
 	@Override
@@ -1115,9 +1107,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 
 	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
-		Document myDoc = getParent();
-		if (myDoc != null)
-			myDoc.fillExceptionDetails(result);
+		parent.fillExceptionDetails(result);
 		String myDetail = name_;
 		try {
 			myDetail = ", Type:" + getDelegate().getType();
@@ -1131,6 +1121,11 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 			myDetail += ", [ValueString -> NotesException: " + e.text + "]";
 		}
 		result.add(new ExceptionDetails.Entry(this, myDetail));
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

@@ -50,21 +50,12 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected View findParent(final lotus.domino.ViewColumn delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), View.SCHEMA, null);
-	}
-
 	private int index_ = -1;
 
 	@Override
 	public int getIndex() {
 		if (index_ == -1) {
-			View view = getParent();
-			Vector<org.openntf.domino.ViewColumn> columns = view.getColumns();
+			Vector<org.openntf.domino.ViewColumn> columns = parent.getColumns();
 			for (int i = 0; i < columns.size(); i++) {
 				if (this.equals(columns.get(i))) {
 					index_ = i;
@@ -374,8 +365,8 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public View getParent() {
-		return getAncestor();
+	public final View getParent() {
+		return parent;
 	}
 
 	/*
@@ -1663,8 +1654,8 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -1673,7 +1664,13 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

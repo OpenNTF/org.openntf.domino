@@ -30,8 +30,6 @@ import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
-import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * @author Nathan T. Freeman
@@ -60,8 +58,9 @@ public class IndexDatabase implements IScannerStateManager {
 			.split(",");
 
 	protected transient Database indexDb_;
-	protected transient View termView_;
-	protected transient View dbView_;
+	// protected transient DatabaseHolder dbHolder_;
+	//	protected transient View termView_;
+	//	protected transient View dbView_;
 	protected Set<CharSequence> stopList_;
 	protected boolean caseSensitive_ = false;
 	protected boolean continue_ = true;
@@ -136,21 +135,21 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void setDatabase(final Database indexDb) {
 		indexDb_ = indexDb;
-		indexApiPath_ = indexDb.getApiPath();
 	}
 
 	public Database getIndexDb() {
-		if (indexDb_ == null) {
-			if (indexApiPath_ != null) {
-				indexDb_ = Factory.getSession(SessionType.CURRENT).getDatabase(indexApiPath_);
-			} else {
-				indexDb_ = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
-			}
-		}
+
+		//		if (indexDb_ == null) {
+		//			if (indexApiPath_ != null) {
+		//				indexDb_ = Factory.getSession(SessionType.CURRENT).getDatabase(indexApiPath_);
+		//			} else {
+		//				indexDb_ = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
+		//			}
+		//		}
 		return indexDb_;
 	}
 
-	protected void initIndexDb() {
+	protected View initIndexDb() {
 		View indexView = getIndexDb().getView(TERM_VIEW_NAME);
 		if (indexView == null) {
 			indexView = getIndexDb().createView(TERM_VIEW_NAME, "Form=\"" + TERM_FORM_NAME + "\"");
@@ -175,6 +174,7 @@ public class IndexDatabase implements IScannerStateManager {
 			titleColumn.setTitle("TITLE");
 
 		}
+		return indexView;
 	}
 
 	public Set<CharSequence> getStopList() {
@@ -192,16 +192,21 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public View getTermView() {
-		if (dbView_ == null) {
-			initIndexDb();
-			dbView_ = getIndexDb().getView(TERM_VIEW_NAME);
+		View result = null;
+		result = getIndexDb().getView(TERM_VIEW_NAME);
+		if (result == null) {
+			result = initIndexDb();
 		}
-		return dbView_;
+		return result;
+		//		if (dbView_ == null) {
+		//			dbView_ = ;
+		//		}
+		//		return dbView_;
 	}
 
 	public List<String> getTermStarts(final String startsWith, final int count) {
 		List<String> result = new ArrayList<String>();
-		ViewEntry startEntry = getTermView().getEntryByKey(startsWith, false);
+		ViewEntry startEntry = getTermView().getFirstEntryByKey(startsWith, false);
 		if (startEntry == null) {
 			if (log_.isLoggable(Level.FINE))
 				log_.log(Level.FINE, "Unable to find ViewEntry for key " + startsWith);
@@ -226,11 +231,18 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public View getDbView() {
-		if (termView_ == null) {
+		View result = null;
+		result = getIndexDb().getView(DB_VIEW_NAME);
+		if (result == null) {
 			initIndexDb();
-			termView_ = getIndexDb().getView(DB_VIEW_NAME);
+			result = getIndexDb().getView(DB_VIEW_NAME);
 		}
-		return termView_;
+		return result;
+		//		if (termView_ == null) {
+		//			initIndexDb();
+		//			termView_ = getIndexDb().getView(DB_VIEW_NAME);
+		//		}
+		//		return termView_;
 	}
 
 	public Document getDbDocument(final CharSequence dbid) {
@@ -248,7 +260,7 @@ public class IndexDatabase implements IScannerStateManager {
 		String key = caseSensitive_ ? token.toString() : token.toString().toLowerCase();
 
 		Document result = getIndexDb().getDocumentWithKey(key, true);
-		if (result.isNewNote()) {
+		if (result != null && result.isNewNote()) {
 			result.replaceItemValue("Form", TERM_FORM_NAME);
 			result.replaceItemValue(TERM_KEY_NAME, token);
 			result.save();
@@ -676,7 +688,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbids) {
-			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			Database db = session.getDatabase(serverName, dbid);
 			if (db != null) {
 				result.add(db.getTitle() + "|" + dbid);
 			}
@@ -687,7 +699,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbMap.keySet()) {
-			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			Database db = session.getDatabase(serverName, dbid);
 			if (db != null) {
 				result.add(db.getTitle() + " (" + dbMap.get(dbid) + ")|" + dbid);
 			}

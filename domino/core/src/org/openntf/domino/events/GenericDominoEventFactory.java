@@ -12,6 +12,7 @@ import org.openntf.domino.Base;
  * 
  */
 public class GenericDominoEventFactory implements IDominoEventFactory {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(GenericDominoEventFactory.class.getName());
 

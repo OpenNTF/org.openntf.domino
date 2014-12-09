@@ -16,27 +16,23 @@
 package org.openntf.domino.iterators;
 
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.NoteCollection;
-import org.openntf.domino.impl.Base;
-import org.openntf.domino.impl.DocumentList;
+import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DocumentIterator.
  */
 public class DocumentIterator implements Iterator<org.openntf.domino.Document> {
-	/** The Constant log_. */
-	private static final Logger log_ = Logger.getLogger(DocumentIterator.class.getName());
+	///** The Constant log_. */
+	//private static final Logger log_ = Logger.getLogger(DocumentIterator.class.getName());
 	/** The index_. */
 	private int index_ = 0;
 
@@ -46,6 +42,7 @@ public class DocumentIterator implements Iterator<org.openntf.domino.Document> {
 	private String currentNoteid_;
 
 	private DocumentCollection collection_;
+	private WrapperFactory wf_;
 
 	// /** The current_. */
 	// private transient Document current_;
@@ -58,46 +55,47 @@ public class DocumentIterator implements Iterator<org.openntf.domino.Document> {
 	 */
 	public DocumentIterator(final DocumentCollection collection) {
 		collection_ = collection;
-		idArray_ = getCollectionIds(collection);
+		wf_ = collection.getAncestorSession().getFactory();
+		idArray_ = CollectionUtils.getNoteIDs(collection);
 	}
 
-	/**
-	 * Gets the collection ids.
-	 * 
-	 * @param collection
-	 *            the collection
-	 * @return the collection ids
-	 */
-	protected int[] getCollectionIds(final DocumentCollection collection) {
-		int[] result = null;
-		if (collection != null) {
-			if (collection instanceof DocumentList) {
-				result = ((DocumentList) collection).getNids();
-			} else {
-				NoteCollection nc = null;
-				try {
-					Database db = collection.getParent();
-					nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-					if (nc.getCount() > 0) {
-						result = nc.getNoteIDs();
-					} else {
-						if (log_.isLoggable(Level.FINER)) {
-							log_.log(Level.FINER, "Attempted to get id array of empty DocumentCollection");
-						}
-					}
-				} catch (Throwable t) {
-					DominoUtils.handleException(t);
-				} finally {
-					Base.s_recycle(nc);
-				}
-			}
-		} else {
-			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING, "Attempted to iterate over null DocumentCollection");
-			}
-		}
-		return result;
-	}
+	//	/**
+	//	 * Gets the collection ids.
+	//	 * 
+	//	 * @param collection
+	//	 *            the collection
+	//	 * @return the collection ids
+	//	 */
+	//	protected int[] getCollectionIds(final DocumentCollection collection) {
+	//		int[] result = null;
+	//		if (collection != null) {
+	//			if (collection instanceof DocumentList) {
+	//				result = ((DocumentList) collection).getNids();
+	//			} else {
+	//				NoteCollection nc = null;
+	//				try {
+	//					Database db = collection.getParent();
+	//					nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
+	//					if (nc.getCount() > 0) {
+	//						result = nc.getNoteIDs();
+	//					} else {
+	//						if (log_.isLoggable(Level.FINER)) {
+	//							log_.log(Level.FINER, "Attempted to get id array of empty DocumentCollection");
+	//						}
+	//					}
+	//				} catch (Throwable t) {
+	//					DominoUtils.handleException(t);
+	//				} finally {
+	//					Base.s_recycle(nc);
+	//				}
+	//			}
+	//		} else {
+	//			if (log_.isLoggable(Level.WARNING)) {
+	//				log_.log(Level.WARNING, "Attempted to iterate over null DocumentCollection");
+	//			}
+	//		}
+	//		return result;
+	//	}
 
 	/**
 	 * Gets the id array.
@@ -149,7 +147,7 @@ public class DocumentIterator implements Iterator<org.openntf.domino.Document> {
 				if (doc instanceof org.openntf.domino.Document) {
 					result = (org.openntf.domino.Document) doc;
 				} else {
-					result = Factory.fromLotus(doc, Document.SCHEMA, db);
+					result = wf_.fromLotus(doc, Document.SCHEMA, db);
 				}
 				// current_ = result;
 			} catch (Throwable t) {

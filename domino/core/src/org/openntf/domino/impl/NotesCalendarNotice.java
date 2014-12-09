@@ -53,15 +53,6 @@ public class NotesCalendarNotice extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected NotesCalendar findParent(final lotus.domino.NotesCalendarNotice delegate) throws NotesException {
-		// TODO Auto-generated method stub
-		throw new IllegalArgumentException();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.openntf.domino.NotesCalendarNotice#accept(java.lang.String)
 	 */
 	@Override
@@ -214,8 +205,7 @@ public class NotesCalendarNotice extends
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getOutstandingInvitations() {
 		try {
-			return fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.SCHEMA,
-					this.getParent());
+			return fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -226,8 +216,8 @@ public class NotesCalendarNotice extends
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public NotesCalendar getParent() {
-		return getAncestor();
+	public final NotesCalendar getParent() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -335,7 +325,13 @@ public class NotesCalendarNotice extends
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

@@ -1,7 +1,5 @@
 package org.openntf.domino.tests.paul;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.impl.DConfiguration;
@@ -12,8 +10,8 @@ import org.openntf.domino.tests.paul.Graph2DataModel.Crew;
 import org.openntf.domino.tests.paul.Graph2DataModel.DirectedBy;
 import org.openntf.domino.tests.paul.Graph2DataModel.Kills;
 import org.openntf.domino.tests.paul.Graph2DataModel.Movie;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphFactory;
@@ -138,7 +136,7 @@ public class Graph2Test implements Runnable {
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
 		@SuppressWarnings("unused")
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 
 		try {
 			timelog("Beginning graph2 test...");
@@ -566,13 +564,4 @@ public class Graph2Test implements Runnable {
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 	}
 
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
 }

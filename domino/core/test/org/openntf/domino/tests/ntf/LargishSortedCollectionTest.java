@@ -3,14 +3,12 @@ package org.openntf.domino.tests.ntf;
 import java.util.ArrayList;
 import java.util.List;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.helpers.DocumentSorter;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class LargishSortedCollectionTest implements Runnable {
 	private static int THREAD_COUNT = 1;
@@ -34,7 +32,7 @@ public class LargishSortedCollectionTest implements Runnable {
 	@Override
 	public void run() {
 		long testStartTime = System.nanoTime();
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		//		Database db = session.getDatabase("", "events4.nsf");
 		Database db = session.getDatabase("", "events4.nsf");
 		//		System.out.println("Starting build of byMod view");
@@ -100,15 +98,5 @@ public class LargishSortedCollectionTest implements Runnable {
 		//		long endTime = System.nanoTime();
 		//		System.out.println("Completed view build in " + ((endTime - startTime) / 1000000) + "ms");
 
-	}
-
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
 	}
 }

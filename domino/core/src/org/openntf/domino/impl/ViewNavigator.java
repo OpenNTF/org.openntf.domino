@@ -52,14 +52,6 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected View findParent(final lotus.domino.ViewNavigator delegate) throws NotesException {
-		return fromLotus(delegate.getParentView(), View.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -326,7 +318,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public ViewEntry getParent() {
+	public final ViewEntry getParent() {
 		try {
 			return fromLotus(getDelegate().getParent(), ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException ne) {
@@ -356,8 +348,8 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * @see org.openntf.domino.ViewNavigator#getParentView()
 	 */
 	@Override
-	public View getParentView() {
-		return getAncestor();
+	public final View getParentView() {
+		return parent;
 	}
 
 	/*
@@ -1004,7 +996,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentView().getAncestorDatabase();
 	}
 
@@ -1014,7 +1006,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -1026,4 +1018,10 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	public Iterator<org.openntf.domino.ViewEntry> siblingIterator() {
 		return new ViewNavigatorSiblingIterator(this);
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

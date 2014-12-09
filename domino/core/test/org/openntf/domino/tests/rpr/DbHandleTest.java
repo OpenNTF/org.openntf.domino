@@ -3,7 +3,7 @@ package org.openntf.domino.tests.rpr;
 import lotus.domino.NotesException;
 
 import org.junit.runner.RunWith;
-import org.openntf.domino.impl.Base;
+import org.openntf.domino.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
@@ -23,16 +23,17 @@ public class DbHandleTest implements Runnable {
 	public void run() {
 		Factory.enableCounters(true, false);
 		try {
-			lotus.domino.Session s = Factory.toLotus(Factory.getSession(SessionType.CURRENT));
+			Session sess = Factory.getSession(SessionType.CURRENT);
+			lotus.domino.Session s = sess.getFactory().toLotus(sess);
 			lotus.domino.Database d1 = s.getDatabase("", "");
 			lotus.domino.Database d2 = s.getDatabase("", "");
-			System.out.println("d1.cppId: " + Base.getLotusId(d1));
-			System.out.println("d2.cppId: " + Base.getLotusId(d2));
+			//System.out.println("d1.cppId: " + Base.getLotusId(d1));
+			//System.out.println("d2.cppId: " + Base.getLotusId(d2));
 
 			d1.openWithFailover("", "names.nsf");
 			d2.openWithFailover("", "names.nsf");
-			System.out.println("d1.cppId: " + Base.getLotusId(d1));
-			System.out.println("d2.cppId: " + Base.getLotusId(d2));
+			//System.out.println("d1.cppId: " + Base.getLotusId(d1));
+			//System.out.println("d2.cppId: " + Base.getLotusId(d2));
 
 			System.out.println("D1:" + d1.getFilePath());
 			d1.recycle();

@@ -627,22 +627,24 @@ public class DominoEmail implements IEmail {
 			}
 			Document memo = currDb.createDocument();
 			memo.put("RecNoOutOfOffice", "1");    //no replies from out of office agents
+			String mimeBoundary = memo.getUniversalID().toLowerCase();
+
 			MIMEEntity mimeRoot = memo.createMIMEEntity("Body");
 
 			mimeHeader = mimeRoot.createHeader("To");
 			mimeHeader.setHeaderVal(join(getTo(), ""));
-			memo.replaceItemValue("sendTo", getTo());
+			//memo.replaceItemValue("sendTo", getTo());
 
 			if (cc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("CC");
 				mimeHeader.setHeaderVal(join(getCC(), ""));
-				memo.replaceItemValue("cc", getCC());
+				//memo.replaceItemValue("cc", getCC());
 			}
 
 			if (bcc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("BCC");
 				mimeHeader.setHeaderVal(join(getBCC(), ""));
-				memo.replaceItemValue("bcc", getBCC());
+				//memo.replaceItemValue("bcc", getBCC());
 			}
 
 			//set subject
@@ -651,7 +653,7 @@ public class DominoEmail implements IEmail {
 
 			//create text/alternative directive: text/plain and text/html part will be childs of this entity
 			MIMEEntity mimeRootChild = mimeRoot.createChildEntity();
-			String mimeBoundary = memo.getUniversalID().toLowerCase();
+
 			mimeHeader = mimeRootChild.createHeader("Content-Type");
 			mimeHeader.setHeaderVal("multipart/alternative; boundary=\"" + mimeBoundary + "\"");
 
@@ -688,6 +690,9 @@ public class DominoEmail implements IEmail {
 
 			//set the sender
 			setSender(mimeRoot);
+
+			// mime processing done.
+			memo.closeMIMEEntities(true);
 
 			//send the e-mail
 			memo.send();

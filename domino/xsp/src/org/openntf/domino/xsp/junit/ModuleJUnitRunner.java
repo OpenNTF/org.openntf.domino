@@ -64,7 +64,7 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 		NotesContext ctx = new NotesContext(module);
 		NotesContext.initThread(ctx); // Request is initialized later
 
-		Factory.initThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 
 		String runAs = getRunAs(method);
 		if (StringUtil.isEmpty(runAs)) {

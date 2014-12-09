@@ -50,9 +50,12 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Item;
 import org.openntf.domino.Name;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.logging.LogUtils;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
@@ -110,17 +113,22 @@ public enum DominoUtils {
 	}
 
 	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
+
 		@Override
 		protected Boolean initialValue() {
-			return Boolean.FALSE;
+			System.out.println("INIT");
+			return Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
 		}
 	};
 
 	public static Boolean getBubbleExceptions() {
-		if (bubbleExceptions_.get() == null) {
-			setBubbleExceptions(Boolean.FALSE);
+		Boolean ret = bubbleExceptions_.get();
+		if (ret == null) {
+			ret = Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
+			bubbleExceptions_.set(ret);
 		}
-		return bubbleExceptions_.get();
+
+		return ret;
 	}
 
 	public static void setBubbleExceptions(final Boolean value) {
@@ -356,8 +364,10 @@ public enum DominoUtils {
 	 * 
 	 * @param args
 	 *            the args
+	 * @deprecated you should recycle objects by passing them to the WrapperFactory
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Deprecated
 	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {
@@ -367,7 +377,8 @@ public enum DominoUtils {
 					// } catch (Throwable t) {
 					// // who cares?
 					// }
-					org.openntf.domino.impl.Base.s_recycle(o);
+					WrapperFactory wf = Factory.getWrapperFactory();
+					wf.recycle((lotus.domino.Base) o);
 				} else if (o instanceof Map) {
 					Set<Map.Entry> entries = ((Map) o).entrySet();
 					for (Map.Entry<?, ?> entry : entries) {
@@ -801,7 +812,7 @@ public enum DominoUtils {
 	 * @return String return value from the notes.ini
 	 */
 	public static String getDominoIniVar(final String propertyName, final String defaultValue) {
-		String newVal = Factory.getSession().getEnvironmentString(propertyName, true);
+		String newVal = Factory.getSession(SessionType.CURRENT).getEnvironmentString(propertyName, true);
 		if (!"".equals(newVal)) {
 			return newVal;
 		} else {
@@ -851,33 +862,37 @@ public enum DominoUtils {
 	}
 
 	public static Item itemFromCalendar(final Item item, final Calendar cal) {
-		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		DateTime dt = item.getAncestorSession().createDateTime(cal);
 		item.setDateTimeValue(dt);
 		DominoUtils.incinerate(dt);
 		return item;
 	}
 
 	public static Item itemFromCalendarAppend(final Item item, final Calendar cal) {
-		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		Session sess = item.getAncestorSession();
+		DateTime dt = sess.createDateTime(cal);
 		Vector<DateTime> v = item.getValueDateTimeArray();
 		v.add(dt);
 		item.setValues(v);
-		DominoUtils.incinerate(dt);
+		sess.getFactory().recycle(dt);
 		return item;
 	}
 
 	public static Item itemFromDate(final Item item, final Date cal) {
-		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		Session sess = item.getAncestorSession();
+		DateTime dt = sess.createDateTime(cal);
 		item.setDateTimeValue(dt);
-		DominoUtils.incinerate(dt);
+		sess.getFactory().recycle(dt);
 		return item;
 	}
 
 	public static Item itemFromDateAppend(final Item item, final Date cal) {
-		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		Session sess = item.getAncestorSession();
+		DateTime dt = sess.createDateTime(cal);
 		Vector<DateTime> v = item.getValueDateTimeArray();
 		v.add(dt);
-		DominoUtils.incinerate(dt);
+		item.setValues(v);
+		sess.getFactory().recycle(dt);
 		return item;
 	}
 

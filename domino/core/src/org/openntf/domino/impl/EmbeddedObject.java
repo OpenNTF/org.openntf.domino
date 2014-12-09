@@ -33,7 +33,6 @@ import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 import org.xml.sax.InputSource;
 
 // TODO: Auto-generated Javadoc
@@ -59,14 +58,6 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 */
 	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final Document parent, final WrapperFactory wf, final long cppId) {
 		super(delegate, parent, wf, cppId, NOTES_EMBEDOBJ);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Document findParent(final lotus.domino.EmbeddedObject delegate) throws NotesException {
-		return fromLotus(delegate.getParent().getParent(), Document.SCHEMA, null);
 	}
 
 	private class EOReader extends Reader {
@@ -225,9 +216,9 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 * @see org.openntf.domino.EmbeddedObject#getParent()
 	 */
 	@Override
-	public RichTextItem getParent() {
+	public final RichTextItem getParent() {
 		try {
-			return fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, getAncestor());
+			return fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -352,8 +343,8 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 * @see org.openntf.domino.EmbeddedObject#getParentDocument()
 	 */
 	@Override
-	public Document getParentDocument() {
-		return getAncestor();
+	public final Document getParentDocument() {
+		return parent;
 	}
 
 	public org.openntf.domino.Database getParentDatabase() {
@@ -513,7 +504,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
+	public final Document getAncestorDocument() {
 		return this.getParentDocument();
 	}
 
@@ -523,7 +514,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -533,7 +524,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
 
@@ -543,7 +534,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	@Override
 	public DateTime getFileCreated() {
 		try {
-			return Factory.fromLotus(getDelegate().getFileCreated(), DateTime.SCHEMA, getAncestorSession());
+			return getFactory().fromLotus(getDelegate().getFileCreated(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -556,11 +547,16 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	@Override
 	public DateTime getFileModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getFileModified(), DateTime.SCHEMA, getAncestorSession());
+			return getFactory().fromLotus(getDelegate().getFileModified(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

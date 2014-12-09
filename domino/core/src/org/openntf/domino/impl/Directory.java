@@ -47,14 +47,6 @@ public class Directory extends BaseNonThreadSafe<org.openntf.domino.Directory, l
 		super(delegate, parent, wf, cppId, NOTES_DIRECTORY);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Directory delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -167,8 +159,8 @@ public class Directory extends BaseNonThreadSafe<org.openntf.domino.Directory, l
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -414,7 +406,13 @@ public class Directory extends BaseNonThreadSafe<org.openntf.domino.Directory, l
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

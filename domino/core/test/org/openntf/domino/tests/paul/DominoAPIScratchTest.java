@@ -2,8 +2,8 @@ package org.openntf.domino.tests.paul;
 
 import java.util.Date;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -22,8 +22,8 @@ public enum DominoAPIScratchTest {
 			long start = System.nanoTime();
 			Session s = Factory.getSession(SessionType.CURRENT);
 			Date d = new Date();
-			DateTime dt = (DateTime) s.createDateTime(d);
-			DateTime dt2 = (DateTime) s.createDateTime(d);
+			DateTime dt = s.createDateTime(d);
+			DateTime dt2 = s.createDateTime(d);
 			doChecks(dt, dt2);
 			dt.adjustHour(1);
 			doChecks(dt, dt2);

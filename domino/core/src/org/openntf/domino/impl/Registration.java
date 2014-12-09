@@ -49,14 +49,6 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Registration delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -581,8 +573,8 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -1110,7 +1102,7 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 	public void setAltOrgUnitLang(final Vector languages) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().setAltOrgUnitLang(toDominoFriendly(languages, this, recycleThis));
+			getDelegate().setAltOrgUnitLang(toDominoFriendly(languages, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1216,7 +1208,7 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 	public void setGroupList(final Vector groups) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().setGroupList(toDominoFriendly(groups, this, recycleThis));
+			getDelegate().setGroupList(toDominoFriendly(groups, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1332,7 +1324,7 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 	public void setMailReplicaServers(final Vector servers) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().setMailReplicaServers(toDominoFriendly(servers, this, recycleThis));
+			getDelegate().setMailReplicaServers(toDominoFriendly(servers, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1655,7 +1647,13 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

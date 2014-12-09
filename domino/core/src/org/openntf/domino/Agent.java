@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.io.Externalizable;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
@@ -24,7 +25,8 @@ import org.openntf.domino.types.FactorySchema;
 /**
  * The Interface Agent.
  */
-public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org.openntf.domino.ext.Agent, Design, DatabaseDescendant {
+public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org.openntf.domino.ext.Agent, Design, DatabaseDescendant,
+		Externalizable {
 
 	public static class Schema extends FactorySchema<Agent, lotus.domino.Agent, Database> {
 		@Override
