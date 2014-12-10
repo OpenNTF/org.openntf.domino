@@ -123,6 +123,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	// private boolean isDbCached_ = false;
 
 	private transient Database currentDatabase_;
+	private transient Boolean isConvertMime_;
 	private String currentDatabaseApiPath_;
 
 	private String username_;
@@ -1245,13 +1246,16 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public boolean isConvertMIME() {
-		try {
-			return getDelegate().isConvertMIME();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		if (isConvertMime_ == null) {
+			try {
+				isConvertMime_ = Boolean.valueOf(getDelegate().isConvertMIME());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				isConvertMime_ = Boolean.FALSE;
 
+			}
 		}
+		return isConvertMime_.booleanValue();
 	}
 
 	/*
@@ -1261,13 +1265,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public boolean isConvertMime() {
-		try {
-			return getDelegate().isConvertMime();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
-
-		}
+		return isConvertMIME();
 	}
 
 	/*
@@ -1437,6 +1435,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public void setConvertMIME(final boolean flag) {
 		try {
+			isConvertMime_ = Boolean.valueOf(flag);
 			getDelegate().setConvertMIME(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1451,12 +1450,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public void setConvertMime(final boolean flag) {
-		try {
-			getDelegate().setConvertMime(flag);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-
-		}
+		setConvertMIME(flag);
 	}
 
 	/*
@@ -1625,7 +1619,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
-
+		isConvertMime_ = null;
 		org.openntf.domino.Session sess = recreateSession();
 
 		if (!(sess instanceof Session)) {

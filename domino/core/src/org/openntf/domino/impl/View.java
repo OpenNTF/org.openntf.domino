@@ -939,9 +939,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 				lotusColl = getDelegate().getAllDocumentsByKey(domKey, exact);
 			}
 			DocumentCollection dc = fromLotus(lotusColl, DocumentCollection.SCHEMA, getAncestorDatabase());
-			if (dc instanceof org.openntf.domino.impl.DocumentCollection) {
-				((org.openntf.domino.impl.DocumentCollection) dc).setParentView(this);
-			}
+			dc.setParentView(this);
 			return dc;
 
 		} catch (NotesException e) {

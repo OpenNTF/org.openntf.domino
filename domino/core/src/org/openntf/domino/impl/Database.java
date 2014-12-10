@@ -3592,7 +3592,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public Document getDocumentByUNID(final String unid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return new org.openntf.domino.impl.Document(unid, this, null);
+			return getFactory().createDeferredDocument(unid, this);
 		} else {
 			return getDocumentByUNID(unid);
 		}
@@ -3601,7 +3601,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public Document getDocumentByID(final String noteid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return new org.openntf.domino.impl.Document(noteid, this, null);
+			return getFactory().createDeferredDocument(noteid, this);
 		} else {
 			return getDocumentByID(noteid);
 		}

@@ -15,7 +15,7 @@ import org.openntf.domino.types.FactorySchema;
  * @author Roland Praml, Foconis AG
  * 
  */
-public interface WrapperFactory extends Base {
+public interface WrapperFactory extends Base<lotus.domino.Base> {
 
 	/**
 	 * Wraps the lotus object in the apropriate wrapper object

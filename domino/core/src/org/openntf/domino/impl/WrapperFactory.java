@@ -51,7 +51,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Enum Factory.
  */
-public class WrapperFactory extends BaseImpl implements org.openntf.domino.WrapperFactory {
+public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.openntf.domino.WrapperFactory {
 
 	/** this is the holder for all other object that need to be recycled **/
 	private static ThreadLocal<DominoReferenceCache> referenceCache = new ThreadLocal<DominoReferenceCache>() {
@@ -720,6 +720,16 @@ public class WrapperFactory extends BaseImpl implements org.openntf.domino.Wrapp
 
 	@Override
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
+		if (values == null)
+			return null;
+		if (values instanceof Vector) {
+			for (Object val : values) {
+				if (!(val instanceof Number) && !(val instanceof String) && !(val instanceof Date)) {
+					return wrapColumnValues(values, session, referenceCache.get(), null);
+				}
+			}
+			return (Vector<Object>) values; // values is a vector that contains only Number/String/Date-values. So it is safe
+		}
 		return wrapColumnValues(values, session, referenceCache.get(), null);
 	}
 
