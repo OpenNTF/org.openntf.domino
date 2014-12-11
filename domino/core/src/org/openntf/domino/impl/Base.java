@@ -956,13 +956,31 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	private List<IDominoListener> listeners_;
 	private transient Map<EnumEvent, List<IDominoListener>> listenerCache_;
 
+	// these are important to link deferred against, so that they aren't recycled.
+	// defered objects that have the same delegate build a circle, so that they aren't gc-ed as 
+	// long as someone is holding a reference to at least one object of this circle.
+
+	protected Base<?, ?, ?> siblingWrapper_;
+
+	// The origin of the deferreds
+	// RPR: Currently, if you use multiple deferreds pointing to the same document, you MAY
+	// get unexpected results, because each Document caches different things.
+	// Normally, each document should route every method call to its origin!
+	protected T originOfDeferred_;
+
 	@Override
 	public final boolean hasListeners() {
+		if (originOfDeferred_ != null)
+			return originOfDeferred_.hasListeners();
+
 		return listeners_ != null && !listeners_.isEmpty();
 	}
 
 	@Override
 	public final List<IDominoListener> getListeners() {
+		if (originOfDeferred_ != null)
+			return originOfDeferred_.getListeners();
+
 		if (listeners_ == null) {
 			listeners_ = new ArrayList<IDominoListener>();
 		}
@@ -971,19 +989,30 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@Override
 	public final void addListener(final IDominoListener listener) {
-		listenerCache_ = null;
-		getListeners().add(listener);
+		if (originOfDeferred_ != null) {
+			originOfDeferred_.addListener(listener);
+		} else {
+			listenerCache_ = null;
+			getListeners().add(listener);
+		}
 	}
 
 	@Override
 	public final void removeListener(final IDominoListener listener) {
-		listenerCache_ = null;
-		getListeners().remove(listener);
+		if (originOfDeferred_ != null) {
+			originOfDeferred_.removeListener(listener);
+		} else {
+			listenerCache_ = null;
+			getListeners().remove(listener);
+		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public final List<IDominoListener> getListeners(final EnumEvent event) {
+		if (originOfDeferred_ != null)
+			return originOfDeferred_.getListeners(event);
+
 		if (!hasListeners())
 			return Collections.EMPTY_LIST;
 
@@ -1008,6 +1037,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@Override
 	public final boolean fireListener(final IDominoEvent event) {
+		if (originOfDeferred_ != null)
+			return originOfDeferred_.fireListener(event);
+
 		boolean result = true;
 		if (!hasListeners())
 			return true;
@@ -1198,6 +1230,28 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return false;
 		}
 		return true;
+	}
+
+	protected void setNewSibling(final org.openntf.domino.impl.Base<?, ?, ?> oldWrapper) {
+		listeners_ = oldWrapper.listeners_;
+	}
+
+	protected void linkToExisting(final Base<?, ?, ?> oldWrapper) {
+		// TODO Auto-generated method stub
+		// link the implWrapper into the circle
+		if (oldWrapper.siblingWrapper_ == null)
+			oldWrapper.siblingWrapper_ = oldWrapper;
+
+		siblingWrapper_ = oldWrapper.siblingWrapper_;
+		oldWrapper.siblingWrapper_ = this;
+
+		// link to origin
+		originOfDeferred_ = (T) oldWrapper.originOfDeferred_;
+
+		// if the oldWrapper has no origin, it IS the origin
+		if (originOfDeferred_ == null)
+			originOfDeferred_ = (T) oldWrapper;
+
 	}
 
 }

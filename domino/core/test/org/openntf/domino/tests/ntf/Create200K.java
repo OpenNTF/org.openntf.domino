@@ -8,14 +8,14 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
-import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 public class Create200K {
 	private static final Logger log_ = Logger.getLogger(Create200K.class.getName());
 
-	static class DocCreator implements Runnable {
+	public static class DocCreator implements Runnable {
 
 		@Override
 		public void run() {
@@ -59,8 +59,7 @@ public class Create200K {
 	 * @param args
 	 */
 	public static void main(final String[] args) {
-		DominoThread dt = new DominoThread(new DocCreator(), "Create One Million Docs");
-		dt.start();
+		TestRunnerUtil.runAsDominoThread(DocCreator.class, TestRunnerUtil.NATIVE_SESSION, 1);
 	}
 
 }

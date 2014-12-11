@@ -106,8 +106,9 @@ public class DominoReferenceCache {
 	 *            key with which the specified value is to be associated.
 	 * @param value
 	 *            value to be associated with the specified key.
+	 * @return
 	 */
-	public void put(final lotus.domino.Base delegate, final org.openntf.domino.Base<?> value) {
+	public org.openntf.domino.Base<?> put(final lotus.domino.Base delegate, final org.openntf.domino.Base<?> value) {
 		// If the map already contains an equivalent key, the new key
 		// of a (key, value) pair is NOT stored in the map but the new
 		// value only. But as the key is strongly referenced by the
@@ -119,16 +120,15 @@ public class DominoReferenceCache {
 		// clean up calls on different operations.
 
 		if (value == null) {
-			return;
+			return null;
 		}
 		// create and enqueue a reference that tracks lifetime of value
 		DominoReference ref = new DominoReference(value, queue, delegate);
 		if (delegate == null) {
 			throw new IllegalArgumentException("key cannot be 0");
 		}
-		map.put(delegate, ref);
-
 		Factory.countLotus(delegate.getClass());
+		return getReferenceObject(map.put(delegate, ref));
 	}
 
 	/**
@@ -185,6 +185,7 @@ public class DominoReferenceCache {
 					}
 				}
 			}
+
 			if (ref.recycle())
 				result++;
 		}

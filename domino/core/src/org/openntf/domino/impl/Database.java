@@ -3565,7 +3565,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	private transient NoteCollection intNC_;
 
 	private NoteCollection getInternalNoteCollection() {
-		if (null == intNC_ || isDead(intNC_)) {
+		if (null == intNC_ || intNC_.isDead()) {
 			intNC_ = this.createNoteCollection(false);
 			//		} else {
 			//			try {

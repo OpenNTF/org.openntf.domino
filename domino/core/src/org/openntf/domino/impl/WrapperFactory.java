@@ -297,7 +297,26 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			trackDoc((Document) wrapper, "/recache");
 		DominoReferenceCache rc = referenceCache.get();
 		rc.processQueue(newLotus, null); // recycle all elements but not the current ones
-		rc.put(newLotus, wrapper);
+
+		// RPr: What happens here:
+		// You recace the same lotus objects for different wrappers
+		// This is something that should not happen unless you use deferred objects. Assume you are retrieving
+		// 
+		// Document doc1 = db.getDocumentByID(0xF376, true);
+		// Document doc2 = db.getDocumentByID(0xF376, true);
+		// so doc1 != doc2, but both are refering to the same delegate.
+		// Recycle of the delegate will occur if ONE of the two wrappers is gc'ed
+
+		org.openntf.domino.impl.Base<?, ?, ?> oldWrapper = (org.openntf.domino.impl.Base<?, ?, ?>) rc.put(newLotus, wrapper);
+		if (oldWrapper != null && oldWrapper != wrapper) {
+			org.openntf.domino.impl.Base<?, ?, ?> implWrapper = (org.openntf.domino.impl.Base<?, ?, ?>) wrapper;
+			if ((implWrapper.siblingWrapper_ == null)) {
+				// wrapper is new and not yet linked, so build a chain of all so that
+				// they are refering to each other
+				implWrapper.linkToExisting(oldWrapper);
+
+			}
+		}
 	}
 
 	@Override

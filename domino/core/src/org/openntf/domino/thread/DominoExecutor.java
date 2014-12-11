@@ -56,7 +56,8 @@ public class DominoExecutor extends AbstractDominoExecutor {
 			try {
 				callOrRun();
 			} catch (Throwable t) {
-				log_.log(Level.WARNING, getDescription() + " - " + t.getMessage(), t);
+				log_.log(Level.WARNING, getDescription() + " caused an error: " + t.toString(), t);
+				throw new RuntimeException(t);
 			}
 		}
 	}

@@ -111,7 +111,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		} catch (Throwable t) {
 			log_.log(Level.WARNING,
 					"cannot create a privilegedThreadFactory - this is the case if you run as java app or in an unsupported operation: "
-							+ t.getMessage(), t);
+							+ t.toString(), t);
 			return Executors.defaultThreadFactory();
 		}
 	}
@@ -219,7 +219,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 				try {
 					this.get();
 				} catch (Throwable t) {
-					log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.getMessage(), t);
+					log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t);
 				}
 				synchronized (this) {
 					this.runner = null;

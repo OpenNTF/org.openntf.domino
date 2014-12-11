@@ -41,9 +41,12 @@ public class MassCopyDocumentsScratchTest {
 
 		assertEquals(0, target.getAllDocuments().size());
 		System.out.println("-- START --");
-
+		int i = 0;
 		for (Document doc : source.getAllDocuments()) {
 			assertNotNull(doc.copyToDatabase(target));
+			i++;
+			if (i % 5000 == 0)
+				System.out.println("Copied " + i + " documents of " + source.getAllDocuments().size());
 		}
 
 		System.out.println("-- STOP --");
