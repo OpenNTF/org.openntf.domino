@@ -61,14 +61,14 @@ public class SessionTestEx {
 
 	@Test
 	public void TestNamedSession() {
-		Session sess = Factory.getNamedSession("CN=The Tester/OU=Test/O=FOCONIS", false);
+		Session sess = Factory.getNamedSession("CN=Theo Tester/OU=Test/O=FOCONIS", false);
 		assertFalse(sess.isTrustedSession());
 		assertFalse(sess.isAnonymous());
 		//assertFalse(sess.isRestricted());
 		System.out.println("Named Session User name      " + sess.getUserName());
 		System.out.println("Named Session Effective name " + sess.getEffectiveUserName());
 
-		Database db = sess.getDatabase(SESSION_USER, "Testdocuments.nsf");
+		Database db = sess.getDatabase(SESSION_USER, "fakenames.nsf");
 
 		Document doc = db.createDocument();
 		doc.replaceItemValue("Test", "Test");
@@ -90,11 +90,14 @@ public class SessionTestEx {
 		assertFalse(sess.isAnonymous());
 		//assertFalse(sess.isRestricted());
 
-		Database db = sess.getDatabase(SESSION_USER, "Testdocuments.nsf");
+		Database db = sess.getDatabase(SESSION_USER, "fakenames.nsf");
 
+		int i = 0;
 		for (Document doc : db.getAllDocuments()) {
-			System.out.println("ID:" + doc.getUniversalID());
+			if (doc.isValid())
+				i++;
 		}
+		System.out.println("Total " + i + "docs");
 
 	}
 }

@@ -201,7 +201,7 @@ public class XOTSTest {
 	public void testTasklet() {
 
 		Xots.getService().runTasklet("entwicklung/jfof4/proglibjfof.nsf", "de.foconis.lib.app.xots.TestRunner_1");
-		Xots.getService().runTasklet("bundle:org.openntf.domino", XotsNsfScanner.class.getName());
+		Xots.getService().runTasklet("bundle:org.openntf.domino.xsp", XotsNsfScanner.class.getName());
 	}
 
 	public static class EndlessTest extends AbstractDominoRunnable {

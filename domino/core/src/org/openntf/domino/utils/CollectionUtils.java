@@ -374,26 +374,26 @@ public enum CollectionUtils {
 		return null;
 	}
 
-	/**
-	 * Convert a Document collection to Notes Collection
-	 * 
-	 * @param collection
-	 * @return
-	 */
-	public static org.openntf.domino.NoteCollection xtoLotusNoteCollection(final lotus.domino.DocumentCollection collection) {
-		org.openntf.domino.NoteCollection result = null;
-		if (collection instanceof org.openntf.domino.DocumentCollection) {
-			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
-			result = db.createNoteCollection(false);
-			result.add(collection);
-		} else if (collection != null) {
-			// TODO Eh?
-			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
-			result = db.createNoteCollection(false);
-			result.add(collection);
-		}
-		return result;
-	}
+	//	/**
+	//	 * Convert a Document collection to Notes Collection
+	//	 * 
+	//	 * @param collection
+	//	 * @return
+	//	 */
+	//	public static org.openntf.domino.NoteCollection toLotusNoteCollection(final lotus.domino.DocumentCollection collection) {
+	//		org.openntf.domino.NoteCollection result = null;
+	//		if (collection instanceof org.openntf.domino.DocumentCollection) {
+	//			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
+	//			result = db.createNoteCollection(false);
+	//			result.add(collection);
+	//		} else if (collection != null) {
+	//			// TODO Eh?
+	//			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
+	//			result = db.createNoteCollection(false);
+	//			result.add(collection);
+	//		}
+	//		return result;
+	//	}
 
 	/**
 	 * Returns the Note IDs of the given (Notes) collection

@@ -231,7 +231,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		try {
 			noteid_ = delegate.getNoteID();
 			unid_ = delegate.getUniversalID();
-			isNew_ = Long.valueOf(noteid_, 16) == 0;
+			isNew_ = noteid_.equals("0") || noteid_.isEmpty();
 
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
@@ -3070,7 +3070,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						// so we can do that in every case
 						noteid_ = del.getNoteID();
 						unid_ = del.getUniversalID();
-						isNew_ = Long.valueOf(noteid_, 16) == 0; // don't set to true, save may fail!
+						isNew_ = noteid_.equals("0") || noteid_.isEmpty(); // don't set to true, save may fail!
 						invalidateCaches();
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
@@ -3090,7 +3090,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						try {
 							getDelegate().save(force, makeResponse, markRead);
 							noteid_ = getDelegate().getNoteID();
-							isNew_ = Long.valueOf(noteid_, 16) == 0;
+							isNew_ = noteid_.equals("0") || noteid_.isEmpty();
 							System.out.println(message);
 							log_.log(Level.WARNING, message/* , t */);
 						} catch (NotesException ne) {
