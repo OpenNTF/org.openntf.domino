@@ -273,9 +273,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		 * BaseOpenLogItem gets shared between calls and _currentDatabase is resurrected.
 		 * So check _currentDbPath variable is actual current path
 		 */
-		if (!StringUtil.equals(_currentDbPath, Factory.getSession().getCurrentDatabase().getFilePath())) {
+		if (!StringUtil.equals(_currentDbPath, Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
 			try {
-				_currentDatabase = Factory.getSession().getCurrentDatabase();
+				_currentDatabase = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 				_currentDbPath = _currentDatabase.getFilePath();
 			} catch (Exception e) {
 				debugPrint(e);
@@ -334,7 +334,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	@Override
 	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
-			setUserRoles(Factory.getSession().evaluate("@UserRoles"));
+			setUserRoles(Factory.getSession(SessionType.CURRENT).evaluate("@UserRoles"));
 		}
 		return _userRoles;
 	}
@@ -359,7 +359,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		if (_clientVersion == null) {
 			_clientVersion = new Vector<String>();
 			try {
-				String cver = Factory.getSession().getNotesVersion();
+				String cver = Factory.getSession(SessionType.CURRENT).getNotesVersion();
 				if (cver != null) {
 					if (cver.indexOf("|") > 0) {
 						_clientVersion.addElement(cver.substring(0, cver.indexOf("|")));
@@ -781,8 +781,8 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
 			// Fixed next line
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
-			logDoc.replaceItemValue("LogUserName", Factory.getSession().getUserName());
-			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession().getEffectiveUserName());
+			logDoc.replaceItemValue("LogUserName", Factory.getSession(SessionType.CURRENT).getUserName());
+			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 			logDoc.replaceItemValue("LogAccessLevel", getAccessLevel());
 			logDoc.replaceItemValue("LogUserRoles", getUserRoles());
 			logDoc.replaceItemValue("LogClientVersion", getClientVersion());

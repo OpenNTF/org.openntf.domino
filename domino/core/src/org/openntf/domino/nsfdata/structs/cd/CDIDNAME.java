@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record describes the HTML field properties, ID, Class, Style, Title, Other and Name associated for any given field defined within
@@ -14,15 +13,15 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDIDNAME extends CDRecord {
 
-	static {
-		addFixedUnsigned("Length", Short.class);
-		addFixedUnsigned("wClassLen", Short.class);
-		addFixedUnsigned("wStyleLen", Short.class);
-		addFixedUnsigned("wTitleLen", Short.class);
-		addFixedUnsigned("wExtraLen", Short.class);
-		addFixedUnsigned("wNameLen", Short.class);
-		addFixedArray("reserved", Byte.class, 10);
+	public final Unsigned16 Length = new Unsigned16();
+	public final Unsigned16 wClassLen = new Unsigned16();
+	public final Unsigned16 wStyleLen = new Unsigned16();
+	public final Unsigned16 wTitleLen = new Unsigned16();
+	public final Unsigned16 wExtraLen = new Unsigned16();
+	public final Unsigned16 wNameLen = new Unsigned16();
+	public final Unsigned8[] reserved = array(new Unsigned8[10]);
 
+	static {
 		addVariableString("ID", "Length");
 		addVariableString("Class", "wClassLen");
 		addVariableString("Style", "wStyleLen");
@@ -31,10 +30,8 @@ public class CDIDNAME extends CDRecord {
 		addVariableString("Name", "wNameLen");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDIDNAME(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDIDNAME(final SIG signature, final ByteBuffer data) {
@@ -42,27 +39,27 @@ public class CDIDNAME extends CDRecord {
 	}
 
 	public String getId() {
-		return (String) getStructElement("ID");
+		return (String) getVariableElement("ID");
 	}
 
 	public String getStyleCLass() {
-		return (String) getStructElement("Class");
+		return (String) getVariableElement("Class");
 	}
 
 	public String getStyle() {
-		return (String) getStructElement("Style");
+		return (String) getVariableElement("Style");
 	}
 
 	public String getTitle() {
-		return (String) getStructElement("Title");
+		return (String) getVariableElement("Title");
 	}
 
 	public String getExtra() {
-		return (String) getStructElement("Extra");
+		return (String) getVariableElement("Extra");
 	}
 
 	public String getName() {
-		return (String) getStructElement("Name");
+		return (String) getVariableElement("Name");
 	}
 
 	//	@Override

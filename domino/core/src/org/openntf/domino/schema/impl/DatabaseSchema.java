@@ -97,6 +97,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public Document createDocument(final Database db, final String doctype) {
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
@@ -124,6 +125,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		boolean result = true;
 		Map<String, IItemDefinition> itemDefs = def.getItemDefinitions();
 		for (String key : itemDefs.keySet()) {
+			@SuppressWarnings("unused")
 			IItemDefinition itemDef = itemDefs.get(key);
 			// TODO NTF
 		}

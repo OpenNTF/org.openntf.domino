@@ -15,6 +15,7 @@ import java.util.logging.Logger;
  */
 
 public class BigString implements CharSequence, Serializable, Comparable<BigString> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BigString.class.getName());
 	private static final long serialVersionUID = 1L;
 

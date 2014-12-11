@@ -17,8 +17,8 @@ import com.ibm.xsp.extlib.component.picker.data.IPickerResult;
  *         SimpleNamePickerData, for use with the NamePicker control
  */
 public class SimpleNamePickerData implements INamePickerData {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(SimpleNamePickerData.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructor

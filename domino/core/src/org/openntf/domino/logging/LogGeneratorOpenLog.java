@@ -24,7 +24,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.Factory;
 
-@SuppressWarnings("restriction")
 public class LogGeneratorOpenLog {
 
 	/*-------------------------------------------------------------*/

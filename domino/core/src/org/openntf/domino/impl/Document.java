@@ -3491,11 +3491,17 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				break;
 			case HARD_TRUE:
 				lotus.domino.Document delegate = getDelegate();
-				result = delegate.removePermanently(true);
+				if (delegate != null) {
+					result = delegate.removePermanently(true);
+				} else {
+					result = true;
+				}
 				if (result) {
 					s_recycle(delegate);
 					this.setDelegate(null, false);
 				}
+				unid_ = null;
+				noteid_ = null;
 				break;
 			case HARD_FALSE:
 				result = getDelegate().removePermanently(false);

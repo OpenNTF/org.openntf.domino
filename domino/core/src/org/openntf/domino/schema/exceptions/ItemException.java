@@ -16,7 +16,9 @@ public abstract class ItemException extends SchemaException {
 	private static final Logger log_ = Logger.getLogger(ItemException.class.getName());
 	private static final long serialVersionUID = 1L;
 
+	@SuppressWarnings("unused")
 	private Object value_;
+	@SuppressWarnings("unused")
 	private ItemDefinition itemdef_;
 
 	public ItemException() {

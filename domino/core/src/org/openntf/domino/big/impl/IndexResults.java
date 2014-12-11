@@ -15,7 +15,9 @@ import java.util.logging.Logger;
  * 
  */
 public class IndexResults {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IndexResults.class.getName());
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	protected Map<CharSequence, AtomicInteger> terms_;

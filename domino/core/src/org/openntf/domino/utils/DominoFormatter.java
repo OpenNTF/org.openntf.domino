@@ -36,42 +36,33 @@ public class DominoFormatter extends ThreadLocal<Object> implements Serializable
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFormatter.class.getName());
 
-	/** The date only format_. */
 	private String dateOnlyFormat_;
 
-	/** The time only format_. */
 	private String timeOnlyFormat_;
 
-	/** The date time format_. */
 	private String dateTimeFormat_;
 
-	/** The df_. */
 	private SimpleDateFormat tdf_;
 	private SimpleDateFormat ddf_;
 	private SimpleDateFormat dtdf_;
 
-	/** The am_. */
+	@SuppressWarnings("unused")
 	private String am_;
 
-	/** The date sep_. */
 	private String dateSep_;
 
-	/** The pm_. */
+	@SuppressWarnings("unused")
 	private String pm_;
 
-	/** The time sep_. */
 	private String timeSep_;
 
-	/** The time24_. */
 	private boolean time24_;
 
-	/** The dmy_. */
 	private boolean dmy_;
 
-	/** The mdy_. */
 	private boolean mdy_;
 
-	/** The ymd_. */
+	@SuppressWarnings("unused")
 	private boolean ymd_;
 
 	/**

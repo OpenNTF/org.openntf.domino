@@ -91,7 +91,7 @@ public enum Factory {
 	public static Printer printer = new Printer();
 
 	/**
-	 * An identifier for the different session types, the factory can create
+	 * An identifier for the different session types the factory can create.
 	 * 
 	 * @author Roland Praml, FOCONIS AG
 	 * 
@@ -871,7 +871,8 @@ public enum Factory {
 	/**
 	 * 
 	 * @param mode
-	 * @return
+	 *            The type of session to create
+	 * @return A Session object corresponding to the given type
 	 */
 	public static org.openntf.domino.Session getSession(final SessionType mode) {
 		ThreadVariables tv = getThreadVariables();
@@ -919,8 +920,6 @@ public enum Factory {
 	/**
 	 * Sets the session for a certain sessionMode
 	 * 
-	 * @param session
-	 * @param mode
 	 */
 	//	public static void setSession(final lotus.domino.Session session, final SessionType mode) {
 	//		if (session instanceof org.openntf.domino.Session) {
@@ -1024,7 +1023,6 @@ public enum Factory {
 		return tv.classLoader;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		ThreadVariables tv = getThreadVariables();
@@ -1093,7 +1091,6 @@ public enum Factory {
 	/**
 	 * terminate the current thread.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void termThread() { // RPr: Method was deliberately renamed
 		if (log_.isLoggable(Level.FINER)) {
 			log_.log(Level.FINER, "Factory.termThread()", new Throwable());

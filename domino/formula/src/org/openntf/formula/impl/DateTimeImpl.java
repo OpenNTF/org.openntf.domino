@@ -61,7 +61,7 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public void convertToZone(final int zone, final boolean isDST) {
-		int unused;
+		//		int unused;
 		// TODO MSt: Timezone support (Really needed?)
 	}
 
@@ -86,13 +86,13 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public int getTimeZone() {
-		int unused;
+		//		int unused;
 		// TODO MSt: Timezone support
 		return 0;
 	}
 
 	public String getZoneTime() {
-		int unused;
+		//		int unused;
 		// TODO MSt: Timezone support
 		return null;
 	}
@@ -106,7 +106,7 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public boolean isDST() {
-		int unused;
+		//		int unused;
 		// TODO MSt: Timezone support
 		return false;
 	}

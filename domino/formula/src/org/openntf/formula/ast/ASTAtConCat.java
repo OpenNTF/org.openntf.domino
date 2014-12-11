@@ -51,7 +51,7 @@ public class ASTAtConCat extends SimpleNode {
 			if (vh != null && vh.dataType == DataType.ERROR)
 				return vh;
 			res[i] = vh;
-			size = Math.max(size, vh.size);
+			size = Math.max(size, vh == null ? 0 : vh.size);
 		}
 
 		int entry = 0;

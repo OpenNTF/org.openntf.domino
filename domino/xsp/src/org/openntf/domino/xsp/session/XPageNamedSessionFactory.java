@@ -7,6 +7,8 @@ import org.openntf.domino.utils.DominoUtils;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 
 public class XPageNamedSessionFactory extends AbstractXPageSessionFactory implements INamedSessionFactory {
+	private static final long serialVersionUID = 1L;
+
 	private boolean fullAccess_;
 	private String runAs_;
 

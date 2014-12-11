@@ -46,8 +46,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	}
 
 	/**
-	 * LinkedHashSet (array of EventError objects in the order they were
-	 * inserted)
+	 * LinkedHashSet (array of EventError objects in the order they were inserted)
 	 * 
 	 * @return LinkedHashSet Errors or Events as a list
 	 */
@@ -75,7 +74,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param loggedErrors
 	 *            LinkedHashSet of EventError objects to add to the log
 	 */
-	public void setLoggedErrors(LinkedHashSet<EventError> loggedErrors) {
+	public void setLoggedErrors(final LinkedHashSet<EventError> loggedErrors) {
 		this.loggedErrors = loggedErrors;
 	}
 
@@ -125,8 +124,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 *            InterpretException thrown from SSJS. In SSJS, add a try...catch block.<br/>
 	 *            The "catch" element passes an InterpretException.
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * @param severity
 	 *            Integer severity level from 1 to 7, corresponding to java.util.logging Levels. 1 is severe, 7 is finest.
 	 * @param unid
@@ -144,7 +142,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            The default level is 4.
 	 */
-	public void addError(Object je, Object thisObj, int severity, String unid) {
+	public void addError(final Object je, final Object thisObj, final int severity, final String unid) {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
@@ -160,8 +158,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 *            InterpretException thrown from SSJS. In SSJS, add a try...catch block.<br/>
 	 *            The "catch" element passes an InterpretException.
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * @param severity
 	 *            Integer severity level from 1 to 7, corresponding to java.util.logging Levels. 1 is severe, 7 is finest.
 	 * 
@@ -177,7 +174,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            The default level is 4.
 	 */
-	public void addError(Object je, Object thisObj, int severity) {
+	public void addError(final Object je, final Object thisObj, final int severity) {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
@@ -193,8 +190,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 *            InterpretException thrown from SSJS. In SSJS, add a try...catch block.<br/>
 	 *            The "catch" element passes an InterpretException.
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * 
 	 *            EXAMPLE
 	 * 
@@ -208,7 +204,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            To pass no control, call openLogBean.addError(e, null)
 	 */
-	public void addError(Object je, Object thisObj) {
+	public void addError(final Object je, final Object thisObj) {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
@@ -226,8 +222,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param msg
 	 *            An additional message to pass to OpenLog.
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * @param severity
 	 *            Integer severity level from 1 to 7, corresponding to java.util.logging Levels. 1 is severe, 7 is finest.
 	 * @param unid
@@ -247,7 +242,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            The default level is 4.
 	 */
-	public void addError(Object je, String msg, Object thisObj, int severity, String unid) {
+	public void addError(final Object je, final String msg, final Object thisObj, final int severity, final String unid) {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
@@ -265,8 +260,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param msg
 	 *            An additional message to pass to OpenLog.
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * @param severity
 	 *            Integer severity level from 1 to 7, corresponding to java.util.logging Levels. 1 is severe, 7 is finest.
 	 * 
@@ -282,7 +276,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            The default level is 4.
 	 */
-	public void addError(Object je, String msg, Object thisObj, int severity) {
+	public void addError(final Object je, final String msg, final Object thisObj, final int severity) {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
@@ -300,8 +294,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param msg
 	 *            An additional message to pass to OpenLog.
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * 
 	 *            EXAMPLE
 	 * 
@@ -315,7 +308,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            To pass no control, call openLogBean.addError(e, null)
 	 */
-	public void addError(Object je, String msg, Object thisObj) {
+	public void addError(final Object je, final String msg, final Object thisObj) {
 		try {
 			InterpretException ie = getInterpretException(je);
 			UIComponent control = getComponentFromThis(thisObj);
@@ -344,8 +337,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param msg
 	 *            String message to pass to the event logger
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * @param severity
 	 *            Integer severity level from 1 to 7, corresponding to java.util.logging Levels. 1 is severe, 7 is finest
 	 * @param unid
@@ -365,7 +357,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            The default level is 4. To pass no UNID, pass "".
 	 */
-	public void addEvent(String msg, Object thisObj, int severity, String unid) {
+	public void addEvent(final String msg, final Object thisObj, final int severity, final String unid) {
 		try {
 			UIComponent control = getComponentFromThis(thisObj);
 			EventError newEv = createEventError(null, msg, control, severity, unid);
@@ -379,8 +371,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param msg
 	 *            String message to pass to the event logger
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * @param severity
 	 *            Integer severity level from 1 to 7, corresponding to java.util.logging Levels. 1 is severe, 7 is finest.
 	 * 
@@ -396,7 +387,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * 
 	 *            The default level is 4.
 	 */
-	public void addEvent(String msg, Object thisObj, int severity) {
+	public void addEvent(final String msg, final Object thisObj, final int severity) {
 		try {
 			UIComponent control = getComponentFromThis(thisObj);
 			EventError newEv = createEventError(null, msg, control, severity, "");
@@ -410,8 +401,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @param msg
 	 *            String message to pass to the event logger
 	 * @param thisObj
-	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a
-	 *            property or an event:
+	 *            Component or eventHandler the error occurred on. To avoid hard-coding the control, use "this" in a property or an event:
 	 * 
 	 *            EXAMPLE:
 	 * 
@@ -423,7 +413,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * }
 	 * </pre>
 	 */
-	public void addEvent(String msg, Object thisObj) {
+	public void addEvent(final String msg, final Object thisObj) {
 		try {
 			UIComponent control = getComponentFromThis(thisObj);
 			EventError newEv = createEventError(null, msg, control, 4, "");
@@ -441,7 +431,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * @return UIComponent the component where the error is on
 	 * @since v5.0.0
 	 */
-	public UIComponent getComponentFromThis(Object thisObj) {
+	public UIComponent getComponentFromThis(final Object thisObj) {
 		try {
 			if (null == thisObj) {
 				return null;
@@ -455,8 +445,8 @@ public class XspOpenLogErrorHolder implements Serializable {
 		} catch (Exception e) {
 			// We've got something I wasn't expecting, an exception
 			System.out
-					.println("WARNING: invalid object passed in by developer. Should be a component (not component id) or eventHandler. Found "
-							+ thisObj.getClass().getName());
+			.println("WARNING: invalid object passed in by developer. Should be a component (not component id) or eventHandler. Found "
+					+ (thisObj == null ? null : thisObj.getClass().getName()));
 			return null;
 		}
 	}

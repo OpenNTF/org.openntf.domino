@@ -14,6 +14,7 @@ import org.openntf.domino.graph2.DElementStore;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 
 public class DConfiguration extends FramedGraphConfiguration implements org.openntf.domino.graph2.DConfiguration {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DConfiguration.class.getName());
 	private Long defaultElementStoreKey_ = null;
 	private Map<Long, DElementStore> elementStoreMap_;

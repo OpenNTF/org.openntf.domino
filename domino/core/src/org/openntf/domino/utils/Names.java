@@ -606,6 +606,7 @@ public enum Names {
 	 * @return Name created from the specified Name. Null on error.
 	 * @deprecated use {@link Name#clone()} instead.
 	 */
+
 	@Deprecated
 	public static Name createName(final Name name) {
 		try {

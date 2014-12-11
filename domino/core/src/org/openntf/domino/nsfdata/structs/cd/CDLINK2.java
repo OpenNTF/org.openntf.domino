@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure implements a document link in a rich text field. It contains an index into a Doc Link Reference List. A Doc Link Reference
@@ -14,27 +13,16 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDLINK2 extends CDRecord {
 
-	static {
-		addFixed("LinkID", Short.class);
+	public final Unsigned16 LinkID = new Unsigned16();
 
-		// TODO add null-terminated-string support
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	// TODO add null-terminated-string support
 
 	public CDLINK2(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDLINK2(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	/**
-	 * @return ID of the link
-	 */
-	public short getLinkId() {
-		return (Short) getStructElement("LinkID");
 	}
 
 	/**
@@ -139,7 +127,7 @@ public class CDLINK2 extends CDRecord {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Link ID: " + getLinkId() + ", Comment: " + getComment() + ", Hint: " + getHint()
+		return "[" + getClass().getSimpleName() + ", Link ID: " + LinkID.get() + ", Comment: " + getComment() + ", Hint: " + getHint()
 				+ ", Anchor: " + getAnchor() + "]";
 	}
 }

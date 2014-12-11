@@ -13,6 +13,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 public class Create200K {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Create200K.class.getName());
 
 	public static class DocCreator implements Runnable {
@@ -55,9 +56,6 @@ public class Create200K {
 		}
 	}
 
-	/**
-	 * @param args
-	 */
 	public static void main(final String[] args) {
 		TestRunnerUtil.runAsDominoThread(DocCreator.class, TestRunnerUtil.NATIVE_SESSION, 1);
 	}

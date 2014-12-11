@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record provides additional table properties, expanding the information provided in CDTABLEBEGIN. It will only be recognized in
@@ -15,73 +14,45 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDPRETABLEBEGIN extends CDRecord {
-
-	static {
-		addFixed("Flags", Integer.class);
-		addFixedUnsigned("Rows", Byte.class);
-		addFixedUnsigned("Columns", Byte.class);
-		addFixed("ColumnSizingBits1", Integer.class);
-		addFixed("ColumnSizingBits2", Integer.class);
-		addFixed("ViewerType", Byte.class);
-		addFixed("Spare", Byte.class);
-		addFixedUnsigned("MinRowHeight", Short.class);
-		addFixed("Spares", Short.class);
-		addFixed("StyleColor1", Integer.class);
-		addFixed("StyleColor2", Integer.class);
-		addFixed("InnerBorderColor", COLOR_VALUE.class);
-		addFixedUnsigned("NameLength", Short.class);
-		addFixed("ImagePacketLength", Short.class);
-		addFixed("RowLabelDataLength", Short.class);
-
-		addVariableString("Name", "getNameLength");
+	public static enum Viewer {
+		ZERO, ONCLICK, ONLOADTIMER, ONLOADCYCLEONCE, TABS, FILEDRIVEN, CYCLEONCE, CAPTIONS, LAST
 	}
 
-	public static final int SIZE = getFixedStructSize();
+	// TODO make enum
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned8 Rows = new Unsigned8();
+	public final Unsigned8 Columns = new Unsigned8();
+	public final Unsigned32 ColumnSizingBits1 = new Unsigned32();
+	public final Unsigned32 ColumnSizingBits2 = new Unsigned32();
+	public final Enum8<Viewer> ViewerType = new Enum8<Viewer>(Viewer.values());
+	public final Unsigned8 Spare = new Unsigned8();
+	public final Unsigned16 MinRowHeight = new Unsigned16();
+	public final Unsigned16[] Spares = array(new Unsigned16[1]);
+	/**
+	 * Use getStyleColor1 for access.
+	 */
+	@Deprecated
+	public final Unsigned32 StyleColor1 = new Unsigned32();
+	/**
+	 * Use getStyleColor2 for access.
+	 */
+	@Deprecated
+	public final Unsigned32 StyleColor2 = new Unsigned32();
+	public final COLOR_VALUE InnerBorderColor = inner(new COLOR_VALUE());
+	public final Unsigned16 NameLength = new Unsigned16();
+	public final Unsigned16 ImagePacketLength = new Unsigned16();
+	public final Unsigned16 RowLabelDataLength = new Unsigned16();
+
+	static {
+		addVariableString("Name", "NameLength");
+	}
 
 	public CDPRETABLEBEGIN(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDPRETABLEBEGIN(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	public int getFlags() {
-		// TODO create enum
-		return (Integer) getStructElement("Flags");
-	}
-
-	public short getRows() {
-		return (Short) getStructElement("Rows");
-	}
-
-	public short getColumns() {
-		return (Short) getStructElement("Columns");
-	}
-
-	public int getColumnSizingBits1() {
-		return (Integer) getStructElement("ColumnSizingBits1");
-	}
-
-	public int getColumnSizingBits2() {
-		return (Integer) getStructElement("ColumnSizingBits2");
-	}
-
-	public byte getViewerType() {
-		// TODO create enum
-		return (Byte) getStructElement("ViewerType");
-	}
-
-	public byte getSpare() {
-		return (Byte) getStructElement("Spare");
-	}
-
-	public int getMinRowHeight() {
-		return (Integer) getStructElement("MinRowHeight");
-	}
-
-	public short getSpare2() {
-		return (Short) getStructElement("");
 	}
 
 	public Color getStyleColor1() {
@@ -98,23 +69,7 @@ public class CDPRETABLEBEGIN extends CDRecord {
 		return new Color(red, green, blue);
 	}
 
-	public COLOR_VALUE getInnerBorderColor() {
-		return (COLOR_VALUE) getStructElement("InnerBorderColor");
-	}
-
-	public int getNameLength() {
-		return (Integer) getStructElement("NameLength");
-	}
-
-	public short getImagePacketLength() {
-		return (Short) getStructElement("ImagePacketLength");
-	}
-
-	public short getRowLabelDataLength() {
-		return (Short) getStructElement("RowLabelDataLength");
-	}
-
 	public String getName() {
-		return (String) getStructElement("Name");
+		return (String) getVariableElement("Name");
 	}
 }

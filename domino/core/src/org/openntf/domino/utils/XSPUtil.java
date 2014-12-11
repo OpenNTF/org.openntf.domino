@@ -45,7 +45,6 @@ public enum XSPUtil {
 	 *            the entry
 	 * @return the view entry
 	 */
-	@SuppressWarnings("deprecation")
 	public static ViewEntry wrap(final lotus.domino.ViewEntry entry) {
 		try {
 			Object parent = entry.getParent();
@@ -146,7 +145,7 @@ public enum XSPUtil {
 	 * @return the current session as signer with full access
 	 * @deprecated use {@link Factory#getSession(SessionType)} instead
 	 */
-	@SuppressWarnings("deprecation")
+
 	@Deprecated
 	public static Session getCurrentSessionAsSignerWithFullAccess() {
 		try {

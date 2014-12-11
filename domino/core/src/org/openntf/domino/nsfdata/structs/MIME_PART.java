@@ -10,25 +10,34 @@ import java.nio.ByteBuffer;
  */
 public class MIME_PART extends AbstractStruct {
 
-	public static final int SIZE = 20;
-
 	public static final int MIME_PART_HAS_BOUNDARY = 0x00000001;
 	public static final int MIME_PART_HAS_HEADERS = 0x00000002;
 	public static final int MIME_PART_BODY_IN_DBOBJECT = 0x00000004;
 	public static final int MIME_PART_SHARED_DBOBJECT = 0x00000008;
 	public static final int MIME_PART_SKIP_FOR_CONVERSION = 0x00000010;
 
-	static {
-		addFixed("wVersion", Short.class);
-		addFixed("dwFlags", Integer.class);
-		addFixed("cPartType", Byte.class);
-		addFixed("cSpare", Byte.class);
-		addFixedUnsigned("wByteCount", Short.class);
-		addFixedUnsigned("wBoundaryLen", Short.class);
-		addFixedUnsigned("wHeadersLen", Short.class);
-		addFixed("wSpare", Short.class);
-		addFixed("dwSpare", Integer.class);
+	public static enum PartType {
+		UNDEFINED, PROLOG, BODY, EPILOG, RETRIEVE_INFO, MESSAGE
 	}
+
+	public final Unsigned16 wVersion = new Unsigned16();
+	public final Unsigned32 dwFlags = new Unsigned32();
+	public final Enum8<PartType> cPartType = new Enum8<PartType>(PartType.values());
+	public final Unsigned8 cSpare = new Unsigned8();
+	/**
+	 * Bytes of variable length part data NOT including data in DB object
+	 */
+	public final Unsigned16 wByteCount = new Unsigned16();
+	/**
+	 * Length of the boundary string
+	 */
+	public final Unsigned16 wBoundaryLen = new Unsigned16();
+	/**
+	 * Length of the headers
+	 */
+	public final Unsigned16 wHeadersLen = new Unsigned16();
+	public final Unsigned16 wSpare = new Unsigned16();
+	public final Unsigned32 dwSpare = new Unsigned32();
 
 	public MIME_PART() {
 		super();
@@ -39,57 +48,9 @@ public class MIME_PART extends AbstractStruct {
 		super(data);
 	}
 
-	/**
-	 * @return MIME_PART Version
-	 */
-	public short getVersion() {
-		return (Short) getStructElement("wVersion");
-	}
-
-	public int getFlags() {
+	public long getFlags() {
 		// TODO create enum
-		return (Integer) getStructElement("dwFlags");
-	}
-
-	/**
-	 * @return Type of MIME_PART body
-	 */
-	public byte getPartType() {
-		// TODO create enum
-		return (Byte) getStructElement("cPartType");
-	}
-
-	public byte getSpare() {
-		return (Byte) getStructElement("cSpare");
-	}
-
-	/**
-	 * @return Bytes of variable length part data NOT including data in DB object
-	 */
-	public int getByteCount() {
-		return (Integer) getStructElement("wByteCount");
-	}
-
-	/**
-	 * @return Length of the boundary string
-	 */
-	public int getBoundaryLen() {
-		return (Integer) getStructElement("wBoundaryLen");
-	}
-
-	/**
-	 * @return Length of the headers
-	 */
-	public int getHeadersLen() {
-		return (Integer) getStructElement("wHeadersLen");
-	}
-
-	public short getSpare2() {
-		return (Short) getStructElement("wSpare");
-	}
-
-	public int getSpare3() {
-		return (Integer) getStructElement("dwSpare");
+		return dwFlags.get();
 	}
 
 	public boolean hasBoundary() {
@@ -108,8 +69,4 @@ public class MIME_PART extends AbstractStruct {
 		return (getFlags() & MIME_PART_SKIP_FOR_CONVERSION) > 0;
 	}
 
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
 }

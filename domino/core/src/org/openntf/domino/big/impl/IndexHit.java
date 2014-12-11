@@ -18,6 +18,7 @@ import org.openntf.domino.Session;
  * 
  */
 public class IndexHit implements Externalizable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IndexHit.class.getName());
 	private static final long serialVersionUID = 1L;
 	private CharSequence term_;

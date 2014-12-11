@@ -43,6 +43,7 @@ public class FunctionFactory {
 	private static ThreadLocal<IServiceLocator> currentServiceLocator_ = new ThreadLocal<IServiceLocator>();
 
 	private final Map<String, Function> functions = new HashMap<String, Function>();
+	@SuppressWarnings("unused")
 	private boolean immutable;
 
 	/**
@@ -93,7 +94,6 @@ public class FunctionFactory {
 		return instance;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		IServiceLocator serviceLocator = currentServiceLocator_.get();

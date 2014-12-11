@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines the structure of the document information field in a form note. A document information field is an item with name $INFO
@@ -13,26 +12,47 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDDOCUMENT extends CDRecord {
+	/**
+	 * Use getPaperColor for access.
+	 */
+	@Deprecated
+	public final Unsigned16 PaperColor = new Unsigned16();
+	/**
+	 * Use getFormFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 FormFlags = new Unsigned16();
+	/**
+	 * Use getNotePrivileges for access.
+	 */
+	@Deprecated
+	public final Unsigned16 NotePrivileges = new Unsigned16();
+	/**
+	 * Use getFormFlags2 for access.
+	 */
+	@Deprecated
+	public final Unsigned16 FormFlags2 = new Unsigned16();
+	public final Unsigned16 InherFieldNameLength = new Unsigned16();
+	/**
+	 * Use getPaperColorExt for access.
+	 */
+	@Deprecated
+	public final Unsigned16 PaperColorExt = new Unsigned16();
+	public final COLOR_VALUE PaperColorValue = inner(new COLOR_VALUE());
+	/**
+	 * Use getFormFlags3 for access.
+	 */
+	@Deprecated
+	public final Unsigned16 FormFlags3 = new Unsigned16();
+	public final Unsigned16[] Spare = array(new Unsigned16[1]);
 
 	static {
-		addFixed("PaperColor", Short.class);
-		addFixed("FormFlags", Short.class);
-		addFixed("NotePrivileges", Short.class);
-		addFixed("FormFlags2", Short.class);
-		addFixedUnsigned("InherFieldNameLength", Short.class);
-		addFixed("PaperColorExt", Short.class);
-		addFixed("PaperColorValue", COLOR_VALUE.class);
-		addFixed("FormFlags3", Short.class);
-		addFixed("Spare", Short.class);
-
-		addVariableString("InherFieldName", "getInherFieldNameLength");
+		addVariableString("InherFieldName", "InherFieldNameLength");
 		addVariableString("FieldName", "getFieldNameLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDDOCUMENT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDDOCUMENT(final SIG signature, final ByteBuffer data) {
@@ -44,7 +64,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getPaperColor() {
 		// TODO make an enum
-		return (Short) getStructElement("PaperColor");
+		return (short) PaperColor.get();
 	}
 
 	/**
@@ -52,7 +72,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getFormFlags() {
 		// TODO make an enum
-		return (Short) getStructElement("FormFlags");
+		return (short) FormFlags.get();
 	}
 
 	/**
@@ -60,7 +80,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getNotePrivileges() {
 		// TODO make an enum
-		return (Short) getStructElement("NotePrivileges");
+		return (short) NotePrivileges.get();
 	}
 
 	/**
@@ -68,14 +88,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getFormFlags2() {
 		// TODO make an enum
-		return (Short) getStructElement("FormFlags2");
-	}
-
-	/**
-	 * @return Length of the name, which follows this struct
-	 */
-	public int getInherFieldNameLength() {
-		return (Integer) getStructElement("InherFieldNameLength");
+		return (short) FormFlags2.get();
 	}
 
 	/**
@@ -84,33 +97,26 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getPaperColorExt() {
 		// TODO make an enum
-		return (Short) getStructElement("PaperColorExt");
-	}
-
-	/**
-	 * @return Paper Color: As of v5.0 stored as RGB, other formats possible
-	 */
-	public COLOR_VALUE getPaperColorValue() {
-		return (COLOR_VALUE) getStructElement("PaperColorValue");
+		return (short) PaperColorExt.get();
 	}
 
 	public short getFormFlags3() {
 		// TODO make an enum
-		return (Short) getStructElement("FormFlags3");
+		return (short) FormFlags3.get();
 	}
 
 	public String getInheritFieldName() {
-		return (String) getStructElement("InherFieldName");
+		return (String) getVariableElement("InherFieldName");
 	}
 
 	public int getFieldNameLength() {
-		return (int) (getDataLength() - 22 - getInherFieldNameLength());
+		return (int) (getDataLength() - 22 - InherFieldNameLength.get());
 	}
 
 	/**
 	 * @return string indicating which field to append version number to
 	 */
 	public String getFieldName() {
-		return (String) getStructElement("FieldName");
+		return (String) getVariableElement("FieldName");
 	}
 }

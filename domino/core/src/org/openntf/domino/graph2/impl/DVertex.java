@@ -25,6 +25,8 @@ import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
 public class DVertex extends DElement implements org.openntf.domino.graph2.DVertex {
+	private static final long serialVersionUID = 1L;
+
 	private static final Logger log_ = Logger.getLogger(DVertex.class.getName());
 	public static final String IN_PREFIX = "_OPEN_IN_";
 	public static final String OUT_PREFIX = "_OPEN_OUT_";
@@ -103,7 +105,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList ins = getInEdgesSet(label);
 		Object eid = edge.getId();
 		if (eid instanceof NoteCoordinate) {
-			eid = eid;
+			// NOP
 		} else if (eid instanceof CharSequence) {
 			eid = new NoteCoordinate((CharSequence) eid);
 		} else {
@@ -130,7 +132,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList outs = getOutEdgesSet(label);
 		Object eid = edge.getId();
 		if (eid instanceof NoteCoordinate) {
-			eid = eid;
+			// NOP
 		} else if (eid instanceof CharSequence) {
 			eid = new NoteCoordinate((CharSequence) eid);
 		} else {
@@ -305,13 +307,12 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected NoteList getInEdgesSet(final String label) {
 		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			String key = DominoVertex.IN_PREFIX + label;
 			edgeIds = new NoteList(true);
-			Map delegate = getDelegate();
+			Map<String, Object> delegate = getDelegate();
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
 					byte[] bytes = ((Document) delegate).readBinary(key);
@@ -321,7 +322,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					if (o instanceof NoteList) {
 						edgeIds = ((NoteList) o);
 					} else if (o instanceof java.util.Collection) {
-						for (Object raw : (Collection) o) {
+						for (Object raw : (Collection<?>) o) {
 							if (raw instanceof String) {
 								edgeIds.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
 							} else {
@@ -334,7 +335,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					}
 				}
 			}
-			Map map = getInEdgesMap();
+			Map<String, NoteList> map = getInEdgesMap();
 			map.put(label, edgeIds);
 		}
 		return edgeIds;
@@ -355,7 +356,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		if (edgeIds == null) {
 			String key = DominoVertex.OUT_PREFIX + label;
 			edgeIds = new NoteList(true);
-			Map delegate = getDelegate();
+			Map<String, Object> delegate = getDelegate();
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
 					byte[] bytes = ((Document) delegate).readBinary(key);
@@ -366,7 +367,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 						if (o instanceof NoteList) {
 							edgeIds = ((NoteList) o);
 						} else if (o instanceof java.util.Collection) {
-							for (Object raw : (Collection) o) {
+							for (Object raw : (Collection<?>) o) {
 								if (raw instanceof String) {
 									edgeIds.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
 								} else {
@@ -380,7 +381,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					}
 				}
 			}
-			Map map = getOutEdgesMap();
+			Map<String, NoteList> map = getOutEdgesMap();
 			map.put(label, edgeIds);
 		}
 		return edgeIds;
@@ -479,7 +480,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 				result.addAll(getInEdgeObjects(label));
 			}
 		}
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 	protected DEdgeList getOutEdgeObjects(final String... labels) {
@@ -512,7 +513,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 				result.addAll(getOutEdgeObjects(label));
 			}
 		}
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 }

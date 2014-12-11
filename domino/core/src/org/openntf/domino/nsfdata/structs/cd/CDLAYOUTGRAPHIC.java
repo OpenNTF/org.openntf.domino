@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A graphical element in a layout region of a form is defined by a CDLAYOUTGRAPHIC record. This record must be between a CDLAYOUT record
@@ -48,36 +47,23 @@ public class CDLAYOUTGRAPHIC extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("ElementHeader", ELEMENTHEADER.class);
-		addFixed("Flags", Integer.class);
-		addFixedArray("Reserved", Byte.class, 16);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final ELEMENTHEADER ElementHeader = inner(new ELEMENTHEADER());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned8[] Reserved = array(new Unsigned8[16]);
 
 	public CDLAYOUTGRAPHIC(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDLAYOUTGRAPHIC(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public ELEMENTHEADER getElementHeader() {
-		return (ELEMENTHEADER) getStructElement("ElementHeader");
-	}
-
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": ElementHeader=" + getElementHeader() + ", Flags=" + getFlags() + "]";
+		return Flag.valuesOf((int) Flags.get());
 	}
 }

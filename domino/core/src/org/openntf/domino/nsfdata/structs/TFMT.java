@@ -8,14 +8,26 @@ import java.nio.ByteBuffer;
  *
  */
 public class TFMT extends AbstractStruct {
-	public static final int SIZE = 4;
-
-	static {
-		addFixed("Date", Byte.class);
-		addFixed("Time", Byte.class);
-		addFixed("Zone", Byte.class);
-		addFixed("Structure", Byte.class);
+	public static enum TDFMT {
+		FULL, CPARTIAL, PARTIAL, DPARTIAL, FULL4, CPARTIAL4, DPARTIAL4
 	}
+
+	public static enum TTFMT {
+		FULL, PARTIAL, HOUR
+	}
+
+	public static enum TZFMT {
+		NEVER, SOMETIMES, ALWAYS
+	}
+
+	public static enum TSFMT {
+		DATE, TIME, DATETIME, CDATETIME
+	}
+
+	public final Enum8<TDFMT> Date = new Enum8<TDFMT>(TDFMT.values());
+	public final Enum8<TTFMT> Time = new Enum8<TTFMT>(TTFMT.values());
+	public final Enum8<TZFMT> Zone = new Enum8<TZFMT>(TZFMT.values());
+	public final Enum8<TSFMT> Structure = new Enum8<TSFMT>(TSFMT.values());
 
 	public TFMT() {
 		super();
@@ -26,45 +38,8 @@ public class TFMT extends AbstractStruct {
 	}
 
 	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
-	/**
-	 * @return Date Display Format
-	 */
-	public byte getDate() {
-		// TODO create enum, TDFMT_xxx
-		return (Byte) getStructElement("Date");
-	}
-
-	/**
-	 * @return Time Display Format
-	 */
-	public byte getTime() {
-		// TODO create enum, TTFMT_xxx
-		return (Byte) getStructElement("Time");
-	}
-
-	/**
-	 * @return Time Zone Display Format
-	 */
-	public byte getZone() {
-		// TODO create enum, TZFMT_xxx
-		return (Byte) getStructElement("Zone");
-	}
-
-	/**
-	 * @return Overall Date/Time Structure
-	 */
-	public byte getStructure() {
-		// TODO create enum, TSFMT_xxx
-		return (Byte) getStructElement("Structure");
-	}
-
-	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Date: " + getDate() + ", Time: " + getTime() + ", Zone: " + getZone()
-				+ ", Structure: " + getStructure() + "]";
+		return "[" + getClass().getSimpleName() + ", Date: " + Date.get() + ", Time: " + Time.get() + ", Zone: " + Zone.get()
+				+ ", Structure: " + Structure.get() + "]";
 	}
 }

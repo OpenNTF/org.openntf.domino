@@ -18,8 +18,8 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
  *         OpenntfViewNavigatorFactoryFactory class
  */
 public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.Factory {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorFactoryFactory.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	// static {
 	// System.out.println("Loaded " + OpenntfViewNavigatorFactoryFactory.class.getName());
@@ -53,7 +53,10 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 	 * OpenntfViewNavigatorFactory class
 	 */
 	public static class OpenntfViewNavigatorFactory extends ViewNavigatorFactory {
+		private static final long serialVersionUID = 1L;
+		@SuppressWarnings("unused")
 		private final String dbPath_;
+		@SuppressWarnings("unused")
 		private final String viewName_;
 		private String entrySearchString;
 

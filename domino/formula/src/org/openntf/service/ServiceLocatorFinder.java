@@ -24,6 +24,7 @@ public enum ServiceLocatorFinder {
 		serviceLocatorFactory = slf;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static class ServiceLocatorFactory implements IServiceLocatorFactory {
 		public IServiceLocator createServiceLocator() {
 			// this is the non OSGI case:
@@ -31,6 +32,7 @@ public enum ServiceLocatorFinder {
 				nonOSGIServicesCache = new ConcurrentHashMap<Class, List>();
 			}
 			return new IServiceLocator() {
+				@SuppressWarnings("unchecked")
 				@Override
 				public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 					List<T> ret = nonOSGIServicesCache.get(serviceClazz);
