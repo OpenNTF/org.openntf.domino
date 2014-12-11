@@ -82,8 +82,8 @@ public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, l
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewEntry(final lotus.domino.ViewEntry delegate, final View parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_VIEWENTRY);
+	protected ViewEntry(final lotus.domino.ViewEntry delegate, final View parent) {
+		super(delegate, parent, NOTES_VIEWENTRY);
 		try {
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
@@ -140,7 +140,7 @@ public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, l
 	 * @param returnConstants
 	 *            this parameter controls if constant values should also be returned
 	 */
-	public java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
+	protected java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
 		try {
 
 			if (columnValues_ == null) {

@@ -30,7 +30,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
-import org.openntf.domino.iterators.DocumentList;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -73,75 +72,9 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DOCCOLL);
+	protected DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent) {
+		super(delegate, parent, NOTES_DOCCOLL);
 	}
-
-	/**
-	 * To lotus note collection.
-	 * 
-	 * @param collection
-	 *            the collection
-	 * @return the org.openntf.domino. note collection
-	 */
-	// RPr I think this is the wrong place here - changed the impl in DocumentList
-//	public static org.openntf.domino.NoteCollection toLotusNoteCollection(final lotus.domino.DocumentCollection collection) {
-//		org.openntf.domino.NoteCollection result = null;
-//		if (collection instanceof org.openntf.domino.DocumentCollection) {
-//			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
-//			result = db.createNoteCollection(false);
-//			result.add(collection);
-//		} else if (collection != null) {
-//			// TODO Eh?
-//			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
-//			result = db.createNoteCollection(false);
-//			result.add(collection);
-//		}
-//		return result;
-//	}
-
-//	public static int[] toNoteIdArray(final lotus.domino.DocumentCollection collection) {
-//		int[] result = null;
-//		if (collection instanceof DocumentList) {
-//			result = ((DocumentList) collection).getNids();
-//		} else if (collection instanceof org.openntf.domino.DocumentCollection) {
-//			org.openntf.domino.DocumentCollection ocoll = (org.openntf.domino.DocumentCollection) collection;
-//			if (ocoll.isSorted()) {
-//				int size = ocoll.getCount();
-//				result = new int[size];
-//				int i = 0;
-//				for (org.openntf.domino.Document doc : ocoll) {
-//					result[i++] = Integer.valueOf(doc.getNoteID(), 16);
-//				}
-//			} else {
-//				org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-//				result = nc.getNoteIDs();
-//			}
-//		} else {
-//			try {
-//				if (collection.isSorted()) {
-//					int size = collection.getCount();
-//					result = new int[size];
-//					lotus.domino.Document doc = collection.getFirstDocument();
-//					lotus.domino.Document next = null;
-//					int i = 0;
-//					while (doc != null) {
-//						next = collection.getNextDocument(doc);
-//						result[i++] = Integer.valueOf(doc.getNoteID(), 16);
-//						doc.recycle();
-//						doc = next;
-//					}
-//				} else {
-//					org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-//					result = nc.getNoteIDs();
-//				}
-//			} catch (NotesException ne) {
-//
-//			}
-//		}
-//		return result;
-//	}
 
 	private org.openntf.domino.View parentView_;
 
@@ -426,12 +359,6 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	void setSorted(final boolean sorted) {
 		sorted_ = sorted;
-	}
-
-	@Override
-	void setDelegate(final lotus.domino.DocumentCollection delegate, final long cppId, final boolean fromResurrect) {
-		sorted_ = null;
-		super.setDelegate(delegate, cppId, fromResurrect);
 	}
 
 	/*
@@ -843,7 +770,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.Document> docs) {
 		if (docs instanceof Base) {
-			this.merge((Base) docs);
+			this.merge((Base<?>) docs);
 		} else {
 			for (org.openntf.domino.Document doc : docs) {
 				this.addDocument(doc);

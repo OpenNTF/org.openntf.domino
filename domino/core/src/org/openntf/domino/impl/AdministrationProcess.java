@@ -42,9 +42,8 @@ public class AdministrationProcess extends
 	 * @param parent
 	 *            the parent
 	 */
-	public AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final Session parent, final WrapperFactory wf,
-			final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
+	protected AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final Session parent) {
+		super(delegate, parent, NOTES_ACLENTRY);
 	}
 
 	/*

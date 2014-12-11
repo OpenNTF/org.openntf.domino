@@ -47,8 +47,8 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public MIMEHeader(final lotus.domino.MIMEHeader delegate, final MIMEEntity parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
+	protected MIMEHeader(final lotus.domino.MIMEHeader delegate, final MIMEEntity parent) {
+		super(delegate, parent, NOTES_MIMEENTITY);
 		initialize(delegate);
 	}
 
@@ -295,7 +295,7 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 		}
 	}
 
-	void markDirty() {
+	protected void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 
@@ -335,7 +335,7 @@ public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader,
 			try {
 				lotus.domino.MIMEEntity entity = toLotus(parent);
 				lotus.domino.MIMEHeader header = entity.getNthHeader(headerName_);
-				this.setDelegate(header, 0, true);
+				this.setDelegate(header, true);
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 			}

@@ -48,8 +48,8 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewNavigator(final lotus.domino.ViewNavigator delegate, final View parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
+	protected ViewNavigator(final lotus.domino.ViewNavigator delegate, final View parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/*
@@ -1015,7 +1015,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 		return new ViewNavigatorEntryIterator(this);
 	}
 
-	public Iterator<org.openntf.domino.ViewEntry> siblingIterator() {
+	protected Iterator<org.openntf.domino.ViewEntry> siblingIterator() {
 		return new ViewNavigatorSiblingIterator(this);
 	}
 

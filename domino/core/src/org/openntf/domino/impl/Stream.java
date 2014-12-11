@@ -44,8 +44,8 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Stream(final lotus.domino.Stream delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_SESSTRM);
+	protected Stream(final lotus.domino.Stream delegate, final Session parent) {
+		super(delegate, parent, NOTES_SESSTRM);
 	}
 
 	/*

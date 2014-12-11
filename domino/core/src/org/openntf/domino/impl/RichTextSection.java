@@ -47,9 +47,8 @@ public class RichTextSection extends BaseNonThreadSafe<org.openntf.domino.RichTe
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextSection(final lotus.domino.RichTextSection delegate, final RichTextNavigator parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_COLOR);
+	protected RichTextSection(final lotus.domino.RichTextSection delegate, final RichTextNavigator parent) {
+		super(delegate, parent, NOTES_COLOR);
 	}
 
 	/*

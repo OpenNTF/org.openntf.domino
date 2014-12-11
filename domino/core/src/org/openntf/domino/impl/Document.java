@@ -106,8 +106,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	private boolean isDirty_ = false;
 	private String noteid_;
 	private String unid_;
-
-	@SuppressWarnings("unused")
 	private boolean isNew_;
 
 	private boolean isQueued_ = false;
@@ -195,13 +193,21 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Document(final lotus.domino.Document delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_NOTE);
+	protected Document(final lotus.domino.Document delegate, final Database parent) {
+		super(delegate, parent, NOTES_NOTE);
 		initialize(delegate);
 	}
 
-	public Document(final String id, final Database parent, final WrapperFactory wf) {
-		super(null, parent, wf, 0, NOTES_NOTE);
+	protected Document(final Database parent, final Object metaData) {
+		super(null, parent, NOTES_NOTE);
+		if (metaData instanceof String) {
+			setDeferredId((String) metaData);
+		} else if (metaData instanceof Integer) {
+			setDeferredId((Integer) metaData);
+		}
+	}
+
+	protected void setDeferredId(final String id) {
 		if (DominoUtils.isUnid(id)) {
 			unid_ = id;
 		} else {
@@ -211,9 +217,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		isNew_ = false;
 	}
 
-	public Document(final int id, final Database parent, final WrapperFactory wf) {
-		this(Integer.toHexString(id), parent, wf);
-		//		System.out.println("Creating a deferred document for id " + id);
+	protected void setDeferredId(final int noteId) {
+		setDeferredId(Integer.toHexString(noteId));
 	}
 
 	/**
@@ -790,7 +795,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 *            the itemName
 	 * @return the wrapped and tracked {@link MIMEEntity}
 	 */
-	public MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName) {
+	protected MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName) {
 		if (lotus == null)
 			return null;
 		MIMEEntity wrapped = fromLotus(lotus, MIMEEntity.SCHEMA, this);
@@ -1093,7 +1098,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	@Override
 	@Deprecated
 	public void recycle() {
-		//		System.out.println("Recycle called on document " + getNoteID());
 		if (openMIMEEntities_ != null && !openMIMEEntities_.isEmpty() && !isDead()) {
 			// RPr: call closeMimeEntities only if really neccessary
 			closeMIMEEntities(false, null);
@@ -2712,6 +2716,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @throws Domino32KLimitException
 	 *             if the item does not fit in a field
 	 */
+	@SuppressWarnings("unchecked")
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
 			throws Domino32KLimitException {
 		checkMimeOpen();
@@ -2751,10 +2756,12 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				beginEdit();
 				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
 				markDirty(itemName, true);
+
+				s_recycle(result);
+
 				if (returnItem) {
-					return fromLotus(result, Item.SCHEMA, this);
+					return getFactory().create(Item.SCHEMA, this, itemName);
 				} else {
-					s_recycle(result);
 					return null;
 				}
 			}
@@ -2801,13 +2808,18 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					isNonSummary = true;
 				dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
 			}
+			Object firstElement = null;
 
 			// empty vectors are treated as "null"
-			if (dominoFriendlyObj == null && (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0)) {
-				return replaceItemValueLotus(itemName, null, isSummary, returnItem);
+			if (dominoFriendlyObj == null) {
+				if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
+					return replaceItemValueLotus(itemName, null, isSummary, returnItem);
+				} else {
+					firstElement = dominoFriendlyVec.get(0);
+				}
+			} else {
+				firstElement = dominoFriendlyObj;
 			}
-
-			Object firstElement = dominoFriendlyObj != null ? dominoFriendlyObj : dominoFriendlyVec.get(0);
 
 			int payloadOverhead = 0;
 
@@ -2892,10 +2904,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				result.setSummary(isSummary.booleanValue());
 			}
 
+			s_recycle(result);
 			if (returnItem) {
-				return fromLotus(result, Item.SCHEMA, this);
-			} else {
-				s_recycle(result);
+				// to keep compatibility and speed, return a blank item, that will resurrect on demand
+				return getFactory().create(Item.SCHEMA, this, itemName);
+				//return fromLotus(result, Item.SCHEMA, this);
 			}
 
 		} catch (NotesException ex) {
@@ -2911,8 +2924,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		// TODO Auto-generated method stub
 		if (!(value instanceof Vector))
 			return false;
-		for (Object v : (Vector) value) {
-			if (value instanceof String || value instanceof Integer || value instanceof Double) {
+		for (Object v : (Vector<?>) value) {
+			if (v instanceof String || v instanceof Integer || v instanceof Double) {
 				// ok
 			} else {
 				return false;
@@ -2955,7 +2968,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	private Map<String, Map<String, Serializable>> itemInfo_;
 
 	@SuppressWarnings("unchecked")
-	public Map<String, Map<String, Serializable>> getItemInfo() {
+	protected Map<String, Map<String, Serializable>> getItemInfo() {
 		// TODO NTF make this optional
 		if (itemInfo_ == null) {
 			if (this.hasItem("$$ItemInfo")) {
@@ -3307,7 +3320,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						org.openntf.domino.Document stashDoc = copyToDatabase(getParentDatabase());
-						setDelegate(del, 0, true);
+						setDelegate(del, true);
 						for (Item item : stashDoc.getItems()) {
 							lotus.domino.Item delItem = del.getFirstItem(item.getName());
 							if (delItem != null) {
@@ -3325,7 +3338,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						}
 					} else {
 						log_.log(Level.WARNING, "Resetting delegate to existing document for id " + unid);
-						setDelegate(del, 0, true);
+						setDelegate(del, true);
 					}
 				} else {
 					getDelegate().setUniversalID(unid);
@@ -3427,7 +3440,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 	}
 
-	void clearDirty() {
+	protected void clearDirty() {
 		isDirty_ = false;
 		isQueued_ = false;
 	}
@@ -3481,7 +3494,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				result = delegate.removePermanently(true);
 				if (result) {
 					s_recycle(delegate);
-					this.setDelegate(null, 0, false);
+					this.setDelegate(null, false);
 				}
 				break;
 			case HARD_FALSE:
@@ -3530,7 +3543,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						d = db.getDocumentByID(noteid_);
 					}
 				}
-				setDelegate(d, 0, true);
+				setDelegate(d, true);
 				//getFactory().recacheLotusObject(d, this, parent_);
 				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
@@ -3576,7 +3589,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 					}
 				}
-				setDelegate(d, 0, true);
+				setDelegate(d, true);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
@@ -4041,7 +4054,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 
 	public final static String CHUNK_TYPE_NAME = "ODAChunk";
 
-	public boolean isChunked(final String name) {
+	protected boolean isChunked(final String name) {
 		boolean result = false;
 		if (hasItem(name)) {
 			if (hasItem(name + "$" + 1)) {
@@ -4232,4 +4245,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public String toString() {
+		return getAncestorDatabase().getApiPath() + "/" + unid_;
+	}
 }

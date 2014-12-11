@@ -44,8 +44,8 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Outline(final lotus.domino.Outline delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
+	protected Outline(final lotus.domino.Outline delegate, final Database parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/*

@@ -45,8 +45,8 @@ public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registrat
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Registration(final lotus.domino.Registration delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
+	protected Registration(final lotus.domino.Registration delegate, final Session parent) {
+		super(delegate, parent, NOTES_VIEWCOLUMN);
 	}
 
 	/*

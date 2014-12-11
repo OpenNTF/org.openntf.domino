@@ -113,8 +113,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public View(final lotus.domino.View delegate, final Database parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_VIEW);
+	protected View(final lotus.domino.View delegate, final Database parent) {
+		super(delegate, parent, NOTES_VIEW);
 		initialize(delegate);
 	}
 
@@ -637,7 +637,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * @return
 	 * @throws NotesException
 	 */
-	ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
+	protected ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
 		if (paramVector == null && paramInt == 42) {
 			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
 		}
@@ -2622,7 +2622,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		try {
 
 			lotus.domino.View view = recreateView();
-			setDelegate(view, 0, true);
+			setDelegate(view, true);
 			/* No special logging, since by now View is a BaseThreadSafe */
 			view.setAutoUpdate(false);
 			//			}

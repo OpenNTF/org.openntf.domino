@@ -47,8 +47,8 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final View parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_VECOLL);
+	protected ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final View parent) {
+		super(delegate, parent, NOTES_VECOLL);
 	}
 
 	// FIXME NTF -- all method that return a ViewEntry probably need to parent to the View rather than the Collection. Someone should verify

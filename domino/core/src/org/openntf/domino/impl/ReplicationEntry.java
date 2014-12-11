@@ -44,9 +44,8 @@ public class ReplicationEntry extends BaseNonThreadSafe<org.openntf.domino.Repli
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final Replication parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_REPLENT);
+	protected ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final Replication parent) {
+		super(delegate, parent, NOTES_REPLENT);
 	}
 
 	/*

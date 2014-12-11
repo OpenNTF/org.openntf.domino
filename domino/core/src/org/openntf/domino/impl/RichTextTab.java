@@ -42,9 +42,8 @@ public class RichTextTab extends BaseNonThreadSafe<org.openntf.domino.RichTextTa
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextTab(final lotus.domino.RichTextTab delegate, final RichTextParagraphStyle parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTTAB);
+	protected RichTextTab(final lotus.domino.RichTextTab delegate, final RichTextParagraphStyle parent) {
+		super(delegate, parent, NOTES_RTTAB);
 	}
 
 	/*

@@ -60,8 +60,8 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public MIMEEntity(final lotus.domino.MIMEEntity delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
+	protected MIMEEntity(final lotus.domino.MIMEEntity delegate, final Document parent) {
+		super(delegate, parent, NOTES_MIMEENTITY);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	 * @param itemName
 	 *            the itemName
 	 */
-	public void init(final String itemName) {
+	protected void init(final String itemName) {
 		itemName_ = itemName;
 	}
 
@@ -95,7 +95,6 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 		return what;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void closeMIMEEntity() {
 		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
 		while (hdrIter.hasNext()) {

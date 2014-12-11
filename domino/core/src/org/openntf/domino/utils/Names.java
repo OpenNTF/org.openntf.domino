@@ -729,8 +729,11 @@ public enum Names {
 	 */
 	public static String buildAddr822Full(final lotus.domino.Name name) {
 		try {
-			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(),
-					name.getAddr822Comment2(), name.getAddr822Comment3());
+			String addr821 = name.getAddr821();
+			if (Strings.isBlankString(addr821))
+				return ""; // fast exit, if there is no Addr821
+			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), addr821, name.getAddr822Comment1(), name.getAddr822Comment2(),
+					name.getAddr822Comment3());
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

@@ -49,9 +49,8 @@ public class RichTextNavigator extends
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final RichTextItem parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTNAVIGATOR);
+	protected RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTNAVIGATOR);
 	}
 
 	/*

@@ -48,8 +48,8 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Form(final lotus.domino.Form delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_FORM);
+	protected Form(final lotus.domino.Form delegate, final Database parent) {
+		super(delegate, parent, NOTES_FORM);
 	}
 
 	/*

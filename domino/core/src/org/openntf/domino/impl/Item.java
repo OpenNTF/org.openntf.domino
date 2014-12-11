@@ -65,8 +65,8 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Item(final lotus.domino.Item delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_ITEM);
+	protected Item(final lotus.domino.Item delegate, final Document parent) {
+		super(delegate, parent, NOTES_ITEM);
 		initialize(delegate);
 	}
 
@@ -78,9 +78,14 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	 * @param wf
 	 * @param cppId
 	 */
-	protected Item(final lotus.domino.RichTextItem delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTITEM);
+	protected Item(final lotus.domino.RichTextItem delegate, final Document parent) {
+		super(delegate, parent, NOTES_RTITEM);
 		initialize(delegate);
+	}
+
+	protected Item(final Document parent, final String name) {
+		super(null, parent, NOTES_ITEM);
+		name_ = name;
 	}
 
 	protected void initialize(final lotus.domino.Item delegate) {
@@ -1046,7 +1051,7 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 			try {
 				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
-				setDelegate(item, 0, true);
+				setDelegate(item, true);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");

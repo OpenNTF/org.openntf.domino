@@ -49,8 +49,8 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
+	protected NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/* (non-Javadoc)

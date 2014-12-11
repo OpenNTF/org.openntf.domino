@@ -33,6 +33,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
+import com.ibm.icu.util.TimeZone;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -133,28 +134,11 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DateTime(final lotus.domino.DateTime delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_TIME);
+	protected DateTime(final lotus.domino.DateTime delegate, final Session parent) {
+		super(delegate, parent, NOTES_TIME);
 		initialize(delegate);
 		// TODO: Wrapping recycles the caller's object. This may cause issues.
 		Base.s_recycle(delegate);
-	}
-
-	/**
-	 * Instantiates a new date time.
-	 * 
-	 * @param date
-	 *            the date
-	 * @param parent
-	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
-	 */
-	public DateTime(final Date date, final Session parent, final WrapperFactory wf) {
-		super(null, parent, wf, 0L, NOTES_TIME);
-		initialize(date);
 	}
 
 	/**
@@ -162,8 +146,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * 
 	 * @param dateTime
 	 */
-	protected DateTime(final DateTime orig, final Session sess, final WrapperFactory wf) {
-		super(null, sess, wf, 0, NOTES_TIME);
+	protected DateTime(final DateTime orig, final Session sess) {
+		super(null, sess, NOTES_TIME);
 		dst_ = orig.dst_;
 		isDateOnly_ = orig.isDateOnly_;
 		isTimeOnly_ = orig.isTimeOnly_;
@@ -178,7 +162,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Override
 	public org.openntf.domino.DateTime clone() {
-		return new DateTime(this, getAncestorSession(), getFactory());
+		return new DateTime(this, getAncestorSession());
 	}
 
 	/*
@@ -204,25 +188,6 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 			DominoUtils.handleException(ne);
 			return null;
 		}
-	}
-
-	/**
-	 * Initialize.
-	 * 
-	 * @param date
-	 *            the date
-	 */
-	private void initialize(final java.util.Date date) {
-		try {
-			lotus.domino.DateTime worker = getWorker();
-			worker.setLocalTime(date);
-			workDone(worker, true);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
-		//	date_ = new Date(date.getTime());	//NTF copy to keep immutable
-		//		dst_ = false;
-		//		notesZone_ = 0;
 	}
 
 	/**
@@ -672,7 +637,17 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Override
 	public void setLocalTime(final java.util.Calendar calendar) {
-		setLocalTime(calendar.getTime());
+		date_ = calendar.getTime();
+		java.util.TimeZone localTimeZone = calendar.getTimeZone();
+		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
+		if (localTimeZone.useDaylightTime() == true) {
+			dst_ = localTimeZone.inDaylightTime(date_);
+		} else {
+			dst_ = false;
+		}
+		isDateOnly_ = false;
+		isTimeOnly_ = false;
+		//setLocalTime(calendar.getTime());
 	}
 
 	/*
@@ -682,7 +657,16 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Override
 	public void setLocalTime(final Calendar calendar) {
-		setLocalTime(calendar.getTime());
+		date_ = calendar.getTime();
+		TimeZone localTimeZone = calendar.getTimeZone();
+		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
+		if (localTimeZone.useDaylightTime() == true) {
+			dst_ = localTimeZone.inDaylightTime(date_);
+		} else {
+			dst_ = false;
+		}
+		isDateOnly_ = false;
+		isTimeOnly_ = false;
 	}
 
 	/*
@@ -692,13 +676,16 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Override
 	public void setLocalTime(final Date date) {
-		try {
-			lotus.domino.DateTime worker = getWorker();
-			worker.setLocalTime(date);
-			workDone(worker, true);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		setLocalTime(cal);
+		//		try {
+		//			lotus.domino.DateTime worker = getWorker();
+		//			worker.setLocalTime(date);
+		//			workDone(worker, true);
+		//		} catch (NotesException ne) {
+		//			DominoUtils.handleException(ne);
+		//		}
 	}
 
 	/*
@@ -896,7 +883,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Deprecated
 	public DateTime() {
-		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_TIME);
+		// it does not matter which session we use here, so we use the current one!
+		super(null, Factory.getSession(SessionType.CURRENT), NOTES_TIME);
 	}
 
 	/**
@@ -907,15 +895,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 * @throws java.text.ParseException
 	 *             if the time string does not match
 	 */
-	public DateTime(final String time, final Session parent, final WrapperFactory wf) throws java.text.ParseException {
-		super(null, parent, wf, 0L, NOTES_TIME);
-		try {
-			lotus.domino.DateTime worker = getWorker();
-			worker.setLocalTime(time);
-			workDone(worker, true);
-		} catch (NotesException ne) {
-			throw new java.text.ParseException(ne.text, 0);
-		}
+	protected DateTime(final Session parent) {
+		super(null, parent, NOTES_TIME);
 	}
 
 	/*

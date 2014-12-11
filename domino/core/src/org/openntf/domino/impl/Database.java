@@ -119,8 +119,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * @param cpp_id
 	 *            the cpp_id
 	 */
-	public Database(final lotus.domino.Database delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_DATABASE);
+	protected Database(final lotus.domino.Database delegate, final Session parent) {
+		super(delegate, parent, NOTES_DATABASE);
 		initialize(delegate);
 	}
 
@@ -153,9 +153,10 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * @param extendedMetadata
 	 *            true if DB should load extended metadata
 	 */
-	public Database(final DatabaseMetaData metaData, final Session parent, final WrapperFactory wf) {
-		super(null, parent, wf, 0, NOTES_DATABASE);
+	protected Database(final Session parent, final DatabaseMetaData metaData) {
+		super(null, parent, NOTES_DATABASE);
 		initialize(metaData);
+
 	}
 
 	protected void initialize(final DatabaseMetaData metaData) {
@@ -550,9 +551,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public NoteCollection createNoteCollection(final boolean selectAllFlag) {
 		try {
-			if (!getDelegate().isOpen()) {
-				getDelegate().open();
-			}
+			open();
 			return fromLotus(getDelegate().createNoteCollection(selectAllFlag), NoteCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -3018,7 +3017,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
-			setDelegate(d, 0, true);
+			setDelegate(d, true);
 			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
@@ -3342,7 +3341,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			lotus.domino.DbDirectory rawDir = rawSess.getDbDirectory(null);
 			lotus.domino.Database rawDb = rawDir.openMailDatabase();
 			s_recycle(getDelegate());
-			this.setDelegate(rawDb, 0, true);
+			this.setDelegate(rawDb, true);
 			rawDir.recycle();
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne, this);
@@ -3592,7 +3591,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public Document getDocumentByUNID(final String unid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return getFactory().createDeferredDocument(unid, this);
+			return getFactory().create(Document.SCHEMA, this, unid);
 		} else {
 			return getDocumentByUNID(unid);
 		}
@@ -3601,7 +3600,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public Document getDocumentByID(final String noteid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return getFactory().createDeferredDocument(noteid, this);
+			return getFactory().create(Document.SCHEMA, this, noteid);
 		} else {
 			return getDocumentByID(noteid);
 		}
@@ -3610,7 +3609,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public Document getDocumentByID(final int noteid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return getFactory().createDeferredDocument(noteid, this); // RPr: This may break Identiy!
+			return getFactory().create(Document.SCHEMA, this, noteid);
 		} else {
 			return getDocumentByID(Integer.toHexString(noteid));
 		}

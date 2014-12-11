@@ -43,9 +43,9 @@ public class RichTextParagraphStyle extends
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final Session parent, final WrapperFactory wf,
+	protected RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final Session parent, final WrapperFactory wf,
 			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTPSTYLE);
+		super(delegate, parent, NOTES_RTPSTYLE);
 	}
 
 	/*

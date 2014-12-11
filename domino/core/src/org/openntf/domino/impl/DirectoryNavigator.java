@@ -23,7 +23,6 @@ import org.openntf.domino.Directory;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,9 +44,8 @@ public class DirectoryNavigator extends
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final Directory parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DIRNAVIGATOR);
+	protected DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final Directory parent) {
+		super(delegate, parent, NOTES_DIRNAVIGATOR);
 	}
 
 	/*
