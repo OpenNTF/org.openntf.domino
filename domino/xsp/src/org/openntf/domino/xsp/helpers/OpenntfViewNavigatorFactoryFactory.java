@@ -74,13 +74,9 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		@Override
 		public String getFTSearch() {
 			String superFT = super.getFTSearch();
-			String[] parts = superFT.split(":");
-			if (parts.length == 2) {
-				String pref = parts[0];
-				if ("searchInEntries".equals(pref)) {
-					setFTSearch("");
-					entrySearchString = parts[1];
-				}
+			if (superFT.startsWith("searchInEntries:")) {
+				setFTSearch("");
+				entrySearchString = superFT.substring(16);
 			}
 			return super.getFTSearch();
 		}
