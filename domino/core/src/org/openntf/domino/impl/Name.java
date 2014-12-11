@@ -236,7 +236,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 */
 	@Override
 	public boolean isHierarchical() {
-		return getNameFormat().equals(NameFormat.HIERARCHICAL);
+		return getNameFormat().isHierarchical();
 	}
 
 	@Override
