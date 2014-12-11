@@ -318,7 +318,14 @@ public enum ISO {
 	 * @return Flag indicating if the source string is null or blank.
 	 */
 	public static boolean isBlankString(final String string) {
-		return ((null == string) || (string.trim().length() < 1));
+		if ((null == string) || (string.isEmpty()))
+			return true;
+		int i = string.length();
+		while (--i >= 0) {
+			if (!Character.isWhitespace(string.charAt(i)))
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -339,6 +346,5 @@ public enum ISO {
 	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
 		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
 	}
-
 
 }

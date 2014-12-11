@@ -89,6 +89,10 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 		COMMON, CANONICAL, ABBREVIATED, ORGUNIT, ORG, COUNTRY
 	}
 
+	public static enum NameFormat {
+		FLAT, HIERARCHICAL, RFC822;
+	}
+
 	/**
 	 * A hierarchical name in abbreviated form.
 	 * 

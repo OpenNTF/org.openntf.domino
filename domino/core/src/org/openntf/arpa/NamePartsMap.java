@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Name.NameFormat;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Strings;
 
 /**
  * NamePartsMap carries the various component string values that make up a name.
@@ -51,7 +53,8 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	};
 
 	public static enum CanonicalKey {
-		CN("Common Name"), OU("Organizational Unit"), O("Organization"), C("Country Code");
+		CN("Common Name"), OU("Organizational Unit"), O("Organization"), C("Country Code"), A("Administration Management Domain"),
+		Q("Generation"), S("Surname"), G("Given"), I("Initials"), P("Private Management Domain Name");
 		private String _label;
 
 		@Override
@@ -69,23 +72,13 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		}
 
 		/**
-		 * Sets the Label for the Canonical Key
-		 * 
-		 * @param label
-		 *            the Label for the Canonical Key
-		 */
-		private void setLabel(final String label) {
-			this._label = label;
-		}
-
-		/**
 		 * Instance Constructor
 		 * 
 		 * @param label
 		 *            Label for the Canonical Key
 		 */
 		private CanonicalKey(final String label) {
-			this.setLabel(label);
+			this._label = label;
 		}
 
 	}
@@ -94,6 +87,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	private static final Logger log_ = Logger.getLogger(NamePartsMap.class.getName());
 	private static final long serialVersionUID = 1L;
 	private RFC822name _rfc822name;
+	private NameFormat _nameFormat = NameFormat.FLAT;
 
 	/**
 	 * * Zero-Argument Constructor
@@ -165,6 +159,10 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return this._rfc822name;
 	}
 
+	public NameFormat getNameFormat() {
+		return _nameFormat;
+	}
+
 	/**
 	 * Sets the RFC822name for the object
 	 * 
@@ -205,10 +203,14 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(NamePartsMap.class.getName());
 		sb.append(" [");
+		boolean comma = false;
 		for (final Key key : Key.values()) {
 			final String s = this.get(key);
 			if (!ISO.isBlankString(s)) {
+				if (comma)
+					sb.append(", ");
 				sb.append(key.name() + "=" + s);
+				comma = true;
 			}
 		}
 
@@ -558,6 +560,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 			if (!ISO.isBlankString(string)) {
 				if (ISO.PatternRFC822.matcher(string).matches()) {
+					_nameFormat = NameFormat.RFC822;
 					this.parseRFC82xContent(string);
 					if (allowRecursion) {
 						final String phrase = this.getRFC822name().getAddr822Phrase();
@@ -569,8 +572,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 				if (string.indexOf('/') < 0) {
 					common = string;
-
+					_nameFormat = NameFormat.FLAT;
 				} else {
+					_nameFormat = NameFormat.HIERARCHICAL;
 					// break the source into component words and parse them
 					final String[] words = string.split("/");
 					if (words.length > 0) {
@@ -606,7 +610,27 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
 												common = value;
+
+											} else if (CanonicalKey.A.name().equalsIgnoreCase(key)) {
+												this.put(Key.ADMD, value);
+
+											} else if (CanonicalKey.Q.name().equalsIgnoreCase(key)) {
+												this.put(NamePartsMap.Key.Generation, value);
+
+											} else if (CanonicalKey.G.name().equalsIgnoreCase(key)) {
+												this.put(NamePartsMap.Key.Given, value);
+
+											} else if (CanonicalKey.I.name().equalsIgnoreCase(key)) {
+												this.put(NamePartsMap.Key.Initials, value);
+
+											} else if (CanonicalKey.P.name().equalsIgnoreCase(key)) {
+												this.put(NamePartsMap.Key.PRMD, value);
+
+											} else if (CanonicalKey.S.name().equalsIgnoreCase(key)) {
+												this.put(NamePartsMap.Key.Surname, value);
+
 											}
+
 										} else {
 											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
 													+ "\"");
@@ -707,6 +731,39 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			this.put(Key.OrgUnit4, ous[3]);
 			this.put(Key.Organization, organization);
 			this.put(Key.Country, country);
+			/**
+			 * From Designer help:
+			 * 
+			 * the following components of a hierarchical name in the order shown separated by backslashes: country or
+			 * region\organization\organizational unit 1\organizational unit 2\organizational unit 3\organizational unit 4. Returns an empty
+			 * string if the property is undefined.
+			 */
+			StringBuilder sb = new StringBuilder();
+			String tmp;
+			if (!Strings.isBlankString(tmp = get(Key.Country))) {
+				sb.append(tmp);
+			}
+			if (!Strings.isBlankString(tmp = get(Key.OrgUnit1))) {
+				if (sb.length() > 0)
+					sb.append('\\');
+				sb.append(tmp);
+			}
+			if (!Strings.isBlankString(tmp = get(Key.OrgUnit2))) {
+				if (sb.length() > 0)
+					sb.append('\\');
+				sb.append(tmp);
+			}
+			if (!Strings.isBlankString(tmp = get(Key.OrgUnit3))) {
+				if (sb.length() > 0)
+					sb.append('\\');
+				sb.append(tmp);
+			}
+			if (!Strings.isBlankString(tmp = get(Key.OrgUnit4))) {
+				if (sb.length() > 0)
+					sb.append('\\');
+				sb.append(tmp);
+			}
+			this.put(Key.Keyword, sb.toString());
 
 			return true;
 
