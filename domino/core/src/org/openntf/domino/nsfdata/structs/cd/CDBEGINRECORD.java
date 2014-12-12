@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the beginning of a series of CD Records. Not all CD records are enclosed within a CDBEGINRECORD/CDENDRECORD
@@ -13,32 +12,16 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDBEGINRECORD extends CDRecord {
-
-	static {
-		addFixed("Version", Short.class);
-		addFixed("Signature", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	// TODO map to weird table in docs
+	public final Unsigned16 Version = new Unsigned16();
+	// TODO implement mapping method to CDSignature
+	public final Unsigned16 Signature = new Unsigned16();
 
 	public CDBEGINRECORD(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDBEGINRECORD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	public short getVersion() {
-		// TODO map to weird table in docs
-		return (Short) getStructElement("Version");
-	}
-
-	/**
-	 * @return Signature of record begin is for
-	 */
-	public short getBeginSignature() {
-		// TODO implement mapping method to CDSignature
-		return (Short) getStructElement("Signature");
 	}
 }

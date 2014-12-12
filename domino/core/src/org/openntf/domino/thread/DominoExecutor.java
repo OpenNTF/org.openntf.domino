@@ -17,6 +17,7 @@ import org.openntf.domino.annotations.Incomplete;
  */
 @Incomplete
 public class DominoExecutor extends AbstractDominoExecutor {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
 
 	/**
@@ -56,7 +57,8 @@ public class DominoExecutor extends AbstractDominoExecutor {
 			try {
 				callOrRun();
 			} catch (Throwable t) {
-				log_.log(Level.WARNING, getDescription() + " - " + t.getMessage(), t);
+				log_.log(Level.WARNING, getDescription() + " caused an error: " + t.toString(), t);
+				throw new RuntimeException(t);
 			}
 		}
 	}
@@ -68,7 +70,6 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	/**
 	 * Constructor of the DominoExecutor
 	 * 
-	 * @param corePoolSize
 	 */
 	public DominoExecutor(final int corePoolSize) {
 		super(corePoolSize);

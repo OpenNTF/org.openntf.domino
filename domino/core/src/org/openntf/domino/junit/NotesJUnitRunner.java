@@ -68,7 +68,7 @@ public class NotesJUnitRunner extends AbstractJUnitRunner {
 
 		} catch (NotesException ne) {
 			ne.printStackTrace();
-			fail(ne.getMessage());
+			fail(ne.toString());
 		}
 	}
 

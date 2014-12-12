@@ -17,7 +17,6 @@ package org.openntf.domino.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.types.Resurrectable;
 
 /**
@@ -38,35 +37,8 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BaseThreadSafe.class.getName());
 
-	/** Class holding the delegate-s */
-	private class DelegateStruct {
-		D _delegate = null;
-		long _cppObject = 0;
-		long _cppSession = 0;
-	}
-
 	/** The delegate, here ThreadLocal */
-	private transient ThreadLocal<DelegateStruct> _delegateStruct;
-
-	/**
-	 * returns the cpp_id. DO NOT REMOVE. Otherwise native functions won't work
-	 * 
-	 * @return the cpp_id
-	 */
-	@Override
-	public long GetCppObj() {
-		return getDelegateStruct()._cppObject;
-	}
-
-	/**
-	 * returns the cpp-session id. Needed for some BackendBridge functions
-	 * 
-	 * @return the cpp_id of the session
-	 */
-	@Override
-	public long GetCppSession() {
-		return getDelegateStruct()._cppSession;
-	}
+	private transient ThreadLocal<D> _delegateLocal;
 
 	/**
 	 * Instantiates a new base.
@@ -82,8 +54,8 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 	 * @param classId
 	 *            the class id
 	 */
-	protected BaseThreadSafe(final D delegate, final P parent, final WrapperFactory wf, final long cppId, final int classId) {
-		super(delegate, parent, wf, cppId, classId);
+	protected BaseThreadSafe(final D delegate, final P parent, final int classId) {
+		super(delegate, parent, classId);
 	}
 
 	/**
@@ -91,18 +63,6 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 	 */
 	protected BaseThreadSafe(final int classId) {
 		super(classId);
-	}
-
-	private final DelegateStruct getDelegateStruct() {
-		if (_delegateStruct == null) {
-			_delegateStruct = new ThreadLocal<DelegateStruct>() {
-				@Override
-				protected DelegateStruct initialValue() {
-					return new DelegateStruct();
-				}
-			};
-		}
-		return _delegateStruct.get();
 	}
 
 	/**
@@ -114,12 +74,10 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 	 *            the cpp-id
 	 */
 	@Override
-	void setDelegate(final D delegate, long cppId, final boolean fromResurrect) {
-		if (cppId == 0)
-			cppId = getLotusId(delegate);
-		DelegateStruct ds = getDelegateStruct();
-		ds._delegate = delegate;
-		ds._cppObject = cppId;
+	final protected void setDelegate(final D delegate, final boolean fromResurrect) {
+		if (_delegateLocal == null)
+			_delegateLocal = new ThreadLocal<D>();
+		_delegateLocal.set(delegate);
 		if (fromResurrect)
 			getFactory().recacheLotusObject(delegate, this, parent);
 	}
@@ -132,21 +90,9 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 
 	@Override
 	protected D getDelegate_unchecked() {
-		return getDelegateStruct()._delegate;
-	}
-
-	@Override
-	void setCppSession() {
-		DelegateStruct ds = getDelegateStruct();
-		long cppSession;
-
-		if (ds._delegate instanceof lotus.domino.Session)
-			cppSession = ds._cppObject;
-		else if (parent instanceof Base)
-			cppSession = ((Base<?, ?, ?>) parent).GetCppSession();
-		else
-			cppSession = 0;
-		ds._cppSession = cppSession;
+		if (_delegateLocal == null)
+			return null;
+		return _delegateLocal.get();
 	}
 
 	@Override

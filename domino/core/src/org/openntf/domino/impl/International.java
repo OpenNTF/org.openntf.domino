@@ -40,8 +40,8 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public International(final lotus.domino.International delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_INTL);
+	protected International(final lotus.domino.International delegate, final Session parent) {
+		super(delegate, parent, NOTES_INTL);
 	}
 
 	/*

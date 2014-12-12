@@ -35,7 +35,7 @@ public @interface Tasklet {
 		/**
 		 * Returns the {@link Context} of that tasklet. If <code>null</code> is returned, the {@link Tasklet#context()} annotation counts.
 		 * 
-		 * @return
+		 * @return the context
 		 */
 		public Context getContext();
 
@@ -218,7 +218,7 @@ public @interface Tasklet {
 	 * <li><code>dynamic</code> get the dynamic schedule by invoking {@link Tasklet.Interface#getDynamicSchedule()} (this must be the first
 	 * and only annotation. Class must have a default constructor.)</li>
 	 * 
-	 * @return
+	 * @return the schedules
 	 */
 	String[] schedule() default "";
 }

@@ -45,8 +45,8 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Replication(final lotus.domino.Replication delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_REPLICATION);
+	protected Replication(final lotus.domino.Replication delegate, final Database parent) {
+		super(delegate, parent, NOTES_REPLICATION);
 	}
 
 	/*
@@ -393,10 +393,6 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-	}
-
-	public final Database getParentDatabase() {
-		return parent;
 	}
 
 	/*

@@ -8,14 +8,14 @@ import java.nio.ByteBuffer;
  */
 public class LENGTH_VALUE extends AbstractStruct {
 
-	public static final int SIZE = 12;
-
-	static {
-		addFixed("Flags", Short.class);
-		addFixed("Length", Double.class);
-		addFixed("Units", Byte.class);
-		addFixed("Reserved", Byte.class);
+	public static enum CDLENGTH_UNITS {
+		UNKNOWN, TWIPS, PIXELS, PERCENT, EMS, EXS, CHARS
 	}
+
+	public final Unsigned16 Flags = new Unsigned16();
+	public final Float64 Length = new Float64();
+	public final Enum8<CDLENGTH_UNITS> Units = new Enum8<CDLENGTH_UNITS>(CDLENGTH_UNITS.values());
+	public final Unsigned8 Reserved = new Unsigned8();
 
 	public LENGTH_VALUE() {
 		super();
@@ -25,38 +25,8 @@ public class LENGTH_VALUE extends AbstractStruct {
 		super(data);
 	}
 
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
-	/**
-	 * @return See CDLENGTH_FLAGS_xxx
-	 */
-	public short getFlags() {
+	public int getFlags() {
 		// TODO make enum
-		return (Short) getStructElement("Flags");
-	}
-
-	/**
-	 * @return Length of the record
-	 */
-	public double getLength() {
-		return (Double) getStructElement("Length");
-	}
-
-	/**
-	 * @return See CDLENGTH_UNITS_xxx
-	 */
-	public byte getUnits() {
-		// TODO make enum
-		return (Byte) getStructElement("Units");
-	}
-
-	/**
-	 * @return Reserved for future use
-	 */
-	public byte getReserved() {
-		return (Byte) getStructElement("Reserved");
+		return Flags.get();
 	}
 }

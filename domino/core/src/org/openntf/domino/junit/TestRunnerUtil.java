@@ -100,7 +100,7 @@ public enum TestRunnerUtil {
 			try {
 				t[i] = new lotus.domino.NotesThread(r.newInstance(), "TestRunner-" + i);
 				t[i].start();
-				Thread.sleep(100); // sleep some millis, as the legacy notes API may crash
+				Thread.sleep(300); // sleep some millis, as the legacy notes API may crash
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {

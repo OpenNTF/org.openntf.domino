@@ -50,8 +50,8 @@ public class AgentContext extends BaseNonThreadSafe<org.openntf.domino.AgentCont
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	public AgentContext(final lotus.domino.AgentContext delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_AGENTCTX);
+	protected AgentContext(final lotus.domino.AgentContext delegate, final Session parent) {
+		super(delegate, parent, NOTES_AGENTCTX);
 	}
 
 	/*

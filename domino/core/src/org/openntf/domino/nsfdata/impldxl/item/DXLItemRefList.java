@@ -27,14 +27,14 @@ public class DXLItemRefList extends DXLItemRaw {
 		ByteBuffer data = ByteBuffer.wrap(this.getBytes());
 		data.order(ByteOrder.nativeOrder());
 		LIST list = new LIST(data);
-		UNIVERSALNOTEID[] ids = new UNIVERSALNOTEID[list.getListEntries()];
-		data.position(data.position() + LIST.SIZE);
+		UNIVERSALNOTEID[] ids = new UNIVERSALNOTEID[list.ListEntries.get()];
+		data.position((int) (data.position() + list.getStructSize()));
 		for (int i = 0; i < ids.length; i++) {
 			ByteBuffer idData = data.duplicate();
-			idData.limit(idData.position() + UNIVERSALNOTEID.SIZE);
+			idData.limit(idData.position() + 16);
 			ids[i] = new UNIVERSALNOTEID(idData);
 
-			data.position(data.position() + UNIVERSALNOTEID.SIZE);
+			data.position(data.position() + 16);
 		}
 		return ids;
 	}
@@ -44,13 +44,13 @@ public class DXLItemRefList extends DXLItemRaw {
 			throw new IllegalArgumentException("value cannot be null");
 		}
 		byte[] oldBytes = this.getBytes();
-		byte[] newBytes = new byte[oldBytes.length + UNIVERSALNOTEID.SIZE];
+		byte[] newBytes = new byte[oldBytes.length + 16];
 		System.arraycopy(oldBytes, 0, newBytes, 0, oldBytes.length);
 		ByteBuffer data = ByteBuffer.wrap(newBytes);
 		data.order(ByteOrder.LITTLE_ENDIAN);
 		LIST list = new LIST(data);
-		data.position(LIST.SIZE + (UNIVERSALNOTEID.SIZE * list.getListEntries()));
-		list.setListEntries(list.getListEntries() + 1);
+		data.position((int) (list.getStructSize() + (16 * list.ListEntries.get())));
+		list.ListEntries.set(list.ListEntries.get() + 1);
 		data.put(value.getData());
 
 		setBytes(data.array());

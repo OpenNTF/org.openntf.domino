@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -43,12 +42,6 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 	/** The delegate_. */
 	protected transient D delegate_;
 
-	/** The CPP-Object ID */
-	private transient long cppObject_;
-
-	/** The CPP-Object ID of the session */
-	private transient long cppSession_;
-
 	/** The Thread, in which wrapper was generated */
 	private transient Thread _myThread = Thread.currentThread();
 
@@ -62,44 +55,25 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 	}
 
 	/**
-	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
-	 * 
-	 * @return the cpp_id
-	 */
-	@Override
-	public long GetCppObj() {
-		return cppObject_;
-	}
-
-	/**
-	 * returns the cpp-session id. Needed for some BackendBridge functions
-	 * 
-	 * @return the cpp_id of the session
-	 */
-	@Override
-	public long GetCppSession() {
-		return cppSession_;
-	}
-
-	/**
 	 * Instantiates a new base.
 	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent (may be null)
-	 * @param wf
-	 *            the wrapperFactory
-	 * @param cppId
-	 *            the cpp-id
 	 * @param classId
 	 *            the class id
 	 */
-	protected BaseNonThreadSafe(final D delegate, final P parent, final WrapperFactory wf, final long cppId, final int classId) {
-		super(delegate, parent, wf, cppId, classId);
+	protected BaseNonThreadSafe(final D delegate, final P parent, final int classId) {
+		super(delegate, parent, classId);
 	}
 
-	public BaseNonThreadSafe(final int classId) {
+	/**
+	 * Constructor for deserialization
+	 * 
+	 * @param classId
+	 */
+	protected BaseNonThreadSafe(final int classId) {
 		super(classId);
 	}
 
@@ -112,9 +86,8 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 	 *            the cpp-id
 	 */
 	@Override
-	void setDelegate(final D delegate, final long cppId, final boolean fromResurrect) {
+	protected final void setDelegate(final D delegate, final boolean fromResurrect) {
 		delegate_ = delegate;
-		cppObject_ = (cppId != 0) ? cppId : getLotusId(delegate);
 
 		if (fromResurrect) {
 			// an other object is set now, so we must recache that object
@@ -181,15 +154,6 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 			throw new IllegalStateException("Notes-Object of type " + this.getClass().getName() + " is used across threads! This Thread: "
 					+ Thread.currentThread() + " correct Thread: " + _myThread);
 		return delegate_;
-	}
-
-	@Override
-	void setCppSession() {
-		if (parent instanceof Base)	// Cannot be a Session here
-			cppSession_ = ((Base<?, ?, ?>) parent).GetCppSession();
-		else
-			cppSession_ = 0;
-
 	}
 
 }

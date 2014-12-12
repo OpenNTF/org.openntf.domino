@@ -18,14 +18,14 @@
       </service>
    </extension>
    
-   <!-- RPr: In my oppinion, the ViewNavigator works correctly as all fixes are done in the backend classes now
+   <!-- RPr: In my oppinion, the ViewNavigator works correctly as all fixes are done in the backend classes now-->
    <extension
          point="com.ibm.commons.Extension">
       <service
             class="org.openntf.domino.xsp.helpers.OpenntfViewNavigatorFactoryFactory"
             type="com.ibm.xsp.model.domino.ViewNavigatorFactory">
       </service>
-   </extension> -->
+   </extension>
    
     <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.designer.runtime.extensions.JavaScriptProvider" class="org.openntf.domino.xsp.script.OpenDomJavaScriptExtension" />

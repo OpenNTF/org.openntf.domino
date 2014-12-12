@@ -131,6 +131,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return caseSensitive_;
 	}
 
+	@SuppressWarnings("unused")
 	private String indexApiPath_;
 
 	public void setDatabase(final Database indexDb) {
@@ -225,6 +226,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private List<String> getTermContains(final String contains) {
 		List<String> result = new ArrayList<String>();
 		return result;
@@ -304,6 +306,7 @@ public class IndexDatabase implements IScannerStateManager {
 		System.out.println("Completed scan of server " + serverName);
 	}
 
+	@SuppressWarnings("unused")
 	public DocumentScanner scanDatabase(final Database db) {
 		Document dbDoc = getDbDocument(db.getReplicaID());
 		DocumentScanner scanner = new DocumentScanner();
@@ -342,6 +345,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return scanner;
 	}
 
+	@SuppressWarnings("unused")
 	private int totalErrCount_ = 0;
 
 	private static final List<String> MOD_SORT_LIST = new ArrayList<String>();
@@ -349,7 +353,9 @@ public class IndexDatabase implements IScannerStateManager {
 		MOD_SORT_LIST.add("@modified");
 	}
 
+	@SuppressWarnings("unused")
 	private int curDocCount_ = 0;
+	@SuppressWarnings("unused")
 	private int sortedDocCount_ = 0;
 
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
@@ -685,6 +691,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbids) {
@@ -696,6 +703,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbMap.keySet()) {

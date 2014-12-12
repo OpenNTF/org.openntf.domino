@@ -50,8 +50,8 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextTable(final lotus.domino.RichTextTable delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTTABLE);
+	protected RichTextTable(final lotus.domino.RichTextTable delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTTABLE);
 	}
 
 	/*

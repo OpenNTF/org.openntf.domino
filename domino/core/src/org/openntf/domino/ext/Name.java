@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.ext;
 
+import org.openntf.domino.Name.NameFormat;
+
 /**
  * @author withersp
  * 
@@ -29,4 +31,15 @@ public interface Name {
 	public org.openntf.domino.Name clone();
 
 	public String getIDprefix();
+
+	public void parse(final String name, final String lang);
+
+	public void parse(final String name);
+
+	/**
+	 * Returns the Name format of this name
+	 * 
+	 * @return
+	 */
+	public NameFormat getNameFormat();
 }

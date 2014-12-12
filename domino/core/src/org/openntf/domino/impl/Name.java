@@ -43,14 +43,17 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
-	private boolean _hierarchical;
 
 	/*
 	 * Deprecated, but needed for Externalization
 	 */
 	@Deprecated
 	public Name() {
-		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_NAME);
+		super(null, Factory.getSession(SessionType.CURRENT), NOTES_NAME);
+	}
+
+	protected Name(final Session sess) {
+		super(null, sess, NOTES_NAME);
 	}
 
 	//	/**
@@ -112,43 +115,36 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Name(final lotus.domino.Name delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_NAME);
+	protected Name(final lotus.domino.Name delegate, final Session parent) {
+		super(delegate, parent, NOTES_NAME);
 		initialize(delegate);
 		// TODO: Wrapping recycles the caller's object. This may cause issues.
 		Base.s_recycle(delegate);
 	}
 
-	public Name(final String name, final Session parent, final WrapperFactory wf) {
-		super(null, parent, wf, 0, NOTES_NAME);
-		initialize(name);
-	}
-
 	/*
 	 * for clone
 	 */
-	protected Name(final NamePartsMap namePartsMap, final boolean hierarchical, final Session parent, final WrapperFactory wf) {
-		super(null, parent, wf, 0, NOTES_NAME);
+	protected Name(final NamePartsMap namePartsMap, final Session parent, final WrapperFactory wf) {
+		super(null, parent, NOTES_NAME);
 		_namePartsMap = (NamePartsMap) namePartsMap.clone();
-		_hierarchical = hierarchical;
 	}
 
 	/**
 	 * Clears the object.
 	 */
 	public void clear() {
-		this._hierarchical = false;
 		if (null != this._namePartsMap) {
 			this._namePartsMap.clear();
 		}
 	}
 
-	/**
-	 * Reloads the object
-	 */
-	public void reload(final Name name) {
-		this.initialize(name);
-	}
+	//	/**
+	//	 * Reloads the object
+	//	 */
+	//	public void reload(final Name name) {
+	//		this.initialize(name);
+	//	}
 
 	/*
 	 * ******************************************************************
@@ -159,15 +155,6 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-	/**
-	 * Flag indicating if the object is Hierarchical
-	 * 
-	 * @param arg0
-	 *            Hierarchical indicator flag
-	 */
-	private void setHierarchical(final boolean arg0) {
-		this._hierarchical = arg0;
-	}
 
 	/**
 	 * Gets the NamePartsMap for the object.
@@ -198,37 +185,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 			}
 
 			this.clear();
-			this.setHierarchical(delegate.isHierarchical());
 			this.setName(delegate);
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-			throw new RuntimeException("EXCEPTION thrown in in Name.initialize()");
-		}
-	}
-
-	private void initialize(final Name name) {
-		this.initialize(name.getDelegate());
-	}
-
-	private void initialize(final String name) {
-		try {
-			if (Strings.isBlankString(name)) {
-				throw new IllegalArgumentException("Source name is null or blank");
-			}
-
-			this.parseRFC82xContent(name);
-			String phrase = this.getAddr822Phrase();
-
-			Name n = (Name) parent.createName((Strings.isBlankString(phrase)) ? name : phrase);
-			if (null == n) {
-				throw new RuntimeException("Unable to create Name object");
-			}
-
-			this.initialize(n);
-
-			// parse again because initialize(n) may have cleared the RFC82x content
-			this.parseRFC82xContent(name);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -279,17 +236,21 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 */
 	@Override
 	public boolean isHierarchical() {
-		return this._hierarchical;
+		return getNameFormat().isHierarchical();
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(Name.class.getName());
 		sb.append(" [");
+		boolean comma = false;
 		for (NamePartsMap.Key key : NamePartsMap.Key.values()) {
 			String s = this.getNamePartsMap().get(key);
 			if (!Strings.isBlankString(s)) {
+				if (comma)
+					sb.append(", ");
 				sb.append(key.name() + "=" + s);
+				comma = true;
 			}
 		}
 
@@ -318,106 +279,100 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	}
 
 	/**
-	 * The cpp-id is not used here, so we do not read it
-	 * 
-	 * @param delegate
-	 * @param cppId
-	 */
-	@Override
-	void setDelegate(final lotus.domino.Name delegate, final long cppId, final boolean fromResurrect) {
-		delegate_ = delegate;
-	}
-
-	/**
 	 * Sets the Name for the object.
 	 * 
 	 * @param name
 	 *            Name for the object.
 	 */
-	public void setName(final lotus.domino.Name name) {
+	protected void setName(final lotus.domino.Name name) {
 		try {
 
 			if (null == name) {
 				throw new IllegalArgumentException("Source Name is null");
 			}
 
-			if (!Strings.isBlankString(name.getCanonical())) {
-				this.setNamePartsMap(new NamePartsMap(name.getCanonical(), Names.buildAddr822Full(name)));
-			} else if (!Strings.isBlankString(name.getAbbreviated())) {
-				this.setNamePartsMap(new NamePartsMap(name.getAbbreviated(), Names.buildAddr822Full(name)));
+			String tmp;
+			if (!Strings.isBlankString(tmp = name.getCanonical())) {
+				this.setNamePartsMap(new NamePartsMap(tmp, Names.buildAddr822Full(name)));
+			} else if (!Strings.isBlankString(tmp = name.getAbbreviated())) {
+				this.setNamePartsMap(new NamePartsMap(tmp, Names.buildAddr822Full(name)));
 			}
 
-			if (!Strings.isBlankString(name.getADMD())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.ADMD, name.getADMD());
-			}
-			if (!Strings.isBlankString(name.getCommon())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Common, name.getCommon());
-			}
-			if (!Strings.isBlankString(name.getCountry())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Country, name.getCountry());
-			}
-			if (!Strings.isBlankString(name.getGeneration())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Generation, name.getGeneration());
-			}
-			if (!Strings.isBlankString(name.getGiven())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Given, name.getGiven());
-			}
-			if (!Strings.isBlankString(name.getInitials())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Initials, name.getInitials());
-			}
-			if (!Strings.isBlankString(name.getKeyword())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Keyword, name.getKeyword());
-			}
-			if (!Strings.isBlankString(name.getLanguage())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Language, name.getLanguage());
-			}
-			if (!Strings.isBlankString(name.getOrganization())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Organization, name.getOrganization());
-			}
-			if (!Strings.isBlankString(name.getOrgUnit1())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit1, name.getOrgUnit1());
-			}
-			if (!Strings.isBlankString(name.getOrgUnit2())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit2, name.getOrgUnit2());
-			}
-			if (!Strings.isBlankString(name.getOrgUnit3())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit3, name.getOrgUnit3());
-			}
-			if (!Strings.isBlankString(name.getOrgUnit4())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit4, name.getOrgUnit4());
-			}
-			if (!Strings.isBlankString(name.getPRMD())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.PRMD, name.getPRMD());
-			}
-			if (!Strings.isBlankString(name.getSurname())) {
-				this.getNamePartsMap().put(NamePartsMap.Key.Surname, name.getSurname());
+			NamePartsMap npm = this.getNamePartsMap();
+
+			if (!Strings.isBlankString(tmp = getADMD())) { // A=
+				npm.put(NamePartsMap.Key.ADMD, tmp);
 			}
 
+			if (!Strings.isBlankString(tmp = getGeneration())) { // Q=
+				npm.put(NamePartsMap.Key.Generation, tmp);
+			}
+			if (!Strings.isBlankString(tmp = getGiven())) { // G=
+				npm.put(NamePartsMap.Key.Given, tmp);
+			}
+			if (!Strings.isBlankString(tmp = getInitials())) { // I=
+				npm.put(NamePartsMap.Key.Initials, tmp);
+			}
+			if (!Strings.isBlankString(tmp = getKeyword())) { // he following components of a hierarchical name in the order shown separated by backslashes: country or region\organization\organizational unit 1\organizational unit 2\organizational unit 3\organizational unit 4. Returns an empty string if the property is undefined.
+				npm.put(NamePartsMap.Key.Keyword, tmp);
+			}
+			if (!Strings.isBlankString(tmp = getLanguage())) { //  as we have only primary user names, this is always empty
+				npm.put(NamePartsMap.Key.Language, tmp);
+			}
+
+			if (!Strings.isBlankString(tmp = getPRMD())) {  // P=
+				npm.put(NamePartsMap.Key.PRMD, tmp);
+			}
+			if (!Strings.isBlankString(tmp = getSurname())) { // S=
+				npm.put(NamePartsMap.Key.Surname, tmp);
+			}
+			// RPr: These fields should be set by the parser
+			//			if (!Strings.isBlankString(tmp = name.getCommon())) {
+			//				npm.put(NamePartsMap.Key.Common, tmp);
+			//			}
+			//			if (!Strings.isBlankString(tmp = name.getOrgUnit1())) {
+			//				npm.put(NamePartsMap.Key.OrgUnit1, tmp);
+			//			}
+			//			if (!Strings.isBlankString(tmp = name.getOrgUnit2())) {
+			//				npm.put(NamePartsMap.Key.OrgUnit2, tmp);
+			//			}
+			//			if (!Strings.isBlankString(tmp = name.getOrgUnit3())) {
+			//				npm.put(NamePartsMap.Key.OrgUnit3, tmp);
+			//			}
+			//			if (!Strings.isBlankString(tmp = name.getOrgUnit4())) {
+			//				npm.put(NamePartsMap.Key.OrgUnit4, tmp);
+			//			}
+			//			if (!Strings.isBlankString(tmp = name.getOrganization())) {
+			//				npm.put(NamePartsMap.Key.Organization, tmp);
+			//			}
+			//			if (!Strings.isBlankString(tmp = name.getCountry())) {
+			//				npm.put(NamePartsMap.Key.Country, tmp);
+			//			}
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	/**
-	 * Sets the Name for the object.
-	 * 
-	 * @param name
-	 *            Name for the object.
-	 */
-	public void setName(final Name name) {
-		try {
-			if (null == name) {
-				throw new IllegalArgumentException("Source Name is null");
-			}
-
-			this.setName(name.getDelegate());
-			this.parseRFC82xContent(Names.buildAddr822Full(name));
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-	}
+	//	/**
+	//	 * Sets the Name for the object.
+	//	 * 
+	//	 * @param name
+	//	 *            Name for the object.
+	//	 */
+	//	public void setName(final Name name) {
+	//		try {
+	//			if (null == name) {
+	//				throw new IllegalArgumentException("Source Name is null");
+	//			}
+	//
+	//			this.setName(name.getDelegate());
+	//			this.parseRFC82xContent(Names.buildAddr822Full(name));
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
 
 	/**
 	 * Gets the Name Part for the specified key.
@@ -695,6 +650,15 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	}
 
 	/**
+	 * Gets the NameType (Hierarchical/Flat/RFC8229)
+	 * 
+	 */
+	@Override
+	public NameFormat getNameFormat() {
+		return getNamePartsMap().getNameFormat();
+	}
+
+	/**
 	 * Gets the RFC821 or RFC822 internet address
 	 * 
 	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
@@ -868,11 +832,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (_hierarchical ? 1231 : 1237);
-		result = prime * result + ((_namePartsMap == null) ? 0 : _namePartsMap.hashCode());
-		return result;
+		return _namePartsMap.hashCode();
 	}
 
 	/* (non-Javadoc)
@@ -890,9 +850,6 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 			return false;
 		}
 		Name other = (Name) obj;
-		if (_hierarchical != other._hierarchical) {
-			return false;
-		}
 		if (_namePartsMap == null) {
 			if (other._namePartsMap != null) {
 				return false;
@@ -958,8 +915,9 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	 */
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-		this.setHierarchical(in.readBoolean());
-		this.initialize(in.readUTF());
+		// RPr: This is useless, but I don#t know if there are externalized names in the wild
+		in.readBoolean(); // so we read a dummy boolean (NTF: Feel free to remove, I don't need it)
+		this.parse(in.readUTF());
 	}
 
 	/* (non-Javadoc)
@@ -986,12 +944,26 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 
 	@Override
 	public Name clone() {
-		return new Name(_namePartsMap, _hierarchical, getAncestorSession(), getFactory());
+		return new Name(_namePartsMap, getAncestorSession(), getFactory());
 	}
 
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public void parse(final String name, final String lang) {
+		this.clear();
+		this.setNamePartsMap(new NamePartsMap(name));
+		if (!Strings.isBlankString(lang)) {
+			this.getNamePartsMap().put(NamePartsMap.Key.Language, lang);
+		}
+	}
+
+	@Override
+	public void parse(final String name) {
+		parse(name, null);
 	}
 
 }

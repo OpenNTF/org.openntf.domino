@@ -12,7 +12,6 @@ import javolution.util.FastSet;
 
 public class NoteSet implements Set<NoteCoordinate>, Externalizable {
 	protected FastSet<NoteCoordinate> delegate_;
-	@SuppressWarnings("unused")
 	protected DbCache localCache_ = null;
 
 	public NoteSet() {

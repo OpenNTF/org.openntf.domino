@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Notes/Domino 6. To preserve compatibility with existing applications, the new attributes have
@@ -21,38 +20,19 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDACTIONEXT extends CDRecord {
 	public static enum Type {
-		BUTTON((short) 0), CHECKBOX((short) 1), MENU_SEPARATOR((short) 2);
-
-		private final short value_;
-
-		private Type(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static Type valueOf(final short typeCode) {
-			for (Type type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Type found for type code " + typeCode);
-		}
+		BUTTON, CHECKBOX, MENU_SEPARATOR;
 	}
 
-	static {
-		addFixed("dwFlags", Integer.class);
-		addFixed("wControlType", Short.class);
-		addFixedUnsigned("wControlFormulaLen", Short.class);
-		addFixedUnsigned("wLabelFormulaLen", Short.class);
-		addFixedUnsigned("wParentLabelFormulaLen", Short.class);
-		addFixedUnsigned("wCompActionIDLen", Short.class);
-		addFixedUnsigned("wProgrammaticUseTxtLen", Short.class);
-		addFixedArray("dwExtra", Integer.class, 2);
+	public final Unsigned32 dwFlags = new Unsigned32();
+	public final Enum16<Type> wControlType = new Enum16<Type>(Type.values());
+	public final Unsigned16 wControlFormulaLen = new Unsigned16();
+	public final Unsigned16 wLabelFormulaLen = new Unsigned16();
+	public final Unsigned16 wParentLabelFormulaLen = new Unsigned16();
+	public final Unsigned16 wCompActionIDLen = new Unsigned16();
+	public final Unsigned16 wProgrammaticUseTxtLen = new Unsigned16();
+	public final Unsigned32[] dwExtra = array(new Unsigned32[2]);
 
+	static {
 		addVariableData("ControlFormula", "wControlFormulaLen");
 		addVariableData("LabelFormula", "wLabelFormulaLen");
 		addVariableData("ParentLabelFormula", "wParentLabelFormulaLen");
@@ -60,43 +40,37 @@ public class CDACTIONEXT extends CDRecord {
 		addVariableString("ProgrammaticUseTxt", "wProgrammaticUseTxtLen");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDACTIONEXT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDACTIONEXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public Type getControlType() {
-		return Type.valueOf((Short) getStructElement("wControlType"));
-	}
-
 	public NSFCompiledFormula getControlFormula() {
-		return new NSFCompiledFormula((byte[]) getStructElement("ControlFormula"));
+		return new NSFCompiledFormula((byte[]) getVariableElement("ControlFormula"));
 	}
 
 	/**
 	 * @return Formula used for control's/menu's label.
 	 */
 	public NSFCompiledFormula getLabelFormula() {
-		return new NSFCompiledFormula((byte[]) getStructElement("LabelFormula"));
+		return new NSFCompiledFormula((byte[]) getVariableElement("LabelFormula"));
 	}
 
 	/**
 	 * @return Formula used for control's/menu's "parent" label when action is first in a group.
 	 */
 	public NSFCompiledFormula getParentLabelFormula() {
-		return new NSFCompiledFormula((byte[]) getStructElement("ParentLabelFormula"));
+		return new NSFCompiledFormula((byte[]) getVariableElement("ParentLabelFormula"));
 	}
 
 	public String getCompActionId() {
-		return (String) getStructElement("CompActionID");
+		return (String) getVariableElement("CompActionID");
 	}
 
 	public String getProgrammaticUseText() {
-		return (String) getStructElement("ProgrammaticUseText");
+		return (String) getVariableElement("ProgrammaticUseText");
 	}
 }

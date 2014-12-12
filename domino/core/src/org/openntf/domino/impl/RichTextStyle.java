@@ -39,8 +39,8 @@ public class RichTextStyle extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_SESSION);
+	protected RichTextStyle(final lotus.domino.RichTextStyle delegate, final Session parent) {
+		super(delegate, parent, NOTES_SESSION);
 	}
 
 	/*

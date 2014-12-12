@@ -42,13 +42,9 @@ public class ACLEntry extends BaseNonThreadSafe<org.openntf.domino.ACLEntry, lot
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperFactory
-	 * @param cpp_id
-	 *            the cpp-id
 	 */
-	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
+	protected ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
+		super(delegate, parent, NOTES_ACLENTRY);
 	}
 
 	/*

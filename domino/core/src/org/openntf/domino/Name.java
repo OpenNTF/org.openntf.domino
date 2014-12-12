@@ -89,6 +89,40 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 		COMMON, CANONICAL, ABBREVIATED, ORGUNIT, ORG, COUNTRY
 	}
 
+	public static enum NameFormat {
+		/**
+		 * A Name witout a slash
+		 */
+		FLAT(false),
+		/**
+		 * A hierarchical name
+		 */
+		HIERARCHICAL(true),
+		/**
+		 * A RFC822 Name (Mail address)
+		 */
+		RFC822(false),
+		/**
+		 * A extended name with components like /A=ADMD, /Q=Generation, /G=Given, /I=Initials, /P=PRMD, /S=Surname
+		 */
+		HIERARCHICALEX(true),
+
+		HIERARCHICALUNKNOWN(true)
+
+		;
+
+		private final boolean _hierarchical;
+
+		private NameFormat(final boolean hierarchical) {
+			_hierarchical = hierarchical;
+		}
+
+		public boolean isHierarchical() {
+			return _hierarchical;
+		}
+
+	}
+
 	/**
 	 * A hierarchical name in abbreviated form.
 	 * 

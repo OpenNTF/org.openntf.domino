@@ -54,13 +54,9 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperFactory
-	 * @param cpp_id
-	 *            the cpp-id
 	 */
-	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Database parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_MACRO);
+	protected Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Database parent) {
+		super(delegate, parent, NOTES_MACRO);
 		initialize(delegate);
 
 	}
@@ -804,7 +800,7 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		try {
 			lotus.domino.Agent agent = resurrectAgent();
-			setDelegate(agent, 0, true);
+			setDelegate(agent, true);
 			/* No special logging, since by now View is a BaseThreadSafe */
 		} catch (Exception e) {
 			DominoUtils.handleException(e);

@@ -56,8 +56,8 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_EMBEDOBJ);
+	protected EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final Document parent) {
+		super(delegate, parent, NOTES_EMBEDOBJ);
 	}
 
 	private class EOReader extends Reader {
@@ -345,10 +345,6 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	@Override
 	public final Document getParentDocument() {
 		return parent;
-	}
-
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParentDocument().getParentDatabase();
 	}
 
 	/*

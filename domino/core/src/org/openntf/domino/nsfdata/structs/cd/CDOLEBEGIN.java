@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the start of an OLE Object. (editods.h)
@@ -79,114 +78,63 @@ public class CDOLEBEGIN extends CDRecord {
 	 *
 	 */
 	public static enum OLEVersion {
-		VERSION1((short) 1), VERSION2((short) 2);
-
-		private final short value_;
-
-		private OLEVersion(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static OLEVersion valueOf(final short typeCode) {
-			for (OLEVersion type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching OLEVersion found for type code " + typeCode);
-		}
+		VERSION1, VERSION2
 	}
+
+	public final Enum16<OLEVersion> Version = new Enum16<OLEVersion>(OLEVersion.values());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Enum16<DDEFormat> ClipFormat = new Enum16<DDEFormat>(DDEFormat.values());
+	public final Unsigned16 AttachNameLength = new Unsigned16();
+	public final Unsigned16 ClassNameLength = new Unsigned16();
+	public final Unsigned16 TemplateNameLength = new Unsigned16();
 
 	static {
-		addFixed("Version", Short.class);
-		addFixed("Flags", Integer.class);
-		addFixed("ClipFormat", Short.class);
-		addFixedUnsigned("AttachNameLength", Short.class);
-		addFixedUnsigned("ClassNameLength", Short.class);
-		addFixedUnsigned("TemplateNameLength", Short.class);
-
-		addVariableString("AttachName", "getAttachNameLength");
-		addVariableString("ClassName", "getClassNameLength");
-		addVariableString("TemplateName", "getTemplateNameLength");
+		addVariableString("AttachName", "AttachNameLength");
+		addVariableString("ClassName", "ClassNameLength");
+		addVariableString("TemplateName", "TemplateNameLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDOLEBEGIN(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDOLEBEGIN(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	/**
-	 * @return The Notes OLE implementation version.
-	 */
-	public OLEVersion getVersion() {
-		return OLEVersion.valueOf((Short) getStructElement("Version"));
-	}
-
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	/**
-	 * @return Clipboard format with which to render data.
-	 */
-	public DDEFormat getClipFormat() {
-		return DDEFormat.valueOf((Short) getStructElement("ClipFormat"));
-	}
-
-	/**
-	 * @return Filename length (without the '\0' terminator) of the attached OLE object file.
-	 */
-	public int getAttachNameLength() {
-		return (Integer) getStructElement("AttachNameLength");
-	}
-
-	/**
-	 * @return (Optional) Length of the object's readable OLE class name.
-	 */
-	public int getClassNameLength() {
-		return (Integer) getStructElement("ClassNameLength");
-	}
-
-	/**
-	 * @return (Optional) Length of the object's template class name.
-	 */
-	public int getTemplateNameLength() {
-		return (Integer) getStructElement("TemplateNameLength");
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	/**
 	 * @return Name of the attached OLE object file.
 	 */
 	public String getAttachName() {
-		return (String) getStructElement("AttachName");
+		return (String) getVariableElement("AttachName");
 	}
 
 	/**
 	 * @return The object's readable OLE class name.
 	 */
 	public String getClassName() {
-		return (String) getStructElement("ClassName");
+		return (String) getVariableElement("ClassName");
 	}
 
 	/**
 	 * @return The object's template class name.
 	 */
 	public String getTemplateName() {
-		return (String) getStructElement("TemplateName");
+		return (String) getVariableElement("TemplateName");
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Version=" + getVersion() + ", Flags=" + getFlags() + ", ClipFormat=" + getClipFormat()
-				+ ", AttachName=" + getAttachName() + ", ClassName=" + getClassName() + ", TemplateName=" + getTemplateName() + "]";
+		return "[" + getClass().getSimpleName() + ": Version=" + Version.get() + ", Flags=" + getFlags() + ", ClipFormat="
+				+ ClipFormat.get() + ", AttachName=" + getAttachName() + ", ClassName=" + getClassName() + ", TemplateName="
+				+ getTemplateName() + "]";
 	}
 }

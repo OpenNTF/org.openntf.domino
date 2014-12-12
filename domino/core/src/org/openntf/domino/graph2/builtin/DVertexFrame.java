@@ -24,14 +24,14 @@ public interface DVertexFrame extends Editable {
 	//	public String[] getReaders();
 
 	public abstract static class DVertexFrameImpl implements DVertexFrame {
-		@SuppressWarnings("rawtypes")
+		@SuppressWarnings({ "unchecked" })
 		@Override
 		public String[] getEditors() {
 			String[] result = null;
 			Object raw = asVertex().getProperty("$UpdatedBy");
 			if (raw != null) {
 				if (raw instanceof Collection) {
-					result = org.openntf.domino.utils.TypeUtils.collectionToStrings((Collection) raw);
+					result = org.openntf.domino.utils.TypeUtils.collectionToStrings((Collection<Object>) raw);
 				}
 			}
 			return result;

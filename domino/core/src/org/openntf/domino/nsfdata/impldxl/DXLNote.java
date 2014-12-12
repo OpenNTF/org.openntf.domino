@@ -183,7 +183,7 @@ public class DXLNote implements NSFNote, Serializable {
 
 					if (record instanceof CDFILEHEADER) {
 						CDFILEHEADER header = (CDFILEHEADER) record;
-						totalSegments = header.getSegCount();
+						totalSegments = (int) header.SegCount.get();
 						segmentCount = 0;
 					}
 					if (record instanceof CDFILESEGMENT) {

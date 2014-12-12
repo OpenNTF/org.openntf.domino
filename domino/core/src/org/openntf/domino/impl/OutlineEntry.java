@@ -44,8 +44,8 @@ public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEn
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final Outline parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINEENTRY);
+	protected OutlineEntry(final lotus.domino.OutlineEntry delegate, final Outline parent) {
+		super(delegate, parent, NOTES_OUTLINEENTRY);
 
 	}
 

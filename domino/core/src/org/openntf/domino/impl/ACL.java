@@ -28,7 +28,7 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
+//TODO: Auto-generated Javadoc
 /**
  * The Class ACL.
  */
@@ -42,13 +42,9 @@ public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.
 	 *            the delegate
 	 * @param parent
 	 *            the parent database
-	 * @param wf
-	 *            the wrapper factory
-	 * @param cppId
-	 *            the cpp-id
 	 */
-	public ACL(final lotus.domino.ACL delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_ACL);
+	protected ACL(final lotus.domino.ACL delegate, final Database parent) {
+		super(delegate, parent, NOTES_ACL);
 	}
 
 	/*
@@ -442,7 +438,7 @@ public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.
 		try {
 			lotus.domino.Database db = toLotus(parent);
 			lotus.domino.ACL d = db.getACL();
-			setDelegate(d, 0, true);
+			setDelegate(d, true);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
 				log_.log(java.util.logging.Level.FINE, "ACL of Database " + parent

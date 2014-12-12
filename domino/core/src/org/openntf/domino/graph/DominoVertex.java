@@ -87,12 +87,12 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	@SuppressWarnings("unchecked")
 	Set<String> getInEdgesSet(final String label) {
-		Set<String> edgeIds = getInEdgesMap().get(label);
+		FastSet<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			Object o = getProperty(DominoVertex.IN_PREFIX + label, java.util.Collection.class);
 			if (o != null) {
 				if (o instanceof FastSet) {
-					edgeIds = ((FastSet) o).atomic();
+					edgeIds = ((FastSet<String>) o).atomic();
 				} else if (o instanceof java.util.Collection) {
 					FastSet<String> result = new FastSet<String>();
 					result.addAll((Collection<String>) o);
@@ -105,7 +105,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			} else {
 				edgeIds = new FastSet<String>().atomic();
 			}
-			Map map = getInEdgesMap();
+			Map<String, FastSet<String>> map = getInEdgesMap();
 			//			synchronized (map) {
 			map.put(label, edgeIds);
 			//			}
@@ -123,13 +123,14 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	FastSet<String> getOutEdgesSet(final String label) {
 		FastSet<String> edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			Object o = getProperty(DominoVertex.OUT_PREFIX + label, java.util.Collection.class);
 			if (o != null) {
 				if (o instanceof FastSet) {
-					edgeIds = ((FastSet) o).atomic();
+					edgeIds = ((FastSet<String>) o).atomic();
 				} else if (o instanceof java.util.Collection) {
 					FastSet<String> result = new FastSet<String>();
 					result.addAll((Collection<String>) o);
@@ -142,7 +143,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			} else {
 				edgeIds = new FastSet<String>().atomic();
 			}
-			Map map = getOutEdgesMap();
+			Map<String, FastSet<String>> map = getOutEdgesMap();
 			//			synchronized (map) {
 			map.put(label, edgeIds);
 			//			}
@@ -157,66 +158,32 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	@Override
 	public void addInEdge(final Edge edge) {
-		boolean adding = false;
 		String label = edge.getLabel();
 
-		// Set<String> ins = getInEdges();
 		Set<String> ins = getInEdgesSet(label);
-		//		synchronized (ins) {
 		if (!ins.contains(edge.getId())) {
-			adding = true;
-			ins.add((String) edge.getId());
-		}
-		//		}
-		if (adding) {
 			getParent().startTransaction(this);
-			Map map = getInDirtyMap();
-			//			synchronized (map) {
+			Map<String, Boolean> map = getInDirtyMap();
 			map.put(label, true);
-			//			}
 			Set<Edge> inLabelObjs = getInEdgeCache(label);
-			//			synchronized (inLabelObjs) {
 			inLabelObjs.add(edge);
-			//			}
-
-			// inDirty_ = true;
-			// Set<Edge> inObjs = getInEdgeObjects();
-			// synchronized (inObjs) {
-			// inObjs.add(edge);
-			// }
+			ins.add((String) edge.getId());
 		}
 	}
 
 	@Override
 	public void addOutEdge(final Edge edge) {
-		boolean adding = false;
 		String label = edge.getLabel();
 
-		// Set<String> outs = getOutEdges();
 		Set<String> outs = getOutEdgesSet(label);
-		//		synchronized (outs) {
 		if (!outs.contains(edge.getId())) {
-			adding = true;
+			getParent().startTransaction(this);
+			Map<String, Boolean> map = getOutDirtyMap();
+			map.put(label, true);
+			Set<Edge> outLabelObjs = getOutEdgeCache(label);
+			outLabelObjs.add(edge);
 			outs.add((String) edge.getId());
 		}
-		//		}
-		if (adding) {
-			getParent().startTransaction(this);
-			Map map = getOutDirtyMap();
-			//			synchronized (map) {
-			map.put(label, true);
-			//			}
-			Set<Edge> outLabelObjs = getOutEdgeCache(label);
-			//			synchronized (outLabelObjs) {
-			outLabelObjs.add(edge);
-			//			}
-			// outDirty_ = true;
-			// Set<Edge> outObjs = getOutEdgeObjects();
-			// synchronized (outObjs) {
-			// outObjs.add(edge);
-			// }
-		}
-		// setProperty(DominoVertex.OUT_NAME, outEdges_);
 	}
 
 	public java.util.Set<String> getBothEdges() {
@@ -345,7 +312,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			}
 		}
 		//		System.out.println("Returning " + (result == null ? "null" : result.size()) + " edges");
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 	protected FastSet<Edge> getOutEdgeObjects(final String... labels) {
@@ -402,7 +369,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				result.addAll(getOutEdgeObjects(label));
 			}
 		}
-		return result.unmodifiable();
+		return result == null ? null : result.unmodifiable();
 	}
 
 	// @SuppressWarnings({ "unchecked", "rawtypes" })

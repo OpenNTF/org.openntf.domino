@@ -13,10 +13,12 @@ import org.openntf.domino.Outline;
 import org.openntf.domino.types.DatabaseDescendant;
 
 public class DatabaseTransaction {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseTransaction.class.getName());
 
 	//	private final Database database_;
 	private final Set<Database> databases_ = new HashSet<Database>();
+	@SuppressWarnings("unused")
 	private boolean isCommitting_ = false;
 	private Queue<DatabaseDescendant> updateQueue_;
 	private Queue<DatabaseDescendant> removeQueue_;
@@ -54,7 +56,7 @@ public class DatabaseTransaction {
 	protected Queue<DatabaseDescendant> getUpdateQueue() {
 		if (updateQueue_ == null) {
 			updateQueue_ = new ArrayDeque<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total
-																	// handles?
+			// handles?
 		}
 		return updateQueue_;
 	}
@@ -62,7 +64,7 @@ public class DatabaseTransaction {
 	protected Queue<DatabaseDescendant> getRemoveQueue() {
 		if (removeQueue_ == null) {
 			removeQueue_ = new ArrayDeque<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total
-																	// handles?
+			// handles?
 		}
 		return removeQueue_;
 	}

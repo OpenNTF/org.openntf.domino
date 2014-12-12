@@ -18,8 +18,8 @@ import java.util.logging.Logger;
  * 
  */
 public class IndexQuery {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IndexQuery.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private Set<CharSequence> terms_;
 	private Set<CharSequence> dbids_;
@@ -27,6 +27,7 @@ public class IndexQuery {
 	private Set<CharSequence> forms_;
 	private boolean isAnd_ = false;
 	private int limit_ = 0;
+	@SuppressWarnings("unused")
 	private transient IndexResults results_;
 
 	public IndexQuery() {
@@ -152,6 +153,7 @@ public class IndexQuery {
 
 	//	private static final List<IndexHit> emptyHits = new ArrayList<IndexHit>();
 
+	@SuppressWarnings("unused")
 	private static String debugStringSet(final Set<String> set) {
 		StringBuilder debug = new StringBuilder();
 		debug.append('[');
@@ -173,6 +175,7 @@ public class IndexQuery {
 		return debug.toString();
 	}
 
+	@SuppressWarnings("unused")
 	private String debugGetTerms() {
 		StringBuilder debug = new StringBuilder();
 		Set<CharSequence> terms = terms_;
@@ -228,7 +231,7 @@ public class IndexQuery {
 			}
 		}
 		if (profile_) {
-			int resultCount = result.getHits().size();
+			int resultCount = result == null ? 0 : result.getHits().size();
 			System.out
 					.println("IndexQuery executed for " + resultCount + " results in " + ((System.nanoTime() - startNanos) / 1000) + "us");
 		}

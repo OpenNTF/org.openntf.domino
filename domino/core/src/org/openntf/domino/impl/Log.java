@@ -43,8 +43,8 @@ public class Log extends BaseNonThreadSafe<org.openntf.domino.Log, lotus.domino.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Log(final lotus.domino.Log delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_AGENTLOG);
+	protected Log(final lotus.domino.Log delegate, final Session parent) {
+		super(delegate, parent, NOTES_AGENTLOG);
 	}
 
 	/*

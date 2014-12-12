@@ -46,8 +46,8 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewColumn(final lotus.domino.ViewColumn delegate, final View parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
+	protected ViewColumn(final lotus.domino.ViewColumn delegate, final View parent) {
+		super(delegate, parent, NOTES_VIEWCOLUMN);
 	}
 
 	private int index_ = -1;

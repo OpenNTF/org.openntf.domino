@@ -37,7 +37,7 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 		super(image, method);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException {
 		ValueHolder ret = null;

@@ -123,6 +123,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	// private boolean isDbCached_ = false;
 
 	private transient Database currentDatabase_;
+	private transient Boolean isConvertMime_;
 	private String currentDatabaseApiPath_;
 
 	private String username_;
@@ -172,8 +173,8 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	public Session(final lotus.domino.Session lotus, final WrapperFactory parent, final WrapperFactory wf, final long cpp_id) {
-		super(lotus, parent, wf, cpp_id, NOTES_SESSION);
+	protected Session(final lotus.domino.Session lotus, final WrapperFactory parent) {
+		super(lotus, parent, NOTES_SESSION);
 		initialize(lotus);
 		featureRestricted_ = false; // currently not implemented
 	}
@@ -254,12 +255,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateRange createDateRange() {
-		try {
-			return fromLotus(getDelegate().createDateRange(), DateRange.SCHEMA, this);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne, this);
-		}
-		return null;
+		return getFactory().create(DateRange.SCHEMA, this, null);
 	}
 
 	/*
@@ -269,12 +265,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateRange createDateRange(final Date startTime, final Date endTime) {
-		try {
-			return fromLotus(getDelegate().createDateRange(startTime, endTime), DateRange.SCHEMA, this);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne, this);
-		}
-		return null;
+		return createDateRange(createDateTime(startTime), createDateTime(endTime));
 	}
 
 	/*
@@ -284,19 +275,10 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime) {
-		@SuppressWarnings("rawtypes")
-		List recycleThis = new ArrayList();
-		lotus.domino.DateTime dt1 = toLotus(startTime, recycleThis);
-		lotus.domino.DateTime dt2 = toLotus(endTime, recycleThis);
-		try {
-			return fromLotus(getDelegate().createDateRange(dt1, dt2), DateRange.SCHEMA, this);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
-		} finally {
-			s_recycle(recycleThis);
-		}
+		DateRange ret = getFactory().create(DateRange.SCHEMA, this, null);
+		ret.setStartDateTime(startTime);
+		ret.setEndDateTime(endTime);
+		return ret;
 	}
 
 	/*
@@ -306,13 +288,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateTime createDateTime(final java.util.Calendar date) {
-		try {
-			return fromLotus(getDelegate().createDateTime(date), DateTime.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
-		}
+		DateTime ret = getFactory().create(DateTime.SCHEMA, this, null);
+		ret.setLocalTime(date);
+		return ret;
 	}
 
 	/*
@@ -322,7 +300,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateTime createDateTime(final Calendar date) {
-		return createDateTime(date.getTime());
+		DateTime ret = getFactory().create(DateTime.SCHEMA, this, null);
+		ret.setLocalTime(date);
+		return ret;
 	}
 
 	/*
@@ -332,7 +312,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateTime createDateTime(final Date date) {
-		return getFactory().createDateTime(date, this);
+		DateTime ret = getFactory().create(DateTime.SCHEMA, this, null);
+		ret.setLocalTime(date);
+		return ret;
 	}
 
 	/*
@@ -344,7 +326,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	public DateTime createDateTime(final int y, final int m, final int d, final int h, final int i, final int s) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(y, m - 1, d, h, i, s);
-		return getFactory().createDateTime(cal.getTime(), this);
+		return createDateTime(cal);
 	}
 
 	/*
@@ -354,12 +336,10 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public DateTime createDateTime(final String date) {
-		try {
-			return fromLotus(getDelegate().createDateTime(date), DateTime.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-		}
+		DateTime ret = getFactory().create(DateTime.SCHEMA, this, null);
+		ret.setLocalTime(date);
+		return ret;
+
 	}
 
 	/*
@@ -417,13 +397,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public Name createName(final String name, final String lang) {
-		try {
-			return fromLotus(getDelegate().createName(name, lang), Name.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
-		}
+		Name ret = getFactory().create(Name.SCHEMA, this, null);
+		ret.parse(name, lang);
+		return ret;
 	}
 
 	/*
@@ -433,13 +409,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public org.openntf.domino.Name createName(final String name) {
-		try {
-			return fromLotus(getDelegate().createName(name), Name.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
-		}
+		Name ret = getFactory().create(Name.SCHEMA, this, null);
+		ret.parse(name);
+		return ret;
 	}
 
 	/*
@@ -1177,13 +1149,14 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public Name getUserNameObject() {
-		try {
-			return fromLotus(getDelegate().getUserNameObject(), Name.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
-		}
+		return createName(getUserName());
+		//		try {
+		//			return fromLotus(getDelegate().getUserNameObject(), Name.SCHEMA, this);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e, this);
+		//			return null;
+		//
+		//		}
 	}
 
 	/*
@@ -1245,13 +1218,16 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public boolean isConvertMIME() {
-		try {
-			return getDelegate().isConvertMIME();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		if (isConvertMime_ == null) {
+			try {
+				isConvertMime_ = Boolean.valueOf(getDelegate().isConvertMIME());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				isConvertMime_ = Boolean.FALSE;
 
+			}
 		}
+		return isConvertMime_.booleanValue();
 	}
 
 	/*
@@ -1261,13 +1237,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public boolean isConvertMime() {
-		try {
-			return getDelegate().isConvertMime();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
-
-		}
+		return isConvertMIME();
 	}
 
 	/*
@@ -1437,6 +1407,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public void setConvertMIME(final boolean flag) {
 		try {
+			isConvertMime_ = Boolean.valueOf(flag);
 			getDelegate().setConvertMIME(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1451,12 +1422,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public void setConvertMime(final boolean flag) {
-		try {
-			getDelegate().setConvertMime(flag);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-
-		}
+		setConvertMIME(flag);
 	}
 
 	/*
@@ -1625,7 +1591,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
-
+		isConvertMime_ = null;
 		org.openntf.domino.Session sess = recreateSession();
 
 		if (!(sess instanceof Session)) {
@@ -1645,7 +1611,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 			}
 		} catch (NotesException e) {
 		}
-		setDelegate(d, 0, true);
+		setDelegate(d, true);
 		/* No special logging, since by now Session is a BaseThreadSafe */
 	}
 
@@ -1974,10 +1940,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		sessionType_ = sessionType;
 	}
 
-	public SessionType getSessionFactory() {
-		return sessionType_;
-	}
-
 	// this is needed for factories that provide an external session
 	boolean noRecycle;
 
@@ -1986,7 +1948,6 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		noRecycle = value;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void recycle() {
 		if (noRecycle)

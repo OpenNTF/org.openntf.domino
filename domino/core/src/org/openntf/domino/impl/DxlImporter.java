@@ -40,8 +40,8 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DxlImporter(final lotus.domino.DxlImporter delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DXLIMPORTER);
+	protected DxlImporter(final lotus.domino.DxlImporter delegate, final Session parent) {
+		super(delegate, parent, NOTES_DXLIMPORTER);
 	}
 
 	/*

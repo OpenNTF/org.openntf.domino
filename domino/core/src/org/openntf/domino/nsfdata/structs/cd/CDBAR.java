@@ -8,7 +8,6 @@ import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.NOTES_COLOR;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the appearance of the bar used with collapsible sections.
@@ -166,15 +165,15 @@ public class CDBAR extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixed("FontID", FONTID.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final FONTID FontID = inner(new FONTID());
 
 	public CDBAR(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDBAR(final SIG signature, final ByteBuffer data) {
@@ -182,14 +181,7 @@ public class CDBAR extends CDRecord {
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Integer"));
-	}
-
-	/**
-	 * Specifies the font, size, and color of the bar title.
-	 */
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FONTID");
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	/**
@@ -198,7 +190,7 @@ public class CDBAR extends CDRecord {
 	 */
 	public NOTES_COLOR getColor() {
 		if (getFlags().contains(Flag.HAS_COLOR)) {
-			short color = getData().getShort(getData().position() + FONTID.SIZE + 4);
+			short color = getData().getShort(getData().position() + FontID.size() + 4);
 			return new NOTES_COLOR(color);
 		}
 		return null;
@@ -208,9 +200,9 @@ public class CDBAR extends CDRecord {
 		// Note: this can't use the standard methods because of the bizarre Color value above
 		int preceding = getFlags().contains(Flag.HAS_COLOR) ? 2 : 0;
 
-		int length = (int) (getDataLength() - 4 - FONTID.SIZE - preceding);
+		int length = (int) (getDataLength() - 4 - FontID.size() - preceding);
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + FONTID.SIZE + 4 + preceding);
+		data.position(data.position() + FontID.size() + 4 + preceding);
 		data.limit(data.position() + length);
 		return ODSUtils.fromLMBCS(data);
 	}

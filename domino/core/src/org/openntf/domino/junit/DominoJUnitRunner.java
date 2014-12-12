@@ -117,7 +117,7 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 
 		} catch (NotesException ne) {
 			ne.printStackTrace();
-			fail(ne.getMessage());
+			fail(ne.toString());
 		}
 	}
 

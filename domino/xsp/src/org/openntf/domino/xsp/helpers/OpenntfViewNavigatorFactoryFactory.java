@@ -18,8 +18,8 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
  *         OpenntfViewNavigatorFactoryFactory class
  */
 public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.Factory {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorFactoryFactory.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	// static {
 	// System.out.println("Loaded " + OpenntfViewNavigatorFactoryFactory.class.getName());
@@ -53,8 +53,12 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 	 * OpenntfViewNavigatorFactory class
 	 */
 	public static class OpenntfViewNavigatorFactory extends ViewNavigatorFactory {
+		private static final long serialVersionUID = 1L;
+		@SuppressWarnings("unused")
 		private final String dbPath_;
+		@SuppressWarnings("unused")
 		private final String viewName_;
+		private String entrySearchString;
 
 		/**
 		 * Constructor
@@ -68,6 +72,16 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		public OpenntfViewNavigatorFactory(final String dbPath, final String viewName) {
 			dbPath_ = dbPath;
 			viewName_ = viewName;
+		}
+
+		@Override
+		public String getFTSearch() {
+			String superFT = super.getFTSearch();
+			if (superFT.startsWith("searchInEntries:")) {
+				setFTSearch("");
+				entrySearchString = superFT.substring(16);
+			}
+			return super.getFTSearch();
 		}
 
 		/*
@@ -111,7 +125,7 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 					// System.out.println("This application is set to use basic state management mode");
 					// }
 					// }
-					result = new OpenntfViewNavigatorEx(this);
+					result = new OpenntfViewNavigatorEx(this, entrySearchString);
 				}
 			} else {
 				// System.out.println("returning a " + result.getClass().getName());

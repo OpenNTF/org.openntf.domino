@@ -46,8 +46,8 @@ public class RichTextDoclink extends BaseNonThreadSafe<org.openntf.domino.RichTe
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTDOCLNK);
+	protected RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTDOCLNK);
 	}
 
 	/*
@@ -275,7 +275,7 @@ public class RichTextDoclink extends BaseNonThreadSafe<org.openntf.domino.RichTe
 		}
 	}
 
-	void markDirty() {
+	protected void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 

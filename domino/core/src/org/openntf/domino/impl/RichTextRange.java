@@ -45,8 +45,8 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextRange(final lotus.domino.RichTextRange delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTRANGE);
+	protected RichTextRange(final lotus.domino.RichTextRange delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTRANGE);
 	}
 
 	/*

@@ -73,8 +73,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_SERVER);
+	protected DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent) {
+		super(delegate, parent, NOTES_SERVER);
 		try {
 			name_ = delegate.getName();
 			clusterName_ = delegate.getClusterName();
@@ -102,15 +102,11 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 
 	}
 
-	public void setComparator(final Comparator<DatabaseMetaData> cmp) {
+	protected void setComparator(final Comparator<DatabaseMetaData> cmp) {
 		if (comparator_ != cmp) {
 			comparator_ = cmp;
 			reset();
 		}
-	}
-
-	public Comparator<DatabaseMetaData> getComparator() {
-		return comparator_;
 	}
 
 	@Override
@@ -384,8 +380,9 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getNextDatabase() {
 		// RPr: hopefully this will work the same way as the original lotus implementation does
-		if (dbIter.hasNext())
-			return getFactory().createClosedDatabase(dbIter.next(), getAncestorSession());
+		if (dbIter.hasNext()) {
+			return getFactory().create(Database.SCHEMA, getAncestorSession(), dbIter.next());
+		}
 		return null;
 		// This will never work, as the DBs in the getDbHolderSet() are in a complete different order 
 		//		try {
@@ -445,7 +442,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 
 			@Override
 			public Database next() {
-				return getFactory().createClosedDatabase(metaIter_.next(), getAncestorSession());
+				return getFactory().create(Database.SCHEMA, getAncestorSession(), metaIter_.next());
 			}
 
 			@Override
@@ -499,6 +496,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 		return getAncestorSession().getDatabaseIfModified(getName(), dbFile, date);
 	}
 
+	@Override
 	public Database openDatabaseIfModified(final String dbFile, final Date date) {
 		return getAncestorSession().getDatabaseIfModified(getName(), dbFile, date);
 	}
@@ -547,7 +545,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 				log_.log(java.util.logging.Level.FINE, "DbDirectory for server " + name_ + "had been recycled and was auto-restored.", t);
 			}
 
-			setDelegate(dir, 0, true);
+			setDelegate(dir, true);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -692,7 +690,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 		Object[] ret = new Object[size()];
 		int i = 0;
 		for (DatabaseMetaData metaData : getMetaDataSet()) {
-			ret[i++] = getFactory().createClosedDatabase(metaData, getAncestorSession());
+			Database db = getFactory().create(Database.SCHEMA, getAncestorSession(), metaData);
+			ret[i++] = db;
 		}
 		return ret;
 	}

@@ -4,7 +4,9 @@ import java.util.concurrent.Callable;
 
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class DominoWrappedTask extends AbstractWrappedTask {
 
@@ -36,6 +38,11 @@ public class DominoWrappedTask extends AbstractWrappedTask {
 		Object wrappedTask = getWrappedTask();
 		ClassLoader runCl = wrappedTask.getClass().getClassLoader();
 		thread.setContextClassLoader(runCl);
+
+		DominoUtils.setBubbleExceptions(bubbleException);
+		if (sessionFactory != null) {
+			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+		}
 		try {
 			if (wrappedTask instanceof Callable) {
 				return ((Callable<?>) wrappedTask).call();

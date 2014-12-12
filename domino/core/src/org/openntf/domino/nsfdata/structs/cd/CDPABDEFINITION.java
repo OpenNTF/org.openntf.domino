@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies a format for paragraphs in a rich-text field. There may be more than one paragraph using the same paragraph
@@ -14,125 +13,29 @@ public class CDPABDEFINITION extends CDRecord {
 
 	public static final int MAXTABS = 20;
 
-	static {
-		addFixed("PABID", Short.class);
-		addFixed("JustifyMode", Short.class);
-		addFixedUnsigned("LineSpacing", Short.class);
-		addFixedUnsigned("ParagraphSpacingBefore", Short.class);
-		addFixedUnsigned("ParagraphSpacingAfter", Short.class);
-		addFixedUnsigned("LeftMargin", Short.class);
-		addFixedUnsigned("RightMargin", Short.class);
-		addFixedUnsigned("FirstLineLeftMargin", Short.class);
-		addFixedUnsigned("Tabs", Short.class);
-		addFixedArray("Tab", Short.class, MAXTABS);
-		addFixed("Flags", Short.class);
-		addFixed("TabTypes", Integer.class);
-		addFixed("Flags2", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final Unsigned16 PABID = new Unsigned16();
+	// TODO make enum
+	public final Unsigned16 JustifyMode = new Unsigned16();
+	public final Unsigned16 LineSpacing = new Unsigned16();
+	public final Unsigned16 ParagraphSpacingBefore = new Unsigned16();
+	public final Unsigned16 ParagraphSpacingAfter = new Unsigned16();
+	public final Unsigned16 LeftMargin = new Unsigned16();
+	public final Unsigned16 RightMargin = new Unsigned16();
+	public final Unsigned16 FirstLineLeftMargin = new Unsigned16();
+	public final Unsigned16 Tabs = new Unsigned16();
+	public final Signed16[] Tab = array(new Signed16[MAXTABS]);
+	// TODO make enum
+	public final Unsigned16 Flags = new Unsigned16();
+	public final Unsigned32 TabTypes = new Unsigned32();
+	// TODO make enum
+	public final Unsigned16 Flags2 = new Unsigned16();
 
 	public CDPABDEFINITION(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDPABDEFINITION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	/**
-	 * @return ID of this PAB
-	 */
-	public short getId() {
-		return (Short) getStructElement("PABID");
-	}
-
-	/**
-	 * @return Paragraph justification type
-	 */
-	public short getJustifyMode() {
-		// TODO create enum
-		return (Short) getStructElement("JustifyMode");
-	}
-
-	/**
-	 * @return (2*(Line Spacing-1)) (0:1,1:1.5,2:2,etc)
-	 */
-	public int getLineSpacing() {
-		return (Integer) getStructElement("LineSpacing");
-	}
-
-	/**
-	 * @return # LineSpacing units above para
-	 */
-	public int getParagraphSpacingBefore() {
-		return (Integer) getStructElement("ParagraphSpacingBefore");
-	}
-
-	/**
-	 * @return # LineSpacing units below para
-	 */
-	public int getParagraphSpacingAfter() {
-		return (Integer) getStructElement("ParagraphSpacingAfter");
-	}
-
-	/**
-	 * @return Leftmost margin, twips rel to abs left (16 bits = about 44")
-	 */
-	public int getLeftMargin() {
-		return (Integer) getStructElement("LeftMargin");
-	}
-
-	/**
-	 * @return Rightmost margin, twips rel to abs right (16 bits = about 44") Special value "0" means right margin will be placed 1" from
-	 *         right edge of paper, regardless of paper size.
-	 */
-	public int getRightMargin() {
-		return (Integer) getStructElement("RightMargin");
-	}
-
-	/**
-	 * @return Leftmost margin on first line (16 bits = about 44")
-	 */
-	public int getFirstLineLeftMargin() {
-		return (Integer) getStructElement("FirstLineLeftMargin");
-	}
-
-	/**
-	 * @return Number of tab stops in table
-	 */
-	public int getTabs() {
-		return (Integer) getStructElement("Tabs");
-	}
-
-	/**
-	 * @return Table of tab stop positions, negative value means decimal tab (15 bits = about 22")
-	 */
-	public short[] getTab() {
-		return (short[]) getStructElement("Tab");
-	}
-
-	/**
-	 * @return Paragraph attribute flags - PABFLAG_xxx
-	 */
-	public short getFlags() {
-		// TODO create enum
-		return (Short) getStructElement("Flags");
-	}
-
-	/**
-	 * @return 2 bits per tab
-	 */
-	public int getTabTypes() {
-		return (Integer) getStructElement("TabTypes");
-	}
-
-	/**
-	 * @return Extra paragraph attribute flags - PABFLAG2_xxx
-	 */
-	public short getFlags2() {
-		// TODO create enum
-		return (Short) getStructElement("Flags2");
 	}
 
 	//	@Override
@@ -189,12 +92,12 @@ public class CDPABDEFINITION extends CDRecord {
 	//		return result;
 	//	}
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", ID: " + getId() + ", Justify Mode: " + getJustifyMode() + ", Line Spacing: "
-				+ getLineSpacing() + ", Paragraph Spacing Before: " + getParagraphSpacingBefore() + ", Paragraph Spacing After: "
-				+ getParagraphSpacingAfter() + ", Left Margin: " + getLeftMargin() + ", Right Margin: " + getRightMargin()
-				+ ", First Line Left Margin: " + getFirstLineLeftMargin() + ", Tab: " + getTab() + ", Flags: " + getFlags()
-				+ ", Tab Types: " + getTabTypes() + ", Flags2: " + getFlags2() + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ", ID: " + getId() + ", Justify Mode: " + getJustifyMode() + ", Line Spacing: "
+	//				+ getLineSpacing() + ", Paragraph Spacing Before: " + getParagraphSpacingBefore() + ", Paragraph Spacing After: "
+	//				+ getParagraphSpacingAfter() + ", Left Margin: " + getLeftMargin() + ", Right Margin: " + getRightMargin()
+	//				+ ", First Line Left Margin: " + getFirstLineLeftMargin() + ", Tab: " + getTab() + ", Flags: " + getFlags()
+	//				+ ", Tab Types: " + getTabTypes() + ", Flags2: " + getFlags2() + "]";
+	//	}
 }

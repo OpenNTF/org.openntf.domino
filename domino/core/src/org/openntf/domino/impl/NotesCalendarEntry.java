@@ -47,9 +47,9 @@ public class NotesCalendarEntry extends
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final NotesCalendar parent, final WrapperFactory wf,
+	protected NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final NotesCalendar parent, final WrapperFactory wf,
 			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_CALENDARENTRY);
+		super(delegate, parent, NOTES_CALENDARENTRY);
 	}
 
 	/* (non-Javadoc)

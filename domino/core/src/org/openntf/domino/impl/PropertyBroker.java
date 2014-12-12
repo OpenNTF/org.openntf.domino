@@ -24,8 +24,8 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public PropertyBroker(final lotus.domino.PropertyBroker delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_PROPERTYBROKER);
+	protected PropertyBroker(final lotus.domino.PropertyBroker delegate, final Session parent) {
+		super(delegate, parent, NOTES_PROPERTYBROKER);
 	}
 
 	@Override

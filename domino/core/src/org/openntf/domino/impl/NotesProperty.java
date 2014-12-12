@@ -23,7 +23,6 @@ import org.openntf.domino.PropertyBroker;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -44,8 +43,8 @@ public class NotesProperty extends BaseNonThreadSafe<org.openntf.domino.NotesPro
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public NotesProperty(final lotus.domino.NotesProperty delegate, final PropertyBroker parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
+	protected NotesProperty(final lotus.domino.NotesProperty delegate, final PropertyBroker parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/*

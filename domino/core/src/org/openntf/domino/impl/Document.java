@@ -106,13 +106,14 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	private boolean isDirty_ = false;
 	private String noteid_;
 	private String unid_;
-	@SuppressWarnings("unused")
 	private boolean isNew_;
+
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
 	private boolean shouldWriteItemMeta_ = false; // TODO NTF create rules for making this true
 
 	private boolean shouldResurrect_ = false;
+	private Boolean containMimes_ = null;
 
 	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
 	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
@@ -192,13 +193,21 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Document(final lotus.domino.Document delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_NOTE);
+	protected Document(final lotus.domino.Document delegate, final Database parent) {
+		super(delegate, parent, NOTES_NOTE);
 		initialize(delegate);
 	}
 
-	public Document(final String id, final Database parent, final WrapperFactory wf) {
-		super(null, parent, wf, 0, NOTES_NOTE);
+	protected Document(final Database parent, final Object metaData) {
+		super(null, parent, NOTES_NOTE);
+		if (metaData instanceof String) {
+			setDeferredId((String) metaData);
+		} else if (metaData instanceof Integer) {
+			setDeferredId((Integer) metaData);
+		}
+	}
+
+	protected void setDeferredId(final String id) {
 		if (DominoUtils.isUnid(id)) {
 			unid_ = id;
 		} else {
@@ -208,9 +217,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		isNew_ = false;
 	}
 
-	public Document(final int id, final Database parent, final WrapperFactory wf) {
-		this(Integer.toHexString(id), parent, wf);
-		//		System.out.println("Creating a deferred document for id " + id);
+	protected void setDeferredId(final int noteId) {
+		setDeferredId(Integer.toHexString(noteId));
 	}
 
 	/**
@@ -223,11 +231,12 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		try {
 			noteid_ = delegate.getNoteID();
 			unid_ = delegate.getUniversalID();
-			isNew_ = delegate.isNewNote();
+			isNew_ = noteid_.equals("0") || noteid_.isEmpty();
 
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
 			}
+
 			// RPr: Do not read too much infos in initialize, as it affects performance!
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
@@ -537,6 +546,18 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return closeMIMEEntities(saveChanges, null);
 	}
 
+	private boolean containsMimes() {
+		if (containMimes_ == null) {
+			lotus.domino.Document del = getDelegate();
+			try {
+				containMimes_ = del.hasItem("$MimeTrack") || del.hasItem("$NoteHasNativeMIME");
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		}
+		return containMimes_.booleanValue();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -774,7 +795,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 *            the itemName
 	 * @return the wrapped and tracked {@link MIMEEntity}
 	 */
-	public MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName) {
+	protected MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName) {
 		if (lotus == null)
 			return null;
 		MIMEEntity wrapped = fromLotus(lotus, MIMEEntity.SCHEMA, this);
@@ -803,6 +824,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	@Override
 	public MIMEEntity createMIMEEntity(String itemName) {
 		// checkMimeOpen(); RPr: This is not needed here (just to tweak my grep command)
+		containMimes_ = Boolean.TRUE;
 		beginEdit();
 		try {
 			if (itemName == null) {
@@ -1076,8 +1098,10 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	@Override
 	@Deprecated
 	public void recycle() {
-		//		System.out.println("Recycle called on document " + getNoteID());
-		closeMIMEEntities(false, null);
+		if (openMIMEEntities_ != null && !openMIMEEntities_.isEmpty() && !isDead()) {
+			// RPr: call closeMimeEntities only if really neccessary
+			closeMIMEEntities(false, null);
+		}
 		super.recycle();
 	}
 
@@ -1261,7 +1285,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					closeMIMEEntities(false, name);
 				}
 			}
-
 			try {
 				vals = getDelegate().getItemValue(name);
 			} catch (NotesException ne) {
@@ -1363,7 +1386,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
 				schema = DateRange.SCHEMA;
 			else {	// Workaround for Vector of DateRange-s
-				while (true) {
+				while (true) { // no real while!
 					int sz = v.size(), i;
 					for (i = 0; i < sz; i++)
 						if (v.elementAt(i) != null)
@@ -1393,7 +1416,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			}
 			return (Vector<org.openntf.domino.Base<?>>) fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
-			while (mayBeMime) {
+			while (mayBeMime) { // no real while!
 				MIMEEntity entity = this.getMIMEEntity(name);
 				if (entity == null)
 					break;
@@ -1558,6 +1581,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	public MIMEEntity getMIMEEntity(final String itemName) {
 		// checkMimeOpen(); This is not needed here
 		// 14-03-14 RPr: disabling convertMime is required here! (Not always... but in some cases)
+		if (!containsMimes())
+			return null;
 		boolean convertMime = getAncestorSession().isConvertMime();
 		try {
 			if (convertMime)
@@ -1928,7 +1953,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 */
 	@Override
 	public boolean isNewNote() {
-		return Long.valueOf(noteid_, 16) == 0;
+		return isNew_;
 	}
 
 	/*
@@ -2674,54 +2699,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @return LMBCS payload
 	 */
 
-	//private int getLMBCSPayload(final Vector<Object> strVect) {
-	public int getLMBCSPayload(final Vector<Object> strVect) {
-		return LMBCSUtils.getPayload(strVect); // Third variant.
-		/*
-		 * First attempt: Using Notes Streams. Slow.
-		 */
-		//		int payload = 0;
-		//		File fAux = null;
-		//		Stream str = null;
-		//		try {
-		//			fAux = File.createTempFile("ntfdom", "aux.tmp");
-		//			str = getAncestorSession().createStream();
-		//			str.open(fAux.getPath(), "LMBCS");
-		//			for (Object o : strVect)
-		//				str.writeText((String) o);
-		//			payload = str.getBytes();
-		//		} catch (Exception e) {
-		//			log_.severe("Got Exception " + e.getClass().getName() + " during getLMBCSPayload: " + e.getMessage());
-		//			for (Object o : strVect)
-		//				payload += ((String) o).length();
-		//		} finally {
-		//			if (str != null)
-		//				str.close();
-		//			if (fAux != null)
-		//				fAux.delete();
-		//		}
-		/*
-		 * 	Second trial: Using com.ibm.icu.charset. Even slower!
-		 */
-		//		String toEncode;
-		//		if (strVect.size() == 1)
-		//			toEncode = (String) strVect.elementAt(0);
-		//		else {
-		//			StringBuffer sb = new StringBuffer(32768);
-		//			for (Object o : strVect)
-		//				sb.append((String) o);
-		//			toEncode = sb.toString();
-		//		}
-		//		CharsetEncoder cse = lGetEncoder();
-		//		try {
-		//			java.nio.ByteBuffer bbf = cse.encode(CharBuffer.wrap(toEncode));
-		//			payload = bbf.limit();
-		//		} catch (CharacterCodingException e) {
-		//			e.printStackTrace();
-		//		}
-		//		return payload;
-	}
-
 	//	private static Charset lLMBCSCharset = null;
 	//
 	//	private static synchronized CharsetEncoder lGetEncoder() {
@@ -2739,6 +2716,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @throws Domino32KLimitException
 	 *             if the item does not fit in a field
 	 */
+	@SuppressWarnings("unchecked")
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
 			throws Domino32KLimitException {
 		checkMimeOpen();
@@ -2756,18 +2734,16 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			}
 		}
 
-		Vector<Object> dominoFriendly;
-		List<lotus.domino.Base> recycleThis;
-		if (value instanceof String || value instanceof Number) {
-			recycleThis = null; // we don't need recycle anything of these primitives! 
-		} else {
-			recycleThis = new ArrayList<lotus.domino.Base>();
-		}
+		Vector<Object> dominoFriendlyVec = null;
+		Object dominoFriendlyObj = null;
+		List<lotus.domino.Base> recycleThis = null;
+
 		boolean isNonSummary = false;
 		lotus.domino.Item result;
 		try {
 			// Special case. If the argument is an Item, just copy it.
 			if (value instanceof Item) {
+				recycleThis = new ArrayList<lotus.domino.Base>();
 				// remove the mime item first, so that it will not collide with MIME etc.
 				MIMEEntity mimeChk = getMIMEEntity(itemName);
 				if (mimeChk != null) {
@@ -2780,63 +2756,77 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				beginEdit();
 				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
 				markDirty(itemName, true);
+
+				s_recycle(result);
+
 				if (returnItem) {
-					return fromLotus(result, Item.SCHEMA, this);
+					return getFactory().create(Item.SCHEMA, this, itemName);
 				} else {
-					s_recycle(result);
 					return null;
 				}
 			}
 
-			// first step: Make it domino friendly and put all converted objects into "dominoFriendly" 
-			if (value instanceof Collection) {
-				Collection<?> coll = (Collection<?>) value;
-				dominoFriendly = new Vector<Object>(coll.size());
-				for (Object valNode : coll) {
-					if (valNode != null) { // CHECKME: Should NULL values discarded?
-						if (valNode instanceof BigString)
-							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
+			// first step: Make it domino friendly and put all converted objects into "dominoFriendly"
+			if (value instanceof String || value instanceof Integer || value instanceof Double) {
+				dominoFriendlyObj = value;
+			} else if (value instanceof Collection) {
+				if (isFriendlyVector(value)) {
+					recycleThis = null;
+					dominoFriendlyVec = (Vector<Object>) value;
+				} else {
+					recycleThis = new ArrayList<lotus.domino.Base>();
+					Collection<?> coll = (Collection<?>) value;
+					dominoFriendlyVec = new Vector<Object>(coll.size());
+					for (Object valNode : coll) {
+						if (valNode != null) { // CHECKME: Should NULL values discarded?
+							if (valNode instanceof BigString)
+								isNonSummary = true;
+							dominoFriendlyVec.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
+						}
 					}
 				}
-
 			} else if (value.getClass().isArray()) {
+				recycleThis = new ArrayList<lotus.domino.Base>();
 				int lh = Array.getLength(value);
 				if (lh > MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
 					String cn = value.getClass().getName();
 					if (cn.length() == 2)						// It is primitive
 						throw new Domino32KLimitException();
 				}
-				dominoFriendly = new Vector<Object>(lh);
+				dominoFriendlyVec = new Vector<Object>(lh);
 				for (int i = 0; i < lh; i++) {
 					Object o = Array.get(value, i);
 					if (o != null) { // CHECKME: Should NULL values be discarded?
 						if (o instanceof BigString)
 							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(o, getAncestorSession(), recycleThis));
+						dominoFriendlyVec.add(toItemFriendly(o, getAncestorSession(), recycleThis));
 					}
 				}
-			} else {
-				// Scalar
-				dominoFriendly = new Vector<Object>(1);
+			} else { // Scalar
+				recycleThis = new ArrayList<lotus.domino.Base>();
 				if (value instanceof BigString)
 					isNonSummary = true;
-				dominoFriendly.add(toItemFriendly(value, getAncestorSession(), recycleThis));
+				dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
 			}
+			Object firstElement = null;
 
 			// empty vectors are treated as "null"
-			if (dominoFriendly.size() == 0) {
-				return replaceItemValueLotus(itemName, null, isSummary, returnItem);
+			if (dominoFriendlyObj == null) {
+				if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
+					return replaceItemValueLotus(itemName, null, isSummary, returnItem);
+				} else {
+					firstElement = dominoFriendlyVec.get(0);
+				}
+			} else {
+				firstElement = dominoFriendlyObj;
 			}
-
-			Object firstElement = dominoFriendly.get(0);
 
 			int payloadOverhead = 0;
 
-			if (dominoFriendly.size() > 1) {	// compute overhead first
+			if (dominoFriendlyVec != null && dominoFriendlyVec.size() > 1) {	// compute overhead first for multi values
 				// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
 				if (firstElement instanceof String)
-					payloadOverhead = 2 + 2 * dominoFriendly.size();
+					payloadOverhead = 2 + 2 * dominoFriendlyVec.size();
 				else
 					payloadOverhead = 4;
 			}
@@ -2862,8 +2852,14 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
 			else
 				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
-			for (Object o : dominoFriendly)
-				payload += getLotusPayload(o, firstElementClass);
+
+			if (dominoFriendlyVec != null) {
+				for (Object o : dominoFriendlyVec)
+					payload += getLotusPayload(o, firstElementClass);
+			} else {
+				payload += getLotusPayload(dominoFriendlyObj, firstElementClass);
+			}
+
 			if (payload > MAX_NATIVE_FIELD_SIZE) {
 				// the datatype is OK, but there's no way to store the data in the Document
 				throw new Domino32KLimitException();
@@ -2872,7 +2868,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				// each sign may demand up to 3 bytes in LMBCS
 				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
 				if (calc >= MAX_NATIVE_FIELD_SIZE) {
-					payload = payloadOverhead + getLMBCSPayload(dominoFriendly);
+					if (dominoFriendlyVec != null) {
+						payload = payloadOverhead + LMBCSUtils.getPayload(dominoFriendlyVec);
+					} else {
+						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
+					}
 					if (payload > MAX_NATIVE_FIELD_SIZE)
 						throw new Domino32KLimitException();
 				}
@@ -2890,10 +2890,10 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				}
 			}
 			beginEdit();
-			if (dominoFriendly.size() == 1) {
+			if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 1) {
 				result = getDelegate().replaceItemValue(itemName, firstElement);
 			} else {
-				result = getDelegate().replaceItemValue(itemName, dominoFriendly);
+				result = getDelegate().replaceItemValue(itemName, dominoFriendlyVec);
 			}
 			markDirty(itemName, true);
 			if (isSummary == null) {
@@ -2904,10 +2904,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				result.setSummary(isSummary.booleanValue());
 			}
 
+			s_recycle(result);
 			if (returnItem) {
-				return fromLotus(result, Item.SCHEMA, this);
-			} else {
-				s_recycle(result);
+				// to keep compatibility and speed, return a blank item, that will resurrect on demand
+				return getFactory().create(Item.SCHEMA, this, itemName);
+				//return fromLotus(result, Item.SCHEMA, this);
 			}
 
 		} catch (NotesException ex) {
@@ -2917,6 +2918,20 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 
 		return null;
+	}
+
+	protected boolean isFriendlyVector(final Object value) {
+		// TODO Auto-generated method stub
+		if (!(value instanceof Vector))
+			return false;
+		for (Object v : (Vector<?>) value) {
+			if (v instanceof String || v instanceof Integer || v instanceof Double) {
+				// ok
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private AutoMime autoMime_ = null;
@@ -2953,7 +2968,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	private Map<String, Map<String, Serializable>> itemInfo_;
 
 	@SuppressWarnings("unchecked")
-	public Map<String, Map<String, Serializable>> getItemInfo() {
+	protected Map<String, Map<String, Serializable>> getItemInfo() {
 		// TODO NTF make this optional
 		if (itemInfo_ == null) {
 			if (this.hasItem("$$ItemInfo")) {
@@ -3055,7 +3070,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						// so we can do that in every case
 						noteid_ = del.getNoteID();
 						unid_ = del.getUniversalID();
-
+						isNew_ = noteid_.equals("0") || noteid_.isEmpty(); // don't set to true, save may fail!
 						invalidateCaches();
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
@@ -3074,9 +3089,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						setUniversalID(newunid);
 						try {
 							getDelegate().save(force, makeResponse, markRead);
-							if (!noteid_.equals(getDelegate().getNoteID())) {
-								noteid_ = getDelegate().getNoteID();
-							}
+							noteid_ = getDelegate().getNoteID();
+							isNew_ = noteid_.equals("0") || noteid_.isEmpty();
 							System.out.println(message);
 							log_.log(Level.WARNING, message/* , t */);
 						} catch (NotesException ne) {
@@ -3306,7 +3320,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						org.openntf.domino.Document stashDoc = copyToDatabase(getParentDatabase());
-						setDelegate(del, 0, true);
+						setDelegate(del, true);
 						for (Item item : stashDoc.getItems()) {
 							lotus.domino.Item delItem = del.getFirstItem(item.getName());
 							if (delItem != null) {
@@ -3324,7 +3338,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						}
 					} else {
 						log_.log(Level.WARNING, "Resetting delegate to existing document for id " + unid);
-						setDelegate(del, 0, true);
+						setDelegate(del, true);
 					}
 				} else {
 					getDelegate().setUniversalID(unid);
@@ -3400,7 +3414,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 * @param itemWritten
 	 *            true if you have written the item, false if not
 	 */
-	public void markDirty(final String fieldName, final boolean itemWritten) {
+	protected void markDirty(final String fieldName, final boolean itemWritten) {
 		markDirtyInt();
 		if (itemWritten) {
 			keySetInt().add(fieldName);
@@ -3426,7 +3440,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		}
 	}
 
-	void clearDirty() {
+	protected void clearDirty() {
 		isDirty_ = false;
 		isQueued_ = false;
 	}
@@ -3477,11 +3491,17 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				break;
 			case HARD_TRUE:
 				lotus.domino.Document delegate = getDelegate();
-				result = delegate.removePermanently(true);
+				if (delegate != null) {
+					result = delegate.removePermanently(true);
+				} else {
+					result = true;
+				}
 				if (result) {
 					s_recycle(delegate);
-					this.setDelegate(null, 0, false);
+					this.setDelegate(null, false);
 				}
+				unid_ = null;
+				noteid_ = null;
 				break;
 			case HARD_FALSE:
 				result = getDelegate().removePermanently(false);
@@ -3529,7 +3549,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						d = db.getDocumentByID(noteid_);
 					}
 				}
-				setDelegate(d, 0, true);
+				setDelegate(d, true);
 				//getFactory().recacheLotusObject(d, this, parent_);
 				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
@@ -3575,7 +3595,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 					}
 				}
-				setDelegate(d, 0, true);
+				setDelegate(d, true);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
@@ -4040,7 +4060,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 
 	public final static String CHUNK_TYPE_NAME = "ODAChunk";
 
-	public boolean isChunked(final String name) {
+	protected boolean isChunked(final String name) {
 		boolean result = false;
 		if (hasItem(name)) {
 			if (hasItem(name + "$" + 1)) {
@@ -4231,4 +4251,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public String toString() {
+		return getAncestorDatabase().getApiPath() + "/" + unid_;
+	}
 }

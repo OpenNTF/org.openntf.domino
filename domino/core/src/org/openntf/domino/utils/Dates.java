@@ -968,7 +968,6 @@ public enum Dates {
 	 * 
 	 * @return Newly created or casted Calendar from the source. Null on exception.
 	 */
-	@SuppressWarnings("restriction")
 	public static Calendar getCalendar(final Object object) {
 
 		String classname = "";
@@ -1056,7 +1055,6 @@ public enum Dates {
 	 * @return Newly created or casted Date from the source. Null on exception
 	 * 
 	 */
-	@SuppressWarnings("restriction")
 	public static Date getDate(final Object object) {
 
 		String classname = "";

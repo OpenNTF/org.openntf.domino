@@ -25,7 +25,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.RichTextNavigator;
 import org.openntf.domino.RichTextRange;
-import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -46,8 +45,8 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextItem(final lotus.domino.RichTextItem delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId);
+	protected RichTextItem(final lotus.domino.RichTextItem delegate, final Document parent) {
+		super(delegate, parent);
 	}
 
 	/* (non-Javadoc)
@@ -602,6 +601,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		}
 	}
 
+	// TODO: does this make sense here?
 	public List<String> getAttachmentNames() {
 		List<String> result = new ArrayList<String>();
 		Vector<org.openntf.domino.EmbeddedObject> objects = getEmbeddedObjects();

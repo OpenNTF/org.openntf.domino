@@ -46,8 +46,8 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DxlExporter(final lotus.domino.DxlExporter delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DXLEXPORTER);
+	protected DxlExporter(final lotus.domino.DxlExporter delegate, final Session parent) {
+		super(delegate, parent, NOTES_DXLEXPORTER);
 	}
 
 	/*

@@ -24,11 +24,16 @@ public enum OpenNTFvLegacyBenchmark {
 	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
 			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
-	public static class LegacyDoer implements Runnable {
+	public static class Doer implements Runnable {
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
 		int fieldCount = 0;
+		private boolean useRawSession_;
+
+		public Doer(final boolean useRawSession) {
+			useRawSession_ = useRawSession;
+		}
 
 		@SuppressWarnings("unchecked")
 		private void iterateForms(final lotus.domino.Database db) throws lotus.domino.NotesException {
@@ -138,7 +143,11 @@ public enum OpenNTFvLegacyBenchmark {
 
 			try {
 				lotus.domino.NotesThread.sinitThread();
-				s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+				if (useRawSession_) {
+					s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+				} else {
+					s = Factory.getSession(SessionType.CURRENT);
+				}
 				sname = s.getUserNameObject();
 				@SuppressWarnings("unused")
 				DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -247,9 +256,32 @@ public enum OpenNTFvLegacyBenchmark {
 			sb.append(nameCount + " names, ");
 			sb.append(fieldCount + " fields, ");
 			sb.append(docCount + " docs, and ");
-			sb.append(dateCount + " datetimes with legacy API.");
+			sb.append(dateCount + " datetimes");
+			if (useRawSession_) {
+				sb.append(" with legacy API.");
+			} else {
+				sb.append(" with legacy API - but with openntf Session");
+			}
 			System.out.println(sb.toString());
 		}
+	}
+
+	public static class RawLegacyDoer extends Doer {
+
+		public RawLegacyDoer() {
+			super(true);
+			// TODO Auto-generated constructor stub
+		}
+
+	}
+
+	public static class ODALegacyDoer extends Doer {
+
+		public ODALegacyDoer() {
+			super(false);
+			// TODO Auto-generated constructor stub
+		}
+
 	}
 
 	public static class OpenNTFDoer extends org.openntf.domino.thread.AbstractDominoRunnable {
@@ -338,7 +370,7 @@ public enum OpenNTFvLegacyBenchmark {
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			org.openntf.domino.Database db = s.getDatabase(server, dbPath);
 
-			//			iterateForms(db);
+			iterateForms(db);
 			iterateAllDocuments(db);
 			//
 			//			org.openntf.domino.NoteCollection nc = db.createNoteCollection(false);
@@ -378,7 +410,12 @@ public enum OpenNTFvLegacyBenchmark {
 
 	public static void main(final String[] args) {
 		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
-		TestRunnerUtil.runAsNotesThread(LegacyDoer.class, THREAD_COUNT);
+		TestRunnerUtil.runAsDominoThread(ODALegacyDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+		TestRunnerUtil.runAsNotesThread(RawLegacyDoer.class, THREAD_COUNT);
+
+		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+		TestRunnerUtil.runAsDominoThread(ODALegacyDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+		TestRunnerUtil.runAsNotesThread(RawLegacyDoer.class, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }

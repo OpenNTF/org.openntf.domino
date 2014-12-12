@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The definition for a layout region on a form is stored as CD records in the $Body item of the form note. The layout region begins with a
@@ -69,58 +68,26 @@ public class CDLAYOUT extends CDRecord {
 		}
 	}
 
-	static {
-		addFixedUnsigned("wLeft", Short.class);
-		addFixedUnsigned("wWidth", Short.class);
-		addFixedUnsigned("wHeight", Short.class);
-		addFixed("Flags", Integer.class);
-		addFixedUnsigned("wGridSize", Short.class);
-		addFixedArray("Reserved", Byte.class, 14);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final Unsigned16 wLeft = new Unsigned16();
+	public final Unsigned16 wWidth = new Unsigned16();
+	public final Unsigned16 wHeight = new Unsigned16();
+	/**
+	 * Use getFlags for access
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned16 wGridSize = new Unsigned16();
+	public final Unsigned8[] Reserved = array(new Unsigned8[14]);
 
 	public CDLAYOUT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDLAYOUT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	/**
-	 * @return Left margin of the layout region in "twips"
-	 */
-	public int getLeft() {
-		return (Integer) getStructElement("wLeft");
-	}
-
-	/**
-	 * @return Width of the layout region in "twips"
-	 */
-	public int getWidth() {
-		return (Integer) getStructElement("wWidth");
-	}
-
-	/**
-	 * @return Height of the layout region in "twips"
-	 */
-	public int getHeight() {
-		return (Integer) getStructElement("wHeight");
-	}
-
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	/**
-	 * @return Spacing of grid points in "twips"
-	 */
-	public int getGridSize() {
-		return (Integer) getStructElement("wGridSize");
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
+		return Flag.valuesOf((int) Flags.get());
 	}
 }

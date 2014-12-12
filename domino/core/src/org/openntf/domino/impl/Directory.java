@@ -43,8 +43,8 @@ public class Directory extends BaseNonThreadSafe<org.openntf.domino.Directory, l
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Directory(final lotus.domino.Directory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DIRECTORY);
+	protected Directory(final lotus.domino.Directory delegate, final Session parent) {
+		super(delegate, parent, NOTES_DIRECTORY);
 	}
 
 	/*

@@ -17,7 +17,6 @@ import org.openntf.domino.xots.Tasklet;
  * 
  * @author Roland Praml, FOCONIS AG
  * 
- * @param <T>
  */
 public abstract class AbstractWrappedTask implements IWrappedTask {
 
@@ -38,7 +37,6 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 	 * 
 	 * @param task
 	 *            the runnable to determine the DominoSessionType
-	 * @return the DominoSessionType
 	 */
 	protected synchronized void setWrappedTask(final Object task) {
 		wrappedTask = task;

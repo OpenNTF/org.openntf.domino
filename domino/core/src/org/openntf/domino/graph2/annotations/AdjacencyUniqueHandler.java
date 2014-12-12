@@ -15,6 +15,7 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 
+@SuppressWarnings("deprecation")
 public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique> {
 
 	@Override
@@ -22,6 +23,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 		return AdjacencyUnique.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final AdjacencyUnique annotation, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
@@ -32,6 +34,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object processVertex(final AdjacencyUnique adjacency, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Vertex vertex) {
 		Edge resultEdge = null;
@@ -106,6 +109,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private Edge addEdge(final AdjacencyUnique adjacency, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex) {
 		Edge result = null;
 		switch (adjacency.direction()) {
@@ -139,6 +143,7 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void removeEdges(final Direction direction, final String label, final Vertex element, final Vertex otherVertex,
 			final FramedGraph framedGraph) {
 		for (final Edge edge : element.getEdges(direction, label)) {

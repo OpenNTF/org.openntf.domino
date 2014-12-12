@@ -21,7 +21,6 @@ public class ASTAtWhile extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 
-		ValueHolder ret = null;
 		if (children != null) {
 			while (children[0].evaluate(ctx).isTrue(ctx)) {
 				for (int i = 1; i < children.length; ++i) {

@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record contains size information for a layer box. The units (pixels, twips, etc.) for the Width and Height are set in the "Units"
@@ -14,32 +13,17 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDBOXSIZE extends CDRecord {
-
-	public static final int SIZE;
-
-	static {
-		addFixed("Width", LENGTH_VALUE.class);
-		addFixed("Height", LENGTH_VALUE.class);
-		addFixedArray("Reserved", LENGTH_VALUE.class, 4);
-		addFixedArray("dwReserved", Integer.class, 4);
-
-		SIZE = getFixedStructSize();
-	}
+	public final LENGTH_VALUE Width = inner(new LENGTH_VALUE());
+	public final LENGTH_VALUE Height = inner(new LENGTH_VALUE());
+	public final LENGTH_VALUE[] Reserved = array(new LENGTH_VALUE[4]);
+	public final Unsigned32[] dwReserved = array(new Unsigned32[4]);
 
 	public CDBOXSIZE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDBOXSIZE(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	public LENGTH_VALUE getWidth() {
-		return (LENGTH_VALUE) getStructElement("Width");
-	}
-
-	public LENGTH_VALUE getHeight() {
-		return (LENGTH_VALUE) getStructElement("Height");
 	}
 
 }

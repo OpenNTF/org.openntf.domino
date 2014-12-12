@@ -26,7 +26,7 @@ public enum CreateTestDatabase {
 		// 2 Threads: 1264 docs/sec
 		// 3 Threads: 1400 docs/sec
 		// 4 Threads: 1480 docs/sec
-		TestRunnerUtil.runAsDominoThread(new DocCreate(), TestRunnerUtil.NATIVE_SESSION, 10);
+		TestRunnerUtil.runAsDominoThread(new DocCreate(), TestRunnerUtil.NATIVE_SESSION, 5);
 	}
 
 	public static class DbSetup implements Runnable {
@@ -41,7 +41,7 @@ public enum CreateTestDatabase {
 
 			db = dir.createDatabase(FAKENAMES_NSF, true);
 			View view = db.createView("Names", "SELECT Form = \"DocName\"");
-			view.createColumn(2, "Full Name", "FullName");
+			view.createColumn(2, "Title", "Title");
 
 			view.createColumn(3, "Prefix", "NamePrefix");
 			view.createColumn(4, "First Name", "FirstName");
@@ -73,7 +73,7 @@ public enum CreateTestDatabase {
 
 			String[] group = { "LocalDomainAdmins", "User", "Developer", "Staff" };
 			Document doc;
-			for (int i = 0; i < 10000; i++) {
+			for (int i = 0; i < 50000; i++) {
 				try {
 					doc = db.createDocument();
 					doc.replaceItemValue("Form", "DocName");
@@ -84,7 +84,7 @@ public enum CreateTestDatabase {
 					doc.replaceItemValue("NamePrefix", namePrefix = faker.name().prefix());
 					doc.replaceItemValue("FirstName", firstName = faker.name().firstName());
 					doc.replaceItemValue("LastName", lastName = faker.name().lastName());
-					doc.replaceItemValue("FullName", join(new String[] { namePrefix, firstName, lastName }, " "));
+					doc.replaceItemValue("Title", join(new String[] { namePrefix, firstName, lastName }, " "));
 					doc.replaceItemValue("NameSuffix", faker.name().suffix());
 
 					doc.replaceItemValue("CityPrefix", faker.address().cityPrefix());

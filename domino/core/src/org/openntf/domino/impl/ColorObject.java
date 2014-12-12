@@ -40,8 +40,8 @@ public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObjec
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ColorObject(final lotus.domino.ColorObject delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_COLOR);
+	protected ColorObject(final lotus.domino.ColorObject delegate, final Session parent) {
+		super(delegate, parent, NOTES_COLOR);
 	}
 
 	/*

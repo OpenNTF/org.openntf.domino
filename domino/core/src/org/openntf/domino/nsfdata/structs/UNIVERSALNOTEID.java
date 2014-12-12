@@ -49,12 +49,8 @@ import java.util.Formatter;
  *
  */
 public class UNIVERSALNOTEID extends AbstractStruct {
-	public static final int SIZE = TIMEDATE.SIZE * 2;
-
-	static {
-		addFixed("File", Long.class);
-		addFixed("Note", Long.class);
-	}
+	public final TIMEDATE File = inner(new TIMEDATE());
+	public final TIMEDATE Note = inner(new TIMEDATE());
 
 	public static UNIVERSALNOTEID fromString(final String hexString) {
 		if (hexString == null) {
@@ -98,19 +94,6 @@ public class UNIVERSALNOTEID extends AbstractStruct {
 
 	public UNIVERSALNOTEID(final ByteBuffer data) {
 		super(data);
-	}
-
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
-	public void setFile(final long value) {
-		setStructElement("File", value);
-	}
-
-	public void setNote(final long value) {
-		setStructElement("Note", value);
 	}
 
 	public String getStringValue() {
