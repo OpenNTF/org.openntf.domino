@@ -78,7 +78,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	 * @param lotusDoc
 	 * @param parent
 	 */
-	private void trackDoc(final Document doc, final String string) {
+	protected void trackDoc(final Document doc, final String string) {
 		String[] arr = lastWrappedDocs.get();
 		System.arraycopy(arr, 0, arr, 1, arr.length - 1); // shift right by one
 		arr[0] = doc.toString().concat(string);
