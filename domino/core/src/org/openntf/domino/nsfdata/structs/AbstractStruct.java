@@ -208,7 +208,6 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 							length = ((Unsigned16) field.get(this)).get();
 							found = true;
 						} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
-							System.out.println("getting 32-bit length: " + (((Unsigned32) field.get(this)).get()));
 							length = (int) ((Unsigned32) field.get(this)).get();
 							found = true;
 						}
@@ -229,10 +228,10 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 						if (String.class.equals(element.dataClass)) {
 							ByteBuffer data = getData().duplicate();
 							data.order(ByteOrder.LITTLE_ENDIAN);
-							System.out.println("length is " + length);
-							System.out.println("setting position to " + (data.position() + preceding));
+							//							System.out.println("length is " + length);
+							//							System.out.println("setting position to " + (data.position() + preceding));
 							data.position(data.position() + preceding);
-							System.out.println("setting limit to " + (data.position() + length));
+							//							System.out.println("setting limit to " + (data.position() + length));
 							data.limit(data.position() + length);
 							if (element.isAscii) {
 								byte[] chars = new byte[length];
@@ -379,9 +378,9 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 							data.get(newBytes, 0, start);
 
 							// Write this element's data
-							System.out.println("replacedBytes.length=" + replacedBytes.length);
-							System.out.println("newBytes.length=" + newBytes.length);
-							System.out.println("start=" + start);
+							//							System.out.println("replacedBytes.length=" + replacedBytes.length);
+							//							System.out.println("newBytes.length=" + newBytes.length);
+							//							System.out.println("start=" + start);
 							System.arraycopy(replacedBytes, 0, newBytes, start, replacedBytes.length);
 
 							// Write any data from after this element
@@ -562,53 +561,53 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	//	}
 	//
 	protected String buildDebugString() {
-		try {
-			StringBuilder result = new StringBuilder();
-			result.append("[");
-			result.append(getClass().getSimpleName());
-			result.append(": ");
+		//		try {
+		StringBuilder result = new StringBuilder();
+		result.append("[");
+		result.append(getClass().getSimpleName());
+		result.append(": ");
 
-			boolean addedProp = false;
+		boolean addedProp = false;
 
-			for (Field field : getClass().getDeclaredFields()) {
-				// TODO add array support
-				if (Struct.Member.class.isAssignableFrom(field.getType())) {
-					if (addedProp) {
-						result.append(", ");
-					} else {
-						addedProp = true;
-					}
-					result.append(field.getName());
-					result.append("=");
-					try {
-						Method getMethod = field.getType().getDeclaredMethod("get");
-						result.append(getMethod.invoke(field.get(this)));
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+		for (Field field : getClass().getDeclaredFields()) {
+			// TODO add array support
+			if (Struct.Member.class.isAssignableFrom(field.getType())) {
+				if (addedProp) {
+					result.append(", ");
+				} else {
+					addedProp = true;
+				}
+				result.append(field.getName());
+				result.append("=");
+				try {
+					Method getMethod = field.getType().getDeclaredMethod("get");
+					result.append(getMethod.invoke(field.get(this)));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
 			}
-
-			if (variableElements_.containsKey(getClass().getName())) {
-				for (VariableElement element : variableElements_.get(getClass().getName())) {
-					System.out.println("getting element " + element.name);
-					if (addedProp) {
-						result.append(", ");
-					} else {
-						addedProp = true;
-					}
-
-					result.append(element.name);
-					result.append("=");
-					result.append(getVariableElement(element.name));
-				}
-			}
-
-			result.append("]");
-			return result.toString();
-		} catch (RuntimeException re) {
-			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName());
-			throw re;
 		}
+
+		if (variableElements_.containsKey(getClass().getName())) {
+			for (VariableElement element : variableElements_.get(getClass().getName())) {
+				//					System.out.println("getting element " + element.name);
+				if (addedProp) {
+					result.append(", ");
+				} else {
+					addedProp = true;
+				}
+
+				result.append(element.name);
+				result.append("=");
+				result.append(getVariableElement(element.name));
+			}
+		}
+
+		result.append("]");
+		return result.toString();
+		//		} catch (RuntimeException re) {
+		//			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName());
+		//			throw re;
+		//		}
 	}
 }
