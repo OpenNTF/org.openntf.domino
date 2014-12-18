@@ -102,10 +102,14 @@ public class CDACTIONBAREXT extends CDRecord {
 	public final COLOR_VALUE LineColor = inner(new COLOR_VALUE());
 	public final COLOR_VALUE FontColor = inner(new COLOR_VALUE());
 	public final COLOR_VALUE ButtonColor = inner(new COLOR_VALUE());
-	public final Enum16<BorderDisplay> BtnBorderDisplay = new Enum16<BorderDisplay>(BorderDisplay.values());
+	// TODO figure out why some values are way out of range - unless isPacked should be false
+	//	public final Enum16<BorderDisplay> BtnBorderDisplay = new Enum16<BorderDisplay>(BorderDisplay.values());
+	public final Unsigned16 BtnBorderDisplay = new Unsigned16();
 	public final Unsigned16 wAppletHeight = new Unsigned16();
 	public final Enum16<BackgroundRepeat> wBarBackgroundRepeat = new Enum16<BackgroundRepeat>(BackgroundRepeat.values());
-	public final Enum8<ButtonWidth> BtnWidthStyle = new Enum8<ButtonWidth>(ButtonWidth.values());
+	// TODO figure out why some values are way out of range - unless isPacked should be false
+	//	public final Enum8<ButtonWidth> BtnWidthStyle = new Enum8<ButtonWidth>(ButtonWidth.values());
+	public final Unsigned8 BtnWidthStyle = new Unsigned8();
 	public final Enum8<Justify> BtnTextJustify = new Enum8<Justify>(Justify.values());
 	public final Unsigned16 wBtnWidthAbsolute = new Unsigned16();
 	public final Unsigned16 wBtnInternalMargin = new Unsigned16();

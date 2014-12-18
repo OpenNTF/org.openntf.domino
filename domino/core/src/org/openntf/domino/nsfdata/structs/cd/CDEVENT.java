@@ -47,7 +47,7 @@ public class CDEVENT extends CDRecord {
 	}
 
 	public static enum Action {
-		FORMULA, CANNED_ACTION, LOTUS_SCRIPT, JAVASCRIPT
+		UNKNOWN, FORMULA, CANNED_ACTION, LOTUS_SCRIPT, JAVASCRIPT
 	}
 
 	/**

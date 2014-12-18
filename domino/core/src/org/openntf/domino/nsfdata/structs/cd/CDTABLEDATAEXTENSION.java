@@ -36,9 +36,9 @@ public class CDTABLEDATAEXTENSION extends CDRecord {
 		// The COLOR_VALUE is missing from data created by some R6 beta releases
 		addVariableArray("FontColor", "getFontColorCount", COLOR_VALUE.class);
 
-		addVariableData("Available11", "getAvailableLength11");
-		addVariableData("Available12", "getAvailableLength12");
-		addVariableData("Extension2", "getExtension2Length");
+		addVariableData("Available11", "wAvailableLength11");
+		addVariableData("Available12", "wAvailableLength12");
+		addVariableData("Extension2", "wExtension2Length");
 	}
 
 	public CDTABLEDATAEXTENSION(final CDSignature cdSig) {

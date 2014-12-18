@@ -46,17 +46,10 @@ public enum CDSignature {
 	TEXTPROPERTIESTABLE(WORD, 112, null),
 	HREF2(WORD, 113, CDRESOURCE.class), // Note: this structure is shared among several records
 	BACKGROUNDCOLOR(BYTE, 114, CDCOLOR.class), // Note: this structure is shared with COLOR
-	INLINE(WORD, 115, CDINLINE.class),
-	V6HOTSPOTBEGIN_CONTINUATION(WORD, 116, null),
-	TARGET_DBLCLK(WORD, 117, CDTARGET.class),
-	CAPTION(WORD, 118, CDCAPTION.class),
-	LINKCOLORS(WORD, 119, null),
-	TABLECELL_HREF(WORD, 120, CDRESOURCE.class),
-	ACTIONBAREXT(WORD, 121, CDACTIONBAREXT.class),
-	IDNAME(WORD, 122, CDIDNAME.class),
-	TABLECELL_IDNAME(WORD, 123, CDIDNAME.class),
-	IMAGESEGMENT(LONG, 124, CDIMAGESEGMENT.class),
-	IMAGEHEADER(LONG, 125, CDIMAGEHEADER.class),
+	INLINE(WORD, 115, CDINLINE.class), V6HOTSPOTBEGIN_CONTINUATION(WORD, 116, null), TARGET_DBLCLK(WORD, 117, CDTARGET.class),
+	CAPTION(WORD, 118, CDCAPTION.class), LINKCOLORS(WORD, 119, null), TABLECELL_HREF(WORD, 120, CDRESOURCE.class),
+	ACTIONBAREXT(WORD, 121, CDACTIONBAREXT.class), IDNAME(WORD, 122, CDIDNAME.class), TABLECELL_IDNAME(WORD, 123, CDIDNAME.class),
+	IMAGESEGMENT(LONG, 124, CDIMAGESEGMENT.class), IMAGEHEADER(LONG, 125, CDIMAGEHEADER.class),
 	V5HOTSPOTBEGIN(WORD, 126, CDHOTSPOTBEGIN.class),
 	V5HOTSPOTEND(BYTE, 127, CDHOTSPOTEND.class),
 	TEXTPROPERTY(WORD, 128, null),
@@ -119,16 +112,9 @@ public enum CDSignature {
 	MAPELEMENT(WORD, 244, null),
 	AREAELEMENT(WORD, 245, null),
 	HREF(WORD, 246, CDRESOURCE.class), // Note: this structure is shared among several records
-	EMBEDDEDCTL(WORD, 247, CDEMBEDDEDCTL.class),
-	HTML_ALTTEXT(WORD, 248, null),
-	EVENT(WORD, 249, CDEVENT.class),
-	PRETABLEBEGIN(WORD, 251, CDPRETABLEBEGIN.class),
-	BORDERINFO(WORD, 252, CDBORDERINFO.class),
-	EMBEDDEDSCHEDCTL(WORD, 253, null),
-	// TODO figure out why CDEXT2FIELD is buggy
-	EXT2_Field(WORD, 254, null),
-	//EXT2_FIELD(WORD, 254, CDEXT2FIELD.class),
-	EMBEDDEDEDITCTL(WORD, 255, null),
+	EMBEDDEDCTL(WORD, 247, CDEMBEDDEDCTL.class), HTML_ALTTEXT(WORD, 248, null), EVENT(WORD, 249, CDEVENT.class),
+	PRETABLEBEGIN(WORD, 251, CDPRETABLEBEGIN.class), BORDERINFO(WORD, 252, CDBORDERINFO.class), EMBEDDEDSCHEDCTL(WORD, 253, null),
+	EXT2_FIELD(WORD, 254, CDEXT2FIELD.class), EMBEDDEDEDITCTL(WORD, 255, null),
 
 	DOCUMENT_PRE_26(BYTE, 128, null), FIELD_PRE_36(WORD, 132, null), FIELD(WORD, 138, CDFIELD.class),
 	DOCUMENT(BYTE, 134, CDDOCUMENT.class), METAFILE(WORD, 135, null), BITMAP(WORD, 136, null), FONTTABLE(WORD, 139, CDFONTTABLE.class),
@@ -252,11 +238,43 @@ public enum CDSignature {
 				// Now determine which SIG to return based on the record length
 				switch (cdSig.getEffectiveRecordLength()) {
 				case BYTE:
+					//					System.out.println("matched BSIG " + cdSig + " for " + lowOrder);
 					return new BSIG(cdSig, highOrder);
 				case WORD:
+					//					System.out.println("matched WSIG " + cdSig + " for " + lowOrder);
 					return new WSIG(cdSig, sigData.getShort(sigData.position() + 2) & 0xFFFF);
 				case LONG:
+					//					System.out.println("matched LSIG " + cdSig + " for " + lowOrder);
 					return new LSIG(cdSig, sigData.getInt(sigData.position() + 2) & 0xFFFFFFFFL);
+				default:
+					break;
+				}
+			}
+		}
+		throw new IllegalArgumentException("Unknown sig value " + lowOrder + " for length " + length);
+	}
+
+	public static CDSignature sigForShort(final short value) {
+		ByteBuffer sigData = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+		sigData.putShort(value);
+		sigData.position(0);
+
+		byte lowOrderByte = sigData.get(sigData.position());
+		int lowOrder = lowOrderByte & 0xFF;                          // low order = type
+		int highOrder = sigData.get(sigData.position() + 1) & 0xFF;  // high order = record length
+
+		RecordLength length = RecordLength.valueOf(highOrder);
+		for (CDSignature cdSig : values()) {
+			if (lowOrder == cdSig.getBaseValue() && length == cdSig.getRecordLength()) {
+				//				System.out.println("matched signature " + cdSig);
+				// Now determine which SIG to return based on the record length
+				switch (cdSig.getEffectiveRecordLength()) {
+				case BYTE:
+					return cdSig;
+				case WORD:
+					return cdSig;
+				case LONG:
+					return cdSig;
 				default:
 					break;
 				}

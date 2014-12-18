@@ -14,7 +14,10 @@ import org.openntf.domino.nsfdata.structs.SIG;
 public class CDBEGINRECORD extends CDRecord {
 	// TODO map to weird table in docs
 	public final Unsigned16 Version = new Unsigned16();
-	// TODO implement mapping method to CDSignature
+	/**
+	 * Use getRecordSignature()
+	 */
+	@Deprecated
 	public final Unsigned16 Signature = new Unsigned16();
 
 	public CDBEGINRECORD(final CDSignature cdSig) {
@@ -23,5 +26,14 @@ public class CDBEGINRECORD extends CDRecord {
 
 	public CDBEGINRECORD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
+	}
+
+	public CDSignature getRecordSignature() {
+		return CDSignature.sigForShort((short) Signature.get());
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Version=" + Version.get() + ", RecordSignature=" + getRecordSignature() + "]";
 	}
 }

@@ -55,6 +55,10 @@ public class CDFONTTABLE extends CDRecord {
 		public final Unsigned8 Family = new Unsigned8();
 		public final Unsigned8[] Name = array(new Unsigned8[MAXFACESIZE]);
 
+		public CDFACE() {
+			super();
+		}
+
 		public CDFACE(final ByteBuffer data) {
 			super(data);
 		}
@@ -95,7 +99,7 @@ public class CDFONTTABLE extends CDRecord {
 	public final Unsigned16 Fonts = new Unsigned16();
 
 	static {
-		addVariableArray("FontFaces", "FontCount", CDFACE.class);
+		addVariableArray("FontFaces", "Fonts", CDFACE.class);
 	}
 
 	public CDFONTTABLE(final CDSignature cdSig) {

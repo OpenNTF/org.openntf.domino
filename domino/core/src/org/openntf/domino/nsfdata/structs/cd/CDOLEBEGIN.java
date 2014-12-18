@@ -11,6 +11,20 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDOLEBEGIN extends CDRecord {
+
+	//	public final Unsigned16 Version = new Unsigned16();
+	public final Enum16<OLEVersion> Version = new Enum16<OLEVersion>(OLEVersion.values());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Enum16<DDEFormat> ClipFormat = new Enum16<DDEFormat>(DDEFormat.values());
+	//	public final Unsigned16 ClipFormat = new Unsigned16();
+	public final Unsigned16 AttachNameLength = new Unsigned16();
+	public final Unsigned16 ClassNameLength = new Unsigned16();
+	public final Unsigned16 TemplateNameLength = new Unsigned16();
+
 	/**
 	 * These flags are used to define the type of OLE object a note contains. These flags are used by the Flags member of the CDOLEBEGIN
 	 * data structure.
@@ -78,19 +92,8 @@ public class CDOLEBEGIN extends CDRecord {
 	 *
 	 */
 	public static enum OLEVersion {
-		VERSION1, VERSION2
+		UNKNOWN, VERSION1, VERSION2
 	}
-
-	public final Enum16<OLEVersion> Version = new Enum16<OLEVersion>(OLEVersion.values());
-	/**
-	 * Use getFlags for access.
-	 */
-	@Deprecated
-	public final Unsigned32 Flags = new Unsigned32();
-	public final Enum16<DDEFormat> ClipFormat = new Enum16<DDEFormat>(DDEFormat.values());
-	public final Unsigned16 AttachNameLength = new Unsigned16();
-	public final Unsigned16 ClassNameLength = new Unsigned16();
-	public final Unsigned16 TemplateNameLength = new Unsigned16();
 
 	static {
 		addVariableString("AttachName", "AttachNameLength");

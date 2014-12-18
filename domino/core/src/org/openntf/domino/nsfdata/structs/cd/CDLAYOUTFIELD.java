@@ -111,7 +111,9 @@ public class CDLAYOUTFIELD extends CDRecord {
 	 */
 	@Deprecated
 	public final Unsigned32 Flags = new Unsigned32();
-	public final Enum8<FieldType> bFieldType = new Enum8<FieldType>(FieldType.values());
+	// TODO figure out why some values are way out of range - unless isPacked should be false
+	//	public final Enum8<FieldType> bFieldType = new Enum8<FieldType>(FieldType.values());
+	public final Unsigned8 bFieldType = new Unsigned8();
 	public final Unsigned8[] Reserved = array(new Unsigned8[15]);
 
 	public CDLAYOUTFIELD(final CDSignature cdSig) {

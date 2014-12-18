@@ -74,16 +74,16 @@ public class CDEXT2FIELD extends CDRecord {
 	public final Unsigned16 wIMGroupFormulaLen = new Unsigned16();
 
 	static {
-		addVariableString("DecimalSymbol", "DecimalSymLength");
-		addVariableString("MilliSepSymbol", "MilliSepSymLength");
-		addVariableString("NegativeSymbol", "NegativeSymLength");
-		addVariableString("CurrencySymbol", "CurrencySymLength");
-		addVariableString("ThumbnailImageFileName", "wThumbnailImageFileName");
+		addVariableAsciiString("DecimalSymbol", "DecimalSymLength");
+		addVariableAsciiString("MilliSepSymbol", "MilliSepSymLength");
+		addVariableAsciiString("NegativeSymbol", "NegativeSymLength");
+		addVariableAsciiString("CurrencySymbol", "CurrencySymLength");
+		addVariableAsciiString("ThumbnailImageFileName", "wThumbnailImageFileName");
 		addVariableData("IMOnlineNameFormula", "wIMOnlineNameFormulaLen");
-		addVariableString("DTDsep1", "DTDsep1Len");
-		addVariableString("DTDsep2", "DTDsep2Len");
-		addVariableString("DTDsep3", "DTDsep3Len");
-		addVariableString("DTTsep", "DTTsepLen");
+		addVariableAsciiString("DTDsep1", "DTDsep1Len");
+		addVariableAsciiString("DTDsep2", "DTDsep2Len");
+		addVariableAsciiString("DTDsep3", "DTDsep3Len");
+		addVariableAsciiString("DTTsep", "DTTsepLen");
 		addVariableData("InputEnabled", "wInputEnabledLen");
 		addVariableData("IMGroupFormula", "wIMGroupFormulaLen");
 	}

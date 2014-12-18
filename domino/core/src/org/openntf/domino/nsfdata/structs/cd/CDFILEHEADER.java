@@ -20,7 +20,7 @@ public class CDFILEHEADER extends CDRecord {
 	public final Unsigned32 Reserved = new Unsigned32();
 
 	static {
-		addVariableString("FileExt", "FileExtLen");
+		addVariableAsciiString("FileExt", "FileExtLen");
 	}
 
 	public CDFILEHEADER(final CDSignature cdSig) {
@@ -36,5 +36,9 @@ public class CDFILEHEADER extends CDRecord {
 	 */
 	public String getFileExt() {
 		return (String) getVariableElement("FileExt");
+	}
+
+	public void setFileExt(final String fileExt) {
+		setVariableElement("FileExt", fileExt);
 	}
 }

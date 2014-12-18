@@ -23,7 +23,7 @@ public enum ODSUtils {
 
 	public static String fromLMBCS(final ByteBuffer data) {
 		Charset lmbcs = Charset.forName("x-lmbcs-1");
-		CharBuffer buffer = lmbcs.decode(data);
+		CharBuffer buffer = lmbcs.decode(data.duplicate());
 		return buffer.toString();
 	}
 

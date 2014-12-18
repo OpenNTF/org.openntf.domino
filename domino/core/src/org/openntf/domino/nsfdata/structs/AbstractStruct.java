@@ -31,6 +31,11 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	}
 
 	@Override
+	public boolean isPacked() {
+		return true;
+	}
+
+	@Override
 	public ByteOrder byteOrder() {
 		return ByteOrder.LITTLE_ENDIAN;
 	}
@@ -223,12 +228,13 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 
 					// LMBCS strings are always even length
 					int extra = String.class.equals(element.dataClass) && !element.isAscii ? length % 2 : 0;
+					//					int extra = String.class.equals(element.dataClass) ? length % 2 : 0;
 
 					if (StringUtil.equals(name, element.name)) {
 						if (String.class.equals(element.dataClass)) {
 							ByteBuffer data = getData().duplicate();
 							data.order(ByteOrder.LITTLE_ENDIAN);
-							//							System.out.println("length is " + length);
+							//							System.out.println("length for " + name + " is " + length);
 							//							System.out.println("setting position to " + (data.position() + preceding));
 							data.position(data.position() + preceding);
 							//							System.out.println("setting limit to " + (data.position() + length));
@@ -284,9 +290,13 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	}
 
 	/**
+	 * Sets a variable-sized element of the struct to the provided value. If the element's length method name is the name of a field, it
+	 * also sets that field to the new length.
+	 * 
 	 * @return The size in bytes of the stored struct element
 	 */
 	protected int setVariableElement(final String name, final Object value) {
+		//		System.out.println("setting field " + name + " to " + value);
 		int preceding = size();
 
 		// Now see if it's one of the variable-length bits
@@ -297,14 +307,18 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 					int length = -1;
 					boolean found = false;
 					// The length method name could either be the name of a fixed variable or a method
+					Field field = null;
 					try {
-						Field field = getClass().getDeclaredField(element.lengthMethodName);
+						field = getClass().getDeclaredField(element.lengthMethodName);
 						if (Unsigned8.class.isAssignableFrom(field.getType())) {
 							length = ((Unsigned8) field.get(this)).get();
+							found = true;
 						} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
 							length = ((Unsigned16) field.get(this)).get();
+							found = true;
 						} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
 							length = (int) ((Unsigned32) field.get(this)).get();
+							found = true;
 						}
 					} catch (NoSuchFieldException nsfe) {
 						// Ignore and move on
@@ -320,7 +334,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 					int extra = String.class.equals(element.dataClass) && !element.isAscii ? length % 2 : 0;
 
 					if (StringUtil.equals(name, element.name)) {
-						ByteBuffer data = getData();
+						ByteBuffer data = getData().duplicate().order(ByteOrder.LITTLE_ENDIAN);
 						byte[] replacedBytes;
 						if (value == null) {
 							// Then outright remove the data
@@ -362,22 +376,30 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 						}
 
 						// Check if the result size is different from the original
-						if (replacedBytes.length == size) {
+						if (replacedBytes.length == length) {
 							// If it's the same, the job is easy
 							data.position(data.position() + preceding);
 							data.put(replacedBytes);
 						} else {
 							// Otherwise, we have to break apart the array and stitch it together
 							// Create an array at the new total size
-							int newLength = data.capacity() - size + replacedBytes.length + 1;
+							// TODO make this only use the part of the data needed for the struct
+							int initialPosition = data.position();
+							int newLength = data.capacity() - length + replacedBytes.length;
 							byte[] newBytes = new byte[newLength];
+							//							System.out.println("original capacity: " + data.capacity());
+							//							System.out.println("new size: " + newLength);
 
 							// Pour in the data before this element
 							int start = data.position() + preceding;
 							data.position(0);
+							//							System.out.println("reading data from 0 to " + (start - 1));
 							data.get(newBytes, 0, start);
+							//							System.arraycopy(dataArray, 0, newBytes, 0, start);
+							//							System.out.println("data's position is now " + data.position());
 
 							// Write this element's data
+							//							System.out.println("original length=" + length);
 							//							System.out.println("replacedBytes.length=" + replacedBytes.length);
 							//							System.out.println("newBytes.length=" + newBytes.length);
 							//							System.out.println("start=" + start);
@@ -385,12 +407,34 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 
 							// Write any data from after this element
 							int remaining = newBytes.length - start - replacedBytes.length;
+							data.position(start + length);
+							int sourceLength = data.capacity() - data.position();
 							if (remaining > 0) {
-								data.position(data.position() + remaining);
-								data.get(newBytes, start, remaining);
+								//								System.out.println("reading from data position " + data.position());
+								int destOffset = start + replacedBytes.length;
+								int sourceOffset = start + length;
+								//								System.out.println("want to write " + sourceLength + " bytes into an array of size " + newBytes.length
+								//										+ " starting at " + destOffset);
+								//								System.arraycopy(dataArray, sourceOffset, newBytes, destOffset, sourceLength);
+								data.get(newBytes, destOffset, sourceLength);
 							}
 
-							this.setData(newBytes);
+							ByteBuffer newData = ByteBuffer.wrap(newBytes);
+							newData.order(ByteOrder.LITTLE_ENDIAN).position(initialPosition);
+							//							this.setData(newBytes);
+							this.setByteBuffer(newData, newData.position());
+
+							// If the element was defined by a field, set that field to the new length value
+							if (field != null) {
+								//								System.out.println("setting size field to " + replacedBytes.length);
+								if (Unsigned8.class.isAssignableFrom(field.getType())) {
+									Unsigned8.class.getMethod("set", Short.TYPE).invoke(field.get(this), (short) replacedBytes.length);
+								} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
+									Unsigned16.class.getMethod("set", Integer.TYPE).invoke(field.get(this), replacedBytes.length);
+								} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
+									Unsigned32.class.getMethod("set", Long.TYPE).invoke(field.get(this), (long) replacedBytes.length);
+								}
+							}
 						}
 
 						// Then we're done
@@ -430,6 +474,15 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 			return 4;
 		} else if (Double.class.equals(sizeClass)) {
 			return 8;
+		} else if (Struct.class.isAssignableFrom(sizeClass)) {
+			try {
+				Struct example = (Struct) sizeClass.newInstance();
+				return example.size();
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
 		} else {
 			Field field = null;
 			try {
@@ -561,53 +614,54 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	//	}
 	//
 	protected String buildDebugString() {
-		//		try {
-		StringBuilder result = new StringBuilder();
-		result.append("[");
-		result.append(getClass().getSimpleName());
-		result.append(": ");
+		try {
+			StringBuilder result = new StringBuilder();
+			result.append("[");
+			result.append(getClass().getSimpleName());
+			result.append(": ");
 
-		boolean addedProp = false;
+			boolean addedProp = false;
 
-		for (Field field : getClass().getDeclaredFields()) {
-			// TODO add array support
-			if (Struct.Member.class.isAssignableFrom(field.getType())) {
-				if (addedProp) {
-					result.append(", ");
-				} else {
-					addedProp = true;
-				}
-				result.append(field.getName());
-				result.append("=");
-				try {
-					Method getMethod = field.getType().getDeclaredMethod("get");
-					result.append(getMethod.invoke(field.get(this)));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+			for (Field field : getClass().getDeclaredFields()) {
+				// TODO add array support
+				if (Struct.Member.class.isAssignableFrom(field.getType())) {
+					if (addedProp) {
+						result.append(", ");
+					} else {
+						addedProp = true;
+					}
+					result.append(field.getName());
+					result.append("=");
+					try {
+						//						System.out.println("getting field " + field.getName());
+						Method getMethod = field.getType().getDeclaredMethod("get");
+						result.append(getMethod.invoke(field.get(this)));
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
 				}
 			}
-		}
 
-		if (variableElements_.containsKey(getClass().getName())) {
-			for (VariableElement element : variableElements_.get(getClass().getName())) {
-				//					System.out.println("getting element " + element.name);
-				if (addedProp) {
-					result.append(", ");
-				} else {
-					addedProp = true;
+			if (variableElements_.containsKey(getClass().getName())) {
+				for (VariableElement element : variableElements_.get(getClass().getName())) {
+					//					System.out.println("getting element " + element.name);
+					if (addedProp) {
+						result.append(", ");
+					} else {
+						addedProp = true;
+					}
+
+					result.append(element.name);
+					result.append("=");
+					result.append(getVariableElement(element.name));
 				}
-
-				result.append(element.name);
-				result.append("=");
-				result.append(getVariableElement(element.name));
 			}
-		}
 
-		result.append("]");
-		return result.toString();
-		//		} catch (RuntimeException re) {
-		//			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName());
-		//			throw re;
-		//		}
+			result.append("]");
+			return result.toString();
+		} catch (RuntimeException re) {
+			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName());
+			throw re;
+		}
 	}
 }
