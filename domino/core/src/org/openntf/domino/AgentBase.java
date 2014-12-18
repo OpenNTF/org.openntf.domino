@@ -19,6 +19,8 @@ public class AgentBase extends lotus.domino.AgentBase {
 	 */
 	@Override
 	public Session getSession() {
+		Factory.startup();
+		Factory.initThread();
 		return Factory.fromLotus(super.getSession(), Session.SCHEMA, null);
 	}
 
