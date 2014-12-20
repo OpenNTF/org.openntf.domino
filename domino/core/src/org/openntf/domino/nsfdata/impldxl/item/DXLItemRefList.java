@@ -26,13 +26,15 @@ public class DXLItemRefList extends DXLItemRaw {
 
 		ByteBuffer data = ByteBuffer.wrap(this.getBytes());
 		data.order(ByteOrder.nativeOrder());
-		LIST list = new LIST(data);
+		LIST list = new LIST();
+		list.init(data);
 		UNIVERSALNOTEID[] ids = new UNIVERSALNOTEID[list.ListEntries.get()];
 		data.position((int) (data.position() + list.getStructSize()));
 		for (int i = 0; i < ids.length; i++) {
 			ByteBuffer idData = data.duplicate();
 			idData.limit(idData.position() + 16);
-			ids[i] = new UNIVERSALNOTEID(idData);
+			ids[i] = new UNIVERSALNOTEID();
+			ids[i].init(idData);
 
 			data.position(data.position() + 16);
 		}
@@ -48,7 +50,8 @@ public class DXLItemRefList extends DXLItemRaw {
 		System.arraycopy(oldBytes, 0, newBytes, 0, oldBytes.length);
 		ByteBuffer data = ByteBuffer.wrap(newBytes);
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		LIST list = new LIST(data);
+		LIST list = new LIST();
+		list.init(data);
 		data.position((int) (list.getStructSize() + (16 * list.ListEntries.get())));
 		list.ListEntries.set(list.ListEntries.get() + 1);
 		data.put(value.getData());

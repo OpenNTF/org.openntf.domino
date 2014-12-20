@@ -1,9 +1,9 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -86,6 +86,7 @@ public class CDLAYOUTTEXT extends CDRecord {
 		}
 	}
 
+	public final BSIG Header = inner(new BSIG());
 	public final ELEMENTHEADER ElementHeader = inner(new ELEMENTHEADER());
 	/**
 	 * Use getFlags for access.
@@ -98,12 +99,9 @@ public class CDLAYOUTTEXT extends CDRecord {
 		addVariableString("Text", "getTextSize");
 	}
 
-	public CDLAYOUTTEXT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDLAYOUTTEXT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
@@ -111,7 +109,7 @@ public class CDLAYOUTTEXT extends CDRecord {
 	}
 
 	public int getTextSize() {
-		return (int) (getDataLength() - ElementHeader.getStructSize() - 20);
+		return (int) (Header.getRecordLength() - Header.size() - ElementHeader.getStructSize() - 20);
 	}
 
 	/**

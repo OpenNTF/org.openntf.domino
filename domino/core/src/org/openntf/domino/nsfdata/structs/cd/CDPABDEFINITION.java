@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies a format for paragraphs in a rich-text field. There may be more than one paragraph using the same paragraph
@@ -13,6 +12,7 @@ public class CDPABDEFINITION extends CDRecord {
 
 	public static final int MAXTABS = 20;
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 PABID = new Unsigned16();
 	// TODO make enum
 	public final Unsigned16 JustifyMode = new Unsigned16();
@@ -30,12 +30,9 @@ public class CDPABDEFINITION extends CDRecord {
 	// TODO make enum
 	public final Unsigned16 Flags2 = new Unsigned16();
 
-	public CDPABDEFINITION(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDPABDEFINITION(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	//	@Override

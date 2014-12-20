@@ -1,10 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record gives information pertaining to shared resources and/or shared code in a form. A CDINLINE record may be preceded by a
@@ -46,6 +46,7 @@ public class CDINLINE extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 wDatalength = new Unsigned16();
 	/**
 	 * Use getFlags for access.
@@ -54,12 +55,9 @@ public class CDINLINE extends CDRecord {
 	public final Unsigned32 dwFlags = new Unsigned32();
 	public final Unsigned32[] dwReserved = array(new Unsigned32[4]);
 
-	public CDINLINE(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDINLINE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

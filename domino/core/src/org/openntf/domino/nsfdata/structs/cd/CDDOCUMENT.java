@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -12,6 +11,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDDOCUMENT extends CDRecord {
+	public final BSIG Header = inner(new BSIG());
 	/**
 	 * Use getPaperColor for access.
 	 */
@@ -51,12 +51,9 @@ public class CDDOCUMENT extends CDRecord {
 		addVariableString("FieldName", "getFieldNameLength");
 	}
 
-	public CDDOCUMENT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDDOCUMENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
@@ -110,7 +107,7 @@ public class CDDOCUMENT extends CDRecord {
 	}
 
 	public int getFieldNameLength() {
-		return (int) (getDataLength() - 22 - InherFieldNameLength.get());
+		return (int) (Header.getRecordLength() - size() - InherFieldNameLength.get());
 	}
 
 	/**

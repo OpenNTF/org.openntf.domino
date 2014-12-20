@@ -219,6 +219,36 @@ public enum CDSignature {
 		return result;
 	}
 
+	/**
+	 * @param size
+	 *            Size, in bytes, of the non-signature data portion of the record.
+	 * @return A SIG value ({@link BSIG}, {@link WSIG}, or {@link LSIG}) appropriate for the CDSignature and given size.
+	 */
+	public SIG getSig() {
+		switch (getEffectiveRecordLength()) {
+		case BYTE:
+			return new BSIG();
+		case WORD:
+			return new WSIG();
+		case LONG:
+			return new LSIG();
+		default:
+			return null;
+		}
+	}
+
+	public static Class<? extends CDRecord> instanceClassForSig(final SIG sig) {
+		for (CDSignature cdSig : values()) {
+			RecordLength recLength = cdSig.getEffectiveRecordLength();
+			if (cdSig.getBaseValue() == sig.getSigIdentifier()
+					&& ((recLength == BYTE && sig instanceof BSIG) || (recLength == WORD && sig instanceof WSIG) || (recLength == LONG && sig instanceof LSIG))) {
+				return cdSig.getInstanceClass();
+			}
+		}
+		throw new IllegalArgumentException("Could not find instance class for sig " + sig + " (sig identifier " + sig.getSigIdentifier()
+				+ ")");
+	}
+
 	public static SIG sigForData(final ByteBuffer data) {
 		ByteBuffer sigData = data.duplicate().order(ByteOrder.LITTLE_ENDIAN);
 		//		System.out.println("reading sig at position: " + data.position());
@@ -236,16 +266,23 @@ public enum CDSignature {
 			if (lowOrder == cdSig.getBaseValue() && length == cdSig.getRecordLength()) {
 				//				System.out.println("matched signature " + cdSig);
 				// Now determine which SIG to return based on the record length
+				SIG result = null;
 				switch (cdSig.getEffectiveRecordLength()) {
 				case BYTE:
 					//					System.out.println("matched BSIG " + cdSig + " for " + lowOrder);
-					return new BSIG(cdSig, highOrder);
+					result = new BSIG();
+					result.init(data);
+					return result;
 				case WORD:
 					//					System.out.println("matched WSIG " + cdSig + " for " + lowOrder);
-					return new WSIG(cdSig, sigData.getShort(sigData.position() + 2) & 0xFFFF);
+					result = new WSIG();
+					result.init(data);
+					return result;
 				case LONG:
 					//					System.out.println("matched LSIG " + cdSig + " for " + lowOrder);
-					return new LSIG(cdSig, sigData.getInt(sigData.position() + 2) & 0xFFFFFFFFL);
+					result = new LSIG();
+					result.init(data);
+					return result;
 				default:
 					break;
 				}

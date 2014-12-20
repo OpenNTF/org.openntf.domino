@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.nio.ByteBuffer;
 
 /**
  * The MIME_PART structure stores the mime parts for items of TYPE_MIME_PART. (mimeods.h)
@@ -39,14 +38,7 @@ public class MIME_PART extends AbstractStruct {
 	public final Unsigned16 wSpare = new Unsigned16();
 	public final Unsigned32 dwSpare = new Unsigned32();
 
-	public MIME_PART() {
-		super();
-	}
-
 	// TODO add support for following MIME data
-	public MIME_PART(final ByteBuffer data) {
-		super(data);
-	}
 
 	public long getFlags() {
 		// TODO create enum

@@ -1,10 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record gives information pertaining to data connection resource information in a field or form. (editods.h)
@@ -36,6 +36,7 @@ public class CDDECSFIELD extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -52,12 +53,9 @@ public class CDDECSFIELD extends CDRecord {
 		addVariableString("DCRName", "DCRNameLength");
 	}
 
-	public CDDECSFIELD(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDDECSFIELD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

@@ -1,12 +1,12 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record describes a view as an embedded element. A CDEMBEDDEDVIEW record will be preceded by a CDPLACEHOLDER record. Further
@@ -75,6 +75,7 @@ public class CDEMBEDDEDVIEW extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -92,12 +93,9 @@ public class CDEMBEDDEDVIEW extends CDRecord {
 		addVariableString("Name", "NameLength");
 	}
 
-	public CDEMBEDDEDVIEW(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEMBEDDEDVIEW(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

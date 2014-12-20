@@ -1,10 +1,9 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the properties of a caption for a grapic [sic] record. The actual caption text follows the fixed part of the
@@ -18,6 +17,7 @@ public class CDCAPTION extends CDRecord {
 		BELOW_CENTER, MIDDLE_CENTER
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 wLength = new Unsigned16();
 	public final Enum8<CaptionPosition> Position = new Enum8<CaptionPosition>(CaptionPosition.values());
 	public final FONTID FontID = inner(new FONTID());
@@ -28,12 +28,9 @@ public class CDCAPTION extends CDRecord {
 		addVariableAsciiString("Caption", "wLength");
 	}
 
-	public CDCAPTION(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDCAPTION(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getCaption() {

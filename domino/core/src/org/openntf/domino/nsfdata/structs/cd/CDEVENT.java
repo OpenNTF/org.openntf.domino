@@ -1,10 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD structure defines simple actions, formulas or LotusScript within a given image map. (editods.h)
@@ -50,6 +50,7 @@ public class CDEVENT extends CDRecord {
 		UNKNOWN, FORMULA, CANNED_ACTION, LOTUS_SCRIPT, JAVASCRIPT
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -66,12 +67,9 @@ public class CDEVENT extends CDRecord {
 		addVariableData("Signature", "SignatureLength");
 	}
 
-	public CDEVENT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEVENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
@@ -84,5 +82,11 @@ public class CDEVENT extends CDRecord {
 
 	public byte[] getEventSignature() {
 		return (byte[]) getVariableElement("Signature");
+	}
+
+	@Override
+	public String toString() {
+		// TODO Figure out why getting the variable elements breaks
+		return "[" + getClass().getSimpleName() + "]";
 	}
 }

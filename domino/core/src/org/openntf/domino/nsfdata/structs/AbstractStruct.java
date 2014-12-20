@@ -21,12 +21,11 @@ import com.ibm.commons.util.StringUtil;
 
 public abstract class AbstractStruct extends Struct implements Externalizable {
 
-	public AbstractStruct() {
-		byte[] byteData = new byte[(int) getStructSize()];
-		setByteBuffer(ByteBuffer.wrap(byteData).order(ByteOrder.LITTLE_ENDIAN), 0);
+	public void init() {
+		setByteBuffer(ByteBuffer.allocate(size()).order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
-	public AbstractStruct(final ByteBuffer data) {
+	public void init(final ByteBuffer data) {
 		setByteBuffer(data.duplicate().order(ByteOrder.LITTLE_ENDIAN), data.position());
 	}
 
@@ -62,6 +61,52 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 
 	public long getStructSize() {
 		return size();
+	}
+
+	public int getExtraLength() {
+		return 0;
+	}
+
+	public long getTotalSize() {
+		long result = size() + getExtraLength();
+
+		Collection<VariableElement> varElements = variableElements_.get(getClass().getName());
+		if (varElements != null) {
+			for (VariableElement element : varElements) {
+				try {
+					int length = -1;
+					boolean found = false;
+					// The length method name could either be the name of a fixed variable or a method
+					try {
+						Field field = getClass().getDeclaredField(element.lengthMethodName);
+						if (Unsigned8.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned8) field.get(this)).get();
+							found = true;
+						} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned16) field.get(this)).get();
+							found = true;
+						} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
+							length = (int) ((Unsigned32) field.get(this)).get();
+							found = true;
+						}
+					} catch (NoSuchFieldException nsfe) {
+						// Ignore and move on
+					}
+
+					if (!found) {
+						Method method = getClass().getDeclaredMethod(element.lengthMethodName);
+						length = (Integer) method.invoke(this);
+					}
+
+					result += length;
+				} catch (Throwable t) {
+					throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+				}
+
+			}
+		}
+
+		return result;
 	}
 
 	@Override
@@ -259,7 +304,8 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 									data.position(data.position() + preceding + (size * i));
 									data.limit(data.position() + size);
 									try {
-										result[i] = element.dataClass.getDeclaredConstructor(ByteBuffer.class).newInstance(data);
+										result[i] = element.dataClass.newInstance();
+										element.dataClass.getMethod("init", ByteBuffer.class).invoke(result[i], data);
 									} catch (Throwable t) {
 										throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
 									}
@@ -412,7 +458,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 							if (remaining > 0) {
 								//								System.out.println("reading from data position " + data.position());
 								int destOffset = start + replacedBytes.length;
-								int sourceOffset = start + length;
+								//								int sourceOffset = start + length;
 								//								System.out.println("want to write " + sourceLength + " bytes into an array of size " + newBytes.length
 								//										+ " starting at " + destOffset);
 								//								System.arraycopy(dataArray, sourceOffset, newBytes, destOffset, sourceLength);

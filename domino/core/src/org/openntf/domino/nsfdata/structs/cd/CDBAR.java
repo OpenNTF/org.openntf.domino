@@ -8,6 +8,7 @@ import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.NOTES_COLOR;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the appearance of the bar used with collapsible sections.
@@ -165,6 +166,7 @@ public class CDBAR extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -172,12 +174,9 @@ public class CDBAR extends CDRecord {
 	public final Unsigned32 Flags = new Unsigned32();
 	public final FONTID FontID = inner(new FONTID());
 
-	public CDBAR(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDBAR(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
@@ -200,7 +199,7 @@ public class CDBAR extends CDRecord {
 		// Note: this can't use the standard methods because of the bizarre Color value above
 		int preceding = getFlags().contains(Flag.HAS_COLOR) ? 2 : 0;
 
-		int length = (int) (getDataLength() - 4 - FontID.size() - preceding);
+		int length = (int) (Header.getRecordLength() - 4 - FontID.size() - preceding);
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + FontID.size() + 4 + preceding);
 		data.limit(data.position() + length);

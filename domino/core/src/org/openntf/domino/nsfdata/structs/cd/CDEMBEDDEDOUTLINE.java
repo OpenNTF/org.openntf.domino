@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -8,6 +7,7 @@ import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.RepeatType;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record defines the attributes of an embedded outline. It is preceded by a CDHOTSPOTBEGIN and a CDPLACEHOLDER. The CD record,
@@ -108,6 +108,7 @@ public class CDEMBEDDEDOUTLINE extends CDRecord {
 		HIDE, SIMPLE, HIERARCHICAL
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -158,12 +159,9 @@ public class CDEMBEDDEDOUTLINE extends CDRecord {
 	public final Unsigned16 SpareWord = new Unsigned16();
 	public final Unsigned32[] Spare = array(new Unsigned32[4]);
 
-	public CDEMBEDDEDOUTLINE(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEMBEDDEDOUTLINE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

@@ -1,11 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD Record further defines information for a table. (editods.h)
@@ -38,6 +38,7 @@ public class CDTABLELABEL extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getLabel for access.
 	 */
@@ -50,12 +51,9 @@ public class CDTABLELABEL extends CDRecord {
 	@Deprecated
 	public final Unsigned16 Flags = new Unsigned16();
 
-	public CDTABLELABEL(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDTABLELABEL(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getLabel() {

@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.nio.ByteBuffer;
 
 /**
  * This structure holds the format for character text number strings. You set up this structure based on the number format you want to use.
@@ -25,14 +24,6 @@ public class NFMT extends AbstractStruct {
 	 */
 	public final Unsigned8 Attributes = new Unsigned8();
 	public final Unsigned8 Unused = new Unsigned8();
-
-	public NFMT() {
-		super();
-	}
-
-	public NFMT(final ByteBuffer data) {
-		super(data);
-	}
 
 	public short getAttributes() {
 		// TODO make enum

@@ -1,9 +1,8 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Release 5.0 of Domino. To preserve compatibility with existing applications, the new attributes
@@ -14,6 +13,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDEXT2FIELD extends CDRecord {
+	public final WSIG Header = inner(new WSIG());
 	// TODO make enum
 	public final Unsigned8 NumSysPref = new Unsigned8();
 	// TODO make enum
@@ -88,12 +88,9 @@ public class CDEXT2FIELD extends CDRecord {
 		addVariableData("IMGroupFormula", "wIMGroupFormulaLen");
 	}
 
-	public CDEXT2FIELD(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEXT2FIELD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getDecimalSymbol() {

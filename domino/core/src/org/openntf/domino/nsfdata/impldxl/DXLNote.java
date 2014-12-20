@@ -94,8 +94,8 @@ public class DXLNote implements NSFNote, Serializable {
 								System.out.println("we went too deep!");
 								break;
 							}
-							System.out.print("\t\t\t[Signature: " + record.getSignature());
-							System.out.print(", Length: " + record.getDataLength());
+							System.out.print("\t\t\t[Signature: " + record.getHeader());
+							System.out.print(", Length: " + record.getHeader().getRecordLength());
 							System.out.print(", Value: " + record);
 							System.out.println("]");
 

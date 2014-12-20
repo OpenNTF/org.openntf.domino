@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -12,12 +11,10 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPARAGRAPH extends CDRecord {
 
-	public CDPARAGRAPH(final CDSignature cdSig) {
-		super(cdSig);
-	}
+	public final BSIG Header = inner(new BSIG());
 
-	public CDPARAGRAPH(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
-
 }

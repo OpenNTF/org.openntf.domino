@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the end of an OLE Object in a rich text field. (editods.h)
@@ -10,14 +9,12 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDOLEEND extends CDRecord {
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned32 Flags = new Unsigned32();
 
-	public CDOLEEND(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDOLEEND(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	//	@Override

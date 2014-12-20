@@ -1,11 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record describes border information for a given table. This CD record will be preceded with CD record CDPRETABLEBEGIN both
@@ -92,6 +92,7 @@ public class CDBORDERINFO extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned32 Flags = new Unsigned32();
 	public final Enum16<Style> BorderStyle = new Enum16<Style>(Style.values());
 	public final Unsigned16 BorderWidthTop = new Unsigned16();
@@ -116,12 +117,9 @@ public class CDBORDERINFO extends CDRecord {
 	public final COLOR_VALUE Color = inner(new COLOR_VALUE());
 	public final Unsigned16[] wSpares = array(new Unsigned16[5]);
 
-	public CDBORDERINFO(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDBORDERINFO(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**

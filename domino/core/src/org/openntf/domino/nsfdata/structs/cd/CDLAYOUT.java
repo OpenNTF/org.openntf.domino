@@ -1,9 +1,9 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -68,6 +68,7 @@ public class CDLAYOUT extends CDRecord {
 		}
 	}
 
+	public final BSIG Header = inner(new BSIG());
 	public final Unsigned16 wLeft = new Unsigned16();
 	public final Unsigned16 wWidth = new Unsigned16();
 	public final Unsigned16 wHeight = new Unsigned16();
@@ -79,12 +80,9 @@ public class CDLAYOUT extends CDRecord {
 	public final Unsigned16 wGridSize = new Unsigned16();
 	public final Unsigned8[] Reserved = array(new Unsigned8[14]);
 
-	public CDLAYOUT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDLAYOUT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

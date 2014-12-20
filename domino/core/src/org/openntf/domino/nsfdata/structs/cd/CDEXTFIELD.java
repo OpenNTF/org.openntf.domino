@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Release 4.0 of Notes. To preserve compatibility with existing applications, the new attributes
@@ -22,6 +21,7 @@ public class CDEXTFIELD extends CDRecord {
 		NONE, ADDRDLG, ACLDLG, VIEWDLG
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	// TODO make enum
 	public final Unsigned32 Flags1 = new Unsigned32();
 	// TODO make enum
@@ -36,12 +36,9 @@ public class CDEXTFIELD extends CDRecord {
 		addVariableString("EntryViewName", "EntryViewNameLen");
 	}
 
-	public CDEXTFIELD(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEXTFIELD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getEntryHelperDBName() {

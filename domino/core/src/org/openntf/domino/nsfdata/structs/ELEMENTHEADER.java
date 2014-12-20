@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.nio.ByteBuffer;
 
 /**
  * This structure contains the common fields for the graphical elements in a layout region of a form.
@@ -36,14 +35,6 @@ public class ELEMENTHEADER extends AbstractStruct {
 	public final Unsigned8 byBackColor = new Unsigned8();
 	public final Unsigned8 bSpare = new Unsigned8();
 	public final COLOR_VALUE BackgroundColor = inner(new COLOR_VALUE());
-
-	public ELEMENTHEADER() {
-		super();
-	}
-
-	public ELEMENTHEADER(final ByteBuffer data) {
-		super(data);
-	}
 
 	@Override
 	public String toString() {

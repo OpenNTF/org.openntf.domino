@@ -14,6 +14,7 @@ import org.openntf.domino.nsfdata.structs.NFMT;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.TFMT;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines the structure of a CDFIELD record in the $Body item of a form note. Each CDFIELD record defines the attributes of one field
@@ -170,6 +171,7 @@ public class CDFIELD extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -201,12 +203,9 @@ public class CDFIELD extends CDRecord {
 		addVariableString("Desc", "DescLength");
 	}
 
-	public CDFIELD(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDFIELD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
@@ -269,7 +268,8 @@ public class CDFIELD extends CDRecord {
 			data.order(ByteOrder.LITTLE_ENDIAN);
 			data.position(data.position() + 32 + preceding);
 			data.limit(data.position() + 2);
-			LIST list = new LIST(data);
+			LIST list = new LIST();
+			list.init(data);
 			int listEntries = list.ListEntries.get();
 
 			data = getData().duplicate();

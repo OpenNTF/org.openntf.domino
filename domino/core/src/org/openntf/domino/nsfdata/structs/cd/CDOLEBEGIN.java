@@ -1,29 +1,16 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the start of an OLE Object. (editods.h)
  *
  */
 public class CDOLEBEGIN extends CDRecord {
-
-	//	public final Unsigned16 Version = new Unsigned16();
-	public final Enum16<OLEVersion> Version = new Enum16<OLEVersion>(OLEVersion.values());
-	/**
-	 * Use getFlags for access.
-	 */
-	@Deprecated
-	public final Unsigned32 Flags = new Unsigned32();
-	public final Enum16<DDEFormat> ClipFormat = new Enum16<DDEFormat>(DDEFormat.values());
-	//	public final Unsigned16 ClipFormat = new Unsigned16();
-	public final Unsigned16 AttachNameLength = new Unsigned16();
-	public final Unsigned16 ClassNameLength = new Unsigned16();
-	public final Unsigned16 TemplateNameLength = new Unsigned16();
 
 	/**
 	 * These flags are used to define the type of OLE object a note contains. These flags are used by the Flags member of the CDOLEBEGIN
@@ -92,8 +79,21 @@ public class CDOLEBEGIN extends CDRecord {
 	 *
 	 */
 	public static enum OLEVersion {
-		UNKNOWN, VERSION1, VERSION2
+		UNUSED0, VERSION1, VERSION2
 	}
+
+	public final WSIG Header = inner(new WSIG());
+	public final Enum16<OLEVersion> Version = new Enum16<OLEVersion>(OLEVersion.values());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Enum16<DDEFormat> ClipFormat = new Enum16<DDEFormat>(DDEFormat.values());
+	//	public final Unsigned16 ClipFormat = new Unsigned16();
+	public final Unsigned16 AttachNameLength = new Unsigned16();
+	public final Unsigned16 ClassNameLength = new Unsigned16();
+	public final Unsigned16 TemplateNameLength = new Unsigned16();
 
 	static {
 		addVariableString("AttachName", "AttachNameLength");
@@ -101,12 +101,9 @@ public class CDOLEBEGIN extends CDRecord {
 		addVariableString("TemplateName", "TemplateNameLength");
 	}
 
-	public CDOLEBEGIN(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDOLEBEGIN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

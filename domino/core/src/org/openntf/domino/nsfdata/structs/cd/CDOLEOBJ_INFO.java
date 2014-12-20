@@ -1,11 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.OLE_GUID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies a connection to an OLE object. (oleods.h)
@@ -90,6 +90,7 @@ public class CDOLEOBJ_INFO extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 FileObjNameLength = new Unsigned16();
 	public final Unsigned16 DescriptionNameLength = new Unsigned16();
 	public final Unsigned16 FieldNameLength = new Unsigned16();
@@ -118,12 +119,9 @@ public class CDOLEOBJ_INFO extends CDRecord {
 		addVariableData("AssociatedFILEs", "AssociatedFILEsLength");
 	}
 
-	public CDOLEOBJ_INFO(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDOLEOBJ_INFO(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

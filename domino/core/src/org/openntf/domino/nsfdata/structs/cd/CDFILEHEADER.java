@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -13,6 +12,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDFILEHEADER extends CDRecord {
 
+	public final LSIG Header = inner(new LSIG());
 	public final Unsigned16 FileExtLen = new Unsigned16();
 	public final Unsigned32 FileDataSize = new Unsigned32();
 	public final Unsigned32 SegCount = new Unsigned32();
@@ -23,12 +23,9 @@ public class CDFILEHEADER extends CDRecord {
 		addVariableAsciiString("FileExt", "FileExtLen");
 	}
 
-	public CDFILEHEADER(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDFILEHEADER(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**

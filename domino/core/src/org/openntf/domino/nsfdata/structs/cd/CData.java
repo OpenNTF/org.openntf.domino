@@ -48,27 +48,31 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 		if (!data_.hasRemaining()) {
 			throw new NoSuchElementException();
 		}
-		//		System.out.println("opening pos: " + data_.position());
+		System.out.println("opening pos: " + data_.position());
+		System.out.println("opening capacity: " + data_.capacity());
 
-		// This has the side effect of incrementing the buffer by two for two gets
-		SIG sig = CDSignature.sigForData(data_.duplicate());
+		// Peek at the next couple bytes to get SIG and find the appropriate record type
+		SIG sig = CDSignature.sigForData(data_.duplicate().order(ByteOrder.LITTLE_ENDIAN));
 		//		System.out.println("making " + sig);
-
-		// Skip past the Signature's two bytes and the length of the Length value
-		// The length value from the signature is the length of the data PLUS the length of the header
-		data_.position(data_.position() + sig.getSigLength());
-
-		long dataLength = sig.getLength() - sig.getSigLength();
 
 		// Now the ByteBuffer is positioned at the start of the data
 		// Create a view starting at the start of the data and going the length of the data
-		ByteBuffer recordData = data_.duplicate();
-		recordData.order(ByteOrder.LITTLE_ENDIAN);
-		CDRecord record = CDRecord.create(sig, recordData);
+		ByteBuffer recordData = data_.duplicate().order(ByteOrder.LITTLE_ENDIAN);
+		long recordSize = sig.getRecordLength() + (sig.getRecordLength() % 2);
+		recordData.limit((int) (recordData.position() + recordSize));
+		//CDRecord record = CDRecord.create(sig, recordData);
+		CDRecord record = null;
+		try {
+			record = CDSignature.instanceClassForSig(sig).newInstance();
+		} catch (Exception e) {
+			throw e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
+		}
+		record.init(recordData);
 
 		// Skip past the data for the next record
 		try {
-			data_.position((int) (data_.position() + dataLength + record.getExtraLength()));
+			System.out.println("moving forward " + recordSize);
+			data_.position((int) (data_.position() + recordSize));
 		} catch (IllegalArgumentException e) {
 			throw e;
 		}

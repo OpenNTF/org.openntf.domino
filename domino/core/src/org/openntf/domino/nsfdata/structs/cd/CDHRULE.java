@@ -1,10 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Specifies a horizontal line (editods.h)
@@ -58,6 +58,7 @@ public class CDHRULE extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -77,12 +78,9 @@ public class CDHRULE extends CDRecord {
 	 */
 	public static final short DEFAULTHRULEWIDTH = 720;
 
-	public CDHRULE(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDHRULE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -14,15 +13,13 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPABFORMULAREF extends CDRecord {
 
+	public final BSIG Header = inner(new BSIG());
 	public final Unsigned16 SourcePABID = new Unsigned16();
 	public final Unsigned16 DestPABID = new Unsigned16();
 
-	public CDPABFORMULAREF(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDPABFORMULAREF(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	@Override

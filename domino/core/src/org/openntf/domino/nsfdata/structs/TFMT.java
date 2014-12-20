@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.nio.ByteBuffer;
 
 /**
  * This structure holds the format for character time/date strings. You set up this structure based on the time/date format you want to use.
@@ -28,14 +27,6 @@ public class TFMT extends AbstractStruct {
 	public final Enum8<TTFMT> Time = new Enum8<TTFMT>(TTFMT.values());
 	public final Enum8<TZFMT> Zone = new Enum8<TZFMT>(TZFMT.values());
 	public final Enum8<TSFMT> Structure = new Enum8<TSFMT>(TSFMT.values());
-
-	public TFMT() {
-		super();
-	}
-
-	public TFMT(final ByteBuffer data) {
-		super(data);
-	}
 
 	@Override
 	public String toString() {

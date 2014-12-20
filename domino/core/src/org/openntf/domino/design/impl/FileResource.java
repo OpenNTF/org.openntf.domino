@@ -96,6 +96,8 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			byte[] data = byteStream.toByteArray();
 
 			if (data.length > 0) {
+				//				CDResourceFile resourceFile = new CDResourceFile(data);
+				//				return resourceFile.getFileData().array();
 				CDResourceFile resourceFile = new CDResourceFile(data);
 				return resourceFile.getData();
 			} else {
@@ -124,6 +126,8 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			// Now create a CD record for the file data
 			CDResourceFile record = CDResourceFile.fromFileData(fileData, "");
 			byte[] reconData = record.getBytes();
+			//		CDResourceFile record = new CDResourceFile("");
+			//		byte[] reconData = record.getBytes().array();
 
 			// Write out the first chunk
 			int firstChunk = reconData.length > 20544 ? 20544 : reconData.length;
