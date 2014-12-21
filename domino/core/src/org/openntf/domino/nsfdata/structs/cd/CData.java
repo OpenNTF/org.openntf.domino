@@ -1,6 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.io.Serializable;
+import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.AbstractSequentialList;
@@ -12,10 +16,10 @@ import java.util.NoSuchElementException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.nsfdata.structs.SIG;
 
-public class CData extends AbstractSequentialList<CDRecord> implements Serializable {
+public class CData extends AbstractSequentialList<CDRecord> implements Externalizable {
 	private static final long serialVersionUID = 1L;
 
-	private final ByteBuffer data_;
+	private ByteBuffer data_;
 	@SuppressWarnings("unused")
 	private int startingPosition_;
 	private transient List<CDRecord> fetched_;
@@ -48,8 +52,8 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 		if (!data_.hasRemaining()) {
 			throw new NoSuchElementException();
 		}
-		System.out.println("opening pos: " + data_.position());
-		System.out.println("opening capacity: " + data_.capacity());
+		//		System.out.println("opening pos: " + data_.position());
+		//		System.out.println("opening capacity: " + data_.capacity());
 
 		// Peek at the next couple bytes to get SIG and find the appropriate record type
 		SIG sig = CDSignature.sigForData(data_.duplicate().order(ByteOrder.LITTLE_ENDIAN));
@@ -71,7 +75,7 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 
 		// Skip past the data for the next record
 		try {
-			System.out.println("moving forward " + recordSize);
+			//			System.out.println("moving forward " + recordSize);
 			data_.position((int) (data_.position() + recordSize));
 		} catch (IllegalArgumentException e) {
 			throw e;
@@ -83,6 +87,37 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 		fetched_.add(record);
 
 		return fetched_.get(fetched_.size() - 1);
+	}
+
+	public byte[] getBytes() {
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			for (CDRecord rec : this) {
+				bos.write(rec.getBytes());
+			}
+			return bos.toByteArray();
+		} catch (IOException ioe) {
+			throw new RuntimeException(ioe);
+		}
+	}
+
+	@Override
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		int capacity = in.readInt();
+		data_ = ByteBuffer.allocate(capacity);
+		for (int i = 0; i < capacity; i++) {
+			data_.put((byte) in.read());
+		}
+	}
+
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		ByteBuffer data = data_.duplicate();
+		data.position(0);
+		out.writeInt(data.capacity());
+		while (data.hasRemaining()) {
+			out.write(data.get());
+		}
 	}
 
 	private class CDataIterator implements ListIterator<CDRecord> {

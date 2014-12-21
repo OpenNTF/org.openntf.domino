@@ -19,6 +19,9 @@ public class CDResourceFile {
 	public CDFILESEGMENT[] segments_;
 
 	/**
+	 * Creates a CDResourceFile wrapping the underlying byte array. Until the file is modified, it does <b>not</b> copy the bytes, so any
+	 * modifications to the underlying array will also modify this data.
+	 * 
 	 * @param data
 	 *            A byte array representing a valid CD file record (i.e. one CDFILEHEADER and zero or more CDFILESEGMENTs).
 	 */
@@ -34,9 +37,13 @@ public class CDResourceFile {
 
 	public CDResourceFile(final String fileExt) {
 		header_ = new CDFILEHEADER();
+		header_.init();
+		header_.Header.setSigIdentifier(CDSignature.FILEHEADER.getBaseValue());
 		header_.setFileExt(fileExt);
+		header_.Header.setRecordLength(header_.size() + header_.getVariableSize());
 		header_.FileDataSize.set(0);
 		header_.SegCount.set(0);
+		segments_ = new CDFILESEGMENT[0];
 	}
 
 	public void setFileData(final byte[] fileData) {
@@ -44,7 +51,7 @@ public class CDResourceFile {
 
 		// Determine how many file segments will be needed based on the inferred size cap
 		int chunks = fileData.length / SEGMENT_SIZE_CAP;
-		if (fileData.length % 10240 > 0) {
+		if (fileData.length % SEGMENT_SIZE_CAP > 0) {
 			chunks++;
 		}
 		header_.SegCount.set(chunks);
@@ -55,17 +62,19 @@ public class CDResourceFile {
 
 			// Figure out our data and segment sizes
 			int dataOffset = SEGMENT_SIZE_CAP * i;
-			short dataSize = (short) ((fileData.length - dataOffset) > 10240 ? 10240 : (fileData.length - dataOffset));
+			short dataSize = (short) ((fileData.length - dataOffset) > SEGMENT_SIZE_CAP ? SEGMENT_SIZE_CAP : (fileData.length - dataOffset));
 			short segSize = (short) (dataSize % 2 == 0 ? dataSize : dataSize + 1);
 
 			segments_[i] = new CDFILESEGMENT();
-			segments_[i].DataSize.set(dataSize);
+			segments_[i].init();
+			segments_[i].Header.setSigIdentifier(CDSignature.FILESEGMENT.getBaseValue());
 			segments_[i].SegSize.set(segSize);
 			segments_[i].setFileData(fileData);
+			segments_[i].Header.setRecordLength(segments_[i].size() + segments_[i].getVariableSize());
 		}
 	}
 
-	public ByteBuffer getBytes() {
+	public ByteBuffer getData() {
 		int totalSize = 0;
 		totalSize += header_.getTotalSize();
 		for (CDFILESEGMENT seg : segments_) {
@@ -73,10 +82,16 @@ public class CDResourceFile {
 		}
 
 		ByteBuffer result = ByteBuffer.allocate(totalSize);
-		result.put(header_.getByteBuffer());
+		//		ByteBuffer headerBuffer = header_.getByteBuffer();
+		//		headerBuffer.position(0);
+		result.put(header_.getBytes());
 		for (CDFILESEGMENT seg : segments_) {
-			result.put(seg.getByteBuffer());
+			//			ByteBuffer segBuffer = seg.getByteBuffer();
+			//			segBuffer.position(0);
+			byte[] segBytes = seg.getBytes();
+			result.put(segBytes);
 		}
+		result.position(0);
 		return result;
 	}
 

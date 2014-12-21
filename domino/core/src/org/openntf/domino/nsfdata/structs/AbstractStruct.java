@@ -51,11 +51,12 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 		setByteBuffer(data.duplicate().order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
-	protected byte[] getBytes() {
+	public byte[] getBytes() {
 		ByteBuffer data = getData().duplicate();
-		int size = data.limit() - data.position();
-		byte[] result = new byte[size];
-		data.get(result);
+		//		int size = data.limit() - data.position();
+		byte[] result = new byte[(int) getTotalSize()];
+		// Ignore extra length when storing
+		data.get(result, 0, (int) (size() + getVariableSize()));
 		return result;
 	}
 
@@ -64,12 +65,16 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	}
 
 	public int getExtraLength() {
-		return 0;
+		return (int) ((size() + getVariableSize()) % 2);
 	}
 
 	public long getTotalSize() {
-		long result = size() + getExtraLength();
+		long result = size() + getVariableSize() + getExtraLength();
+		return result;
+	}
 
+	public long getVariableSize() {
+		long result = 0;
 		Collection<VariableElement> varElements = variableElements_.get(getClass().getName());
 		if (varElements != null) {
 			for (VariableElement element : varElements) {
@@ -105,7 +110,6 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 
 			}
 		}
-
 		return result;
 	}
 
@@ -380,6 +384,8 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 					int extra = String.class.equals(element.dataClass) && !element.isAscii ? length % 2 : 0;
 
 					if (StringUtil.equals(name, element.name)) {
+						//						System.out.println("determined length for existing data in " + name + " is " + length);
+
 						ByteBuffer data = getData().duplicate().order(ByteOrder.LITTLE_ENDIAN);
 						byte[] replacedBytes;
 						if (value == null) {
@@ -420,6 +426,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 								}
 							}
 						}
+						//						System.out.println("replacing with data length " + replacedBytes.length);
 
 						// Check if the result size is different from the original
 						if (replacedBytes.length == length) {
