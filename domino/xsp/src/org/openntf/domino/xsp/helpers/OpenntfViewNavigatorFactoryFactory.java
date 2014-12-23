@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.xsp.ODAPlatform;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.ViewNavigatorEx;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
+import com.ibm.xsp.model.domino.viewnavigator.FTViewNavigatorEx;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
 
@@ -103,6 +105,11 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		@Override
 		public ViewNavigatorEx createNavigator() {
 			ViewNavigatorEx result = super.createNavigator();
+			if (result instanceof FTViewNavigatorEx) {
+				if (ODAPlatform.isAppGodMode(null) && StringUtil.isNotEmpty(entrySearchString)) {
+					result = new OpenntfViewNavigatorEx(this, entrySearchString);
+				}
+			}
 			if (result instanceof NOIViewNavigatorEx9 || result instanceof NOIViewNavigatorEx) {
 				if (ODAPlatform.isAppGodMode(null)) {
 					// FacesContext ctx = FacesContext.getCurrentInstance();
