@@ -1,5 +1,7 @@
 package org.openntf.domino.nsfdata.structs;
 
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * The MIME_PART structure stores the mime parts for items of TYPE_MIME_PART. (mimeods.h)
@@ -8,15 +10,36 @@ package org.openntf.domino.nsfdata.structs;
  *
  */
 public class MIME_PART extends AbstractStruct {
-
-	public static final int MIME_PART_HAS_BOUNDARY = 0x00000001;
-	public static final int MIME_PART_HAS_HEADERS = 0x00000002;
-	public static final int MIME_PART_BODY_IN_DBOBJECT = 0x00000004;
-	public static final int MIME_PART_SHARED_DBOBJECT = 0x00000008;
-	public static final int MIME_PART_SKIP_FOR_CONVERSION = 0x00000010;
-
 	public static enum PartType {
 		UNDEFINED, PROLOG, BODY, EPILOG, RETRIEVE_INFO, MESSAGE
+	}
+
+	/**
+	 * The action flags based on the API documentation (MIME_PART_xxx)
+	 */
+	public static enum Flag {
+		HAS_BOUNDARY(0x00000001), HAS_HEADERS(0x00000002), BODY_IN_DBOBJECT(0x00000004), SHARED_DBOBJECT(0x00000008),
+		SKIP_FOR_CONVERSION(0x00000010);
+
+		private final int value_;
+
+		private Flag(final int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static Set<Flag> valuesOf(final int flags) {
+			Set<Flag> result = EnumSet.noneOf(Flag.class);
+			for (Flag flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
 	}
 
 	public final Unsigned16 wVersion = new Unsigned16();
@@ -38,27 +61,15 @@ public class MIME_PART extends AbstractStruct {
 	public final Unsigned16 wSpare = new Unsigned16();
 	public final Unsigned32 dwSpare = new Unsigned32();
 
-	// TODO add support for following MIME data
-
-	public long getFlags() {
-		// TODO create enum
-		return dwFlags.get();
+	static {
+		addVariableData("MIMEData", "wByteCount");
 	}
 
-	public boolean hasBoundary() {
-		return (getFlags() & MIME_PART_HAS_BOUNDARY) > 0;
+	public Set<Flag> getFlags() {
+		return Flag.valuesOf((int) dwFlags.get());
 	}
 
-	public boolean hasHeaders() {
-		return (getFlags() & MIME_PART_HAS_HEADERS) > 0;
+	public byte[] getMIMEData() {
+		return (byte[]) getVariableElement("MIMEData");
 	}
-
-	public boolean isBodyInDBObject() {
-		return (getFlags() & MIME_PART_BODY_IN_DBOBJECT) > 0;
-	}
-
-	public boolean isSkipForConversion() {
-		return (getFlags() & MIME_PART_SKIP_FOR_CONVERSION) > 0;
-	}
-
 }

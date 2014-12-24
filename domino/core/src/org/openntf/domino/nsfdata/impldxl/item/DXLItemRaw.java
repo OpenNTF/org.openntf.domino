@@ -17,6 +17,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 			return new DXLItemComposite(node, dupItemId);
 		case NOTEREF_LIST:
 			return new DXLItemRefList(node, dupItemId);
+		case MIME_PART:
+			return new DXLItemMIMEPart(node, dupItemId);
 		default:
 			return new DXLItemRaw(node, dupItemId);
 		}
