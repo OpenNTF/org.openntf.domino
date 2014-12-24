@@ -587,8 +587,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
-			// RPR: I don't exactly remember, why we do that. As far as I know, we should
-			// ensure that every MIME item is recycled before closing.
+
 			if (openMIMEEntities_ != null) {
 				if (entityItemName == null) {
 					for (Set<MIMEEntity> currEntitySet : openMIMEEntities_.values()) {
@@ -3463,11 +3462,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				break;
 			case HARD_TRUE:
 				lotus.domino.Document delegate = getDelegate();
-				result = delegate.removePermanently(true);
+				if (delegate != null) {
+					result = delegate.removePermanently(true);
+				} else {
+					result = true;
+				}
 				if (result) {
 					s_recycle(delegate);
 					this.setDelegate(null, 0);
 				}
+				unid_ = null;
+				noteid_ = null;
 				break;
 			case HARD_FALSE:
 				result = getDelegate().removePermanently(false);
