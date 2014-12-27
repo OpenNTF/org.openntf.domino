@@ -19,6 +19,8 @@ public class DXLItemRaw extends AbstractDXLItem {
 			return new DXLItemRefList(node, dupItemId);
 		case MIME_PART:
 			return new DXLItemMIMEPart(node, dupItemId);
+		case COLLATION:
+			return new DXLItemCollation(node, dupItemId);
 		default:
 			return new DXLItemRaw(node, dupItemId);
 		}
