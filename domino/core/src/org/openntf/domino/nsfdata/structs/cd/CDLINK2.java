@@ -65,22 +65,25 @@ public class CDLINK2 extends CDRecord {
 		// Now we're past comment. Time to read in Hint
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		breaker = 0;
-		do {
-			aByte = data.get();
-			bos.write(aByte);
-			if (breaker++ > 1000) {
-				System.out.println("we dug too deep!");
-				return "";
-			}
-		} while (aByte != 0);
-		return ODSUtils.fromLMBCS(bos.toByteArray());
+		if (data.hasRemaining()) {
+			do {
+				aByte = data.get();
+				bos.write(aByte);
+				if (breaker++ > 1000) {
+					System.out.println("we dug too deep!");
+					return "";
+				}
+			} while (aByte != 0 && data.hasRemaining());
+			return ODSUtils.fromLMBCS(bos.toByteArray());
+		} else {
+			return "";
+		}
 	}
 
 	/**
 	 * @return Anchor text (optional)
 	 */
 	public String getAnchor() {
-		// TODO make this work - namely, figure out how to know when it's present
 		// Seek to the first null byte (the end of Comment)
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 2);
@@ -92,10 +95,13 @@ public class CDLINK2 extends CDRecord {
 				System.out.println("we dug too deep!");
 				return "";
 			}
-		} while (aByte != 0);
+		} while (aByte != 0 && data.hasRemaining());
+		if (!data.hasRemaining()) {
+			return "";
+		}
 
 		// Now seek to the second null byte (end of Hint)
-		data.position(data.position() + 2);
+		data.get();
 		breaker = 0;
 		do {
 			aByte = data.get();
@@ -103,20 +109,24 @@ public class CDLINK2 extends CDRecord {
 				System.out.println("we dug too deep!");
 				return "";
 			}
-		} while (aByte != 0);
+		} while (aByte != 0 && data.hasRemaining());
 
 		// Now we're past Hint. Time to read in Anchor
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		breaker = 0;
-		do {
-			aByte = data.get();
-			bos.write(aByte);
-			if (breaker++ > 1000) {
-				System.out.println("we dug too deep!");
-				return "";
-			}
-		} while (aByte != 0);
-		return ODSUtils.fromLMBCS(bos.toByteArray());
+		if (data.hasRemaining()) {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			breaker = 0;
+			do {
+				aByte = data.get();
+				bos.write(aByte);
+				if (breaker++ > 1000) {
+					System.out.println("we dug too deep!");
+					return "";
+				}
+			} while (aByte != 0 && data.hasRemaining());
+			return ODSUtils.fromLMBCS(bos.toByteArray());
+		} else {
+			return "";
+		}
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import org.openntf.domino.nsfdata.NSFDateTime;
 import org.openntf.domino.nsfdata.NSFItem;
+import org.openntf.domino.nsfdata.NSFItem.Type;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public enum DXLItemFactory {
@@ -36,7 +37,13 @@ public enum DXLItemFactory {
 		} else if ("textlist".equals(dataNodeName)) {
 			return new DXLItemTextList(node, dupItemId);
 		} else if ("number".equals(dataNodeName)) {
-			return new DXLItemNumber(node, dupItemId);
+			// the value may be @Error
+			XMLNode numberNode = node.selectSingleNode("./number");
+			if (numberNode.getText().equals("@ERROR")) {
+				return new DXLItemError(node, dupItemId, Type.NUMBER);
+			} else {
+				return new DXLItemNumber(node, dupItemId);
+			}
 		} else if ("numberlist".equals(dataNodeName)) {
 			return new DXLItemNumberRange(node, dupItemId);
 		} else if ("datetime".equals(dataNodeName)) {

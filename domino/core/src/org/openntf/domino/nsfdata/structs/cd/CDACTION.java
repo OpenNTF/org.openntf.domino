@@ -153,7 +153,7 @@ public class CDACTION extends CDRecord {
 	public final Enum16<ActionType> Type = new Enum16<ActionType>(ActionType.values());
 	public final Unsigned16 IconIndex = new Unsigned16();
 	/**
-	 * Use getFlags for access.
+	 * @deprecated Use getFlags for access.
 	 */
 	@Deprecated
 	public final Unsigned32 Flags = new Unsigned32();

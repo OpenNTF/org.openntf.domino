@@ -46,6 +46,8 @@ public class DXLNote implements NSFNote, Serializable {
 		String noteClass = node.getAttribute("class");
 		if ("replicationformula".equalsIgnoreCase(noteClass)) {
 			noteClass = "replformula";
+		} else if ("helpindex".equalsIgnoreCase(noteClass)) {
+			noteClass = "help_index";
 		}
 		noteClass_ = NoteClass.valueOf(noteClass.toUpperCase());
 		default_ = "true".equals(node.getAttribute("default"));

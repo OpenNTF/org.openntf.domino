@@ -716,7 +716,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 			result.append("]");
 			return result.toString();
 		} catch (RuntimeException re) {
-			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName() + " FOR FIELD " + currentField);
+			System.err.println("RUNTIME EXCEPTION IN " + getClass().getName() + " FOR FIELD " + currentField);
 			throw re;
 		}
 	}

@@ -62,6 +62,15 @@ public class ViewFormat {
 				itemNames_[i] = "";
 			}
 
+			int columnTitleSize = columnFormats_[i].TitleSize.get();
+			if (columnTitleSize > 0) {
+				byte[] columnTitleBytes = new byte[columnTitleSize];
+				localData.get(columnTitleBytes);
+				columnTitles_[i] = ODSUtils.fromLMBCS(columnTitleBytes);
+			} else {
+				columnTitles_[i] = "";
+			}
+
 			int formulaSize = columnFormats_[i].FormulaSize.get();
 			if (formulaSize > 0) {
 				byte[] formulaBytes = new byte[formulaSize];
@@ -80,14 +89,6 @@ public class ViewFormat {
 				constantValues_[i] = null;
 			}
 
-			int columnTitleSize = columnFormats_[i].TitleSize.get();
-			if (columnTitleSize > 0) {
-				byte[] columnTitleBytes = new byte[columnTitleSize];
-				localData.get(columnTitleBytes);
-				columnTitles_[i] = ODSUtils.fromLMBCS(columnTitleBytes);
-			} else {
-				columnTitles_[i] = "";
-			}
 		}
 
 		// VIEW_TABLE_FORMAT2 exists for views saved in Notes 2.0 and later
@@ -140,11 +141,13 @@ public class ViewFormat {
 		}
 
 		// one VIEW_COLUMN_FORMAT3 for each column saved in Notes 5.0 and later
-		if (localData.hasRemaining()) {
-			format3_ = new VIEW_TABLE_FORMAT3();
-			format3_.init(localData);
-			localData.position(localData.position() + format3_.size());
-		}
+		// TODO Nifty 50 trleader.nsf view "TeamRoom Leader's Guide" has 8 bytes remaining at this point somehow
+		//		if (localData.hasRemaining()) {
+		//			System.out.println("remaining amount: " + localData.remaining());
+		//			format3_ = new VIEW_TABLE_FORMAT3();
+		//			format3_.init(localData);
+		//			localData.position(localData.position() + format3_.size());
+		//		}
 	}
 
 	public VIEW_TABLE_FORMAT getFormat() {

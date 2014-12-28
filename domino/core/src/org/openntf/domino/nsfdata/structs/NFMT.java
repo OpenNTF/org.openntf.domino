@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs;
 
-
 /**
  * This structure holds the format for character text number strings. You set up this structure based on the number format you want to use.
  * Definitions for the various fields of this structure are found in NFMT_xxx and NATTR_xxx. (misc.h)
@@ -18,7 +17,9 @@ public class NFMT extends AbstractStruct {
 	/**
 	 * Display Format
 	 */
-	public final Enum8<NumFormat> Format = new Enum8<NumFormat>(NumFormat.values());
+	// TODO Figure out why this doesn't work as an enum (Nifty 50 FORMROUT.NSF contains a value 58 here)
+	//	public final Enum8<NumFormat> Format = new Enum8<NumFormat>(NumFormat.values());
+	public final Unsigned8 Format = new Unsigned8();
 	/**
 	 * Display Attributes
 	 */

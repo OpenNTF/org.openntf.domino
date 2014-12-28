@@ -32,7 +32,7 @@ public class CDTEXT extends CDRecord {
 	}
 
 	public int getTextLength() {
-		return (int) (Header.getRecordLength() - Header.size() - FontID.getStructSize());
+		return (int) (Header.getRecordLength() - Header.size() - FontID.size());
 	}
 
 	@Override

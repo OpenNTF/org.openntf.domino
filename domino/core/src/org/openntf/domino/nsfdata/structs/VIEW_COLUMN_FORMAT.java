@@ -122,7 +122,9 @@ public class VIEW_COLUMN_FORMAT extends AbstractStruct {
 	public final Unsigned16 Flags2 = new Unsigned16();
 	public final NFMT NumberFormat = inner(new NFMT());
 	public final TFMT TimeFormat = inner(new TFMT());
-	public final Enum16<DataType> FormatDataType = new Enum16<DataType>(DataType.values());
+	// TODO FORMROUT.NSF contained 16424
+	public final Unsigned16 FormatDataType = new Unsigned16();
+	//	public final Enum16<DataType> FormatDataType = new Enum16<DataType>(DataType.values());
 	// TODO match to LDDELIM_xxx
 	public final Unsigned16 ListSep = new Unsigned16();
 

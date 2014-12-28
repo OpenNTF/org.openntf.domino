@@ -39,21 +39,41 @@ public class DXLItemObjectFile extends DXLItemObject {
 		XMLNode objectNode = node.getFirstChildElement();
 		XMLNode fileNode = objectNode.getFirstChildElement();
 
-		hostType_ = HostType.valueOf(fileNode.getAttribute("hosttype").toUpperCase());
-		compressionType_ = CompressionType.valueOf(fileNode.getAttribute("compression").toUpperCase());
+		String hostType = fileNode.getAttribute("hosttype");
+		if (!hostType.isEmpty()) {
+			hostType_ = HostType.valueOf(hostType.toUpperCase());
+		} else {
+			hostType_ = null;
+		}
+		String compressionType = fileNode.getAttribute("compression");
+		if (!compressionType.isEmpty()) {
+			compressionType_ = CompressionType.valueOf(compressionType.toUpperCase());
+		} else {
+			compressionType_ = null;
+		}
 		encoding_ = fileNode.getAttribute("encoding");
 		fileName_ = fileNode.getAttribute("name");
 		fileSize_ = Long.parseLong(fileNode.getAttribute("size"), 10);
 
 		flags_ = EnumSet.noneOf(Flag.class);
 		for (String flag : fileNode.getAttribute("flags").split("[,\\s]")) {
-			flags_.add(Flag.valueOf(flag.toUpperCase()));
+			if (!flag.trim().isEmpty()) {
+				flags_.add(Flag.valueOf(flag.toUpperCase()));
+			}
 		}
 
 		XMLNode createdNode = fileNode.selectSingleNode("./created/datetime");
-		fileCreated_ = DXLItemFactory.createDateTime(createdNode).toDate();
+		if (!createdNode.getText().isEmpty()) {
+			fileCreated_ = DXLItemFactory.createDateTime(createdNode).toDate();
+		} else {
+			fileCreated_ = null;
+		}
 		XMLNode modifiedNode = fileNode.selectSingleNode("./modified/datetime");
-		fileModified_ = DXLItemFactory.createDateTime(modifiedNode).toDate();
+		if (!modifiedNode.getText().isEmpty()) {
+			fileModified_ = DXLItemFactory.createDateTime(modifiedNode).toDate();
+		} else {
+			fileModified_ = null;
+		}
 
 		value_ = parseBase64Binary(fileNode.selectSingleNode("./filedata").getText());
 	}

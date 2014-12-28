@@ -51,7 +51,9 @@ public class VIEW_TABLE_FORMAT2 extends AbstractStruct {
 	public final Unsigned16 AlternateBackgroundColor = new Unsigned16();
 	public final Unsigned16 wSig = new Unsigned16();
 	public final Unsigned8 LineCount = new Unsigned8();
-	public final Enum8<SpacingType> Spacing = new Enum8<SpacingType>(SpacingType.values());
+	// TODO investigate why this doesn't work as an enum (observed values of 8 and 68 in Nifty 50)
+	//	public final Enum8<SpacingType> Spacing = new Enum8<SpacingType>(SpacingType.values());
+	public final Unsigned8 Spacing = new Unsigned8();
 	public final Unsigned16 BackgroundColorExt = new Unsigned16();
 	public final Unsigned8 HeaderLineCount = new Unsigned8();
 	/**
