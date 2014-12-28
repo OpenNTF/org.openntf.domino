@@ -116,7 +116,7 @@ public enum CDSignature {
 	PRETABLEBEGIN(WORD, 251, CDPRETABLEBEGIN.class), BORDERINFO(WORD, 252, CDBORDERINFO.class), EMBEDDEDSCHEDCTL(WORD, 253, null),
 	EXT2_FIELD(WORD, 254, CDEXT2FIELD.class), EMBEDDEDEDITCTL(WORD, 255, null),
 
-	DOCUMENT_PRE_26(BYTE, 128, null), FIELD_PRE_36(WORD, 132, null), FIELD(WORD, 138, CDFIELD.class),
+	DOCUMENT_PRE_26(BYTE, 128, null), FIELD_PRE_36(WORD, 132, CDFIELD_PRE_36.class), FIELD(WORD, 138, CDFIELD.class),
 	DOCUMENT(BYTE, 134, CDDOCUMENT.class), METAFILE(WORD, 135, null), BITMAP(WORD, 136, null), FONTTABLE(WORD, 139, CDFONTTABLE.class),
 	LINK(BYTE, 140, null), LINKEXPORT(BYTE, 141, null), KEYWORD(WORD, 143, null), LINK2(WORD, 145, CDLINK2.class), CGM(WORD, 147, null),
 	TIFF(LONG, 148, null), PATTERNTABLE(LONG, 152, CDPATTERNTABLE.class), DDEBEGIN(WORD, 161, null), DDEEND(WORD, 162, null),
@@ -242,6 +242,9 @@ public enum CDSignature {
 			RecordLength recLength = cdSig.getEffectiveRecordLength();
 			if (cdSig.getBaseValue() == sig.getSigIdentifier()
 					&& ((recLength == BYTE && sig instanceof BSIG) || (recLength == WORD && sig instanceof WSIG) || (recLength == LONG && sig instanceof LSIG))) {
+				if (cdSig.getInstanceClass() == null) {
+					throw new UnsupportedOperationException("No implementing class found for signature " + cdSig);
+				}
 				return cdSig.getInstanceClass();
 			}
 		}
