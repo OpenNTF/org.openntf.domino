@@ -667,6 +667,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	//	}
 	//
 	protected String buildDebugString() {
+		String currentField = null;
 		try {
 			StringBuilder result = new StringBuilder();
 			result.append("[");
@@ -676,6 +677,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 			boolean addedProp = false;
 
 			for (Field field : getClass().getDeclaredFields()) {
+				currentField = field.getName();
 				// TODO add array support
 				if (Struct.Member.class.isAssignableFrom(field.getType())) {
 					if (addedProp) {
@@ -697,6 +699,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 
 			if (variableElements_.containsKey(getClass().getName())) {
 				for (VariableElement element : variableElements_.get(getClass().getName())) {
+					currentField = element.name;
 					//					System.out.println("getting element " + element.name);
 					if (addedProp) {
 						result.append(", ");
@@ -713,7 +716,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 			result.append("]");
 			return result.toString();
 		} catch (RuntimeException re) {
-			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName());
+			System.out.println("RUNTIME EXCEPTION IN " + getClass().getName() + " FOR FIELD " + currentField);
 			throw re;
 		}
 	}
