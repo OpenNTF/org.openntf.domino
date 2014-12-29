@@ -109,6 +109,7 @@ public interface WrapperFactory extends Base<lotus.domino.Base> {
 
 	void recycle(lotus.domino.Base obj);
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	void recycle(Vector vec);
 
@@ -138,6 +139,7 @@ public interface WrapperFactory extends Base<lotus.domino.Base> {
 	 */
 	public String[] getLastWrappedDocsInThread();
 
+	@SuppressWarnings("rawtypes")
 	public <T extends Base, P extends Base> T create(FactorySchema<T, ?, P> schema, P parent, Object metadata);
 
 }

@@ -21,15 +21,12 @@ package org.openntf.arpa;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Name.NameFormat;
+import org.openntf.domino.ext.Name.NamePartKey;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Strings;
 
 /**
  * NamePartsMap carries the various component string values that make up a name.
@@ -37,61 +34,54 @@ import org.openntf.domino.utils.Strings;
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  */
-public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements Serializable {
+public class NamePartsMap extends HashMap<NamePartKey, String> implements Serializable {
 
-	static NamePartsMap DOMAIN_PARTS = new NamePartsMap(Factory.getLocalServerName()); // don't know if this is correct
+	// Enum Key moved to Interface ext-Name (org.openntf.domino.ext.Name.NamePartKey)
 
-	public static enum Key {
-		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common,
-		Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname,
-		IDprefix, SourceString;
+	public static enum CanonicalKey {
+		CN("Common Name"), OU("Organizational Unit"), O("Organization"), C("Country Code");
+		private String _label;
 
 		@Override
 		public String toString() {
-			return Key.class.getName() + ": " + this.name();
+			return CanonicalKey.class.getName() + ": " + this.name() + "(\"" + this.getLabel() + "\")";
 		}
 
-		public String getInfo() {
-			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+		/**
+		 * Gets the Label for the Canonical Key
+		 * 
+		 * @return Label for the Canonical Key
+		 */
+		public String getLabel() {
+			return this._label;
 		}
-	};
 
-	//	public static enum CanonicalKey {
-	//		CN("Common Name"), OU("Organizational Unit"), O("Organization"), C("Country Code"), A("Administration Management Domain"),
-	//		Q("Generation"), S("Surname"), G("Given"), I("Initials"), P("Private Management Domain Name");
-	//		private String _label;
-	//
-	//		@Override
-	//		public String toString() {
-	//			return CanonicalKey.class.getName() + ": " + this.name() + "(\"" + this.getLabel() + "\")";
-	//		}
-	//
-	//		/**
-	//		 * Gets the Label for the Canonical Key
-	//		 * 
-	//		 * @return Label for the Canonical Key
-	//		 */
-	//		public String getLabel() {
-	//			return this._label;
-	//		}
-	//
-	//		/**
-	//		 * Instance Constructor
-	//		 * 
-	//		 * @param label
-	//		 *            Label for the Canonical Key
-	//		 */
-	//		private CanonicalKey(final String label) {
-	//			this._label = label;
-	//		}
-	//
-	//	}
+		/**
+		 * Sets the Label for the Canonical Key
+		 * 
+		 * @param label
+		 *            the Label for the Canonical Key
+		 */
+		private void setLabel(final String label) {
+			this._label = label;
+		}
+
+		/**
+		 * Instance Constructor
+		 * 
+		 * @param label
+		 *            Label for the Canonical Key
+		 */
+		private CanonicalKey(final String label) {
+			this.setLabel(label);
+		}
+
+	}
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(NamePartsMap.class.getName());
 	private static final long serialVersionUID = 1L;
 	private RFC822name _rfc822name;
-	private NameFormat _nameFormat = NameFormat.FLAT;
 
 	/**
 	 * * Zero-Argument Constructor
@@ -163,10 +153,6 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return this._rfc822name;
 	}
 
-	public NameFormat getNameFormat() {
-		return _nameFormat;
-	}
-
 	/**
 	 * Sets the RFC822name for the object
 	 * 
@@ -200,21 +186,17 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 */
 	@Override
 	public String get(final Object key) {
-		return (key instanceof NamePartsMap.Key) ? this.get((NamePartsMap.Key) key) : "";
+		return (key instanceof NamePartKey) ? this.get((NamePartKey) key) : "";
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(NamePartsMap.class.getName());
 		sb.append(" [");
-		boolean comma = false;
-		for (final Key key : Key.values()) {
+		for (final NamePartKey key : NamePartKey.values()) {
 			final String s = this.get(key);
 			if (!ISO.isBlankString(s)) {
-				if (comma)
-					sb.append(", ");
 				sb.append(key.name() + "=" + s);
-				comma = true;
 			}
 		}
 
@@ -233,19 +215,17 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * 
 	 * @see java.util.HashMap#get(Object)
 	 */
-	public String get(final NamePartsMap.Key key) {
+	public String get(final NamePartKey key) {
 		if (null != key) {
 			switch (key) {
 			case Abbreviated: {
-				if (_nameFormat == NameFormat.HIERARCHICALEX || _nameFormat == NameFormat.HIERARCHICALUNKNOWN)
-					return this.get(Key.SourceString);
-				final String common = this.get(NamePartsMap.Key.Common);
-				final String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
-				final String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
-				final String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
-				final String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
-				final String organization = this.get(NamePartsMap.Key.Organization);
-				final String country = this.get(NamePartsMap.Key.Country);
+				final String common = this.get(NamePartKey.Common);
+				final String ou1 = this.get(NamePartKey.OrgUnit1);
+				final String ou2 = this.get(NamePartKey.OrgUnit2);
+				final String ou3 = this.get(NamePartKey.OrgUnit3);
+				final String ou4 = this.get(NamePartKey.OrgUnit4);
+				final String organization = this.get(NamePartKey.Organization);
+				final String country = this.get(NamePartKey.Country);
 
 				final StringBuffer sb = new StringBuffer("");
 				if (!ISO.isBlankString(common)) {
@@ -298,28 +278,15 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				return this.getRFC822name().getAddr822Phrase();
 
 			case Canonical: {
-				if (_nameFormat == NameFormat.HIERARCHICALUNKNOWN)
-					return this.get(Key.SourceString);
-				final String generation = this.get(NamePartsMap.Key.Generation);
-				final String given = this.get(NamePartsMap.Key.Given);
-				final String common = this.get(NamePartsMap.Key.Common);
-				final String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
-				final String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
-				final String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
-				final String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
-				final String organization = this.get(NamePartsMap.Key.Organization);
-				final String country = this.get(NamePartsMap.Key.Country);
+				final String common = this.get(NamePartKey.Common);
+				final String ou1 = this.get(NamePartKey.OrgUnit1);
+				final String ou2 = this.get(NamePartKey.OrgUnit2);
+				final String ou3 = this.get(NamePartKey.OrgUnit3);
+				final String ou4 = this.get(NamePartKey.OrgUnit4);
+				final String organization = this.get(NamePartKey.Organization);
+				final String country = this.get(NamePartKey.Country);
 
 				final StringBuffer sb = new StringBuffer("");
-
-				if (!ISO.isBlankString(generation)) {
-					sb.append("Q=" + generation + "/");
-				}
-
-				if (!ISO.isBlankString(given)) {
-					sb.append("G=" + given + "/");
-				}
-
 				if (!ISO.isBlankString(common)) {
 					sb.append("*".equals(common) ? "*" : "CN=" + common);
 				}
@@ -353,7 +320,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 			default:
 				final String result = super.get(key);
-				return (result == null) ? "" : result;
+				return (null == result) ? "" : result;
 			}
 		}
 
@@ -374,7 +341,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * @see java.util.HashMap#put(Object, Object)
 	 */
 	@Override
-	public String put(final NamePartsMap.Key key, final String value) {
+	public String put(final NamePartKey key, final String value) {
 		if (null != key) {
 			if (ISO.isBlankString(value)) {
 				if (this.containsKey(key)) {
@@ -387,7 +354,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			switch (key) {
 			case Abbreviated: {
 				this.parse(value);
-				return this.get(Key.Abbreviated);
+				return this.get(NamePartKey.Abbreviated);
 			}
 
 			case Addr821:
@@ -410,7 +377,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 			case Canonical: {
 				this.parse(value);
-				return this.get(Key.Canonical);
+				return this.get(NamePartKey.Canonical);
 			}
 
 			case IDprefix:
@@ -433,10 +400,10 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * @return IDprefix for the Name
 	 */
 	public String getIDprefix() {
-		String result = super.get(Key.IDprefix);
+		String result = super.get(NamePartKey.IDprefix);
 		if (ISO.isBlankString(result)) {
 
-			final String common = this.get(Key.Common);
+			final String common = this.get(NamePartKey.Common);
 			if (null != common) {
 
 				final String alphanumericandspacacesonly = common.trim().toUpperCase().replaceAll("[^A-Za-z0-9 ]", "");
@@ -460,7 +427,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				result = sb.toString();
 
 				// use super.put() to avoid endless loop! 
-				super.put(Key.IDprefix, result);
+				super.put(NamePartKey.IDprefix, result);
 			}
 		}
 
@@ -558,7 +525,6 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 *            String from which to parse the name values.
 	 */
 	private boolean parse(final String string) {
-		this.put(Key.SourceString, string);
 		return this.parse(string, true);
 	}
 
@@ -579,8 +545,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			String country = "";
 
 			if (!ISO.isBlankString(string)) {
-				if (ISO.PatternRFC822.matcher(string).matches()) { // --------- RFC822 name --------------------
-					_nameFormat = NameFormat.RFC822;
+				if (ISO.PatternRFC822.matcher(string).matches()) {
 					this.parseRFC82xContent(string);
 					if (allowRecursion) {
 						final String phrase = this.getRFC822name().getAddr822Phrase();
@@ -590,94 +555,46 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 					return false;
 				}
 
-				if (string.indexOf('/') < 0) { // ------------------- flat name ---------------------------------
+				if (string.indexOf('/') < 0) {
 					common = string;
-					_nameFormat = NameFormat.FLAT;
 
-				} else { // ----------------------------------------- hierarchical Name -------------------------
-					_nameFormat = NameFormat.HIERARCHICAL;
+				} else {
 					// break the source into component words and parse them
 					final String[] words = string.split("/");
-
 					if (words.length > 0) {
 						int idx = 0;
 
-						if (string.indexOf('=') > 0) { // ---------- use canonical logic------------------------
+						if (string.indexOf('=') > 0) {
+							// use canonical logic
 							try {
 								TreeMap<Integer, String> undefinedValues = null;
 								int Oidx = -1;
 								int Cidx = -1;
-
 								for (int i = (words.length - 1); i >= 0; i--) {
 									final String word = words[i].trim();
-									int sep;
-									if ((sep = word.indexOf('=')) > 0) {
+									if (word.indexOf('=') > 0) {
+										final String[] nibbles = word.split("=");
+										if (nibbles.length > 1) {
+											final String key = nibbles[0];
+											final String value = nibbles[1];
 
-										if (word.indexOf('=', sep + 1) == -1) { // more than one ==
+											if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
+												country = value;
+												Cidx = i;
 
-											final String key = word.substring(0, sep).toUpperCase(Locale.ENGLISH);
-											final String value = word.substring(sep + 1);
-											if (key.length() == 1) {
-												switch (key.charAt(0)) {
+											} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
+												organization = value;
+												Oidx = i;
 
-												case 'C': // Country
-													country = value;
-													Cidx = i;
-													break;
-
-												case 'O': // Organitation
-													organization = value;
-													Oidx = i;
-													break;
-
-												case 'A':
-													//if (_nameFormat != NameFormat.HIERARCHICALUNKNOWN)
-													_nameFormat = NameFormat.HIERARCHICALUNKNOWN;
-													this.put(Key.ADMD, value);
-													break;
-												case 'G':
-													if (_nameFormat != NameFormat.HIERARCHICALUNKNOWN)
-														_nameFormat = NameFormat.HIERARCHICALEX;
-													this.put(NamePartsMap.Key.Given, value);
-													break;
-												case 'I':
-													if (_nameFormat != NameFormat.HIERARCHICALUNKNOWN)
-														_nameFormat = NameFormat.HIERARCHICALEX;
-													this.put(NamePartsMap.Key.Initials, value);
-													break;
-												case 'P':
-													//if (_nameFormat != NameFormat.HIERARCHICALUNKNOWN)
-													_nameFormat = NameFormat.HIERARCHICALUNKNOWN;
-													this.put(NamePartsMap.Key.PRMD, value);
-													break;
-												case 'S':
-													if (_nameFormat != NameFormat.HIERARCHICALUNKNOWN)
-														_nameFormat = NameFormat.HIERARCHICALEX;
-													this.put(NamePartsMap.Key.Surname, value);
-													break;
-												case 'Q':
-													if (_nameFormat != NameFormat.HIERARCHICALUNKNOWN)
-														_nameFormat = NameFormat.HIERARCHICALEX;
-													this.put(NamePartsMap.Key.Generation, value);
-													break;
-												default:
-													_nameFormat = NameFormat.HIERARCHICALUNKNOWN;
-													// TODO: Should we save unknown parts in the map?
-												}
-
-											} else if ("CN".equals(key)) {
-												common = value;
-
-											} else if ("OU".equals(key)) {
+											} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
 												if (idx < 4) {
 													ous[idx] = value;
 												}
 												idx++;
-											} else {
-												_nameFormat = NameFormat.HIERARCHICALUNKNOWN;
-												// TODO: Should we save unknown parts in the map?
-											}
 
+											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
+												common = value;
+											}
 										} else {
 											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
 													+ "\"");
@@ -736,22 +653,21 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 								DominoUtils.handleException(e, "Source String: \"" + string + "\"");
 							}
 
-						} else { // ----------------------------------- use abbreviated logic ------------------------------
+						} else {
+							// use abbreviated logic
 							common = words[0].trim();
 							if (words.length > 1) {
 								int orgpos = (words.length - 1);
 								organization = words[orgpos];
 								if (ISO.isCountryCode2(organization)) {
 									// organization could be a country code,
-									country = organization;
-									orgpos--;
-									if (orgpos > 0) {
+									if (orgpos > 1) {
 										// Treat organization as a country code
 										// and
 										// re-aquire the organization
+										country = organization;
+										orgpos--;
 										organization = words[orgpos];
-									} else {
-										organization = "";
 									}
 								}
 
@@ -772,79 +688,13 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				}
 			}
 
-			if (DOMAIN_PARTS != null && (_nameFormat == NameFormat.HIERARCHICAL || _nameFormat == NameFormat.HIERARCHICALEX)) {
-				do {
-					// fill missing parts from current domain
-					if (!ISO.isBlankString(country))
-						break;
-					country = DOMAIN_PARTS.get(Key.Country);
-
-					if (!ISO.isBlankString(organization))
-						break;
-					organization = DOMAIN_PARTS.get(Key.Organization);
-
-					if (!ISO.isBlankString(ous[3]))
-						break;
-					ous[3] = DOMAIN_PARTS.get(Key.OrgUnit4);
-
-					if (!ISO.isBlankString(ous[2]))
-						break;
-					ous[2] = DOMAIN_PARTS.get(Key.OrgUnit3);
-
-					if (!ISO.isBlankString(ous[1]))
-						break;
-					ous[1] = DOMAIN_PARTS.get(Key.OrgUnit2);
-
-					if (!ISO.isBlankString(ous[0]))
-						break;
-					ous[0] = DOMAIN_PARTS.get(Key.OrgUnit1);
-				} while (false);
-			}
-			this.put(Key.Common, common);
-			this.put(Key.OrgUnit1, ous[0]);
-			this.put(Key.OrgUnit2, ous[1]);
-			this.put(Key.OrgUnit3, ous[2]);
-			this.put(Key.OrgUnit4, ous[3]);
-			this.put(Key.Organization, organization);
-			this.put(Key.Country, country);
-			/**
-			 * From Designer help:
-			 * 
-			 * the following components of a hierarchical name in the order shown separated by backslashes: country or
-			 * region\organization\organizational unit 1\organizational unit 2\organizational unit 3\organizational unit 4. Returns an empty
-			 * string if the property is undefined.
-			 */
-			StringBuilder sb = new StringBuilder();
-			String tmp;
-			if (!Strings.isBlankString(tmp = get(Key.Country))) {
-				sb.append(tmp);
-			}
-			if (!Strings.isBlankString(tmp = get(Key.Organization))) {
-				if (sb.length() > 0)
-					sb.append('\\');
-				sb.append(tmp);
-			}
-			if (!Strings.isBlankString(tmp = get(Key.OrgUnit1))) {
-				if (sb.length() > 0)
-					sb.append('\\');
-				sb.append(tmp);
-			}
-			if (!Strings.isBlankString(tmp = get(Key.OrgUnit2))) {
-				if (sb.length() > 0)
-					sb.append('\\');
-				sb.append(tmp);
-			}
-			if (!Strings.isBlankString(tmp = get(Key.OrgUnit3))) {
-				if (sb.length() > 0)
-					sb.append('\\');
-				sb.append(tmp);
-			}
-			if (!Strings.isBlankString(tmp = get(Key.OrgUnit4))) {
-				if (sb.length() > 0)
-					sb.append('\\');
-				sb.append(tmp);
-			}
-			this.put(Key.Keyword, sb.toString());
+			this.put(NamePartKey.Common, common);
+			this.put(NamePartKey.OrgUnit1, ous[0]);
+			this.put(NamePartKey.OrgUnit2, ous[1]);
+			this.put(NamePartKey.OrgUnit3, ous[2]);
+			this.put(NamePartKey.OrgUnit4, ous[3]);
+			this.put(NamePartKey.Organization, organization);
+			this.put(NamePartKey.Country, country);
 
 			return true;
 

@@ -21,7 +21,7 @@ import lotus.domino.ViewEntry;
 import lotus.domino.ViewEntryCollection;
 import lotus.domino.ViewNavigator;
 
-import org.openntf.arpa.NamePartsMap;
+import org.openntf.domino.ext.Name.NamePartKey;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Names;
@@ -54,7 +54,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	private Boolean people;
 	private Boolean groups;
 	private String returnNameFormat;
-	private NamePartsMap.Key returnNameFormatAsKey;
+	private NamePartKey returnNameFormatAsKey;
 
 	/**
 	 * Constructor
@@ -72,7 +72,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	public String getReturnNameFormat() {
 		if (null != this.returnNameFormat) {
 			if (null == this.returnNameFormatAsKey) {
-				for (NamePartsMap.Key nameFormat : NamePartsMap.Key.values()) {
+				for (NamePartKey nameFormat : NamePartKey.values()) {
 					if (this.returnNameFormat.equals(nameFormat.name())) {
 						setReturnNameFormatAsKey(nameFormat);
 					}
@@ -83,7 +83,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		ValueBinding _vb = getValueBinding("returnNameFormat"); //$NON-NLS-1$
 		if (_vb != null) {
 			String passedVal = (String) _vb.getValue(getFacesContext());
-			for (NamePartsMap.Key nameFormat : NamePartsMap.Key.values()) {
+			for (NamePartKey nameFormat : NamePartKey.values()) {
 				if (passedVal.equals(nameFormat.name())) {
 					setReturnNameFormatAsKey(nameFormat);
 				}
@@ -104,23 +104,23 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	}
 
 	/**
-	 * Gets the return name format as a {@link NamePartsMap.Key}
+	 * Gets the return name format as a {@link NamePartKey}
 	 * 
-	 * @return NamePartsMap.Key
+	 * @return NamePartKey
 	 * @since org.openntf.domino.xsp 5.0.0
 	 */
-	public NamePartsMap.Key getReturnNameFormatAsKey() {
+	public NamePartKey getReturnNameFormatAsKey() {
 		return returnNameFormatAsKey;
 	}
 
 	/**
-	 * Loads the return name format as a {@link NamePartsMap.Key}
+	 * Loads the return name format as a {@link NamePartKey}
 	 * 
 	 * @param returnNameFormatAsKey
-	 *            NamePartsMap.Key
+	 *            NamePartKey
 	 * @since org.openntf.domino.xsp 5.0.0
 	 */
-	public void setReturnNameFormatAsKey(final NamePartsMap.Key returnNameFormatAsKey) {
+	public void setReturnNameFormatAsKey(final NamePartKey returnNameFormatAsKey) {
 		this.returnNameFormatAsKey = returnNameFormatAsKey;
 	}
 
@@ -571,7 +571,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	public abstract static class EntryMetaData {
 		private View view;
 		private IPickerOptions options;
-		private NamePartsMap.Key key;
+		private NamePartKey key;
 
 		/**
 		 * Constructor loading in the options
@@ -604,21 +604,21 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		}
 
 		/**
-		 * Gets a {@link NamePartsMap.Key} corresponding to the return name format defined on the Name Picker
+		 * Gets a {@link NamePartKey} corresponding to the return name format defined on the Name Picker
 		 * 
-		 * @return NamePartsMap.Key for the return name format
+		 * @return NamePartKey for the return name format
 		 */
-		public NamePartsMap.Key getKey() {
+		public NamePartKey getKey() {
 			return key;
 		}
 
 		/**
-		 * Loads in the return name format as a {@link NamePartsMap.Key} corresponding to the return name format defined on the Name Picker
+		 * Loads in the return name format as a {@link NamePartKey} corresponding to the return name format defined on the Name Picker
 		 * 
 		 * @param key
-		 *            NamePartsMap.Key
+		 *            NamePartKey
 		 */
-		public void setKey(final NamePartsMap.Key key) {
+		public void setKey(final NamePartKey key) {
 			this.key = key;
 		}
 
@@ -767,7 +767,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			NamePartsMap.Key key = getMetaData().getKey();
+			NamePartKey key = getMetaData().getKey();
 			if (null == key) {
 				return columnValues.get(0);
 			} else {
@@ -876,7 +876,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			NamePartsMap.Key key = getMetaData().getKey();
+			NamePartKey key = getMetaData().getKey();
 			if (null == key) {
 				return columnValues.get(1);
 			} else {
@@ -1069,7 +1069,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			NamePartsMap.Key key = getMetaData().getKey();
+			NamePartKey key = getMetaData().getKey();
 			if ("G".equals(columnValues.get(0))) {
 				// Groups are never canonical, only have a basic value
 				return columnValues.get(1);
