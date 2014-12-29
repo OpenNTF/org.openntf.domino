@@ -28,7 +28,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openntf.arpa.NamePartsMap;
 import org.openntf.arpa.RFC822name;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -36,6 +35,7 @@ import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.ext.Name.NamePartKey;
 
 /**
  * Name handling utilities
@@ -140,7 +140,7 @@ public enum Names {
 	 * 
 	 * @return source string converted to the appropriate name format
 	 */
-	public static String getNamePart(final Session session, final String source, final NamePartsMap.Key key) {
+	public static String getNamePart(final Session session, final String source, final NamePartKey key) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -175,7 +175,7 @@ public enum Names {
 	 * 
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
-	public static String[] getNameParts(final Session session, final String[] source, final NamePartsMap.Key key) {
+	public static String[] getNameParts(final Session session, final String[] source, final NamePartKey key) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -226,7 +226,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getAbbreviated(final Session session, final String[] source) {
-		return Names.getNameParts(session, source, NamePartsMap.Key.Abbreviated);
+		return Names.getNameParts(session, source, NamePartKey.Abbreviated);
 	}
 
 	/**
@@ -241,7 +241,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getAbbreviated(final Session session, final String source) {
-		return Names.getNamePart(session, source, NamePartsMap.Key.Abbreviated);
+		return Names.getNamePart(session, source, NamePartKey.Abbreviated);
 	}
 
 	/**
@@ -268,7 +268,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCanonical(final Session session, final String[] source) {
-		return Names.getNameParts(session, source, NamePartsMap.Key.Canonical);
+		return Names.getNameParts(session, source, NamePartKey.Canonical);
 	}
 
 	/**
@@ -283,7 +283,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCanonical(final Session session, final String source) {
-		return Names.getNamePart(session, source, NamePartsMap.Key.Canonical);
+		return Names.getNamePart(session, source, NamePartKey.Canonical);
 	}
 
 	/**
@@ -310,7 +310,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCommon(final Session session, final String[] source) {
-		return Names.getNameParts(session, source, NamePartsMap.Key.Common);
+		return Names.getNameParts(session, source, NamePartKey.Common);
 	}
 
 	/**
@@ -325,7 +325,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCommon(final Session session, final String source) {
-		return Names.getNamePart(session, source, NamePartsMap.Key.Common);
+		return Names.getNamePart(session, source, NamePartKey.Common);
 	}
 
 	/**

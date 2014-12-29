@@ -29,9 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.openntf.arpa.ISO;
 import org.openntf.domino.Document;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
@@ -302,56 +301,68 @@ public enum Strings {
 	 * @return Proper Case string from the specified source string.
 	 */
 	public static String toProperCase(final String string) {
-		return ISO.toProperCase(string);
+		return isBlankString(string) ? "" : string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
 	}
 
-	public static boolean isBlankString(final String string) {
-		if (string == null)
+	/**
+	 * Determines whether a CharSequence consists only of "White Spaces" (or is null or empty)
+	 * 
+	 * @param cs
+	 *            The CharSequence to test
+	 * 
+	 * @return true if it does
+	 */
+	public static boolean isBlankString(final CharSequence cs) {
+		if (cs == null)
 			return true;
-		return ISO.isBlankString(string);
+		for (int i = cs.length() - 1; i >= 0; i--)
+			if (!Character.isWhitespace(cs.charAt(i)))
+				return false;
+		return true;
 	}
 
 	/**
 	 * Determines if a string is null or blank
 	 * 
-	 * @param string
+	 * @param o
 	 *            Source string to check for null or blank value.
 	 * 
 	 * @return Flag indicating if the source string is null or blank.
 	 */
-	public static boolean isBlankString(final Object string) {
-		if (string instanceof CharSequence) {
-			return ISO.isBlankString(((CharSequence) string).toString());
-		} else {
-			if (string == null)
-				return true;
-			throw new RuntimeException("Cannot check for blankness on a non-null object of type " + string.getClass().getName());
-		}
+	public static boolean isBlankString(final Object o) {
+		if (o == null)
+			return true;
+		if (o instanceof CharSequence)
+			return isBlankString((CharSequence) o);
+		throw new RuntimeException("Cannot check for blankness on a non-null object of type " + o.getClass().getName());
 	}
 
-	public static boolean isHexadecimalString(final Object string) {
-		if (string instanceof CharSequence) {
-			return isHexadecimalString(((CharSequence) string).toString());
-		} else {
-			if (string == null)
-				return false;
-			throw new RuntimeException("Cannot check for hexidecimal on a non-null object of type " + string.getClass().getName());
-		}
+	/**
+	 * Determines if a specified object is a Hexadecimal string (comprised of characters 0-9 or A-F, case insensitive)
+	 * 
+	 * @param o
+	 *            Object to check.
+	 * @return true if it is
+	 */
+	public static boolean isHexadecimalString(final Object o) {
+		if (o == null)
+			return false;
+		if (o instanceof CharSequence)
+			return isHexadecimalString((CharSequence) o);
+		throw new RuntimeException("Cannot check for hexidecimal on a non-null object of type " + o.getClass().getName());
 	}
+
+	private static final Pattern PatternHexadecimal = Pattern.compile("^[A-Fa-f0-9]+$");
 
 	/**
 	 * Determines if a specified string is a Hexadecimal string (comprised of characters 0-9 or A-F, case insensitive)
 	 * 
-	 * @param string
+	 * @param cs
 	 *            Source string to check.
 	 * @return Flag indicating if string is comprised only of Hexadecimal characters.
 	 */
-	public static boolean isHexadecimalString(final String string) {
-		if (!Strings.isBlankString(string)) {
-			Matcher matcher = ISO.PatternHexadecimal.matcher(string);
-			return matcher.matches();
-		}
-		return false;
+	public static boolean isHexadecimalString(final CharSequence cs) {
+		return Strings.isBlankString(cs) ? false : PatternHexadecimal.matcher(cs).matches();
 	}
 
 	/**
@@ -663,15 +674,25 @@ public enum Strings {
 	 * <strong>Special Behavior</strong>: Returns false if source or prefix are null.
 	 * 
 	 * @param source
-	 *            String to check if begins with prefix.
+	 *            CharSequence to check if begins with prefix.
 	 * 
 	 * @param prefix
-	 *            String to match agains the beginning of source.
+	 *            CharSequence to match against the beginning of source.
 	 * 
 	 * @return Flag indicating if source begins with prefix.
 	 */
-	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
-		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
+	public static boolean startsWithIgnoreCase(final CharSequence source, final CharSequence prefix) {
+		// return source.toLowerCase().startsWith(prefix.toLowerCase());
+		// Of source, this works for Strings, but the variant below is cheaper
+		if (null == source || null == prefix)
+			return false;
+		int sz = prefix.length();
+		if (sz > source.length())
+			return false;
+		for (int i = 0; i < sz; i++)
+			if (Character.toLowerCase(source.charAt(i)) != Character.toLowerCase(prefix.charAt(i)))
+				return false;
+		return true;
 	}
 
 	/**
