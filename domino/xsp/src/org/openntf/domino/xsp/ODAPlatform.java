@@ -2,6 +2,7 @@ package org.openntf.domino.xsp;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
+import org.openntf.domino.config.Configuration;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -33,7 +34,7 @@ public enum ODAPlatform {
 	 * <li>startup the {@link Factory}</li>
 	 * <li>Configure the Factory with proper {@link INamedSessionFactory}s for XPages</li>
 	 * <li>Call {@link #verifyIGetEntryByKey()}</li>
-	 * <li>Start the {@link Xots} with 10 threads (if it is not completely disabled with "xots_tasks=0" in Notes.ini)</li>
+	 * <li>Start the {@link Xots} with 10 threads (if it is not completely disabled with "XotsTasks=0" in oda.nsf)</li>
 	 * </ol>
 	 * 
 	 * This is done automatically on server start or can manually invoked with<br>
@@ -44,16 +45,12 @@ public enum ODAPlatform {
 		// Here is all the init/term stuff done
 		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
 		Factory.startup();
-
 		// Setup the named factories 4 XPages
 		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 		verifyIGetEntryByKey();
 
-		int xotsTasks = 10;
-		try {
-			xotsTasks = Integer.parseInt(getEnvironmentString("xots_tasks"));
-		} catch (NumberFormatException e) {
-		}
+		int xotsTasks = Configuration.sGetConfigValueInt("XotsTasks", 10);
+
 		if (xotsTasks > 0) {
 			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
 			Xots.start(executor);
