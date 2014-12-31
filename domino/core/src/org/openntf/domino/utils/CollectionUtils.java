@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -36,6 +37,75 @@ import org.openntf.domino.Document;
  */
 public enum CollectionUtils {
 	;
+
+	public static class ChainedIterable<T> implements Iterable<T> {
+
+		private final List<Iterable<T>> iterables_;
+
+		protected static class ChainedIterator<T> implements Iterator<T> {
+			private final List<Iterable<T>> iterables_;
+			private Iterator<T> currentIterator;
+			private int current = 0;
+
+			ChainedIterator(final List<Iterable<T>> iterables) {
+				iterables_ = iterables;
+				currentIterator = iterables_.get(0).iterator();
+			}
+
+			@Override
+			public void remove() {
+				currentIterator.remove();
+			}
+
+			@Override
+			public boolean hasNext() {
+				while (true) {
+					if (currentIterator.hasNext()) {
+						return true;
+					} else {
+						this.current++;
+						if (this.current >= iterables_.size())
+							break;
+						this.currentIterator = iterables_.get(this.current).iterator();
+					}
+				}
+				return false;
+			}
+
+			@Override
+			public T next() {
+				while (true) {
+					if (currentIterator.hasNext()) {
+						return currentIterator.next();
+					} else {
+						this.current++;
+						if (this.current >= iterables_.size())
+							break;
+						this.currentIterator = iterables_.get(current).iterator();
+					}
+				}
+				throw new NoSuchElementException();
+			}
+		}
+
+		public ChainedIterable(final Iterable<T>... iterables) {
+			if (iterables != null && iterables.length > 0) {
+				iterables_ = new ArrayList<Iterable<T>>(iterables.length);
+				for (Iterable<T> iterable : iterables) {
+					iterables_.add(iterable);
+				}
+			} else {
+				throw new IllegalArgumentException("Cannot pass a null or empty set of iterables to a ChainedIterable");
+			}
+
+		}
+
+		@Override
+		public Iterator<T> iterator() {
+			return new ChainedIterator<T>(iterables_);
+		}
+
+	}
 
 	/**
 	 * Gets or generates an List of Strings from an Item on a Document
@@ -369,6 +439,10 @@ public enum CollectionUtils {
 		}
 
 		return null;
+	}
+
+	public static Iterable chain(final Iterable... iterables) {
+		return new ChainedIterable(iterables);
 	}
 
 }

@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 import lotus.notes.NotesThread;
 
-import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
@@ -50,7 +49,6 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -1110,22 +1108,33 @@ public enum Factory {
 		return iniFile;
 	}
 
+	@SuppressWarnings("restriction")
 	public static void startup() {
-
 		synchronized (Factory.class) {
-
-			NotesThread.sinitThread();
-			try {
-				lotus.domino.Session sess = lotus.domino.NotesFactory.createSession();
-				try {
-					startup(sess);
-				} finally {
-					sess.recycle();
+			//			System.out.println("TEMP DEBUG: Beginning initialization of the OpenNTF Domino API");
+			//TODO NTF or RPr run this in a separate thread because otherwise is corrupts the loading
+			//thread handling the Factory start up in the first place.
+			NotesThread nt = new NotesThread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						lotus.domino.Session sess = lotus.domino.NotesFactory.createSession();
+						try {
+							startup(sess);
+						} finally {
+							sess.recycle();
+						}
+					} catch (NotesException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (NotesException e) {
+			});
+			nt.start();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				NotesThread.stermThread();
 			}
 		}
 	}
@@ -1177,23 +1186,23 @@ public enum Factory {
 		};
 
 		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new NativeSessionFactory(null);
 
 		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new SessionFullAccessFactory(null);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
 		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new NativeSessionFactory(null);
 
 		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
-		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new TrustedSessionFactory(null);
 
 		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		= new SessionFullAccessFactory(null);
 
-		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
-		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		defaultNamedSessionFactory = new NamedSessionFactory(null);
+		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(null);
 
 		started = true;
 

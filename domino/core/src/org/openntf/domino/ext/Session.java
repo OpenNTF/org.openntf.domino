@@ -422,4 +422,17 @@ public interface Session {
 	//public ISessionFactory getSessionFactory();
 
 	public SessionHolder getSessionHolder();
+
+	/**
+	 * Sets this session to "no recycle". This means, a recycle call will do nothing.
+	 * 
+	 * @param noRecycle
+	 *            true = do not recycle that session
+	 */
+	public void setNoRecycle(boolean noRecycle);
+
+	/**
+	 * Recycling a session is allowed (needed to be compatible with @deprecated = error)
+	 */
+	public void recycle();
 }

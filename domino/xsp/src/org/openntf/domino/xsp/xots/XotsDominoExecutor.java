@@ -49,7 +49,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * 
 	 * @param <V>
 	 */
-	protected class XotsWrappedCallable<V> extends WrappedCallable<V> {
+	protected static class XotsWrappedCallable<V> extends WrappedCallable<V> {
 
 		private NSFComponentModule module_;
 
@@ -80,12 +80,17 @@ public class XotsDominoExecutor extends DominoExecutor {
 
 		@Override
 		public void run() {
-
 			try {
 				callOrRun(module_, bubbleException, sessionFactory, null, getWrappedTask());
 			} catch (Exception e) {
 				log_.log(Level.SEVERE, "Could not execute " + module_.getModuleName() + "/" + getWrappedTask().getClass(), e);
 			}
+		}
+
+		@Override
+		public String toString() {
+			return XotsWrappedRunnable.class.getName() + " " + System.identityHashCode(this) + " running a "
+					+ getWrappedTask().getClass().getName();
 		}
 	}
 
@@ -262,7 +267,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
 					org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
 
-					Factory.getNamedSessionFactory(true).createSession(current.getEffectiveUserName());
+					Factory.getNamedSessionFactory(true).createSession(null/*current.getEffectiveUserName()*/);
 					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT_FULL_ACCESS);
 				}
 

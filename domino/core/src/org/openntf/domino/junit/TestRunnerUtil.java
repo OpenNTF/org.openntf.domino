@@ -1,7 +1,5 @@
 package org.openntf.domino.junit;
 
-import org.openntf.domino.AutoMime;
-import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
@@ -12,8 +10,8 @@ import org.openntf.domino.utils.Factory.SessionType;
 public enum TestRunnerUtil {
 	;
 
-	public static ISessionFactory NATIVE_SESSION = new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-	public static ISessionFactory TRUSTED_SESSION = new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+	public static ISessionFactory NATIVE_SESSION = new NativeSessionFactory(null);
+	public static ISessionFactory TRUSTED_SESSION = new TrustedSessionFactory(null);
 
 	public static void runAsDominoThread(final Runnable r, final ISessionFactory sf) {
 		Factory.startup();

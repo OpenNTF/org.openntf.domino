@@ -627,6 +627,17 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 		return nc.getCount();
 	}
 
+	public NoteCollection getNoteCollection() {
+		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		nc.setSelectOptions(noteClass);
+		String selectionFormula = getSelectionFormula();
+		nc.setSelectionFormula(selectionFormula);
+		nc.buildCollection();
+		return nc;
+	}
+
 	@Override
 	public String getSelectionFormula() {
 		StringBuilder sb = new StringBuilder();

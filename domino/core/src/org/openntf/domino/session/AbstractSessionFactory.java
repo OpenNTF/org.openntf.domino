@@ -6,6 +6,7 @@ import java.security.AccessController;
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 
@@ -13,10 +14,6 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 	private static final long serialVersionUID = 1L;
 
 	protected static final AccessControlContext acc_ = AccessController.getContext();
-
-	private Fixes[] fixes_;
-
-	private AutoMime autoMime_;
 
 	protected String currentApiPath_;
 
@@ -28,38 +25,23 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 	//				null); 				// All the default sessionfactories do not have a contextDB
 	//	}
 
-	public AbstractSessionFactory(final Fixes[] fixes, final AutoMime autoMime, final String apiPath) {
-		fixes_ = fixes;
-		autoMime_ = autoMime;
+	public AbstractSessionFactory(final String apiPath) {
 		currentApiPath_ = apiPath;
 	}
 
-	public AbstractSessionFactory(final Session source) {
-		fixes_ = source.getEnabledFixes();
-		autoMime_ = source.getAutoMime();
-		// TODO Should we clone event factory and so on also?
-		Database currDb = source.getCurrentDatabase();
-		currentApiPath_ = currDb == null ? null : currDb.getApiPath();
-	}
-
-	public AbstractSessionFactory(final ISessionFactory source) {
-		AbstractSessionFactory sf = (AbstractSessionFactory) source;
-		fixes_ = sf.fixes_;
-		autoMime_ = sf.autoMime_;
-		currentApiPath_ = sf.currentApiPath_;
-	}
-
 	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
-		org.openntf.domino.impl.Session sess = (org.openntf.domino.impl.Session) Factory.fromLotus(raw, Session.SCHEMA, null);
-		sess.setSessionFactory(this);
+		WrapperFactory wf = Factory.getWrapperFactory();
+		org.openntf.domino.Session sess = Factory.fromLotus(raw, Session.SCHEMA, null);
 		sess.setNoRecycle(!selfCreated);
+		((org.openntf.domino.impl.Session) sess).setSessionFactory(this);
 
-		if (fixes_ != null) {
-			for (Fixes fix : fixes_) {
+		Fixes[] fixes = org.openntf.domino.ext.Session.Fixes.values();
+		if (fixes != null) {
+			for (Fixes fix : fixes) {
 				sess.setFixEnable(fix, true);
 			}
 		}
-		sess.setAutoMime(autoMime_);
+		sess.setAutoMime(AutoMime.WRAP_ALL);
 
 		sess.setConvertMIME(false);
 		if (selfCreated && currentApiPath_ != null) {
