@@ -50,7 +50,9 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 	public class _EntryMetaData extends EntryMetaData {
 		private int valueIndex;
 		private int labelIndex;
+		@SuppressWarnings("unused")
 		private String[] attributeNames;
+		@SuppressWarnings("unused")
 		private int[] attributeIndexes;
 
 		/**
@@ -65,7 +67,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		protected _EntryMetaData(final IPickerOptions options) throws NotesException {
 			super(options);
 
-			Vector<ViewColumn> vc = (Vector<ViewColumn>) getView().getColumns();
+			Vector<ViewColumn> vc = getView().getColumns();
 
 			// Look for the key column
 			if ((valueIndex = findSortColumnIndex(vc)) < 0) {
@@ -140,6 +142,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 	 * This class is an exact duplicate of that class
 	 */
 	public class _Entry extends Entry {
+		@SuppressWarnings("unused")
 		private Object[] attributes;
 
 		/**
@@ -371,6 +374,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getValue()
 		 */
+		@Override
 		public Object getValue() {
 			return value;
 		}
@@ -380,6 +384,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getLabel()
 		 */
+		@Override
 		public Object getLabel() {
 			return label;
 		}
@@ -389,6 +394,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getAttributeCount()
 		 */
+		@Override
 		public int getAttributeCount() {
 			return 0;
 		}
@@ -398,6 +404,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getAttributeName(int)
 		 */
+		@Override
 		public String getAttributeName(final int index) {
 			return null;
 		}
@@ -407,6 +414,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerEntry#getAttributeValue(int)
 		 */
+		@Override
 		public Object getAttributeValue(final int index) {
 			return attributes[index];
 		}
@@ -473,6 +481,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerResult#getEntries()
 		 */
+		@Override
 		public List<IPickerEntry> getEntries() {
 			return entries;
 		}
@@ -482,6 +491,7 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 		 * 
 		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerResult#getTotalCount()
 		 */
+		@Override
 		public int getTotalCount() {
 			return count;
 		}

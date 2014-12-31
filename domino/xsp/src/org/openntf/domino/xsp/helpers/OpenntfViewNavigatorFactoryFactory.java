@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.xsp.ODAPlatform;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.model.domino.ViewNavigatorEx;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
+import com.ibm.xsp.model.domino.viewnavigator.FTViewNavigatorEx;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
 
@@ -18,8 +20,8 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
  *         OpenntfViewNavigatorFactoryFactory class
  */
 public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.Factory {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorFactoryFactory.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	// static {
 	// System.out.println("Loaded " + OpenntfViewNavigatorFactoryFactory.class.getName());
@@ -53,8 +55,12 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 	 * OpenntfViewNavigatorFactory class
 	 */
 	public static class OpenntfViewNavigatorFactory extends ViewNavigatorFactory {
+		private static final long serialVersionUID = 1L;
+		@SuppressWarnings("unused")
 		private final String dbPath_;
+		@SuppressWarnings("unused")
 		private final String viewName_;
+		private String entrySearchString;
 
 		/**
 		 * Constructor
@@ -68,6 +74,16 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		public OpenntfViewNavigatorFactory(final String dbPath, final String viewName) {
 			dbPath_ = dbPath;
 			viewName_ = viewName;
+		}
+
+		@Override
+		public String getFTSearch() {
+			String superFT = super.getFTSearch();
+			if (superFT != null && superFT.startsWith("searchInEntries:")) {
+				setFTSearch("");
+				entrySearchString = superFT.substring(16);
+			}
+			return superFT;
 		}
 
 		/*
@@ -89,6 +105,11 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		@Override
 		public ViewNavigatorEx createNavigator() {
 			ViewNavigatorEx result = super.createNavigator();
+			if (result instanceof FTViewNavigatorEx) {
+				if (ODAPlatform.isAppGodMode(null) && StringUtil.isNotEmpty(entrySearchString)) {
+					result = new OpenntfViewNavigatorEx(this, entrySearchString);
+				}
+			}
 			if (result instanceof NOIViewNavigatorEx9 || result instanceof NOIViewNavigatorEx) {
 				if (ODAPlatform.isAppGodMode(null)) {
 					// FacesContext ctx = FacesContext.getCurrentInstance();
@@ -111,7 +132,7 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 					// System.out.println("This application is set to use basic state management mode");
 					// }
 					// }
-					result = new OpenntfViewNavigatorEx(this);
+					result = new OpenntfViewNavigatorEx(this, entrySearchString);
 				}
 			} else {
 				// System.out.println("returning a " + result.getClass().getName());

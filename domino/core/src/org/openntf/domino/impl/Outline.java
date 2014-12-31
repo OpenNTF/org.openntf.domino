@@ -29,7 +29,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Outline.
  */
-public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outline, Database> implements org.openntf.domino.Outline {
+public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus.domino.Outline, Database> implements
+		org.openntf.domino.Outline {
 
 	/**
 	 * Instantiates a new outline.
@@ -43,16 +44,8 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Outline(final lotus.domino.Outline delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Outline delegate) throws NotesException {
-		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
+	protected Outline(final lotus.domino.Outline delegate, final Database parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/*
@@ -383,8 +376,8 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.Outline#getParentDatabase()
 	 */
 	@Override
-	public Database getParentDatabase() {
-		return getAncestor();
+	public final Database getParentDatabase() {
+		return parent;
 	}
 
 	/*
@@ -549,7 +542,7 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentDatabase();
 	}
 
@@ -559,7 +552,13 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

@@ -2,13 +2,11 @@ package org.openntf.domino.tests.ntf;
 
 import java.util.Set;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Session;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class DominoRunnable implements Runnable {
 	public static void main(final String[] args) {
@@ -22,7 +20,7 @@ public class DominoRunnable implements Runnable {
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		Formula formula = new Formula();
 		String source = "REM {the quick \"brown\" fox jumped};\r\n" + "REM {over the \"lazy\" dog};\r\n"
 				+ "DEFAULT defVar := @If(isThing2; \"thing2\"; thing);\r\n" + "ENVIRONMENT envVar := @Now;\r\n"
@@ -79,13 +77,4 @@ public class DominoRunnable implements Runnable {
 		}
 	}
 
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
 }

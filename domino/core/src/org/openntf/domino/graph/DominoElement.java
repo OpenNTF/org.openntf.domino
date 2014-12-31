@@ -508,6 +508,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	//
 	//	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
 		//		if ("PROGNAME".equalsIgnoreCase(propertyName)) {
@@ -636,6 +637,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return decrementProperty(prop.getName());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final IDominoProperties prop) {
 		if (prop == null) {
@@ -653,6 +655,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final IDominoProperties prop, final boolean allowNull) {
 		Class<?> type = prop.getType();

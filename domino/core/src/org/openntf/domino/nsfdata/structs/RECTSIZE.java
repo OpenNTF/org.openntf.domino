@@ -7,12 +7,8 @@ import java.nio.ByteBuffer;
  *
  */
 public class RECTSIZE extends AbstractStruct {
-	public static final int SIZE = 4;
-
-	static {
-		addFixedUnsigned("width", Short.class);
-		addFixedUnsigned("height", Short.class);
-	}
+	public final Unsigned16 width = new Unsigned16();
+	public final Unsigned16 height = new Unsigned16();
 
 	public RECTSIZE() {
 		super();
@@ -22,21 +18,8 @@ public class RECTSIZE extends AbstractStruct {
 		super(data);
 	}
 
-	public int getWidth() {
-		return (Integer) getStructElement("width");
-	}
-
-	public int getHeight() {
-		return (Integer) getStructElement("height");
-	}
-
-	@Override
-	public long getStructSize() {
-		return SIZE;
-	}
-
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Width=" + getWidth() + ", Height=" + getHeight() + "]";
+		return "[" + getClass().getSimpleName() + ": Width=" + width.get() + ", Height=" + height.get() + "]";
 	}
 }

@@ -3,9 +3,11 @@ package org.openntf.domino.xsp;
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.ThreadConfig;
 import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.helpers.OsgiServiceLocatorFactory;
 import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
@@ -451,5 +453,12 @@ public enum ODAPlatform {
 
 	public static boolean isAppFlagSet(final String flagName) {
 		return isAppFlagSet(flagName, null);
+	}
+
+	public static ThreadConfig getAppThreadConfig(final Application app) {
+		Fixes[] fixes = isAppFlagSet("KHAN", app) ? Fixes.values() : null;
+		AutoMime autoMime = getAppAutoMime(app);
+		boolean bubbleExceptions = ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS");
+		return new ThreadConfig(fixes, autoMime, bubbleExceptions);
 	}
 }

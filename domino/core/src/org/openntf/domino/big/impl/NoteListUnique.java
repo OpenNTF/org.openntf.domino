@@ -134,7 +134,6 @@ public class NoteListUnique extends NoteList {
 	public boolean addAll(final int index, final Collection<? extends NoteCoordinate> c) {
 		if (index < 0 || index > size())
 			throw new IndexOutOfBoundsException();
-		boolean result = false;
 		Iterator<NoteCoordinate> it = (Iterator<NoteCoordinate>) c.iterator();
 		while (it.hasNext()) {
 			NoteCoordinate nc = it.next();

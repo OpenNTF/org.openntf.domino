@@ -16,6 +16,7 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 		runAs_ = runAs;
 	}
 
+
 	@Override
 	public Session createSession() {
 		return createSession(runAs_);
@@ -28,5 +29,4 @@ public class NamedSessionFactory extends AbstractSessionFactory implements IName
 		lotus.domino.Session raw = LotusSessionFactory.createSessionWithTokenEx(userName);
 		return wrapSession(raw, true);
 	}
-
 }

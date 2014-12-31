@@ -15,10 +15,10 @@
  */
 package org.openntf.domino.logging;
 
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+
+import org.openntf.domino.utils.Factory;
 
 /**
  * DefaultConsoleHandler class
@@ -27,7 +27,7 @@ import java.util.logging.LogRecord;
  * 
  * @author withersp
  */
-public class DefaultConsoleHandler extends ConsoleHandler {
+public class DefaultConsoleHandler extends Handler {
 
 	/** The ol debug level. */
 	private static String olDebugLevel = "1";
@@ -75,7 +75,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	 */
 	@Override
 	public void close() {
-		super.close();
+
 	}
 
 	/*
@@ -93,13 +93,8 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		}
 		if (debugLevel > 0) {
 			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						DefaultConsoleHandler.super.publish(record);
-						return null;
-					}
-				});
+				String s = getFormatter().format(record);
+				Factory.println(record.getLevel().toString(), s);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
@@ -110,5 +105,10 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void flush() {
+		// TODO Auto-generated method stub
 	}
 }

@@ -9,7 +9,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
+public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
 		org.openntf.domino.PropertyBroker {
 
 	/**
@@ -24,16 +24,8 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public PropertyBroker(final lotus.domino.PropertyBroker delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_PROPERTYBROKER);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.PropertyBroker delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	protected PropertyBroker(final lotus.domino.PropertyBroker delegate, final Session parent) {
+		super(delegate, parent, NOTES_PROPERTYBROKER);
 	}
 
 	@Override
@@ -146,7 +138,13 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

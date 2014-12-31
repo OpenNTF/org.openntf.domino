@@ -27,12 +27,15 @@ import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DGraph implements org.openntf.domino.graph2.DGraph {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DGraph.class.getName());
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
 	private DConfiguration configuration_;
+	@SuppressWarnings("unused")
 	private DbCache dbCache_;
 
 	public static class GraphTransaction extends FastTable<Element> {
+		private static final long serialVersionUID = 1L;
 
 	}
 
@@ -161,6 +164,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
@@ -333,7 +337,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public Object getStoreDelegate(final DElementStore store, final Object provisionalKey) {
 		Object result = null;
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		if (provisionalKey instanceof CharSequence) {
 			String key = provisionalKey.toString();
 			result = session.getDatabase(key);
@@ -358,7 +362,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public Object getProxyStoreDelegate(final DElementStore store, final Object provisionalKey) {
 		Object result = null;
-		Session session = Factory.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		if (provisionalKey instanceof CharSequence) {
 			String key = provisionalKey.toString();
 			result = session.getDatabase(key);

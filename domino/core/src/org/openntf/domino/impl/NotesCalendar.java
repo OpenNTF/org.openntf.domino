@@ -34,7 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class NotesCalendar.
  */
-public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
+public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
 		org.openntf.domino.NotesCalendar {
 
 	/**
@@ -49,16 +49,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.NotesCalendar delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	protected NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/* (non-Javadoc)
@@ -243,8 +235,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -391,8 +383,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -434,4 +426,10 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 		}
 		return result;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

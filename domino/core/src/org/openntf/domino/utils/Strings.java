@@ -36,6 +36,7 @@ import org.openntf.arpa.ISO;
 import org.openntf.domino.Document;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 /**
@@ -698,20 +699,17 @@ public enum Strings {
 				throw new IllegalArgumentException("NameHandle is null");
 			}
 
-			if (name instanceof org.openntf.domino.impl.Name) {
-				String result = ((org.openntf.domino.impl.Name) name).getIDprefix() + "-" + Dates.getTimeCode();
-				try {
-					// avoid potential duplicate consecutive results by sleeping for 1/4 second 
-					Thread.sleep(250); // 250 milliseconds = 1/4 second
-				} catch (InterruptedException ex) {
-					Thread.currentThread().interrupt();
-					DominoUtils.handleException(ex);
-				}
+			String result = name.getIDprefix() + "-" + Dates.getTimeCode();
+			// RPr: Dates.getTimeCode() does not produce duplicates any more
+			//			try {
+			//				// avoid potential duplicate consecutive results by sleeping for 1/4 second 
+			//				Thread.sleep(5); // 5 millis
+			//			} catch (InterruptedException ex) {
+			//				Thread.currentThread().interrupt();
+			//				DominoUtils.handleException(ex);
+			//			}
 
-				return result;
-			}
-
-			return Strings.getSpawnedRecordID(Names.createName(name));
+			return result;
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -734,10 +732,9 @@ public enum Strings {
 	 * @see Dates#getTimeCode()
 	 * 
 	 */
-	@SuppressWarnings("restriction")
 	public static String getSpawnedRecordID(final lotus.domino.Name name) {
-		org.openntf.domino.Name newname = Names.createName(name);
-		return Strings.getSpawnedRecordID(newname);
+		WrapperFactory wf = Factory.getWrapperFactory();
+		return Strings.getSpawnedRecordID(wf.fromLotus(name, Name.SCHEMA, null));
 	}
 
 	/**
@@ -760,7 +757,7 @@ public enum Strings {
 				throw new IllegalArgumentException("Session is null");
 			}
 
-			return Strings.getSpawnedRecordID(new org.openntf.domino.impl.Name(session));
+			return Strings.getSpawnedRecordID(session.createName(session.getEffectiveUserName()));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);

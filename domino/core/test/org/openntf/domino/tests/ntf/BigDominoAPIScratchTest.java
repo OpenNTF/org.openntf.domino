@@ -16,8 +16,7 @@ import org.openntf.domino.Name;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
-import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -31,7 +30,7 @@ public enum BigDominoAPIScratchTest {
 	private static final int THREAD_COUNT = 10;
 	private static final boolean INCLUDE_FORMS = false;
 
-	static class Doer implements Runnable {
+	public static class Doer implements Runnable {
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
@@ -174,21 +173,23 @@ public enum BigDominoAPIScratchTest {
 	 *            the arguments
 	 */
 	public static void main(final String[] args) {
-		int delay = 500;
-		DominoThread[] threads = new DominoThread[THREAD_COUNT];
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);
-		}
-
-		for (DominoThread thread : threads) {
-			thread.start();
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e1) {
-				DominoUtils.handleException(e1);
-
-			}
-		}
+		TestRunnerUtil.runAsDominoThread(Doer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+		//		int delay = 500;
+		//		
+		//		DominoThread[] threads = new DominoThread[THREAD_COUNT];
+		//		for (int i = 0; i < THREAD_COUNT; i++) {
+		//			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);
+		//		}
+		//
+		//		for (DominoThread thread : threads) {
+		//			thread.start();
+		//			try {
+		//				Thread.sleep(delay);
+		//			} catch (InterruptedException e1) {
+		//				DominoUtils.handleException(e1);
+		//
+		//			}
+		//		}
 
 	}
 }

@@ -345,4 +345,5 @@ public interface Document {
 
 	public void setItemTablePivot(final List<Map<String, Object>> pivot);
 
+	public Name getItemValueName(String itemName);
 }

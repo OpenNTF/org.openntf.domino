@@ -18,6 +18,7 @@ import org.openntf.domino.Session;
  * 
  */
 public class IndexHit implements Externalizable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IndexHit.class.getName());
 	private static final long serialVersionUID = 1L;
 	private CharSequence term_;
@@ -114,7 +115,7 @@ public class IndexHit implements Externalizable {
 		Document doc = getDocument(session, serverName);
 		if (doc != null && doc.isValid() && !doc.getItems().isEmpty()) {
 			Item hitItem = doc.getFirstItem(getItem());
-			if (hitItem.getType() == Item.RICHTEXT) {
+			if (hitItem.getTypeEx() == Item.Type.RICHTEXT) {
 				//TODO NTF - possibly add some HTML formatting stuff...
 			} else {
 
@@ -180,6 +181,7 @@ public class IndexHit implements Externalizable {
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
+	@Override
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 		term_ = arg0.readUTF();
 		dbid_ = arg0.readUTF();
@@ -192,6 +194,7 @@ public class IndexHit implements Externalizable {
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
+	@Override
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
 		arg0.writeUTF(term_.toString());
 		arg0.writeUTF(dbid_.toString());

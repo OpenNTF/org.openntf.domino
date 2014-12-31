@@ -7,7 +7,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xsp.ODAPlatform;
@@ -21,6 +20,7 @@ import com.ibm.xsp.domino.context.DominoFacesContextFactoryImpl;
 import com.ibm.xsp.event.FacesContextListener;
 
 public class ODAFacesContextFactory extends FacesContextFactory {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ODAFacesContextFactory.class.getName());
 	private final FacesContextFactory _delegate;
 	private ContextListener _contextListener;
@@ -70,14 +70,10 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 			throws FacesException {
 		FacesContext ctx = _delegate.getFacesContext(context, request, response, lifecycle);
 
-		Factory.initThread();
+		Factory.initThread(ODAPlatform.getAppThreadConfig(null));
 		Factory.setSessionFactory(new XPageCurrentSessionFactory(), SessionType.CURRENT);
 		Factory.setSessionFactory(new XPageSignerSessionFactory(false), SessionType.SIGNER);
 		Factory.setSessionFactory(new XPageSignerSessionFactory(true), SessionType.SIGNER_FULL_ACCESS);
-
-		if (ODAPlatform.isAppFlagSet("BUBBLEEXCEPTIONS")) {
-			DominoUtils.setBubbleExceptions(true);
-		}
 
 		// TODO RPr: This is probably the wrong locale. See ViewHandler.calculateLocale
 		Factory.setUserLocale(ctx.getExternalContext().getRequestLocale());

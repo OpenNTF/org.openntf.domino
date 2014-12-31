@@ -617,6 +617,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	// private boolean inTransaction_ = false;
+	@SuppressWarnings("unused")
 	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
 
 	};
@@ -680,7 +681,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	@Deprecated
-	@SuppressWarnings("deprecation")
 	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
 
@@ -691,6 +691,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (txn != null) {
 			if (getCache().size() > 0) {
 				// System.out.println("Reapplying cache to " + getCache().size() + " elements...");
+				@SuppressWarnings("unused")
 				int vCount = 0;
 				Set<Element> elems = getCacheValues();
 				for (Element elem : elems) {

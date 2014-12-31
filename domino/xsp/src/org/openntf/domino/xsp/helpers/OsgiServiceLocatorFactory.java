@@ -23,14 +23,14 @@ public class OsgiServiceLocatorFactory implements IServiceLocatorFactory {
 		return AccessController.doPrivileged(new PrivilegedAction<IServiceLocator>() {
 			@Override
 			public IServiceLocator run() {
-				ApplicationFactory aFactory = (ApplicationFactory) FactoryFinder
-						.getFactory("javax.faces.application.ApplicationFactory");
+				ApplicationFactory aFactory = (ApplicationFactory) FactoryFinder.getFactory("javax.faces.application.ApplicationFactory");
 				final ApplicationEx app_ = aFactory == null ? null : (ApplicationEx) aFactory.getApplication();
 
 				if (app_ == null) {
 					return new IServiceLocator() {
 						final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
 
+						@SuppressWarnings({ "rawtypes", "unchecked" })
 						@Override
 						public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 							List<T> ret = (List<T>) cache.get(serviceClazz);
@@ -57,6 +57,7 @@ public class OsgiServiceLocatorFactory implements IServiceLocatorFactory {
 					return new IServiceLocator() {
 						final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
 
+						@SuppressWarnings({ "unchecked", "rawtypes" })
 						@Override
 						public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 							List<T> ret = (List<T>) cache.get(serviceClazz);

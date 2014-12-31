@@ -24,36 +24,44 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 	private final Map<String, String> overrideLabels_ = new HashMap<String, String>();
 	private boolean defaultSummary_ = true;
 	private transient IDatabaseSchema parentSchema_;
+	@SuppressWarnings("unused")
 	private DocumentValidator validator_;
 
 	public DocumentDefinition() {
 
 	}
 
+	@Override
 	public void setParent(final IDatabaseSchema parent) {
 		parentSchema_ = parent;
 	}
 
+	@Override
 	public IDatabaseSchema getParent() {
 		return parentSchema_;
 	}
 
+	@Override
 	public String getName() {
 		return name_;
 	}
 
+	@Override
 	public void setName(final String name) {
 		name_ = name;
 	}
 
+	@Override
 	public boolean isDefaultSummary() {
 		return defaultSummary_;
 	}
 
+	@Override
 	public void setDefaultSummary(final boolean defaultSummary) {
 		defaultSummary_ = defaultSummary;
 	}
 
+	@Override
 	public Map<String, IItemDefinition> getItemDefinitions() {
 		if (itemDefs_.isEmpty()) {
 			for (String key : getItemDefinitionKeys()) {
@@ -66,6 +74,7 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 		return itemDefs_;
 	}
 
+	@Override
 	public Set<String> getItemDefinitionKeys() {
 		return itemDefinitionKeys_;
 	}
@@ -76,6 +85,7 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 		itemDefinitionKeys_.addAll(itemDefinitionKeys);
 	}
 
+	@Override
 	public void addItemDefinition(final IItemDefinition itemDef) {
 		if (itemDefs_ != null) {
 			itemDefs_.put(itemDef.getName(), itemDef);
@@ -88,6 +98,7 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 		itemDefinitionKeys_.add(key);
 	}
 
+	@Override
 	public Map<String, String> getOverrideLabels() {
 		return overrideLabels_;
 	}

@@ -23,6 +23,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.RichTextNavigator;
 import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -30,8 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextSection.
  */
-public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection, RichTextNavigator> implements
-		org.openntf.domino.RichTextSection {
+public class RichTextSection extends BaseNonThreadSafe<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection, RichTextNavigator>
+		implements org.openntf.domino.RichTextSection {
 	//private static final Logger log_ = Logger.getLogger(RichTextSection.class.getName());
 
 	/**
@@ -46,9 +47,8 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextSection(final lotus.domino.RichTextSection delegate, final RichTextNavigator parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_COLOR);
+	protected RichTextSection(final lotus.domino.RichTextSection delegate, final RichTextNavigator parent) {
+		super(delegate, parent, NOTES_COLOR);
 	}
 
 	/*
@@ -70,8 +70,8 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public RichTextNavigator getParent() {
-		return getAncestor();
+	public final RichTextNavigator getParent() {
+		return parent;
 	}
 
 	/*
@@ -204,8 +204,8 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return ((DocumentDescendant) this.getParent()).getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return ((DocumentDescendant) parent).getAncestorDocument();
 	}
 
 	/*
@@ -214,7 +214,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -224,7 +224,13 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

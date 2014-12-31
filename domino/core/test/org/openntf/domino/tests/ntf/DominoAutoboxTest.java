@@ -4,16 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class DominoAutoboxTest implements Runnable {
 	public static void main(final String[] args) {
@@ -27,7 +25,7 @@ public class DominoAutoboxTest implements Runnable {
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		session.setConvertMIME(false);
 		session.setFixEnable(Fixes.APPEND_ITEM_VALUE, true);
 		session.setFixEnable(Fixes.FORCE_JAVA_DATES, true);
@@ -83,13 +81,4 @@ public class DominoAutoboxTest implements Runnable {
 		System.out.println("Complete");
 	}
 
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
 }

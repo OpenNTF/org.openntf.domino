@@ -4,9 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.openntf.domino.nsfdata.structs.NOTES_COLOR;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Specifies a horizontal line (editods.h)
@@ -60,15 +58,15 @@ public class CDHRULE extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixedUnsigned("Width", Short.class);
-		addFixedUnsigned("Height", Short.class);
-		addFixed("Color", Short.class);
-		addFixed("GradientColor", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned16 Width = new Unsigned16();
+	public final Unsigned16 Height = new Unsigned16();
+	public final Unsigned16 Color = new Unsigned16();
+	public final Unsigned16 GradientColor = new Unsigned16();
 
 	/**
 	 * Default value for Height member of the CDRULE structure in TWIPS.
@@ -80,7 +78,7 @@ public class CDHRULE extends CDRecord {
 	public static final short DEFAULTHRULEWIDTH = 720;
 
 	public CDHRULE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDHRULE(final SIG signature, final ByteBuffer data) {
@@ -88,44 +86,12 @@ public class CDHRULE extends CDRecord {
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
+		return Flag.valuesOf((int) Flags.get());
 	}
 
-	/**
-	 * Use DEFAULTHRULEWIDTH for the default.
-	 * 
-	 * @return The horizontal length of the line in TWIPS (see the symbolic definition for ONEINCH for more information).
-	 */
-	public int getWidth() {
-		return (Integer) getStructElement("Width");
-	}
-
-	/**
-	 * Use DEFAULTHRULEHEIGHT for the default.
-	 * 
-	 * @return The height of the line (or thickness) in TWIPS.
-	 */
-	public int getHeight() {
-		return (Integer) getStructElement("Height");
-	}
-
-	/**
-	 * @return The color used to draw the line.
-	 */
-	public NOTES_COLOR getColor() {
-		return new NOTES_COLOR((Short) getStructElement("Color"));
-	}
-
-	/**
-	 * @return The gradient color used to draw the line.
-	 */
-	public NOTES_COLOR getGradientColor() {
-		return new NOTES_COLOR((Short) getStructElement("GradientColor"));
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", Width=" + getWidth() + ", Height=" + getHeight()
-				+ ", Color=" + getColor() + ", GradientColor=" + getGradientColor() + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", Width=" + getWidth() + ", Height=" + getHeight()
+	//				+ ", Color=" + getColor() + ", GradientColor=" + getGradientColor() + "]";
+	//}
 }

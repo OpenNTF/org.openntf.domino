@@ -22,9 +22,9 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
-import org.openntf.domino.xots.XotsNsfScanner;
 import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
+import org.openntf.domino.xsp.xots.XotsNsfScanner;
 import org.openntf.junit4xpages.OsgiTest;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
@@ -60,8 +60,6 @@ public class XOTSTest {
 	/**
 	 * Test if basic callable will work
 	 * 
-	 * @throws InterruptedException
-	 * @throws ExecutionException
 	 */
 	@Test
 	public void testCallable() throws InterruptedException, ExecutionException {
@@ -203,7 +201,7 @@ public class XOTSTest {
 	public void testTasklet() {
 
 		Xots.getService().runTasklet("entwicklung/jfof4/proglibjfof.nsf", "de.foconis.lib.app.xots.TestRunner_1");
-		Xots.getService().runTasklet("bundle:org.openntf.domino", XotsNsfScanner.class.getName());
+		Xots.getService().runTasklet("bundle:org.openntf.domino.xsp", XotsNsfScanner.class.getName());
 	}
 
 	public static class EndlessTest extends AbstractDominoRunnable {

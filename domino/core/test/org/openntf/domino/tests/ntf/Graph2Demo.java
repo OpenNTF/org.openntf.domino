@@ -445,7 +445,6 @@ public class Graph2Demo implements Runnable {
 
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
-		Session session = Factory.getSession();
 
 		try {
 			timelog("Beginning graph2 test...");

@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Replication.
  */
-public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
+public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
 		org.openntf.domino.Replication {
 
 	/**
@@ -45,8 +45,8 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Replication(final lotus.domino.Replication delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_REPLICATION);
+	protected Replication(final lotus.domino.Replication delegate, final Database parent) {
+		super(delegate, parent, NOTES_REPLICATION);
 	}
 
 	/*
@@ -158,8 +158,8 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -395,18 +395,14 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
-	public Database getParentDatabase() {
-		return getParent();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	/*
@@ -415,7 +411,13 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

@@ -3,7 +3,6 @@
  */
 package org.openntf.domino.schema.types;
 
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Item;
@@ -37,10 +36,10 @@ public class CurrencyType extends AbstractDominoType {
 	 */
 	@Override
 	public boolean validateItem(final Item item) throws ItemException {
-		Vector<Object> v = item.getValues();
-		for (Object o : v) {
-
-		}
+		//		Vector<Object> v = item.getValues();
+		//		for (Object o : v) {
+		//
+		//		}
 		return super.validateItem(item);
 	}
 

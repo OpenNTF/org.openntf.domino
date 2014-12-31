@@ -2,7 +2,6 @@ package org.openntf.domino.thread;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Callable;
 
 import lotus.domino.NotesThread;
 
@@ -18,18 +17,10 @@ import org.openntf.domino.xots.Tasklet;
  * 
  * @author Roland Praml, FOCONIS AG
  * 
- * @param <T>
  */
-public abstract class AbstractWrapped<T> {
-	public static abstract class WrappedCallable<V> extends AbstractWrapped<Callable<V>> implements Callable<V> {
+public abstract class AbstractWrappedTask implements IWrappedTask {
 
-	}
-
-	public static abstract class WrappedRunnable extends AbstractWrapped<Runnable> implements Runnable {
-
-	}
-
-	private T wrappedTask;
+	private Object wrappedTask;
 
 	protected Tasklet.Scope scope;
 	protected Tasklet.Context context;
@@ -46,10 +37,11 @@ public abstract class AbstractWrapped<T> {
 	 * 
 	 * @param task
 	 *            the runnable to determine the DominoSessionType
-	 * @return the DominoSessionType
 	 */
-	protected void init(final T task) {
+	protected synchronized void setWrappedTask(final Object task) {
 		wrappedTask = task;
+		if (task == null)
+			return;
 		// some security checks...
 		if (task instanceof NotesThread) {
 			// RPr: I'm not sure if this should be allowed anyway...
@@ -59,7 +51,7 @@ public abstract class AbstractWrapped<T> {
 			// RPr: don't know if this is possible
 			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
-		if (task instanceof AbstractWrapped) {
+		if (task instanceof AbstractWrappedTask) {
 			// RPr: don't know if this is possible
 			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
@@ -136,13 +128,45 @@ public abstract class AbstractWrapped<T> {
 		}
 	}
 
+	/**
+	 * Returns the wrapped task
+	 * 
+	 * @return
+	 */
+	protected synchronized Object getWrappedTask() {
+		return wrappedTask;
+	}
+
+	/**
+	 * adds an observer to the wrapped task
+	 * 
+	 * @param o
+	 */
+	@Override
 	public void addObserver(final Observer o) {
-		if (wrappedTask instanceof Observable) {
-			((Observable) wrappedTask).addObserver(o);
+		Object task = getWrappedTask();
+		if (task instanceof Observable) {
+			((Observable) task).addObserver(o);
 		}
 	}
 
-	protected T getWrappedTask() {
-		return wrappedTask;
+	/**
+	 * stops the wrapped task if it does implement {@link Tasklet.Interface}
+	 */
+	@Override
+	public void stop() {
+		Object task = getWrappedTask();
+		if (task instanceof Tasklet.Interface) {
+			((Tasklet.Interface) task).stop();
+		}
+	}
+
+	@Override
+	public String getDescription() {
+		Object task = getWrappedTask();
+		if (task instanceof Tasklet.Interface) {
+			return ((Tasklet.Interface) task).getDescription();
+		}
+		return task.getClass().getSimpleName();
 	}
 }

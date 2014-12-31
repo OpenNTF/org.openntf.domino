@@ -16,6 +16,7 @@
 package org.openntf.domino;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
@@ -245,5 +246,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 */
 	@Override
 	public void setHonorShowInOpenDatabaseDialog(final boolean flag);
+
+	Database openDatabaseIfModified(String dbFile, Date date);
 
 }

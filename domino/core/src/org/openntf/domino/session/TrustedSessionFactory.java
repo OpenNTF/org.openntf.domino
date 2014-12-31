@@ -12,11 +12,7 @@ public class TrustedSessionFactory extends AbstractSessionFactory {
 	@Override
 	public Session createSession() {
 		lotus.domino.Session raw = LotusSessionFactory.createTrustedSession();
-		if (raw != null) {
-			return wrapSession(raw, true);
-		}
-		Throwable t = new Throwable();
-		throw new RuntimeException("Unable to create trusted session!", t);
+		return wrapSession(raw, true);
 	}
 
 }

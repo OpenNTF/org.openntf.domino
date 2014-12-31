@@ -14,6 +14,7 @@ public abstract class ThreadedTest implements Callable<String> {
 	@Test
 	public void runTest() throws InterruptedException, ExecutionException, IllegalAccessException, InstantiationException {
 		int threadCount = getThreadCount();
+		@SuppressWarnings("unchecked")
 		Future<String> futures[] = new Future[threadCount];
 		int i;
 		for (i = 0; i < threadCount; i++) {

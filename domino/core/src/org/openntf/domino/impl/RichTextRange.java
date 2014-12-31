@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextRange.
  */
-public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
+public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
 		org.openntf.domino.RichTextRange {
 
 	/**
@@ -45,8 +45,8 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextRange(final lotus.domino.RichTextRange delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTRANGE);
+	protected RichTextRange(final lotus.domino.RichTextRange delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTRANGE);
 	}
 
 	/*
@@ -57,7 +57,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	@Override
 	public org.openntf.domino.RichTextRange Clone() {
 		try {
-			return fromLotus(getDelegate().Clone(), RichTextRange.SCHEMA, getParent());
+			return fromLotus(getDelegate().Clone(), RichTextRange.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -108,7 +108,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	@Override
 	public RichTextNavigator getNavigator() {
 		try {
-			return fromLotus(getDelegate().getNavigator(), RichTextNavigator.SCHEMA, getParent());
+			return fromLotus(getDelegate().getNavigator(), RichTextNavigator.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -119,8 +119,8 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public RichTextItem getParent() {
-		return getAncestor();
+	public final RichTextItem getParent() {
+		return parent;
 	}
 
 	/*
@@ -265,8 +265,8 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return getAncestor().getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return parent.getAncestorDocument();
 	}
 
 	/*
@@ -275,7 +275,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -285,7 +285,13 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

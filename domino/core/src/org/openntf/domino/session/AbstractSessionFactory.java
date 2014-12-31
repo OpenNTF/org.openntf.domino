@@ -3,7 +3,6 @@ package org.openntf.domino.session;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 
-import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
@@ -31,17 +30,16 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 
 	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
 		WrapperFactory wf = Factory.getWrapperFactory();
-		org.openntf.domino.Session sess = Factory.fromLotus(raw, Session.SCHEMA, null);
+		org.openntf.domino.Session sess = wf.fromLotus(raw, Session.SCHEMA, wf);
 		sess.setNoRecycle(!selfCreated);
-		((org.openntf.domino.impl.Session) sess).setSessionFactory(this);
 
-		Fixes[] fixes = org.openntf.domino.ext.Session.Fixes.values();
+		Fixes[] fixes = Factory.getThreadConfig().fixes;
 		if (fixes != null) {
 			for (Fixes fix : fixes) {
 				sess.setFixEnable(fix, true);
 			}
 		}
-		sess.setAutoMime(AutoMime.WRAP_ALL);
+		sess.setAutoMime(Factory.getThreadConfig().autoMime);
 
 		sess.setConvertMIME(false);
 		if (selfCreated && currentApiPath_ != null) {

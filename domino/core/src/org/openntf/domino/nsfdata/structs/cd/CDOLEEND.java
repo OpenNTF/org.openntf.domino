@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the end of an OLE Object in a rich text field. (editods.h)
@@ -11,29 +10,18 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDOLEEND extends CDRecord {
 
-	static {
-		addFixed("Flags", Integer.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final Unsigned32 Flags = new Unsigned32();
 
 	public CDOLEEND(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDOLEEND(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	/**
-	 * Currently unused, but reserve some flags
-	 */
-	public int getFlags() {
-		return (Integer) getStructElement("Flags");
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + "]";
+	//	}
 }

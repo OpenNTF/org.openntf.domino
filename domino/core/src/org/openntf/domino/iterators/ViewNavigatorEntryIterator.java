@@ -19,7 +19,7 @@ public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 
 	private transient ViewNavigator navigator_;
 
-	/** The current entry_. */
+	@SuppressWarnings("unused")
 	private transient ViewEntry previousEntry_;
 	private transient ViewEntry currentEntry_;
 	private transient ViewEntry nextEntry_;
@@ -60,7 +60,6 @@ public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 	 */
 	@Override
 	public ViewEntry next() {
-		ViewEntry result = null;
 		if (hasNext()) {
 			previousEntry_ = currentEntry_;	//TODO NTF use if we want to implement a ListIterator
 			currentEntry_ = nextEntry_;

@@ -31,7 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author Roland Praml, Foconis AG
  * 
  */
-public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter, Session> implements
+public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter, Session> implements
 		org.openntf.domino.DxlExporter {
 
 	/**
@@ -46,16 +46,8 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DxlExporter(final lotus.domino.DxlExporter delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DXLEXPORTER);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DxlExporter delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	protected DxlExporter(final lotus.domino.DxlExporter delegate, final Session parent) {
+		super(delegate, parent, NOTES_DXLEXPORTER);
 	}
 
 	/*
@@ -691,7 +683,13 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

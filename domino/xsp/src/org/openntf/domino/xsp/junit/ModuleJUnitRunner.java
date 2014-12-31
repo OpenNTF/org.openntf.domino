@@ -11,9 +11,9 @@ import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.xsp.helpers.ModuleLoader;
 import org.openntf.domino.xsp.session.XPageCurrentSessionFactory;
 import org.openntf.domino.xsp.xots.FakeHttpRequest;
+import org.openntf.domino.xsp.xots.ModuleLoader;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
@@ -64,7 +64,7 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 		NotesContext ctx = new NotesContext(module);
 		NotesContext.initThread(ctx); // Request is initialized later
 
-		Factory.initThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 
 		String runAs = getRunAs(method);
 		if (StringUtil.isEmpty(runAs)) {

@@ -355,6 +355,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		 * since actually having knowledge of the syntax tree would only be useful in an interpretter/converter 
 		 * context.
 		 */
+		@SuppressWarnings("unused")
 		private static final Logger log_ = Logger.getLogger(Formula.Parser.class.getName());
 		public static final String DEFAULT = "DEFAULT";
 		public static final String REM = "REM";
@@ -377,8 +378,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		//		private boolean inBracket_;
 		//		private boolean inEscape_;
 		private boolean inRightSide_;
+		@SuppressWarnings("unused")
 		private Boolean isAssignment_;
+		@SuppressWarnings("unused")
 		private boolean justClosedKeyword_;
+		@SuppressWarnings("unused")
 		private boolean justClosedExpression_;
 		private int parenDepth_ = 0;
 		private char lastOpChar_;

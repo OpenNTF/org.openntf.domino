@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Starting in Release 4.0 of Notes, a paragraph may have an associated formula that determines when the paragraph is to be hidden. The
@@ -15,37 +14,19 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDPABFORMULAREF extends CDRecord {
 
-	static {
-		addFixed("SourcePABID", Short.class);
-		addFixed("DestPABID", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final Unsigned16 SourcePABID = new Unsigned16();
+	public final Unsigned16 DestPABID = new Unsigned16();
 
 	public CDPABFORMULAREF(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDPABFORMULAREF(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	/**
-	 * @return ID number of the source PAB containing the formula.
-	 */
-	public short getSourcePabId() {
-		return (Short) getStructElement("SourcePABID");
-	}
-
-	/**
-	 * @return ID number of the dest PAB
-	 */
-	public short getDestPabId() {
-		return (Short) getStructElement("DestPABID");
-	}
-
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": SourcePabId=" + getSourcePabId() + ", DestPabId=" + getDestPabId() + "]";
+		return "[" + getClass().getSimpleName() + ": SourcePabId=" + SourcePABID.get() + ", DestPabId=" + DestPABID.get() + "]";
 	}
 }

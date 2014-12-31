@@ -18,6 +18,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
  *         Class of XPages utilities
  */
 public class XspUtils {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XspUtils.class.getName());
 
 	/**

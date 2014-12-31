@@ -28,11 +28,11 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
+//TODO: Auto-generated Javadoc
 /**
  * The Class ACL.
  */
-public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
+public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
 	private static final Logger log_ = Logger.getLogger(ACL.class.getName());
 
 	/**
@@ -42,21 +42,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 	 *            the delegate
 	 * @param parent
 	 *            the parent database
-	 * @param wf
-	 *            the wrapper factory
-	 * @param cppId
-	 *            the cpp-id
 	 */
-	public ACL(final lotus.domino.ACL delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_ACL);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.ACL delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
+	protected ACL(final lotus.domino.ACL delegate, final Database parent) {
+		super(delegate, parent, NOTES_ACL);
 	}
 
 	/*
@@ -126,13 +114,18 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 	}
 
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	@Override
-	public Session getAncestorSession() {
-		return this.getAncestorDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 	/*
@@ -216,8 +209,8 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -443,12 +436,12 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database
 	@Override
 	protected void resurrect() {
 		try {
-			lotus.domino.Database db = toLotus(getParent());
+			lotus.domino.Database db = toLotus(parent);
 			lotus.domino.ACL d = db.getACL();
-			setDelegate(d, 0);
+			setDelegate(d, true);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
-				log_.log(java.util.logging.Level.FINE, "ACL of Database " + getParent()
+				log_.log(java.util.logging.Level.FINE, "ACL of Database " + parent
 						+ "had been recycled and was auto-restored. Changes may have been lost.", t);
 			}
 			// Recaching is done in setDelegate now

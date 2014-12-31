@@ -1,7 +1,5 @@
 package org.openntf.domino.tests.ntf;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.schema.impl.DatabaseSchema;
@@ -11,8 +9,8 @@ import org.openntf.domino.schema.types.DateTimeType;
 import org.openntf.domino.schema.types.IntegerType;
 import org.openntf.domino.schema.types.StringType;
 import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class SchemaConstructionTest implements Runnable {
 	public static void main(final String[] args) {
@@ -26,7 +24,7 @@ public class SchemaConstructionTest implements Runnable {
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		Database db = session.getDatabase("", "log.nsf");
 		try {
 			DatabaseSchema schema = new DatabaseSchema();
@@ -93,15 +91,5 @@ public class SchemaConstructionTest implements Runnable {
 			t.printStackTrace();
 		}
 
-	}
-
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
 	}
 }

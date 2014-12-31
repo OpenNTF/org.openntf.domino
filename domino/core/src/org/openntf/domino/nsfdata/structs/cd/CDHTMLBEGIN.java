@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Text in a rich-text field can have the "Pass-Thru HTML" attribute. Pass-through HTML text is not translated to the Domino rich text
@@ -14,14 +13,10 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDHTMLBEGIN extends CDRecord {
 
-	static {
-		addFixedArray("Spares", Byte.class, 4);
-	}
-
-	public static final int SIZE = getFixedStructSize();
+	public final Unsigned8[] Spared = array(new Unsigned8[4]);
 
 	public CDHTMLBEGIN(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDHTMLBEGIN(final SIG signature, final ByteBuffer data) {

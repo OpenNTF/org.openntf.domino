@@ -30,8 +30,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AdministrationProcess.
  */
-public class AdministrationProcess extends Base<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session>
-		implements org.openntf.domino.AdministrationProcess {
+public class AdministrationProcess extends
+		BaseNonThreadSafe<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session> implements
+		org.openntf.domino.AdministrationProcess {
 
 	/**
 	 * Instantiates a new administration process.
@@ -41,17 +42,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 * @param parent
 	 *            the parent
 	 */
-	public AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final Session parent, final WrapperFactory wf,
-			final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.AdministrationProcess delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	protected AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final Session parent) {
+		super(delegate, parent, NOTES_ACLENTRY);
 	}
 
 	/*
@@ -500,8 +492,13 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 	/*
@@ -570,8 +567,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -1035,6 +1032,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#delegateMailFile(java.lang.String, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, java.lang.String)
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public String delegateMailFile(final String arg0, final Vector arg1, final Vector arg2, final Vector arg3, final Vector arg4,
 			final Vector arg5, final Vector arg6, final Vector arg7, final String arg8, final String arg9) {
@@ -1049,6 +1047,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#setEnableOutlookSupport(java.lang.String, boolean)
 	 */
+	@Override
 	public String setEnableOutlookSupport(final String arg0, final boolean arg1) {
 		try {
 			return getDelegate().setEnableOutlookSupport(arg0, arg1);

@@ -32,4 +32,6 @@ public interface DateRange {
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public boolean contains(final Date date);
+
+	public org.openntf.domino.DateRange clone();
 }

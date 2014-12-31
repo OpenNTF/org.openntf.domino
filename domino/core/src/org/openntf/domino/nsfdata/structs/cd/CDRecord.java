@@ -25,6 +25,10 @@ public abstract class CDRecord extends AbstractStruct {
 
 	private SIG signature_;
 
+	protected CDRecord(final CDSignature cdSig) {
+		// TODO implement this
+	}
+
 	protected CDRecord(final SIG signature, final ByteBuffer data) {
 		super(data);
 		signature_ = signature;

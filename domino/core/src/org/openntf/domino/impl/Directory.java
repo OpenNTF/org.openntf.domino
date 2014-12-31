@@ -28,8 +28,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Directory.
  */
-public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements org.openntf.domino.Directory {
-
+public class Directory extends BaseNonThreadSafe<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements
+		org.openntf.domino.Directory {
 
 	/**
 	 * Instantiates a new outline.
@@ -43,16 +43,8 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Directory(final lotus.domino.Directory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DIRECTORY);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Directory delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	protected Directory(final lotus.domino.Directory delegate, final Session parent) {
+		super(delegate, parent, NOTES_DIRECTORY);
 	}
 
 	/*
@@ -167,8 +159,8 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -414,7 +406,13 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A text element in a layout region of a form is defined by a CDLAYOUTTEXT record. This record must be between a CDLAYOUT record and a
@@ -87,38 +86,32 @@ public class CDLAYOUTTEXT extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("ElementHeader", ELEMENTHEADER.class);
-		addFixed("Flags", Integer.class);
-		addFixedArray("Reserved", Byte.class, 16);
+	public final ELEMENTHEADER ElementHeader = inner(new ELEMENTHEADER());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned8[] Reserved = array(new Unsigned8[16]);
 
+	static {
 		addVariableString("Text", "getTextSize");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
 	public CDLAYOUTTEXT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDLAYOUTTEXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public ELEMENTHEADER getElementHeader() {
-		return (ELEMENTHEADER) getStructElement("ElementHeader");
-	}
-
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	public int getTextSize() {
-		return (int) (getDataLength() - ELEMENTHEADER.SIZE - 20);
+		return (int) (getDataLength() - ElementHeader.getStructSize() - 20);
 	}
 
 	/**
@@ -130,12 +123,12 @@ public class CDLAYOUTTEXT extends CDRecord {
 	 */
 	@Deprecated
 	public String getText() {
-		return (String) getStructElement("Text");
+		return (String) getVariableElement("Text");
 	}
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": ElementHeader=" + getElementHeader() + ", Flags=" + getFlags() + ", Text=" + getText()
-				+ "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ": ElementHeader=" + getElementHeader() + ", Flags=" + getFlags() + ", Text=" + getText()
+	//				+ "]";
+	//	}
 }

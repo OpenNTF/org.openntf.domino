@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Contains additional event information for Notes/Domino 6. (editods.h)
@@ -12,62 +11,23 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDEVENTENTRY extends CDRecord {
-
-	public static final int SIZE;
-
-	static {
-		addFixed("wPlatform", Short.class);
-		addFixed("wEventId", Short.class);
-		addFixed("wActionType", Short.class);
-		addFixed("wReserved", Short.class);
-		addFixed("dwReserved", Integer.class);
-
-		SIZE = getFixedStructSize();
+	public static enum Platform {
+		UNUSED0, CLIENT_ODS, WEB_ODS
 	}
 
+	public final Enum16<Platform> wPlatform = new Enum16<Platform>(Platform.values());
+	// TODO expand HTMLEvent from CDEVENT to work with getter for this value
+	public final Unsigned16 wEventId = new Unsigned16();
+	// TODO add enum with getter for this (ACTION_* skips values and Enum16 wouldn't suffice)
+	public final Unsigned16 wActionType = new Unsigned16();
+	public final Unsigned16 wReserved = new Unsigned16();
+	public final Unsigned32 dwReserved = new Unsigned32();
+
 	public CDEVENTENTRY(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+		super(cdSig);
 	}
 
 	public CDEVENTENTRY(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-	}
-
-	/**
-	 * @return Platform type
-	 */
-	public short getPlatform() {
-		// TODO create enum
-		return (Short) getStructElement("wPlatform");
-	}
-
-	/**
-	 * @return Event id. The event that this will run on... OnClick, Exit, etc.
-	 */
-	public short getEventId() {
-		// TODO create enum
-		return (Short) getStructElement("wEventId");
-	}
-
-	/**
-	 * @return Action type (the language... LotusScript, Javascript, Formula, etc.
-	 */
-	public short getActionType() {
-		// TODO create enum
-		return (Short) getStructElement("wActionType");
-	}
-
-	/**
-	 * @return future use
-	 */
-	public short getReserved() {
-		return (Short) getStructElement("wReserved");
-	}
-
-	/**
-	 * @return future use
-	 */
-	public int getReserved2() {
-		return (Integer) getStructElement("dwReserved");
 	}
 }

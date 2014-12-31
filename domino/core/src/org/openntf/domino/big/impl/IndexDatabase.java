@@ -27,7 +27,6 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
-import org.openntf.domino.helpers.DatabaseHolder;
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
@@ -58,8 +57,8 @@ public class IndexDatabase implements IScannerStateManager {
 	public static final String[] DEFAULT_STOP_WORDS_EN = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
 			.split(",");
 
-	//	protected transient Database indexDb_;
-	protected transient DatabaseHolder dbHolder_;
+	protected transient Database indexDb_;
+	// protected transient DatabaseHolder dbHolder_;
 	//	protected transient View termView_;
 	//	protected transient View dbView_;
 	protected Set<CharSequence> stopList_;
@@ -121,8 +120,7 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public IndexDatabase(final Database indexDb) {
-		dbHolder_ = new DatabaseHolder(indexDb);
-		//		indexDb_ = indexDb;
+		indexDb_ = indexDb;
 	}
 
 	public void setCaseSensitive(final boolean value) {
@@ -133,16 +131,15 @@ public class IndexDatabase implements IScannerStateManager {
 		return caseSensitive_;
 	}
 
+	@SuppressWarnings("unused")
 	private String indexApiPath_;
 
 	public void setDatabase(final Database indexDb) {
-		dbHolder_ = new DatabaseHolder(indexDb);
-		//		indexDb_ = indexDb;
-		//		indexApiPath_ = indexDb.getApiPath();
+		indexDb_ = indexDb;
 	}
 
 	public Database getIndexDb() {
-		return dbHolder_.getDatabase();
+
 		//		if (indexDb_ == null) {
 		//			if (indexApiPath_ != null) {
 		//				indexDb_ = Factory.getSession(SessionType.CURRENT).getDatabase(indexApiPath_);
@@ -150,7 +147,7 @@ public class IndexDatabase implements IScannerStateManager {
 		//				indexDb_ = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 		//			}
 		//		}
-		//		return indexDb_;
+		return indexDb_;
 	}
 
 	protected View initIndexDb() {
@@ -210,7 +207,7 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public List<String> getTermStarts(final String startsWith, final int count) {
 		List<String> result = new ArrayList<String>();
-		ViewEntry startEntry = getTermView().getEntryByKey(startsWith, false);
+		ViewEntry startEntry = getTermView().getFirstEntryByKey(startsWith, false);
 		if (startEntry == null) {
 			if (log_.isLoggable(Level.FINE))
 				log_.log(Level.FINE, "Unable to find ViewEntry for key " + startsWith);
@@ -229,6 +226,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	private List<String> getTermContains(final String contains) {
 		List<String> result = new ArrayList<String>();
 		return result;
@@ -308,6 +306,7 @@ public class IndexDatabase implements IScannerStateManager {
 		System.out.println("Completed scan of server " + serverName);
 	}
 
+	@SuppressWarnings("unused")
 	public DocumentScanner scanDatabase(final Database db) {
 		Document dbDoc = getDbDocument(db.getReplicaID());
 		DocumentScanner scanner = new DocumentScanner();
@@ -346,6 +345,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return scanner;
 	}
 
+	@SuppressWarnings("unused")
 	private int totalErrCount_ = 0;
 
 	private static final List<String> MOD_SORT_LIST = new ArrayList<String>();
@@ -353,7 +353,9 @@ public class IndexDatabase implements IScannerStateManager {
 		MOD_SORT_LIST.add("@modified");
 	}
 
+	@SuppressWarnings("unused")
 	private int curDocCount_ = 0;
+	@SuppressWarnings("unused")
 	private int sortedDocCount_ = 0;
 
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
@@ -689,10 +691,11 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbids) {
-			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			Database db = session.getDatabase(serverName, dbid);
 			if (db != null) {
 				result.add(db.getTitle() + "|" + dbid);
 			}
@@ -700,10 +703,11 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbMap.keySet()) {
-			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			Database db = session.getDatabase(serverName, dbid);
 			if (db != null) {
 				result.add(db.getTitle() + " (" + dbMap.get(dbid) + ")|" + dbid);
 			}
@@ -841,7 +845,7 @@ public class IndexDatabase implements IScannerStateManager {
 				scanner = (DocumentScanner) o;
 			} else {
 				System.out
-				.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
+						.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
 			}
 			if (status != null) {
 				//				System.out.println("DEBUG: Received update with status " + status.name());

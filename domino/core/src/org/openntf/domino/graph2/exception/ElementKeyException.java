@@ -1,6 +1,7 @@
 package org.openntf.domino.graph2.exception;
 
 public class ElementKeyException extends GraphException {
+	private static final long serialVersionUID = 1L;
 
 	public ElementKeyException(final String arg0) {
 		super(arg0);

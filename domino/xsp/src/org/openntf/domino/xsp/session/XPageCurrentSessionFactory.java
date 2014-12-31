@@ -1,7 +1,5 @@
 package org.openntf.domino.xsp.session;
 
-import java.security.PrivilegedActionException;
-
 import javax.servlet.ServletException;
 
 import lotus.domino.NotesException;
@@ -12,7 +10,6 @@ import org.openntf.domino.xsp.xots.FakeHttpRequest;
 
 import com.ibm.designer.runtime.domino.bootstrap.util.StringUtil;
 import com.ibm.domino.napi.NException;
-import com.ibm.domino.napi.c.NotesUtil;
 import com.ibm.domino.napi.c.xsp.XSPNative;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
@@ -56,7 +53,7 @@ public class XPageCurrentSessionFactory extends AbstractXPageSessionFactory {
 	 * @throws
 	 */
 	@Override
-	public Session createSession() throws PrivilegedActionException {
+	public Session createSession() {
 		if (runAs_ == null) {
 			throw new NullPointerException("No username set");
 		}
@@ -79,8 +76,9 @@ public class XPageCurrentSessionFactory extends AbstractXPageSessionFactory {
 				}
 			} else {
 				// no context open
-				long userHandle = NotesUtil.createUserNameList(runAs_);
+				final long userHandle = createUserNameList(runAs_);
 				return wrapSession(XSPNative.createXPageSession(runAs_, userHandle, false, true), true);
+
 			}
 
 		} catch (ServletException e) { // ctx.initRequest

@@ -15,11 +15,14 @@
  */
 package org.openntf.domino.xsp;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.Platform;
@@ -30,15 +33,10 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
-import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Xots;
-import org.openntf.domino.xsp.helpers.ModuleLoader;
-import org.openntf.domino.xsp.xots.FakeHttpRequest;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 /**
  * 
@@ -94,6 +92,14 @@ public class OsgiCommandProvider implements CommandProvider {
 		return sb.toString();
 	}
 
+	private void printThrowable(final CommandInterpreter ci, final Throwable t) {
+		StringWriter errors = new StringWriter();
+		t.printStackTrace(new PrintWriter(errors));
+		ci.println(errors.toString());
+		log_.log(Level.SEVERE, t.getMessage(), t);
+
+	}
+
 	/**
 	 * 
 	 * @param inp
@@ -115,46 +121,65 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	public void _xots(final CommandInterpreter ci) {
-		String cmd = ci.nextArgument();
-		if (StringUtil.isEmpty(cmd)) {
-			// TODO what does XOTS?
-			xotsTasks(ci);
-		} else if (cmp(cmd, "tasks", 1)) { // tasks
-			xotsTasks(ci);
-		} else if (cmp(cmd, "schedule", 1)) {
-			xotsSchedule(ci);
-		} else if (cmp(cmd, "run", 1)) {
-			xotsRun(ci);
+		try {
+			String cmd = ci.nextArgument();
+			if (StringUtil.isEmpty(cmd)) {
+				// TODO what does XOTS?
+				xotsTasks(ci);
+			} else if (cmp(cmd, "tasks", 1)) { // tasks
+				xotsTasks(ci);
+			} else if (cmp(cmd, "schedule", 1)) {
+				xotsSchedule(ci);
+			} else if (cmp(cmd, "run", 1)) {
+				xotsRun(ci);
+			} else {
+				ci.println("Unknown command: " + cmd);
+			}
+		} catch (Exception e) {
+			printThrowable(ci, e);
+
 		}
 	}
 
 	public void _junit(final CommandInterpreter ci) throws ClassNotFoundException {
-		final Bundle bundle = Platform.getBundle(ci.nextArgument());
-		Class<?> testclass = bundle.loadClass(ci.nextArgument());
+		try {
+			String bundleName = ci.nextArgument();
+			String className = ci.nextArgument();
 
-		JUnitCore runner = new org.junit.runner.JUnitCore();
-		RunListener listener = new TextListener(System.out);
-		runner.addListener(listener);
+			final Bundle bundle = Platform.getBundle(bundleName);
+			Class<?> testclass = bundle.loadClass(className);
 
-		Result result = runner.run(testclass);
-		if (result.wasSuccessful()) {
-			ci.println("SUCCESS");
-		} else {
-			ci.print("FAILURE - " + result.getFailureCount() + " failed");
+			JUnitCore runner = new org.junit.runner.JUnitCore();
+			RunListener listener = new TextListener(System.out);
+			runner.addListener(listener);
+
+			Result result = runner.run(testclass);
+			if (result.wasSuccessful()) {
+				ci.println("SUCCESS");
+			} else {
+				ci.print("FAILURE - " + result.getFailureCount() + " failed");
+			}
+		} catch (Exception e) {
+			printThrowable(ci, e);
 		}
+
 	}
 
 	public void _oda(final CommandInterpreter ci) {
-		String cmd = ci.nextArgument();
-		if (StringUtil.isEmpty(cmd)) {
-			// TODO what does ODA?
-		} else if (cmp(cmd, "stop", 3)) {
-			ODAPlatform.stop();
-		} else if (cmp(cmd, "start", 3)) {
-			ODAPlatform.start();
-		} else if (cmp(cmd, "restart", 1)) {
-			ODAPlatform.stop();
-			ODAPlatform.start();
+		try {
+			String cmd = ci.nextArgument();
+			if (StringUtil.isEmpty(cmd)) {
+				// TODO what does ODA?
+			} else if (cmp(cmd, "stop", 3)) {
+				ODAPlatform.stop();
+			} else if (cmp(cmd, "start", 3)) {
+				ODAPlatform.start();
+			} else if (cmp(cmd, "restart", 1)) {
+				ODAPlatform.stop();
+				ODAPlatform.start();
+			}
+		} catch (Exception e) {
+			printThrowable(ci, e);
 		}
 	}
 
@@ -172,155 +197,33 @@ public class OsgiCommandProvider implements CommandProvider {
 		for (DominoFutureTask<?> task : tasks) {
 			ci.println(task.getId() + "\t" + // ID
 					task.getState() + "\t" + // State
-					convertTimeUnit(task.getNextExecutionTime(TimeUnit.SECONDS)));
+					convertTimeUnit(task.getNextExecutionTimeInMillis()));
 
 		}
 	}
 
-	private String convertTimeUnit(final long sec) {
-		if (sec < 0) {
+	private String convertTimeUnit(final long millis) {
+		if (millis < 0) {
 			return "NOW!";
 		}
-		if (sec < 120) {
-			return "in " + sec + " seconds.";
+		if (millis < 1000 * 240) {
+			return "in " + (millis / 1000) + " seconds";
 		}
-		if (sec < 600) {
-			return "in " + (sec / 60) + " minutes " + (sec % 60) + " seconds.";
-		}
-		return "at " + new Date(sec * 1000);
+		return "at " + new Date(millis);
 	}
 
 	private void xotsRun(final CommandInterpreter ci) {
-		try {
-			String moduleName = ci.nextArgument();
-			String className = ci.nextArgument();
+		String moduleName = ci.nextArgument();
+		String className = ci.nextArgument();
 
-			Class<?> clazz = null;
-			NSFComponentModule module = null;
-			NotesContext ctx = null;
-			if (moduleName.startsWith("bundle:")) {
-				// -- Load the class from bundle
-				String bundleName = moduleName.substring(7);
-				final Bundle bundle = Platform.getBundle(bundleName);
-				if (bundle == null) {
-					ci.println("Could not find bundle " + bundleName);
-					return;
-				}
+		List<String> args = new ArrayList<String>();
 
-				try {
-					clazz = bundle.loadClass(className);
-				} catch (ClassNotFoundException e) {
-				}
-
-				if (clazz == null) {
-					ci.println("Could not find class " + className + " in bundle " + bundleName);
-					return;
-				}
-				ClassLoader cLoader = clazz.getClassLoader();
-
-				//runXotsClass(ci, clazz, cLoader);
-
-			} else {
-				// -- Load the class from module
-				module = ModuleLoader.loadModule(moduleName, true);
-				ctx = new NotesContext(module);
-				NotesContext.initThread(ctx);
-				// CHECKME which username should we use? Server
-				ctx.initRequest(new FakeHttpRequest(Factory.getLocalServerName()));
-
-				try {
-					if (module == null) {
-						ci.println("Could not find module " + moduleName);
-						return;
-					}
-					try {
-						clazz = module.getModuleClassLoader().loadClass(className);
-					} catch (ClassNotFoundException e) {
-					}
-
-					if (clazz == null) {
-						ci.println("Could not find class " + className);
-						return;
-					}
-					ClassLoader cLoader = module.getModuleClassLoader();
-					//runXotsClass(ci, clazz, cLoader);
-				} finally {
-					NotesContext.termThread();
-					ctx = null;
-				}
-			}
-
-		} catch (Exception e) {
-			ci.printStackTrace(e);
+		String arg;
+		while ((arg = ci.nextArgument()) != null) {
+			args.add(arg);
 		}
+		Xots.getService().runTasklet(moduleName, className, args.toArray());
 
 	}
-
-	//	private void runXotsClass(final CommandInterpreter ci, final Class<?> clazz, final ClassLoader ctxCl) {
-	//		OpenntfFactoryInitializer.initializeFromContext(null, ctxCl); 	// Factory.initThread is done here
-	//		try {
-	//			Tasklet annot = clazz.getAnnotation(Tasklet.class);
-	//			if (annot == null || !annot.isPublic()) {
-	//				ci.println(clazz.getName() + " does not annotate @Tasklet(isPublic=true). Cannot run.");
-	//				return;
-	//			}
-	//
-	//			List<String> args = new ArrayList<String>();
-	//
-	//			String arg;
-	//			while ((arg = ci.nextArgument()) != null) {
-	//				args.add(arg);
-	//			}
-	//
-	//			Class<?> ctorClasses[] = new Class<?>[args.size()];
-	//			for (int i = 0; i < ctorClasses.length; i++) {
-	//				ctorClasses[i] = String.class;
-	//			}
-	//			Object ctorArgs[] = new Object[0];
-	//
-	//			Constructor<?> cTor = null;
-	//			try {
-	//				cTor = clazz.getConstructor(ctorClasses);
-	//				ctorArgs = args.toArray();
-	//			} catch (NoSuchMethodException nsme1) {
-	//				try {
-	//					cTor = clazz.getConstructor(new Class<?>[] { String[].class });
-	//					ctorArgs = new Object[] { args.toArray() };
-	//				} catch (NoSuchMethodException nsme2) {
-	//
-	//				}
-	//			}
-	//			if (cTor == null) {
-	//				ci.println(clazz.getName() + " has no constructor for " + ctorClasses.length + " String argument(s)");
-	//				return;
-	//			}
-	//
-	//			Thread thread = Thread.currentThread();
-	//			ClassLoader oldCl = thread.getContextClassLoader();
-	//			try {
-	//				if (ctxCl != null) {
-	//					thread.setContextClassLoader(ctxCl);
-	//				}
-	//				try {
-	//					if (Callable.class.isAssignableFrom(clazz)) {
-	//						Callable<?> callable = (Callable<?>) cTor.newInstance(ctorArgs);
-	//						Xots.getService().submit(callable);
-	//					} else if (Runnable.class.isAssignableFrom(clazz)) {
-	//						Runnable runnable = (Runnable) cTor.newInstance(ctorArgs);
-	//						Xots.getService().submit(runnable);
-	//					} else {
-	//						ci.println("Could not run " + clazz.getName() + ", as this is no runnable or callable class");
-	//					}
-	//				} catch (Exception ex) {
-	//					log_.log(Level.SEVERE, "Could not run " + clazz.getName(), ex);
-	//					ci.println("ERROR: " + ex.getMessage());
-	//				}
-	//			} finally {
-	//				thread.setContextClassLoader(oldCl);
-	//			}
-	//		} finally {
-	//			Factory.termThread();
-	//		}
-	//	}
 
 }

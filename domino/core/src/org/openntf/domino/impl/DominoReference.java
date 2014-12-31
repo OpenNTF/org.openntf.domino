@@ -13,7 +13,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.thread;
+package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -31,15 +32,12 @@ import org.openntf.domino.utils.Factory;
  *         DominoReference tracks the lifetime of reference object and recycles delegate if reference object is GCed
  * 
  */
-public class DominoReference extends WeakReference<Object> {
+public class DominoReference extends WeakReference<Base<?>> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
 	/** The delegate_. This is the wrapped Object */
 	private lotus.domino.Base delegate_;
-
-	/** This is the CPP-ID or an other unique hash value **/
-	private long key_;
 
 	private transient int hashcode_;
 
@@ -55,13 +53,12 @@ public class DominoReference extends WeakReference<Object> {
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(final long key, final Object reference, final lotus.domino.Base delegate, final ReferenceQueue<Object> q) {
+	public DominoReference(final Base<?> reference, final ReferenceQueue<Object> q, final lotus.domino.Base delegate) {
 		super(reference, q);
 
 		// Because the reference separately contains a pointer to the delegate object, it's still available even
 		// though the wrapper is null
 		this.delegate_ = delegate;
-		this.key_ = key;
 	}
 
 	//void clearLotusReference() {
@@ -171,12 +168,8 @@ public class DominoReference extends WeakReference<Object> {
 		return hashcode_;
 	}
 
-	long getKey() {
-		return key_;
-	}
-
-	boolean isDead() {
-		return org.openntf.domino.impl.Base.isDead(delegate_);
+	lotus.domino.Base getDelegate() {
+		return delegate_;
 	}
 
 }

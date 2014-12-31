@@ -28,7 +28,10 @@ import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import lotus.domino.NotesException;
+
 import org.openntf.domino.Document;
+import org.openntf.domino.iterators.DocumentList;
 
 /**
  * CollectionUtils (Sets and Lists) utilities library
@@ -445,4 +448,70 @@ public enum CollectionUtils {
 		return new ChainedIterable(iterables);
 	}
 
+	//	/**
+	//	 * Convert a Document collection to Notes Collection
+	//	 * 
+	//	 * @param collection
+	//	 * @return
+	//	 */
+	//	public static org.openntf.domino.NoteCollection toLotusNoteCollection(final lotus.domino.DocumentCollection collection) {
+	//		org.openntf.domino.NoteCollection result = null;
+	//		if (collection instanceof org.openntf.domino.DocumentCollection) {
+	//			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
+	//			result = db.createNoteCollection(false);
+	//			result.add(collection);
+	//		} else if (collection != null) {
+	//			// TODO Eh?
+	//			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getAncestorDatabase();
+	//			result = db.createNoteCollection(false);
+	//			result.add(collection);
+	//		}
+	//		return result;
+	//	}
+
+	/**
+	 * Returns the Note IDs of the given (Notes) collection
+	 * 
+	 * @param collection
+	 *            the DocumentCollection
+	 * @return a array of NoteIDs
+	 */
+	public static int[] getNoteIDs(final lotus.domino.DocumentCollection collection) {
+		int[] result = null;
+		try {
+			if (collection instanceof DocumentList) {
+				result = ((DocumentList) collection).getNids();
+			} else if (collection.isSorted()) {
+				if (collection instanceof org.openntf.domino.DocumentCollection) {
+					org.openntf.domino.DocumentCollection ocoll = (org.openntf.domino.DocumentCollection) collection;
+					int size = ocoll.getCount();
+					result = new int[size];
+					int i = 0;
+					for (org.openntf.domino.Document doc : ocoll) {
+						result[i++] = Integer.valueOf(doc.getNoteID(), 16);
+					}
+				} else {
+					int size = collection.getCount();
+					result = new int[size];
+					lotus.domino.Document doc = collection.getFirstDocument();
+					lotus.domino.Document next = null;
+					int i = 0;
+					while (doc != null) {
+						next = collection.getNextDocument(doc);
+						result[i++] = Integer.valueOf(doc.getNoteID(), 16);
+						doc.recycle();
+						doc = next;
+					}
+				}
+			} else {
+				lotus.domino.Database db = collection.getParent();
+				lotus.domino.NoteCollection nc = db.createNoteCollection(false);
+				result = nc.getNoteIDs();
+				nc.recycle();
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
+	}
 }
