@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The CD record contains Lotus Script object code. (editods.h)
@@ -12,6 +11,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDLSOBJECT extends CDRecord {
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned32 CodeSize = new Unsigned32();
 	public final Unsigned8[] Reserved = array(new Unsigned8[4]);
 
@@ -19,12 +19,9 @@ public class CDLSOBJECT extends CDRecord {
 		addVariableData("ObjectCode", "CodeSize");
 	}
 
-	public CDLSOBJECT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDLSOBJECT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public byte[] getObjectCode() {

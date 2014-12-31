@@ -1,11 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.OLE_GUID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Structure of an on-disk autolaunch item. Most of the information contained in this structure refers to OLE autolaunching behaviors.
@@ -199,6 +199,7 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getObjectType for access.
 	 */
@@ -233,12 +234,9 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 		addVariableString("FieldName", "FieldNameLength");
 	}
 
-	public CDDOCAUTOLAUNCH(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDDOCAUTOLAUNCH(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**

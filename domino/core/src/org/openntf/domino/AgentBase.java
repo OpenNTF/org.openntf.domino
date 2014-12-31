@@ -19,8 +19,9 @@ public class AgentBase extends lotus.domino.AgentBase {
 	 */
 	@Override
 	public Session getSession() {
-		// TODO: I think we have to setup/teardown the whole api somewhere
-		return Factory.getWrapperFactory().fromLotus(super.getSession(), Session.SCHEMA, null);
+		Factory.startup();
+		Factory.initThread();
+		return Factory.fromLotus(super.getSession(), Session.SCHEMA, null);
 	}
 
 	/**
@@ -29,7 +30,6 @@ public class AgentBase extends lotus.domino.AgentBase {
 	 * @return the agent session
 	 */
 	public static Session getAgentSession() {
-		return Factory.getWrapperFactory().fromLotus(lotus.domino.AgentBase.getAgentSession(), Session.SCHEMA, null);
+		return Factory.fromLotus(lotus.domino.AgentBase.getAgentSession(), Session.SCHEMA, null);
 	}
-
 }

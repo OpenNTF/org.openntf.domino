@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
 
 /**
@@ -13,14 +12,6 @@ public class OLE_GUID extends AbstractStruct {
 	public final Unsigned16 Data2 = new Unsigned16();
 	public final Unsigned16 Data3 = new Unsigned16();
 	public final Unsigned8[] Data4 = array(new Unsigned8[8]);
-
-	public OLE_GUID() {
-		super();
-	}
-
-	public OLE_GUID(final ByteBuffer data) {
-		super(data);
-	}
 
 	public UUID getUUID() {
 		return UUID.nameUUIDFromBytes(getBytes());

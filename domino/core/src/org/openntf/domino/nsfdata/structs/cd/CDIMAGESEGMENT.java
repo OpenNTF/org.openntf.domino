@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -14,6 +13,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDIMAGESEGMENT extends CDRecord {
 
+	public final LSIG Header = inner(new LSIG());
 	public final Unsigned16 DataSize = new Unsigned16();
 	public final Unsigned16 SegSize = new Unsigned16();
 
@@ -21,12 +21,9 @@ public class CDIMAGESEGMENT extends CDRecord {
 		addVariableData("Data", "DataSize");
 	}
 
-	public CDIMAGESEGMENT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDIMAGESEGMENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public byte[] getImageData() {

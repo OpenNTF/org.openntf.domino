@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -12,6 +11,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDWINMETASEG extends CDRecord {
 
+	public final LSIG Header = inner(new LSIG());
 	public final Unsigned16 DataSize = new Unsigned16();
 	public final Unsigned16 SegSize = new Unsigned16();
 
@@ -19,12 +19,9 @@ public class CDWINMETASEG extends CDRecord {
 		addVariableData("Data", "DataSize");
 	}
 
-	public CDWINMETASEG(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDWINMETASEG(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**

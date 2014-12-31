@@ -1,9 +1,8 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Notes/Domino 6. To preserve compatibility with existing applications, the new attributes have
@@ -23,6 +22,7 @@ public class CDACTIONEXT extends CDRecord {
 		BUTTON, CHECKBOX, MENU_SEPARATOR;
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned32 dwFlags = new Unsigned32();
 	public final Enum16<Type> wControlType = new Enum16<Type>(Type.values());
 	public final Unsigned16 wControlFormulaLen = new Unsigned16();
@@ -40,12 +40,9 @@ public class CDACTIONEXT extends CDRecord {
 		addVariableString("ProgrammaticUseTxt", "wProgrammaticUseTxtLen");
 	}
 
-	public CDACTIONEXT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDACTIONEXT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public NSFCompiledFormula getControlFormula() {

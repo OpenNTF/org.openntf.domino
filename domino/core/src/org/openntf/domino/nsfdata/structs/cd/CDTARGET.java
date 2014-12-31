@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The CDTARGET structure specifies the target (ie: the frame) where a resource link hotspot is to be displayed. It is followed by variable
@@ -15,6 +14,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTARGET extends CDRecord {
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 TargetLength = new Unsigned16();
 	// TODO make enum
 	public final Unsigned16 Flags = new Unsigned16();
@@ -24,12 +24,9 @@ public class CDTARGET extends CDRecord {
 		addVariableString("Target", "TargetLength");
 	}
 
-	public CDTARGET(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDTARGET(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getTarget() {

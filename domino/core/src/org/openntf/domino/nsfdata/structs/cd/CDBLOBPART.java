@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record is used in conjunction with CD record CDEVENT. If a CDEVENT record has an ActionType of ACTION_TYPE_JAVASCRIPT then
@@ -11,6 +10,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDBLOBPART extends CDRecord {
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 OwnerSig = new Unsigned16();
 	public final Unsigned16 Length = new Unsigned16();
 	public final Unsigned16 BlobMax = new Unsigned16();
@@ -20,12 +20,9 @@ public class CDBLOBPART extends CDRecord {
 		addVariableData("BlobData", "Length");
 	}
 
-	public CDBLOBPART(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDBLOBPART(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public byte[] getBlobData() {

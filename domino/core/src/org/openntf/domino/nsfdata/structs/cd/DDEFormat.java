@@ -6,6 +6,7 @@ package org.openntf.domino.nsfdata.structs.cd;
  *
  */
 public enum DDEFormat {
+	UNUSED0,
 	/**
 	 * CF_TEXT
 	 */

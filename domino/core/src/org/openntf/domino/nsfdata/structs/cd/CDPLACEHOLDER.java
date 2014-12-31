@@ -1,12 +1,12 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A CDPLACEHOLDER record stores additional information about various embedded type CD records, such as CDEMBEDDEDCTL, CDEMBEDDEDOUTLINE and
@@ -84,6 +84,7 @@ public class CDPLACEHOLDER extends CDRecord {
 		LEFT, CENTER, RIGHT
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Enum16<CDHOTSPOTBEGIN.HotspotType> Type = new Enum16<CDHOTSPOTBEGIN.HotspotType>(CDHOTSPOTBEGIN.HotspotType.values());
 	/**
 	 * Use getFlags for access.
@@ -104,12 +105,9 @@ public class CDPLACEHOLDER extends CDRecord {
 	public final Unsigned16 SpareWord = new Unsigned16();
 	public final Unsigned32[] Spare = array(new Unsigned32[3]);
 
-	public CDPLACEHOLDER(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDPLACEHOLDER(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

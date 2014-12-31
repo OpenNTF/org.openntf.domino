@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -17,6 +16,7 @@ public class CDPOSITIONING extends CDRecord {
 		STATIC, ABSOLUTE, RELATIVE, FIXED
 	}
 
+	public final BSIG Header = inner(new BSIG());
 	public final Enum8<SchemeType> Scheme = new Enum8<SchemeType>(SchemeType.values());
 	public final Unsigned8 bReserved = new Unsigned8();
 	public final Signed32 ZIndex = new Signed32();
@@ -27,11 +27,8 @@ public class CDPOSITIONING extends CDRecord {
 	public final Float64 BrowserLeftOffset = new Float64();
 	public final Float64 BrowserRightOffset = new Float64();
 
-	public CDPOSITIONING(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDPOSITIONING(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 }

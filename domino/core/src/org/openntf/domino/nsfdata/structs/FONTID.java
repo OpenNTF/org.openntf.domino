@@ -23,13 +23,15 @@ public class FONTID extends AbstractStruct {
 	public final Unsigned8 Color = new Unsigned8();
 	public final Unsigned8 PointSize = new Unsigned8();
 
-	public FONTID() {
-		super();
+	@Override
+	public void init() {
+		super.init();
 		getByteBuffer().order(ByteOrder.nativeOrder());
 	}
 
-	public FONTID(final ByteBuffer data) {
-		super(data);
+	@Override
+	public void init(final ByteBuffer data) {
+		super.init(data);
 		getByteBuffer().order(ByteOrder.nativeOrder());
 	}
 
