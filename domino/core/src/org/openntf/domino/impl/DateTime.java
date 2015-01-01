@@ -33,14 +33,13 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
-import com.ibm.icu.util.TimeZone;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DateTime.
  */
 public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements
-		org.openntf.domino.DateTime {
+org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -78,7 +77,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	private boolean isTimeOnly_;
 
 	/** The notes zone_. */
-	private int notesZone_;
+	private int notesZone_ = Integer.MIN_VALUE;
 
 	private static final ThreadLocal<lotus.domino.DateTime> lotusWorker = new ThreadLocal<lotus.domino.DateTime>();
 
@@ -152,6 +151,10 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		isDateOnly_ = orig.isDateOnly_;
 		isTimeOnly_ = orig.isTimeOnly_;
 		notesZone_ = orig.notesZone_;
+		if (notesZone_ == -18000000) {
+			Throwable t = new Throwable();
+			t.printStackTrace();
+		}
 		if (orig.date_ != null) {
 			date_ = new Date(orig.date_.getTime());
 		}
@@ -176,7 +179,13 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		try {
 			lotus.domino.Session rawsession = toLotus(parent);
 			lotus.domino.DateTime delegate = rawsession.createDateTime(date_);
-			delegate.convertToZone(notesZone_, dst_);
+			if (notesZone_ != Integer.MIN_VALUE) {
+				try {
+					delegate.convertToZone(notesZone_, dst_);
+				} catch (Throwable t) {
+					log_.log(Level.WARNING, "Failed to convert a DateTime to zone " + notesZone_ + " with a dst of " + String.valueOf(dst_));
+				}
+			}
 			if (isAnyTime()) {
 				delegate.setAnyTime();
 			}
@@ -200,6 +209,10 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		try {
 			dst_ = delegate.isDST();
 			notesZone_ = delegate.getTimeZone();
+			if (notesZone_ == -18000000) {
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			}
 			String s = delegate.getDateOnly();
 			isTimeOnly_ = (s == null || s.length() == 0);
 			s = delegate.getTimeOnly();
@@ -638,13 +651,14 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	public void setLocalTime(final java.util.Calendar calendar) {
 		date_ = calendar.getTime();
-		java.util.TimeZone localTimeZone = calendar.getTimeZone();
-		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
-		if (localTimeZone.useDaylightTime() == true) {
-			dst_ = localTimeZone.inDaylightTime(date_);
-		} else {
-			dst_ = false;
-		}
+		//FIXME NTF this is incorrect. The notesZone_ is the timezone according to the legacy Notes API. The Java calendar API cannot replace it.
+		//		java.util.TimeZone localTimeZone = calendar.getTimeZone();
+		//		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
+		//		if (localTimeZone.useDaylightTime() == true) {
+		//			dst_ = localTimeZone.inDaylightTime(date_);
+		//		} else {
+		//			dst_ = false;
+		//		}
 		isDateOnly_ = false;
 		isTimeOnly_ = false;
 		//setLocalTime(calendar.getTime());
@@ -658,13 +672,14 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	public void setLocalTime(final Calendar calendar) {
 		date_ = calendar.getTime();
-		TimeZone localTimeZone = calendar.getTimeZone();
-		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
-		if (localTimeZone.useDaylightTime() == true) {
-			dst_ = localTimeZone.inDaylightTime(date_);
-		} else {
-			dst_ = false;
-		}
+		//FIXME NTF this is incorrect. The notesZone_ is the timezone according to the legacy Notes API. The Java calendar API cannot replace it.
+		//		TimeZone localTimeZone = calendar.getTimeZone();
+		//		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
+		//		if (localTimeZone.useDaylightTime() == true) {
+		//			dst_ = localTimeZone.inDaylightTime(date_);
+		//		} else {
+		//			dst_ = false;
+		//		}
 		isDateOnly_ = false;
 		isTimeOnly_ = false;
 	}
