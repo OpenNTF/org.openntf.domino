@@ -1,5 +1,7 @@
 package org.openntf.domino.nsfdata.structs;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -23,7 +25,7 @@ public enum ODSUtils {
 
 	public static String fromLMBCS(final ByteBuffer data) {
 		Charset lmbcs = Charset.forName("x-lmbcs-1");
-		CharBuffer buffer = lmbcs.decode(data);
+		CharBuffer buffer = lmbcs.decode(data.duplicate());
 		return buffer.toString();
 	}
 
@@ -33,10 +35,19 @@ public enum ODSUtils {
 	}
 
 	public static String fromAscii(final Unsigned8[] data) {
-		byte[] result = new byte[data.length];
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		for (int i = 0; i < data.length; i++) {
-			result[i] = (byte) data[i].get();
+			byte aByte = (byte) data[i].get();
+			if (aByte == 0) {
+				break;
+			} else {
+				bos.write(aByte);
+			}
 		}
-		return new String(result);
+		try {
+			return new String(bos.toByteArray(), "US-ASCII");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -10,6 +9,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTABLECELL extends CDRecord {
 
+	public final BSIG Header = inner(new BSIG());
 	public final Unsigned8 Row = new Unsigned8();
 	public final Unsigned8 Column = new Unsigned8();
 	public final Unsigned16 LeftMargin = new Unsigned16();
@@ -25,12 +25,9 @@ public class CDTABLECELL extends CDRecord {
 	public final Unsigned8 ColumnSpan = new Unsigned8();
 	public final Unsigned16 BackgroundColor = new Unsigned16();
 
-	public CDTABLECELL(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDTABLECELL(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 }

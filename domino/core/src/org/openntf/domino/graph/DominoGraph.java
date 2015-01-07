@@ -17,6 +17,7 @@ import javolution.util.FastMap;
 import javolution.util.FastSet;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
@@ -370,12 +371,20 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	protected org.openntf.domino.Database getDatabase() {
-		return getRawSession().getDatabase(server_, filepath_);
+		Session session = getCurrentSession();
+		if (session == null) {
+			log_.log(Level.INFO, "Current session not available. Using native session instead.");
+			session = getRawSession();
+		}
+		return session.getDatabase(server_, filepath_);
+	}
+
+	public org.openntf.domino.Session getCurrentSession() {
+		return Factory.getSession(SessionType.CURRENT);
 	}
 
 	public org.openntf.domino.Session getRawSession() {
-		// CHECKME: Is this correct?
-		return Factory.getSession(SessionType.CURRENT);
+		return Factory.getSession(SessionType.NATIVE);
 	}
 
 	public org.openntf.domino.Database getRawDatabase() {

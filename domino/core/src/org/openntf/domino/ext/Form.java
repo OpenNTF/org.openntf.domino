@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.ext;
 
+import org.openntf.domino.NoteCollection;
+
 /**
  * @author withersp
  * 
@@ -53,5 +55,7 @@ public interface Form {
 	 * @since org.openntf.domino 3.0.0
 	 */
 	public String getSelectionFormula();
+
+	public NoteCollection getNoteCollection();
 
 }

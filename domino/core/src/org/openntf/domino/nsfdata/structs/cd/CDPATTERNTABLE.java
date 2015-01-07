@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -18,16 +19,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPATTERNTABLE extends CDRecord {
 
-	public CDPATTERNTABLE(final CDSignature cdSig) {
-		super(cdSig);
-	}
+	public final LSIG Header = inner(new LSIG());
 
-	public CDPATTERNTABLE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public int getPatternCount() {
-		return (int) (getDataLength() / 24);
+		return (int) ((Header.getRecordLength() - Header.size()) / 24);
 	}
 
 	public Pattern[] getPatterns() {
@@ -36,6 +36,7 @@ public class CDPATTERNTABLE extends CDRecord {
 		for (int i = 0; i < count; i++) {
 			ByteBuffer data = getData().duplicate();
 			data.order(ByteOrder.LITTLE_ENDIAN);
+			data.position(data.position() + size());
 			data.position(data.position() + (i * 24));
 			data.limit(data.position() + 24);
 			result[i] = new Pattern(data);

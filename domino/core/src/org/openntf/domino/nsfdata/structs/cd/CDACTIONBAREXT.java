@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -8,6 +7,7 @@ import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the Action Bar attributes. It is an extension of the CDACTIONBAR record. It is found within a $V5ACTIONS item and
@@ -98,14 +98,19 @@ public class CDACTIONBAREXT extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final COLOR_VALUE BackColor = inner(new COLOR_VALUE());
 	public final COLOR_VALUE LineColor = inner(new COLOR_VALUE());
 	public final COLOR_VALUE FontColor = inner(new COLOR_VALUE());
 	public final COLOR_VALUE ButtonColor = inner(new COLOR_VALUE());
-	public final Enum16<BorderDisplay> BtnBorderDisplay = new Enum16<BorderDisplay>(BorderDisplay.values());
+	// TODO figure out why some values are way out of range - unless isPacked should be false
+	//	public final Enum16<BorderDisplay> BtnBorderDisplay = new Enum16<BorderDisplay>(BorderDisplay.values());
+	public final Unsigned16 BtnBorderDisplay = new Unsigned16();
 	public final Unsigned16 wAppletHeight = new Unsigned16();
 	public final Enum16<BackgroundRepeat> wBarBackgroundRepeat = new Enum16<BackgroundRepeat>(BackgroundRepeat.values());
-	public final Enum8<ButtonWidth> BtnWidthStyle = new Enum8<ButtonWidth>(ButtonWidth.values());
+	// TODO figure out why some values are way out of range - unless isPacked should be false
+	//	public final Enum8<ButtonWidth> BtnWidthStyle = new Enum8<ButtonWidth>(ButtonWidth.values());
+	public final Unsigned8 BtnWidthStyle = new Unsigned8();
 	public final Enum8<Justify> BtnTextJustify = new Enum8<Justify>(Justify.values());
 	public final Unsigned16 wBtnWidthAbsolute = new Unsigned16();
 	public final Unsigned16 wBtnInternalMargin = new Unsigned16();
@@ -118,14 +123,6 @@ public class CDACTIONBAREXT extends CDRecord {
 	public final LENGTH_VALUE barHeight = inner(new LENGTH_VALUE());
 	public final Unsigned32[] Spare = array(new Unsigned32[12]);
 
-	public CDACTIONBAREXT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDACTIONBAREXT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
 	/**
 	 * @return See ACTIONBAREXT_xxx flags
 	 */
@@ -133,4 +130,8 @@ public class CDACTIONBAREXT extends CDRecord {
 		return Flag.valuesOf((int) dwFlags.get());
 	}
 
+	@Override
+	public SIG getHeader() {
+		return Header;
+	}
 }

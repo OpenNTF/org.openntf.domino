@@ -1,10 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.awt.Color;
-import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record provides additional table properties, expanding the information provided in CDTABLEBEGIN. It will only be recognized in
@@ -15,9 +15,10 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPRETABLEBEGIN extends CDRecord {
 	public static enum Viewer {
-		ZERO, ONCLICK, ONLOADTIMER, ONLOADCYCLEONCE, TABS, FILEDRIVEN, CYCLEONCE, CAPTIONS, LAST
+		UNUSED0, ONCLICK, ONLOADTIMER, ONLOADCYCLEONCE, TABS, FILEDRIVEN, CYCLEONCE, CAPTIONS, LAST
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	// TODO make enum
 	public final Unsigned32 Flags = new Unsigned32();
 	public final Unsigned8 Rows = new Unsigned8();
@@ -47,12 +48,9 @@ public class CDPRETABLEBEGIN extends CDRecord {
 		addVariableString("Name", "NameLength");
 	}
 
-	public CDPRETABLEBEGIN(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDPRETABLEBEGIN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Color getStyleColor1() {

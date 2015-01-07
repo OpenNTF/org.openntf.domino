@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -20,7 +19,7 @@ public class CDACTION extends CDRecord {
 	 * The action type based on the API documentation (ACTION_xxx (type)).
 	 */
 	public static enum ActionType {
-		UNDEFINED, RUN_FORMULA, RUN_SCRIPT, RUN_AGENT, OLDSYS_COMMAND, SYS_COMMAND, UNDEFINED6, PLACEHOLDER, RUN_JAVASCRIPT;
+		UNUSED0, RUN_FORMULA, RUN_SCRIPT, RUN_AGENT, OLDSYS_COMMAND, SYS_COMMAND, UNUSED6, PLACEHOLDER, RUN_JAVASCRIPT;
 	}
 
 	/**
@@ -150,10 +149,11 @@ public class CDACTION extends CDRecord {
 		}
 	}
 
+	public final LSIG Header = inner(new LSIG());
 	public final Enum16<ActionType> Type = new Enum16<ActionType>(ActionType.values());
 	public final Unsigned16 IconIndex = new Unsigned16();
 	/**
-	 * Use getFlags for access.
+	 * @deprecated Use getFlags for access.
 	 */
 	@Deprecated
 	public final Unsigned32 Flags = new Unsigned32();
@@ -167,12 +167,9 @@ public class CDACTION extends CDRecord {
 		addVariableData("Formula", "FormulaLen");
 	}
 
-	public CDACTION(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDACTION(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
@@ -182,7 +179,7 @@ public class CDACTION extends CDRecord {
 	public int getActionDataLen() {
 		// This is an oddball one, since there's no ActionDataLen - it's implied by the total length minus everything else
 		int extra = TitleLen.get() % 2 + FormulaLen.get() % 2;
-		return (int) (getSignature().getLength() - LSIG.SIZE - 16 - TitleLen.get() - FormulaLen.get() - extra);
+		return (int) (Header.Length.get() - Header.size() - 16 - TitleLen.get() - FormulaLen.get() - extra);
 	}
 
 	public byte[] getActionData() {

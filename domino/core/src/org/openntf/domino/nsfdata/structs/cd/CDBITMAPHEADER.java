@@ -1,9 +1,9 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -51,6 +51,7 @@ public class CDBITMAPHEADER extends CDRecord {
 		}
 	}
 
+	public final LSIG Header = inner(new LSIG());
 	public final RECTSIZE Dest = inner(new RECTSIZE());
 	public final RECTSIZE Crop = inner(new RECTSIZE());
 	/**
@@ -69,12 +70,9 @@ public class CDBITMAPHEADER extends CDRecord {
 	public final Unsigned16 ColorCount = new Unsigned16();
 	public final Unsigned16 PatternCount = new Unsigned16();
 
-	public CDBITMAPHEADER(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDBITMAPHEADER(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**

@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record may further define attributes within a CDFIELD such as tab order.
@@ -14,6 +13,7 @@ public class CDEMBEDDEDCTL extends CDRecord {
 		VERSION1
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getCtlStyle for access.
 	 */
@@ -37,12 +37,9 @@ public class CDEMBEDDEDCTL extends CDRecord {
 	public final Unsigned16 Percentage = new Unsigned16();
 	public final Unsigned32[] Spare = array(new Unsigned32[3]);
 
-	public CDEMBEDDEDCTL(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEMBEDDEDCTL(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**

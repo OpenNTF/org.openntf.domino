@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -12,6 +11,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTABLEBEGIN extends CDRecord {
 
+	public final BSIG Header = inner(new BSIG());
 	public final Unsigned16 LeftMargin = new Unsigned16();
 	public final Unsigned16 HorizInterCellSpace = new Unsigned16();
 	public final Unsigned16 VertInterCellSpace = new Unsigned16();
@@ -20,12 +20,9 @@ public class CDTABLEBEGIN extends CDRecord {
 	// TODO make enum
 	public final Unsigned16 Flags = new Unsigned16();
 
-	public CDTABLEBEGIN(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDTABLEBEGIN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 }

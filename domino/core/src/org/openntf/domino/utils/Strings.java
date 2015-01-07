@@ -63,8 +63,12 @@ public enum Strings {
 	public static final String MESSAGE_DIGEST_ALGORYTHM = "MD5";
 	public static final String MESSAGE_FORMULA_INVALID = "The Formula syntax is invalid.  ";
 
+	public static final String REGEX_PIPE = "\\|";
+	public static final Pattern PATTERN_PIPE = Pattern.compile(REGEX_PIPE);
 	public static final String REGEX_NEWLINE = "\\r?\\n";
+	public static final Pattern PATTERN_NEWLINE = Pattern.compile(REGEX_NEWLINE);
 	public static final String REGEX_BEGIN_NOCASE = "(?i)^";
+	public static final Pattern PATTERN_BEGIN_NOCASE = Pattern.compile(REGEX_BEGIN_NOCASE);
 	public static final String REGEX_MONTH = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May?|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
 	public static final String REGEX_DAYOFWEEK = "(?:Sun(?:day)?|Mon(?:day)?|Tue(?:sday)?|Wed(?:nesday)?|Thu(?:rsday)?|Fri(?:day)?|Sat(?:urday)?)";
 	public static final String REGEX_9_1 = "\\d{1}";

@@ -1,9 +1,8 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * Frame Name String and Target Name string follow the fixed portion of this CD Record. The strings are not null terminated. (fsods.h)
@@ -13,6 +12,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDFRAME extends CDRecord {
 
+	public final WSIG Header = inner(new WSIG());
 	// TODO make enum
 	public final Unsigned32 Flags = new Unsigned32();
 	// TODO make enum
@@ -37,12 +37,9 @@ public class CDFRAME extends CDRecord {
 		// TODO add DataFlags extra data
 	}
 
-	public CDFRAME(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDFRAME(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getFrameName() {

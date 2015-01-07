@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs;
 
 import java.awt.Color;
-import java.nio.ByteBuffer;
 
 /**
  * This data structure defines the three components of an RGB color which consist of a red, green, and blue color value. (colorods.h)
@@ -15,14 +14,6 @@ public class COLOR_VALUE extends AbstractStruct {
 	public final Unsigned8 Component1 = new Unsigned8();
 	public final Unsigned8 Component2 = new Unsigned8();
 	public final Unsigned8 Component3 = new Unsigned8();
-
-	public COLOR_VALUE() {
-		super();
-	}
-
-	public COLOR_VALUE(final ByteBuffer data) {
-		super(data);
-	}
 
 	public int getFlags() {
 		// TODO make enum

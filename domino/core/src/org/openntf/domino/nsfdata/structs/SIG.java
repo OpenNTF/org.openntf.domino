@@ -1,38 +1,13 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.io.Serializable;
 
-import org.openntf.domino.nsfdata.structs.cd.CDSignature;
+public abstract class SIG extends AbstractStruct {
 
-@SuppressWarnings("serial")
-public abstract class SIG implements Serializable {
+	public abstract long getRecordLength();
 
-	private CDSignature signature_;
-	private long length_;
+	public abstract void setRecordLength(long length);
 
-	protected SIG(final CDSignature signature, final long length) {
-		signature_ = signature;
-		length_ = length;
-	}
+	public abstract int getSigIdentifier();
 
-	public CDSignature getSignature() {
-		return signature_;
-	}
-
-	public long getLength() {
-		return length_;
-	}
-
-	public void setDataLength(final int length) {
-		length_ = getSigLength() + length;
-	}
-
-	public abstract int getSigLength();
-
-	public abstract byte[] getBytes();
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Signature: " + getSignature() + ", Length: " + getLength() + "]";
-	}
+	public abstract void setSigIdentifier(int identifier);
 }

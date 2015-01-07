@@ -1,9 +1,9 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -129,6 +129,7 @@ public class CDACTIONBAR extends CDRecord {
 		}
 	}
 
+	public final BSIG Header = inner(new BSIG());
 	public final Unsigned16 BackColor = new Unsigned16();
 	public final Unsigned16 LineColor = new Unsigned16();
 	public final Enum16<ActionLineStyle> LineStyle = new Enum16<ActionLineStyle>(ActionLineStyle.values());
@@ -144,12 +145,9 @@ public class CDACTIONBAR extends CDRecord {
 	public final Unsigned16 BtnHeight = new Unsigned16();
 	public final Unsigned16 HeightSpc = new Unsigned16();
 
-	public CDACTIONBAR(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDACTIONBAR(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

@@ -23,7 +23,9 @@ public class SessionFullAccessFactory extends AbstractSessionFactory implements 
 	@Override
 	public Session createSession(final String userName) {
 		if (userName != null) {
-			throw new UnsupportedOperationException("This SessionType is not (yet)supported in Domino environment");
+			//			Thread.currentThread().interrupt();
+			throw new UnsupportedOperationException("SessionType FULL_ACCESS as user " + String.valueOf(userName)
+					+ " is not (yet)supported in Domino environment: ");
 		}
 		lotus.domino.Session raw = LotusSessionFactory.createSessionWithFullAccess(userName);
 		return wrapSession(raw, true);

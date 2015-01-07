@@ -1,11 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the appearance of a button in a rich text field. (editods.h)
@@ -102,6 +102,7 @@ public class CDBUTTON extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -116,12 +117,9 @@ public class CDBUTTON extends CDRecord {
 		addVariableString("Text", "getTextLen");
 	}
 
-	public CDBUTTON(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDBUTTON(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
@@ -129,7 +127,7 @@ public class CDBUTTON extends CDRecord {
 	}
 
 	public int getTextLen() {
-		return (int) (getDataLength() - 8 - FontID.size());
+		return (int) (Header.getRecordLength() - 8 - FontID.size());
 	}
 
 	public String getText() {

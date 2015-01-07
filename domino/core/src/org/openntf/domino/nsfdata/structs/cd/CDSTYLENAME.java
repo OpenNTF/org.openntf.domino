@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -12,6 +11,7 @@ public class CDSTYLENAME extends CDRecord {
 
 	public static final int MAX_STYLE_NAME = 35;
 
+	public final BSIG Header = inner(new BSIG());
 	// TODO make enum
 	public final Unsigned32 Flags = new Unsigned32();
 	public final Unsigned16 PABID = new Unsigned16();
@@ -25,12 +25,9 @@ public class CDSTYLENAME extends CDRecord {
 		//		/*		BYTE	userName [nameLen]	User name			*/
 	}
 
-	public CDSTYLENAME(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDSTYLENAME(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getStyleName() {

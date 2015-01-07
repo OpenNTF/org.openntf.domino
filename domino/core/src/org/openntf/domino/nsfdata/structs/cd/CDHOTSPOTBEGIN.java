@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the start of a "hot" region in a rich text field. Clicking on a hot region causes some other action to occur.
@@ -72,6 +71,7 @@ public class CDHOTSPOTBEGIN extends CDRecord {
 		CONTACTLISTCTL;
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	public final Enum16<HotspotType> Type = new Enum16<HotspotType>(HotspotType.values());
 	// TODO make enum
 	public final Unsigned32 Flags = new Unsigned32();
@@ -81,12 +81,9 @@ public class CDHOTSPOTBEGIN extends CDRecord {
 		addVariableData("Data", "DataLength");
 	}
 
-	public CDHOTSPOTBEGIN(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDHOTSPOTBEGIN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public byte[] getHotspotData() {

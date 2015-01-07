@@ -1,10 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines a resource within a database. There may be many resources defined within a particular database. A resource can be
@@ -201,6 +201,7 @@ public class CDRESOURCE extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
 	/**
 	 * Use getFlags for access.
 	 */
@@ -227,12 +228,9 @@ public class CDRESOURCE extends CDRecord {
 		addVariableData("Data1", "Length1");
 	}
 
-	public CDRESOURCE(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDRESOURCE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {

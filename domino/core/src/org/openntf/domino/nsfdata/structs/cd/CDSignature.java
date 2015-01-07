@@ -48,8 +48,11 @@ public enum CDSignature {
 	BACKGROUNDCOLOR(BYTE, 114, CDCOLOR.class), // Note: this structure is shared with COLOR
 	INLINE(WORD, 115, CDINLINE.class), V6HOTSPOTBEGIN_CONTINUATION(WORD, 116, null), TARGET_DBLCLK(WORD, 117, CDTARGET.class),
 	CAPTION(WORD, 118, CDCAPTION.class), LINKCOLORS(WORD, 119, null), TABLECELL_HREF(WORD, 120, CDRESOURCE.class),
-	ACTIONBAREXT(WORD, 121, CDACTIONBAREXT.class), IDNAME(WORD, 122, CDIDNAME.class), TABLECELL_IDNAME(WORD, 123, CDIDNAME.class),
-	IMAGESEGMENT(LONG, 124, CDIMAGESEGMENT.class), IMAGEHEADER(LONG, 125, CDIMAGEHEADER.class),
+	ACTIONBAREXT(WORD, 121, CDACTIONBAREXT.class),
+	IDNAME(WORD, 122, CDIDNAME.class),
+	TABLECELL_IDNAME(WORD, 123, CDIDNAME.class),
+	IMAGESEGMENT(LONG, 124, CDIMAGESEGMENT.class),
+	IMAGEHEADER(LONG, 125, CDIMAGEHEADER.class),
 	V5HOTSPOTBEGIN(WORD, 126, CDHOTSPOTBEGIN.class),
 	V5HOTSPOTEND(BYTE, 127, CDHOTSPOTEND.class),
 	TEXTPROPERTY(WORD, 128, null),
@@ -57,7 +60,7 @@ public enum CDSignature {
 	PABDEFINITION(WORD, 130, CDPABDEFINITION.class),
 	PABREFERENCE(BYTE, 131, CDPABREFERENCE.class),
 	TEXT(WORD, 133, CDTEXT.class),
-	HEADER(WORD, 142, null),
+	HEADER(WORD, 142, CDHEADER.class),
 	LINKEXPORT2(WORD, 146, null),
 	BITMAPHEADER(LONG, 149, CDBITMAPHEADER.class),
 	BITMAPSEGMENT(LONG, 150, CDBITMAPSEGMENT.class),
@@ -65,11 +68,11 @@ public enum CDSignature {
 	GRAPHIC(LONG, 153, CDGRAPHIC.class),
 	PMMETASEC(LONG, 154, null),
 	WINMETASEG(LONG, 155, CDWINMETASEG.class),
-	MACMETASEG(LONG, 156, null),
+	MACMETASEG(LONG, 156, CDMACMETASEG.class),
 	CGMETA(LONG, 157, null),
 	PMMETAHEADER(LONG, 158, null),
 	WINMETAHEADER(LONG, 159, CDWINMETAHEADER.class),
-	MACMETAHEADER(LONG, 160, null),
+	MACMETAHEADER(LONG, 160, CDMACMETAHEADER.class),
 	TABLEBEGIN(BYTE, 163, CDTABLEBEGIN.class),
 	TABLECELL(BYTE, 164, CDTABLECELL.class),
 	TABLEEND(BYTE, 165, CDTABLEEND.class),
@@ -116,10 +119,11 @@ public enum CDSignature {
 	PRETABLEBEGIN(WORD, 251, CDPRETABLEBEGIN.class), BORDERINFO(WORD, 252, CDBORDERINFO.class), EMBEDDEDSCHEDCTL(WORD, 253, null),
 	EXT2_FIELD(WORD, 254, CDEXT2FIELD.class), EMBEDDEDEDITCTL(WORD, 255, null),
 
-	DOCUMENT_PRE_26(BYTE, 128, null), FIELD_PRE_36(WORD, 132, null), FIELD(WORD, 138, CDFIELD.class),
-	DOCUMENT(BYTE, 134, CDDOCUMENT.class), METAFILE(WORD, 135, null), BITMAP(WORD, 136, null), FONTTABLE(WORD, 139, CDFONTTABLE.class),
-	LINK(BYTE, 140, null), LINKEXPORT(BYTE, 141, null), KEYWORD(WORD, 143, null), LINK2(WORD, 145, CDLINK2.class), CGM(WORD, 147, null),
-	TIFF(LONG, 148, null), PATTERNTABLE(LONG, 152, CDPATTERNTABLE.class), DDEBEGIN(WORD, 161, null), DDEEND(WORD, 162, null),
+	DOCUMENT_PRE_26(BYTE, 128, null), FIELD_PRE_36(WORD, 132, CDFIELD_PRE_36.class), FIELD(WORD, 138, CDFIELD.class),
+	DOCUMENT(BYTE, 134, CDDOCUMENT.class), METAFILE(WORD, 135, null), BITMAP(WORD, 136, CDBITMAP.class),
+	FONTTABLE(WORD, 139, CDFONTTABLE.class), LINK(BYTE, 140, null), LINKEXPORT(BYTE, 141, null), KEYWORD(WORD, 143, null),
+	LINK2(WORD, 145, CDLINK2.class), CGM(WORD, 147, CDCGM.class), TIFF(LONG, 148, CDTIFF.class),
+	PATTERNTABLE(LONG, 152, CDPATTERNTABLE.class), DDEBEGIN(WORD, 161, CDDDEBEGIN.class), DDEEND(WORD, 162, CDDDEEND.class),
 	OLEBEGIN(WORD, 167, CDOLEBEGIN.class), OLEEND(WORD, 168, CDOLEEND.class), HOTSPOTBEGIN(WORD, 169, CDHOTSPOTBEGIN.class),
 	HOTSPOTEND(BYTE, 170, CDHOTSPOTEND.class), BUTTON(WORD, 171, CDBUTTON.class), BAR(WORD, 172, CDBAR.class),
 	V4HOTSPOTBEGIN(WORD, 173, CDHOTSPOTBEGIN.class), V4HOTSPOTEND(BYTE, 174, CDHOTSPOTEND.class), EXT_FIELD(WORD, 176, CDEXTFIELD.class),
@@ -219,6 +223,39 @@ public enum CDSignature {
 		return result;
 	}
 
+	/**
+	 * @param size
+	 *            Size, in bytes, of the non-signature data portion of the record.
+	 * @return A SIG value ({@link BSIG}, {@link WSIG}, or {@link LSIG}) appropriate for the CDSignature and given size.
+	 */
+	public SIG getSig() {
+		switch (getEffectiveRecordLength()) {
+		case BYTE:
+			return new BSIG();
+		case WORD:
+			return new WSIG();
+		case LONG:
+			return new LSIG();
+		default:
+			return null;
+		}
+	}
+
+	public static Class<? extends CDRecord> instanceClassForSig(final SIG sig) {
+		for (CDSignature cdSig : values()) {
+			RecordLength recLength = cdSig.getEffectiveRecordLength();
+			if (cdSig.getBaseValue() == sig.getSigIdentifier()
+					&& ((recLength == BYTE && sig instanceof BSIG) || (recLength == WORD && sig instanceof WSIG) || (recLength == LONG && sig instanceof LSIG))) {
+				if (cdSig.getInstanceClass() == null) {
+					throw new UnsupportedOperationException("No implementing class found for signature " + cdSig);
+				}
+				return cdSig.getInstanceClass();
+			}
+		}
+		throw new IllegalArgumentException("Could not find instance class for sig " + sig + " (sig identifier " + sig.getSigIdentifier()
+				+ ")");
+	}
+
 	public static SIG sigForData(final ByteBuffer data) {
 		ByteBuffer sigData = data.duplicate().order(ByteOrder.LITTLE_ENDIAN);
 		//		System.out.println("reading sig at position: " + data.position());
@@ -236,13 +273,52 @@ public enum CDSignature {
 			if (lowOrder == cdSig.getBaseValue() && length == cdSig.getRecordLength()) {
 				//				System.out.println("matched signature " + cdSig);
 				// Now determine which SIG to return based on the record length
+				SIG result = null;
 				switch (cdSig.getEffectiveRecordLength()) {
 				case BYTE:
-					return new BSIG(cdSig, highOrder);
+					//					System.out.println("matched BSIG " + cdSig + " for " + lowOrder);
+					result = new BSIG();
+					result.init(data);
+					return result;
 				case WORD:
-					return new WSIG(cdSig, sigData.getShort(sigData.position() + 2) & 0xFFFF);
+					//					System.out.println("matched WSIG " + cdSig + " for " + lowOrder);
+					result = new WSIG();
+					result.init(data);
+					return result;
 				case LONG:
-					return new LSIG(cdSig, sigData.getInt(sigData.position() + 2) & 0xFFFFFFFFL);
+					//					System.out.println("matched LSIG " + cdSig + " for " + lowOrder);
+					result = new LSIG();
+					result.init(data);
+					return result;
+				default:
+					break;
+				}
+			}
+		}
+		throw new IllegalArgumentException("Unknown sig value " + lowOrder + " for length " + length);
+	}
+
+	public static CDSignature sigForShort(final short value) {
+		ByteBuffer sigData = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+		sigData.putShort(value);
+		sigData.position(0);
+
+		byte lowOrderByte = sigData.get(sigData.position());
+		int lowOrder = lowOrderByte & 0xFF;                          // low order = type
+		int highOrder = sigData.get(sigData.position() + 1) & 0xFF;  // high order = record length
+
+		RecordLength length = RecordLength.valueOf(highOrder);
+		for (CDSignature cdSig : values()) {
+			if (lowOrder == cdSig.getBaseValue() && length == cdSig.getRecordLength()) {
+				//				System.out.println("matched signature " + cdSig);
+				// Now determine which SIG to return based on the record length
+				switch (cdSig.getEffectiveRecordLength()) {
+				case BYTE:
+					return cdSig;
+				case WORD:
+					return cdSig;
+				case LONG:
+					return cdSig;
 				default:
 					break;
 				}

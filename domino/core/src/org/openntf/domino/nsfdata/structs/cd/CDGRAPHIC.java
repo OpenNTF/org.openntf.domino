@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.CROPRECT;
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -13,6 +12,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDGRAPHIC extends CDRecord {
 
+	public final LSIG Header = inner(new LSIG());
 	public final RECTSIZE DestSize = inner(new RECTSIZE());
 	public final RECTSIZE CropSize = inner(new RECTSIZE());
 	public final CROPRECT CropOffset = inner(new CROPRECT());
@@ -22,12 +22,9 @@ public class CDGRAPHIC extends CDRecord {
 	public final Unsigned8 bFlags = new Unsigned8();
 	public final Unsigned16 wReserved = new Unsigned16();
 
-	public CDGRAPHIC(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDGRAPHIC(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 }

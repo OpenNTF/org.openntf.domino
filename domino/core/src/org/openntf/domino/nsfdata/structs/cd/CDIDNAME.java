@@ -1,8 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record describes the HTML field properties, ID, Class, Style, Title, Other and Name associated for any given field defined within
@@ -13,6 +12,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDIDNAME extends CDRecord {
 
+	public final WSIG Header = inner(new WSIG());
 	public final Unsigned16 Length = new Unsigned16();
 	public final Unsigned16 wClassLen = new Unsigned16();
 	public final Unsigned16 wStyleLen = new Unsigned16();
@@ -30,12 +30,9 @@ public class CDIDNAME extends CDRecord {
 		addVariableString("Name", "wNameLen");
 	}
 
-	public CDIDNAME(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDIDNAME(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getId() {

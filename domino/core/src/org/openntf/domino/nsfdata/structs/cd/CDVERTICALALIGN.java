@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -15,13 +14,11 @@ public class CDVERTICALALIGN extends CDRecord {
 		BASELINE, CENTER, TOP, UNUSED3, UNUSED4, BOTTOM
 	}
 
+	public final BSIG Header = inner(new BSIG());
 	public final Enum16<AlignmentType> Alignment = new Enum16<AlignmentType>(AlignmentType.values());
 
-	public CDVERTICALALIGN(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDVERTICALALIGN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 }

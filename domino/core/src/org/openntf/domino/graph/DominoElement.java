@@ -279,6 +279,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return key_;
 	}
 
+	@Override
 	public DominoGraph getParent() {
 		return parent_;
 	}

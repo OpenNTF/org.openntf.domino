@@ -1,9 +1,8 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
+import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * New field attributes have been added in Release 5.0 of Domino. To preserve compatibility with existing applications, the new attributes
@@ -14,6 +13,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDEXT2FIELD extends CDRecord {
+	public final WSIG Header = inner(new WSIG());
 	// TODO make enum
 	public final Unsigned8 NumSysPref = new Unsigned8();
 	// TODO make enum
@@ -74,26 +74,23 @@ public class CDEXT2FIELD extends CDRecord {
 	public final Unsigned16 wIMGroupFormulaLen = new Unsigned16();
 
 	static {
-		addVariableString("DecimalSymbol", "DecimalSymLength");
-		addVariableString("MilliSepSymbol", "MilliSepSymLength");
-		addVariableString("NegativeSymbol", "NegativeSymLength");
-		addVariableString("CurrencySymbol", "CurrencySymLength");
-		addVariableString("ThumbnailImageFileName", "wThumbnailImageFileName");
+		addVariableAsciiString("DecimalSymbol", "DecimalSymLength");
+		addVariableAsciiString("MilliSepSymbol", "MilliSepSymLength");
+		addVariableAsciiString("NegativeSymbol", "NegativeSymLength");
+		addVariableAsciiString("CurrencySymbol", "CurrencySymLength");
+		addVariableAsciiString("ThumbnailImageFileName", "wThumbnailImageFileName");
 		addVariableData("IMOnlineNameFormula", "wIMOnlineNameFormulaLen");
-		addVariableString("DTDsep1", "DTDsep1Len");
-		addVariableString("DTDsep2", "DTDsep2Len");
-		addVariableString("DTDsep3", "DTDsep3Len");
-		addVariableString("DTTsep", "DTTsepLen");
+		addVariableAsciiString("DTDsep1", "DTDsep1Len");
+		addVariableAsciiString("DTDsep2", "DTDsep2Len");
+		addVariableAsciiString("DTDsep3", "DTDsep3Len");
+		addVariableAsciiString("DTTsep", "DTTsepLen");
 		addVariableData("InputEnabled", "wInputEnabledLen");
 		addVariableData("IMGroupFormula", "wIMGroupFormulaLen");
 	}
 
-	public CDEXT2FIELD(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDEXT2FIELD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getDecimalSymbol() {

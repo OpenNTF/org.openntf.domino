@@ -4156,10 +4156,10 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				int actual = 0;
 
 				for (String curChunk : chunkNames) {
-					//					System.out.println("DEBUG: Attempting binary read from " + curChunk);
+					System.out.println("DEBUG: Attempting binary read from " + curChunk);
 					try {
 						byte[] cur = getDelegate().getItemValueCustomDataBytes(curChunk, CHUNK_TYPE_NAME);
-						//						System.out.println("Found " + cur.length + " bytes from chunk " + curChunk);
+						System.out.println("Found " + cur.length + " bytes from chunk " + curChunk);
 						System.arraycopy(cur, 0, accumulated, actual, cur.length);
 						actual = actual + cur.length;
 					} catch (Exception e) {

@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -12,6 +11,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDBITMAPSEGMENT extends CDRecord {
+	public final LSIG Header = inner(new LSIG());
 	public final Unsigned32[] Reserved = array(new Unsigned32[2]);
 	public final Unsigned16 ScanlineCount = new Unsigned16();
 	public final Unsigned16 DataSize = new Unsigned16();
@@ -20,12 +20,9 @@ public class CDBITMAPSEGMENT extends CDRecord {
 		addVariableData("BitmapData", "DataSize");
 	}
 
-	public CDBITMAPSEGMENT(final CDSignature cdSig) {
-		super(cdSig);
-	}
-
-	public CDBITMAPSEGMENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	// TODO uncompress the data (see docs)
