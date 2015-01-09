@@ -292,7 +292,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 	@Override
 	public String logError(final Throwable ee) {
-		FacesMessage m = null;
+		String m = "";
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
 				if (elem.getClassName().equals(XspOpenLogItem.class.getName())) {
@@ -304,18 +304,18 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 				}
 			}
 			StackTraceElement[] s = ee.getStackTrace();
-			m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " + ee.toString());
+			m = "Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " + ee.toString();
 			if (ee.getMessage() != null) {
 				setMessage(ee.getMessage());
 			} else {
 				setMessage(ee.getClass().getCanonicalName());
 			}
 		} else {
-			m = new FacesMessage("No trace information available");
+			m = "No trace information available";
 
 		}
 		try {
-			ExtLibUtil.getXspContext().getFacesContext().addMessage(null, m);
+			addFacesMessage("", m);
 			setBase(ee);
 
 			// if (ee.getMessage().length() > 0) {
