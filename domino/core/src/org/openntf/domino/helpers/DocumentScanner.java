@@ -486,7 +486,9 @@ public class DocumentScanner extends Observable {
 		//		System.out.println("DEBUG: Scanning a collection of " + collection_.getCount());
 		for (Document doc : collection_) {
 			if (docCount_ < docLimit_) {
-				processDocument(doc);
+				if (!Thread.interrupted()) {
+					processDocument(doc);
+				}
 			} else {
 				break;
 			}

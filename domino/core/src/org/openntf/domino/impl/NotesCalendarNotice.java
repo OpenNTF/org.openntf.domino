@@ -31,8 +31,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class NotesCalendarNotice.
  */
-public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNotice, lotus.domino.NotesCalendarNotice, NotesCalendar>
-		implements org.openntf.domino.NotesCalendarNotice {
+public class NotesCalendarNotice extends
+		BaseNonThreadSafe<org.openntf.domino.NotesCalendarNotice, lotus.domino.NotesCalendarNotice, NotesCalendar> implements
+		org.openntf.domino.NotesCalendarNotice {
 
 	/**
 	 * Instantiates a new outline.
@@ -46,18 +47,9 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final NotesCalendar parent, final WrapperFactory wf,
+	protected NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final NotesCalendar parent, final WrapperFactory wf,
 			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_CALENDARNOTICE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected NotesCalendar findParent(final lotus.domino.NotesCalendarNotice delegate) throws NotesException {
-		// TODO Auto-generated method stub
-		throw new IllegalArgumentException();
+		super(delegate, parent, NOTES_CALENDARNOTICE);
 	}
 
 	/* (non-Javadoc)
@@ -213,8 +205,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getOutstandingInvitations() {
 		try {
-			return fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.SCHEMA,
-					this.getParent());
+			return fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -225,8 +216,8 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public NotesCalendar getParent() {
-		return getAncestor();
+	public final NotesCalendar getParent() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -334,7 +325,13 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

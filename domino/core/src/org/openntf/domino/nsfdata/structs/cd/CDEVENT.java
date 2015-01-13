@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -38,110 +37,56 @@ public class CDEVENT extends CDRecord {
 		}
 	}
 
-	public static enum EventType {
-		ONCLICK((short) 1), ONDBLCLICK((short) 2), ONMOUSEDOWN((short) 3), ONMOUSEUP((short) 4), ONMOUSEOVER((short) 5),
-		ONMOUSEMOVE((short) 6), ONMOUSEOUT((short) 7), ONKEYPRESS((short) 8), ONKEYDOWN((short) 9), ONKEYUP((short) 10),
-		ONFOCUS((short) 11), ONBLUR((short) 12), ONLOAD((short) 13), ONUNLOAD((short) 14), HEADER((short) 15), ONSUBMIT((short) 16),
-		ONRESET((short) 17), ONCHANGE((short) 18), ONERROR((short) 19), ONHELP((short) 20), ONSELECT((short) 21),
+	public static enum HTMLEvent {
+		ONCLICK, ONDBLCLICK, ONMOUSEDOWN, ONMOUSEUP, ONMOUSEOVER, ONMOUSEMOVE, ONMOUSEOUT, ONKEYPRESS, ONKEYDOWN, ONKEYUP, ONFOCUS, ONBLUR,
+		ONLOAD, ONUNLOAD, HEADER, ONSUBMIT, ONRESET, ONCHANGE, ONERROR, ONHELP, ONSELECT,
 		/**
 		 * This isn't really an event
 		 */
-		LIBRARY((short) 22);
-
-		private final short value_;
-
-		private EventType(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static EventType valueOf(final short typeCode) {
-			for (EventType type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching EventType found for type code " + typeCode);
-		}
+		LIBRARY
 	}
 
-	public static enum ActionType {
-		FORMULA((short) 1), CANNED_ACTION((short) 2), LOTUS_SCRIPT((short) 3), JAVASCRIPT((short) 4);
-
-		private final short value_;
-
-		private ActionType(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static ActionType valueOf(final short typeCode) {
-			for (ActionType type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching ActionType found for type code " + typeCode);
-		}
+	public static enum Action {
+		UNKNOWN, FORMULA, CANNED_ACTION, LOTUS_SCRIPT, JAVASCRIPT
 	}
+
+	public final WSIG Header = inner(new WSIG());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Enum16<HTMLEvent> EventType = new Enum16<HTMLEvent>(HTMLEvent.values());
+	public final Enum16<Action> ActionType = new Enum16<Action>(Action.values());
+	public final Unsigned32 ActionLength = new Unsigned32();
+	public final Unsigned16 SignatureLength = new Unsigned16();
+	public final Unsigned8[] Reserved = array(new Unsigned8[14]);
 
 	static {
-		addFixed("Flags", Integer.class);
-		addFixed("EventType", Short.class);
-		addFixed("ActionType", Short.class);
-		addFixedUnsigned("ActionLength", Integer.class);
-		addFixedUnsigned("SignatureLength", Short.class);
-		addFixedArray("Reserved", Byte.class, 14);
-
-		addVariableData("Action", "getActionLength");
-		addVariableData("Signature", "getSignatureLength");
+		addVariableData("Action", "ActionLength");
+		addVariableData("Signature", "SignatureLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDEVENT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDEVENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	public EventType getEventType() {
-		return EventType.valueOf((Short) getStructElement("EventType"));
-	}
-
-	public ActionType getActionType() {
-		return ActionType.valueOf((Short) getStructElement("ActionType"));
-	}
-
-	public int getActionLength() {
-		return ((Long) getStructElement("ActionLength")).intValue();
-	}
-
-	public int getSignatureLength() {
-		return (Integer) getStructElement("SignatureLength");
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	public byte[] getAction() {
-		return (byte[]) getStructElement("Action");
+		return (byte[]) getVariableElement("Action");
 	}
 
 	public byte[] getEventSignature() {
-		return (byte[]) getStructElement("Signature");
+		return (byte[]) getVariableElement("Signature");
+	}
+
+	@Override
+	public String toString() {
+		// TODO Figure out why getting the variable elements breaks
+		return "[" + getClass().getSimpleName() + "]";
 	}
 }

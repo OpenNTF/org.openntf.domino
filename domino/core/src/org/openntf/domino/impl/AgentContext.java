@@ -35,16 +35,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AgentContext.
  */
-public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.domino.AgentContext, Session> implements
+public class AgentContext extends BaseNonThreadSafe<org.openntf.domino.AgentContext, lotus.domino.AgentContext, Session> implements
 		org.openntf.domino.AgentContext {
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.AgentContext delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
 
 	/**
 	 * Instantiates a new agent context.
@@ -58,8 +50,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	public AgentContext(final lotus.domino.AgentContext delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_AGENTCTX);
+	protected AgentContext(final lotus.domino.AgentContext delegate, final Session parent) {
+		super(delegate, parent, NOTES_AGENTCTX);
 	}
 
 	/*
@@ -156,8 +148,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#getParentSession()
 	 */
 	@Override
-	public Session getParentSession() {
-		return getAncestor();
+	public final Session getParentSession() {
+		return parent;
 	}
 
 	/* (non-Javadoc)
@@ -329,4 +321,10 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	public org.openntf.domino.Session getAncestorSession() {
 		return this.getParentSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

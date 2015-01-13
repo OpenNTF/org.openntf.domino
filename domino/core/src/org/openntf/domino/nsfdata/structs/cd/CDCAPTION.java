@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
@@ -15,78 +13,27 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDCAPTION extends CDRecord {
-	public static enum Position {
-		BELOW_CENTER((byte) 0), MIDDLE_CENTER((byte) 1);
-
-		private final byte value_;
-
-		private Position(final byte value) {
-			value_ = value;
-		}
-
-		public byte getValue() {
-			return value_;
-		}
-
-		public static Position valueOf(final byte typeCode) {
-			for (Position type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Position found for type code " + typeCode);
-		}
+	public static enum CaptionPosition {
+		BELOW_CENTER, MIDDLE_CENTER
 	}
 
-	public static final int SIZE;
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 wLength = new Unsigned16();
+	public final Enum8<CaptionPosition> Position = new Enum8<CaptionPosition>(CaptionPosition.values());
+	public final FONTID FontID = inner(new FONTID());
+	public final COLOR_VALUE FontColor = inner(new COLOR_VALUE());
+	public final Unsigned8[] Reserved = array(new Unsigned8[11]);
 
 	static {
-		addFixedUnsigned("wLength", Short.class);
-		addFixed("Position", Byte.class);
-		addFixed("FontID", FONTID.class);
-		addFixed("FontColor", COLOR_VALUE.class);
-		addFixedArray("Reserved", Byte.class, 11);
-
-		addVariableAsciiString("Caption", "getCaptionLength");
-
-		SIZE = getFixedStructSize();
+		addVariableAsciiString("Caption", "wLength");
 	}
 
-	public CDCAPTION(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDCAPTION(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return Caption text length
-	 */
-	public int getCaptionLength() {
-		return (Integer) getStructElement("wLength");
-	}
-
-	/**
-	 * @return CAPTION_POSITION_xxx
-	 */
-	public Position getPosition() {
-		return Position.valueOf((Byte) getStructElement("Position"));
-	}
-
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FontID");
-	}
-
-	public COLOR_VALUE getFontColor() {
-		return (COLOR_VALUE) getStructElement("FontColor");
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getCaption() {
-		return (String) getStructElement("Caption");
+		return (String) getVariableElement("Caption");
 	}
 }

@@ -45,7 +45,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
+public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
 		org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
@@ -73,8 +73,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_SERVER);
+	protected DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent) {
+		super(delegate, parent, NOTES_SERVER);
 		try {
 			name_ = delegate.getName();
 			clusterName_ = delegate.getClusterName();
@@ -83,14 +83,6 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 		//dbHolderSet_ = new ConcurrentSkipListSet<DatabaseMetaData>(DatabaseMetaData.FILEPATH_COMPARATOR);
 		type_ = Type.TEMPLATE_CANDIDATE;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DbDirectory delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	@Override
@@ -102,7 +94,6 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	@Deprecated
 	public void setSortByLastModified(final boolean value) {
-		Comparator<DatabaseMetaData> cmp;
 		if (value) {
 			setComparator(DatabaseMetaData.LASTMOD_COMPARATOR);
 		} else {
@@ -111,15 +102,11 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 	}
 
-	public void setComparator(final Comparator<DatabaseMetaData> cmp) {
+	protected void setComparator(final Comparator<DatabaseMetaData> cmp) {
 		if (comparator_ != cmp) {
 			comparator_ = cmp;
 			reset();
 		}
-	}
-
-	public Comparator<DatabaseMetaData> getComparator() {
-		return comparator_;
 	}
 
 	@Override
@@ -393,8 +380,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getNextDatabase() {
 		// RPr: hopefully this will work the same way as the original lotus implementation does
-		if (dbIter.hasNext())
-			return dbIter.next().getDatabase(getAncestorSession());
+		if (dbIter.hasNext()) {
+			return getFactory().create(Database.SCHEMA, getAncestorSession(), dbIter.next());
+		}
 		return null;
 		// This will never work, as the DBs in the getDbHolderSet() are in a complete different order 
 		//		try {
@@ -411,8 +399,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public org.openntf.domino.Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -454,7 +442,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 			@Override
 			public Database next() {
-				return metaIter_.next().getDatabase(getAncestorSession());
+				return getFactory().create(Database.SCHEMA, getAncestorSession(), metaIter_.next());
 			}
 
 			@Override
@@ -493,10 +481,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public Database openDatabaseByReplicaID(final String replicaId) {
-		return getAncestorSession().getDatabaseByReplicaID(getName(), replicaId);
+		return getAncestorSession().getDatabase(getName(), replicaId);
 	}
 
 	/*
@@ -509,6 +496,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return getAncestorSession().getDatabaseIfModified(getName(), dbFile, date);
 	}
 
+	@Override
 	public Database openDatabaseIfModified(final String dbFile, final Date date) {
 		return getAncestorSession().getDatabaseIfModified(getName(), dbFile, date);
 	}
@@ -542,13 +530,13 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	@Override
 	protected void resurrect() {
-		lotus.domino.Session rawSession = toLotus(getParent());
+		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
@@ -557,7 +545,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 				log_.log(java.util.logging.Level.FINE, "DbDirectory for server " + name_ + "had been recycled and was auto-restored.", t);
 			}
 
-			setDelegate(dir, 0);
+			setDelegate(dir, true);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -701,8 +689,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public Object[] toArray() {
 		Object[] ret = new Object[size()];
 		int i = 0;
-		for (DatabaseMetaData dbHolder_ : getMetaDataSet()) {
-			ret[i++] = dbHolder_.getDatabase(getAncestorSession());
+		for (DatabaseMetaData metaData : getMetaDataSet()) {
+			Database db = getFactory().create(Database.SCHEMA, getAncestorSession(), metaData);
+			ret[i++] = db;
 		}
 		return ret;
 	}
@@ -733,6 +722,11 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		if (dbDirectoryTree_ == null)
 			dbDirectoryTree_ = new DbDirectoryTree(getMetaDataSet(), getAncestorSession());
 		return dbDirectoryTree_;
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

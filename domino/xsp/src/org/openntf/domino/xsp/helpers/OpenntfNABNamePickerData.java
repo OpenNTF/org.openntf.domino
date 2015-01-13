@@ -1217,9 +1217,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 							}
 						}
 						for (int i = 0; i < count && ve != null; i++) {
-							if (ve instanceof ViewEntry) {
-								entries.add(meta.createEntry(ve));
-							}
+							entries.add(meta.createEntry(ve));
 							ve = nav.getNext(ve);
 						}
 

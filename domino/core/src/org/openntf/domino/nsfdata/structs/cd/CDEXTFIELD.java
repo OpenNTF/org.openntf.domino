@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
@@ -20,111 +18,34 @@ public class CDEXTFIELD extends CDRecord {
 	 *
 	 */
 	public static enum FieldHelper {
-		/**
-		 * No helper type.
-		 */
-		NONE((short) 0),
-		/**
-		 * Mail address dialog helper type.
-		 */
-		ADDRDLG((short) 1),
-		/**
-		 * ACL dialog helper type.
-		 */
-		ACLDLG((short) 2),
-		/**
-		 * View dialog helper type.
-		 */
-		VIEWDLG((short) 3);
-
-		private final short value_;
-
-		private FieldHelper(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static FieldHelper valueOf(final short typeCode) {
-			for (FieldHelper type : FieldHelper.values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching FieldHelper found for type code " + typeCode);
-		}
+		NONE, ADDRDLG, ACLDLG, VIEWDLG
 	}
+
+	public final WSIG Header = inner(new WSIG());
+	// TODO make enum
+	public final Unsigned32 Flags1 = new Unsigned32();
+	// TODO make enum
+	public final Unsigned32 Flags2 = new Unsigned32();
+	public final Enum16<FieldHelper> EntryHelper = new Enum16<FieldHelper>(FieldHelper.values());
+	public final Unsigned16 EntryDBNameLen = new Unsigned16();
+	public final Unsigned16 EntryViewNameLen = new Unsigned16();
+	public final Unsigned16 EntryColumnNumber = new Unsigned16();
 
 	static {
-		addFixed("Flags1", Integer.class);
-		addFixed("Flags2", Integer.class);
-		addFixed("EntryHelper", Short.class);
-		addFixedUnsigned("EntryDBNameLen", Short.class);
-		addFixedUnsigned("EntryViewNameLen", Short.class);
-		addFixedUnsigned("EntryColumnNumber", Short.class);
-
-		addVariableString("EntryDBName", "getEntryDBNameLen");
-		addVariableString("EntryViewName", "getEntryViewNameLen");
+		addVariableString("EntryDBName", "EntryDBNameLen");
+		addVariableString("EntryViewName", "EntryViewNameLen");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDEXTFIELD(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDEXTFIELD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return Field Flags (see FEXT_xxx)
-	 */
-	public int getFlags1() {
-		// TODO make enum
-		return (Integer) getStructElement("Flags1");
-	}
-
-	public int getFlags2() {
-		// TODO make enum
-		return (Integer) getStructElement("Flags2");
-	}
-
-	/**
-	 * @return Field entry helper type (see FIELD_HELPER_xxx)
-	 */
-	public FieldHelper getEntryHelper() {
-		return FieldHelper.valueOf((Short) getStructElement("EntryHelper"));
-	}
-
-	/**
-	 * @return Entry helper DB name length
-	 */
-	public int getEntryDBNameLen() {
-		return (Integer) getStructElement("EntryDBNameLen");
-	}
-
-	/**
-	 * @return Entry helper View name length
-	 */
-	public int getEntryViewNameLen() {
-		return (Integer) getStructElement("EntryViewNameLen");
-	}
-
-	/**
-	 * @return Entry helper column number
-	 */
-	public int getEntryColumnNumber() {
-		return (Integer) getStructElement("EntryColumnNumber");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getEntryHelperDBName() {
-		return (String) getStructElement("EntryDBName");
+		return (String) getVariableElement("EntryDBName");
 	}
 
 	public String getEntryHelperViewName() {
-		return (String) getStructElement("EntryViewName");
+		return (String) getVariableElement("EntryViewName");
 	}
 }

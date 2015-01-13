@@ -1,10 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
+import java.util.EnumSet;
+import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This defines the structure of the document information field in a form note. A document information field is an item with name $INFO
@@ -13,30 +14,75 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDDOCUMENT extends CDRecord {
+	public static enum FormFlag1 {
+		REFERENCE(0x0001), MAIL(0x0002), NOTEREF(0x0004), NOTEREF_MAIN(0x0008), RECALC(0x0010), BOILERPLATE(0x0020), FGCOLOR(0x0040),
+		SPARESOK(0x0080), ACTIVATE_OBJECT_COMP(0x0100), ACTIVATE_OBJECT_EDIT(0x0200), ACTIVATE_OBJECT_READ(0x0400),
+		SHOW_WINDOW_COMPOSE(0x0800), SHOW_WINDOW_EDIT(0x1000), SHOW_WINDOW_READ(0x2000), UPDATE_RESPONSE(0x4000), UPDATE_PARENT(0x8000);
+
+		private final short value_;
+
+		private FormFlag1(final int value) {
+			value_ = (short) value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static Set<FormFlag1> valuesOf(final short flags) {
+			Set<FormFlag1> result = EnumSet.noneOf(FormFlag1.class);
+			for (FormFlag1 flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
+	}
+
+	public final BSIG Header = inner(new BSIG());
+	/**
+	 * Use getPaperColor for access.
+	 */
+	@Deprecated
+	public final Unsigned16 PaperColor = new Unsigned16();
+	/**
+	 * Use getFormFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 FormFlags = new Unsigned16();
+	/**
+	 * Use getNotePrivileges for access.
+	 */
+	@Deprecated
+	public final Unsigned16 NotePrivileges = new Unsigned16();
+	/**
+	 * Use getFormFlags2 for access.
+	 */
+	@Deprecated
+	public final Unsigned16 FormFlags2 = new Unsigned16();
+	public final Unsigned16 InherFieldNameLength = new Unsigned16();
+	/**
+	 * Use getPaperColorExt for access.
+	 */
+	@Deprecated
+	public final Unsigned16 PaperColorExt = new Unsigned16();
+	public final COLOR_VALUE PaperColorValue = inner(new COLOR_VALUE());
+	/**
+	 * Use getFormFlags3 for access.
+	 */
+	@Deprecated
+	public final Unsigned16 FormFlags3 = new Unsigned16();
+	public final Unsigned16[] Spare = array(new Unsigned16[1]);
 
 	static {
-		addFixed("PaperColor", Short.class);
-		addFixed("FormFlags", Short.class);
-		addFixed("NotePrivileges", Short.class);
-		addFixed("FormFlags2", Short.class);
-		addFixedUnsigned("InherFieldNameLength", Short.class);
-		addFixed("PaperColorExt", Short.class);
-		addFixed("PaperColorValue", COLOR_VALUE.class);
-		addFixed("FormFlags3", Short.class);
-		addFixed("Spare", Short.class);
-
-		addVariableString("InherFieldName", "getInherFieldNameLength");
+		addVariableString("InherFieldName", "InherFieldNameLength");
 		addVariableString("FieldName", "getFieldNameLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDDOCUMENT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDDOCUMENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
@@ -44,15 +90,11 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getPaperColor() {
 		// TODO make an enum
-		return (Short) getStructElement("PaperColor");
+		return (short) PaperColor.get();
 	}
 
-	/**
-	 * @return Form Flags
-	 */
-	public short getFormFlags() {
-		// TODO make an enum
-		return (Short) getStructElement("FormFlags");
+	public Set<FormFlag1> getFormFlags() {
+		return FormFlag1.valuesOf((short) FormFlags.get());
 	}
 
 	/**
@@ -60,7 +102,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getNotePrivileges() {
 		// TODO make an enum
-		return (Short) getStructElement("NotePrivileges");
+		return (short) NotePrivileges.get();
 	}
 
 	/**
@@ -68,14 +110,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getFormFlags2() {
 		// TODO make an enum
-		return (Short) getStructElement("FormFlags2");
-	}
-
-	/**
-	 * @return Length of the name, which follows this struct
-	 */
-	public int getInherFieldNameLength() {
-		return (Integer) getStructElement("InherFieldNameLength");
+		return (short) FormFlags2.get();
 	}
 
 	/**
@@ -84,33 +119,40 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public short getPaperColorExt() {
 		// TODO make an enum
-		return (Short) getStructElement("PaperColorExt");
-	}
-
-	/**
-	 * @return Paper Color: As of v5.0 stored as RGB, other formats possible
-	 */
-	public COLOR_VALUE getPaperColorValue() {
-		return (COLOR_VALUE) getStructElement("PaperColorValue");
+		return (short) PaperColorExt.get();
 	}
 
 	public short getFormFlags3() {
 		// TODO make an enum
-		return (Short) getStructElement("FormFlags3");
+		return (short) FormFlags3.get();
 	}
 
 	public String getInheritFieldName() {
-		return (String) getStructElement("InherFieldName");
+		// In builds prior to 100 (somewhere in R3), data past NotePrivileges was junk,
+		// so don't try to get variable data
+		if (getFormFlags().contains(FormFlag1.SPARESOK)) {
+			return (String) getVariableElement("InherFieldName");
+		} else {
+			return "";
+		}
 	}
 
 	public int getFieldNameLength() {
-		return (int) (getDataLength() - 22 - getInherFieldNameLength());
+		return (int) (Header.getRecordLength() - size() - InherFieldNameLength.get());
 	}
 
 	/**
 	 * @return string indicating which field to append version number to
 	 */
 	public String getFieldName() {
-		return (String) getStructElement("FieldName");
+		return (String) getVariableElement("FieldName");
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": PaperColor=" + PaperColor.get() + ", FormFlags=" + getFormFlags()
+				+ ", NotePrivileges=" + getNotePrivileges() + ", FormFlags2=" + getFormFlags2() + ", InheritFieldName="
+				+ getInheritFieldName() + ", PaperColorExt=" + getPaperColorExt() + ", PaperColorValue=" + PaperColorValue
+				+ ", FormFlags3=" + getFormFlags3() + "]";
 	}
 }

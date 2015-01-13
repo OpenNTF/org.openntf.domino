@@ -103,6 +103,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	private transient String logDbName_;
 	private transient Boolean displayError_;
 	private transient String displayErrorGeneric_;
+	@SuppressWarnings("unused")
 	private transient Boolean suppressEventStack_;
 	// this variable sets the "debug level" of all the methods
 	public String olDebugLevel = getDefaultDebugLevel();

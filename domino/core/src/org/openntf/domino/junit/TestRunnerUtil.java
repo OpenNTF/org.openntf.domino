@@ -1,7 +1,5 @@
 package org.openntf.domino.junit;
 
-import org.openntf.domino.AutoMime;
-import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
@@ -12,13 +10,13 @@ import org.openntf.domino.utils.Factory.SessionType;
 public enum TestRunnerUtil {
 	;
 
-	public static ISessionFactory NATIVE_SESSION = new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-	public static ISessionFactory TRUSTED_SESSION = new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+	public static ISessionFactory NATIVE_SESSION = new NativeSessionFactory(null);
+	public static ISessionFactory TRUSTED_SESSION = new TrustedSessionFactory(null);
 
 	public static void runAsDominoThread(final Runnable r, final ISessionFactory sf) {
 		Factory.startup();
 		lotus.domino.NotesThread.sinitThread();
-		Factory.initThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 		Factory.setSessionFactory(sf, SessionType.CURRENT);
 
 		Thread t = new DominoThread(r, "TestRunner");
@@ -37,7 +35,7 @@ public enum TestRunnerUtil {
 	public static void runAsDominoThread(final Runnable r, final ISessionFactory sf, final int instances) {
 		Factory.startup();
 		lotus.domino.NotesThread.sinitThread();
-		Factory.initThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 		Factory.setSessionFactory(sf, SessionType.CURRENT);
 
 		Thread[] t = new Thread[instances];
@@ -64,7 +62,7 @@ public enum TestRunnerUtil {
 	public static void runAsDominoThread(final Class<? extends Runnable> r, final ISessionFactory sf, final int instances) {
 		Factory.startup();
 		lotus.domino.NotesThread.sinitThread();
-		Factory.initThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 		Factory.setSessionFactory(sf, SessionType.CURRENT);
 
 		Thread[] t = new Thread[instances];
@@ -102,7 +100,7 @@ public enum TestRunnerUtil {
 			try {
 				t[i] = new lotus.domino.NotesThread(r.newInstance(), "TestRunner-" + i);
 				t[i].start();
-				Thread.sleep(100); // sleep some millis, as the legacy notes API may crash
+				Thread.sleep(300); // sleep some millis, as the legacy notes API may crash
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {

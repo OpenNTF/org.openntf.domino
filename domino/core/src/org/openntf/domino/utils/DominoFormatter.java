@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -29,47 +30,39 @@ import com.ibm.icu.util.ULocale;
 /**
  * The Class DominoFormatter.
  */
-public class DominoFormatter extends ThreadLocal<Object> {
+public class DominoFormatter extends ThreadLocal<Object> implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFormatter.class.getName());
 
-	/** The date only format_. */
 	private String dateOnlyFormat_;
 
-	/** The time only format_. */
 	private String timeOnlyFormat_;
 
-	/** The date time format_. */
 	private String dateTimeFormat_;
 
-	/** The df_. */
 	private SimpleDateFormat tdf_;
 	private SimpleDateFormat ddf_;
 	private SimpleDateFormat dtdf_;
 
-	/** The am_. */
+	@SuppressWarnings("unused")
 	private String am_;
 
-	/** The date sep_. */
 	private String dateSep_;
 
-	/** The pm_. */
+	@SuppressWarnings("unused")
 	private String pm_;
 
-	/** The time sep_. */
 	private String timeSep_;
 
-	/** The time24_. */
 	private boolean time24_;
 
-	/** The dmy_. */
 	private boolean dmy_;
 
-	/** The mdy_. */
 	private boolean mdy_;
 
-	/** The ymd_. */
+	@SuppressWarnings("unused")
 	private boolean ymd_;
 
 	/**
@@ -80,7 +73,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 * @throws NotesException
 	 *             the notes exception
 	 */
-	public DominoFormatter(final lotus.domino.International intl) throws NotesException {
+	public DominoFormatter(final org.openntf.domino.International intl) throws NotesException {
 		am_ = intl.getAMString();
 		dateSep_ = intl.getDateSep();
 		pm_ = intl.getPMString();
@@ -104,7 +97,6 @@ public class DominoFormatter extends ThreadLocal<Object> {
 		}
 
 		dateTimeFormat_ = dateOnlyFormat_ + " " + timeOnlyFormat_;
-		org.openntf.domino.impl.Base.s_recycle(intl);
 	}
 
 	private DateFormat getTimeOnlyFormat() {

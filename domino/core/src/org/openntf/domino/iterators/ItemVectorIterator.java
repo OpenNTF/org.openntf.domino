@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
-import org.openntf.domino.impl.ItemVector;
 
 // TODO: Auto-generated Javadoc
 /**

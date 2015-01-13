@@ -3,14 +3,14 @@ package org.openntf.domino.junit;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.logging.LogManager;
+
 import lotus.domino.NotesException;
 import lotus.domino.NotesThread;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openntf.domino.AutoMime;
-import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.impl.Base;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
@@ -48,6 +48,7 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 		} catch (NotesException ne) {
 			ne.printStackTrace();
 		}
+		LogManager.getLogManager().reset();
 		// RPr: Did not figure out, how to set up a proper SM
 		//		if (System.getSecurityManager() == null) {
 		//			new lotus.notes.AgentSecurityManager();
@@ -92,20 +93,14 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 		try {
 			String runAs = getRunAs(method);
 			String db = getDatabase(method);
-			Factory.initThread();
+			Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 			if (runAs == null) {
-				Factory.setSessionFactory(new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, db),//
-						SessionType.CURRENT);
-
-				Factory.setSessionFactory(new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, db),//
-						SessionType.CURRENT_FULL_ACCESS);
+				Factory.setSessionFactory(new NativeSessionFactory(db), SessionType.CURRENT);
+				Factory.setSessionFactory(new SessionFullAccessFactory(db), SessionType.CURRENT_FULL_ACCESS);
 
 			} else {
-				Factory.setSessionFactory(new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, db, runAs),//
-						SessionType.CURRENT);
-
-				Factory.setSessionFactory(new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, db, runAs),
-						SessionType.CURRENT_FULL_ACCESS);
+				Factory.setSessionFactory(new NamedSessionFactory(db, runAs), SessionType.CURRENT);
+				Factory.setSessionFactory(new SessionFullAccessFactory(db, runAs), SessionType.CURRENT_FULL_ACCESS);
 			}
 
 			TestEnv.session = Factory.getSession(SessionType.CURRENT);
@@ -115,23 +110,23 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 			}
 
 			if (isRunLegacy(method)) {
-				TestEnv.session = Base.toLotus(TestEnv.session);
-				TestEnv.database = Base.toLotus(TestEnv.database);
+				WrapperFactory wf = Factory.getWrapperFactory();
+				TestEnv.session = wf.toLotus(TestEnv.session);
+				TestEnv.database = wf.toLotus(TestEnv.database);
 			}
 
 		} catch (NotesException ne) {
 			ne.printStackTrace();
-			Base.s_recycle(TestEnv.session);
-			Base.s_recycle(TestEnv.database);
-			fail(ne.getMessage());
+			fail(ne.toString());
 		}
 	}
 
 	@Override
 	protected void afterTest(final FrameworkMethod method) {
 		// TODO Auto-generated method stub
-		Base.s_recycle(TestEnv.database);
-		Base.s_recycle(TestEnv.session);
+		WrapperFactory wf = Factory.getWrapperFactory();
+		wf.recycle(TestEnv.database);
+		wf.recycle(TestEnv.session);
 		TestEnv.session = null;
 		TestEnv.database = null;
 		Factory.termThread();

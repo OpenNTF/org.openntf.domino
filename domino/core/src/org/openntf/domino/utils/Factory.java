@@ -15,8 +15,11 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -57,6 +60,7 @@ import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
+import org.openntf.domino.session.PasswordSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
@@ -64,20 +68,13 @@ import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
  */
 public enum Factory {
 	;
-	/**
-	 * Enables Thread support (sharing Notes-objects across threads). But you _SHOULD_ really avoid this! Neiter the ODA is tested, nor IBM
-	 * recommend this. You should read the paragraph <a
-	 * href="http://www-01.ibm.com/support/knowledgecenter/SSVRGU_8.5.3/com.ibm.designer.domino.main.doc/H_NOTESTHREAD_CLASS_JAVA.html"
-	 * >Multithreading issues</a> before changing the value.
-	 * 
-	 * TODO RPr: make notes.ini setting.
-	 */
-	public static boolean ENABLE_THREAD_SUPPORT = false;
 
 	/**
 	 * Printer class (will be modified by XSP-environment), so that the Factory prints directly to Console (so no "HTTP JVM" Prefix is
@@ -95,7 +92,7 @@ public enum Factory {
 	public static Printer printer = new Printer();
 
 	/**
-	 * An identifier for the different session types, the factory can create
+	 * An identifier for the different session types the factory can create.
 	 * 
 	 * @author Roland Praml, FOCONIS AG
 	 * 
@@ -151,9 +148,26 @@ public enum Factory {
 		/**
 		 * Returns a Session with full access.
 		 */
-		FULL_ACCESS(6, "FULL_ACCESS");
+		FULL_ACCESS(6, "FULL_ACCESS"),
 
-		static int SIZE = 7;
+		/**
+		 * Returns a Session with full access.
+		 */
+		PASSWORD(7, "PASSWORD"),
+
+		/**
+		 * for internal use only!
+		 */
+		_NAMED_internal(-1, "NAMED"),
+
+		/**
+		 * for internal use only!
+		 */
+		_NAMED_FULL_ACCESS_internal(-1, "NAMED_FULL_ACCESS"),
+
+		;
+
+		static int SIZE = 8;
 		int index;
 		String alias;
 
@@ -162,6 +176,25 @@ public enum Factory {
 			this.alias = alias;
 		}
 	}
+
+	public static class ThreadConfig {
+		public final Fixes[] fixes;
+		public final AutoMime autoMime;
+		public final boolean bubbleExceptions;
+
+		public ThreadConfig(final Fixes[] fixes, final AutoMime autoMime, final boolean bubbleExceptions) {
+			super();
+			this.fixes = fixes;
+			this.autoMime = autoMime;
+			this.bubbleExceptions = bubbleExceptions;
+		}
+
+	}
+
+	// this thread config wraps everything and squelches errors (does not change default behavior 
+	public static ThreadConfig PERMISSIVE_THREAD_CONFIG = new ThreadConfig(Fixes.values(), AutoMime.WRAP_ALL, false);
+
+	public static ThreadConfig STRICT_THREAD_CONFIG = new ThreadConfig(Fixes.values(), AutoMime.WRAP_32K, true);
 
 	/**
 	 * Container Class for all statistic counters
@@ -243,6 +276,14 @@ public enum Factory {
 		/** These sessions will be recycled at the end of that thread. Key = UserName of session */
 		public Map<String, Session> ownSessions = new HashMap<String, Session>();
 
+		private List<Runnable> terminateHooks;
+
+		private ThreadConfig threadConfig;
+
+		public ThreadVariables(final ThreadConfig tc) {
+			threadConfig = tc;
+		}
+
 		/** clear the object */
 		private void clear() {
 			wrapperFactory = null;
@@ -255,7 +296,30 @@ public enum Factory {
 			userLocale = null;
 			namedSessionFactory = null;
 			namedSessionFullAccessFactory = null;
-			terminateHooks.clear();
+
+		}
+
+		public void removeTerminateHook(final Runnable hook) {
+			if (terminateHooks == null)
+				return;
+			terminateHooks.remove(hook);
+
+		}
+
+		public void addTerminateHook(final Runnable hook) {
+			if (terminateHooks == null) {
+				terminateHooks = new ArrayList<Runnable>();
+			}
+			terminateHooks.add(hook);
+		}
+
+		public void terminate() {
+			if (terminateHooks != null) {
+				for (Runnable hook : terminateHooks) {
+					hook.run();
+				}
+				terminateHooks = null;
+			}
 		}
 	}
 
@@ -268,7 +332,7 @@ public enum Factory {
 	 */
 	private static ThreadLocal<ThreadVariables> threadVariables_ = new ThreadLocal<ThreadVariables>();
 
-	private static List<Runnable> terminateHooks = new ArrayList<Runnable>();
+	private static List<Runnable> globalTerminateHooks = new ArrayList<Runnable>();
 	private static List<Runnable> shutdownHooks = new ArrayList<Runnable>();
 
 	private static String localServerName;
@@ -278,6 +342,13 @@ public enum Factory {
 		if (tv == null)
 			throw new IllegalStateException(Factory.class.getName() + " is not initialized for this thread!");
 		return tv;
+	}
+
+	public static ThreadConfig getThreadConfig() {
+		ThreadVariables tv = threadVariables_.get();
+		if (tv == null)
+			return PERMISSIVE_THREAD_CONFIG;
+		return tv.threadConfig;
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -543,6 +614,8 @@ public enum Factory {
 		return result;
 	}
 
+	private static WrapperFactory DEFAULT_WRAPPER_FACTORY = new org.openntf.domino.impl.WrapperFactory();
+
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
@@ -554,15 +627,13 @@ public enum Factory {
 		if (wf == null) {
 			try {
 				List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
-				if (wfList.size() > 0) {
-					// We need a NEW wrapperFactory for each instance.
-					wf = wfList.get(0).getClass().newInstance();
-				} else {
-					wf = new org.openntf.domino.impl.WrapperFactory();
-				}
+				if (wfList.size() > 0)
+					wf = wfList.get(0);
+				else
+					wf = DEFAULT_WRAPPER_FACTORY;
 			} catch (Throwable t) {
 				log_.log(Level.WARNING, "Getting default WrapperFactory", t);
-				wf = new org.openntf.domino.impl.WrapperFactory();
+				wf = DEFAULT_WRAPPER_FACTORY;
 			}
 			tv.wrapperFactory = wf;
 		}
@@ -608,6 +679,7 @@ public enum Factory {
 	 * 
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, Base)
 	 */
+	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -650,6 +722,7 @@ public enum Factory {
 	 * @return the wrapped object
 	 */
 	@SuppressWarnings({ "rawtypes" })
+	@Deprecated
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
 		return getWrapperFactory().fromLotus(lotusColl, schema, parent);
@@ -672,6 +745,7 @@ public enum Factory {
 	 *            the parent
 	 * @return the wrapped object
 	 */
+	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -739,6 +813,7 @@ public enum Factory {
 	 *            the values
 	 * @return the java.util. vector
 	 */
+	@Deprecated
 	public static java.util.Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
 		if (values == null) {
 			log_.log(Level.WARNING, "Request to wrapColumnValues for a collection of null");
@@ -754,6 +829,7 @@ public enum Factory {
 	 *            object to unwrap
 	 * @return the unwrapped object
 	 */
+	@Deprecated
 	public static <T extends lotus.domino.Base> T toLotus(final T base) {
 		return getWrapperFactory().toLotus(base);
 	}
@@ -798,38 +874,92 @@ public enum Factory {
 		return getSession(SessionType.SIGNER);
 	}
 
-	/**
-	 * 
-	 * @param mode
-	 * @return
-	 */
-	public static org.openntf.domino.Session getSession(final SessionType mode) {
+	public static org.openntf.domino.Session getSession(final SessionType mode, final String paramString) {
 		ThreadVariables tv = getThreadVariables();
 		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
-		if (result == null) {
-			//			System.out.println("TEMP DEBUG: No session found of type " + mode.name() + " in thread "
-			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+		if (result == null || result.isDead()) {
+			ISessionFactory sf = getSessionFactory(mode);
+			if (mode == SessionType.PASSWORD) {
+				result = ((PasswordSessionFactory) sf).createSession(paramString);
+				result = sf.createSession();
+				result.setSessionType(mode);
+				tv.sessionHolders[mode.index] = result;
+				tv.ownSessions.put(mode.alias, result);
 
-			try {
-				ISessionFactory sf = getSessionFactory(mode);
-				if (sf != null) {
-					result = sf.createSession();
-					tv.sessionHolders[mode.index] = result;
-					// Per default. Session objects are not recycled by the ODA and thats OK so.
-					// this is our own session which will be recycled in terminate
-					tv.ownSessions.put(mode.alias, result);
-					//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
-					//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
-				} else {
-					log_.log(Level.SEVERE, "No session factory found for mode " + mode.alias);
+				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
+				if (currentChk == null) {
+					tv.sessionHolders[SessionType.CURRENT.index] = result;
+					tv.ownSessions.put(SessionType.CURRENT.alias, result);
 				}
-			} catch (PrivilegedActionException ne) {
-				log_.log(Level.SEVERE, "Unable to get the session of type " + mode.alias
+			} else if (sf != null) {
+				result = sf.createSession();
+				result.setSessionType(mode);
+				tv.sessionHolders[mode.index] = result;
+				// Per default. Session objects are not recycled by the ODA and thats OK so.
+				// this is our own session which will be recycled in terminate
+				tv.ownSessions.put(mode.alias, result);
+
+				//TODO NTF per RPr we can remove this when we have an alternative way to designate an internal session
+				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
+				if (currentChk == null) {
+					tv.sessionHolders[SessionType.CURRENT.index] = result;
+					tv.ownSessions.put(SessionType.CURRENT.alias, result);
+				}
+				//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
+				//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+			}
+			if (result == null) {
+				log_.severe("Unable to get the session of type " + mode.alias
 						+ ". This probably means that you are running in an unsupported configuration "
 						+ "or you forgot to set up your context at the start of the operation. "
 						+ "If you're running in XPages, check the xsp.properties of your database. "
 						+ "If you are running in an Agent, make sure you start with a call to "
-						+ "Factory.setSession() and pass in your lotus.domino.Session", ne);
+						+ "Factory.setSession() and pass in your lotus.domino.Session");
+			}
+		} else {
+			//			System.out.println("TEMP DEBUG: Found an existing session " + System.identityHashCode(result) + " of type " + mode.name()
+			//					+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param mode
+	 *            The type of session to create
+	 * @return A Session object corresponding to the given type
+	 */
+	public static org.openntf.domino.Session getSession(final SessionType mode) {
+		ThreadVariables tv = getThreadVariables();
+		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
+		if (result == null || result.isDead()) {
+			//			System.out.println("TEMP DEBUG: No session found of type " + mode.name() + " in thread "
+			//					+ System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+
+			ISessionFactory sf = getSessionFactory(mode);
+			if (sf != null) {
+				result = sf.createSession();
+				result.setSessionType(mode);
+				tv.sessionHolders[mode.index] = result;
+				// Per default. Session objects are not recycled by the ODA and thats OK so.
+				// this is our own session which will be recycled in terminate
+				tv.ownSessions.put(mode.alias, result);
+
+				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
+				if (currentChk == null) {
+					tv.sessionHolders[SessionType.CURRENT.index] = result;
+					tv.ownSessions.put(SessionType.CURRENT.alias, result);
+				}
+				//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
+				//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+			}
+			if (result == null) {
+				log_.severe("Unable to get the session of type " + mode.alias
+						+ ". This probably means that you are running in an unsupported configuration "
+						+ "or you forgot to set up your context at the start of the operation. "
+						+ "If you're running in XPages, check the xsp.properties of your database. "
+						+ "If you are running in an Agent, make sure you start with a call to "
+						+ "Factory.setSession() and pass in your lotus.domino.Session");
 			}
 		} else {
 			//			System.out.println("TEMP DEBUG: Found an existing session " + System.identityHashCode(result) + " of type " + mode.name()
@@ -851,8 +981,6 @@ public enum Factory {
 	/**
 	 * Sets the session for a certain sessionMode
 	 * 
-	 * @param session
-	 * @param mode
 	 */
 	//	public static void setSession(final lotus.domino.Session session, final SessionType mode) {
 	//		if (session instanceof org.openntf.domino.Session) {
@@ -956,7 +1084,6 @@ public enum Factory {
 		return tv.classLoader;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		ThreadVariables tv = getThreadVariables();
@@ -1005,7 +1132,7 @@ public enum Factory {
 	 * Begin with a clear environment. Initialize this thread
 	 * 
 	 */
-	public static void initThread() { // RPr: Method was deliberately renamed
+	public static void initThread(final ThreadConfig tc) { // RPr: Method was deliberately renamed
 		if (!started) {
 			throw new IllegalStateException("Factory is not yet started");
 		}
@@ -1019,13 +1146,12 @@ public enum Factory {
 		//		System.out.println("TEMP DEBUG: Factory thread initializing.");
 		//		Throwable t = new Throwable();
 		//		t.printStackTrace();
-		threadVariables_.set(new ThreadVariables());
+		threadVariables_.set(new ThreadVariables(tc));
 	}
 
 	/**
 	 * terminate the current thread.
 	 */
-	@SuppressWarnings("deprecation")
 	public static void termThread() { // RPr: Method was deliberately renamed
 		if (log_.isLoggable(Level.FINER)) {
 			log_.log(Level.FINER, "Factory.termThread()", new Throwable());
@@ -1041,11 +1167,12 @@ public enum Factory {
 		//		trace.printStackTrace();
 		try {
 
-			for (Runnable term : terminateHooks) {
+			for (Runnable term : globalTerminateHooks) {
 				term.run();
 			}
+			tv.terminate();
 			if (tv.wrapperFactory != null) {
-				tv.wrapperFactory.terminate();
+				tv.wrapperFactory.recycle();
 			}
 			//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 			DominoUtils.setBubbleExceptions(null);
@@ -1171,29 +1298,23 @@ public enum Factory {
 			}
 
 			@Override
-			public Session createSession() throws PrivilegedActionException {
+			public Session createSession() {
 				return Factory.getNamedSession(getName(), true);
 			}
 		};
 
-		defaultSessionFactories[SessionType.SIGNER.index] // In XPages environment, this factory will be replaced 
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		String defaultApiPath = null; // maybe we set this to ODA.nsf
 
-		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] // In XPages environment, this factory will be replaced 
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		// In XPages environment, these factories will be replaced 
+		defaultNamedSessionFactory = new NamedSessionFactory(defaultApiPath);
+		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
-		defaultSessionFactories[SessionType.NATIVE.index] // may work if we bypass the SM
-		= new NativeSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-
-		defaultSessionFactories[SessionType.TRUSTED.index] // found no way to get this working in XPages
-		= new TrustedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-
-		defaultSessionFactories[SessionType.FULL_ACCESS.index]// may work if we bypass the SM
-		= new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
-
-		defaultNamedSessionFactory = new NamedSessionFactory(Fixes.values(), AutoMime.WRAP_32K, null, null);
-		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(Fixes.values(), AutoMime.WRAP_32K, null);
+		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(defaultApiPath);
+		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
 
 		started = true;
 
@@ -1333,16 +1454,13 @@ public enum Factory {
 		ThreadVariables tv = getThreadVariables();
 		String key = name.toLowerCase() + (fullAccess ? ":full" : ":normal");
 		Session sess = tv.ownSessions.get(key);
-		if (sess == null) {
-			try {
-				INamedSessionFactory sf = getNamedSessionFactory(fullAccess);
-				if (sf != null) {
-					sess = sf.createSession(name);
-				}
-				tv.ownSessions.put(key, sess);
-			} catch (PrivilegedActionException e) {
-				log_.log(Level.SEVERE, "Unable to create named session for '" + name + "'", e);
+		if (sess == null || sess.isDead()) {
+			INamedSessionFactory sf = getNamedSessionFactory(fullAccess);
+			if (sf != null) {
+				sess = sf.createSession(name);
+				sess.setSessionType(fullAccess ? SessionType._NAMED_FULL_ACCESS_internal : SessionType._NAMED_internal);
 			}
+			tv.ownSessions.put(key, sess);
 		}
 		return sess;
 
@@ -1375,6 +1493,7 @@ public enum Factory {
 	 *            the base
 	 * @return the session
 	 */
+	@Deprecated
 	public static Session getSession(final lotus.domino.Base base) {
 		org.openntf.domino.Session result = null;
 		if (base instanceof SessionDescendant) {
@@ -1642,7 +1761,10 @@ public enum Factory {
 	 * @param collection
 	 *            the collection
 	 * @return the org.openntf.domino. note collection
+	 * 
+	 * @deprecated this should be moved to {@link CollectionUtils}
 	 */
+	@Deprecated
 	public static org.openntf.domino.NoteCollection toNoteCollection(final lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
 		if (collection instanceof DocumentCollection) {
@@ -1660,13 +1782,22 @@ public enum Factory {
 	 * 
 	 * @param hook
 	 *            the hook that should run on next terminate
+	 * 
 	 */
-	public static void addTerminateHook(final Runnable hook) {
-		terminateHooks.add(hook);
+	public static void addTerminateHook(final Runnable hook, final boolean global) {
+		if (global) {
+			globalTerminateHooks.add(hook);
+		} else {
+			getThreadVariables().addTerminateHook(hook);
+		}
 	}
 
-	public static void removeTerminateHook(final Runnable hook) {
-		terminateHooks.remove(hook);
+	public static void removeTerminateHook(final Runnable hook, final boolean global) {
+		if (global) {
+			globalTerminateHooks.remove(hook);
+		} else {
+			getThreadVariables().removeTerminateHook(hook);
+		}
 	}
 
 	/**
@@ -1690,16 +1821,41 @@ public enum Factory {
 		return localServerName;
 	}
 
+	public static void println(String prefix, final String lines) {
+		BufferedReader reader = new BufferedReader(new StringReader(lines));
+		String line;
+		try {
+			if (StringUtil.isEmpty(prefix)) {
+				prefix = "[ODA] ";
+			} else {
+				prefix = "[ODA::" + prefix + "] ";
+			}
+			while ((line = reader.readLine()) != null) {
+				if (line.length() > 0)
+					printer.println(prefix + line);
+			}
+		} catch (IOException ioex) {
+
+		}
+	}
+
 	public static void println(final Object x) {
-		printer.println("[ODA] " + x);
+		println(null, String.valueOf(x));
 	}
 
 	public static void println(final Object source, final Object x) {
 		if (source == null) {
-			printer.println("[ODA] " + x);
+			println(null, String.valueOf(x));
 		} else {
-			Class<?> cls = source instanceof Class ? (Class<?>) source : source.getClass();
-			printer.println("[ODA::" + cls.getSimpleName() + "] " + x);
+			String prefix;
+			if (source instanceof String) {
+				prefix = (String) source;
+			} else if (source instanceof Class) {
+				prefix = ((Class<?>) source).getSimpleName();
+			} else {
+				prefix = source.getClass().getSimpleName();
+			}
+			println(prefix, String.valueOf(x));
 		}
 	}
 

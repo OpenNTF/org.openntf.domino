@@ -1,8 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FRAMESETLENGTH;
 import org.openntf.domino.nsfdata.structs.SIG;
@@ -17,182 +14,56 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDFRAMESET extends CDRecord {
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixed("BorderEnable", Byte.class);
-		addFixed("byAvail1", Byte.class);
-		addFixed("Reserved1", Short.class);
-		addFixed("Reserved2", Short.class);
-		addFixedUnsigned("FrameBorderWidth", Short.class);
-		addFixed("Reserved3", Short.class);
-		addFixedUnsigned("FrameSpacingWidth", Short.class);
-		addFixed("Reserved4", Short.class);
-		addFixed("ReservedColor1", COLOR_VALUE.class);
-		addFixed("ReservedColro2", COLOR_VALUE.class);
-		addFixedUnsigned("RowQty", Short.class);
-		addFixedUnsigned("ColQty", Short.class);
-		addFixed("Reserved5", Short.class);
-		addFixed("Reserved6", Short.class);
-		addFixed("FrameBorderColor", COLOR_VALUE.class);
-		addFixed("ThemeSetting", Byte.class);
-		addFixed("Reserved7", Byte.class);
+	public static final int fFSBorderEnable = 0x00000001;
+	public static final int fFSFrameBorderDims = 0x00000004;
+	public static final int fFSFrameSpacingDims = 0x00000008;
+	public static final int fFSFrameBorderColor = 0x00000040;
 
+	public final WSIG Header = inner(new WSIG());
+	// TODO make enum
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Bool BorderEnable = new Bool();
+	public final Unsigned8 byAvail1 = new Unsigned8();
+	public final Unsigned16 Reserved1 = new Unsigned16();
+	public final Unsigned16 Reserved2 = new Unsigned16();
+	public final Unsigned16 FrameBorderWidth = new Unsigned16();
+	public final Unsigned16 Reserved3 = new Unsigned16();
+	public final Unsigned16 FrameSpacingWidth = new Unsigned16();
+	public final Unsigned16 Reserved4 = new Unsigned16();
+	public final COLOR_VALUE ReservedColor1 = inner(new COLOR_VALUE());
+	public final COLOR_VALUE ReservedColor2 = inner(new COLOR_VALUE());
+	public final Unsigned16 RowQty = new Unsigned16();
+	public final Unsigned16 ColQty = new Unsigned16();
+	public final Unsigned16 Reserved5 = new Unsigned16();
+	public final Unsigned16 Reserved6 = new Unsigned16();
+	public final COLOR_VALUE FrameBorderColor = inner(new COLOR_VALUE());
+	// TODO make enum?
+	public final Unsigned8 ThemeSetting = new Unsigned8();
+	public final Unsigned8 Reserved7 = new Unsigned8();
+
+	static {
 		addVariableArray("Rows", "RowQty", FRAMESETLENGTH.class);
 		addVariableArray("Cols", "ColQty", FRAMESETLENGTH.class);
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDFRAMESET(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDFRAMESET(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return fFSxxxxxxx as defined below. Unused bits must be set to 0
-	 */
-	public int getFlags() {
-		// TODO make enum
-		return (Integer) getStructElement("Flags");
-	}
-
-	/**
-	 * @return HTML FRAMEBORDER attribute
-	 */
-	public boolean getBorderEnable() {
-		return (Byte) getStructElement("BorderEnable") != 0;
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public byte getAvailable1() {
-		return (Byte) getStructElement("byAvail1");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public short getReserved1() {
-		return (Short) getStructElement("Reserved1");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public short getReserved2() {
-		return (Short) getStructElement("Reserved2");
-	}
-
-	/**
-	 * @return HTML BORDER attribute
-	 */
-	public int getFrameBorderWidth() {
-		return (Integer) getStructElement("FrameBorderWidth");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public short getReserved3() {
-		return (Short) getStructElement("Reserved3");
-	}
-
-	/**
-	 * @return HTML FRAMESPACING attribute
-	 */
-	public int getFrameSpacingWidth() {
-		return (Integer) getStructElement("FrameSpacingWidth");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public short getReserved4() {
-		return (Short) getStructElement("Reserved4");
-	}
-
-	/**
-	 * reserved for future use
-	 */
-	public COLOR_VALUE getReservedColor1() {
-		return (COLOR_VALUE) getStructElement("ReservedColor1");
-	}
-
-	/**
-	 * reserved for future use
-	 */
-	public COLOR_VALUE getReservedColor2() {
-		return (COLOR_VALUE) getStructElement("ReservedColor2");
-	}
-
-	/**
-	 * @return The number of FRAMESETLENGTH structures defining row information
-	 */
-	public int getRowQty() {
-		return (Integer) getStructElement("RowQty");
-	}
-
-	/**
-	 * @return The number of FRAMESETLENGTH structures defining column information
-	 */
-	public int getColQty() {
-		return (Integer) getStructElement("ColQty");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public short getReserved5() {
-		return (Short) getStructElement("Reserved5");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public short getReserved6() {
-		return (Short) getStructElement("Reserved6");
-	}
-
-	/**
-	 * @return HTML BORDERCOLOR attribute
-	 */
-	public COLOR_VALUE getFrameBorderColor() {
-		return (COLOR_VALUE) getStructElement("FrameBorderColor");
-	}
-
-	/**
-	 * @return Theme Setting
-	 * @since IBM Notes/Domino 8.5
-	 */
-	public byte getThemeSetting() {
-		// TODO make enum?
-		return (Byte) getStructElement("ThemeSetting");
-	}
-
-	/**
-	 * Reserved, must be 0
-	 */
-	public byte getReserved7() {
-		return (Byte) getStructElement("Reserved7");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public FRAMESETLENGTH[] getRows() {
-		return (FRAMESETLENGTH[]) getStructElement("Rows");
+		return (FRAMESETLENGTH[]) getVariableElement("Rows");
 	}
 
 	public FRAMESETLENGTH[] getCols() {
-		return (FRAMESETLENGTH[]) getStructElement("Cols");
+		return (FRAMESETLENGTH[]) getVariableElement("Cols");
 	}
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", BorderEnable: " + getBorderEnable() + ", FrameBorderWidth: " + getFrameBorderWidth()
-				+ ", FrameSpacingWidth: " + getFrameSpacingWidth() + ", FrameBorderColor: " + getFrameBorderColor() + ", ThemeSetting: "
-				+ getThemeSetting() + ", RowQty: " + getRowQty() + ", ColQty: " + getColQty() + ", Rows: " + Arrays.asList(getRows())
-				+ ", Cols: " + Arrays.asList(getCols()) + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ", BorderEnable: " + getBorderEnable() + ", FrameBorderWidth: " + getFrameBorderWidth()
+	//				+ ", FrameSpacingWidth: " + getFrameSpacingWidth() + ", FrameBorderColor: " + getFrameBorderColor() + ", ThemeSetting: "
+	//				+ getThemeSetting() + ", RowQty: " + getRowQty() + ", ColQty: " + getColQty() + ", Rows: " + Arrays.asList(getRows())
+	//				+ ", Cols: " + Arrays.asList(getCols()) + "]";
+	//	}
 }

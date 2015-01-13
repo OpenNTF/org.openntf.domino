@@ -16,7 +16,7 @@ public interface XotsExecutorService extends ScheduledExecutorService {
 
 	ScheduledFuture<?> schedule(Runnable runnable, Scheduler scheduler);
 
-	ScheduledFuture<?> scheduleTasklet(String moduleName, String className, Scheduler scheduler, Object[] ctorArgs);
+	ScheduledFuture<?> scheduleTasklet(String moduleName, String className, Scheduler scheduler, Object... ctorArgs);
 
 	ScheduledFuture<?> runTasklet(String moduleName, String className, Object... ctorArgs);
 

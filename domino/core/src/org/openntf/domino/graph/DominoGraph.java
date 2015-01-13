@@ -16,7 +16,9 @@ import java.util.logging.Logger;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
@@ -25,6 +27,8 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -38,6 +42,34 @@ import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
 @SuppressWarnings("rawtypes")
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
+	public static class GraphCacheLoader extends CacheLoader {
+		private transient Database rawDb_;
+
+		public GraphCacheLoader(final Database db) {
+			rawDb_ = db;
+		}
+
+		@Override
+		public Object load(final Object key) throws Exception {
+			DominoElement result = null;
+			String unid = null;
+			if (key instanceof String) {
+				String sid = (String) key;
+				if (DominoUtils.isUnid(sid)) {
+					unid = sid;
+				} else if (sid.length() > 32) {
+					unid = DominoUtils.toUnid(sid);
+				} else {
+					unid = DominoUtils.toUnid(sid);
+				}
+			} else if (key instanceof Serializable) {
+				unid = DominoUtils.toUnid((Serializable) key);
+			}
+			return result;
+		}
+
+	}
+
 	public static class DominoGraphException extends RuntimeException {
 
 		private static final long serialVersionUID = 1L;
@@ -163,6 +195,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	private java.util.Map<Object, Element> cache_;
+	private Cache<Object, Element> managedCache_;
 
 	private String filepath_;
 	private String server_;
@@ -370,41 +403,58 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	protected org.openntf.domino.Database getDatabase() {
-		return getRawSession().getDatabase(server_, filepath_);
+		Session session = getCurrentSession();
+		if (session == null) {
+			log_.log(Level.INFO, "Current session not available. Using native session instead.");
+			session = getRawSession();
+		}
+		return session.getDatabase(server_, filepath_);
+	}
+
+	public org.openntf.domino.Session getCurrentSession() {
+		return Factory.getSession(SessionType.CURRENT);
 	}
 
 	public org.openntf.domino.Session getRawSession() {
-		// CHECKME: Is this correct?
-		return Factory.getSession(SessionType.CURRENT);
+		return Factory.getSession(SessionType.NATIVE);
 	}
 
 	public org.openntf.domino.Database getRawDatabase() {
 		return getDatabase();
 	}
 
-	Document getDocument(final Object id, final boolean createOnFail) {
-		Document result = null;
-		String unid = "";
-		Map<String, Document> map = documentCache.get();
-		if (id == null && createOnFail) {
-			result = getRawDatabase().createDocument();
-			//			synchronized (map) {
-			map.put(result.getUniversalID(), result);
-			//			}
-		} else if (id instanceof String) {
-			String sid = (String) id;
+	public static String toUnid(final java.lang.Object value) {
+		String unid = null;
+		if (value == null)
+			return null;
+		if (value instanceof String) {
+			String sid = (String) value;
 			if (DominoUtils.isUnid(sid)) {
 				unid = sid;
 			} else if (sid.length() > 32) {
 				unid = DominoUtils.toUnid(sid);
 			} else {
-
 				unid = DominoUtils.toUnid(sid);
 			}
-		} else if (id instanceof Serializable) {
-			unid = DominoUtils.toUnid((Serializable) id);
+		} else if (value instanceof Serializable) {
+			unid = DominoUtils.toUnid((Serializable) value);
 		}
-		if (id != null && !DominoUtils.isUnid(unid)) {
+		return unid;
+	}
+
+	Document getDocument(final Object id, final boolean createOnFail) {
+		Document result = null;
+		String unid = toUnid(id);
+		Map<String, Document> map = documentCache.get();
+
+		if (id == null && createOnFail) {
+			result = getRawDatabase().createDocument();
+			//			synchronized (map) {
+			map.put(result.getUniversalID(), result);
+			//			}
+		}
+		unid = toUnid(id);
+		if (unid != null && !DominoUtils.isUnid(unid)) {
 			log_.log(Level.SEVERE, "ALERT! INVALID UNID FROM id type " + (id == null ? "null" : id.getClass().getName()) + ": " + id);
 		}
 		if (result == null) {
@@ -608,6 +658,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	// private boolean inTransaction_ = false;
+	@SuppressWarnings("unused")
 	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
 
 	};
@@ -671,7 +722,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	@Deprecated
-	@SuppressWarnings("deprecation")
 	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
 
@@ -682,6 +732,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (txn != null) {
 			if (getCache().size() > 0) {
 				// System.out.println("Reapplying cache to " + getCache().size() + " elements...");
+				@SuppressWarnings("unused")
 				int vCount = 0;
 				Set<Element> elems = getCacheValues();
 				for (Element elem : elems) {

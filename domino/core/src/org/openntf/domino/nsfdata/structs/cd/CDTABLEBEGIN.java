@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure specifies the beginning of a table. It contains information about the format and size of the table. Use this structure
@@ -13,65 +11,18 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDTABLEBEGIN extends CDRecord {
 
-	static {
-		addFixedUnsigned("LeftMargin", Short.class);
-		addFixedUnsigned("HorizInterCellSpace", Short.class);
-		addFixedUnsigned("VertInterCellSpace", Short.class);
-		addFixedUnsigned("V4HorizInterCellSpace", Short.class);
-		addFixedUnsigned("V4VertInterCellSpace", Short.class);
-		addFixed("Flags", Short.class);
+	public final BSIG Header = inner(new BSIG());
+	public final Unsigned16 LeftMargin = new Unsigned16();
+	public final Unsigned16 HorizInterCellSpace = new Unsigned16();
+	public final Unsigned16 VertInterCellSpace = new Unsigned16();
+	public final Unsigned16 V4HorizInterCellSpace = new Unsigned16();
+	public final Unsigned16 V4VertInterCellSpace = new Unsigned16();
+	// TODO make enum
+	public final Unsigned16 Flags = new Unsigned16();
+
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDTABLEBEGIN(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDTABLEBEGIN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return TWIPS
-	 */
-	public int getLeftMargin() {
-		return (Integer) getStructElement("LeftMargin");
-	}
-
-	/**
-	 * @return TWIPS
-	 */
-	public int getHorizInterCellSpace() {
-		return (Integer) getStructElement("HorizInterCellSpace");
-	}
-
-	/**
-	 * @return TWIPS
-	 */
-	public int getVertInterCellSpace() {
-		return (Integer) getStructElement("VertInterCellSpace");
-	}
-
-	/**
-	 * @return TWIPS -- field was spare in V3
-	 */
-	public int getV4HorizInterCellSpace() {
-		return (Integer) getStructElement("V4HorizInterCellSpace");
-	}
-
-	/**
-	 * @return TWIPS -- field was spare in V3
-	 */
-	public int getV4VertInterCellSpace() {
-		return (Integer) getStructElement("V4VertInterCellSpace");
-	}
-
-	/**
-	 * @return Flags
-	 */
-	public short getFlags() {
-		// TODO create enum
-		return (Short) getStructElement("Flags");
-	}
 }

@@ -3,11 +3,13 @@
  */
 package org.openntf.domino.events;
 
+import java.io.Serializable;
+
 /**
  * @author nfreeman
  * 
  */
-public interface IDominoEventFactory {
+public interface IDominoEventFactory extends Serializable {
 	/**
 	 * Returns the IDominoEvent wrapped by this EventFactory
 	 * 

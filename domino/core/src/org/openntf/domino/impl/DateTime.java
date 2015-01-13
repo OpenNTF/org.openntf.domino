@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -37,7 +38,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements org.openntf.domino.DateTime {
+public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements
+org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -49,7 +51,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 				lotusWorker.set(null);
 				calendar.set(null);
 			}
-		});
+		}, true);
 	}
 
 	/** The calendar */
@@ -75,7 +77,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	private boolean isTimeOnly_;
 
 	/** The notes zone_. */
-	private int notesZone_;
+	private int notesZone_ = Integer.MIN_VALUE;
 
 	private static final ThreadLocal<lotus.domino.DateTime> lotusWorker = new ThreadLocal<lotus.domino.DateTime>();
 
@@ -131,39 +133,11 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DateTime(final lotus.domino.DateTime delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_TIME);
+	protected DateTime(final lotus.domino.DateTime delegate, final Session parent) {
+		super(delegate, parent, NOTES_TIME);
 		initialize(delegate);
 		// TODO: Wrapping recycles the caller's object. This may cause issues.
 		Base.s_recycle(delegate);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.DateTime delegate) {
-		if (delegate == null) {
-			return Factory.getSession(SessionType.CURRENT); // the current Session
-		}
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
-	}
-
-	/**
-	 * Instantiates a new date time.
-	 * 
-	 * @param date
-	 *            the date
-	 * @param parent
-	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
-	 */
-	public DateTime(final Date date, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(null, parent, wf, cppId, NOTES_TIME);
-		initialize(date);
 	}
 
 	/**
@@ -171,12 +145,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @param dateTime
 	 */
-	protected DateTime(final DateTime orig) {
-		super(null, orig.getAncestorSession(), orig.getFactory(), 0, NOTES_TIME);
+	protected DateTime(final DateTime orig, final Session sess) {
+		super(null, sess, NOTES_TIME);
 		dst_ = orig.dst_;
 		isDateOnly_ = orig.isDateOnly_;
 		isTimeOnly_ = orig.isTimeOnly_;
 		notesZone_ = orig.notesZone_;
+		if (notesZone_ == -18000000) {
+			Throwable t = new Throwable();
+			t.printStackTrace();
+		}
 		if (orig.date_ != null) {
 			date_ = new Date(orig.date_.getTime());
 		}
@@ -186,8 +164,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * Clones the DateTime object.
 	 */
 	@Override
-	public DateTime clone() {
-		return new DateTime(this);
+	public org.openntf.domino.DateTime clone() {
+		return new DateTime(this, getAncestorSession());
 	}
 
 	/*
@@ -199,9 +177,15 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			lotus.domino.Session rawsession = toLotus(parent);
 			lotus.domino.DateTime delegate = rawsession.createDateTime(date_);
-			delegate.convertToZone(notesZone_, dst_);
+			if (notesZone_ != Integer.MIN_VALUE) {
+				try {
+					delegate.convertToZone(notesZone_, dst_);
+				} catch (Throwable t) {
+					log_.log(Level.WARNING, "Failed to convert a DateTime to zone " + notesZone_ + " with a dst of " + String.valueOf(dst_));
+				}
+			}
 			if (isAnyTime()) {
 				delegate.setAnyTime();
 			}
@@ -218,25 +202,6 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/**
 	 * Initialize.
 	 * 
-	 * @param date
-	 *            the date
-	 */
-	private void initialize(final java.util.Date date) {
-		try {
-			lotus.domino.DateTime worker = getWorker();
-			worker.setLocalTime(date);
-			workDone(worker, true);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
-		//	date_ = new Date(date.getTime());	//NTF copy to keep immutable
-		//		dst_ = false;
-		//		notesZone_ = 0;
-	}
-
-	/**
-	 * Initialize.
-	 * 
 	 * @param delegate
 	 *            the delegate
 	 */
@@ -244,6 +209,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		try {
 			dst_ = delegate.isDST();
 			notesZone_ = delegate.getTimeZone();
+			if (notesZone_ == -18000000) {
+				Throwable t = new Throwable();
+				t.printStackTrace();
+			}
 			String s = delegate.getDateOnly();
 			isTimeOnly_ = (s == null || s.length() == 0);
 			s = delegate.getTimeOnly();
@@ -546,8 +515,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -681,7 +650,18 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public void setLocalTime(final java.util.Calendar calendar) {
-		setLocalTime(calendar.getTime());
+		date_ = calendar.getTime();
+		//FIXME NTF this is incorrect. The notesZone_ is the timezone according to the legacy Notes API. The Java calendar API cannot replace it.
+		//		java.util.TimeZone localTimeZone = calendar.getTimeZone();
+		//		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
+		//		if (localTimeZone.useDaylightTime() == true) {
+		//			dst_ = localTimeZone.inDaylightTime(date_);
+		//		} else {
+		//			dst_ = false;
+		//		}
+		isDateOnly_ = false;
+		isTimeOnly_ = false;
+		//setLocalTime(calendar.getTime());
 	}
 
 	/*
@@ -691,7 +671,17 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public void setLocalTime(final Calendar calendar) {
-		setLocalTime(calendar.getTime());
+		date_ = calendar.getTime();
+		//FIXME NTF this is incorrect. The notesZone_ is the timezone according to the legacy Notes API. The Java calendar API cannot replace it.
+		//		TimeZone localTimeZone = calendar.getTimeZone();
+		//		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
+		//		if (localTimeZone.useDaylightTime() == true) {
+		//			dst_ = localTimeZone.inDaylightTime(date_);
+		//		} else {
+		//			dst_ = false;
+		//		}
+		isDateOnly_ = false;
+		isTimeOnly_ = false;
 	}
 
 	/*
@@ -701,13 +691,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public void setLocalTime(final Date date) {
-		try {
-			lotus.domino.DateTime worker = getWorker();
-			worker.setLocalTime(date);
-			workDone(worker, true);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		setLocalTime(cal);
+		//		try {
+		//			lotus.domino.DateTime worker = getWorker();
+		//			worker.setLocalTime(date);
+		//			workDone(worker, true);
+		//		} catch (NotesException ne) {
+		//			DominoUtils.handleException(ne);
+		//		}
 	}
 
 	/*
@@ -835,8 +828,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -900,23 +893,25 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		out.writeLong(date_.getTime());
 	}
 
-	/*
-	 * Deprecated, but needed for Externalization
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
 	 */
 	@Deprecated
 	public DateTime() {
-		super(null, Factory.getSession(SessionType.CURRENT), null, 0, NOTES_TIME);
+		// it does not matter which session we use here, so we use the current one!
+		super(null, Factory.getSession(SessionType.CURRENT), NOTES_TIME);
 	}
 
-	public DateTime(final String time) throws java.text.ParseException {
-		this();
-		try {
-			lotus.domino.DateTime worker = getWorker();
-			worker.setLocalTime(time);
-			workDone(worker, true);
-		} catch (NotesException ne) {
-			throw new java.text.ParseException(ne.text, 0);
-		}
+	/**
+	 * Constructs a new DateTime from the given String
+	 * 
+	 * @param time
+	 *            the time string in a notes readable format
+	 * @throws java.text.ParseException
+	 *             if the time string does not match
+	 */
+	protected DateTime(final Session parent) {
+		super(null, parent, NOTES_TIME);
 	}
 
 	/*
@@ -948,6 +943,11 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	public void setLocalTime(final String time, final boolean parseLenient) {
 		setLocalTime(time);
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

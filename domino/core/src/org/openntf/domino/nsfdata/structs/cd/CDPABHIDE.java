@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
@@ -14,36 +12,24 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDPABHIDE extends CDRecord {
 
-	static {
-		addFixed("PABID", Short.class);
-		addFixedArray("Reserved", Byte.class, 8);
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 PABID = new Unsigned16();
+	public final Unsigned8[] Reserved = array(new Unsigned8[8]);
 
+	static {
 		addVariableData("Formula", "getFormulaLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDPABHIDE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDPABHIDE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	public short getPabId() {
-		return (Short) getStructElement("PABID");
-	}
-
-	public byte[] getReserved() {
-		return (byte[]) getStructElement("Reserved");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public int getFormulaLength() {
-		return (int) (getDataLength() - 10);
+		return (int) (Header.getRecordLength() - size());
 	}
 
 	public NSFCompiledFormula getFormula() {
-		return new NSFCompiledFormula((byte[]) getStructElement("Formula"));
+		return new NSFCompiledFormula((byte[]) getVariableElement("Formula"));
 	}
 }

@@ -16,9 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,6 +34,7 @@ import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
 
 /**
@@ -57,6 +60,8 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	private static final String ACL_NOTE = "FFFF0040";
 	private static final String USING_NOTE = "FFFF0100";
 	private static final String REPLICATION_FORMULA = "FFFF0800";
+
+	private transient Properties props;
 
 	private final Database database_;
 
@@ -597,5 +602,49 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public Session getAncestorSession() {
 		return database_.getAncestorSession();
+	}
+
+	@Override
+	public synchronized String[] getXspProperty(final String propertyName) {
+		if (props == null) {
+			props = new Properties();
+			FileResource res = getHiddenFileResource("WEB-INF/xsp.properties");
+			if (res != null) {
+				try {
+					props.load(new ByteArrayInputStream(res.getFileData()));
+				} catch (IOException e) {
+					DominoUtils.handleException(e);
+				}
+			}
+		}
+		String setting = props.getProperty(propertyName);
+		if (StringUtil.isNotEmpty(setting)) {
+			if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) {
+				return StringUtil.splitString(setting, ',');
+			} else {
+				return new String[] { setting };
+			}
+		}
+		return new String[0];
+	}
+
+	@Override
+	public boolean isAPIEnabled() {
+		for (String s : getXspProperty("xsp.library.depends")) {
+			if (s.equalsIgnoreCase("org.openntf.domino.xsp.XspLibrary")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isAppFlagSet(final String flagName) {
+		for (String s : getXspProperty("org.openntf.domino.xsp")) {
+			if (s.equalsIgnoreCase(flagName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -1,13 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
+import org.openntf.domino.nsfdata.structs.RepeatType;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
@@ -102,234 +100,71 @@ public class CDEMBEDDEDOUTLINE extends CDRecord {
 		}
 	}
 
-	public static enum Alignment {
-		TOPLEFT((short) 0), TOPCENTER((short) 1), TOPRIGHT((short) 2), MIDDLELEFT((short) 3), MIDDLECENTER((short) 4),
-		MIDDLERIGHT((short) 5), BOTTOMLEFT((short) 6), BOTTOMCENTER((short) 7), BOTTOMRIGHT((short) 8);
-
-		private final short value_;
-
-		private Alignment(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static Alignment valueOf(final short typeCode) {
-			for (Alignment type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Alignment found for type code " + typeCode);
-		}
+	public static enum ImageAlign {
+		TOPLEFT, TOPCENTER, TOPRIGHT, MIDDLELEFT, MIDDLECENTER, MIDDLERIGHT, BOTTOMLEFT, BOTTOMCENTER, BOTTOMRIGHT
 	}
 
 	public static enum TitleStyle {
-		HIDE((short) 0), SIMPLE((short) 1), HIERARCHICAL((short) 2);
-
-		private final short value_;
-
-		private TitleStyle(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static TitleStyle valueOf(final short typeCode) {
-			for (TitleStyle type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching TitleStyle found for type code " + typeCode);
-		}
+		HIDE, SIMPLE, HIERARCHICAL
 	}
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixedArray("Unused", Integer.class, 3);
-		addFixed("Alignment", Short.class);
-		addFixedUnsigned("SpaceBetweenEntries", Short.class);
-		addFixedUnsigned("LabelLength", Short.class);
-		addFixed("Style", Short.class);
-		addFixedUnsigned("Title_VOffset", Short.class);
-		addFixedUnsigned("Title_HOffset", Short.class);
-		addFixedUnsigned("Title_Height", Short.class);
-		addFixedUnsigned("TopLevel_VOffset", Short.class);
-		addFixedUnsigned("TopLevel_HOffset", Short.class);
-		addFixedUnsigned("TopLevel_Height", Short.class);
-		addFixedUnsigned("SubLevel_VOffset", Short.class);
-		addFixedUnsigned("SubLevel_HOffset", Short.class);
-		addFixedUnsigned("SubLevel_Height", Short.class);
-		addFixedUnsigned("NameLength", Short.class);
-		addFixedUnsigned("TargetFrameLength", Short.class);
-		addFixedArray("SelectFontID", FONTID.class, 3);
-		addFixedArray("MouseFontID", FONTID.class, 3);
-		addFixedArrayUnsigned("Font_VOffset", Short.class, 3);
-		addFixedArrayUnsigned("Font_HOffset", Short.class, 3);
-		addFixedArray("Align", Short.class, 3);
-		addFixed("Control_BackColor", COLOR_VALUE.class);
-		addFixedArray("BackColor", COLOR_VALUE.class, 9);
-		addFixedArray("SelectFontColor", COLOR_VALUE.class, 3);
-		addFixedArray("Repeat", Short.class, 4);
-		addFixedArray("Background_Align", Short.class, 4);
-		addFixedArrayUnsigned("Background_VOffset", Short.class, 4);
-		addFixedArrayUnsigned("Background_HOffset", Short.class, 4);
-		addFixedArray("wBackground_Image", Short.class, 4);
-		addFixedArray("NormalFontColor", COLOR_VALUE.class, 3);
-		addFixedArray("MouseFontColor", COLOR_VALUE.class, 3);
-		addFixedUnsigned("RootLength", Short.class);
-		addFixedUnsigned("TopLevel_PixelHeight", Short.class);
-		addFixedUnsigned("wColWidth", Short.class);
-		addFixed("SpareWord", Short.class);
-		addFixedArray("Spare", Integer.class, 4);
-	}
+	public final WSIG Header = inner(new WSIG());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned32[] Unused = array(new Unsigned32[3]);
+	public final Unsigned16 Align = new Unsigned16();
+	public final Unsigned16 SpaceBetweenEntries = new Unsigned16();
+	public final Unsigned16 LabelLength = new Unsigned16();
+	public final Enum16<TitleStyle> Style = new Enum16<TitleStyle>(TitleStyle.values());
+	public final Unsigned16 Title_VOffset = new Unsigned16();
+	public final Unsigned16 Title_HOffset = new Unsigned16();
+	public final Unsigned16 Title_Height = new Unsigned16();
+	public final Unsigned16 TopLevel_VOffset = new Unsigned16();
+	public final Unsigned16 TopLevel_HOffset = new Unsigned16();
+	public final Unsigned16 TopLevel_Height = new Unsigned16();
+	public final Unsigned16 SubLevel_VOffset = new Unsigned16();
+	public final Unsigned16 SubLevel_HOffset = new Unsigned16();
+	public final Unsigned16 SubLevel_Height = new Unsigned16();
+	public final Unsigned16 NameLength = new Unsigned16();
+	public final Unsigned16 TargetFrameLength = new Unsigned16();
+	public final FONTID[] SelectFontID = array(new FONTID[3]);
+	public final FONTID[] MouseFontID = array(new FONTID[3]);
+	public final Unsigned16[] Font_VOffset = array(new Unsigned16[3]);
+	public final Unsigned16[] Font_HOffset = array(new Unsigned16[3]);
+	public final Enum16<ImageAlign> Align1 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final Enum16<ImageAlign> Align2 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final Enum16<ImageAlign> Align3 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final COLOR_VALUE Control_BackColor = inner(new COLOR_VALUE());
+	public final COLOR_VALUE[] BackColor = array(new COLOR_VALUE[9]);
+	public final COLOR_VALUE[] SelectBackColor = array(new COLOR_VALUE[3]);
+	public final Enum16<RepeatType> Repeat1 = new Enum16<RepeatType>(RepeatType.values());
+	public final Enum16<RepeatType> Repeat2 = new Enum16<RepeatType>(RepeatType.values());
+	public final Enum16<RepeatType> Repeat3 = new Enum16<RepeatType>(RepeatType.values());
+	public final Enum16<RepeatType> Repeat4 = new Enum16<RepeatType>(RepeatType.values());
+	public final Enum16<ImageAlign> Background_Align1 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final Enum16<ImageAlign> Background_Align2 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final Enum16<ImageAlign> Background_Align3 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final Enum16<ImageAlign> Background_Align4 = new Enum16<ImageAlign>(ImageAlign.values());
+	public final Unsigned16[] Background_VOffset = array(new Unsigned16[4]);
+	public final Unsigned16[] Background_HOffset = array(new Unsigned16[4]);
+	public final Unsigned16[] wBackground_Image = array(new Unsigned16[4]);
+	public final COLOR_VALUE[] NormalFontColor = array(new COLOR_VALUE[3]);
+	public final COLOR_VALUE[] MouseFontColor = array(new COLOR_VALUE[3]);
+	public final Unsigned16 RootLength = new Unsigned16();
+	public final Unsigned16 TopLevel_PixelHeight = new Unsigned16();
+	public final Unsigned16 wColWidth = new Unsigned16();
+	public final Unsigned16 SpareWord = new Unsigned16();
+	public final Unsigned32[] Spare = array(new Unsigned32[4]);
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDEMBEDDEDOUTLINE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDEMBEDDEDOUTLINE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	public Alignment getAlignment() {
-		return Alignment.valueOf((Short) getStructElement("Alignment"));
-	}
-
-	public int getSpaceBetweenEntries() {
-		return (Integer) getStructElement("SpaceBetweenElements");
-	}
-
-	public TitleStyle getStyle() {
-		return TitleStyle.valueOf((Short) getStructElement("Style"));
-	}
-
-	public int getTitleVOffset() {
-		return (Integer) getStructElement("Title_VOffset");
-	}
-
-	public int getTitleHOffset() {
-		return (Integer) getStructElement("Title_HOffset");
-	}
-
-	public int getTitleHeight() {
-		return (Integer) getStructElement("Title_Height");
-	}
-
-	public int getTopLevelVOffset() {
-		return (Integer) getStructElement("TopLevel_VOffset");
-	}
-
-	public int getTopLevelHOffset() {
-		return (Integer) getStructElement("TopLevel_HOffset");
-	}
-
-	public int getTopLevelHeight() {
-		return (Integer) getStructElement("TopLevel_Height");
-	}
-
-	public int getSubLevelVOffset() {
-		return (Integer) getStructElement("SubLevel_VOffset");
-	}
-
-	public int getSubLevelHOffset() {
-		return (Integer) getStructElement("SubLevel_HOffset");
-	}
-
-	public int getSubLevelHeight() {
-		return (Integer) getStructElement("SubLevel_Height");
-	}
-
-	public FONTID[] getSelectFontId() {
-		return (FONTID[]) getStructElement("SelectFontID");
-	}
-
-	public FONTID[] getMouseFontId() {
-		return (FONTID[]) getStructElement("MouseFontID");
-	}
-
-	public int[] getFontVOffset() {
-		return (int[]) getStructElement("Font_VOffset");
-	}
-
-	public int[] getFontHOffset() {
-		return (int[]) getStructElement("Font_HOffset");
-	}
-
-	public List<Alignment> getAlign() {
-		short[] value = (short[]) getStructElement("Align");
-		List<Alignment> result = new ArrayList<Alignment>(value.length);
-		for (short val : value) {
-			result.add(Alignment.valueOf(val));
-		}
-		return result;
-	}
-
-	public COLOR_VALUE getControlBackColor() {
-		return (COLOR_VALUE) getStructElement("Control_BackColor");
-	}
-
-	public COLOR_VALUE[] getBackColor() {
-		return (COLOR_VALUE[]) getStructElement("BackColor");
-	}
-
-	public COLOR_VALUE[] getSelectFontColor() {
-		return (COLOR_VALUE[]) getStructElement("SelectFontColor");
-	}
-
-	public short[] getRepeat() {
-		return (short[]) getStructElement("Repeat");
-	}
-
-	public List<Alignment> getBackgroundAlign() {
-		short[] value = (short[]) getStructElement("Background_Align");
-		List<Alignment> result = new ArrayList<Alignment>(value.length);
-		for (short val : value) {
-			result.add(Alignment.valueOf(val));
-		}
-		return result;
-	}
-
-	public int[] getBackgroundVOffset() {
-		return (int[]) getStructElement("Background_VOffset");
-	}
-
-	public int[] getBackgroundHOffset() {
-		return (int[]) getStructElement("Background_HOffset");
-	}
-
-	public short[] getBackgroundImage() {
-		return (short[]) getStructElement("wBackground_Image");
-	}
-
-	public COLOR_VALUE[] getNormalFontColor() {
-		return (COLOR_VALUE[]) getStructElement("NormalFontColor");
-	}
-
-	public COLOR_VALUE[] getMouseFontColor() {
-		return (COLOR_VALUE[]) getStructElement("MouseFontColor");
-	}
-
-	public int getRootLength() {
-		return (Integer) getStructElement("RootLength");
-	}
-
-	public int getTopLevelPixelHeight() {
-		return (Integer) getStructElement("TopLevel_PixelHeight");
-	}
-
-	public int getColWidth() {
-		return (Integer) getStructElement("wColWidth");
+		return Flag.valuesOf((int) Flags.get());
 	}
 }

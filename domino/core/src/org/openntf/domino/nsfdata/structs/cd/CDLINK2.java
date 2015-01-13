@@ -14,27 +14,14 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDLINK2 extends CDRecord {
 
-	static {
-		addFixed("LinkID", Short.class);
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 LinkID = new Unsigned16();
 
-		// TODO add null-terminated-string support
-	}
+	// TODO add null-terminated-string support
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDLINK2(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDLINK2(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return ID of the link
-	 */
-	public short getLinkId() {
-		return (Short) getStructElement("LinkID");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
@@ -78,22 +65,25 @@ public class CDLINK2 extends CDRecord {
 		// Now we're past comment. Time to read in Hint
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		breaker = 0;
-		do {
-			aByte = data.get();
-			bos.write(aByte);
-			if (breaker++ > 1000) {
-				System.out.println("we dug too deep!");
-				return "";
-			}
-		} while (aByte != 0);
-		return ODSUtils.fromLMBCS(bos.toByteArray());
+		if (data.hasRemaining()) {
+			do {
+				aByte = data.get();
+				bos.write(aByte);
+				if (breaker++ > 1000) {
+					System.out.println("we dug too deep!");
+					return "";
+				}
+			} while (aByte != 0 && data.hasRemaining());
+			return ODSUtils.fromLMBCS(bos.toByteArray());
+		} else {
+			return "";
+		}
 	}
 
 	/**
 	 * @return Anchor text (optional)
 	 */
 	public String getAnchor() {
-		// TODO make this work - namely, figure out how to know when it's present
 		// Seek to the first null byte (the end of Comment)
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 2);
@@ -105,10 +95,13 @@ public class CDLINK2 extends CDRecord {
 				System.out.println("we dug too deep!");
 				return "";
 			}
-		} while (aByte != 0);
+		} while (aByte != 0 && data.hasRemaining());
+		if (!data.hasRemaining()) {
+			return "";
+		}
 
 		// Now seek to the second null byte (end of Hint)
-		data.position(data.position() + 2);
+		data.get();
 		breaker = 0;
 		do {
 			aByte = data.get();
@@ -116,30 +109,34 @@ public class CDLINK2 extends CDRecord {
 				System.out.println("we dug too deep!");
 				return "";
 			}
-		} while (aByte != 0);
+		} while (aByte != 0 && data.hasRemaining());
 
 		// Now we're past Hint. Time to read in Anchor
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		breaker = 0;
-		do {
-			aByte = data.get();
-			bos.write(aByte);
-			if (breaker++ > 1000) {
-				System.out.println("we dug too deep!");
-				return "";
-			}
-		} while (aByte != 0);
-		return ODSUtils.fromLMBCS(bos.toByteArray());
+		if (data.hasRemaining()) {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			breaker = 0;
+			do {
+				aByte = data.get();
+				bos.write(aByte);
+				if (breaker++ > 1000) {
+					System.out.println("we dug too deep!");
+					return "";
+				}
+			} while (aByte != 0 && data.hasRemaining());
+			return ODSUtils.fromLMBCS(bos.toByteArray());
+		} else {
+			return "";
+		}
 	}
 
 	@Override
 	public int getExtraLength() {
-		return (int) (getDataLength() % 2);
+		return (int) (Header.getRecordLength() % 2);
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Link ID: " + getLinkId() + ", Comment: " + getComment() + ", Hint: " + getHint()
+		return "[" + getClass().getSimpleName() + ", Link ID: " + LinkID.get() + ", Comment: " + getComment() + ", Hint: " + getHint()
 				+ ", Anchor: " + getAnchor() + "]";
 	}
 }

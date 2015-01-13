@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -103,62 +102,35 @@ public class CDBUTTON extends CDRecord {
 		}
 	}
 
-	public static final int SIZE;
+	public final WSIG Header = inner(new WSIG());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 Flags = new Unsigned16();
+	public final Unsigned16 Width = new Unsigned16();
+	public final Unsigned16 Height = new Unsigned16();
+	public final Unsigned16 Lines = new Unsigned16();
+	public final FONTID FontID = inner(new FONTID());
 
 	static {
-		addFixed("Flags", Short.class);
-		addFixedUnsigned("Width", Short.class);
-		addFixedUnsigned("Height", Short.class);
-		addFixedUnsigned("Lines", Short.class);
-		addFixed("FontID", FONTID.class);
-
 		addVariableString("Text", "getTextLen");
-
-		SIZE = getFixedStructSize();
 	}
 
-	public CDBUTTON(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDBUTTON(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Short) getStructElement("Flags"));
-	}
-
-	/**
-	 * @return The width of the button in TWIPS (see the symbolic definition for ONEINCH for more information).
-	 */
-	public int getWidth() {
-		return (Integer) getStructElement("Width");
-	}
-
-	/**
-	 * Reserved. Should be set to NULL.
-	 */
-	public int getHeight() {
-		return (Integer) getStructElement("Height");
-	}
-
-	/**
-	 * @return The maximum number of lines of text to use to display the button text.
-	 */
-	public int getLines() {
-		return (Integer) getStructElement("Lines");
-	}
-
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FontID");
+		return Flag.valuesOf((short) Flags.get());
 	}
 
 	public int getTextLen() {
-		return (int) (getDataLength() - 8 - FONTID.SIZE);
+		return (int) (Header.getRecordLength() - 8 - FontID.size());
 	}
 
 	public String getText() {
-		return (String) getStructElement("Text");
+		return (String) getVariableElement("Text");
 	}
 }

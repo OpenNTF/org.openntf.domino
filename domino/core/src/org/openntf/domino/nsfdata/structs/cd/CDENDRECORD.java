@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record defines the end of a series of CD records. Not all CD records are enclosed within a CDBEGINRECORD/CDENDRECORD combination.
@@ -13,24 +11,13 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDENDRECORD extends CDRecord {
+	public final BSIG Header = inner(new BSIG());
+	public final Unsigned16 Version = new Unsigned16();
+	public final Unsigned16 Signature = new Unsigned16();
 
-	static {
-		addFixed("Version", Short.class);
-		addFixed("Signature", Short.class);
-	}
-
-	public static final int SIZE = getFixedStructSize();
-
-	public CDENDRECORD(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDENDRECORD(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	public short getVersion() {
-		return (Short) getStructElement("Version");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
@@ -38,6 +25,6 @@ public class CDENDRECORD extends CDRecord {
 	 */
 	public short getEndSignature() {
 		// TODO implement mapping method to CDSignature
-		return (Short) getStructElement("Signature");
+		return (short) Signature.get();
 	}
 }

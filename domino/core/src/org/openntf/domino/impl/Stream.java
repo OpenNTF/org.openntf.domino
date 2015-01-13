@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Stream.
  */
-public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream, Session> implements org.openntf.domino.Stream {
+public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.domino.Stream, Session> implements org.openntf.domino.Stream {
 
 	/**
 	 * Instantiates a new outline.
@@ -44,16 +44,8 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream,
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Stream(final lotus.domino.Stream delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_SESSTRM);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Stream delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	protected Stream(final lotus.domino.Stream delegate, final Session parent) {
+		super(delegate, parent, NOTES_SESSTRM);
 	}
 
 	/*
@@ -132,8 +124,8 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream,
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -393,7 +385,13 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream,
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

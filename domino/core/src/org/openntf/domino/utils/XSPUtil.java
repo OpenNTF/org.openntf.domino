@@ -7,6 +7,8 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,9 +29,10 @@ public enum XSPUtil {
 	public static Document wrap(final lotus.domino.Document doc) {
 		try {
 			lotus.domino.Database db = doc.getParentDatabase();
-			Session session = Factory.fromLotus(db.getParent(), Session.SCHEMA, null);
-			Database wrappedDB = Factory.fromLotus(db, Database.SCHEMA, session);
-			return Factory.fromLotus(doc, Document.SCHEMA, wrappedDB);
+			WrapperFactory wf = Factory.getWrapperFactory();
+			Session session = wf.fromLotus(db.getParent(), Session.SCHEMA, wf);
+			Database wrappedDB = wf.fromLotus(db, Database.SCHEMA, session);
+			return wf.fromLotus(doc, Document.SCHEMA, wrappedDB);
 		} catch (lotus.domino.NotesException ne) {
 			return null;
 		}
@@ -42,7 +45,6 @@ public enum XSPUtil {
 	 *            the entry
 	 * @return the view entry
 	 */
-	@SuppressWarnings("deprecation")
 	public static ViewEntry wrap(final lotus.domino.ViewEntry entry) {
 		try {
 			Object parent = entry.getParent();
@@ -55,9 +57,10 @@ public enum XSPUtil {
 				view = (lotus.domino.View) parent;
 			}
 			lotus.domino.Database db = view.getParent();
-			Session session = Factory.fromLotus(db.getParent(), Session.SCHEMA, null);
-			Database wrappedDB = Factory.fromLotus(db, Database.SCHEMA, session);
-			View wrappedView = Factory.fromLotus(view, View.SCHEMA, wrappedDB);
+			WrapperFactory wf = Factory.getWrapperFactory();
+			Session session = wf.fromLotus(db.getParent(), Session.SCHEMA, wf);
+			Database wrappedDB = wf.fromLotus(db, Database.SCHEMA, session);
+			View wrappedView = wf.fromLotus(view, View.SCHEMA, wrappedDB);
 			//			if (parent instanceof lotus.domino.ViewEntryCollection) {
 			//				ViewEntryCollection vec = Factory.fromLotus((lotus.domino.ViewEntryCollection) parent, ViewEntryCollection.SCHEMA,
 			//						wrappedView);
@@ -66,7 +69,7 @@ public enum XSPUtil {
 			//				ViewNavigator vnav = Factory.fromLotus((lotus.domino.ViewNavigator) parent, ViewNavigator.SCHEMA, wrappedView);
 			//				return Factory.fromLotus(entry, ViewEntry.SCHEMA, vnav);
 			//			} else {
-			return Factory.fromLotus(entry, ViewEntry.SCHEMA, wrappedView);
+			return wf.fromLotus(entry, ViewEntry.SCHEMA, wrappedView);
 			//			}
 		} catch (lotus.domino.NotesException ne) {
 			return null;
@@ -84,7 +87,9 @@ public enum XSPUtil {
 			if (db instanceof org.openntf.domino.Database) {
 				return (org.openntf.domino.Database) db;
 			} else {
-				return Factory.fromLotus(db, Database.SCHEMA, getCurrentSession());
+				WrapperFactory wf = Factory.getWrapperFactory();
+				Session session = wf.fromLotus(db.getParent(), Session.SCHEMA, wf);
+				return wf.fromLotus(db, Database.SCHEMA, session);
 			}
 		} catch (Exception ne) {
 			DominoUtils.handleException(ne);
@@ -96,15 +101,16 @@ public enum XSPUtil {
 	 * Gets the current session.
 	 * 
 	 * @return the current session
+	 * 
 	 */
-	@SuppressWarnings("deprecation")
 	public static Session getCurrentSession() {
 		try {
 			lotus.domino.Session s = (lotus.domino.Session) resolveVariable("session");
 			if (s instanceof org.openntf.domino.Session) {
 				return (org.openntf.domino.Session) s;
 			} else {
-				return Factory.fromLotus(s, Session.SCHEMA, null);
+				WrapperFactory wf = Factory.getWrapperFactory();
+				return wf.fromLotus(s, Session.SCHEMA, wf);
 			}
 		} catch (ClassNotFoundException nfe) {
 			System.out
@@ -121,7 +127,9 @@ public enum XSPUtil {
 	 * Gets the current session as signer.
 	 * 
 	 * @return the current session as signer
+	 * @deprecated use {@link Factory#getSession(SessionType)} instead
 	 */
+	@Deprecated
 	public static Session getCurrentSessionAsSigner() {
 		try {
 			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSigner"), Session.SCHEMA, null);
@@ -135,8 +143,10 @@ public enum XSPUtil {
 	 * Gets the current session as signer with full access.
 	 * 
 	 * @return the current session as signer with full access
+	 * @deprecated use {@link Factory#getSession(SessionType)} instead
 	 */
-	@SuppressWarnings("deprecation")
+
+	@Deprecated
 	public static Session getCurrentSessionAsSignerWithFullAccess() {
 		try {
 			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSignerWithFullAccess"), Session.SCHEMA, null);
@@ -155,6 +165,7 @@ public enum XSPUtil {
 	 * @throws Exception
 	 *             the exception
 	 */
+	@Deprecated
 	public static Object resolveVariable(final String varName) throws Exception {
 		// TODO RPr move to Xpage-Plugin
 		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());

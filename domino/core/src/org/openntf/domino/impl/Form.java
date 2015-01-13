@@ -34,7 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Form.
  */
-public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
+public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
 
 	/**
 	 * Instantiates a new form.
@@ -48,16 +48,8 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Form(final lotus.domino.Form delegate, final Database parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_FORM);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.Form delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
+	protected Form(final lotus.domino.Form delegate, final Database parent) {
+		super(delegate, parent, NOTES_FORM);
 	}
 
 	/*
@@ -85,7 +77,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 */
 	@Override
 	public Document getDocument() {
-		return this.getParent().getDocumentByUNID(this.getUniversalID());
+		return parent.getDocumentByUNID(this.getUniversalID());
 	}
 
 	/*
@@ -197,7 +189,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 */
 	@Override
 	public String getNoteID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getFirstNoteID();
 	}
@@ -224,8 +216,8 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -253,7 +245,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 */
 	@Override
 	public String getUniversalID() {
-		NoteCollection notes = this.getParent().createNoteCollection(false);
+		NoteCollection notes = parent.createNoteCollection(false);
 		notes.add(this);
 		return notes.getUNID(notes.getFirstNoteID());
 	}
@@ -593,8 +585,8 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent();
+	public final Database getAncestorDatabase() {
+		return parent;
 	}
 
 	/*
@@ -603,7 +595,7 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -627,6 +619,17 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 		return nc.getCount();
 	}
 
+	public NoteCollection getNoteCollection() {
+		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		nc.setSelectOptions(noteClass);
+		String selectionFormula = getSelectionFormula();
+		nc.setSelectionFormula(selectionFormula);
+		nc.buildCollection();
+		return nc;
+	}
+
 	@Override
 	public String getSelectionFormula() {
 		StringBuilder sb = new StringBuilder();
@@ -644,6 +647,11 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

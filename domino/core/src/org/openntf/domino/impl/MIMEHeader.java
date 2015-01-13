@@ -31,7 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class MIMEHeader.
  */
-public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> implements
+public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> implements
 		org.openntf.domino.MIMEHeader {
 	private static final Logger log_ = Logger.getLogger(MIMEHeader.class.getName());
 
@@ -47,8 +47,8 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public MIMEHeader(final lotus.domino.MIMEHeader delegate, final MIMEEntity parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
+	protected MIMEHeader(final lotus.domino.MIMEHeader delegate, final MIMEEntity parent) {
+		super(delegate, parent, NOTES_MIMEENTITY);
 		initialize(delegate);
 	}
 
@@ -228,8 +228,8 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public MIMEEntity getParent() {
-		return getAncestor();
+	public final MIMEEntity getParent() {
+		return parent;
 	}
 
 	/*
@@ -295,7 +295,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	void markDirty() {
+	protected void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 
@@ -305,8 +305,8 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return this.getParent().getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return parent.getAncestorDocument();
 	}
 
 	/*
@@ -315,7 +315,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -325,7 +325,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
 
@@ -333,9 +333,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	protected void resurrect() {
 		if (headerName_ != null) {
 			try {
-				lotus.domino.MIMEEntity entity = (lotus.domino.MIMEEntity) org.openntf.domino.impl.Base.getDelegate(getAncestor());
+				lotus.domino.MIMEEntity entity = toLotus(parent);
 				lotus.domino.MIMEHeader header = entity.getNthHeader(headerName_);
-				this.setDelegate(header);
+				this.setDelegate(header, true);
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 			}
@@ -345,6 +345,11 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 						"MIMEHeader doesn't have headerName value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

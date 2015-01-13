@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
@@ -16,30 +14,22 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDTARGET extends CDRecord {
 
-	static {
-		addFixedUnsigned("TargetLength", Short.class);
-		addFixed("Flags", Short.class);
-		addFixed("Reserved", Integer.class);
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 TargetLength = new Unsigned16();
+	// TODO make enum
+	public final Unsigned16 Flags = new Unsigned16();
+	public final Unsigned32 Reserved = new Unsigned32();
 
+	static {
 		addVariableString("Target", "TargetLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDTARGET(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDTARGET(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	public short getFlags() {
-		// TODO make enum
-		return (Short) getStructElement("Flags");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getTarget() {
-		return (String) getStructElement("Target");
+		return (String) getVariableElement("Target");
 	}
 }

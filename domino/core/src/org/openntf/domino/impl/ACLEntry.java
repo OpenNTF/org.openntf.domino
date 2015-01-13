@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ACLEntry.
  */
-public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry, org.openntf.domino.ACL> implements
+public class ACLEntry extends BaseNonThreadSafe<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry, org.openntf.domino.ACL> implements
 		org.openntf.domino.ACLEntry {
 
 	/**
@@ -42,18 +42,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperFactory
-	 * @param cpp_id
-	 *            the cpp-id
 	 */
-	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
-	}
-
-	@Override
-	protected ACL findParent(final lotus.domino.ACLEntry delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), ACL.SCHEMA, null);
+	protected ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
+		super(delegate, parent, NOTES_ACLENTRY);
 	}
 
 	/*
@@ -135,8 +126,8 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public ACL getParent() {
-		return getAncestor();
+	public final ACL getParent() {
+		return parent;
 	}
 
 	/*
@@ -674,13 +665,18 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	}
 
 	@Override
-	public Database getAncestorDatabase() {
-		return getParent().getParent();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	@Override
-	public Session getAncestorSession() {
-		return getAncestorDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
+	}
+
+	@Override
+	protected final WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

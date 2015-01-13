@@ -21,12 +21,12 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 		// TODO Auto-generated constructor stub
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Class getAnnotationType() {
+	public Class<TypedProperty> getAnnotationType() {
 		return TypedProperty.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final Object frame, final Method method, final Object[] arguments, final TypedProperty property,
 			final FramedGraph framedGraph, final Element element) {
@@ -48,6 +48,7 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object orig_processElement(final String annotationValue, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
 		if (ClassUtilities.isGetMethod(method)) {
@@ -69,6 +70,7 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 		return null;
 	}
 
+	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
 	private Enum getValueAsEnum(final Method method, final Object value) {
 		Class<Enum> en = (Class<Enum>) method.getReturnType();
 		if (value != null)

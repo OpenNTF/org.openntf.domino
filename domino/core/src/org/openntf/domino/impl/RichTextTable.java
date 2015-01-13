@@ -34,7 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextTable.
  */
-public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
+public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
 		org.openntf.domino.RichTextTable {
 	//private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
 
@@ -50,8 +50,8 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextTable(final lotus.domino.RichTextTable delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTTABLE);
+	protected RichTextTable(final lotus.domino.RichTextTable delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTTABLE);
 	}
 
 	/*
@@ -148,8 +148,8 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public RichTextItem getParent() {
-		return getAncestor();
+	public final RichTextItem getParent() {
+		return parent;
 	}
 
 	/*
@@ -328,7 +328,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void setRowLabels(final Vector labels) {
 		List recycleThis = new ArrayList();
 		try {
-			getDelegate().setRowLabels(toDominoFriendly(labels, this, recycleThis));
+			getDelegate().setRowLabels(toDominoFriendly(labels, getAncestorSession(), recycleThis));
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -362,8 +362,8 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return ((DocumentDescendant) this.getParent()).getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return ((DocumentDescendant) parent).getAncestorDocument();
 	}
 
 	/*
@@ -372,7 +372,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -382,7 +382,13 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This CD record describes the Row Height property for a table. (editods.h)
@@ -13,21 +11,11 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDTABLEROWHEIGHT extends CDRecord {
 
-	static {
-		addFixedUnsigned("RowHeight", Short.class);
-	}
+	public final BSIG Header = inner(new BSIG());
+	public final Unsigned16 RowHeight = new Unsigned16();
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDTABLEROWHEIGHT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDTABLEROWHEIGHT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	public int getRowHeight() {
-		return (Integer) getStructElement("RowHeight");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 }

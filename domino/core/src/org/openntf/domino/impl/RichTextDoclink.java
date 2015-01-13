@@ -24,15 +24,14 @@ import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
-import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RichTextDoclink.
  */
-public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink, RichTextItem> implements
-		org.openntf.domino.RichTextDoclink {
+public class RichTextDoclink extends BaseNonThreadSafe<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink, RichTextItem>
+		implements org.openntf.domino.RichTextDoclink {
 	//private static final Logger log_ = Logger.getLogger(RichTextDoclink.class.getName());
 
 	/**
@@ -47,8 +46,8 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTDOCLNK);
+	protected RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTDOCLNK);
 	}
 
 	/*
@@ -276,7 +275,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	void markDirty() {
+	protected void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 
@@ -286,8 +285,8 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return ((DocumentDescendant) this.getAncestor()).getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return parent.getAncestorDocument();
 	}
 
 	/*
@@ -296,8 +295,8 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getAncestorDocument().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -306,8 +305,8 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getAncestorDocument().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
 
 	/* (non-Javadoc)
@@ -351,4 +350,10 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 		return null;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

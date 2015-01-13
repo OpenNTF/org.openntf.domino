@@ -29,7 +29,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class OutlineEntry.
  */
-public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry, Outline> implements
+public class OutlineEntry extends BaseNonThreadSafe<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry, Outline> implements
 		org.openntf.domino.OutlineEntry {
 
 	/**
@@ -44,17 +44,9 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final Outline parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINEENTRY);
+	protected OutlineEntry(final lotus.domino.OutlineEntry delegate, final Outline parent) {
+		super(delegate, parent, NOTES_OUTLINEENTRY);
 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Outline findParent(final lotus.domino.OutlineEntry delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Outline.SCHEMA, null);
 	}
 
 	/*
@@ -95,7 +87,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public Document getDocument() {
 		try {
-			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParent().getParentDatabase());
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, parent.getParentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -251,8 +243,8 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Outline getParent() {
-		return getAncestor();
+	public final Outline getParent() {
+		return parent;
 	}
 
 	/*
@@ -649,8 +641,8 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -659,8 +651,13 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

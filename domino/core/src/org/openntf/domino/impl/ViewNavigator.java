@@ -33,7 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
+public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
 		org.openntf.domino.ViewNavigator {
 
 	/**
@@ -48,16 +48,8 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewNavigator(final lotus.domino.ViewNavigator delegate, final View parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected View findParent(final lotus.domino.ViewNavigator delegate) throws NotesException {
-		return fromLotus(delegate.getParentView(), View.SCHEMA, null);
+	protected ViewNavigator(final lotus.domino.ViewNavigator delegate, final View parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/*
@@ -326,7 +318,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public ViewEntry getParent() {
+	public final ViewEntry getParent() {
 		try {
 			return fromLotus(getDelegate().getParent(), ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException ne) {
@@ -356,8 +348,8 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 * @see org.openntf.domino.ViewNavigator#getParentView()
 	 */
 	@Override
-	public View getParentView() {
-		return getAncestor();
+	public final View getParentView() {
+		return parent;
 	}
 
 	/*
@@ -1004,7 +996,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentView().getAncestorDatabase();
 	}
 
@@ -1014,7 +1006,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -1023,7 +1015,13 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		return new ViewNavigatorEntryIterator(this);
 	}
 
-	public Iterator<org.openntf.domino.ViewEntry> siblingIterator() {
+	protected Iterator<org.openntf.domino.ViewEntry> siblingIterator() {
 		return new ViewNavigatorSiblingIterator(this);
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

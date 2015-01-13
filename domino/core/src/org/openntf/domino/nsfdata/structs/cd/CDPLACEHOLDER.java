@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -8,7 +7,6 @@ import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
-import org.openntf.domino.nsfdata.structs.cd.CDHOTSPOTBEGIN.Type;
 
 /**
  * A CDPLACEHOLDER record stores additional information about various embedded type CD records, such as CDEMBEDDEDCTL, CDEMBEDDEDOUTLINE and
@@ -83,124 +81,37 @@ public class CDPLACEHOLDER extends CDRecord {
 	 * @since Lotus Notes/Domino 5.0
 	 */
 	public static enum Alignment {
-		LEFT((short) 0), CENTER((short) 1), RIGHT((short) 2);
-
-		private final short value_;
-
-		private Alignment(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static Alignment valueOf(final short typeCode) {
-			for (Alignment type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Alignment found for type code " + typeCode);
-		}
+		LEFT, CENTER, RIGHT
 	}
 
-	static {
-		addFixed("Type", Short.class);
-		addFixed("Flags", Integer.class);
-		addFixedUnsigned("Width", Short.class);
-		addFixedUnsigned("Height", Short.class);
-		addFixed("FontID", FONTID.class);
-		addFixedUnsigned("Characters", Short.class);
-		addFixedUnsigned("SpaceBetween", Short.class);
-		addFixed("TextAlignment", Short.class);
-		addFixedUnsigned("SpaceWord", Short.class);
-		addFixedArray("SubFontID", FONTID.class, 2);
-		addFixedUnsigned("SpaceWord", Short.class);
-		addFixed("BackgroundColor", COLOR_VALUE.class);
-		addFixed("ColorRGB", COLOR_VALUE.class);
-		addFixed("SpareWord", Short.class);
-		addFixedArray("Spare", Integer.class, 3);
-	}
+	public final WSIG Header = inner(new WSIG());
+	public final Enum16<CDHOTSPOTBEGIN.HotspotType> Type = new Enum16<CDHOTSPOTBEGIN.HotspotType>(CDHOTSPOTBEGIN.HotspotType.values());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned16 Width = new Unsigned16();
+	public final Unsigned16 Height = new Unsigned16();
+	public final FONTID FontID = inner(new FONTID());
+	public final Unsigned16 Characters = new Unsigned16();
+	public final Unsigned16 SpaceBetween = new Unsigned16();
+	public final Enum16<Alignment> TextAlignment = new Enum16<Alignment>(Alignment.values());
+	public final Unsigned16 SpaceWord = new Unsigned16();
+	public final FONTID[] SubFontID = array(new FONTID[2]);
+	public final Unsigned16 DataLength = new Unsigned16();
+	public final COLOR_VALUE BackgroundColor = inner(new COLOR_VALUE());
+	public final COLOR_VALUE ColorRGB = inner(new COLOR_VALUE());
+	public final Unsigned16 SpareWord = new Unsigned16();
+	public final Unsigned32[] Spare = array(new Unsigned32[3]);
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDPLACEHOLDER(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDPLACEHOLDER(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	public Type getType() {
-		return Type.valueOf((Short) getStructElement("Type"));
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
+		return Flag.valuesOf((int) Flags.get());
 	}
 
-	/**
-	 * @return The width of the embedded element
-	 */
-	public int getWidth() {
-		return (Integer) getStructElement("Width");
-	}
-
-	/**
-	 * @return The height of the embedded element
-	 */
-	public int getHeight() {
-		return (Integer) getStructElement("Height");
-	}
-
-	/**
-	 * @return Font information of the embedded element
-	 */
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FontID");
-	}
-
-	public int getCharacters() {
-		return (Integer) getStructElement("Characters");
-	}
-
-	public int getSpaceBetween() {
-		return (Integer) getStructElement("SpaceBetween");
-	}
-
-	public Alignment getTextAlignment() {
-		return Alignment.valueOf((Short) getStructElement("TextAlignment"));
-	}
-
-	public int getSpaceWord() {
-		return (Integer) getStructElement("SpaceWord");
-	}
-
-	/**
-	 * @return Sub Font information of embedded element
-	 */
-	public FONTID getSubFontId1() {
-		return ((FONTID[]) getStructElement("SubFontID"))[0];
-	}
-
-	/**
-	 * @return Sub Font information of embedded element
-	 */
-	public FONTID getSubFontId2() {
-		return ((FONTID[]) getStructElement("SubFontID"))[1];
-	}
-
-	public int getPlaceholderDataLength() {
-		return (Integer) getStructElement("DataLength");
-	}
-
-	public COLOR_VALUE getBackgroundColor() {
-		return (COLOR_VALUE) getStructElement("BackgroundColor");
-	}
-
-	public COLOR_VALUE getColorRGB() {
-		return (COLOR_VALUE) getStructElement("ColorRGB");
-	}
 }

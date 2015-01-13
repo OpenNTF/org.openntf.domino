@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
@@ -11,14 +9,11 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDPDEF_TYPE extends CDRecord {
 
-	public static final int SIZE = getFixedStructSize();
+	public final WSIG Header = inner(new WSIG());
 
-	public CDPDEF_TYPE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDPDEF_TYPE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 }

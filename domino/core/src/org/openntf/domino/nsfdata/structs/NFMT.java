@@ -1,65 +1,39 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.nio.ByteBuffer;
-
 /**
  * This structure holds the format for character text number strings. You set up this structure based on the number format you want to use.
  * Definitions for the various fields of this structure are found in NFMT_xxx and NATTR_xxx. (misc.h)
  *
  */
 public class NFMT extends AbstractStruct {
-	public static final int SIZE = 4;
-
-	static {
-		addFixedUnsigned("Digits", Byte.class);
-		addFixed("Format", Byte.class);
-		addFixed("Attributes", Byte.class);
-		addFixed("Unused", Byte.class);
-	}
-
-	public NFMT() {
-		super();
-	}
-
-	public NFMT(final ByteBuffer data) {
-		super(data);
-	}
-
-	@Override
-	public long getStructSize() {
-		return SIZE;
+	public static enum NumFormat {
+		GENERAL, FIXED, SCIENTIFIC, CURRENCY, BYTES
 	}
 
 	/**
-	 * @return Number of decimal digits
+	 * Number of decimal digits
 	 */
-	public short getDigits() {
-		return (Short) getStructElement("Digits");
-	}
-
+	public final Unsigned8 Digits = new Unsigned8();
 	/**
-	 * @return Display Format
+	 * Display Format
 	 */
-	public byte getFormat() {
+	// TODO Figure out why this doesn't work as an enum (Nifty 50 FORMROUT.NSF contains a value 58 here)
+	//	public final Enum8<NumFormat> Format = new Enum8<NumFormat>(NumFormat.values());
+	public final Unsigned8 Format = new Unsigned8();
+	/**
+	 * Display Attributes
+	 */
+	public final Unsigned8 Attributes = new Unsigned8();
+	public final Unsigned8 Unused = new Unsigned8();
+
+	public short getAttributes() {
 		// TODO make enum
-		return (Byte) getStructElement("Format");
-	}
-
-	/**
-	 * @return Display Attributes
-	 */
-	public byte getAttributes() {
-		// TODO make enum
-		return (Byte) getStructElement("Attributes");
-	}
-
-	public byte getUnused() {
-		return (Byte) getStructElement("Unused");
+		return Attributes.get();
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Digits: " + getDigits() + ", Format: " + getFormat() + ", Attributes: "
+		return "[" + getClass().getSimpleName() + ", Digits: " + Digits.get() + ", Format: " + Format.get() + ", Attributes: "
 				+ getAttributes() + "]";
 	}
 }

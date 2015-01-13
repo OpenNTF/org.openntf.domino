@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 	 * @since Lotus Notes 4.1
 	 *
 	 */
-	public static enum ObjectType {
+	public static enum ObjType {
 		/**
 		 * Object type is not specified.
 		 */
@@ -50,7 +49,7 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 
 		private final int value_;
 
-		private ObjectType(final int value) {
+		private ObjType(final int value) {
 			value_ = value;
 		}
 
@@ -58,13 +57,13 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 			return value_;
 		}
 
-		public static ObjectType valueOf(final int typeCode) {
-			for (ObjectType type : values()) {
+		public static ObjType valueOf(final int typeCode) {
+			for (ObjType type : values()) {
 				if (type.getValue() == typeCode) {
 					return type;
 				}
 			}
-			throw new IllegalArgumentException("No matching ObjectType found for type code " + typeCode);
+			throw new IllegalArgumentException("No matching ObjType found for type code " + typeCode);
 		}
 	}
 
@@ -200,76 +199,73 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
+	/**
+	 * Use getObjectType for access.
+	 */
+	@Deprecated
+	public final Unsigned32 ObjectType = new Unsigned32();
+	/**
+	 * Use getHideWhenFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 HideWhenFlags = new Unsigned32();
+	/**
+	 * Use getLaunchWhenFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 LaunchWhenFlags = new Unsigned32();
+	/**
+	 * Use getOleFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 OleFlags = new Unsigned32();
+	/**
+	 * Use getCopyToFieldFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 CopyToFieldFlags = new Unsigned32();
+	public final Unsigned32 Spare1 = new Unsigned32();
+	public final Unsigned32 Spare2 = new Unsigned32();
+	public final Unsigned16 FieldNameLength = new Unsigned16();
+	public final OLE_GUID OleObjClass = inner(new OLE_GUID());
+
 	static {
-		addFixed("ObjectType", Integer.class);
-		addFixed("HideWhenFlags", Integer.class);
-		addFixed("LaunchWhenFlags", Integer.class);
-		addFixed("OleFlags", Integer.class);
-		addFixed("CopyToFieldFlags", Integer.class);
-		addFixed("Spare1", Integer.class);
-		addFixed("Spare2", Integer.class);
-		addFixed("OleObjClass", OLE_GUID.class);
-		addFixedUnsigned("FieldNameLength", Short.class);
-
-		addVariableString("FieldName", "getFieldNameLength");
+		addVariableString("FieldName", "FieldNameLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDDOCAUTOLAUNCH(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDDOCAUTOLAUNCH(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
 	 * @return Type of object to launch
 	 */
-	public ObjectType getObjectType() {
-		return ObjectType.valueOf((Integer) getStructElement("ObjectType"));
+	public ObjType getObjectType() {
+		return ObjType.valueOf((int) ObjectType.get());
 	}
 
 	public Set<HideWhenFlag> getHideWhenFlags() {
-		return HideWhenFlag.valuesOf((Integer) getStructElement("HideWhenFlags"));
+		return HideWhenFlag.valuesOf((int) HideWhenFlags.get());
 	}
 
 	public Set<LaunchWhenFlag> getLaunchWhenFlags() {
-		return LaunchWhenFlag.valuesOf((Integer) getStructElement("LaunchWhenFlags"));
+		return LaunchWhenFlag.valuesOf((int) LaunchWhenFlags.get());
 	}
 
 	public Set<OLEFlag> getOLEFlags() {
-		return OLEFlag.valuesOf((Integer) getStructElement("OleFlags"));
+		return OLEFlag.valuesOf((int) OleFlags.get());
 	}
 
 	public Set<FieldCopyFlag> getCopyToFieldFlags() {
-		return FieldCopyFlag.valuesOf((Integer) getStructElement("CopyToFieldFlags"));
-	}
-
-	public int getSpare1() {
-		return (Integer) getStructElement("Spare1");
-	}
-
-	public int getSpare2() {
-		return (Integer) getStructElement("Spare2");
-	}
-
-	/**
-	 * @return If named field, field name length
-	 */
-	public int getFieldNameLength() {
-		return (Integer) getStructElement("FieldNameLength");
-	}
-
-	public OLE_GUID getOLEObjectClass() {
-		return (OLE_GUID) getStructElement("OleObjClass");
+		return FieldCopyFlag.valuesOf((int) CopyToFieldFlags.get());
 	}
 
 	/**
 	 * @return ClassID GUID of OLE object, if create new
 	 */
 	public String getFieldName() {
-		return (String) getStructElement("FieldName");
+		return (String) getVariableElement("FieldName");
 	}
 }

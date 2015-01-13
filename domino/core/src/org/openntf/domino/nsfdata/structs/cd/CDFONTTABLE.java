@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.AbstractStruct;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
@@ -33,13 +31,13 @@ public class CDFONTTABLE extends CDRecord {
 			}
 		}
 
-		public static enum Family {
+		public static enum FamilyType {
 			DONTCARE((short) 0x00), ROMAN((short) 0x10), SWISS((short) 0x20), MODERN((short) 0x30), SCRIPT((short) 0x40),
 			DECORATIVE((short) 0x50);
 
 			private final short value_;
 
-			private Family(final short value) {
+			private FamilyType(final short value) {
 				value_ = value;
 			}
 
@@ -49,55 +47,29 @@ public class CDFONTTABLE extends CDRecord {
 		}
 
 		public static final int MAXFACESIZE = 32;
-		public static final int SIZE = 2 + MAXFACESIZE;
 
 		public static final int TRUETYPE_FONTTYPE = 0x004;
 
-		static {
-			addFixed("Face", Byte.class);
-			addFixed("Family", Byte.class);
-			addFixedArray("Name", Byte.class, MAXFACESIZE);
-		}
-
-		public CDFACE(final ByteBuffer data) {
-			super(data);
-		}
-
-		@Override
-		public long getStructSize() {
-			return SIZE;
-		}
-
-		/**
-		 * @return ID number of face
-		 */
-		public byte getId() {
-			return (Byte) getStructElement("Face");
-		}
-
-		/**
-		 * @return Font Family
-		 */
-		public byte getFamilyField() {
-			return (Byte) getStructElement("Family");
-		}
+		public final Unsigned8 Face = new Unsigned8();
+		public final Unsigned8 Family = new Unsigned8();
+		public final Unsigned8[] Name = array(new Unsigned8[MAXFACESIZE]);
 
 		public boolean isTrueType() {
-			return (getFamilyField() & TRUETYPE_FONTTYPE) > 0;
+			return (Family.get() & TRUETYPE_FONTTYPE) > 0;
 		}
 
 		public Pitch getPitch() {
 			for (Pitch pitch : Pitch.values()) {
-				if ((getFamilyField() & pitch.getValue()) > 0) {
+				if ((Family.get() & pitch.getValue()) > 0) {
 					return pitch;
 				}
 			}
 			return null;
 		}
 
-		public Family getFamily() {
-			for (Family family : Family.values()) {
-				if ((getFamilyField() & family.getValue()) > 0) {
+		public FamilyType getFamily() {
+			for (FamilyType family : FamilyType.values()) {
+				if ((Family.get() & family.getValue()) > 0) {
 					return family;
 				}
 			}
@@ -105,37 +77,29 @@ public class CDFONTTABLE extends CDRecord {
 		}
 
 		public String getName() {
-			return ODSUtils.fromLMBCS((byte[]) getStructElement("Name"));
+			return ODSUtils.fromLMBCS(Name);
 		}
 
-		@Override
-		public String toString() {
-			return "[" + getClass().getSimpleName() + ": ID=" + getId() + ", TrueType=" + isTrueType() + ", Pitch=" + getPitch()
-					+ ", Family=" + getFamily() + ", Name=" + getName() + "]";
-		}
+		//		@Override
+		//		public String toString() {
+		//			return "[" + getClass().getSimpleName() + ": ID=" + getId() + ", TrueType=" + isTrueType() + ", Pitch=" + getPitch()
+		//					+ ", Family=" + getFamily() + ", Name=" + getName() + "]";
+		//		}
 	}
+
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 Fonts = new Unsigned16();
 
 	static {
-		addFixedUnsigned("Fonts", Short.class);
-
-		addVariableArray("FontFaces", "getFontCount", CDFACE.class);
+		addVariableArray("FontFaces", "Fonts", CDFACE.class);
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDFONTTABLE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDFONTTABLE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	public int getFontCount() {
-		return (Integer) getStructElement("Fonts");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public CDFACE[] getFonts() {
-		return (CDFACE[]) getStructElement("FontFaces");
+		return (CDFACE[]) getVariableElement("FontFaces");
 	}
 }

@@ -1,12 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The designer of a form or view may define custom actions for that form or view. The attributes for the button bar are stored in the
@@ -15,80 +14,27 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  * @since Lotus Notes/Domino 4.5
  */
 public class CDACTIONBAR extends CDRecord {
-	public static enum LineStyle {
-		/**
-		 * CDACTIONBAR dividing line height of 1
-		 */
-		SINGLE((short) 1),
-		/**
-		 * CDACTIONBAR dividing line height of 2
-		 */
-		DOUBLE((short) 2),
-		/**
-		 * CDACTIONBAR dividing line height of 3
-		 */
-		TRIPLE((short) 3),
-		/**
-		 * CDACTIONBAR dividing line height of 2 separate lines
-		 */
-		TWO((short) 4);
-
-		private final short value_;
-
-		private LineStyle(final short value) {
-			value_ = value;
-		}
-
-		public int getValue() {
-			return value_;
-		}
-
-		public static LineStyle valueOf(final short styleCode) {
-			for (LineStyle style : values()) {
-				if (style.getValue() == styleCode) {
-					return style;
-				}
-			}
-			throw new IllegalArgumentException("No matching LineStyle found for type code " + styleCode);
-		}
+	public static enum ActionLineStyle {
+		UNDEFINED, SINGLE, DOUBLE, TRIPLE, TWO
 	}
 
-	public static enum BorderStyle {
+	public static enum ActionBorderStyle {
 		/**
 		 * No border selected
 		 */
-		NONE((short) 0),
+		NONE,
 		/**
 		 * Maximum border selected within window size
 		 */
-		MAX((short) 1),
+		MAX,
 		/**
 		 * Border under buttons only
 		 */
-		VAR((short) 2),
+		VAR,
 		/**
 		 * Border calculated with Border Width
 		 */
-		ABS((short) 3);
-
-		private final short value_;
-
-		private BorderStyle(final short value) {
-			value_ = value;
-		}
-
-		public int getValue() {
-			return value_;
-		}
-
-		public static BorderStyle valueOf(final short styleCode) {
-			for (BorderStyle style : values()) {
-				if (style.getValue() == styleCode) {
-					return style;
-				}
-			}
-			throw new IllegalArgumentException("No matching BorderStyle found for type code " + styleCode);
-		}
+		ABS
 	}
 
 	public static enum Flag {
@@ -183,94 +129,28 @@ public class CDACTIONBAR extends CDRecord {
 		}
 	}
 
-	public static final int SIZE;
-
-	static {
-		addFixed("BackColor", Short.class);
-		addFixed("LineColor", Short.class);
-		addFixed("LineStyle", Short.class);
-		addFixed("BorderStyle", Short.class);
-		addFixedUnsigned("BorderWidth", Short.class);
-		addFixed("dwFlags", Integer.class);
-		addFixed("ShareID", Integer.class);
-		addFixed("FontID", FONTID.class);
-		addFixedUnsigned("BtnHeight", Short.class);
-		addFixedUnsigned("HeightSpc", Short.class);
-
-		SIZE = getFixedStructSize();
-	}
-
-	public CDACTIONBAR(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDACTIONBAR(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
+	public final BSIG Header = inner(new BSIG());
+	public final Unsigned16 BackColor = new Unsigned16();
+	public final Unsigned16 LineColor = new Unsigned16();
+	public final Enum16<ActionLineStyle> LineStyle = new Enum16<ActionLineStyle>(ActionLineStyle.values());
+	public final Enum16<ActionBorderStyle> BorderStyle = new Enum16<ActionBorderStyle>(ActionBorderStyle.values());
+	public final Unsigned16 BorderWidth = new Unsigned16();
 	/**
-	 * @return Background color index
+	 * Use getFlags for access.
 	 */
-	public short getBackColor() {
-		// TODO map to color?
-		return (Short) getStructElement("BackColor");
-	}
+	@Deprecated
+	public final Unsigned32 dwFlags = new Unsigned32();
+	public final Unsigned32 ShareID = new Unsigned32();
+	public final FONTID FontID = inner(new FONTID());
+	public final Unsigned16 BtnHeight = new Unsigned16();
+	public final Unsigned16 HeightSpc = new Unsigned16();
 
-	/**
-	 * @return Line color index
-	 */
-	public short getLineColor() {
-		// TODO map to color?
-		return (Short) getStructElement("LineColor");
-	}
-
-	/**
-	 * @return Style of line
-	 */
-	public LineStyle getLineStyle() {
-		return LineStyle.valueOf((Short) getStructElement("LineStyle"));
-	}
-
-	/**
-	 * @return Border style
-	 */
-	public BorderStyle getBorderStyle() {
-		return BorderStyle.valueOf((Short) getStructElement("BorderStyle"));
-	}
-
-	/**
-	 * @return Border width (twips)
-	 */
-	public int getBorderWidth() {
-		return (Integer) getStructElement("BorderWidth");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("dwFlags"));
-	}
-
-	/**
-	 * @return ID of Shared Action
-	 */
-	public int getShareId() {
-		return (Integer) getStructElement("ShareID");
-	}
-
-	public FONTID getFontId() {
-		return (FONTID) getStructElement("FontID");
-	}
-
-	/**
-	 * @return Height of the Button
-	 */
-	public int getBtnHeight() {
-		return (Integer) getStructElement("BtnHeight");
-	}
-
-	/**
-	 * @return Height spacing
-	 */
-	public int getHeightSpc() {
-		return (Integer) getStructElement("HeightSpc");
+		return Flag.valuesOf((int) dwFlags.get());
 	}
 }

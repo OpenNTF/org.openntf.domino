@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.io.Externalizable;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
@@ -28,7 +29,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface View.
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
-DatabaseDescendant {
+		DatabaseDescendant, Externalizable {
 
 	public static class Schema extends FactorySchema<View, lotus.domino.View, Database> {
 		@Override
@@ -635,7 +636,7 @@ DatabaseDescendant {
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object)
-	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.lang.Object)
+	 * @deprecated Do not use getEntryByKey, instead use {@link org.openntf.domino.View#getFirstEntryByKey(java.lang.Object)}
 	 */
 	@Override
 	@Deprecated
@@ -645,7 +646,7 @@ DatabaseDescendant {
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object, boolean)
-	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.lang.Object, boolean)
+	 * @deprecated Do not use getEntryByKey, instead use {@link org.openntf.domino.View#getFirstEntryByKey(java.lang.Object, boolean)}
 	 */
 	@Override
 	@Deprecated

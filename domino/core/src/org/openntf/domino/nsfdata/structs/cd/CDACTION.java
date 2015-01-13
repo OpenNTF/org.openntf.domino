@@ -1,13 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The designer of a form or view may define custom actions associated with that form or view. Actions may be presented to the user as
@@ -20,28 +18,8 @@ public class CDACTION extends CDRecord {
 	/**
 	 * The action type based on the API documentation (ACTION_xxx (type)).
 	 */
-	public static enum Type {
-		RUN_FORMULA((short) 1), RUN_SCRIPT((short) 2), RUN_AGENT((short) 3), OLDSYS_COMMAND((short) 4), SYS_COMMAND((short) 5),
-		PLACEHOLDER((short) 7), RUN_JAVASCRIPT((short) 8);
-
-		private final short value_;
-
-		private Type(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static Type valueOf(final short typeCode) {
-			for (Type type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Type found for type code " + typeCode);
-		}
+	public static enum ActionType {
+		UNUSED0, RUN_FORMULA, RUN_SCRIPT, RUN_AGENT, OLDSYS_COMMAND, SYS_COMMAND, UNUSED6, PLACEHOLDER, RUN_JAVASCRIPT;
 	}
 
 	/**
@@ -171,92 +149,47 @@ public class CDACTION extends CDRecord {
 		}
 	}
 
-	public static final int SIZE;
+	public final LSIG Header = inner(new LSIG());
+	public final Enum16<ActionType> Type = new Enum16<ActionType>(ActionType.values());
+	public final Unsigned16 IconIndex = new Unsigned16();
+	/**
+	 * @deprecated Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned16 TitleLen = new Unsigned16();
+	public final Unsigned16 FormulaLen = new Unsigned16();
+	public final Unsigned32 ShareId = new Unsigned32();
 
 	static {
-		addFixed("Type", Short.class);
-		addFixedUnsigned("IconIndex", Short.class);
-		addFixed("Flags", Integer.class);
-		addFixedUnsigned("TitleLen", Short.class);
-		addFixedUnsigned("FormulaLen", Short.class);
-		addFixed("ShareId", Integer.class);
-
 		addVariableString("Title", "TitleLen");
 		addVariableData("ActionData", "getActionDataLen");
 		addVariableData("Formula", "FormulaLen");
-
-		SIZE = getFixedStructSize();
 	}
 
-	public CDACTION(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
-	public CDACTION(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return Type of action (formula, script, etc.)
-	 */
-	public Type getType() {
-		short typeCode = (Short) getStructElement("Type");
-		return Type.valueOf(typeCode);
-	}
-
-	/**
-	 * @return Index into array of icons
-	 */
-	public int getIconIndex() {
-		return (Integer) getStructElement("IconIndex");
-	}
-
-	/**
-	 * @return Action flags
-	 */
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	/**
-	 * @return Length (in bytes) of action's title
-	 */
-	public int getTitleLen() {
-		return (Integer) getStructElement("TitleLen");
-	}
-
-	/**
-	 * @return Length (in bytes) of "hide when" formula
-	 */
-	public int getFormulaLen() {
-		return (Integer) getStructElement("FormulaLen");
-	}
-
-	/**
-	 * @return Share ID of the Shared Action
-	 */
-	public int getShareId() {
-		return (Integer) getStructElement("ShareId");
-	}
-
-	public String getTitle() {
-		return (String) getStructElement("Title");
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	public int getActionDataLen() {
 		// This is an oddball one, since there's no ActionDataLen - it's implied by the total length minus everything else
-		int extra = getTitleLen() % 2 + getFormulaLen() % 2;
-		return (int) (getSignature().getLength() - LSIG.SIZE - 16 - getTitleLen() - getFormulaLen() - extra);
+		int extra = TitleLen.get() % 2 + FormulaLen.get() % 2;
+		return (int) (Header.Length.get() - Header.size() - 16 - TitleLen.get() - FormulaLen.get() - extra);
 	}
 
 	public byte[] getActionData() {
-		return (byte[]) getStructElement("ActionData");
+		return (byte[]) getVariableElement("ActionData");
 	}
 
 	public NSFCompiledFormula getFormula() {
-		int length = getFormulaLen();
+		int length = FormulaLen.get();
 		if (length > 0) {
-			return new NSFCompiledFormula((byte[]) getStructElement("Formula"));
+			return new NSFCompiledFormula((byte[]) getVariableElement("Formula"));
 		} else {
 			return null;
 		}

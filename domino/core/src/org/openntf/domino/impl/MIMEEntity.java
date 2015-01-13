@@ -39,7 +39,7 @@ import org.xml.sax.InputSource;
 /**
  * The Class MIMEEntity.
  */
-public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
+public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
 		org.openntf.domino.MIMEEntity {
 
 	/**
@@ -60,8 +60,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public MIMEEntity(final lotus.domino.MIMEEntity delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
+	protected MIMEEntity(final lotus.domino.MIMEEntity delegate, final Document parent) {
+		super(delegate, parent, NOTES_MIMEENTITY);
 	}
 
 	/**
@@ -70,13 +70,12 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 * @param itemName
 	 *            the itemName
 	 */
-	public void init(final String itemName) {
+	protected void init(final String itemName) {
 		itemName_ = itemName;
 	}
 
 	protected org.openntf.domino.MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus) {
-		org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) getParent();
-		return doc.fromLotusMimeEntity(lotus, itemName_);
+		return ((org.openntf.domino.impl.Document) parent).fromLotusMimeEntity(lotus, itemName_);
 
 	}
 
@@ -96,14 +95,10 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		return what;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void closeMIMEEntity() {
 		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
 		while (hdrIter.hasNext()) {
-			try {
-				hdrIter.next().recycle();
-			} catch (NotesException e) {
-			}
+			((org.openntf.domino.impl.MIMEHeader) hdrIter.next()).recycle();
 			hdrIter.remove();
 		}
 		recycle();
@@ -562,7 +557,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Document getParent() {
+	public final Document getParent() {
 		return getAncestorDocument();
 	}
 
@@ -682,7 +677,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		List recycleThis = new ArrayList();
 		try {
 			String result;
-			Vector v = toDominoFriendly(headerFilters, this, recycleThis);
+			Vector v = toDominoFriendly(headerFilters, getAncestorSession(), recycleThis);
 			result = getDelegate().getSomeHeaders(v);
 			return result;
 		} catch (NotesException e) {
@@ -704,7 +699,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		try {
 			String result;
 			List recycleThis = new ArrayList();
-			java.util.Vector v = toDominoFriendly(headerFilters, this, recycleThis);
+			java.util.Vector v = toDominoFriendly(headerFilters, getAncestorSession(), recycleThis);
 			result = getDelegate().getSomeHeaders(v, inclusive);
 			s_recycle(recycleThis);
 			return result;
@@ -745,10 +740,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	@Override
-	@Deprecated
 	public void recycle() {
-		//		System.out.println("TMP DEBUG: Recycle called on a MIMEEntity: " + getItemName());
-		getParent().closeMIMEEntities(false, getItemName());
+		parent.closeMIMEEntities(false, getItemName());
 		super.recycle();
 	}
 
@@ -822,8 +815,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return getAncestor();
+	public final Document getAncestorDocument() {
+		return parent;
 	}
 
 	/*
@@ -832,7 +825,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getAncestorDocument().getAncestorDatabase();
 	}
 
@@ -842,7 +835,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
 
@@ -855,6 +848,11 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 			return itemName_;
 
 		return getParentEntity().getItemName();
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

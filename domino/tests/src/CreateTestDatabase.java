@@ -10,6 +10,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.junit.TestRunnerUtil;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 import com.github.javafaker.Faker;
@@ -25,7 +26,7 @@ public enum CreateTestDatabase {
 		// 2 Threads: 1264 docs/sec
 		// 3 Threads: 1400 docs/sec
 		// 4 Threads: 1480 docs/sec
-		TestRunnerUtil.runAsDominoThread(new DocCreate(), TestRunnerUtil.NATIVE_SESSION, 10);
+		TestRunnerUtil.runAsDominoThread(new DocCreate(), TestRunnerUtil.NATIVE_SESSION, 5);
 	}
 
 	public static class DbSetup implements Runnable {
@@ -40,7 +41,7 @@ public enum CreateTestDatabase {
 
 			db = dir.createDatabase(FAKENAMES_NSF, true);
 			View view = db.createView("Names", "SELECT Form = \"DocName\"");
-			view.createColumn(2, "Full Name", "FullName");
+			view.createColumn(2, "Title", "Title");
 
 			view.createColumn(3, "Prefix", "NamePrefix");
 			view.createColumn(4, "First Name", "FirstName");
@@ -68,45 +69,52 @@ public enum CreateTestDatabase {
 			Session sess;
 			sess = Factory.getSession();
 			db = sess.getDatabase("", FAKENAMES_NSF);
+			DominoUtils.setBubbleExceptions(true);
 
 			String[] group = { "LocalDomainAdmins", "User", "Developer", "Staff" };
 			Document doc;
-			for (int i = 0; i < 10000; i++) {
-				doc = db.createDocument();
-				doc.replaceItemValue("Form", "DocName");
+			for (int i = 0; i < 50000; i++) {
+				try {
+					doc = db.createDocument();
+					doc.replaceItemValue("Form", "DocName");
 
-				String firstName;
-				String lastName;
-				String namePrefix;
-				doc.replaceItemValue("NamePrefix", namePrefix = faker.name().prefix());
-				doc.replaceItemValue("FirstName", firstName = faker.name().firstName());
-				doc.replaceItemValue("LastName", lastName = faker.name().lastName());
-				doc.replaceItemValue("FullName", join(new String[] { namePrefix, firstName, lastName }, " "));
-				doc.replaceItemValue("NameSuffix", faker.name().suffix());
+					String firstName;
+					String lastName;
+					String namePrefix;
+					doc.replaceItemValue("NamePrefix", namePrefix = faker.name().prefix());
+					doc.replaceItemValue("FirstName", firstName = faker.name().firstName());
+					doc.replaceItemValue("LastName", lastName = faker.name().lastName());
+					doc.replaceItemValue("Title", join(new String[] { namePrefix, firstName, lastName }, " "));
+					doc.replaceItemValue("NameSuffix", faker.name().suffix());
 
-				doc.replaceItemValue("CityPrefix", faker.address().cityPrefix());
-				doc.replaceItemValue("CitySuffix", faker.address().citySuffix());
+					doc.replaceItemValue("CityPrefix", faker.address().cityPrefix());
+					doc.replaceItemValue("CitySuffix", faker.address().citySuffix());
 
-				doc.replaceItemValue("ZipCode", faker.address().zipCode());
-				doc.replaceItemValue("Country", faker.address().country());
-				doc.replaceItemValue("Address", faker.address().streetAddress(true));
+					doc.replaceItemValue("ZipCode", faker.address().zipCode());
+					doc.replaceItemValue("Country", faker.address().country());
+					doc.replaceItemValue("Address", faker.address().streetAddress(true));
 
-				DateTime birthday = sess.createDateTime(faker.integer(1900, 2010), faker.integer(1, 12), faker.integer(1, 31), 0, 0, 0);
-				doc.replaceItemValue("Birthday", birthday);
+					DateTime birthday = sess.createDateTime(faker.integer(1900, 2010), faker.integer(1, 12), faker.integer(1, 31), 0, 0, 0);
+					doc.replaceItemValue("Birthday", birthday);
 
-				doc.replaceItemValue("PhoneNumber", faker.phoneNumber().phoneNumber());
+					doc.replaceItemValue("PhoneNumber", faker.phoneNumber().phoneNumber());
 
-				doc.replaceItemValue("CreditCardNumber", faker.business().creditCardNumber());
-				doc.replaceItemValue("CreditCartExpiry", faker.business().creditCardExpiry());
-				doc.replaceItemValue("CreditCartType", faker.business().creditCardType());
-				Set<String> members = new HashSet<String>();
-				int j;
-				int grpCnt = faker.integer(0, 4);
-				for (j = 0; j < grpCnt; j++) {
-					members.add(faker.options().option(group));
+					doc.replaceItemValue("CreditCardNumber", faker.business().creditCardNumber());
+					doc.replaceItemValue("CreditCartExpiry", faker.business().creditCardExpiry());
+					doc.replaceItemValue("CreditCartType", faker.business().creditCardType());
+					Set<String> members = new HashSet<String>();
+					int j;
+					int grpCnt = faker.integer(0, 4);
+					for (j = 0; j < grpCnt; j++) {
+						members.add(faker.options().option(group));
+					}
+					doc.replaceItemValue("Member", members);
+					doc.save();
+				} catch (Exception e) {
+					System.err.println("[i=" + i + "] Exception " + e.getClass().getName() + " at DocCount=" + docCount);
+					e.printStackTrace();
+					return;
 				}
-				doc.replaceItemValue("Member", members);
-				doc.save();
 				docCount++;
 
 				if (docCount % 1000 == 0) {

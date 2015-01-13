@@ -11,11 +11,12 @@ import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
 import org.openntf.domino.DateTime;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
-import org.openntf.domino.helpers.SessionHolder;
 import org.openntf.domino.utils.DominoFormatter;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
 
@@ -413,14 +414,30 @@ public interface Session {
 	DominoFormatter getFormatter();
 
 	/**
-	 * Sets the sessionFactory of this session. You can pass SessionFactories across threads. (same as a SessionCloner)
+	 * Sets the session type on construction, so that it can be recreated if used across threads
 	 * 
-	 * @param sessionFactory
-	 *            the session factory that has constructed this session
+	 * @param sessionType
+	 *            the sessionType
 	 */
-	//public void setSessionFactory(ISessionFactory nativeSessionFactory);
+	public void setSessionType(final SessionType sessionType);
 
-	//public ISessionFactory getSessionFactory();
+	/**
+	 * Returns the wrapperFactory for this session
+	 * 
+	 * @return the {@link WrapperFactory}
+	 */
+	public WrapperFactory getFactory();
 
-	public SessionHolder getSessionHolder();
+	/**
+	 * Sets this session to "no recycle". This means, a recycle call will do nothing.
+	 * 
+	 * @param noRecycle
+	 *            true = do not recycle that session
+	 */
+	public void setNoRecycle(boolean noRecycle);
+
+	/**
+	 * Recycling a session is allowed (needed to be compatible with @deprecated = error)
+	 */
+	public void recycle();
 }

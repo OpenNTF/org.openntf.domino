@@ -4,7 +4,6 @@
 package org.openntf.domino;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.types.FactorySchema;
@@ -13,7 +12,7 @@ import org.openntf.domino.types.FactorySchema;
  * @author Roland Praml, Foconis AG
  * 
  */
-public interface WrapperFactory {
+public interface WrapperFactory extends Base<lotus.domino.Base> {
 
 	/**
 	 * Wraps the lotus object in the apropriate wrapper object
@@ -105,26 +104,13 @@ public interface WrapperFactory {
 	/**
 	 * shuts down the factory
 	 */
-	long terminate();
+	@Override
+	void recycle();
 
-	/**
-	 * Wraps a Java-Date into a DateTime object
-	 * 
-	 * @param start
-	 * @param parent
-	 * @return The resulant DateTime
-	 */
-	DateTime createDateTime(Date start, Session parent);
+	void recycle(lotus.domino.Base obj);
 
-	/**
-	 * Wraps start and end Java-Date into a DateRange object
-	 * 
-	 * @param start
-	 * @param end
-	 * @param parent
-	 * @return The resultant DateRange
-	 */
-	DateRange createDateRange(Date start, Date end, Session parent);
+	@Override
+	void recycle(Vector vec);
 
 	/**
 	 * Disables autorecycle for that element. By default, AutoRecycle for Session and AgentContext is always disabled
@@ -151,5 +137,7 @@ public interface WrapperFactory {
 	 * @return null if there aren't any, array of correct size, if there are
 	 */
 	public String[] getLastWrappedDocsInThread();
+
+	public <T extends Base, P extends Base> T create(FactorySchema<T, ?, P> schema, P parent, Object metadata);
 
 }

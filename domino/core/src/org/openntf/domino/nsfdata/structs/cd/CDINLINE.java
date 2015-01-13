@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -47,23 +46,21 @@ public class CDINLINE extends CDRecord {
 		}
 	}
 
-	static {
-		addFixedUnsigned("wDataLength", Short.class);
-		addFixed("dwFlags", Integer.class);
-		addFixedArray("dwReserved", Integer.class, 4);
-	}
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 wDatalength = new Unsigned16();
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 dwFlags = new Unsigned32();
+	public final Unsigned32[] dwReserved = array(new Unsigned32[4]);
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDINLINE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDINLINE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("dwFlags"));
+		return Flag.valuesOf((int) dwFlags.get());
 	}
 }

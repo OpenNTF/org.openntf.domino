@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure is used to define a Cascading Style Sheet (CSS) that is part of a Domino database. CDFILESEGMENT structure(s) follow the
@@ -14,65 +12,30 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDFILEHEADER extends CDRecord {
 
+	public final LSIG Header = inner(new LSIG());
+	public final Unsigned16 FileExtLen = new Unsigned16();
+	public final Unsigned32 FileDataSize = new Unsigned32();
+	public final Unsigned32 SegCount = new Unsigned32();
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned32 Reserved = new Unsigned32();
+
 	static {
-		addFixedUnsigned("FileExtLen", Short.class);
-		addFixedUnsigned("FileDataSize", Integer.class);
-		addFixedUnsigned("SegCount", Integer.class);
-		addFixed("Flags", Integer.class);
-		addFixed("Reserved", Integer.class);
-
-		addVariableString("FileExt", "getFileExtLen");
+		addVariableAsciiString("FileExt", "FileExtLen");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDFILEHEADER(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDFILEHEADER(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return Length of file extenstion [sic]
-	 */
-	public int getFileExtLen() {
-		return (Integer) getStructElement("FileExtLen");
-	}
-
-	/**
-	 * @return Size (in bytes) of the file data
-	 */
-	public int getFileDataSize() {
-		return ((Long) getStructElement("FileDataSize")).intValue();
-	}
-
-	/**
-	 * @return Number of CDFILESEGMENT records expected to follow
-	 */
-	public int getSegCount() {
-		return ((Long) getStructElement("SegCount")).intValue();
-	}
-
-	/**
-	 * @return Flags (currently unused)
-	 */
-	public int getFlags() {
-		return (Integer) getStructElement("Flags");
-	}
-
-	/**
-	 * @return Reserved for future use
-	 */
-	public int getReserved() {
-		return (Integer) getStructElement("Reserved");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
 	 * @return The file extension for the file
 	 */
 	public String getFileExt() {
-		return (String) getStructElement("FileExt");
+		return (String) getVariableElement("FileExt");
+	}
+
+	public void setFileExt(final String fileExt) {
+		setVariableElement("FileExt", fileExt);
 	}
 }

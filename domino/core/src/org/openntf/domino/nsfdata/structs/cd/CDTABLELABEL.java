@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -39,32 +38,30 @@ public class CDTABLELABEL extends CDRecord {
 		}
 	}
 
-	static {
-		addFixedArray("Label", Byte.class, 128);
-		addFixedArray("Reserved", Short.class, 3);
-		addFixed("Flags", Short.class);
-	}
+	public final WSIG Header = inner(new WSIG());
+	/**
+	 * Use getLabel for access.
+	 */
+	@Deprecated
+	public final Unsigned8[] Label = array(new Unsigned8[128]);
+	public final Unsigned16[] Reserved = array(new Unsigned16[3]);
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned16 Flags = new Unsigned16();
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDTABLELABEL(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDTABLELABEL(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getLabel() {
-		return ODSUtils.fromLMBCS((byte[]) getStructElement("Label"));
-	}
-
-	public short[] getReserved() {
-		return (short[]) getStructElement("Reserved");
+		return ODSUtils.fromLMBCS(Label);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Short) getStructElement("Flags"));
+		return Flag.valuesOf((short) Flags.get());
 	}
 
 	@Override

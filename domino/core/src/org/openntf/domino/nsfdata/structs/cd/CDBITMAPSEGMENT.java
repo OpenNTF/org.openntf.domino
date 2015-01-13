@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * The bitmap data is divided into segments to optimize data storage within Domino. It is recommended that each segment be no larger than
@@ -13,49 +11,22 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  *
  */
 public class CDBITMAPSEGMENT extends CDRecord {
-	public static final int SIZE;
+	public final LSIG Header = inner(new LSIG());
+	public final Unsigned32[] Reserved = array(new Unsigned32[2]);
+	public final Unsigned16 ScanlineCount = new Unsigned16();
+	public final Unsigned16 DataSize = new Unsigned16();
 
 	static {
-		addFixedArray("Reserved", Integer.class, 2);
-		addFixedUnsigned("ScanlineCount", Short.class);
-		addFixedUnsigned("DataSize", Short.class);
-
-		addVariableData("BitmapData", "getDataSize");
-
-		SIZE = getFixedStructSize();
+		addVariableData("BitmapData", "DataSize");
 	}
 
-	public CDBITMAPSEGMENT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDBITMAPSEGMENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * Reserved for future use
-	 */
-	public int[] getReserved() {
-		return (int[]) getStructElement("Reserved");
-	}
-
-	/**
-	 * @return Number of compressed scanlines in seg
-	 */
-	public int getScanlineCount() {
-		return (Integer) getStructElement("ScanlineCount");
-	}
-
-	/**
-	 * @return Size, in bytes, of compressed data
-	 */
-	public int getDataSize() {
-		return (Integer) getStructElement("DataSize");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	// TODO uncompress the data (see docs)
 	public byte[] getBitmapData() {
-		return (byte[]) getStructElement("BitmapData");
+		return (byte[]) getVariableElement("BitmapData");
 	}
 }

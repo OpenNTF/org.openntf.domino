@@ -25,7 +25,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.RichTextNavigator;
 import org.openntf.domino.RichTextRange;
-import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -46,8 +45,8 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextItem(final lotus.domino.RichTextItem delegate, final Document parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId);
+	protected RichTextItem(final lotus.domino.RichTextItem delegate, final Document parent) {
+		super(delegate, parent);
 	}
 
 	/* (non-Javadoc)
@@ -535,7 +534,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public EmbeddedObject embedObject(final int type, final String className, final String source, final String name) {
 		markDirty();
 		try {
-			return fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.SCHEMA, getParent());
+			return fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -595,13 +594,14 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return fromLotusAsVector(getDelegate().getEmbeddedObjects(), EmbeddedObject.SCHEMA, getParent());
+			return fromLotusAsVector(getDelegate().getEmbeddedObjects(), EmbeddedObject.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
 
+	// TODO: does this make sense here?
 	public List<String> getAttachmentNames() {
 		List<String> result = new ArrayList<String>();
 		Vector<org.openntf.domino.EmbeddedObject> objects = getEmbeddedObjects();

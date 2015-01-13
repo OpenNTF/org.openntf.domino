@@ -24,7 +24,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextStyle.
  */
-public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle, Session> implements
+public class RichTextStyle extends BaseNonThreadSafe<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle, Session> implements
 		org.openntf.domino.RichTextStyle {
 
 	/**
@@ -39,16 +39,8 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_SESSION);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.RichTextStyle delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	protected RichTextStyle(final lotus.domino.RichTextStyle delegate, final Session parent) {
+		super(delegate, parent, NOTES_SESSION);
 	}
 
 	/*
@@ -147,8 +139,8 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -352,7 +344,13 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

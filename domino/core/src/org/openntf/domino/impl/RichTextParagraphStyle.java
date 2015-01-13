@@ -20,14 +20,16 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RichTextParagraphStyle.
  */
-public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session>
-		implements org.openntf.domino.RichTextParagraphStyle {
+public class RichTextParagraphStyle extends
+		BaseNonThreadSafe<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session> implements
+		org.openntf.domino.RichTextParagraphStyle {
 
 	/**
 	 * Instantiates a new outline.
@@ -41,17 +43,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final Session parent, final WrapperFactory wf,
+	protected RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final Session parent, final WrapperFactory wf,
 			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTPSTYLE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.RichTextParagraphStyle delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+		super(delegate, parent, NOTES_RTPSTYLE);
 	}
 
 	/*
@@ -147,8 +141,8 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -379,7 +373,13 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

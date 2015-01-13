@@ -55,11 +55,6 @@ public class Xots {
 		return executor_;
 	}
 
-	/**
-	 * 
-	 * @param comparator
-	 * @return
-	 */
 	public static List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
 		if (!isStarted())
 			return Collections.emptyList();
@@ -80,7 +75,6 @@ public class Xots {
 	/**
 	 * Tests if the XotsDaemon is started
 	 * 
-	 * @return
 	 */
 	public static synchronized boolean isStarted() {
 		return executor_ != null;

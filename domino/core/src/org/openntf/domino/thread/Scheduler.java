@@ -1,15 +1,15 @@
 package org.openntf.domino.thread;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
 
 public interface Scheduler {
 
-	public void computeNextExecutionTime();
+	public void eventStart(Calendar now);
 
-	public long getDelay(final TimeUnit timeUnit);
-
-	public long getNextExecutionTime(final TimeUnit timeUnit);
+	public void eventStop(Calendar now);
 
 	public boolean isPeriodic();
+
+	public long getNextExecutionTimeInMillis();
 
 }

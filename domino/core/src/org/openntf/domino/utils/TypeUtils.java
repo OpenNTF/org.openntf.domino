@@ -10,11 +10,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,7 +29,6 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.types.BigString;
 
 import com.ibm.icu.math.BigDecimal;
@@ -77,17 +73,21 @@ public enum TypeUtils {
 		}
 	}
 
-	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base<?> context)
-			throws IllegalArgumentException {
-		Map<String, Object> result = new LinkedHashMap<String, Object>();
-		synchronized (rawMap) {
-			for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
-				Object lValue = Base.toItemFriendly(entry.getValue(), context, null);
-				result.put(entry.getKey(), lValue);
-			}
-		}
-		return Collections.unmodifiableMap(result);
-	}
+	// RPr: This method is implemented wrong, you MUST NOT pass null as "recycleThis" argument, because it may created
+	// dangling DateTimes that will crash the server (if you have created too much)
+	// ==>commented out and implemented stampAll method correctly
+	//	@Deprecated
+	//	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base<?> context)
+	//			throws IllegalArgumentException {
+	//		Map<String, Object> result = new LinkedHashMap<String, Object>();
+	//		synchronized (rawMap) {
+	//			for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
+	//				Object lValue = Base.toItemFriendly(entry.getValue(), context, null);
+	//				result.put(entry.getKey(), lValue);
+	//			}
+	//		}
+	//		return Collections.unmodifiableMap(result);
+	//	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<?> T) {
@@ -114,8 +114,23 @@ public enum TypeUtils {
 		}
 		Object result = itemValueToClass(doc.getFirstItem(itemName), T);
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
-					+ " in item " + itemName + " for document id " + noteid);
+			if (T.isPrimitive()) {
+				if (Integer.TYPE.equals(T) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(T) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(T) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(T) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
+						+ " in item " + itemName + " for document id " + noteid);
+			}
 		}
 		return (T) result;
 	}
@@ -127,7 +142,7 @@ public enum TypeUtils {
 		if (v == null) {
 			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
 		}
-		Session session = Factory.getSession(item);
+		Session session = item.getAncestorSession();
 		T result = null;
 		try {
 			result = collectionToClass(v, T, session);
@@ -331,17 +346,31 @@ public enum TypeUtils {
 		}
 
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			if (T.isPrimitive()) {
+				if (Integer.TYPE.equals(T) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(T) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(T) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(T) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			}
 		}
 		return (T) result;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Collection<Serializable> toSerializables(final Object value) {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return DominoUtils.toSerializable((Collection) value);
+			return DominoUtils.toSerializable((Collection<?>) value);
 		} else if (value.getClass().isArray()) {
 			return DominoUtils.toSerializable(Arrays.asList(value));
 		} else {
@@ -500,18 +529,34 @@ public enum TypeUtils {
 		}
 
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			if (T.isPrimitive()) {
+				if (Integer.TYPE.equals(T) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(T) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(T) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(T) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			}
 		}
 		return (T) result;
 	}
 
 	private static final Logger log_ = Logger.getLogger(TypeUtils.class.getName());
 
+	@SuppressWarnings("unchecked")
 	public static <T> T toNumberArray(final Object value, final Class<?> T) {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return (T) collectionToNumberArray((Collection) value, T);
+			return (T) collectionToNumberArray((Collection<Object>) value, T);
 		} else if (value.getClass().isArray()) {
 			Object[] arr = (Object[]) value;
 			Object[] result = (Object[]) Array.newInstance(T, arr.length);
@@ -644,6 +689,7 @@ public enum TypeUtils {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Boolean[] toBooleans(final Object value) {
 		if (value == null)
 			return null;
@@ -739,9 +785,10 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Object toPrimitive(final Object value, final Class<?> ctype) {
 		if (value instanceof Collection) {
-			return toPrimitive((Collection) value, ctype);
+			return toPrimitive((Collection<Object>) value, ctype);
 		} else {
 			if (ctype == Boolean.TYPE)
 				return toBoolean(value);
@@ -776,7 +823,7 @@ public enum TypeUtils {
 		if (values.isEmpty()) {
 			throw new DataNotCompatibleException("Cannot create a primitive " + ctype + " from data because we don't have any values.");
 		}
-		Iterator it = values.iterator();
+		Iterator<Object> it = values.iterator();
 		if (ctype == Boolean.TYPE)
 			return toBoolean(it.next());
 		if (ctype == Integer.TYPE)
@@ -834,11 +881,12 @@ public enum TypeUtils {
 		return join(values, ", ");
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Object toPrimitiveArray(final Object value, final Class<?> ctype) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToPrimitiveArray((Collection) value, ctype);
+			return collectionToPrimitiveArray((Collection<Object>) value, ctype);
 		} else if (value.getClass().isArray()) {
 			//TODO NTF this could be better, but I'm tired
 			return collectionToPrimitiveArray(Arrays.asList(value), ctype);
@@ -886,7 +934,7 @@ public enum TypeUtils {
 			throws DataNotCompatibleException {
 		Object result = null;
 		int size = values.size();
-		Iterator it = values.iterator();
+		Iterator<Object> it = values.iterator();
 		int i = 0;
 		if (ctype == Boolean.TYPE) {
 			boolean[] outcome = new boolean[size];
@@ -965,6 +1013,7 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Date[] toDates(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
@@ -991,12 +1040,13 @@ public enum TypeUtils {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static org.openntf.domino.DateTime[] toDateTimes(final Object value, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToDateTimes((Collection) value, session);
+			return collectionToDateTimes((Collection<Object>) value, session);
 		} else if (value.getClass().isArray()) {
 			return collectionToDateTimes(Arrays.asList(value), session);
 		} else {
@@ -1024,12 +1074,13 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static org.openntf.domino.Name[] toNames(final Object value, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToNames((Collection) value, session);
+			return collectionToNames((Collection<Object>) value, session);
 		} else if (value.getClass().isArray()) {
 			return collectionToNames(Arrays.asList(value), session);
 		} else {
@@ -1056,11 +1107,12 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static String[] toStrings(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToStrings((Collection) value);
+			return collectionToStrings((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
 			Object[] arr = (Object[]) value;
 			String[] result = new String[arr.length];
@@ -1107,11 +1159,12 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Pattern[] toPatterns(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToPatterns((Collection) value);
+			return collectionToPatterns((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
 			return collectionToPatterns(Arrays.asList(value));
 		} else {
@@ -1133,11 +1186,12 @@ public enum TypeUtils {
 		return patterns;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static java.lang.Object[] toObjects(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToObjects((Collection) value);
+			return collectionToObjects((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
 			return collectionToObjects(Arrays.asList(value));
 		} else {
@@ -1159,11 +1213,12 @@ public enum TypeUtils {
 		return patterns;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Class<?>[] toClasses(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToClasses((Collection) value);
+			return collectionToClasses((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
 			return collectionToClasses(Arrays.asList(value));
 		} else {
@@ -1246,11 +1301,12 @@ public enum TypeUtils {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Enum<?>[] toEnums(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return collectionToEnums((Collection) value);
+			return collectionToEnums((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
 			return collectionToEnums(Arrays.asList(value));
 		} else {
@@ -1293,6 +1349,7 @@ public enum TypeUtils {
 		return classes;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Formula[] toFormulas(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
@@ -1319,6 +1376,7 @@ public enum TypeUtils {
 		return formulas;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static BigString[] toBigStrings(final Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
@@ -1348,6 +1406,7 @@ public enum TypeUtils {
 		return strings;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static int[] toIntArray(final Object value) {
 		if (value == null)
 			return null;

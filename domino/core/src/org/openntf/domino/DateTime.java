@@ -313,6 +313,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	/*
 	 * Clones the dateTime object
 	 */
+	@Override
 	public DateTime clone();
 
 	// /**

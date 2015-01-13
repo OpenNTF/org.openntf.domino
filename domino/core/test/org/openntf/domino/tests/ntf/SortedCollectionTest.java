@@ -4,16 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import lotus.domino.NotesFactory;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class SortedCollectionTest implements Runnable {
 	public static void main(final String[] args) {
@@ -27,7 +25,7 @@ public class SortedCollectionTest implements Runnable {
 
 	@Override
 	public void run() {
-		Session session = this.getSession();
+		Session session = Factory.getSession(SessionType.CURRENT);
 		Database db = session.getDatabase("", "CollTest.nsf");
 		DocumentCollection coll = db.getAllDocuments();
 		//		System.out.println("UNSORTED");
@@ -65,13 +63,4 @@ public class SortedCollectionTest implements Runnable {
 
 	}
 
-	protected Session getSession() {
-		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
-			return session;
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return null;
-		}
-	}
 }

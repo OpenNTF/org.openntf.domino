@@ -15,12 +15,14 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
@@ -29,14 +31,13 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DocumentCollection.
  */
-public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database> implements
-		org.openntf.domino.DocumentCollection {
+public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
+		implements org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
@@ -71,81 +72,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_DOCCOLL);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Database findParent(final lotus.domino.DocumentCollection delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
-	}
-
-	/**
-	 * To lotus note collection.
-	 * 
-	 * @param collection
-	 *            the collection
-	 * @return the org.openntf.domino. note collection
-	 */
-	public static org.openntf.domino.NoteCollection toLotusNoteCollection(final lotus.domino.DocumentCollection collection) {
-		org.openntf.domino.NoteCollection result = null;
-		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
-			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
-			result = db.createNoteCollection(false);
-			result.add(collection);
-		} else if (collection != null) {
-			// TODO Eh?
-			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
-			result = db.createNoteCollection(false);
-			result.add(collection);
-		}
-		return result;
-	}
-
-	public static int[] toNoteIdArray(final lotus.domino.DocumentCollection collection) {
-		int[] result = null;
-		if (collection instanceof DocumentList) {
-			result = ((DocumentList) collection).getNids();
-		} else if (collection instanceof org.openntf.domino.DocumentCollection) {
-			org.openntf.domino.DocumentCollection ocoll = (org.openntf.domino.DocumentCollection) collection;
-			if (ocoll.isSorted()) {
-				int size = ocoll.getCount();
-				result = new int[size];
-				int i = 0;
-				for (org.openntf.domino.Document doc : ocoll) {
-					result[i++] = Integer.valueOf(doc.getNoteID(), 16);
-				}
-			} else {
-				org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-				result = nc.getNoteIDs();
-			}
-		} else {
-			try {
-				if (collection.isSorted()) {
-					int size = collection.getCount();
-					result = new int[size];
-					lotus.domino.Document doc = collection.getFirstDocument();
-					lotus.domino.Document next = null;
-					int i = 0;
-					while (doc != null) {
-						next = collection.getNextDocument(doc);
-						result[i++] = Integer.valueOf(doc.getNoteID(), 16);
-						doc.recycle();
-						doc = next;
-					}
-				} else {
-					org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-					result = nc.getNoteIDs();
-				}
-			} catch (NotesException ne) {
-
-			}
-		}
-		return result;
+	protected DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent) {
+		super(delegate, parent, NOTES_DOCCOLL);
 	}
 
 	private org.openntf.domino.View parentView_;
@@ -198,8 +126,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public org.openntf.domino.Database getParent() {
-		return getAncestor();
+	public final Database getParent() {
+		return parent;
 	}
 
 	/*
@@ -433,18 +361,6 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		sorted_ = sorted;
 	}
 
-	@Override
-	void setDelegate(final lotus.domino.DocumentCollection delegate) {
-		sorted_ = null;
-		super.setDelegate(delegate);
-	}
-
-	@Override
-	void setDelegate(final lotus.domino.DocumentCollection delegate, final long cppId) {
-		sorted_ = null;
-		super.setDelegate(delegate, cppId);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -512,20 +428,24 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 */
 	@Override
 	public void stampAll(final String itemName, final Object value) {
+		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().stampAll(itemName, Base.toItemFriendly(value, this, null));
+			getDelegate().stampAll(itemName, toItemFriendly(value, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
 	@Override
 	public void stampAll(final Map<String, Object> map) {
+		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
-			for (Map.Entry<String, Object> entry : localMap.entrySet()) {
+			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
 				//NTF - go directly to delegate because we already know the entries are Domino friendly.
-				getDelegate().stampAll(entry.getKey(), entry.getValue());
+				getDelegate().stampAll(entry.getKey(), toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis));
 			}
 		} catch (IllegalArgumentException iae) {
 			for (org.openntf.domino.Document doc : this) {
@@ -534,6 +454,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -835,8 +757,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return new DocumentCollectionIterator(this);
 	}
 
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParent();
+	public final Database getParentDatabase() {
+		return parent;
 	}
 
 	@Override
@@ -847,8 +769,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.Document> docs) {
-		if (docs instanceof Base<?, ?, ?>) {
-			this.merge((Base<?, ?, ?>) docs);
+		if (docs instanceof Base) {
+			this.merge((Base<?>) docs);
 		} else {
 			for (org.openntf.domino.Document doc : docs) {
 				this.addDocument(doc);
@@ -943,7 +865,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
+	public final Database getAncestorDatabase() {
 		return this.getParentDatabase();
 	}
 
@@ -953,8 +875,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getAncestorDatabase().getParent();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
 
 	@Override
@@ -999,6 +921,11 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 			}
 		}
 		return result;
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

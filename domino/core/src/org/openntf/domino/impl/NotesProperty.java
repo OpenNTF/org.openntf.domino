@@ -23,14 +23,13 @@ import org.openntf.domino.PropertyBroker;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class NotesProperty.
  */
-public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.domino.NotesProperty, PropertyBroker> implements
-		org.openntf.domino.NotesProperty {
+public class NotesProperty extends BaseNonThreadSafe<org.openntf.domino.NotesProperty, lotus.domino.NotesProperty, PropertyBroker>
+		implements org.openntf.domino.NotesProperty {
 
 	/**
 	 * Instantiates a new outline.
@@ -44,16 +43,8 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public NotesProperty(final lotus.domino.NotesProperty delegate, final PropertyBroker parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected PropertyBroker findParent(final lotus.domino.NotesProperty delegate) throws NotesException {
-		throw new IllegalArgumentException();
+	protected NotesProperty(final lotus.domino.NotesProperty delegate, final PropertyBroker parent) {
+		super(delegate, parent, NOTES_OUTLINE);
 	}
 
 	/*
@@ -169,7 +160,7 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 	public Vector<Object> getValues() {
 		try {
 			// Does this even use DateTime? Who knows?
-			return Factory.wrapColumnValues(getDelegate().getValues(), this.getAncestorSession());
+			return wrapColumnValues(getDelegate().getValues(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -211,7 +202,13 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return getAncestor().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

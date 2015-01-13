@@ -169,7 +169,7 @@ public class DbDirectoryTree {
 
 					@Override
 					public Database next() {
-						return metaIter.next().getDatabase(session_);
+						return session_.getFactory().create(Database.SCHEMA, session_, metaIter.next());
 					}
 
 					@Override

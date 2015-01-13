@@ -158,11 +158,10 @@ public enum Streams {
 			}
 		}
 
-		@SuppressWarnings("cast")
 		private long _skip(final long n) throws IOException {
 			int avail = buffered - bufferPos;
 			if (avail > 0) {
-				if (n < (long) avail) {
+				if (n < avail) {
 					bufferPos += n;
 					return n;
 				}

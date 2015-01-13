@@ -15,7 +15,12 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -51,15 +56,17 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.design.impl.DatabaseDesign;
+import org.openntf.domino.design.impl.IconNote;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.helpers.DatabaseHolder;
+import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.icu.util.Calendar;
@@ -69,7 +76,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements org.openntf.domino.Database {
+public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
+		org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -79,19 +87,24 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private String path_;
 
 	/** The apiPath */
-	private String apiPath_;
+	private transient String apiPath_;
+
+	/** The fileName */
+	private transient String fileName_;
 
 	/** The replid_. */
 	private String replid_;
 
-	private String basedOnTemplate_;
-	private String templateName_;
-	private Date lastModDate_;
-	private String title_;
-	private Boolean isReplicationDisabled_;
+	//private String basedOnTemplate_;
+	//private String templateName_;
+	//private Date lastModDate_;
+	//private String title_;
+	private transient Boolean isReplicationDisabled_;
 	private AutoMime autoMime_;
 
-	private String ident_;
+	private DatabaseMetaData shadowedMetaData_;
+
+	// private String ident_;
 
 	/**
 	 * Instantiates a new database.
@@ -106,29 +119,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @param cpp_id
 	 *            the cpp_id
 	 */
-	public Database(final lotus.domino.Database delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_DATABASE);
+	protected Database(final lotus.domino.Database delegate, final Session parent) {
+		super(delegate, parent, NOTES_DATABASE);
 		initialize(delegate);
 	}
-
-	/**
-	 * This constructor is used in the dbDirectory. The Delegate will get recycled!
-	 * 
-	 * @param delegate
-	 *            the delegate
-	 * @param parent
-	 *            the parent
-	 * @param extendedMetadata
-	 *            true if DB should load extended metadata
-	 */
-	// it's a very bad idea to use this constructor, as it recycles the delegate. This means all DB-objects that are open, will be closed afterwards
-	//	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
-	//		super(delegate, //
-	//				(parent instanceof Session) ? (Session) parent : org.openntf.domino.utils.Factory.getSession(parent), //
-	//						org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
-	//		initialize(delegate, extendedMetadata);
-	//		s_recycle(delegate);
-	//	}
 
 	private void initialize(final lotus.domino.Database delegate) {
 		try {
@@ -141,49 +135,35 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache filepath for Database due to exception: " + e.text);
 		}
-		if (server_.length() > 0) {
-			apiPath_ = server_ + "!!" + path_;
-		} else {
-			apiPath_ = path_;
-		}
 
 		try {
 			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache replica id for Database due to exception: " + e.text);
 		}
-		try {
-			basedOnTemplate_ = delegate.getDesignTemplateName();
-		} catch (NotesException e) {
-			log_.log(java.util.logging.Level.FINE, "Unable to cache design template name for Database due to exception: " + e.text);
-		}
-		try {
-			templateName_ = delegate.getTemplateName();
-		} catch (NotesException e) {
-			log_.log(java.util.logging.Level.FINE, "Unable to cache template name for Database due to exception: " + e.text);
-		}
-		try {
-			title_ = delegate.getTitle();
-		} catch (NotesException e) {
-			log_.log(java.util.logging.Level.FINE, "Unable to cache title for Database due to exception: " + e.text);
-		}
-		//		if (extended) {
-		//			try {
-		//				lotus.domino.DateTime dt = delegate.getLastModified();
-		//				lastModDate_ = dt.toJavaDate();
-		//				s_recycle(dt);
-		//			} catch (NotesException e) {
-		//				log_.log(java.util.logging.Level.FINE, "Unable to cache last modification date for Database due to exception: " + e.text);
-		//			}
-		//			try {
-		//				lotus.domino.Replication repl = delegate.getReplicationInfo();
-		//				isReplicationDisabled_ = repl.isDisabled();
-		//				s_recycle(repl);
-		//			} catch (NotesException e) {
-		//				log_.log(java.util.logging.Level.FINE, "Unable to cache replication status for Database due to exception: " + e.text);
-		//			}
-		//		}
-		ident_ = System.identityHashCode(getParent()) + "!!!" + server_ + "!!" + path_;
+	}
+
+	/**
+	 * This constructor is used in the dbDirectory. The Delegate will get recycled!
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param extendedMetadata
+	 *            true if DB should load extended metadata
+	 */
+	protected Database(final Session parent, final DatabaseMetaData metaData) {
+		super(null, parent, NOTES_DATABASE);
+		initialize(metaData);
+
+	}
+
+	protected void initialize(final DatabaseMetaData metaData) {
+		shadowedMetaData_ = metaData;
+		server_ = metaData.getServer();
+		path_ = metaData.getFilePath();
+		replid_ = metaData.getReplicaID();
 	}
 
 	/*
@@ -422,18 +402,17 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		//			return null;
 		//		}
 		Document result = null;
-		boolean go = true;
-		go = fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
+		boolean go;
+		go = !hasListeners() ? true : fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
 		if (go) {
 			try {
-				if (!getDelegate().isOpen()) {
-					getDelegate().open();
-				}
+				open();
 				result = fromLotus(getDelegate().createDocument(), Document.SCHEMA, this);
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}
-			fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
+			if (hasListeners())
+				fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
 		}
 		//		System.out.println("Returning a newly created document in " + this.getFilePath());
 		//		try {
@@ -503,7 +482,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);
 			if (rawColl.getCount() > 0) {
-				int[] nids = org.openntf.domino.impl.DocumentCollection.toNoteIdArray(rawColl);
+				int[] nids = CollectionUtils.getNoteIDs(rawColl);
 				for (int nid : nids) {
 					rawColl.subtract(nid);
 				}
@@ -572,9 +551,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public NoteCollection createNoteCollection(final boolean selectAllFlag) {
 		try {
-			if (!getDelegate().isOpen()) {
-				getDelegate().open();
-			}
+			open();
 			return fromLotus(getDelegate().createNoteCollection(selectAllFlag), NoteCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -978,6 +955,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getCategories() {
+		if (shadowedMetaData_ != null)
+			return shadowedMetaData_.getCategories();
 		try {
 			return getDelegate().getCategories();
 		} catch (NotesException e) {
@@ -1043,6 +1022,23 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return new DatabaseDesign(this);
 	}
 
+	@Override
+	public org.openntf.domino.Database getXPageSharedDesignTemplate() throws FileNotFoundException {
+		IconNote icon = getDesign().getIconNote();
+		if (icon == null)
+			return null;
+		Document iconDoc = icon.getDocument();
+		if ("1".equals(iconDoc.getItemValueString("$XpageSharedDesign"))) {
+			String templatePath = iconDoc.getItemValueString("$XpageSharedDesignTemplate");
+			org.openntf.domino.Database template = getAncestorSession().getDatabase(templatePath);
+			if (template == null || !template.isOpen()) {
+				throw new FileNotFoundException("Could not open the XPage shared Design Template: " + templatePath);
+			}
+			return template;
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1050,6 +1046,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getDesignTemplateName() {
+		if (shadowedMetaData_ != null)
+			return shadowedMetaData_.getDesignTemplateName();
 		try {
 			return getDelegate().getDesignTemplateName();
 		} catch (NotesException e) {
@@ -1239,13 +1237,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getFileName() {
-		try {
-			return getDelegate().getFileName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return null;
-
+		if (fileName_ == null) {
+			int idx = path_.lastIndexOf('/');
+			if (idx != -1) {
+				fileName_ = path_.substring(idx + 1);
+			} else {
+				idx = path_.lastIndexOf('\\'); // if no \ is found, it returns -1 (-1+1=0)
+				fileName_ = path_.substring(idx + 1);
+			}
 		}
+		return fileName_;
 	}
 
 	/*
@@ -1424,11 +1425,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	@Override
 	public Date getLastModifiedDate() {
-		if (lastModDate_ != null)
-			return lastModDate_;
+		if (shadowedMetaData_ != null)
+			return shadowedMetaData_.getLastModifiedDate();
 		try {
-			lastModDate_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
-			return lastModDate_;
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -1648,8 +1648,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -1759,6 +1759,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public double getSize() {
+		if (shadowedMetaData_ != null)
+			return shadowedMetaData_.getSize();
 		try {
 			return getDelegate().getSize();
 		} catch (NotesException e) {
@@ -1807,6 +1809,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getTemplateName() {
+		if (shadowedMetaData_ != null)
+			return shadowedMetaData_.getTemplateName();
 		try {
 			return getDelegate().getTemplateName();
 		} catch (NotesException e) {
@@ -1823,6 +1827,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getTitle() {
+		if (shadowedMetaData_ != null)
+			return shadowedMetaData_.getTitle();
 		try {
 			return getDelegate().getTitle();
 		} catch (NotesException e) {
@@ -2220,6 +2226,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public boolean isOpen() {
+		if (getDelegate_unchecked() == null)
+			return false;
 		try {
 			return getDelegate().isOpen();
 		} catch (NotesException e) {
@@ -2291,14 +2299,19 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	protected transient boolean alreadyOpen_ = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 */
 	@Override
 	public boolean open() {
+		if (alreadyOpen_ && !isDead(getDelegate_unchecked()))
+			return false;
 		try {
 			boolean result = false;
+			alreadyOpen_ = true;
 			try {
 				result = getDelegate().open();
 			} catch (NotesException ne) {
@@ -3000,34 +3013,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		lotus.domino.Session rawSession = toLotus(getParent());
+		shadowedMetaData_ = null; // clear metaData
+		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
-			//d.open();
-			setDelegate(d, 0);
-			// Logging of setDelegate should be sufficient
-			if (log_.isLoggable(java.util.logging.Level.FINE)) {
-				Throwable t = new Throwable();
-				//				StackTraceElement[] elements = t.getStackTrace();
-				log_.log(
-						java.util.logging.Level.FINE,
-						"Database " + this + "had been recycled and was auto-restored. Changes may have been lost. " +
-						// 		RPR: I don't think that this behavior is normal (you should not try to cache a database accross requests!)
-								"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.",
-						t);
-				//
-				//				log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
-				//						+ elements[1].getLineNumber() + ")");
-				//				log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
-				//						+ elements[2].getLineNumber() + ")");
-				//				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
-				//						+ elements[3].getLineNumber() + ")");
-				//
-				//				THIS IS VERY DANGEROUS!			
-				//				log_.log(java.util.logging.Level.FINE,
-				//						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
-				//
-			}
+			setDelegate(d, true);
+			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3039,8 +3030,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -3208,7 +3199,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return getDailyModifiedNoteCount(since, noteClass);
 	}
 
-	public static final int DAILY_ARRAY_LIMIT = 31;
+	protected static final int DAILY_ARRAY_LIMIT = 31;
 
 	public int[] getDailyModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
 		Date now = new Date();
@@ -3273,26 +3264,66 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return getEventFactory().generate(event, source, this, payload);
 	}
 
-	@Override
-	public boolean equals(final Object other) {
-		if (other == null)
-			return false;
-		if (other instanceof lotus.domino.Database) {
-			if (other instanceof Database) {
-				return ident_.equalsIgnoreCase(((Database) other).ident_);
-			} else {
-				return getDelegate().equals(other);
-			}
-		}
-		throw new IllegalArgumentException("Cannot compare a Database with a " + (other == null ? "null" : other.getClass().getName()));
-	}
+	// this is wrong as it is NOT symmetric: oda.equals(lotus) != lotus.equals(oda)
+	//	@Override
+	//	public boolean equals(final Object other) {
+	//		if (other == null)
+	//			return false;
+	//		if (other instanceof lotus.domino.Database) {
+	//			if (other instanceof Database) {
+	//				Database oDb = (Database) other;
+	//				return oDb.getAncestorSession().equals(getAncestorSession()) && oDb.getApiPath().equals(getApiPath());
+	//			} else {
+	//				return getDelegate().equals(other);
+	//			}
+	//		}
+	//		throw new IllegalArgumentException("Cannot compare a Database with a " + (other == null ? "null" : other.getClass().getName()));
+	//	}
+	//
+	//	/* (non-Javadoc)
+	//	 * @see java.lang.Object#hashCode()
+	//	 */
+	//	@Override
+	//	public int hashCode() {
+	//		return getDelegate().hashCode();
+	//	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
-		return getDelegate().hashCode();
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((path_ == null) ? 0 : path_.hashCode());
+		result = prime * result + ((server_ == null) ? 0 : server_.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (!(obj instanceof Database)) {
+			return false;
+		}
+		Database other = (Database) obj;
+		if (path_ == null) {
+			if (other.path_ != null) {
+				return false;
+			}
+		} else if (!path_.equals(other.path_)) {
+			return false;
+		}
+		if (server_ == null) {
+			if (other.server_ != null) {
+				return false;
+			}
+		} else if (!server_.equals(other.server_)) {
+			return false;
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -3310,7 +3341,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.DbDirectory rawDir = rawSess.getDbDirectory(null);
 			lotus.domino.Database rawDb = rawDir.openMailDatabase();
 			s_recycle(getDelegate());
-			this.setDelegate(rawDb, 0);
+			this.setDelegate(rawDb, true);
 			rawDir.recycle();
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne, this);
@@ -3446,6 +3477,13 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public String getApiPath() {
+		if (apiPath_ == null) {
+			if (server_.length() > 0) {
+				apiPath_ = server_ + "!!" + path_;
+			} else {
+				apiPath_ = path_;
+			}
+		}
 		return apiPath_;
 	}
 
@@ -3484,14 +3522,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	void setReplication(final boolean value) {
 		isReplicationDisabled_ = value;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Database delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	@Override
@@ -3534,10 +3564,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	private transient NoteCollection intNC_;
 
-	private DatabaseHolder databaseHolder_;
-
 	private NoteCollection getInternalNoteCollection() {
-		if (null == intNC_ || isDead(intNC_)) {
+		if (null == intNC_ || intNC_.isDead()) {
 			intNC_ = this.createNoteCollection(false);
 			//		} else {
 			//			try {
@@ -3563,7 +3591,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Document getDocumentByUNID(final String unid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return new org.openntf.domino.impl.Document(unid, this, null);
+			return getFactory().create(Document.SCHEMA, this, unid);
 		} else {
 			return getDocumentByUNID(unid);
 		}
@@ -3572,7 +3600,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Document getDocumentByID(final String noteid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return new org.openntf.domino.impl.Document(noteid, this, null);
+			return getFactory().create(Document.SCHEMA, this, noteid);
 		} else {
 			return getDocumentByID(noteid);
 		}
@@ -3581,7 +3609,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Document getDocumentByID(final int noteid, final boolean deferDelegate) {
 		if (deferDelegate) {
-			return new org.openntf.domino.impl.Document(noteid, this, null);
+			return getFactory().create(Document.SCHEMA, this, noteid);
 		} else {
 			return getDocumentByID(Integer.toHexString(noteid));
 		}
@@ -3589,17 +3617,63 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
-		Session mySess = getParent();
-		if (mySess != null)
-			mySess.fillExceptionDetails(result);
+		parent.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
 	}
 
-	@Override
-	public DatabaseHolder getDatabaseHolder() {
-		if (databaseHolder_ == null) {
-			databaseHolder_ = new DatabaseHolder(this);
-		}
-		return databaseHolder_;
+	//-------------- Externalize/Deexternalize stuff ------------------
+	private static final int EXTERNALVERSIONUID = 20141205;
+
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
+	 */
+	@Deprecated
+	public Database() {
+		super(NOTES_DATABASE);
 	}
+
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		super.writeExternal(out);
+		out.writeInt(EXTERNALVERSIONUID); // data version
+
+		out.writeObject(server_);
+		out.writeObject(path_);
+		out.writeObject(replid_);
+		out.writeObject(autoMime_);
+
+		// out.writeObject(formatter_); not needed!
+		// out.writeBoolean(noRecycle); not needed - done by factory
+
+	}
+
+	@Override
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		super.readExternal(in);
+
+		int version = in.readInt();
+		if (version != EXTERNALVERSIONUID)
+			throw new InvalidClassException("Cannot read dataversion " + version);
+
+		server_ = (String) in.readObject();
+		path_ = (String) in.readObject();
+		replid_ = (String) in.readObject();
+
+		autoMime_ = (AutoMime) in.readObject();
+	}
+
+	protected Object readResolve() {
+		Database ret = (Database) getAncestorSession().getDatabase(server_, path_);
+		readResolveCheck(server_, ret.server_);
+		readResolveCheck(path_, ret.path_);
+		readResolveCheck(replid_, ret.replid_);
+		readResolveCheck(autoMime_, ret.autoMime_);
+		return ret;
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

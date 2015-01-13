@@ -64,14 +64,28 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		int result = 0;
 
 		for (IDominoProperties key : dProps_) {
+			boolean isInteger = Integer.class.equals(key.getType());
 			java.lang.Object v0 = DominoElement.getReflectiveProperty(arg0, key);
 			java.lang.Object v1 = DominoElement.getReflectiveProperty(arg1, key);
 			if (v0 == null && v1 == null) {
-				result = 0;
+				if (isInteger) {
+					v0 = Integer.MAX_VALUE;
+					v1 = Integer.MAX_VALUE;
+				} else {
+					result = 0;
+				}
 			} else if (v0 == null) {
-				return -1;
+				if (isInteger) {
+					v0 = Integer.MAX_VALUE;
+				} else {
+					return -1;
+				}
 			} else if (v1 == null) {
-				return 1;
+				if (isInteger) {
+					v1 = Integer.MAX_VALUE;
+				} else {
+					return 1;
+				}
 			}
 			if (v0 instanceof Number && v1 instanceof Number) {
 				double d0 = ((Number) v0).doubleValue();

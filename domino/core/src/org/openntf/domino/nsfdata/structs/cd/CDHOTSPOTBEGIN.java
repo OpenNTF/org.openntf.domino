@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
 
@@ -15,122 +13,81 @@ public class CDHOTSPOTBEGIN extends CDRecord {
 	 * These flags are used to define what type of hotspot is being defined by a CDHOTSPOTBEGIN data structure. (editods.h)
 	 *
 	 */
-	public static enum Type {
+	public static enum HotspotType {
 
 		/** The hotspot is a popup */
-		POPUP((short) 1),
+		POPUP,
 		/**
 		 * The hotspot is a button whose presentation is an arbitrary region of the rich text field. This region is bounded by the
 		 * CDHOTSPOTBEGIN and CDHOTSPOTEND records.
 		 */
-		HOREGION((short) 2),
+		HOREGION,
 		/** The hotspot is a button. */
-		BUTTON((short) 3),
+		BUTTON,
 		/** The hotspot is a file attachment. */
-		FILE((short) 4),
+		FILE, UNUSED5, UNUSED6,
 		/** The hotspot is a Notes Release 3 section field hotspot. */
-		SECTION((short) 7),
+		SECTION,
 		/** Unused */
-		ANY((short) 8),
+		ANY, UNUSED9, UNUSED10,
 		/**
 		 * The hotspot is a document, database, or view link hotspot. The presentation of this hotspot is an arbitrary region of the rich
 		 * text field. This region is bounded by the CDHOTSPOTBEGIN and CDHOTSPOTEND records.
 		 */
-		HOTLINK((short) 11),
+		HOTLINK,
 		/** The hotspot is a standard collapsible section which is not access controlled. */
-		BUNDLE((short) 12),
+		BUNDLE,
 		/** The hotspot is an access controlled collapsible section. */
-		V4_SECTION((short) 13),
+		V4_SECTION,
 		/** The hotspot is a subform. */
-		SUBFORM((short) 14),
+		SUBFORM,
 		/** The hotspot is an active object. */
-		ACTIVEOBJECT((short) 15),
+		ACTIVEOBJECT, UNUSED16, UNUSED17,
 		/** The hotspot is an OLE rich text object. */
-		OLERICHTEXT((short) 18),
+		OLERICHTEXT,
 		/** The hotspot is an embedded view. */
-		EMBEDDEDVIEW((short) 19),
+		EMBEDDEDVIEW,
 		/** The hotspot is an embedded folder pane. */
-		EMBEDDEDPANE((short) 20),
+		EMBEDDEDPANE,
 		/** The hotspot is an embedded navigator. */
-		EMBEDDEDNAV((short) 21),
+		EMBEDDEDNAV,
 		/** The hotspot is mouse over text popup. */
-		MOUSEOVER((short) 22),
+		MOUSEOVER, UNUSED23,
 		/** The hotspot is a file upload placeholder. */
-		FILEUPLOAD((short) 24),
+		FILEUPLOAD, UNUSED25, UNUSED26,
 		/** The hotspot is an embedded outline. */
-		EMBEDDEDOUTLINE((short) 27),
+		EMBEDDEDOUTLINE,
 		/** The hotspot is an embedded control window. */
-		EMBEDDEDCTL((short) 28),
+		EMBEDDEDCTL, UNUSED29,
 		/** The hotspot is an embedded calendar control (date picker). */
-		EMBEDDEDCALENDARCTL((short) 30),
+		EMBEDDEDCALENDARCTL,
 		/** The hotspot is an embedded scheduling control. */
-		EMBEDDEDSCHEDCTL((short) 31),
+		EMBEDDEDSCHEDCTL,
 		/** The hotspot is a resource link. */
-		RCLINK((short) 32),
+		RCLINK, UNUSED33,
 		/** The hotspot is an embedded editor control. */
-		EMBEDDEDEDITCEL((short) 34),
+		EMBEDDEDEDITCEL, UNUSED35,
 		/** Embeddable buddy list. */
-		CONTACTLISTCTL((short) 36);
-
-		private final short value_;
-
-		private Type(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static Type valueOf(final short typeCode) {
-			for (Type type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching Type found for type code " + typeCode);
-		}
+		CONTACTLISTCTL;
 	}
+
+	public final WSIG Header = inner(new WSIG());
+	public final Enum16<HotspotType> Type = new Enum16<HotspotType>(HotspotType.values());
+	// TODO make enum
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned16 DataLength = new Unsigned16();
 
 	static {
-		addFixed("Type", Short.class);
-		addFixed("Flags", Integer.class);
-		addFixedUnsigned("DataLength", Short.class);
-
-		addVariableData("Data", "getHotspotDataLength");
+		addVariableData("Data", "DataLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDHOTSPOTBEGIN(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDHOTSPOTBEGIN(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return HOTSPOTREC_TYPE_xxx
-	 */
-	public Type getType() {
-		return Type.valueOf((Short) getStructElement("Type"));
-	}
-
-	/**
-	 * @return HOTSPOTREC_RUNFLAG_xxx
-	 */
-	public int getFlags() {
-		// TODO make enum
-		return (Integer) getStructElement("Flags");
-	}
-
-	public int getHotspotDataLength() {
-		return (Integer) getStructElement("DataLength");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public byte[] getHotspotData() {
-		return (byte[]) getStructElement("Data");
+		return (byte[]) getVariableElement("Data");
 	}
 
 	// TODO add accessors for data

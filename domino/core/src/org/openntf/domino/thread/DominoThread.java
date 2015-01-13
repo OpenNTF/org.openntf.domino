@@ -20,12 +20,12 @@ import java.util.logging.Logger;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DominoThread.
+ * The Class DominoThread extends the NotesThread and clones the current SessionFactory.
  */
 public class DominoThread extends NotesThread {
 	private static final Logger log_ = Logger.getLogger(DominoThread.class.getName());
@@ -33,11 +33,42 @@ public class DominoThread extends NotesThread {
 	protected int nativeId_;
 	private final ISessionFactory sessionFactory_;
 
+	private Factory.ThreadConfig sourceThreadConfig = Factory.getThreadConfig();
+
+	/**
+	 * The shutdown hook is executed if the thread is still running before the Factory is shut down.
+	 */
+	private Runnable shutdownHook = new Runnable() {
+
+		@Override
+		public void run() {
+			Factory.println(DominoThread.this, "Shutdown " + DominoThread.this);
+			DominoThread.this.interrupt();
+			try {
+				DominoThread.this.join(30 * 1000); // give the thread 30 seconds to join after interrupt.
+			} catch (InterruptedException e) {
+			}
+			if (DominoThread.this.isAlive()) {
+				Factory.println(DominoThread.this, "WARNING " + DominoThread.this + " is still alive after 30 secs. Continuing anyway.");
+			}
+		}
+	};
+
 	/**
 	 * Instantiates a new domino thread.
 	 */
 	public DominoThread() {
-		// TODO Auto-generated constructor stub
+		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
+	}
+
+	/**
+	 * Instantiates a new domino thread.
+	 * 
+	 * @param threadName
+	 *            the thread name
+	 */
+	public DominoThread(final String threadName) {
+		super(threadName);
 		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
 
@@ -58,15 +89,11 @@ public class DominoThread extends NotesThread {
 	 * 
 	 * @param runnable
 	 *            the runnable
+	 * @param threadName
+	 *            the thread name
 	 */
-	public DominoThread(final Runnable runnable, final String name) {
-		super(name);
-		runnable_ = runnable;
-		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
-	}
-
-	public DominoThread(final AbstractDominoRunnable runnable) {
-		super();
+	public DominoThread(final Runnable runnable, final String threadName) {
+		super(threadName);
 		runnable_ = runnable;
 		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
 	}
@@ -78,11 +105,57 @@ public class DominoThread extends NotesThread {
 	 *            the runnable
 	 * @param threadName
 	 *            the thread name
+	 * @param sessionFactory
+	 *            the session factory
 	 */
-	public DominoThread(final AbstractDominoRunnable runnable, final String threadName) {
+	public DominoThread(final Runnable runnable, final String threadName, final ISessionFactory sessionFactory) {
 		super(threadName);
 		runnable_ = runnable;
-		sessionFactory_ = Factory.getSessionFactory(SessionType.CURRENT);
+		sessionFactory_ = sessionFactory;
+	}
+
+	/**
+	 * Instantiates a new domino thread.
+	 * 
+	 * @param threadName
+	 *            the thread name
+	 * @param sessionFactory
+	 *            the session factory
+	 */
+	public DominoThread(final String threadName, final ISessionFactory sessionFactory) {
+		super(threadName);
+		sessionFactory_ = sessionFactory;
+	}
+
+	/**
+	 * Instantiates a new domino thread.
+	 * 
+	 * @param runnable
+	 *            the runnable
+	 * @param threadName
+	 *            the thread name
+	 * @param sessionFactory
+	 *            the session factory
+	 */
+	public DominoThread(final ISessionFactory sessionFactory) {
+		super();
+		sessionFactory_ = sessionFactory;
+	}
+
+	/**
+	 * Instantiates a new domino thread.
+	 * 
+	 * @param runnable
+	 *            the runnable
+	 * @param threadName
+	 *            the thread name
+	 * @param sessionFactory
+	 *            the session factory
+	 */
+	public DominoThread(final Runnable runnable, final ISessionFactory sessionFactory) {
+		super();
+		runnable_ = runnable;
+		sessionFactory_ = sessionFactory;
 	}
 
 	public Runnable getRunnable() {
@@ -102,30 +175,42 @@ public class DominoThread extends NotesThread {
 			//until the Executor is shutdown or the keep alive expires.
 		} catch (Throwable t) {
 			t.printStackTrace();
-		}/* finally {
-			termThread();
-			}*/
+			DominoUtils.handleException(t);
+		}
 	}
 
 	@Override
 	public void initThread() {
 		super.initThread();
+		nativeId_ = this.getNativeThreadID();
 		log_.fine("DEBUG: Initializing a " + toString());
-		Factory.initThread();
+		Factory.initThread(sourceThreadConfig);
 		Factory.setSessionFactory(sessionFactory_, SessionType.CURRENT);
+
+		Factory.addShutdownHook(shutdownHook);
 	}
 
 	@Override
 	public void termThread() {
 		log_.fine("DEBUG: Terminating a " + toString());
 		Factory.termThread();
+		Factory.removeShutdownHook(shutdownHook);
 		super.termThread();
 	}
 
 	@Override
 	public String toString() {
-		return (getClass().getSimpleName() + ": " + this.getId() + //
-				getRunnable() == null ? "" : ("( Runnable: " + getRunnable().getClass().getName() + ") ") + " native: "
-				+ this.getNativeThreadID());
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName());
+		if (nativeId_ != 0) {
+			sb.append(String.format(" [%04x]", nativeId_));
+		}
+		sb.append(": ");
+		if (getRunnable() != null) {
+			sb.append(getRunnable().getClass().getName());
+		} else {
+			sb.append(getClass().getName());
+		}
+		return sb.toString();
 	}
 }

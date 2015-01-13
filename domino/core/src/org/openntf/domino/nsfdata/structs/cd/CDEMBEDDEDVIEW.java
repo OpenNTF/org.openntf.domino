@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -76,42 +75,38 @@ public class CDEMBEDDEDVIEW extends CDRecord {
 		}
 	}
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixed("SpareFontID", FONTID.class);
-		addFixedUnsigned("RestrictFormulaLength", Short.class);
-		addFixedUnsigned("WebLines", Short.class);
-		addFixedUnsigned("NameLength", Short.class);
-		addFixed("wSpare", Short.class);
-		addFixedArray("Spare", Integer.class, 3);
+	public final WSIG Header = inner(new WSIG());
+	/**
+	 * Use getFlags for access.
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final FONTID SpareFontID = inner(new FONTID());
+	public final Unsigned16 RestrictFormulaLength = new Unsigned16();
+	public final Unsigned16 WebLines = new Unsigned16();
+	public final Unsigned16 NameLength = new Unsigned16();
+	public final Unsigned16 wSpare = new Unsigned16();
+	public final Unsigned32[] Spare = array(new Unsigned32[3]);
 
+	static {
 		addVariableData("RestrictFormula", "RestrictFormulaLength");
 		addVariableString("Name", "NameLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDEMBEDDEDVIEW(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDEMBEDDEDVIEW(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
-	}
-
-	public int getWebLines() {
-		return (Integer) getStructElement("WebLines");
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	public NSFCompiledFormula getRestrictFormula() {
-		return new NSFCompiledFormula((byte[]) getStructElement("RestrictFormula"));
+		return new NSFCompiledFormula((byte[]) getVariableElement("RestrictFormula"));
 	}
 
 	public String getName() {
-		return (String) getStructElement("Name");
+		return (String) getVariableElement("Name");
 	}
 }

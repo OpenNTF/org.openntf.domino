@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.BSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the start of a new paragraph within a rich-text field. Each paragraph in a rich text field may have different
@@ -13,14 +11,10 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDPARAGRAPH extends CDRecord {
 
-	public static final int SIZE = getFixedStructSize();
+	public final BSIG Header = inner(new BSIG());
 
-	public CDPARAGRAPH(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
-
-	public CDPARAGRAPH(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
 }

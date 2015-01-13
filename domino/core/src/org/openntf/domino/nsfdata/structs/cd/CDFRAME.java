@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
 import org.openntf.domino.nsfdata.structs.WSIG;
@@ -14,146 +12,49 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDFRAME extends CDRecord {
 
-	static {
-		addFixed("Flags", Integer.class);
-		addFixed("DataFlags", Short.class);
-		addFixed("BorderEnable", Byte.class);
-		addFixed("NoResize", Byte.class);
-		addFixed("ScrollBarStyle", Short.class);
-		addFixedUnsigned("MarginWidth", Byte.class);
-		addFixedUnsigned("MarginHeight", Byte.class);
-		addFixed("dwReserved", Integer.class);
-		addFixedUnsigned("FrameNameLength", Short.class);
-		addFixed("Reserved1", Short.class);
-		addFixedUnsigned("FrameTargetLength", Short.class);
-		addFixed("FrameBorderColor", COLOR_VALUE.class);
-		addFixed("wReserved", Short.class);
+	public final WSIG Header = inner(new WSIG());
+	// TODO make enum
+	public final Unsigned32 Flags = new Unsigned32();
+	// TODO make enum
+	public final Unsigned16 DataFlags = new Unsigned16();
+	public final Bool BorderEnable = new Bool();
+	public final Bool NoResize = new Bool();
+	// TODO make enum
+	public final Unsigned16 ScrollBarStyle = new Unsigned16();
+	public final Unsigned16 MarginWidth = new Unsigned16();
+	public final Unsigned16 MarginHeight = new Unsigned16();
+	public final Unsigned32 dwReserved = new Unsigned32();
+	public final Unsigned16 FrameNameLength = new Unsigned16();
+	public final Unsigned16 Reserved1 = new Unsigned16();
+	public final Unsigned16 FrameTargetLength = new Unsigned16();
+	public final COLOR_VALUE FrameBorderColor = inner(new COLOR_VALUE());
+	public final Unsigned16 wReserved = new Unsigned16();
 
-		addVariableString("FrameName", "getFrameNameLength");
-		addVariableString("FrameTarget", "getFrameTargetLength");
+	static {
+		addVariableString("FrameName", "FrameNameLength");
+		addVariableString("FrameTarget", "FrameTargetLength");
 
 		// TODO add DataFlags extra data
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDFRAME(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDFRAME(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * Unused bits must be set to 0
-	 * 
-	 * @return fFRxxx
-	 */
-	public int getFlags() {
-		// TODO make enum
-		return (Integer) getStructElement("Flags");
-	}
-
-	/**
-	 * In 6 this word is used to signify variable data follows the frame the data is in the order of the bits, i.e. 0x8000 is the first
-	 * chunk of data the first word of each set of data is the size then the data
-	 * 
-	 * @return fFRNotesxxx
-	 */
-	public short getDataFlags() {
-		// TODO make enum
-		return (Short) getStructElement("DataFlags");
-	}
-
-	/**
-	 * @return The FRAMEBORDER attribute for this Frame element
-	 */
-	public boolean getBorderEnable() {
-		return (Byte) getStructElement("BorderEnable") != 0;
-	}
-
-	/**
-	 * @return The NORESIZE attribute for this Frame element
-	 */
-	public boolean getNoResize() {
-		return (Byte) getStructElement("NoResize") != 0;
-	}
-
-	/**
-	 * @return The SCROLLING attribute for this frame element. Must be ALWAYS_ScrollStyle, NEVER_ScrollStyle or AUTO_ScrollStyle
-	 */
-	public short getScrollBarStyle() {
-		// TODO make enum
-		return (Short) getStructElement("ScrollBarStyle");
-	}
-
-	/**
-	 * @return The MARGINWIDTH attribute for this frame element
-	 */
-	public short getMarginWidth() {
-		return (Short) getStructElement("MarginWidth");
-	}
-
-	/**
-	 * @return The MARGINHEIGHT attribute for this frame element
-	 */
-	public short getMarginHeight() {
-		return (Short) getStructElement("MarginHeight");
-	}
-
-	/**
-	 * Reserved for future use, must be 0
-	 */
-	public int getReserved1() {
-		return (Integer) getStructElement("dwReserved");
-	}
-
-	/**
-	 * @return Length of FrameName string that follows
-	 */
-	public int getFrameNameLength() {
-		return (Integer) getStructElement("FrameNameLength");
-	}
-
-	public short getReserved2() {
-		return (Short) getStructElement("Reserved1");
-	}
-
-	/**
-	 * @return Length of default target frame name
-	 */
-	public int getFrameTargetLength() {
-		return (Integer) getStructElement("FrameTargetLength");
-	}
-
-	/**
-	 * @return The BORDERCOLOR attribute for this frame element
-	 */
-	public COLOR_VALUE getFrameBorderColor() {
-		return (COLOR_VALUE) getStructElement("FrameBorderColor");
-	}
-
-	/**
-	 * Reserved for future use, must be 0
-	 */
-	public short getReserved3() {
-		return (Short) getStructElement("wReserved");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public String getFrameName() {
-		return (String) getStructElement("FrameName");
+		return (String) getVariableElement("FrameName");
 	}
 
 	public String getFrameTarget() {
-		return (String) getStructElement("FrameTarget");
+		return (String) getVariableElement("FrameTarget");
 	}
 
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", DataFlags=" + getDataFlags() + ", BorderEnable="
-				+ getBorderEnable() + ", NoResize=" + getNoResize() + ", ScrollBarStyle=" + getScrollBarStyle() + ", MarginWidth="
-				+ getMarginWidth() + ", MarginHeight=" + getMarginHeight() + ", FrameBorderColor=" + getFrameBorderColor() + ", FrameName="
-				+ getFrameName() + ", FrameTarget=" + getFrameTarget() + "]";
-	}
+	//	@Override
+	//	public String toString() {
+	//		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", DataFlags=" + getDataFlags() + ", BorderEnable="
+	//				+ getBorderEnable() + ", NoResize=" + getNoResize() + ", ScrollBarStyle=" + getScrollBarStyle() + ", MarginWidth="
+	//				+ getMarginWidth() + ", MarginHeight=" + getMarginHeight() + ", FrameBorderColor=" + getFrameBorderColor() + ", FrameName="
+	//				+ getFrameName() + ", FrameTarget=" + getFrameTarget() + "]";
+	//	}
 }

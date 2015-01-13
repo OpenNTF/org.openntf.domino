@@ -1,9 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * This structure defines the image segment data of a JPEG or GIF image and follows a CDIMAGEHEADER structure. The number of segments in the
@@ -15,38 +13,20 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDIMAGESEGMENT extends CDRecord {
 
+	public final LSIG Header = inner(new LSIG());
+	public final Unsigned16 DataSize = new Unsigned16();
+	public final Unsigned16 SegSize = new Unsigned16();
+
 	static {
-		addFixedUnsigned("DataSize", Short.class);
-		addFixedUnsigned("SegSize", Short.class);
-
-		addVariableData("Data", "getDataSize");
+		addVariableData("Data", "DataSize");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDIMAGESEGMENT(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDIMAGESEGMENT(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return Actual Size of image bits in bytes, ignoring any filler
-	 */
-	public int getDataSize() {
-		return (Integer) getStructElement("DataSize");
-	}
-
-	/**
-	 * @return Size of segment, is equal to or larger than DataSize if filler byte added to maintain word boundary
-	 */
-	public int getSegSize() {
-		return (Integer) getStructElement("SegSize");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public byte[] getImageData() {
-		return (byte[]) getStructElement("Data");
+		return (byte[]) getVariableElement("Data");
 	}
 }

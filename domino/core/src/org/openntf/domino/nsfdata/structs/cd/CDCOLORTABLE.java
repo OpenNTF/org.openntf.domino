@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
-import org.openntf.domino.nsfdata.structs.WSIG;
 
 /**
  * A color table is one of the optional records following a CDBITMAPHEADER record. The color table specifies the mapping between 8-bit
@@ -14,21 +14,19 @@ import org.openntf.domino.nsfdata.structs.WSIG;
  */
 public class CDCOLORTABLE extends CDRecord {
 
-	public static final int SIZE = 0;
+	public final LSIG Header = inner(new LSIG());
 
-	public CDCOLORTABLE(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDCOLORTABLE(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Color[] getColors() {
 		// This doesn't fit into the usual pattern
-		int count = (int) (getDataLength() / 3);
+		int count = (int) ((Header.getRecordLength() - Header.size()) / 3);
 		Color[] result = new Color[count];
 		ByteBuffer data = getData().duplicate();
+		data.position(data.position() + Header.size());
 		data.order(ByteOrder.LITTLE_ENDIAN);
 		for (int i = 0; i < count; i++) {
 			int r = data.get() & 0xFF;

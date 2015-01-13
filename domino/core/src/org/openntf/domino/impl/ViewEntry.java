@@ -37,7 +37,6 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.impl.View.DominoColumnInfo;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
@@ -45,11 +44,13 @@ import org.openntf.domino.utils.TypeUtils;
 /**
  * The Class ViewEntry.
  */
-public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements org.openntf.domino.ViewEntry {
+public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements
+		org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
 	private Vector<Object> columnValues_;
+
 	private static Method getParentViewMethod;
 
 	static {
@@ -81,8 +82,8 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewEntry(final lotus.domino.ViewEntry delegate, final View parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_VIEWENTRY);
+	protected ViewEntry(final lotus.domino.ViewEntry delegate, final View parent) {
+		super(delegate, parent, NOTES_VIEWENTRY);
 		try {
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
@@ -91,31 +92,6 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 			DominoUtils.handleException(ne);
 		}
 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected View findParent(final lotus.domino.ViewEntry delegate) {
-		return fromLotus(getParentView(delegate), View.SCHEMA, null);
-	}
-
-	/**
-	 * Returns the session for a certain base object
-	 * 
-	 * @param base
-	 * @return
-	 */
-	protected static lotus.domino.View getParentView(final lotus.domino.ViewEntry base) {
-		if (base == null)
-			return null;
-		try {
-			return ((lotus.domino.View) getParentViewMethod.invoke(base, (Object[]) null));
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
 	}
 
 	/*
@@ -164,12 +140,12 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @param returnConstants
 	 *            this parameter controls if constant values should also be returned
 	 */
-	public java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
+	protected java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
 		try {
 
 			if (columnValues_ == null) {
 				// cache the columnValues and rely that the caller will NOT modify the objects inside
-				columnValues_ = Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
+				columnValues_ = wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 			}
 
 			if (returnConstants) {
@@ -225,7 +201,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Document getDocument() {
 		try {
-			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParentView().getParent());
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParentView().getAncestorDatabase());
 		} catch (NotesException e) {
 			if (e.id == 4432) {
 				return null;
@@ -295,14 +271,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getParent()
-	 */
 	@Override
-	public org.openntf.domino.Base<?> getParent() {
-		return getAncestor();
+	public final View getParent() {
+		return parent;
 	}
 
 	/*
@@ -311,8 +282,8 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.ext.ViewEntry#getParentView()
 	 */
 	@Override
-	public View getParentView() {
-		return getAncestor();
+	public final View getParentView() {
+		return parent;
 	}
 
 	/*
@@ -502,8 +473,8 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return ((DatabaseDescendant) this.getParent()).getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return ((DatabaseDescendant) parent).getAncestorDatabase();
 	}
 
 	/*
@@ -512,7 +483,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
@@ -577,4 +548,27 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		String pos = this.getPosition(dot); // e.g. 2.1
 		return pos;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
+	/**
+	 * Returns the session for a certain base object
+	 * 
+	 * @param base
+	 * @return
+	 */
+	protected static lotus.domino.View getParentView(final lotus.domino.ViewEntry base) {
+		if (base == null)
+			return null;
+		try {
+			return ((lotus.domino.View) getParentViewMethod.invoke(base, (Object[]) null));
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
 }

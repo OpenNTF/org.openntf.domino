@@ -9,7 +9,7 @@ import org.openntf.domino.Item.Flags;
 import org.openntf.domino.Item.Type;
 
 public class ItemType implements org.openntf.domino.big.ItemType {
-	private short lotusType_;
+	private Item.Type lotusType_;
 	private byte lotusFlags_;
 
 	public ItemType() {
@@ -18,12 +18,12 @@ public class ItemType implements org.openntf.domino.big.ItemType {
 
 	public ItemType(final org.openntf.domino.Item prototype) {
 		lotusFlags_ = (byte) Item.Flags.getFlags(prototype);
-		lotusType_ = (short) prototype.getType();
+		lotusType_ = prototype.getTypeEx();
 	}
 
 	public boolean validateItem(final org.openntf.domino.Item candidate) {
 		byte flags = (byte) Item.Flags.getFlags(candidate);
-		short type = (short) candidate.getType();
+		Item.Type type = candidate.getTypeEx();
 		return flags == lotusFlags_ && type == lotusType_;
 	}
 
@@ -99,7 +99,7 @@ public class ItemType implements org.openntf.domino.big.ItemType {
 
 	@Override
 	public Type getType() {
-		return Item.Type.valueOf(lotusType_);
+		return lotusType_;
 	}
 
 	@Override
@@ -133,8 +133,7 @@ public class ItemType implements org.openntf.domino.big.ItemType {
 
 	@Override
 	public void setType(final Item.Type type) {
-		int value = type.getValue();
-		lotusType_ = new Integer(value).shortValue();
+		lotusType_ = type;
 	}
 
 	@Override
@@ -145,13 +144,14 @@ public class ItemType implements org.openntf.domino.big.ItemType {
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		lotusFlags_ = in.readByte();
-		lotusType_ = in.readShort();
+		//  To keep compatibility, we read and write the item type as short
+		lotusType_ = Item.Type.valueOf(in.readShort());
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeByte(lotusFlags_);
-		out.writeShort(lotusType_);
+		out.writeShort((short) lotusType_.getValue());
 	}
 
 }

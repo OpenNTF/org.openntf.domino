@@ -26,6 +26,7 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DElementStore implements org.openntf.domino.graph2.DElementStore {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DElementStore.class.getName());
 
 	private List<Class<?>> types_;
@@ -459,7 +460,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (result == null) {
 			System.out
-			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		}
 		if (result != null) {
 			if (type.equals(Element.class)) {

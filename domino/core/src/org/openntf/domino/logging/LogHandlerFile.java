@@ -159,7 +159,7 @@ public class LogHandlerFile extends FileHandler implements LogHandlerUpdateIF {
 				}
 			});
 		} catch (Throwable e) {
-			System.err.println(e.getMessage());
+			System.err.println(e.toString());
 			e.printStackTrace();
 		} finally {
 			publishing_.set(Boolean.FALSE);

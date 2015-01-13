@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -22,27 +21,8 @@ public class CDOLEOBJ_INFO extends CDRecord {
 	 * @since Lotus Notes/Domino 4.5
 	 *
 	 */
-	public static enum StorageFormat {
-		STRUCT_STORAGE((short) 1), ISTORAGE_ISTREAM((short) 2), STRUCT_STREAM((short) 3);
-
-		private final short value_;
-
-		private StorageFormat(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static StorageFormat valueOf(final short typeCode) {
-			for (StorageFormat type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching StorageFormat found for type code " + typeCode);
-		}
+	public static enum StorageFormatType {
+		STRUCT_STORAGE, ISTORAGE_ISTREAM, STRUCT_STREAM
 	}
 
 	/**
@@ -110,85 +90,42 @@ public class CDOLEOBJ_INFO extends CDRecord {
 		}
 	}
 
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned16 FileObjNameLength = new Unsigned16();
+	public final Unsigned16 DescriptionNameLength = new Unsigned16();
+	public final Unsigned16 FieldNameLength = new Unsigned16();
+	public final Unsigned16 TextIndexObjNameLength = new Unsigned16();
+	public final OLE_GUID OleObjClass = inner(new OLE_GUID());
+	public final Enum16<StorageFormatType> StorageFormat = new Enum16<StorageFormatType>(StorageFormatType.values());
+	public final Enum16<DDEFormat> DisplayFormat = new Enum16<DDEFormat>(DDEFormat.values());
+	/**
+	 * Use getFlags for access
+	 */
+	@Deprecated
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Unsigned16 StorageFormatAppearedIn = new Unsigned16();
+	public final Unsigned16 HTMLDataLength = new Unsigned16();
+	public final Unsigned16 AssociatedFILEsLength = new Unsigned16();
+	public final Unsigned16 Reserved3 = new Unsigned16();
+	public final Unsigned32 Reserved4 = new Unsigned32();
+
 	static {
-		addFixedUnsigned("FileObjNameLength", Short.class);
-		addFixedUnsigned("DescriptionNameLength", Short.class);
-		addFixedUnsigned("FieldNameLength", Short.class);
-		addFixedUnsigned("TextIndexObjNameLength", Short.class);
-		addFixed("OleObjClass", OLE_GUID.class);
-		addFixed("StorageFormat", Short.class);
-		addFixed("DisplayFormat", Short.class);
-		addFixed("Flags", Integer.class);
-		addFixed("StorageFormatAppearedIn", Short.class);
-		addFixedUnsigned("HTMLDataLength", Short.class);
-		addFixedUnsigned("AssociatedFILEsLength", Short.class);
-		addFixed("Reserved3", Short.class);
-		addFixed("Reserved4", Integer.class);
-
 		// TODO verify that these are indeed ASCII
-		addVariableAsciiString("FileObjectName", "getFileObjNameLength");
-		addVariableAsciiString("DescriptionName", "getDescriptionNameLength");
-		addVariableAsciiString("FieldName", "getFieldNameLength");
-		addVariableAsciiString("TextIndexObjName", "getTextIndexObjNameLength");
-		addVariableData("HTMLData", "getHTMLDataLength");
-		addVariableData("AssociatedFILEs", "getAssociatedFILEsLength");
+		addVariableAsciiString("FileObjectName", "FileObjNameLength");
+		addVariableAsciiString("DescriptionName", "DescriptionNameLength");
+		addVariableAsciiString("FieldName", "FieldNameLength");
+		addVariableAsciiString("TextIndexObjName", "TextIndexObjNameLength");
+		addVariableData("HTMLData", "HTMLDataLength");
+		addVariableData("AssociatedFILEs", "AssociatedFILEsLength");
 	}
 
-	public static final int SIZE = getFixedStructSize();
-
-	public CDOLEOBJ_INFO(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDOLEOBJ_INFO(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
-	/**
-	 * @return Length of the name of extendable $FILE object containing object data
-	 */
-	public int getFileObjNameLength() {
-		return (Integer) getStructElement("FileObjNameLength");
-	}
-
-	/**
-	 * @return Length of object description
-	 */
-	public int getDescriptionNameLength() {
-		return (Integer) getStructElement("DescriptionNameLength");
-	}
-
-	/**
-	 * @return Length of field name in which object resides
-	 */
-	public int getFieldNameLength() {
-		return (Integer) getStructElement("FieldNameLength");
-	}
-
-	/**
-	 * @return Length of the name of the $FILE object containing LMBCS text for object
-	 */
-	public int getTextIndexObjNameLength() {
-		return (Integer) getStructElement("TextIndexObjNameLength");
-	}
-
-	/**
-	 * @return OLE ClassID GUID of OLE object
-	 */
-	public OLE_GUID getOleObjClass() {
-		return (OLE_GUID) getStructElement("OleObjClass");
-	}
-
-	public StorageFormat getStorageFormat() {
-		return StorageFormat.valueOf((Short) getStructElement("StorageFormat"));
-	}
-
-	public DDEFormat getDisplayFormat() {
-		return DDEFormat.valueOf((Short) getStructElement("DisplayFormat"));
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf((Integer) getStructElement("Flags"));
+		return Flag.valuesOf((int) Flags.get());
 	}
 
 	/**
@@ -197,87 +134,58 @@ public class CDOLEOBJ_INFO extends CDRecord {
 	 * @return Version # of Notes, for display purposes
 	 */
 	public String getStorageFormatAppearedIn() {
-		int low = getData().get(getData().position() + OLE_GUID.SIZE + 16) & 0xFF;
-		int high = getData().get(getData().position() + OLE_GUID.SIZE + 17) & 0xFF;
+		int low = getData().get((int) (getData().position() + OleObjClass.getStructSize() + 16)) & 0xFF;
+		int high = getData().get((int) (getData().position() + OleObjClass.getStructSize() + 17)) & 0xFF;
 		return high + "." + low;
-	}
-
-	/**
-	 * @return Length of HTML data for object
-	 */
-	public int getHTMLDataLength() {
-		return (Integer) getStructElement("HTMLDataLength");
-	}
-
-	/**
-	 * @return Length of Associated $FILEs data for object
-	 */
-	public int getAssociatedFILEsLength() {
-		return (Integer) getStructElement("AssociatedFILEsLength");
-	}
-
-	/**
-	 * Unused, must be 0
-	 */
-	public short getReserved3() {
-		return (Short) getStructElement("Reserved3");
-	}
-
-	/**
-	 * Unused, must be 0
-	 */
-	public int getReserved4() {
-		return (Integer) getStructElement("Reserved4");
 	}
 
 	/**
 	 * @return Name of extendable $FILE object containing object data
 	 */
 	public String getFileObjectName() {
-		return (String) getStructElement("FileObjectName");
+		return (String) getVariableElement("FileObjectName");
 	}
 
 	/**
 	 * @return Object description
 	 */
 	public String getDescriptionName() {
-		return (String) getStructElement("DescriptionName");
+		return (String) getVariableElement("DescriptionName");
 	}
 
 	/**
 	 * @return Field Name in Document in which this object resides
 	 */
 	public String getFieldName() {
-		return (String) getStructElement("FieldName");
+		return (String) getVariableElement("FieldName");
 	}
 
 	/**
 	 * @return Full Text index $FILE object name
 	 */
 	public String getTextIndexObjName() {
-		return (String) getStructElement("TextIndexObjName");
+		return (String) getVariableElement("TextIndexObjName");
 	}
 
 	/**
 	 * @return HTML data, as a byte array
 	 */
 	public byte[] getHTMLData() {
-		return (byte[]) getStructElement("HTMLData");
+		return (byte[]) getVariableElement("HTMLData");
 	}
 
 	/**
 	 * @return Associated $FILEs Data
 	 */
 	public byte[] getAssociatedFILEs() {
-		return (byte[]) getStructElement("AssociatedFILEs");
+		return (byte[]) getVariableElement("AssociatedFILEs");
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": OleObjClass=" + getOleObjClass() + ", StorageFormat=" + getStorageFormat()
-				+ ", DisplayFormat=" + getDisplayFormat() + ", Flags=" + getFlags() + ", StorageFormatAppearedIn="
+		return "[" + getClass().getSimpleName() + ": OleObjClass=" + OleObjClass + ", StorageFormat=" + StorageFormat.get()
+				+ ", DisplayFormat=" + DisplayFormat.get() + ", Flags=" + getFlags() + ", StorageFormatAppearedIn="
 				+ getStorageFormatAppearedIn() + ", FileObjectName=" + getFileObjectName() + ", DescriptionName=" + getDescriptionName()
-				+ ", FieldName=" + getFieldName() + ", TextIndexObjName=" + getTextIndexObjName() + ", HTMLDataLength="
-				+ getHTMLDataLength() + ", AssociatedFILEsLength=" + getAssociatedFILEsLength() + "]";
+				+ ", FieldName=" + getFieldName() + ", TextIndexObjName=" + getTextIndexObjName() + "]";
 	}
 }

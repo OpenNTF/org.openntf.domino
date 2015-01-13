@@ -29,8 +29,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ReplicationEntry.
  */
-public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, lotus.domino.ReplicationEntry, Replication> implements
-		org.openntf.domino.ReplicationEntry {
+public class ReplicationEntry extends BaseNonThreadSafe<org.openntf.domino.ReplicationEntry, lotus.domino.ReplicationEntry, Replication>
+		implements org.openntf.domino.ReplicationEntry {
 
 	/**
 	 * Instantiates a new outline.
@@ -44,9 +44,8 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final Replication parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_REPLENT);
+	protected ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final Replication parent) {
+		super(delegate, parent, NOTES_REPLENT);
 	}
 
 	/*
@@ -83,8 +82,8 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Replication getParent() {
-		return getAncestor();
+	public final Replication getParent() {
+		return parent;
 	}
 
 	/*
@@ -344,8 +343,8 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -354,7 +353,13 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

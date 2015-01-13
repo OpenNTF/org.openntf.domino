@@ -15,42 +15,103 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import javolution.io.Struct;
+
 import com.ibm.commons.util.StringUtil;
 
-public abstract class AbstractStruct implements Externalizable {
-	private ByteBuffer data_;
+public abstract class AbstractStruct extends Struct implements Externalizable {
 
-	public AbstractStruct() {
-		byte[] byteData = new byte[(int) getStructSize()];
-		data_ = ByteBuffer.wrap(byteData).order(ByteOrder.LITTLE_ENDIAN);
+	public void init() {
+		setByteBuffer(ByteBuffer.allocate(size()).order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
-	public AbstractStruct(final ByteBuffer data) {
-		data_ = data.duplicate();
-		data_.order(ByteOrder.LITTLE_ENDIAN);
+	public void init(final ByteBuffer data) {
+		setByteBuffer(data.duplicate().order(ByteOrder.LITTLE_ENDIAN), data.position());
+	}
+
+	@Override
+	public boolean isPacked() {
+		return true;
+	}
+
+	@Override
+	public ByteOrder byteOrder() {
+		return ByteOrder.LITTLE_ENDIAN;
 	}
 
 	public ByteBuffer getData() {
-		return data_;
+		return getByteBuffer();
 	}
 
 	protected void setData(final byte[] data) {
-		data_ = ByteBuffer.wrap(data);
+		setByteBuffer(ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
 	protected void setData(final ByteBuffer data) {
-		data_ = data.duplicate().order(ByteOrder.LITTLE_ENDIAN);
+		setByteBuffer(data.duplicate().order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
-	protected byte[] getBytes() {
+	public byte[] getBytes() {
 		ByteBuffer data = getData().duplicate();
-		int size = data.limit() - data.position();
-		byte[] result = new byte[size];
-		data.get(result);
+		//		int size = data.limit() - data.position();
+		byte[] result = new byte[(int) getTotalSize()];
+		// Ignore extra length when storing
+		data.get(result, 0, (int) (size() + getVariableSize()));
 		return result;
 	}
 
-	public abstract long getStructSize();
+	public long getStructSize() {
+		return size();
+	}
+
+	public int getExtraLength() {
+		return (int) ((size() + getVariableSize()) % 2);
+	}
+
+	public long getTotalSize() {
+		long result = size() + getVariableSize() + getExtraLength();
+		return result;
+	}
+
+	public long getVariableSize() {
+		long result = 0;
+		Collection<VariableElement> varElements = variableElements_.get(getClass().getName());
+		if (varElements != null) {
+			for (VariableElement element : varElements) {
+				try {
+					int length = -1;
+					boolean found = false;
+					// The length method name could either be the name of a fixed variable or a method
+					try {
+						Field field = getClass().getDeclaredField(element.lengthMethodName);
+						if (Unsigned8.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned8) field.get(this)).get();
+							found = true;
+						} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned16) field.get(this)).get();
+							found = true;
+						} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
+							length = (int) ((Unsigned32) field.get(this)).get();
+							found = true;
+						}
+					} catch (NoSuchFieldException nsfe) {
+						// Ignore and move on
+					}
+
+					if (!found) {
+						Method method = getClass().getDeclaredMethod(element.lengthMethodName);
+						length = (Integer) method.invoke(this);
+					}
+
+					result += length;
+				} catch (Throwable t) {
+					throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+				}
+
+			}
+		}
+		return result;
+	}
 
 	@Override
 	public String toString() {
@@ -62,14 +123,13 @@ public abstract class AbstractStruct implements Externalizable {
 		int len = in.readInt();
 		byte[] storage = new byte[len];
 		in.read(storage);
-		data_ = ByteBuffer.wrap(storage);
-		data_.order(ByteOrder.LITTLE_ENDIAN);
+		setByteBuffer(ByteBuffer.wrap(storage).order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		byte[] storage = getBytes();
-		data_.get(storage);
+		//		getByteBuffer().get(storage);
 		out.writeInt(storage.length);
 		out.write(storage);
 	}
@@ -84,46 +144,6 @@ public abstract class AbstractStruct implements Externalizable {
 		boolean isUpgrade();
 
 		boolean isArray();
-	}
-
-	/**
-	 * This class represents a fixed-length element in the static structure definition.
-	 * 
-	 * @author jgallagher
-	 *
-	 */
-	private static class FixedElement implements Element {
-		private final String name;
-		private final Class<?> dataClass;
-		private final boolean upgrade;
-		private final int count;
-
-		private FixedElement(final String name, final Class<?> sizeClass, final boolean upgrade, final int count) {
-			this.name = name;
-			this.dataClass = sizeClass;
-			this.upgrade = upgrade;
-			this.count = count;
-		}
-
-		@Override
-		public Class<?> getDataClass() {
-			return dataClass;
-		}
-
-		@Override
-		public boolean isUpgrade() {
-			return upgrade;
-		}
-
-		@Override
-		public boolean isArray() {
-			return count > 1;
-		}
-
-		@Override
-		public int hashCode() {
-			return 10 + name.hashCode() + dataClass.hashCode() + (upgrade ? 2 : 1) + count;
-		}
 	}
 
 	/**
@@ -166,44 +186,7 @@ public abstract class AbstractStruct implements Externalizable {
 		}
 	}
 
-	private static final Map<String, Collection<FixedElement>> fixedElements_ = new HashMap<String, Collection<FixedElement>>();
 	private static final Map<String, Collection<VariableElement>> variableElements_ = new HashMap<String, Collection<VariableElement>>();
-
-	protected static void addFixed(final String name, final Class<?> sizeClass) {
-		Exception e = new Exception();
-		String caller = e.getStackTrace()[1].getClassName();
-		if (!fixedElements_.containsKey(caller)) {
-			fixedElements_.put(caller, new LinkedHashSet<FixedElement>());
-		}
-		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, false, 1));
-	}
-
-	protected static void addFixedUnsigned(final String name, final Class<?> sizeClass) {
-		Exception e = new Exception();
-		String caller = e.getStackTrace()[1].getClassName();
-		if (!fixedElements_.containsKey(caller)) {
-			fixedElements_.put(caller, new LinkedHashSet<FixedElement>());
-		}
-		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, true, 1));
-	}
-
-	protected static void addFixedArray(final String name, final Class<?> sizeClass, final int size) {
-		Exception e = new Exception();
-		String caller = e.getStackTrace()[1].getClassName();
-		if (!fixedElements_.containsKey(caller)) {
-			fixedElements_.put(caller, new LinkedHashSet<FixedElement>());
-		}
-		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, false, size));
-	}
-
-	protected static void addFixedArrayUnsigned(final String name, final Class<?> sizeClass, final int size) {
-		Exception e = new Exception();
-		String caller = e.getStackTrace()[1].getClassName();
-		if (!fixedElements_.containsKey(caller)) {
-			fixedElements_.put(caller, new LinkedHashSet<FixedElement>());
-		}
-		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, true, size));
-	}
 
 	/**
 	 * @param name
@@ -259,84 +242,8 @@ public abstract class AbstractStruct implements Externalizable {
 		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, String.class, true));
 	}
 
-	protected static int getFixedStructSize(final String className) {
-		int result = 0;
-		if (fixedElements_.containsKey(className)) {
-			Collection<FixedElement> elements = fixedElements_.get(className);
-			for (FixedElement element : elements) {
-				int size = _getSize(element.dataClass);
-				result += size * element.count;
-			}
-		}
-		return result;
-	}
-
-	protected static int getFixedStructSize() {
-		Exception e = new Exception();
-		String caller = e.getStackTrace()[1].getClassName();
-		return getFixedStructSize(caller);
-	}
-
-	protected Object getStructElement(final String name) {
-		int preceding = 0;
-
-		// Look through the fixed elements first, building up the preceding byte count while we're at it
-		Collection<FixedElement> fixedElements = fixedElements_.get(getClass().getName());
-		if (fixedElements != null) {
-			for (FixedElement element : fixedElements) {
-				int size = _getSize(element.dataClass);
-				if (StringUtil.equals(name, element.name)) {
-					Object[] result = new Object[element.count];
-
-					for (int i = 0; i < element.count; i++) {
-						Object primitive = _getPrimitive(element.dataClass, preceding + (size * i), element.upgrade);
-						if (primitive != null) {
-							result[i] = primitive;
-						} else {
-							// Then it's a struct
-							ByteBuffer data = getData().duplicate();
-							data.order(ByteOrder.LITTLE_ENDIAN);
-							data.position(data.position() + preceding + (size * i));
-							data.limit(data.position() + size);
-							try {
-								result[i] = element.dataClass.getDeclaredConstructor(ByteBuffer.class).newInstance(data);
-							} catch (Throwable t) {
-								throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
-							}
-						}
-					}
-
-					if (element.count == 1) {
-						return result[0];
-					} else if (_isPrimitive(element.dataClass)) {
-						if (element.upgrade) {
-							if (Byte.class.equals(element.dataClass)) {
-								return _toPrimitiveArray(result, Short.class);
-							} else if (Short.class.equals(element.dataClass)) {
-								return _toPrimitiveArray(result, Integer.class);
-							} else if (Integer.class.equals(element.dataClass)) {
-								return _toPrimitiveArray(result, Long.class);
-							} else if (Float.class.equals(element.dataClass)) {
-								return _toPrimitiveArray(result, Double.class);
-							} else {
-								return _toPrimitiveArray(result, element.dataClass);
-							}
-						} else {
-							return _toPrimitiveArray(result, element.dataClass);
-						}
-					} else {
-						// Then switch it to an array of the appropriate class
-						Object structArray = Array.newInstance(element.dataClass, result.length);
-						for (int i = 0; i < result.length; i++) {
-							Array.set(structArray, i, result[i]);
-						}
-						return structArray;
-					}
-				} else {
-					preceding += size * element.count;
-				}
-			}
-		}
+	protected Object getVariableElement(final String name) {
+		int preceding = size();
 
 		// Now see if it's one of the variable-length bits
 		Collection<VariableElement> varElements = variableElements_.get(getClass().getName());
@@ -346,12 +253,22 @@ public abstract class AbstractStruct implements Externalizable {
 					int length = -1;
 					boolean found = false;
 					// The length method name could either be the name of a fixed variable or a method
-					for (FixedElement fixElem : fixedElements_.get(getClass().getName())) {
-						if (StringUtil.equals(fixElem.name, element.lengthMethodName)) {
-							length = (Integer) getStructElement(element.lengthMethodName);
+					try {
+						Field field = getClass().getDeclaredField(element.lengthMethodName);
+						if (Unsigned8.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned8) field.get(this)).get();
+							found = true;
+						} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned16) field.get(this)).get();
+							found = true;
+						} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
+							length = (int) ((Unsigned32) field.get(this)).get();
 							found = true;
 						}
+					} catch (NoSuchFieldException nsfe) {
+						// Ignore and move on
 					}
+
 					if (!found) {
 						Method method = getClass().getDeclaredMethod(element.lengthMethodName);
 						length = (Integer) method.invoke(this);
@@ -360,12 +277,16 @@ public abstract class AbstractStruct implements Externalizable {
 
 					// LMBCS strings are always even length
 					int extra = String.class.equals(element.dataClass) && !element.isAscii ? length % 2 : 0;
+					//					int extra = String.class.equals(element.dataClass) ? length % 2 : 0;
 
 					if (StringUtil.equals(name, element.name)) {
 						if (String.class.equals(element.dataClass)) {
 							ByteBuffer data = getData().duplicate();
 							data.order(ByteOrder.LITTLE_ENDIAN);
+							//							System.out.println("length for " + name + " is " + length);
+							//							System.out.println("setting position to " + (data.position() + preceding));
 							data.position(data.position() + preceding);
+							//							System.out.println("setting limit to " + (data.position() + length));
 							data.limit(data.position() + length);
 							if (element.isAscii) {
 								byte[] chars = new byte[length];
@@ -387,7 +308,8 @@ public abstract class AbstractStruct implements Externalizable {
 									data.position(data.position() + preceding + (size * i));
 									data.limit(data.position() + size);
 									try {
-										result[i] = element.dataClass.getDeclaredConstructor(ByteBuffer.class).newInstance(data);
+										result[i] = element.dataClass.newInstance();
+										element.dataClass.getMethod("init", ByteBuffer.class).invoke(result[i], data);
 									} catch (Throwable t) {
 										throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
 									}
@@ -418,67 +340,14 @@ public abstract class AbstractStruct implements Externalizable {
 	}
 
 	/**
+	 * Sets a variable-sized element of the struct to the provided value. If the element's length method name is the name of a field, it
+	 * also sets that field to the new length.
+	 * 
 	 * @return The size in bytes of the stored struct element
 	 */
-	protected int setStructElement(final String name, final Object value) {
-		int preceding = 0;
-
-		// Look through the fixed elements first, building up the preceding byte count while we're at it
-		Collection<FixedElement> fixedElements = fixedElements_.get(getClass().getName());
-		if (fixedElements != null) {
-			for (FixedElement element : fixedElements) {
-				int size = _getSize(element.dataClass);
-				if (StringUtil.equals(name, element.name)) {
-					// First, make sure the value is correct
-					if (!_matchesType(value, element)) {
-						// value will not be null here
-						throw new IllegalArgumentException("Value class '" + value.getClass().getName()
-								+ "' does not match expected class '" + element.dataClass.getName() + "'");
-					}
-
-					// Now, actually set the value
-					ByteBuffer data = getData().duplicate().order(ByteOrder.LITTLE_ENDIAN);
-					data.position(data.position() + preceding);
-					if (value == null) {
-						// Then zero out the appropriate number of bytes
-						for (int i = 0; i < size * element.count; i++) {
-							data.put(data.position() + i, (byte) 0);
-						}
-					} else {
-						// Then set the value properly
-
-						// Convert to an array first for consistency
-						Object arrayValue = _toArrayType(value);
-
-						// Since we always have an array type, loop through it to pour in the data
-						for (int i = 0; i < Array.getLength(arrayValue); i++) {
-							Object val = Array.get(arrayValue, i);
-							if (Byte.class.equals(element.dataClass)) {
-								data.put(((Number) val).byteValue());
-							} else if (Short.class.equals(element.dataClass)) {
-								data.putShort(((Number) val).shortValue());
-							} else if (Integer.class.equals(element.dataClass)) {
-								data.putInt(((Number) val).intValue());
-							} else if (Long.class.equals(element.dataClass)) {
-								data.putLong(((Number) val).longValue());
-							} else if (Float.class.equals(element.dataClass)) {
-								data.putFloat(((Number) val).floatValue());
-							} else if (Double.class.equals(element.dataClass)) {
-								data.putDouble(((Number) val).doubleValue());
-							} else {
-								ByteBuffer structData = ((AbstractStruct) val).getData().duplicate();
-								data.put(structData);
-							}
-						}
-					}
-
-					// Then we're done
-					return size * element.count;
-				} else {
-					preceding += size * element.count;
-				}
-			}
-		}
+	protected int setVariableElement(final String name, final Object value) {
+		//		System.out.println("setting field " + name + " to " + value);
+		int preceding = size();
 
 		// Now see if it's one of the variable-length bits
 		Collection<VariableElement> varElements = variableElements_.get(getClass().getName());
@@ -488,12 +357,23 @@ public abstract class AbstractStruct implements Externalizable {
 					int length = -1;
 					boolean found = false;
 					// The length method name could either be the name of a fixed variable or a method
-					for (FixedElement fixElem : fixedElements_.get(getClass().getName())) {
-						if (StringUtil.equals(fixElem.name, element.lengthMethodName)) {
-							length = (Integer) getStructElement(element.lengthMethodName);
+					Field field = null;
+					try {
+						field = getClass().getDeclaredField(element.lengthMethodName);
+						if (Unsigned8.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned8) field.get(this)).get();
+							found = true;
+						} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
+							length = ((Unsigned16) field.get(this)).get();
+							found = true;
+						} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
+							length = (int) ((Unsigned32) field.get(this)).get();
 							found = true;
 						}
+					} catch (NoSuchFieldException nsfe) {
+						// Ignore and move on
 					}
+
 					if (!found) {
 						Method method = getClass().getDeclaredMethod(element.lengthMethodName);
 						length = (Integer) method.invoke(this);
@@ -504,7 +384,9 @@ public abstract class AbstractStruct implements Externalizable {
 					int extra = String.class.equals(element.dataClass) && !element.isAscii ? length % 2 : 0;
 
 					if (StringUtil.equals(name, element.name)) {
-						ByteBuffer data = getData();
+						//						System.out.println("determined length for existing data in " + name + " is " + length);
+
+						ByteBuffer data = getData().duplicate().order(ByteOrder.LITTLE_ENDIAN);
 						byte[] replacedBytes;
 						if (value == null) {
 							// Then outright remove the data
@@ -544,37 +426,68 @@ public abstract class AbstractStruct implements Externalizable {
 								}
 							}
 						}
+						//						System.out.println("replacing with data length " + replacedBytes.length);
 
 						// Check if the result size is different from the original
-						if (replacedBytes.length == size) {
+						if (replacedBytes.length == length) {
 							// If it's the same, the job is easy
 							data.position(data.position() + preceding);
 							data.put(replacedBytes);
 						} else {
 							// Otherwise, we have to break apart the array and stitch it together
 							// Create an array at the new total size
-							int newLength = data.capacity() - size + replacedBytes.length + 1;
+							// TODO make this only use the part of the data needed for the struct
+							int initialPosition = data.position();
+							int newLength = data.capacity() - length + replacedBytes.length;
 							byte[] newBytes = new byte[newLength];
+							//							System.out.println("original capacity: " + data.capacity());
+							//							System.out.println("new size: " + newLength);
 
 							// Pour in the data before this element
 							int start = data.position() + preceding;
 							data.position(0);
+							//							System.out.println("reading data from 0 to " + (start - 1));
 							data.get(newBytes, 0, start);
+							//							System.arraycopy(dataArray, 0, newBytes, 0, start);
+							//							System.out.println("data's position is now " + data.position());
 
 							// Write this element's data
-							System.out.println("replacedBytes.length=" + replacedBytes.length);
-							System.out.println("newBytes.length=" + newBytes.length);
-							System.out.println("start=" + start);
+							//							System.out.println("original length=" + length);
+							//							System.out.println("replacedBytes.length=" + replacedBytes.length);
+							//							System.out.println("newBytes.length=" + newBytes.length);
+							//							System.out.println("start=" + start);
 							System.arraycopy(replacedBytes, 0, newBytes, start, replacedBytes.length);
 
 							// Write any data from after this element
 							int remaining = newBytes.length - start - replacedBytes.length;
+							data.position(start + length);
+							int sourceLength = data.capacity() - data.position();
 							if (remaining > 0) {
-								data.position(data.position() + remaining);
-								data.get(newBytes, start, remaining);
+								//								System.out.println("reading from data position " + data.position());
+								int destOffset = start + replacedBytes.length;
+								//								int sourceOffset = start + length;
+								//								System.out.println("want to write " + sourceLength + " bytes into an array of size " + newBytes.length
+								//										+ " starting at " + destOffset);
+								//								System.arraycopy(dataArray, sourceOffset, newBytes, destOffset, sourceLength);
+								data.get(newBytes, destOffset, sourceLength);
 							}
 
-							this.setData(newBytes);
+							ByteBuffer newData = ByteBuffer.wrap(newBytes);
+							newData.order(ByteOrder.LITTLE_ENDIAN).position(initialPosition);
+							//							this.setData(newBytes);
+							this.setByteBuffer(newData, newData.position());
+
+							// If the element was defined by a field, set that field to the new length value
+							if (field != null) {
+								//								System.out.println("setting size field to " + replacedBytes.length);
+								if (Unsigned8.class.isAssignableFrom(field.getType())) {
+									Unsigned8.class.getMethod("set", Short.TYPE).invoke(field.get(this), (short) replacedBytes.length);
+								} else if (Unsigned16.class.isAssignableFrom(field.getType())) {
+									Unsigned16.class.getMethod("set", Integer.TYPE).invoke(field.get(this), replacedBytes.length);
+								} else if (Unsigned32.class.isAssignableFrom(field.getType())) {
+									Unsigned32.class.getMethod("set", Long.TYPE).invoke(field.get(this), (long) replacedBytes.length);
+								}
+							}
 						}
 
 						// Then we're done
@@ -614,6 +527,15 @@ public abstract class AbstractStruct implements Externalizable {
 			return 4;
 		} else if (Double.class.equals(sizeClass)) {
 			return 8;
+		} else if (Struct.class.isAssignableFrom(sizeClass)) {
+			try {
+				Struct example = (Struct) sizeClass.newInstance();
+				return example.size();
+			} catch (InstantiationException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
 		} else {
 			Field field = null;
 			try {
@@ -718,110 +640,84 @@ public abstract class AbstractStruct implements Externalizable {
 		return value;
 	}
 
-	private static boolean _matchesType(final Object value, final Element element) {
-		if (value == null) {
-			// null means "zero out"
-			return true;
-		}
-
-		Class<?> baseClass;
-		if (element.isUpgrade()) {
-			baseClass = _upgradeClass(element.getDataClass());
-		} else {
-			baseClass = element.getDataClass();
-		}
-		if (element.isArray()) {
-			Object arrayObj = Array.newInstance(baseClass, 0);
-			baseClass = arrayObj.getClass();
-		}
-		return baseClass.equals(value.getClass());
-	}
-
-	private static Class<?> _upgradeClass(final Class<?> dataClass) {
-		if (Byte.class.equals(dataClass)) {
-			return Short.class;
-		} else if (Byte[].class.equals(dataClass)) {
-			return Short[].class;
-		} else if (Short.class.equals(dataClass)) {
-			return Integer.class;
-		} else if (Short[].class.equals(dataClass)) {
-			return Integer[].class;
-		} else if (Integer.class.equals(dataClass)) {
-			return Long.class;
-		} else if (Integer[].class.equals(dataClass)) {
-			return Long[].class;
-		} else if (Float.class.equals(dataClass)) {
-			return Double.class;
-		} else if (Float[].class.equals(dataClass)) {
-			return Double[].class;
-		} else {
-			return dataClass;
-		}
-	}
-
-	protected String buildDebugString(final String... properties) {
-		StringBuilder result = new StringBuilder();
-		result.append("[");
-		result.append(getClass().getSimpleName());
-		result.append(": ");
-		boolean addedProp = false;
-		for (String property : properties) {
-			if (addedProp) {
-				result.append(", ");
-			} else {
-				addedProp = true;
-			}
-			result.append(property);
-			result.append("=");
-
-			try {
-				Method getter = getClass().getMethod("get" + property);
-				result.append(getter.invoke(this));
-			} catch (Throwable t) {
-				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
-			}
-		}
-		result.append("]");
-		return result.toString();
-	}
-
+	//	protected String buildDebugString(final String... properties) {
+	//		StringBuilder result = new StringBuilder();
+	//		result.append("[");
+	//		result.append(getClass().getSimpleName());
+	//		result.append(": ");
+	//		boolean addedProp = false;
+	//		for (String property : properties) {
+	//			if (addedProp) {
+	//				result.append(", ");
+	//			} else {
+	//				addedProp = true;
+	//			}
+	//			result.append(property);
+	//			result.append("=");
+	//
+	//			try {
+	//				Method getter = getClass().getMethod("get" + property);
+	//				result.append(getter.invoke(this));
+	//			} catch (Throwable t) {
+	//				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+	//			}
+	//		}
+	//		result.append("]");
+	//		return result.toString();
+	//	}
+	//
 	protected String buildDebugString() {
-		StringBuilder result = new StringBuilder();
-		result.append("[");
-		result.append(getClass().getSimpleName());
-		result.append(": ");
+		String currentField = null;
+		try {
+			StringBuilder result = new StringBuilder();
+			result.append("[");
+			result.append(getClass().getSimpleName());
+			result.append(": ");
 
-		boolean addedProp = false;
+			boolean addedProp = false;
 
-		if (fixedElements_.containsKey(getClass().getName())) {
-			for (FixedElement element : fixedElements_.get(getClass().getName())) {
-				if (addedProp) {
-					result.append(", ");
-				} else {
-					addedProp = true;
+			for (Field field : getClass().getDeclaredFields()) {
+				currentField = field.getName();
+				// TODO add array support
+				if (Struct.Member.class.isAssignableFrom(field.getType())) {
+					if (addedProp) {
+						result.append(", ");
+					} else {
+						addedProp = true;
+					}
+					result.append(field.getName());
+					result.append("=");
+					try {
+						//						System.out.println("getting field " + field.getName());
+						Method getMethod = field.getType().getDeclaredMethod("get");
+						result.append(getMethod.invoke(field.get(this)));
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
 				}
-
-				result.append(element.name);
-				result.append("=");
-				result.append(getStructElement(element.name));
 			}
-		}
 
-		if (variableElements_.containsKey(getClass().getName())) {
-			for (VariableElement element : variableElements_.get(getClass().getName())) {
-				if (addedProp) {
-					result.append(", ");
-				} else {
-					addedProp = true;
+			if (variableElements_.containsKey(getClass().getName())) {
+				for (VariableElement element : variableElements_.get(getClass().getName())) {
+					currentField = element.name;
+					//					System.out.println("getting element " + element.name);
+					if (addedProp) {
+						result.append(", ");
+					} else {
+						addedProp = true;
+					}
+
+					result.append(element.name);
+					result.append("=");
+					result.append(getVariableElement(element.name));
 				}
-
-				result.append(element.name);
-				result.append("=");
-				result.append(getStructElement(element.name));
 			}
-		}
 
-		result.append("]");
-		return result.toString();
+			result.append("]");
+			return result.toString();
+		} catch (RuntimeException re) {
+			System.err.println("RUNTIME EXCEPTION IN " + getClass().getName() + " FOR FIELD " + currentField);
+			throw re;
+		}
 	}
 }

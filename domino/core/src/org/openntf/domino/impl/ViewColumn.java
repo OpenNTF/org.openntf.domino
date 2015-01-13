@@ -31,7 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewColumn.
  */
-public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements org.openntf.domino.ViewColumn {
+public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements
+		org.openntf.domino.ViewColumn {
 
 	/**
 	 * Instantiates a new outline.
@@ -45,16 +46,8 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ViewColumn(final lotus.domino.ViewColumn delegate, final View parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected View findParent(final lotus.domino.ViewColumn delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), View.SCHEMA, null);
+	protected ViewColumn(final lotus.domino.ViewColumn delegate, final View parent) {
+		super(delegate, parent, NOTES_VIEWCOLUMN);
 	}
 
 	private int index_ = -1;
@@ -62,8 +55,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	@Override
 	public int getIndex() {
 		if (index_ == -1) {
-			View view = getParent();
-			Vector<org.openntf.domino.ViewColumn> columns = view.getColumns();
+			Vector<org.openntf.domino.ViewColumn> columns = parent.getColumns();
 			for (int i = 0; i < columns.size(); i++) {
 				if (this.equals(columns.get(i))) {
 					index_ = i;
@@ -373,8 +365,8 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public View getParent() {
-		return getAncestor();
+	public final View getParent() {
+		return parent;
 	}
 
 	/*
@@ -1662,8 +1654,8 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getParent().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -1672,7 +1664,13 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
+	public final Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

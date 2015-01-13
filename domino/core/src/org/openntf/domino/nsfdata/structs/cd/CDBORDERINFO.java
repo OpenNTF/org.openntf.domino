@@ -1,6 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -19,70 +18,51 @@ public class CDBORDERINFO extends CDRecord {
 	/**
 	 * These contstants [sic] define the BorderStyle variable in the CD Record CDBORDERINFO (CDBORDERSTYLE_xxx).
 	 */
-	public static enum BorderStyle {
+	public static enum Style {
 		/**
 		 * There isn't any border style
 		 */
-		NONE((short) 0),
+		NONE,
 		/**
 		 * Border is displayed as a solid line
 		 */
-		SOLID((short) 1),
+		SOLID,
 		/**
 		 * Border is displayed as a double line
 		 */
-		DOUBLE((short) 2),
+		DOUBLE,
 		/**
 		 * Border is inset
 		 */
-		INSET((short) 3),
+		INSET,
 		/**
 		 * Border is outset
 		 */
-		OUTSET((short) 4),
+		OUTSET,
 		/**
 		 * Border has a ridge
 		 */
-		RIDGE((short) 5),
+		RIDGE,
 		/**
 		 * Border has a groove
 		 */
-		GROOVE((short) 6),
+		GROOVE,
 		/**
 		 * Border is dotted
 		 */
-		DOTTED((short) 7),
+		DOTTED,
 		/**
 		 * Border is dashed
 		 */
-		DASHED((short) 8),
+		DASHED,
 		/**
 		 * Border is displayed as a "picture frame" around table
 		 */
-		PICTURE((short) 9),
+		PICTURE,
 		/**
 		 * Border is a graphic
 		 */
-		GRAPHIC((short) 10);
-
-		private final short value_;
-
-		private BorderStyle(final short value) {
-			value_ = value;
-		}
-
-		public short getValue() {
-			return value_;
-		}
-
-		public static BorderStyle valueOf(final short typeCode) {
-			for (BorderStyle type : values()) {
-				if (type.getValue() == typeCode) {
-					return type;
-				}
-			}
-			throw new IllegalArgumentException("No matching BorderStyle found for type code " + typeCode);
-		}
+		GRAPHIC;
 	}
 
 	public static enum BorderFlag {
@@ -112,164 +92,41 @@ public class CDBORDERINFO extends CDRecord {
 		}
 	}
 
-	public static final int SIZE;
-
-	static {
-		addFixed("Flags", Integer.class);
-		addFixed("BorderStyle", Short.class);
-		addFixedUnsigned("BorderWidthTop", Short.class);
-		addFixedUnsigned("BorderWidthLeft", Short.class);
-		addFixedUnsigned("BorderWidthBottom", Short.class);
-		addFixedUnsigned("BorderWidthRight", Short.class);
-		addFixed("dwSpare", Integer.class);
-		addFixed("BorderFlags", Short.class);
-		addFixedUnsigned("DropShadowWidth", Short.class);
-		addFixedUnsigned("InnerWidthTop", Short.class);
-		addFixedUnsigned("InnerWidthLeft", Short.class);
-		addFixedUnsigned("InnerWidthBottom", Short.class);
-		addFixedUnsigned("InnerWidthRight", Short.class);
-		addFixedUnsigned("OuterWidthTop", Short.class);
-		addFixedUnsigned("OuterWidthLeft", Short.class);
-		addFixedUnsigned("OuterWidthBottom", Short.class);
-		addFixedUnsigned("OuterWidthRight", Short.class);
-		addFixed("Color", COLOR_VALUE.class);
-		addFixedArray("wSpares", Short.class, 5);
-
-		SIZE = getFixedStructSize();
-	}
-
-	public CDBORDERINFO(final CDSignature cdSig) {
-		super(new WSIG(cdSig, cdSig.getSize() + SIZE), ByteBuffer.wrap(new byte[SIZE]));
-	}
-
-	public CDBORDERINFO(final SIG signature, final ByteBuffer data) {
-		super(signature, data);
-	}
-
+	public final WSIG Header = inner(new WSIG());
+	public final Unsigned32 Flags = new Unsigned32();
+	public final Enum16<Style> BorderStyle = new Enum16<Style>(Style.values());
+	public final Unsigned16 BorderWidthTop = new Unsigned16();
+	public final Unsigned16 BorderWidthLeft = new Unsigned16();
+	public final Unsigned16 BorderWidthBottom = new Unsigned16();
+	public final Unsigned16 BorderWidthRight = new Unsigned16();
+	public final Unsigned32 dwSpare = new Unsigned32();
 	/**
-	 * Not Used must be 0
+	 * Use getFlags for access.
 	 */
-	public int getFlags() {
-		return (Integer) getStructElement("Flags");
-	}
+	@Deprecated
+	public final Unsigned16 BorderFlags = new Unsigned16();
+	public final Unsigned16 DropShadowWidth = new Unsigned16();
+	public final Unsigned16 InnerWidthTop = new Unsigned16();
+	public final Unsigned16 InnerWidthLeft = new Unsigned16();
+	public final Unsigned16 InnerWidthBottom = new Unsigned16();
+	public final Unsigned16 InnerWidthRight = new Unsigned16();
+	public final Unsigned16 OuterWidthTop = new Unsigned16();
+	public final Unsigned16 OuterWidthLeft = new Unsigned16();
+	public final Unsigned16 OuterWidthBottom = new Unsigned16();
+	public final Unsigned16 OuterWidthRight = new Unsigned16();
+	public final COLOR_VALUE Color = inner(new COLOR_VALUE());
+	public final Unsigned16[] wSpares = array(new Unsigned16[5]);
 
-	/**
-	 * @return CDBORDERSTYLE_xxx
-	 */
-	public BorderStyle getBorderStyle() {
-		return BorderStyle.valueOf((Short) getStructElement("BorderStyle"));
-	}
-
-	/**
-	 * @return Thickness Top
-	 */
-	public int getBorderWidthTop() {
-		return (Integer) getStructElement("BorderWidthTop");
-	}
-
-	/**
-	 * @return Thickness Left
-	 */
-	public int getBorderWidthLeft() {
-		return (Integer) getStructElement("BorderWidthLeft");
-	}
-
-	/**
-	 * @return Thickness Bottom
-	 */
-	public int getBorderWidthBottom() {
-		return (Integer) getStructElement("BorderWidthBottom");
-	}
-
-	/**
-	 * @return Thickness Right
-	 */
-	public int getBorderWidthRight() {
-		return (Integer) getStructElement("BorderWidthRight");
-	}
-
-	public int getSpare() {
-		return (Integer) getStructElement("dwSpare");
+	@Override
+	public SIG getHeader() {
+		return Header;
 	}
 
 	/**
 	 * @return CDBORDER_FLAGS_xxx
 	 */
 	public Set<BorderFlag> getBorderFlags() {
-		return BorderFlag.valuesOf((Short) getStructElement("BorderFlags"));
+		return BorderFlag.valuesOf((short) BorderFlags.get());
 	}
 
-	/**
-	 * @return Border Effects Drop Shadow Width
-	 */
-	public int getDropShadowWidth() {
-		return (Integer) getStructElement("DropShadowWidth");
-	}
-
-	/**
-	 * @return Inside Thickness Top
-	 */
-	public int getInnerWidthTop() {
-		return (Integer) getStructElement("InnerWidthTop");
-	}
-
-	/**
-	 * @return Inside Thickness Left
-	 */
-	public int getInnerWidthLeft() {
-		return (Integer) getStructElement("InnerWidthLeft");
-	}
-
-	/**
-	 * @return Inside Thickness Bottom
-	 */
-	public int getInnerWidthBottom() {
-		return (Integer) getStructElement("InnerWidthBottom");
-	}
-
-	/**
-	 * @return Inside Thickness Right
-	 */
-	public int getInnerWidthRight() {
-		return (Integer) getStructElement("InnerWidthRight");
-	}
-
-	/**
-	 * @return Outside Thickness Top
-	 */
-	public int getOuterWidthTop() {
-		return (Integer) getStructElement("OuterWidthTop");
-	}
-
-	/**
-	 * @return Outside Thickness Left
-	 */
-	public int getOuterWidthLeft() {
-		return (Integer) getStructElement("OuterWidthLeft");
-	}
-
-	/**
-	 * @return Outside Thickness Bottom
-	 */
-	public int getOuterWidthBottom() {
-		return (Integer) getStructElement("OuterWidthBottom");
-	}
-
-	/**
-	 * @return Outside Thickness Right
-	 */
-	public int getOuterWidthRight() {
-		return (Integer) getStructElement("OuterWidthRight");
-	}
-
-	/**
-	 * @return Border Color
-	 */
-	public COLOR_VALUE getColor() {
-		return (COLOR_VALUE) getStructElement("Color");
-	}
-
-	public short[] getSpares() {
-		return (short[]) getStructElement("wSpares");
-	}
 }

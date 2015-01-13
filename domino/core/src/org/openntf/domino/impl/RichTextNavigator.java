@@ -30,7 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextNavigator.
  */
-public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
+public class RichTextNavigator extends
+		BaseNonThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
 		org.openntf.domino.RichTextNavigator {
 
 	@SuppressWarnings("unused")
@@ -48,9 +49,8 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final RichTextItem parent, final WrapperFactory wf,
-			final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_RTNAVIGATOR);
+	protected RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final RichTextItem parent) {
+		super(delegate, parent, NOTES_RTNAVIGATOR);
 	}
 
 	/*
@@ -61,7 +61,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	@Override
 	public org.openntf.domino.RichTextNavigator Clone() {
 		try {
-			return fromLotus(getDelegate().Clone(), RichTextNavigator.SCHEMA, getAncestor());
+			return fromLotus(getDelegate().Clone(), RichTextNavigator.SCHEMA, parent);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -375,8 +375,8 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
-	public Document getAncestorDocument() {
-		return this.getAncestor().getAncestorDocument();
+	public final Document getAncestorDocument() {
+		return parent.getAncestorDocument();
 	}
 
 	/*
@@ -385,8 +385,8 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
-	public Database getAncestorDatabase() {
-		return this.getAncestor().getAncestorDatabase();
+	public final Database getAncestorDatabase() {
+		return parent.getAncestorDatabase();
 	}
 
 	/*
@@ -395,7 +395,13 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getAncestor().getAncestorSession();
+	public final Session getAncestorSession() {
+		return parent.getAncestorSession();
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getAncestorSession().getFactory();
+	}
+
 }

@@ -29,7 +29,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Log.
  */
-public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session> implements org.openntf.domino.Log {
+public class Log extends BaseNonThreadSafe<org.openntf.domino.Log, lotus.domino.Log, Session> implements org.openntf.domino.Log {
 
 	/**
 	 * Instantiates a new outline.
@@ -43,16 +43,8 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session>
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Log(final lotus.domino.Log delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_AGENTLOG);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Log delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	protected Log(final lotus.domino.Log delegate, final Session parent) {
+		super(delegate, parent, NOTES_AGENTLOG);
 	}
 
 	/*
@@ -105,8 +97,8 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session>
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -249,7 +241,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session>
 	public void openMailLog(final Vector recipients, final String subject) {
 		List recycleThis = new ArrayList();
 		try {
-			java.util.Vector v = toDominoFriendly(recipients, this, recycleThis);
+			java.util.Vector v = toDominoFriendly(recipients, getAncestorSession(), recycleThis);
 			getDelegate().openMailLog(v, subject);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
@@ -334,7 +326,13 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session>
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

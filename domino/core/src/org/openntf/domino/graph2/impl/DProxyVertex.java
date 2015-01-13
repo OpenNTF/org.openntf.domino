@@ -11,6 +11,7 @@ import org.openntf.domino.graph.DominoVertex;
 
 public class DProxyVertex extends DVertex {
 	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DProxyVertex.class.getName());
 	public static final String PROXY_ITEM = "_ODA_PROXYID";
 	protected org.openntf.domino.graph2.DVertex proxyDelegate_;

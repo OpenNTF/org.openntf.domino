@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Registration.
  */
-public class Registration extends Base<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
+public class Registration extends BaseNonThreadSafe<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
 		org.openntf.domino.Registration {
 
 	/**
@@ -45,16 +45,8 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public Registration(final lotus.domino.Registration delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
-		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.Registration delegate) throws NotesException {
-		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	protected Registration(final lotus.domino.Registration delegate, final Session parent) {
+		super(delegate, parent, NOTES_VIEWCOLUMN);
 	}
 
 	/*
@@ -581,8 +573,8 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -1110,7 +1102,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	public void setAltOrgUnitLang(final Vector languages) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().setAltOrgUnitLang(toDominoFriendly(languages, this, recycleThis));
+			getDelegate().setAltOrgUnitLang(toDominoFriendly(languages, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1216,7 +1208,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	public void setGroupList(final Vector groups) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().setGroupList(toDominoFriendly(groups, this, recycleThis));
+			getDelegate().setGroupList(toDominoFriendly(groups, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1332,7 +1324,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	public void setMailReplicaServers(final Vector servers) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().setMailReplicaServers(toDominoFriendly(servers, this, recycleThis));
+			getDelegate().setMailReplicaServers(toDominoFriendly(servers, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1655,7 +1647,13 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public org.openntf.domino.Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
+	}
+
 }

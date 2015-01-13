@@ -25,7 +25,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ColorObject.
  */
-public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
+public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
 		org.openntf.domino.ColorObject {
 
 	/**
@@ -40,16 +40,8 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @param cppId
 	 *            the cpp-id
 	 */
-	public ColorObject(final lotus.domino.ColorObject delegate, final Session parent, final WrapperFactory wf, final long cppId) {
-		super(delegate, parent, wf, cppId, NOTES_COLOR);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
-	 */
-	@Override
-	protected Session findParent(final lotus.domino.ColorObject delegate) {
-		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	protected ColorObject(final lotus.domino.ColorObject delegate, final Session parent) {
+		super(delegate, parent, NOTES_COLOR);
 	}
 
 	/*
@@ -131,8 +123,8 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public Session getParent() {
-		return getAncestor();
+	public final Session getParent() {
+		return parent;
 	}
 
 	/*
@@ -223,8 +215,8 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 	/*
@@ -259,6 +251,11 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		String b = hex.substring(4, 6);
 
 		this.setRGB(Integer.valueOf(r, 16), Integer.valueOf(g, 16), Integer.valueOf(b, 16));
+	}
+
+	@Override
+	protected WrapperFactory getFactory() {
+		return parent.getFactory();
 	}
 
 }

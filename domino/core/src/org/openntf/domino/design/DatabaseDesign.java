@@ -259,4 +259,30 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 */
 	public JavaScriptLibrary getJavaScriptLibrary(String name);
 
+	/**
+	 * Gets an XSP-Property from WEB-INF/xsp.properties
+	 * 
+	 * @param propertyName
+	 * @return the value of that property
+	 */
+	String[] getXspProperty(String propertyName);
+
+	/**
+	 * Checks whether or not the API is enabled for the current database
+	 * 
+	 * @return boolean whether or not enabled
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public boolean isAPIEnabled();
+
+	/**
+	 * common code to test if a flag is set in the xsp.properties file for the "org.openntf.domino.xsp" value.
+	 * 
+	 * @param flagName
+	 *            use upperCase for flagName, e.g. RAID
+	 * @return true if the flag is set
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public boolean isAppFlagSet(final String flagName);
+
 }

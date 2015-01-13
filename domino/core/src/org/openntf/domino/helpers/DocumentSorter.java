@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.impl.DocumentList;
+import org.openntf.domino.iterators.DocumentList;
 import org.openntf.domino.types.Null;
 
 public class DocumentSorter implements Externalizable {
@@ -266,6 +266,7 @@ public class DocumentSorter implements Externalizable {
 		//		System.out.println("Done normalizing to a set of size " + size() + " after iterating over " + docCount + " docs.");
 	}
 
+	@SuppressWarnings("unused")
 	private void _treeSort() {
 		long startTime = System.nanoTime();
 		treeSet_.addAll(Arrays.asList(dataset_));
@@ -275,6 +276,7 @@ public class DocumentSorter implements Externalizable {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void _skipListSort() {
 		long startTime = System.nanoTime();
 		skipListSet_.addAll(Arrays.asList(dataset_));
@@ -336,6 +338,7 @@ public class DocumentSorter implements Externalizable {
 		getCriteria().remove(crit);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 		criteria_ = (List<String>) arg0.readObject();

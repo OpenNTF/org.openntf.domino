@@ -571,8 +571,8 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 					} else {
 						final String[] commentSet = RFC822name.INPARENS_MATCH.split(comments);
 						for (int i = 0; i < commentSet.length; i++) {
-							if (i < 4) {
-								this.setAddr822Comment(i, commentSet[i]);
+							if (i < 3) {
+								this.setAddr822Comment(i + 1, commentSet[i]);
 							} else {
 								break;
 							}

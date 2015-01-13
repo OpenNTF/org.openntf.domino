@@ -1,5 +1,8 @@
 package org.openntf.domino.tests.ntf;
 
+import java.util.Iterator;
+
+import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
@@ -16,6 +19,7 @@ import org.openntf.domino.graph2.impl.DFramedGraphFactory;
 import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -76,6 +80,9 @@ public class Graph2Demo implements Runnable {
 
 		@AdjacencyUnique(label = directedBy)
 		public Crew addDirectedByCrew(Crew crew);
+
+		@IncidenceUnique(label = starring)
+		public Iterable<Starring> getStarringInvert();
 
 		@IncidenceUnique(label = starring, direction = Direction.IN)
 		public Iterable<Starring> getStarring();
@@ -311,17 +318,37 @@ public class Graph2Demo implements Runnable {
 
 	@Override
 	public void run() {
+		resetDbs();
 		System.out.println("Starting run...");
 		run1();
 		//		run2();
 		run3();
 	}
 
+	public void resetDbs() {
+		System.out.println("Resetting test databases");
+		Session session = Factory.getSession(SessionType.NATIVE);
+		Database crewDb = session.getDatabase(crewId);
+		crewDb.getAllDocuments().removeAll(true);
+
+		Database movieDb = session.getDatabase(movieId);
+		movieDb.getAllDocuments().removeAll(true);
+		Database characterDb = session.getDatabase(characterId);
+		characterDb.getAllDocuments().removeAll(true);
+		Database edgeDb = session.getDatabase(edgeId);
+		edgeDb.getAllDocuments().removeAll(true);
+		Database usersDb = session.getDatabase(usersId);
+		usersDb.getAllDocuments().removeAll(true);
+		session.recycle();
+		System.gc();
+	}
+
 	public void run3() {
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
-		Session session = Factory.getSession();
-
+		Session session = Factory.getSession(SessionType.FULL_ACCESS);
+		graph = null;
+		System.gc();
 		try {
 
 			timelog("Beginning graph2 test3...");
@@ -369,10 +396,33 @@ public class Graph2Demo implements Runnable {
 			System.out.println("***************************");
 			System.out.println("Don't miss " + newhopeMovie.getTitle() + " " + newhopeMovie.getRaterRating(ntfUser) + " stars!");
 			Iterable<Starring> starrings = newhopeMovie.getStarring();
+			int starringCount = 0;
 			for (Starring starring : starrings) {
+				starringCount++;
 				Crew crew = starring.getStar();
-				Character character = crew.getPortraysCharacters().iterator().next();
-				System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " (" + crew.asVertex().getId() + ")");
+				}
+			}
+			if (starringCount == 0) {
+				System.out.println("Starring was empty for " + newhopeMovie.getTitle() + ". Trying inversion...");
+				starrings = newhopeMovie.getStarringInvert();
+				starringCount = 0;
+				for (Starring starring : starrings) {
+					starringCount++;
+					Crew crew = starring.getStar();
+					Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+					if (chars.hasNext()) {
+						Character character = chars.next();
+						System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+					} else {
+						System.out.println(crew.getFirstName() + " " + crew.getLastName() + " (" + crew.asVertex().getId() + ")");
+					}
+				}
 			}
 
 			System.out.println("***************************");
@@ -380,8 +430,13 @@ public class Graph2Demo implements Runnable {
 			starrings = empireMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
-				Character character = crew.getPortraysCharacters().iterator().next();
-				System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
 			}
 
 			System.out.println("***************************");
@@ -389,8 +444,13 @@ public class Graph2Demo implements Runnable {
 			starrings = jediMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
-				Character character = crew.getPortraysCharacters().iterator().next();
-				System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
 			}
 
 		} catch (Throwable t) {
@@ -414,8 +474,7 @@ public class Graph2Demo implements Runnable {
 			}
 			//			lotus.domino.Session s = Factory.terminate();
 			//			s.recycle();
-			graph = null;
-			System.gc();
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -428,7 +487,6 @@ public class Graph2Demo implements Runnable {
 
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
-		Session session = Factory.getSession();
 
 		try {
 			timelog("Beginning graph2 test...");
@@ -648,9 +706,12 @@ public class Graph2Demo implements Runnable {
 
 			Crew fischer = framedGraph.addVertex("Carrie Fischer", Crew.class);
 			fischer.setFullName("Carrie Fischer");
-			fischer.addStarsInMovie(newhopeMovie);
-			fischer.addStarsInMovie(empireMovie);
-			fischer.addStarsInMovie(jediMovie);
+			newhopeMovie.addStarring(fischer);
+			empireMovie.addStarring(fischer);
+			jediMovie.addStarring(fischer);
+			//			fischer.addStarsInMovie(newhopeMovie);
+			//			fischer.addStarsInMovie(empireMovie);
+			//			fischer.addStarsInMovie(jediMovie);
 			fischer.addPortrayals(leia);
 
 			Crew hammill = framedGraph.addVertex("Mark Hammill", Crew.class);
@@ -855,8 +916,9 @@ public class Graph2Demo implements Runnable {
 			padme.addSpawns(leia);
 			shmi.addSpawns(anakin);
 			jango.addSpawns(boba);
-
+			System.out.println("Commiting graph...");
 			graph.commit();
+			System.out.println("Committed!");
 
 		} catch (Throwable t) {
 			t.printStackTrace();
