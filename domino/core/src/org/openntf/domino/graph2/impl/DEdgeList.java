@@ -53,7 +53,7 @@ public class DEdgeList extends FastTable<Edge> {
 						break;
 					}
 				} else {
-					System.out.println("DEBUG: Found an Edge that's not a DEdge. It's a " + edge.getClass().getName());
+					//					System.out.println("DEBUG: Found an Edge that's not a DEdge. It's a " + edge.getClass().getName());
 					Vertex inVertex = edge.getVertex(Direction.IN);
 					if (fromId.equals(inVertex.getId())) {
 						if (toId.equals(edge.getVertex(Direction.OUT))) {
@@ -67,7 +67,7 @@ public class DEdgeList extends FastTable<Edge> {
 				}
 			}
 		} else {
-			System.out.println("DEBUG: No edges defined in EdgeList");
+			//			System.out.println("DEBUG: No edges defined in EdgeList");
 		}
 		return result;
 	}

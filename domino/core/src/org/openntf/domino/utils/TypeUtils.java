@@ -114,8 +114,23 @@ public enum TypeUtils {
 		}
 		Object result = itemValueToClass(doc.getFirstItem(itemName), T);
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
-					+ " in item " + itemName + " for document id " + noteid);
+			if (T.isPrimitive()) {
+				if (Integer.TYPE.equals(T) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(T) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(T) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(T) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
+						+ " in item " + itemName + " for document id " + noteid);
+			}
 		}
 		return (T) result;
 	}
@@ -331,7 +346,22 @@ public enum TypeUtils {
 		}
 
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			if (T.isPrimitive()) {
+				if (Integer.TYPE.equals(T) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(T) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(T) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(T) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			}
 		}
 		return (T) result;
 	}
@@ -499,7 +529,22 @@ public enum TypeUtils {
 		}
 
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			if (T.isPrimitive()) {
+				if (Integer.TYPE.equals(T) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(T) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(T) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(T) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+			}
 		}
 		return (T) result;
 	}

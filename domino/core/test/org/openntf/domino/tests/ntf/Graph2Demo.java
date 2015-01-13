@@ -1,5 +1,8 @@
 package org.openntf.domino.tests.ntf;
 
+import java.util.Iterator;
+
+import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
@@ -315,10 +318,29 @@ public class Graph2Demo implements Runnable {
 
 	@Override
 	public void run() {
+		resetDbs();
 		System.out.println("Starting run...");
 		run1();
 		//		run2();
 		run3();
+	}
+
+	public void resetDbs() {
+		System.out.println("Resetting test databases");
+		Session session = Factory.getSession(SessionType.NATIVE);
+		Database crewDb = session.getDatabase(crewId);
+		crewDb.getAllDocuments().removeAll(true);
+
+		Database movieDb = session.getDatabase(movieId);
+		movieDb.getAllDocuments().removeAll(true);
+		Database characterDb = session.getDatabase(characterId);
+		characterDb.getAllDocuments().removeAll(true);
+		Database edgeDb = session.getDatabase(edgeId);
+		edgeDb.getAllDocuments().removeAll(true);
+		Database usersDb = session.getDatabase(usersId);
+		usersDb.getAllDocuments().removeAll(true);
+		session.recycle();
+		System.gc();
 	}
 
 	public void run3() {
@@ -378,8 +400,13 @@ public class Graph2Demo implements Runnable {
 			for (Starring starring : starrings) {
 				starringCount++;
 				Crew crew = starring.getStar();
-				Character character = crew.getPortraysCharacters().iterator().next();
-				System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " (" + crew.asVertex().getId() + ")");
+				}
 			}
 			if (starringCount == 0) {
 				System.out.println("Starring was empty for " + newhopeMovie.getTitle() + ". Trying inversion...");
@@ -388,8 +415,13 @@ public class Graph2Demo implements Runnable {
 				for (Starring starring : starrings) {
 					starringCount++;
 					Crew crew = starring.getStar();
-					Character character = crew.getPortraysCharacters().iterator().next();
-					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+					Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+					if (chars.hasNext()) {
+						Character character = chars.next();
+						System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+					} else {
+						System.out.println(crew.getFirstName() + " " + crew.getLastName() + " (" + crew.asVertex().getId() + ")");
+					}
 				}
 			}
 
@@ -398,8 +430,13 @@ public class Graph2Demo implements Runnable {
 			starrings = empireMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
-				Character character = crew.getPortraysCharacters().iterator().next();
-				System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
 			}
 
 			System.out.println("***************************");
@@ -407,8 +444,13 @@ public class Graph2Demo implements Runnable {
 			starrings = jediMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
-				Character character = crew.getPortraysCharacters().iterator().next();
-				System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
 			}
 
 		} catch (Throwable t) {

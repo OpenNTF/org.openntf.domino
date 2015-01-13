@@ -195,25 +195,25 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public Edge findInEdge(final Vertex otherVertex, final String label) {
-		System.out.println("DEBUG: Attempting to find IN edge of label " + label + " from " + getId() + " to " + otherVertex.getId());
+		//		System.out.println("DEBUG: Attempting to find IN edge of label " + label + " from " + getId() + " to " + otherVertex.getId());
 		DEdgeList edgeList = getInEdgeCache(label);
 		Edge result = edgeList.findEdge(otherVertex);
-		if (result != null) {
-			//			System.out.println("DEBUG: Found IN edge: " + result.getId());
-		} else {
-			System.out.println("DEBUG: returning null");
-			System.out.println("DEBUG: Checking out edges just in case...");
-			result = findOutEdge(otherVertex, label);
-			if (result != null) {
-				System.out.println("DEBUG: AH! Found an edge in the opposite direction. You might have reversed them.");
-				Throwable t = new Throwable();
-				t.printStackTrace();
-			} else {
-				System.out.println("DEBUG: Still no, sorry");
-			}
-			//			Throwable t = new Throwable();
-			//			t.printStackTrace();
-		}
+		//		if (result != null) {
+		//						System.out.println("DEBUG: Found IN edge: " + result.getId());
+		//		} else {
+		//			System.out.println("DEBUG: returning null");
+		//			System.out.println("DEBUG: Checking out edges just in case...");
+		//			result = findOutEdge(otherVertex, label);
+		//			if (result != null) {
+		//				System.out.println("DEBUG: AH! Found an edge in the opposite direction. You might have reversed them.");
+		//				Throwable t = new Throwable();
+		//				t.printStackTrace();
+		//			} else {
+		//				System.out.println("DEBUG: Still no, sorry");
+		//			}
+		//			//			Throwable t = new Throwable();
+		//			//			t.printStackTrace();
+		//		}
 		return result;
 	}
 
@@ -360,6 +360,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
 					byte[] bytes = ((Document) delegate).readBinary(key);
+					//					System.out.println("TEMP DEBUG: read Document-based NoteList binary for " + label + " and found " + bytes.length
+					//							+ " bytes");
 					edgeIds.loadByteArray(bytes);
 				} else {
 					Object o = getProperty(key, java.util.Collection.class);
