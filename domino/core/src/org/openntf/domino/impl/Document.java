@@ -89,7 +89,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
  * The Class Document.
  */
 public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-		org.openntf.domino.Document {
+org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -106,6 +106,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	private boolean isDirty_ = false;
 	private String noteid_;
 	private String unid_;
+	private long threadid_;
 	private boolean isNew_;
 
 	private boolean isQueued_ = false;
@@ -196,6 +197,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	protected Document(final lotus.domino.Document delegate, final Database parent) {
 		super(delegate, parent, NOTES_NOTE);
 		initialize(delegate);
+		threadid_ = System.identityHashCode(Thread.currentThread());
 	}
 
 	protected Document(final Database parent, final Object metaData) {
@@ -242,8 +244,9 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
 			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());
 			// lastAccessed_ = DominoUtils.toJavaDateSafe(delegate.getLastAccessed());
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
+		} catch (NotesException ne) {
+			log_.log(Level.WARNING, "Exception occured when initializing a Document wrapper: " + ne.text);
+			DominoUtils.handleException(ne, this);
 		}
 	}
 
@@ -3314,27 +3317,31 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						org.openntf.domino.Document stashDoc = copyToDatabase(getParentDatabase());
 						setDelegate(del, true);
-						for (Item item : stashDoc.getItems()) {
-							lotus.domino.Item delItem = del.getFirstItem(item.getName());
-							if (delItem != null) {
-								lotus.domino.DateTime delDt = delItem.getLastModified();
-								java.util.Date delDate = delDt.toJavaDate();
-								delDt.recycle();
-								Date modDate = item.getLastModifiedDate();
-								if (modDate.after(delDate)) {
+						try {
+							for (Item item : stashDoc.getItems()) {
+								lotus.domino.Item delItem = del.getFirstItem(item.getName());
+								if (delItem != null) {
+									lotus.domino.DateTime delDt = delItem.getLastModified();
+									java.util.Date delDate = delDt.toJavaDate();
+									delDt.recycle();
+									Date modDate = item.getLastModifiedDate();
+									if (modDate.after(delDate)) {
+										item.copyItemToDocument(del);
+									}
+								} else {
 									item.copyItemToDocument(del);
 								}
-							} else {
-								item.copyItemToDocument(del);
+								// TODO NTF properties?
 							}
-							// TODO NTF properties?
+						} catch (Throwable t) {
+							DominoUtils.handleException(t);
 						}
 					} else {
 						log_.log(Level.WARNING, "Resetting delegate to existing document for id " + unid);
@@ -3605,13 +3612,13 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3620,9 +3627,10 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				DominoUtils.handleException(e);
 			}
 		} else {
+			long curThreadid = System.identityHashCode(Thread.currentThread());
 			if (log_.isLoggable(Level.SEVERE)) {
-				log_.log(Level.SEVERE,
-						"Document doesn't have noteid or unid value. Something went terribly wrong. Nothing good can come of this...");
+				log_.log(Level.SEVERE, "Document doesn't have noteid or unid value so we cannot resurrect it. It was created on thread "
+						+ threadid_ + " and we are attempting to resurrect it on thread " + curThreadid);
 			}
 		}
 	}

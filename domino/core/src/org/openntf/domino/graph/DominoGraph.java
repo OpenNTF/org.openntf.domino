@@ -629,9 +629,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public void removeEdge(final Edge edge) {
 		startTransaction(edge);
 		Vertex in = edge.getVertex(Direction.IN);
-		((DominoVertex) in).removeEdge(edge);
+		if (in != null) {
+			((DominoVertex) in).removeEdge(edge);
+		}
 		Vertex out = edge.getVertex(Direction.OUT);
-		((DominoVertex) out).removeEdge(edge);
+		if (out != null) {
+			((DominoVertex) out).removeEdge(edge);
+		}
 		removeCache(edge);
 		((DominoEdge) edge)._remove();
 	}
@@ -641,7 +645,11 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		startTransaction(vertex);
 		DominoVertex dv = (DominoVertex) vertex;
 		for (Edge edge : dv.getEdges(Direction.BOTH)) {
-			removeEdge(edge);
+			try {
+				removeEdge(edge);
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+			}
 		}
 		removeCache(vertex);
 		dv._remove();
