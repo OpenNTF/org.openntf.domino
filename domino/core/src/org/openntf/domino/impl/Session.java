@@ -398,7 +398,10 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public Name createName(final String name, final String lang) {
 		Name ret = getFactory().create(Name.SCHEMA, this, null);
-		ret.parse(name, lang);
+		//		ret.parse(name, lang);
+		((org.openntf.domino.impl.Name) ret).setSource(name);
+		if (lang != null)
+			((org.openntf.domino.impl.Name) ret).setLang(lang);
 		return ret;
 	}
 
@@ -409,9 +412,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 */
 	@Override
 	public org.openntf.domino.Name createName(final String name) {
-		Name ret = getFactory().create(Name.SCHEMA, this, null);
-		ret.parse(name);
-		return ret;
+		return createName(name, null);
 	}
 
 	/*

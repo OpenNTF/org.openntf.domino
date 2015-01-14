@@ -43,6 +43,9 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
+	private String source_;
+	private String lang_;
+	private Boolean isParsed_ = false;
 
 	/*
 	 * Deprecated, but needed for Externalization
@@ -278,6 +281,18 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 		return (null == this._namePartsMap) ? false : this.getNamePartsMap().isHasRFC82xContent();
 	}
 
+	protected void setSource(final String sourceName) {
+		this.source_ = sourceName;
+	}
+
+	public String getSource() {
+		return source_;
+	}
+
+	protected void setLang(final String lang) {
+		this.lang_ = lang;
+	}
+
 	/**
 	 * Sets the Name for the object.
 	 * 
@@ -391,7 +406,7 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 			if (null == key) {
 				throw new IllegalArgumentException("NamePart is null");
 			}
-
+			//			parse();
 			String result = this.getNamePartsMap().get(key);
 			return (null == result) ? "" : result;
 
@@ -954,16 +969,27 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 
 	@Override
 	public void parse(final String name, final String lang) {
-		this.clear();
-		this.setNamePartsMap(new NamePartsMap(name));
+		if (_namePartsMap == null) {
+			this.setNamePartsMap(new NamePartsMap(name));
+		} else {
+			this.clear();
+			_namePartsMap.setName(name);
+		}
 		if (!Strings.isBlankString(lang)) {
 			this.getNamePartsMap().put(NamePartsMap.Key.Language, lang);
 		}
+		isParsed_ = true;
 	}
 
 	@Override
 	public void parse(final String name) {
 		parse(name, null);
+	}
+
+	protected void parse() {
+		if (!isParsed_) {
+			parse(source_, lang_);
+		}
 	}
 
 }
