@@ -17,7 +17,6 @@ package org.openntf.domino;
 
 import java.io.Externalizable;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Incomplete;
@@ -30,7 +29,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface Database.
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-		Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
+Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 
 	/**
 	 * Enum to allow easy access to Schema
@@ -639,9 +638,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public int compactWithOptions(final String options);
 
 	/*
-		 * 
-		 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
-		 */
+	 * 
+	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public Database createCopy(final String server, final String dbFile);
 
@@ -651,6 +650,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String, int)
 	 */
 	@Override
+	@Deprecated
 	public Database createCopy(final String server, final String dbFile, final int maxSize);
 
 	/*
@@ -660,16 +660,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public Document createDocument();
-
-	/**
-	 * Creates the document.
-	 * 
-	 * @param itemValues
-	 *            the item values
-	 * @return the document
-	 */
-	@Override
-	public Document createDocument(final Map<String, Object> itemValues);
 
 	/**
 	 * Creates the document.
