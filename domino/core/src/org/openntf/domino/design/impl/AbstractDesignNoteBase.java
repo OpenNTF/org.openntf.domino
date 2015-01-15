@@ -73,6 +73,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.DesignBase#getDxlString()
 	 */
+	@Override
 	public String getDxlString() {
 		try {
 			return getDxl().getXml();
@@ -132,6 +133,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 		return getFlags().contains(DESIGN_FLAG_PROPAGATE_NOCHANGE);
 	}
 
+	@Override
 	public void reattach(final Database database) {
 		database_ = database;
 	}
@@ -228,6 +230,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	 * 
 	 * @see org.openntf.domino.design.DesignBaseNamed#getAlias()
 	 */
+	@Override
 	public String getAlias() {
 		String[] aliases = getAliases().toArray(new String[] {});
 		return StringUtil.concatStrings(aliases, '|', false);
@@ -518,5 +521,52 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 			titleNode.setAttribute("name", "$TITLE");
 		}
 		return titleNode;
+	}
+
+	protected void setItemValue(final String itemName, final Object value) {
+		XMLNode node = getDxl().selectSingleNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		if (node == null) {
+			node = getDxl().selectSingleNode("/*").addChildElement("item");
+			node.setAttribute("name", itemName);
+		} else {
+			node.removeChildren();
+		}
+
+		if (value instanceof Iterable) {
+			Object first = ((Iterable<?>) value).iterator().next();
+			XMLNode list = node.addChildElement(first instanceof Number ? "numberlist" : "textlist");
+
+			for (Object val : (Iterable<?>) value) {
+				appendItemValueNode(list, val);
+			}
+		} else {
+			appendItemValueNode(node, value);
+		}
+	}
+
+	private void appendItemValueNode(final XMLNode node, final Object value) {
+		XMLNode child;
+		if (value instanceof Number) {
+			child = node.addChildElement("number");
+		} else {
+			child = node.addChildElement("text");
+		}
+		child.setText(String.valueOf(value));
+	}
+
+	protected List<Object> getItemValue(final String itemName) {
+		List<Object> result = new ArrayList<Object>();
+		XMLNode node = getDxl().selectSingleNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		if (node != null) {
+			List<XMLNode> nodes = node.selectNodes(".//number | .//text");
+			for (XMLNode child : nodes) {
+				if (child.getNodeName().equals("number")) {
+					result.add(Double.parseDouble(child.getText()));
+				} else {
+					result.add(child.getText());
+				}
+			}
+		}
+		return result;
 	}
 }

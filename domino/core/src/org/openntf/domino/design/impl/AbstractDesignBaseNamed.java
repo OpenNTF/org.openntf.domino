@@ -27,6 +27,8 @@ import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * @author jgallagher
  * 
@@ -113,6 +115,23 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	@Override
 	public void setName(final String name) {
 		getDocumentElement().setAttribute("name", name);
+	}
+
+	@Override
+	public String getDesignTemplateName() {
+		List<Object> templateNameValue = getItemValue("$Class");
+		if (!templateNameValue.isEmpty()) {
+			Object val = templateNameValue.get(0);
+			if (val != null && StringUtil.isNotEmpty(String.valueOf(val))) {
+				return String.valueOf(val);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setDesignTemplateName(final String designTemplateName) {
+		setItemValue("$Class", designTemplateName);
 	}
 
 	protected void setItemValue(final String itemName, final Object value) {

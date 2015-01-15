@@ -57,4 +57,16 @@ public interface DesignBaseNamed extends DesignBase {
 	 *            The new aliases for the design element; any |-delimited values will be exploded into the final list
 	 */
 	public void setAliases(final Iterable<String> aliases);
+
+	/**
+	 * @return The design-element-specific template name.
+	 */
+	public String getDesignTemplateName();
+
+	/**
+	 * 
+	 * @param designTemplateName
+	 *            The new design template to assign to this specific design element.
+	 */
+	public void setDesignTemplateName(String designTemplateName);
 }
