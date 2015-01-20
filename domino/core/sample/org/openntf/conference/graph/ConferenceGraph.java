@@ -1,6 +1,5 @@
 package org.openntf.conference.graph;
 
-import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.builtin.social.Comment;
 import org.openntf.domino.graph2.builtin.social.Likes;
 import org.openntf.domino.graph2.builtin.social.Mentions;
@@ -63,7 +62,7 @@ public class ConferenceGraph {
 		socialStore.addType(Rates.class);
 		socialStore.addType(Mentions.class);
 		DElementStore defaultStore = new DElementStore();
-		defaultStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(DEFAULT_PATH));
+		defaultStore.setStoreKey(DEFAULT_PATH);
 
 		DConfiguration config = new DConfiguration();
 		config.addElementStore(attendeeStore);
