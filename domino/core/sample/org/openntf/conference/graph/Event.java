@@ -5,6 +5,7 @@ import org.openntf.conference.graph.Attendee.PlansToAttend;
 import org.openntf.conference.graph.Invite.InvitationFor;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
+import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.social.Commentable;
 import org.openntf.domino.graph2.builtin.social.Likeable;
@@ -33,16 +34,22 @@ public interface Event extends Commentable, Likeable, Rateable {
 		DRAFT, PROPOSED, CONFIRMED, CANCELLED;
 	}
 
+	@TypedProperty("Title")
 	public String getTitle();
 
+	@TypedProperty("Title")
 	public void setTitle(String title);
 
+	@TypedProperty("Description")
 	public String getDescription();
 
+	@TypedProperty("Description")
 	public void setDescription(String description);
 
+	@TypedProperty("Status")
 	public Status getStatus();
 
+	@TypedProperty("Status")
 	public void setStatus(Status status);
 
 	@AdjacencyUnique(label = PlansToAttend.LABEL, direction = Direction.IN)

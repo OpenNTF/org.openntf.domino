@@ -206,9 +206,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			setStoreKey(NoteCoordinate.Utils.getLongFromReplid(storeKey));
 		} else {
 			if (storeKey.toString().contains("!!")) {
-				//TODO load from APIPath
+				provisionalDelegateKey_ = storeKey;
 			} else {
-				//TODO load from local path
+				provisionalDelegateKey_ = storeKey;
 			}
 		}
 	}
@@ -225,9 +225,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(storeKey));
 		} else {
 			if (storeKey.toString().contains("!!")) {
-				//TODO load from APIPath
+				this.provisionalProxyDelegateKey_ = storeKey;
 			} else {
-				//TODO load from local path
+				this.provisionalProxyDelegateKey_ = storeKey;
 			}
 		}
 	}
