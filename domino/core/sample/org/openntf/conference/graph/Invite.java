@@ -7,34 +7,58 @@ import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
 
 public interface Invite extends DVertexFrame {
 	public static interface Invites extends DEdgeFrame {
 		public static final String LABEL = "Invites";
 
+		public static enum Status {
+			DRAFT, SENT, WITHDRAWN;
+		}
+
+		@InVertex
 		public Attendee getInviter();
 
+		@OutVertex
 		public Invite getInvite();
+
+		@TypedProperty("Status")
+		public Status getStatus();
+
+		@TypedProperty("Status")
+		public void setStatus(Status status);
 	}
 
 	public static interface InvitedTo extends DEdgeFrame {
 		public static final String LABEL = "InvitedTo";
 
+		public static enum Status {
+			UNREAD, OPEN, TENTATIVE, COMMITTED, DECLINED;
+		}
+
+		@OutVertex
 		public Attendee getInvitee();
 
+		@InVertex
 		public Invite getInvite();
+
+		@TypedProperty("Status")
+		public Status getStatus();
+
+		@TypedProperty("Status")
+		public void setStatus(Status status);
 	}
 
 	public static interface InvitationFor extends DEdgeFrame {
 		public static final String LABEL = "InvitationFor";
 
+		@InVertex
 		public Event getEvent();
 
+		@OutVertex
 		public Invite getInvite();
-	}
-
-	public static enum Status {
-		DRAFT, UNREAD, OPEN, TENTATIVE, COMMITTED, DECLINED;
 	}
 
 	@TypedProperty("Message")
@@ -42,12 +66,6 @@ public interface Invite extends DVertexFrame {
 
 	@TypedProperty("Message")
 	public void setMessage(String message);
-
-	@TypedProperty("Status")
-	public Status getStatus();
-
-	@TypedProperty("Status")
-	public void setStatus(Status status);
 
 	@AdjacencyUnique(label = Invites.LABEL, direction = Direction.IN)
 	public Attendee getInvitingAttendee();

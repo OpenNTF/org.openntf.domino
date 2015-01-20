@@ -10,6 +10,8 @@ import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.social.Socializer;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
 
 public interface Attendee extends Socializer {
 
@@ -20,8 +22,10 @@ public interface Attendee extends Socializer {
 			CANCELLED, FULFILLED, UNDETERMINED
 		}
 
+		@OutVertex
 		public Attendee getAttendee();
 
+		@InVertex
 		public Event getEvent();
 
 		@TypedProperty("Status")
@@ -34,16 +38,20 @@ public interface Attendee extends Socializer {
 	public static interface Attending extends DEdgeFrame {
 		public static final String LABEL = "Attending";
 
+		@OutVertex
 		public Attendee getAttendee();
 
+		@InVertex
 		public Event getEvent();
 	}
 
 	public static interface MemberOf extends DEdgeFrame {
 		public static final String LABEL = "MemberOf";
 
+		@InVertex
 		public Group getGroup();
 
+		@OutVertex
 		public Attendee getAttendee();
 	}
 

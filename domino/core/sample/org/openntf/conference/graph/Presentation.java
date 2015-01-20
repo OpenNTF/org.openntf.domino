@@ -6,14 +6,18 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
 
 public interface Presentation extends Event {
 
 	public static interface PresentedBy extends DEdgeFrame {
 		public static final String LABEL = "PresentedBy";
 
+		@OutVertex
 		public Attendee getPresenter();
 
+		@InVertex
 		public Presentation getSession();
 	}
 

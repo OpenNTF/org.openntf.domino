@@ -12,21 +12,27 @@ import org.openntf.domino.graph2.builtin.social.Likeable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
 
 public interface Event extends Commentable, Likeable, Rateable {
 	public static interface HappeningOn extends DEdgeFrame {
 		public static final String LABEL = "HappeningOn";
 
+		@InVertex
 		public TimeSlot getTimeslot();
 
+		@OutVertex
 		public Event getEvent();
 	}
 
 	public static interface HappeningAt extends DEdgeFrame {
 		public static final String LABEL = "HappeningAt";
 
+		@InVertex
 		public Location getLocation();
 
+		@OutVertex
 		public Event getEvent();
 	}
 
