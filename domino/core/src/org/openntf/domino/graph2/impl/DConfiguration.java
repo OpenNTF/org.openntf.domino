@@ -12,6 +12,8 @@ import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
 
 import com.tinkerpop.frames.FramedGraphConfiguration;
+import com.tinkerpop.frames.modules.Module;
+import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
 public class DConfiguration extends FramedGraphConfiguration implements org.openntf.domino.graph2.DConfiguration {
 	@SuppressWarnings("unused")
@@ -20,6 +22,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	private Map<Long, DElementStore> elementStoreMap_;
 	private Map<Class<?>, Long> typeMap_;
 	private transient DGraph graph_;
+	private transient Module module_;
 
 	public DConfiguration() {
 		// TODO Auto-generated constructor stub
@@ -80,6 +83,24 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				getTypeMap().put(type, key);
 			}
 		}
+	}
+
+	private TypedGraphModuleBuilder getTypedBuilder() {
+		TypedGraphModuleBuilder typedBuilder = new TypedGraphModuleBuilder();
+		for (DElementStore store : getElementStores().values()) {
+			for (Class<?> klazz : store.getTypes()) {
+				typedBuilder.withClass(klazz);
+			}
+		}
+		return typedBuilder;
+	}
+
+	public Module getModule() {
+		if (module_ == null) {
+			TypedGraphModuleBuilder builder = getTypedBuilder();
+			module_ = builder.build();
+		}
+		return module_;
 	}
 
 	@Override

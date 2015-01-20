@@ -7,14 +7,18 @@ import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
 
 public interface Track extends DVertexFrame {
 	public static interface Includes extends DEdgeFrame {
 		public static final String LABEL = "Includes";
 
+		@InVertex
 		public Track getTrack();
 
-		public Session getSession();
+		@OutVertex
+		public Presentation getSession();
 	}
 
 	@TypedProperty("Title")
@@ -30,13 +34,13 @@ public interface Track extends DVertexFrame {
 	public void setDescription(String description);
 
 	@AdjacencyUnique(label = Includes.LABEL, direction = Direction.IN)
-	public Iterable<Session> getIncludesSessions();
+	public Iterable<Presentation> getIncludesSessions();
 
 	@AdjacencyUnique(label = Includes.LABEL, direction = Direction.IN)
-	public Includes addIncludesSession(Session session);
+	public Includes addIncludesSession(Presentation session);
 
 	@AdjacencyUnique(label = Includes.LABEL, direction = Direction.IN)
-	public void removeIncludesSession(Session session);
+	public void removeIncludesSession(Presentation session);
 
 	@IncidenceUnique(label = Includes.LABEL, direction = Direction.IN)
 	public Iterable<Includes> getIncludes();
