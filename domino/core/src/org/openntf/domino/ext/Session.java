@@ -343,6 +343,7 @@ public interface Session {
 	/**
 	 * Gets a database by:
 	 * <ul>
+	 * <li>Its {@link org.openntf.domino.Database#getFilePath()} property</li>
 	 * <li>Its {@link org.openntf.domino.Database#getApiPath()} property (serverName!!filePath)</li>
 	 * <li>Its {@link org.openntf.domino.Database#getReplicaID()} property</li>
 	 * <li>Its {@link org.openntf.domino.Database#getMetaReplicaId()} property</li>
