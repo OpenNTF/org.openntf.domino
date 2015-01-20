@@ -46,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
+import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Item;
@@ -407,6 +408,57 @@ public enum DominoUtils {
 
 	public static boolean isHierarchicalName(final CharSequence name) {
 		return (Strings.isBlankString(name.toString())) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
+	}
+
+	public static void parseNamesPartMap(final CharSequence name, final NamePartsMap map) {
+		if (isHierarchicalName(name)) {
+			Matcher m = Names.CN_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					map.put(NamePartsMap.Key.Common, name.subSequence(start, end).toString());
+				} else {
+					map.put(NamePartsMap.Key.Common, name.toString());
+				}
+			}
+			m = Names.O_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					map.put(NamePartsMap.Key.Organization, name.subSequence(start, end).toString());
+				} else {
+					map.put(NamePartsMap.Key.Organization, name.toString());
+				}
+			}
+			m = Names.C_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					map.put(NamePartsMap.Key.Country, name.subSequence(start, end).toString());
+				} else {
+					map.put(NamePartsMap.Key.Country, name.toString());
+				}
+			}
+			m = Names.OU_MATCH.matcher(name);
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					if (i == 0)
+						map.put(NamePartsMap.Key.OrgUnit1, name.subSequence(start, end).toString());
+					if (i == 1)
+						map.put(NamePartsMap.Key.OrgUnit2, name.subSequence(start, end).toString());
+					if (i == 2)
+						map.put(NamePartsMap.Key.OrgUnit3, name.subSequence(start, end).toString());
+					if (i == 3)
+						map.put(NamePartsMap.Key.OrgUnit4, name.subSequence(start, end).toString());
+				}
+			}
+		}
 	}
 
 	public static String toAbbreviatedName(final CharSequence name) {

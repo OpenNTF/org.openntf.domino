@@ -24,4 +24,23 @@ public interface Commentable extends DVertexFrame {
 
 	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
 	public void removeComment(Comment comment);
+
+	@IncidenceUnique(label = Mentions.LABEL_MENTIONS, direction = Direction.IN)
+	public Iterable<Mentions> getMentions();
+
+	@IncidenceUnique(label = Mentions.LABEL_MENTIONS, direction = Direction.IN)
+	public Mentions addMentions(Socializer mentioned);
+
+	@IncidenceUnique(label = Mentions.LABEL_MENTIONS, direction = Direction.IN)
+	public void removeMentions(Socializer mentioned);
+
+	@AdjacencyUnique(label = Mentions.LABEL_MENTIONS, direction = Direction.IN)
+	public Iterable<Socializer> getMentioned();
+
+	@AdjacencyUnique(label = Mentions.LABEL_MENTIONS, direction = Direction.IN)
+	public Socializer addMentioned(Socializer mentioned);
+
+	@AdjacencyUnique(label = Mentions.LABEL_MENTIONS, direction = Direction.IN)
+	public void removeMentioned(Socializer mentioned);
+
 }

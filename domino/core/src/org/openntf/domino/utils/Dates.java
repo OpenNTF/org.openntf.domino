@@ -242,7 +242,7 @@ public enum Dates {
 	public static String getTimeCode() {
 		try {
 
-			//			Long ntime = Math.abs(System.currentTimeMillis()); // nanoseconds is too acurate
+			//			Long ntime = Math.abs(System.currentTimeMillis()); // nanoseconds is too accurate
 			//			if (ntime.equals(Long.MIN_VALUE)) {
 			//				ntime = Long.MAX_VALUE;
 			//			}

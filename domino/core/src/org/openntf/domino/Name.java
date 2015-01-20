@@ -99,6 +99,10 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 		 */
 		HIERARCHICAL(true),
 		/**
+		 * A canonical name
+		 */
+		CANONICAL(true),
+		/**
 		 * A RFC822 Name (Mail address)
 		 */
 		RFC822(false),
