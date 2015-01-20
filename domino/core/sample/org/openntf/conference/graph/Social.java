@@ -1,5 +1,7 @@
 package org.openntf.conference.graph;
 
 public interface Social extends Event {
-	//TODO Title
+	public static enum Features {
+		REFRESHMENTS, OPENBAR, MUSIC, CODING
+	}
 }
