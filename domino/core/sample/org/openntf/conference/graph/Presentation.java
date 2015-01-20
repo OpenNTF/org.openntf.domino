@@ -7,14 +7,14 @@ import org.openntf.domino.graph2.builtin.DEdgeFrame;
 
 import com.tinkerpop.blueprints.Direction;
 
-public interface Session extends Event {
+public interface Presentation extends Event {
 
 	public static interface PresentedBy extends DEdgeFrame {
 		public static final String LABEL = "PresentedBy";
 
 		public Attendee getPresenter();
 
-		public Session getSession();
+		public Presentation getSession();
 	}
 
 	@AdjacencyUnique(label = PresentedBy.LABEL, direction = Direction.IN)

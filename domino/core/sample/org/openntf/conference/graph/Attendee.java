@@ -2,7 +2,7 @@ package org.openntf.conference.graph;
 
 import org.openntf.conference.graph.Invite.InvitedTo;
 import org.openntf.conference.graph.Invite.Invites;
-import org.openntf.conference.graph.Session.PresentedBy;
+import org.openntf.conference.graph.Presentation.PresentedBy;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;

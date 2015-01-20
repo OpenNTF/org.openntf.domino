@@ -14,7 +14,7 @@ public interface Track extends DVertexFrame {
 
 		public Track getTrack();
 
-		public Session getSession();
+		public Presentation getSession();
 	}
 
 	@TypedProperty("Title")
@@ -30,13 +30,13 @@ public interface Track extends DVertexFrame {
 	public void setDescription(String description);
 
 	@AdjacencyUnique(label = Includes.LABEL, direction = Direction.IN)
-	public Iterable<Session> getIncludesSessions();
+	public Iterable<Presentation> getIncludesSessions();
 
 	@AdjacencyUnique(label = Includes.LABEL, direction = Direction.IN)
-	public Includes addIncludesSession(Session session);
+	public Includes addIncludesSession(Presentation session);
 
 	@AdjacencyUnique(label = Includes.LABEL, direction = Direction.IN)
-	public void removeIncludesSession(Session session);
+	public void removeIncludesSession(Presentation session);
 
 	@IncidenceUnique(label = Includes.LABEL, direction = Direction.IN)
 	public Iterable<Includes> getIncludes();

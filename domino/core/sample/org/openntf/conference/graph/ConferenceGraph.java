@@ -36,7 +36,7 @@ public class ConferenceGraph {
 		DElementStore eventStore = new DElementStore();
 		eventStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(EVENT_PATH));
 		eventStore.addType(Event.class);
-		eventStore.addType(Session.class);
+		eventStore.addType(Presentation.class);
 		eventStore.addType(Social.class);
 		eventStore.addType(Meeting.class);
 		eventStore.addType(Track.class);
@@ -68,7 +68,7 @@ public class ConferenceGraph {
 		typedBuilder.withClass(Attendee.class);
 		typedBuilder.withClass(Group.class);
 		typedBuilder.withClass(Event.class);
-		typedBuilder.withClass(Session.class);
+		typedBuilder.withClass(Presentation.class);
 		typedBuilder.withClass(Social.class);
 		typedBuilder.withClass(Meeting.class);
 		typedBuilder.withClass(Track.class);
