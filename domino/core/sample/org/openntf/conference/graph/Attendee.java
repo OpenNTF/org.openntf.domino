@@ -12,7 +12,9 @@ import org.openntf.domino.graph2.builtin.social.Socializer;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Attendee")
 public interface Attendee extends Socializer {
 
 	public static interface PlansToAttend extends DEdgeFrame {

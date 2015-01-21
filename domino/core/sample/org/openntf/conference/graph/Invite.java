@@ -9,7 +9,9 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Invite")
 public interface Invite extends DVertexFrame {
 	public static interface Invites extends DEdgeFrame {
 		public static final String LABEL = "Invites";

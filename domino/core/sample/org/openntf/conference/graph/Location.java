@@ -11,7 +11,9 @@ import org.openntf.domino.graph2.builtin.social.Likeable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Location")
 public interface Location extends Commentable, Likeable, Rateable {
 	public static enum Features {
 		RESTAURANT, REFRESHMENTS, BAR, OUTDOOR;

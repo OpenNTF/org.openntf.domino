@@ -9,7 +9,9 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Track")
 public interface Track extends DVertexFrame {
 	public static interface Includes extends DEdgeFrame {
 		public static final String LABEL = "Includes";
