@@ -66,11 +66,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 	@Override
 	public void addElementStore(final DElementStore store) {
+		store.setConfiguration(this);
 		Long key = store.getStoreKey();
 		DElementStore schk = getElementStores().get(key);
 		if (schk == null) {
 			getElementStores().put(key, store);
-			store.setConfiguration(this);
 		}
 		List<Class<?>> types = store.getTypes();
 		for (Class<?> type : types) {
@@ -95,6 +95,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		return typedBuilder;
 	}
 
+	@Override
 	public Module getModule() {
 		if (module_ == null) {
 			TypedGraphModuleBuilder builder = getTypedBuilder();

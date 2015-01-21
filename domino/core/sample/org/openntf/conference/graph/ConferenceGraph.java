@@ -65,6 +65,7 @@ public class ConferenceGraph {
 		defaultStore.setStoreKey(DEFAULT_PATH);
 
 		DConfiguration config = new DConfiguration();
+		DGraph graph = new DGraph(config);
 		config.addElementStore(attendeeStore);
 		config.addElementStore(groupStore);
 		config.addElementStore(eventStore);
@@ -73,7 +74,6 @@ public class ConferenceGraph {
 		config.addElementStore(locationStore);
 		config.addElementStore(defaultStore);
 		config.setDefaultElementStore(defaultStore.getStoreKey());
-		DGraph graph = new DGraph(config);
 
 		JavaHandlerModule jhm = new JavaHandlerModule();
 		Module module = config.getModule();
