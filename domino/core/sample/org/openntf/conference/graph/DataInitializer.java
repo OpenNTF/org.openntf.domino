@@ -1,8 +1,11 @@
 package org.openntf.conference.graph;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
+import org.openntf.conference.graph.Group.Type;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
@@ -32,15 +35,20 @@ public class DataInitializer implements Runnable {
 
 			// Get / create databases
 			Session s = Factory.getSession(SessionType.NATIVE);
-			//			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
+			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
+			attendees.getAllDocuments().removeAll(true);
 			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
 			events.getAllDocuments().removeAll(true);
-			//			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
-			//			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
+			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
+			groups.getAllDocuments().removeAll(true);
+			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
+			invites.getAllDocuments().removeAll(true);
 			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
 			location.getAllDocuments().removeAll(true);
-			//			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
-			//			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
+			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
+			times.getAllDocuments().removeAll(true);
+			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
+			defaults.getAllDocuments().removeAll(true);
 
 			// Initialize the graph
 			ConferenceGraph graph = new ConferenceGraph();
@@ -97,15 +105,15 @@ public class DataInitializer implements Runnable {
 						System.out.println("Retrieved track - " + trackKey);
 					}
 
-					//					Date dt = doc.getItemValue("CalendarDateTime", Date.class);
-					//					Integer duration = doc.getItemValue("Duration", Integer.class);
-					//
-					//					TimeSlot ts = framedGraph.addVertex(DATE_FORMAT.format(dt) + "~" + String.valueOf(duration), TimeSlot.class);
-					//					ts.setStartTime(dt);
-					//					Calendar cal = Calendar.getInstance();
-					//					cal.setTime(dt);
-					//					cal.add(Calendar.MINUTE, duration);
-					//					ts.setEndTime(cal.getTime());
+					Date dt = doc.getItemValue("CalendarDateTime", Date.class);
+					Integer duration = doc.getItemValue("Duration", Integer.class);
+
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(dt);
+					cal.add(Calendar.MINUTE, duration);
+					TimeSlot ts = framedGraph.addVertex(DATE_FORMAT.format(dt) + "~" + DATE_FORMAT.format(cal.getTime()), TimeSlot.class);
+					ts.setStartTime(dt);
+					ts.setEndTime(cal.getTime());
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later
@@ -118,38 +126,38 @@ public class DataInitializer implements Runnable {
 					sess.addLocation(loc);
 					track.addIncludesSession(sess);
 
-					//ts.addEvent(sess);
+					ts.addEvent(sess);
 
-					//					for (int i = 1; i < 6; i++) {
-					//						String speaker = doc.getItemValueString("Speaker" + String.valueOf(i));
-					//						if ("".equals(speaker)) {
-					//							break;
-					//						}
-					//						String speakerName = speaker;
-					//						String organization = "";
-					//						if (speaker.contains(" - ")) {
-					//							int splitPos = speaker.indexOf(" - ");
-					//							speakerName = speaker.substring(0, splitPos);
-					//							organization = speaker.substring(splitPos + 3, speaker.length());
-					//						}
-					//						Attendee att = framedGraph.addVertex(null, Attendee.class);
-					//						int sep = speakerName.indexOf(" ");
-					//						String firstName = speakerName.substring(0, sep);
-					//						String lastName = speakerName.substring(sep + 1, speakerName.length());
-					//						att.setFirstName(firstName);
-					//						att.setLastName(lastName);
-					//
-					//						if (!"".equals(organization)) {
-					//							Group org = framedGraph.addVertex(organization, Group.class);
-					//							org.setName(organization);
-					//							org.setType(Type.COMPANY);
-					//							org.addMember(att);
-					//						}
-					//
-					//						sess.addPresentedBy(att);
-					//						sess.addAttendingAttendee(att);
-					//						sess.addPlansToAttend(att);
-					//					}
+					for (int i = 1; i < 6; i++) {
+						String speaker = doc.getItemValueString("Speaker" + String.valueOf(i));
+						if ("".equals(speaker)) {
+							break;
+						}
+						String speakerName = speaker;
+						String organization = "";
+						if (speaker.contains(" - ")) {
+							int splitPos = speaker.indexOf(" - ");
+							speakerName = speaker.substring(0, splitPos);
+							organization = speaker.substring(splitPos + 3, speaker.length());
+						}
+						Attendee att = framedGraph.addVertex(null, Attendee.class);
+						int sep = speakerName.indexOf(" ");
+						String firstName = speakerName.substring(0, sep);
+						String lastName = speakerName.substring(sep + 1, speakerName.length());
+						att.setFirstName(firstName);
+						att.setLastName(lastName);
+
+						if (!"".equals(organization)) {
+							Group org = framedGraph.addVertex(organization, Group.class);
+							org.setName(organization);
+							org.setType(Type.COMPANY);
+							org.addMember(att);
+						}
+
+						sess.addPresentedBy(att);
+						sess.addAttendingAttendee(att);
+						sess.addPlansToAttend(att);
+					}
 
 				}
 
