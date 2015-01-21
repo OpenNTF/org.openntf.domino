@@ -35,4 +35,19 @@ public class ACLNote extends AbstractDesignBase implements org.openntf.domino.de
 	protected ACLNote(final Document document) {
 		super(document);
 	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "AppProperties";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return "";//throw new UnsupportedOperationException("IconNote + ACL is merged in database.properties");
+	}
+
+	@Override
+	public String getName() {
+		return "acl.properties";
+	}
 }

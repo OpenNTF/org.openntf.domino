@@ -27,7 +27,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Session;
-import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -38,7 +37,7 @@ import org.xml.sax.SAXException;
  * 
  */
 @SuppressWarnings("serial")
-public abstract class AbstractDesignBase implements DesignBase {
+public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
@@ -338,4 +337,5 @@ public abstract class AbstractDesignBase implements DesignBase {
 	protected XMLNode getDxlNode(final String xpathString) {
 		return getDxl().selectSingleNode(xpathString);
 	}
+
 }

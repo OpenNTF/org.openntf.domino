@@ -20,6 +20,8 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -35,7 +37,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
+public abstract class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
@@ -79,6 +81,11 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		return getFileData(DEFAULT_FILEDATA_FIELD);
 	}
 
+	protected byte[] convertCdData(final byte[] data) {
+		CDResourceFile resourceFile = new CDResourceFile(data);
+		return resourceFile.getData();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -96,8 +103,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			byte[] data = byteStream.toByteArray();
 
 			if (data.length > 0) {
-				CDResourceFile resourceFile = new CDResourceFile(data);
-				return resourceFile.getData();
+				return convertCdData(data);
 			} else {
 				return data;
 			}
@@ -272,5 +278,13 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 
 		return result;
+	}
+
+	@Override
+	public void writeOnDiskFile(final File odsFile) throws IOException {
+		FileOutputStream fo = new FileOutputStream(odsFile);
+		fo.write(getFileData());
+		fo.close();
+
 	}
 }

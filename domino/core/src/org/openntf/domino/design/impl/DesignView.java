@@ -53,6 +53,7 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 		}
 	}
 
+	@Override
 	public String getSelectionFormula() {
 		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
 		if (formula != null) {
@@ -61,10 +62,21 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 		return null;
 	}
 
+	@Override
 	public void setSelectionFormula(final String selectionFormula) {
 		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
 		if (formula != null) {
 			formula.setTextContent(selectionFormula);
 		}
+	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Views";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return ".view";
 	}
 }

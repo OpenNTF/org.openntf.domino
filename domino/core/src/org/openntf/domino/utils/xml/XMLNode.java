@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -247,7 +248,11 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			xResult = new StreamResult(new StringWriter());
 			source = new DOMSource(this.node_);
 			// We don't want the XML declaration in front
-			transformer.setOutputProperty("omit-xml-declaration", "yes");
+			//transformer.setOutputProperty("omit-xml-declaration", "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 			transformer.transform(source, xResult);
 			return xResult.getWriter().toString();
 

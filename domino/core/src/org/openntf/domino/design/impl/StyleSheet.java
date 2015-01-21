@@ -27,7 +27,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class StyleSheet extends FileResource implements org.openntf.domino.design.StyleSheet {
+public class StyleSheet extends FileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
@@ -40,6 +40,7 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
 	}
 
+	@Override
 	public String getContent() {
 		try {
 			return new String(getFileData(), "UTF-8");
@@ -49,6 +50,7 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 		}
 	}
 
+	@Override
 	public void setContent(final String content) {
 		try {
 			if (content == null) {
@@ -60,4 +62,15 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 			DominoUtils.handleException(e);
 		}
 	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Resources/StyleSheets";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return ".css";
+	}
+
 }

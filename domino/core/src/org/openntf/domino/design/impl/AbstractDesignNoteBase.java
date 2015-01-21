@@ -42,7 +42,7 @@ import com.ibm.commons.util.StringUtil;
  * 
  */
 @SuppressWarnings("serial")
-public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
+public abstract class AbstractDesignNoteBase extends AbstractDesignOnDisk implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignNoteBase.class.getName());
 
@@ -73,6 +73,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.DesignBase#getDxlString()
 	 */
+	@Override
 	public String getDxlString() {
 		try {
 			return getDxl().getXml();
@@ -132,6 +133,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 		return getFlags().contains(DESIGN_FLAG_PROPAGATE_NOCHANGE);
 	}
 
+	@Override
 	public void reattach(final Database database) {
 		database_ = database;
 	}
@@ -228,6 +230,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	 * 
 	 * @see org.openntf.domino.design.DesignBaseNamed#getAlias()
 	 */
+	@Override
 	public String getAlias() {
 		String[] aliases = getAliases().toArray(new String[] {});
 		return StringUtil.concatStrings(aliases, '|', false);
@@ -519,4 +522,5 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 		}
 		return titleNode;
 	}
+
 }

@@ -16,35 +16,32 @@
 
 package org.openntf.domino.design.impl;
 
-import java.util.logging.Logger;
-
-import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author jgallagher
+ * a Java - ScriptLibrary
+ * 
+ * @author Roland Praml
  * 
  */
-public class XPage extends JavaResource implements org.openntf.domino.design.XPage, HasMetadata {
+public class JavaLibrary extends AbstractDesignBaseNamed {
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
 
-	protected XPage(final Document document) {
+	/**
+	 * @param document
+	 */
+	protected JavaLibrary(final Document document) {
 		super(document);
-	}
-
-	protected XPage(final Database database) {
-		super(database);
 	}
 
 	@Override
 	public String getOnDiskFolder() {
-		return "XPages";
+		return "Code/ScriptLibraries";
 	}
 
 	@Override
 	public String getOnDiskExtension() {
-		return "";
+		return ".javalib";
 	}
+
 }

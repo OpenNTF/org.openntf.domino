@@ -115,4 +115,19 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 		}
 		return new String[] {};
 	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Resources";
+	}
+
+	@Override
+	public String getOnDiskName() {
+		return "IconNote";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return "";
+	}
 }

@@ -25,22 +25,22 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class XPage extends JavaResource implements org.openntf.domino.design.XPage, HasMetadata {
+public class CustomControl extends JavaResource implements org.openntf.domino.design.XPage, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
+	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());
 
-	protected XPage(final Document document) {
+	protected CustomControl(final Document document) {
 		super(document);
 	}
 
-	protected XPage(final Database database) {
+	protected CustomControl(final Database database) {
 		super(database);
 	}
 
 	@Override
 	public String getOnDiskFolder() {
-		return "XPages";
+		return "CustomControls";
 	}
 
 	@Override
