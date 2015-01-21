@@ -3,6 +3,7 @@ package org.openntf.conference.graph;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import org.openntf.conference.graph.Group.Type;
@@ -36,31 +37,33 @@ public class DataInitializer implements Runnable {
 
 			// Get / create databases
 			Session s = Factory.getSession(SessionType.NATIVE);
-			//			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
-			//			attendees.getAllDocuments().removeAll(true);
-			//			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
-			//			events.getAllDocuments().removeAll(true);
-			//			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
-			//			groups.getAllDocuments().removeAll(true);
-			//			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
-			//			invites.getAllDocuments().removeAll(true);
-			//			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
-			//			location.getAllDocuments().removeAll(true);
-			//			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
-			//			times.getAllDocuments().removeAll(true);
-			//			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
-			//			defaults.getAllDocuments().removeAll(true);
+			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
+			attendees.getAllDocuments().removeAll(true);
+			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
+			events.getAllDocuments().removeAll(true);
+			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
+			groups.getAllDocuments().removeAll(true);
+			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
+			invites.getAllDocuments().removeAll(true);
+			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
+			location.getAllDocuments().removeAll(true);
+			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
+			times.getAllDocuments().removeAll(true);
+			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
+			defaults.getAllDocuments().removeAll(true);
 
 			// Initialize the graph
 			ConferenceGraph graph = new ConferenceGraph();
 			//			graph.initialize();	//NTF already done in constructor
 			FramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
+
+			loadData(s, framedGraph);
+
 			Iterable<Presentation> pres = framedGraph.getVertices(null, null, Presentation.class);
 
 			for (Presentation presentation : pres) {
 				System.out.println(presentation.getTitle());
 			}
-			loadData(s, framedGraph);
 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -82,6 +85,7 @@ public class DataInitializer implements Runnable {
 			Group ibm_champion = framedGraph.addVertex("IBM Champions", Group.class);
 			ibm_champion.setType(Group.Type.PROGRAM);
 
+			SimpleDateFormat sdf = new SimpleDateFormat();
 			View sessions = srcDb.getView("Sessions");
 			for (Document doc : sessions.getAllDocuments()) {
 				if (!doc.hasItem("$Conflict")) {	// ignore conflicts
@@ -98,15 +102,27 @@ public class DataInitializer implements Runnable {
 						track.setDescription(doc.getItemValueString("Categories"));
 					}
 
-					Date dt = doc.getItemValue("CalendarDateTime", Date.class);
-					Integer duration = doc.getItemValue("Duration", Integer.class);
+					Date startDate = (Date) doc.getItemValue("StartDate", Date.class);
+					Date startDateTime = (Date) doc.getItemValue("StartDateTime", Date.class);
+					Date endDate = (Date) doc.getItemValue("EndDate", Date.class);
+					Date endDateTime = (Date) doc.getItemValue("EndDateTime", Date.class);
 
-					Calendar cal = Calendar.getInstance();
-					cal.setTime(dt);
-					cal.add(Calendar.MINUTE, duration);
-					TimeSlot ts = framedGraph.addVertex(DATE_FORMAT.format(dt) + "~" + DATE_FORMAT.format(cal.getTime()), TimeSlot.class);
-					ts.setStartTime(dt);
-					ts.setEndTime(cal.getTime());
+					Calendar startCal = new GregorianCalendar();
+					startCal.setTime(startDate);
+					startCal.set(Calendar.HOUR, startDateTime.getHours());
+					startCal.set(Calendar.MINUTE, startDateTime.getMinutes());
+					startCal.set(Calendar.SECOND, startDateTime.getSeconds());
+
+					Calendar endCal = new GregorianCalendar();
+					endCal.setTime(endDate);
+					endCal.set(Calendar.HOUR, endDateTime.getHours());
+					endCal.set(Calendar.MINUTE, endDateTime.getMinutes());
+					endCal.set(Calendar.SECOND, endDateTime.getSeconds());
+
+					String tsKey = sdf.format(startCal.getTime()) + " - " + sdf.format(endCal.getTime());
+					TimeSlot ts = framedGraph.addVertex(tsKey, TimeSlot.class);
+					ts.setStartTime(startCal.getTime());
+					ts.setEndTime(endCal.getTime());
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later
