@@ -26,7 +26,7 @@ public class DesignClassTest {
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
 		DesignCollection<DesignBase> elems = design
-				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) & @Contains($TITLE;{ssjs})");
+				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) & @IsAvailable($xres)");
 		System.out.println("Count: " + elems.getCount());
 
 		File root = new File("D:/daten/temp/ods");

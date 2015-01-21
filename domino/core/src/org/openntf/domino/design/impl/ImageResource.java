@@ -20,6 +20,8 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -27,6 +29,7 @@ import javax.imageio.ImageIO;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
@@ -36,6 +39,7 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
+	private transient XMLNode imageNode_;
 
 	public ImageResource(final Document document) {
 		super(document);
@@ -43,7 +47,14 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 
 	@Override
 	public byte[] getImageData() {
-		return parseBase64Binary(getDxl().selectSingleNode("//jpeg").getText());
+		return parseBase64Binary(getImageNode().getText());
+	}
+
+	private XMLNode getImageNode() {
+		if (imageNode_ == null) {
+			imageNode_ = getDxl().selectSingleNode("//jpeg|//gif|//png");
+		}
+		return imageNode_;
 	}
 
 	@Override
@@ -57,12 +68,20 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 	}
 
 	@Override
+	public void writeOnDiskFile(final File odpFile) throws IOException {
+		FileOutputStream fo = new FileOutputStream(odpFile);
+		fo.write(getImageData());
+		fo.close();
+
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "Resources/Images";
 	}
 
 	@Override
 	public String getOnDiskExtension() {
-		return "";
+		return "." + getImageNode().getNodeName().replace("jpeg", "jpg");
 	}
 }
