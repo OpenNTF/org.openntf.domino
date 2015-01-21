@@ -84,6 +84,20 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	@Override
+	public <F> Iterable<F> getVertices(final String key, final Object value, final Class<F> kind) {
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		store = base.findElementStore(kind);
+		if (store != null) {
+			String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedVertexFormula(key, value, kind);
+			Iterable<Vertex> vertices = store.getVertices(formulaFilter);
+			return this.frameVertices(vertices, kind);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
 	public <F> F addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label, final Direction direction,
 			final Class<F> kind) {
 		DGraph base = (DGraph) this.getBaseGraph();
@@ -106,6 +120,20 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			initializer.initElement(kind, this, edge);
 		}
 		return this.frame(edge, kind);
+	}
+
+	@Override
+	public <F> Iterable<F> getEdges(final String key, final Object value, final Class<F> kind) {
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		store = base.findElementStore(kind);
+		if (store != null) {
+			String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedEdgeFormula(key, value, kind);
+			Iterable<Edge> edges = store.getEdges(formulaFilter);
+			return this.frameEdges(edges, kind);
+		} else {
+			return null;
+		}
 	}
 
 }

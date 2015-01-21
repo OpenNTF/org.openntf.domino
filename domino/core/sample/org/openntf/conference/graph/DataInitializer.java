@@ -14,6 +14,7 @@ import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
@@ -35,26 +36,30 @@ public class DataInitializer implements Runnable {
 
 			// Get / create databases
 			Session s = Factory.getSession(SessionType.NATIVE);
-			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
-			attendees.getAllDocuments().removeAll(true);
-			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
-			events.getAllDocuments().removeAll(true);
-			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
-			groups.getAllDocuments().removeAll(true);
-			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
-			invites.getAllDocuments().removeAll(true);
-			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
-			location.getAllDocuments().removeAll(true);
-			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
-			times.getAllDocuments().removeAll(true);
-			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
-			defaults.getAllDocuments().removeAll(true);
+			//			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
+			//			attendees.getAllDocuments().removeAll(true);
+			//			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
+			//			events.getAllDocuments().removeAll(true);
+			//			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
+			//			groups.getAllDocuments().removeAll(true);
+			//			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
+			//			invites.getAllDocuments().removeAll(true);
+			//			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
+			//			location.getAllDocuments().removeAll(true);
+			//			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
+			//			times.getAllDocuments().removeAll(true);
+			//			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
+			//			defaults.getAllDocuments().removeAll(true);
 
 			// Initialize the graph
 			ConferenceGraph graph = new ConferenceGraph();
 			//			graph.initialize();	//NTF already done in constructor
 			FramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
+			Iterable<Presentation> pres = framedGraph.getVertices(null, null, Presentation.class);
 
+			for (Presentation presentation : pres) {
+				System.out.println(presentation.getTitle());
+			}
 			loadData(s, framedGraph);
 
 		} catch (Throwable t) {
@@ -81,28 +86,16 @@ public class DataInitializer implements Runnable {
 			for (Document doc : sessions.getAllDocuments()) {
 				if (!doc.hasItem("$Conflict")) {	// ignore conflicts
 					String locKey = doc.getItemValueString("Location");
-					Location loc;
-					if (!locs.containsKey(locKey)) {
-						loc = framedGraph.addVertex(null, Location.class);
-						loc.setAddress(doc.getItemValueString("Location"));
-						locs.put(locKey, loc);
-						System.out.println("Added location - " + locKey);
-					} else {
-						loc = locs.get(locKey);
-						System.out.println("Retrieved location - " + locKey);
+					Location loc = framedGraph.addVertex(locKey, Location.class);
+					if (Strings.isBlankString(loc.getName())) {
+						loc.setName(doc.getItemValueString("Location"));
 					}
 
 					String trackKey = doc.getItemValueString("Categories");
-					Track track;
-					if (tracks.containsKey(trackKey)) {
-						track = framedGraph.addVertex(trackKey, Track.class);
+					Track track = framedGraph.addVertex(trackKey, Track.class);
+					if (Strings.isBlankString(track.getTitle())) {
 						track.setTitle(doc.getItemValueString("Categories"));
 						track.setDescription(doc.getItemValueString("Categories"));
-						tracks.put(trackKey, track);
-						System.out.println("Added track - " + trackKey);
-					} else {
-						track = tracks.get(trackKey);
-						System.out.println("Retrieved track - " + trackKey);
 					}
 
 					Date dt = doc.getItemValue("CalendarDateTime", Date.class);

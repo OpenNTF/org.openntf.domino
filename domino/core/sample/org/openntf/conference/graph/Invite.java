@@ -13,6 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Invite")
 public interface Invite extends DVertexFrame {
+	@TypeValue(Invites.LABEL)
 	public static interface Invites extends DEdgeFrame {
 		public static final String LABEL = "Invites";
 
@@ -33,6 +34,7 @@ public interface Invite extends DVertexFrame {
 		public void setStatus(Status status);
 	}
 
+	@TypeValue(InvitedTo.LABEL)
 	public static interface InvitedTo extends DEdgeFrame {
 		public static final String LABEL = "InvitedTo";
 
@@ -53,6 +55,7 @@ public interface Invite extends DVertexFrame {
 		public void setStatus(Status status);
 	}
 
+	@TypeValue(InvitationFor.LABEL)
 	public static interface InvitationFor extends DEdgeFrame {
 		public static final String LABEL = "InvitationFor";
 

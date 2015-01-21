@@ -3,6 +3,7 @@ package org.openntf.domino.big;
 import java.io.Externalizable;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.google.common.base.Strings;
@@ -107,6 +108,30 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 				bytes[i + start] = (byte) (int) (value & 0xFF);
 				value >>= 8;
 			}
+		}
+
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final NoteCollection notecoll, final String nid) {
+			return new org.openntf.domino.big.impl.NoteCoordinate(notecoll, nid);
+		}
+
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final Document doc) {
+			return new org.openntf.domino.big.impl.NoteCoordinate(doc);
+		}
+
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final CharSequence replicaid, final CharSequence unid) {
+			return new org.openntf.domino.big.impl.NoteCoordinate(replicaid, unid);
+		}
+
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final CharSequence metaversalid) {
+			return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
+		}
+
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final byte[] bytes) {
+			return new org.openntf.domino.big.impl.NoteCoordinate(bytes);
+		}
+
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final long db, final long x, final long y) {
+			return new org.openntf.domino.big.impl.NoteCoordinate(db, x, y);
 		}
 	}
 

@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Attendee")
 public interface Attendee extends Socializer {
-
+	@TypeValue(PlansToAttend.LABEL)
 	public static interface PlansToAttend extends DEdgeFrame {
 		public static final String LABEL = "PlansToAttend";
 
@@ -37,6 +37,7 @@ public interface Attendee extends Socializer {
 		public void setStatus(Status status);
 	}
 
+	@TypeValue(Attending.LABEL)
 	public static interface Attending extends DEdgeFrame {
 		public static final String LABEL = "Attending";
 
@@ -47,6 +48,7 @@ public interface Attendee extends Socializer {
 		public Event getEvent();
 	}
 
+	@TypeValue(MemberOf.LABEL)
 	public static interface MemberOf extends DEdgeFrame {
 		public static final String LABEL = "MemberOf";
 

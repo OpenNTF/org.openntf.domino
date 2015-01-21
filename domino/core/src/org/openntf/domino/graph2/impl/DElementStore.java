@@ -15,6 +15,7 @@ import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -474,7 +475,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (result == null) {
 			System.out
-			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		}
 		if (result != null) {
 			if (type.equals(Element.class)) {
@@ -566,6 +567,38 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
+	public Iterable<Vertex> getVertices() {
+		return new DVertexIterable(this, getVertexIds());
+	}
+
+	@Override
+	public Iterable<Edge> getEdges() {
+		return new DEdgeIterable(this, getEdgeIds());
+	}
+
+	@Override
+	public Iterable<Vertex> getVertices(final String formulaFilter) {
+		return new DVertexIterable(this, getVertexIds(formulaFilter));
+	}
+
+	@Override
+	public Iterable<Edge> getEdges(final String formulaFilter) {
+		return new DEdgeIterable(this, getEdgeIds(formulaFilter));
+	}
+
+	@Override
+	public Iterable<Vertex> getVertices(final String key, final Object value) {
+		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getVertexFormula(key, value);
+		return getVertices(formulaFilter);
+	}
+
+	@Override
+	public Iterable<Edge> getEdges(final String key, final Object value) {
+		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getEdgeFormula(key, value);
+		return getEdges(formulaFilter);
+	}
+
+	@Override
 	public Set<Vertex> getCachedVertices() {
 		FastSet<Vertex> result = new FastSet<Vertex>();
 		for (Element elem : getElementCache().values()) {
@@ -574,6 +607,44 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		return result.unmodifiable();
+	}
+
+	protected Iterable<NoteCoordinate> getVertexIds() {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
+	}
+
+	protected Iterable<NoteCoordinate> getVertexIds(final String formulaFilter) {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(formulaFilter);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
 	}
 
 	@Override
@@ -585,6 +656,44 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		return result.unmodifiable();
+	}
+
+	protected Iterable<NoteCoordinate> getEdgeIds() {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
+	}
+
+	protected Iterable<NoteCoordinate> getEdgeIds(final String formulaFilter) {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(formulaFilter);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
 	}
 
 }
