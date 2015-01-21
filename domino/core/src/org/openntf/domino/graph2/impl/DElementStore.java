@@ -36,6 +36,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	private Object proxyDelegate_;
 	private Long proxyDelegateKey_;
 	private Object provisionalProxyDelegateKey_;
+	private transient Map<Object, NoteCoordinate> keyCache_;
 	private transient Map<Object, Element> elementCache_;
 	private transient org.openntf.domino.graph2.DConfiguration configuration_;
 
@@ -48,6 +49,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			elementCache_ = new FastMap<Object, Element>().atomic();
 		}
 		return elementCache_;
+	}
+
+	protected Map<Object, NoteCoordinate> getKeyCache() {
+		if (keyCache_ == null) {
+			keyCache_ = new FastMap<Object, NoteCoordinate>().atomic();
+		}
+		return keyCache_;
 	}
 
 	public DElementStore() {
@@ -257,16 +265,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex addVertex(final Object id) {
 		Vertex result = null;
-		Object localkey = localizeKey(id);
-		Element chk = getCachedElement(localkey, Vertex.class);
+		Element chk = getCachedElement(id, Vertex.class);
 		if (chk != null) {
 			result = (Vertex) chk;
 		} else {
+			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class);
 			if (delegate != null) {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
-				getElementCache().put(localkey, result);//TODO NTF switching from getId to localkey. Very on-the-fence about this
+				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -276,16 +285,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex getVertex(final Object id) {
 		Vertex result = null;
-		Object localkey = localizeKey(id);
-		Element chk = getCachedElement(localkey, Vertex.class);
+		Element chk = getCachedElement(id, Vertex.class);
 		if (chk != null) {
 			result = (Vertex) chk;
 		} else {
+			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = findElementDelegate(localkey, Vertex.class);
 			if (delegate != null) {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
-				getElementCache().put(localkey, result);
+				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 			}
 		}
 		return result;
@@ -305,18 +315,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Edge addEdge(final Object id) {
 		Edge result = null;
-		Object localkey = localizeKey(id);
-		Element chk = getCachedElement(localkey, Edge.class);
+		Element chk = getCachedElement(id, Edge.class);
 		if (chk != null) {
 			result = (Edge) chk;
 		} else {
-			System.out.println("Cache miss on localizedKey " + localkey);
+			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
 			if (delegate != null) {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
-				//				System.out.println("TEMP DEBUG: Returning edge " + result.getId());
-				getElementCache().put(localkey, result);//TODO NTF switching from getId to localkey. Very on-the-fence about this
+				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -327,6 +336,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (id == null)
 			return null;
 		Element chk = getElementCache().get(id);
+		if (chk == null) {
+			NoteCoordinate nc = getKeyCache().get(id);
+			if (nc != null) {
+				chk = getElementCache().get(nc);
+			}
+		}
 		if (chk != null) {
 			if (type.isAssignableFrom(chk.getClass())) {
 				return chk;
@@ -341,16 +356,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Edge getEdge(final Object id) {
 		Edge result = null;
-		Object localkey = localizeKey(id);
-		Element chk = getCachedElement(localkey, Edge.class);
+		Element chk = getCachedElement(id, Edge.class);
 		if (chk != null) {
 			result = (Edge) chk;
 		} else {
+			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = findElementDelegate(localkey, Edge.class);
 			if (delegate != null) {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
-				getElementCache().put(localkey, result);
+				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 			}
 		}
 		return result;
