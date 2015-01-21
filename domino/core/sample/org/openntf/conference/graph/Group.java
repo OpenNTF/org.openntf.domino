@@ -9,7 +9,9 @@ import org.openntf.domino.graph2.builtin.social.Likeable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Group")
 public interface Group extends Commentable, Likeable, Rateable {
 	public static enum Type {
 		OPEN, COMPANY, SOCIAL, PROGRAM, PRIVATE

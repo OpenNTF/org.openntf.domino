@@ -14,8 +14,10 @@ import org.openntf.domino.graph2.builtin.social.Rateable;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-public interface Event extends Commentable, Likeable, Rateable {
+@TypeValue("Event")
+public abstract interface Event extends Commentable, Likeable, Rateable {
 	public static interface HappeningOn extends DEdgeFrame {
 		public static final String LABEL = "HappeningOn";
 

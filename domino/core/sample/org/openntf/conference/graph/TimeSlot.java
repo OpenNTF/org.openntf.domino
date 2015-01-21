@@ -11,8 +11,10 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @JavaHandlerClass(TimeSlot.TimeSlotImpl.class)
+@TypeValue("TimeSlot")
 public interface TimeSlot extends DVertexFrame {
 	public abstract static class TimeSlotImpl implements TimeSlot {
 		@Override
