@@ -17,7 +17,6 @@
 package org.openntf.domino.design.impl;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.design.cd.CDResourceEvent;
 
 /**
  * @author Roland Praml
@@ -48,9 +47,4 @@ public class SSJSLibrary extends FileResource implements HasMetadata {
 		return getFileData("$ServerJavaScriptLibrary");
 	}
 
-	@Override
-	protected byte[] convertCdData(final byte[] data) {
-		CDResourceEvent resourceFile = new CDResourceEvent(data);
-		return resourceFile.getData();
-	}
 }

@@ -51,6 +51,13 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 		setByteBuffer(data.duplicate().order(ByteOrder.LITTLE_ENDIAN), 0);
 	}
 
+	public long getPayload(final byte[] result, final long offset) {
+		ByteBuffer data = getData().duplicate();
+		long length = Math.min(getVariableSize(), result.length - offset);
+		data.get(result, (int) offset, (int) length);
+		return length;
+	}
+
 	public byte[] getBytes() {
 		ByteBuffer data = getData().duplicate();
 		//		int size = data.limit() - data.position();
@@ -150,7 +157,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 	 * This class represents a variable-length element in the static structure definition.
 	 * 
 	 * @author jgallagher
-	 *
+	 * 
 	 */
 	private static class VariableElement implements Element {
 		private final String name;

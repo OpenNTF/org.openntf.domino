@@ -20,6 +20,8 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -30,12 +32,15 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.nsfdata.structs.cd.CDResourceFile;
+import org.openntf.domino.nsfdata.structs.cd.CData;
+import org.openntf.domino.nsfdata.structs.obj.CDObject;
+import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
+import org.openntf.domino.nsfdata.structs.obj.CDResourceFile;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
+public abstract class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
@@ -80,10 +85,10 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
-	 */
+	 *  (non-Javadoc)
+		 * 
+		 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
+		 */
 	@Override
 	public byte[] getFileData(final String itemName) {
 		try {
@@ -96,10 +101,14 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			byte[] data = byteStream.toByteArray();
 
 			if (data.length > 0) {
-				CDResourceFile resourceFile = new CDResourceFile(data);
-				return resourceFile.getFileData().array();
-				//				CDResourceFile resourceFile = new CDResourceFile(data);
-				//				return resourceFile.getData();
+				CData cdata = new CData(data);
+				CDObject obj = CDObject.create(cdata);
+				// Files may be attached either as FILE or as EVENT... (ssjs for example) Damn. This makes everything quite complex
+				if (obj instanceof CDResourceFile)
+					return ((CDResourceFile) obj).getFileData();
+				if (obj instanceof CDResourceEvent)
+					return ((CDResourceEvent) obj).getFileData();
+				throw new IllegalStateException("Cannot decode " + obj.getClass().getName());
 			} else {
 				return data;
 			}
@@ -277,5 +286,13 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 
 		return result;
+	}
+
+	@Override
+	public void writeOnDiskFile(final File odsFile) throws IOException {
+		FileOutputStream fo = new FileOutputStream(odsFile);
+		fo.write(getFileData());
+		fo.close();
+
 	}
 }

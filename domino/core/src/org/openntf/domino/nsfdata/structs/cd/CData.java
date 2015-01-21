@@ -30,6 +30,10 @@ public class CData extends AbstractSequentialList<CDRecord> implements Externali
 		startingPosition_ = data_.position();
 	}
 
+	public CData(final byte[] data) {
+		this(ByteBuffer.wrap(data));
+	}
+
 	@Override
 	public ListIterator<CDRecord> listIterator(final int index) {
 		return new CDataIterator(index);

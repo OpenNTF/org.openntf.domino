@@ -33,6 +33,7 @@ public class DesignClassTest {
 
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {
+			System.out.println("class: " + elem.getClass().getName() + ":");
 			//System.out.println(elem.getClass().getSimpleName() + "'" + elem.getNoteID() + "\t" + elem.getName() + "\t"
 			//		+ elem.getDocument().getItemValueString("$FLAGS"));
 			try {
