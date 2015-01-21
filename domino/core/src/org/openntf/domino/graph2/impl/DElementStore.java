@@ -257,16 +257,16 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex addVertex(final Object id) {
 		Vertex result = null;
-		Element chk = getCachedElement(id, Vertex.class);
+		Object localkey = localizeKey(id);
+		Element chk = getCachedElement(localkey, Vertex.class);
 		if (chk != null) {
 			result = (Vertex) chk;
 		} else {
-			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class);
 			if (delegate != null) {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
-				getElementCache().put(result.getId(), result);
+				getElementCache().put(localkey, result);//TODO NTF switching from getId to localkey. Very on-the-fence about this
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -276,16 +276,16 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex getVertex(final Object id) {
 		Vertex result = null;
-		Element chk = getCachedElement(id, Vertex.class);
+		Object localkey = localizeKey(id);
+		Element chk = getCachedElement(localkey, Vertex.class);
 		if (chk != null) {
 			result = (Vertex) chk;
 		} else {
-			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = findElementDelegate(localkey, Vertex.class);
 			if (delegate != null) {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
-				getElementCache().put(result.getId(), result);
+				getElementCache().put(localkey, result);
 			}
 		}
 		return result;
@@ -305,20 +305,18 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Edge addEdge(final Object id) {
 		Edge result = null;
-		Element chk = getCachedElement(id, Edge.class);
+		Object localkey = localizeKey(id);
+		Element chk = getCachedElement(localkey, Edge.class);
 		if (chk != null) {
 			result = (Edge) chk;
 		} else {
-			if (id == null) {
-
-			}
-			Object localkey = localizeKey(id);
+			System.out.println("Cache miss on localizedKey " + localkey);
 			Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
 			if (delegate != null) {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
 				//				System.out.println("TEMP DEBUG: Returning edge " + result.getId());
-				getElementCache().put(result.getId(), result);
+				getElementCache().put(localkey, result);//TODO NTF switching from getId to localkey. Very on-the-fence about this
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -343,16 +341,16 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Edge getEdge(final Object id) {
 		Edge result = null;
-		Element chk = getCachedElement(id, Edge.class);
+		Object localkey = localizeKey(id);
+		Element chk = getCachedElement(localkey, Edge.class);
 		if (chk != null) {
 			result = (Edge) chk;
 		} else {
-			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = findElementDelegate(localkey, Edge.class);
 			if (delegate != null) {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
-				getElementCache().put(result.getId(), result);
+				getElementCache().put(localkey, result);
 			}
 		}
 		return result;
@@ -460,7 +458,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (result == null) {
 			System.out
-					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		}
 		if (result != null) {
 			if (type.equals(Element.class)) {

@@ -3,6 +3,7 @@ package org.openntf.conference.graph;
 import org.openntf.conference.graph.Track.Includes;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
+import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -22,6 +23,18 @@ public interface Presentation extends Event {
 		@InVertex
 		public Presentation getSession();
 	}
+
+	@TypedProperty("SessionID")
+	public String getSessionId();
+
+	@TypedProperty("SessionID")
+	public void setSessionId();
+
+	@TypedProperty("Level")
+	public String getLevel();
+
+	@TypedProperty("Level")
+	public void setLevel(String level);
 
 	@AdjacencyUnique(label = PresentedBy.LABEL, direction = Direction.IN)
 	public Iterable<Attendee> getPresentingAttendees();

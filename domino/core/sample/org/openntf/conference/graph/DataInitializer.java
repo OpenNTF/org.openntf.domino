@@ -13,7 +13,7 @@ import com.tinkerpop.frames.FramedTransactionalGraph;
 
 public class DataInitializer implements Runnable {
 	private long marktime;
-	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere15.nsf";
+	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";
 
 	public DataInitializer() {
 
@@ -28,17 +28,19 @@ public class DataInitializer implements Runnable {
 
 			// Get / create databases
 			Session s = Factory.getSession(SessionType.NATIVE);
-			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
+			//			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
 			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
-			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
-			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
+			events.getAllDocuments().removeAll(true);
+			//			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
+			//			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
 			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
-			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
-			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
+			location.getAllDocuments().removeAll(true);
+			//			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
+			//			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
 
 			// Initialize the graph
 			ConferenceGraph graph = new ConferenceGraph();
-			graph.initialize();
+			//			graph.initialize();	//NTF already done in constructor
 			FramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
 
 			loadData(s, framedGraph);
@@ -71,24 +73,18 @@ public class DataInitializer implements Runnable {
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later
-					if (code.startsWith("COM") || code.startsWith("FUN") || code.startsWith("GEEK")) {
-						Event evt = framedGraph.addVertex(code, Event.class);
-						evt.addLocation(loc);
-						evt.setTitle(doc.getItemValueString("Subject"));
-						evt.setDescription(doc.getItemValueString("Abstract"));
-						evt.setStatus(Event.Status.CONFIRMED);
-					} else {
-						Presentation sess = framedGraph.addVertex(code, Presentation.class);
-						sess.addLocation(loc);
-						sess.setTitle(doc.getItemValueString("Subject"));
-						sess.setDescription(doc.getItemValueString("Abstract"));
-						sess.setStatus(Event.Status.CONFIRMED);
-						track.addIncludesSession(sess);
-					}
+
+					Presentation sess = framedGraph.addVertex(code, Presentation.class);
+					sess.addLocation(loc);
+					sess.setTitle(doc.getItemValueString("Subject"));
+					sess.setDescription(doc.getItemValueString("Abstract"));
+					sess.setStatus(Event.Status.CONFIRMED);
+					track.addIncludesSession(sess);
 
 				}
 
 			}
+			framedGraph.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
