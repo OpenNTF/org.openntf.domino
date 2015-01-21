@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class ImageResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.ImageResource {
+public class ImageResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.ImageResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
@@ -54,5 +54,15 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Resources/Images";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return "";
 	}
 }

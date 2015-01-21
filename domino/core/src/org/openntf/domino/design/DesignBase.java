@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
 import org.openntf.domino.Database;
@@ -79,4 +81,25 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	 */
 	public boolean save();
 
+	/**
+	 * Every element should have an (abstract) name
+	 * 
+	 * @return
+	 */
+	public String getName();
+
+	/**
+	 * Retruns the On-Disk folder component
+	 * 
+	 * @return
+	 */
+	public String getOnDiskFolder();
+
+	public String getOnDiskName();
+
+	public String getOnDiskExtension();
+
+	public String getOnDiskPath();
+
+	public void writeOnDiskFile(File odsFile) throws IOException;
 }

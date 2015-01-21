@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class JarResource extends FileResource implements org.openntf.domino.design.JarResource {
+public class JarResource extends FileResource implements org.openntf.domino.design.JarResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JarResource.class.getName());
@@ -74,5 +74,15 @@ public class JarResource extends FileResource implements org.openntf.domino.desi
 			DominoUtils.handleException(ioe);
 			return null;
 		}
+	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Code/Jars";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return ".jar";
 	}
 }

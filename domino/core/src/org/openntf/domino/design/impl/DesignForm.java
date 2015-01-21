@@ -98,4 +98,14 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 	public void swapFields(final int a, final int b) {
 		getFields().swap(a, b);
 	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Forms";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return ".form";
+	}
 }

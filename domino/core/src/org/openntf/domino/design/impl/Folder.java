@@ -48,4 +48,14 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 			DominoUtils.handleException(e);
 		}
 	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Folders";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return ".folder";
+	}
 }

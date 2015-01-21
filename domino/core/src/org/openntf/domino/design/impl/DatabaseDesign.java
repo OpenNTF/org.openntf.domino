@@ -32,6 +32,7 @@ import org.openntf.domino.DxlImporter;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
+import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.commons.util.StringUtil;
@@ -236,7 +237,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public org.openntf.domino.design.DesignCollection<org.openntf.domino.design.ImageResource> getImageResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'i') ", EnumSet.of(SelectOption.IMAGE_RESOURCES));
-		return new DesignCollection<org.openntf.domino.design.ImageResource>(notes, ImageResource.class);
+		return new DesignCollection<org.openntf.domino.design.ImageResource>(notes, org.openntf.domino.design.ImageResource.class);
 	}
 
 	/* (non-Javadoc)
@@ -646,5 +647,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public DesignCollection<DesignBase> getDesignElements(final String formula) {
+		NoteCollection notes = getNoteCollection(formula,
+				EnumSet.of(SelectOption.ALL_BUT_NOT, SelectOption.DOCUMENTS, SelectOption.PROFILES));
+		return new DesignCollection<DesignBase>(notes, null);
 	}
 }

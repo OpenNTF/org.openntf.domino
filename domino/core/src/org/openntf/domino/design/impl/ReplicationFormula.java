@@ -36,4 +36,22 @@ public class ReplicationFormula extends AbstractDesignBase implements org.opennt
 		super(document);
 	}
 
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getOnDiskFolder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

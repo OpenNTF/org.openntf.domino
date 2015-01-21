@@ -36,4 +36,19 @@ public class AboutDocument extends AbstractDesignBase implements org.openntf.dom
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AboutDocument.class.getName());
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Resources";
+	}
+
+	@Override
+	public String getName() {
+		return "AboutDocument";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return "";
+	}
 }

@@ -16,35 +16,45 @@
 
 package org.openntf.domino.design.impl;
 
-import java.util.logging.Logger;
-
-import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * @author jgallagher
+ * @author Roland Praml
  * 
  */
-public class XPage extends JavaResource implements org.openntf.domino.design.XPage, HasMetadata {
+public class DesignAgent extends AbstractDesignBaseNamed /* implements TODO */{
 	private static final long serialVersionUID = 1L;
-	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
 
-	protected XPage(final Document document) {
+	/**
+	 * @param document
+	 */
+	protected DesignAgent(final Document document) {
 		super(document);
 	}
 
-	protected XPage(final Database database) {
-		super(database);
-	}
-
+	// 
 	@Override
 	public String getOnDiskFolder() {
-		return "XPages";
+		return "Code/Agents";
 	}
 
 	@Override
 	public String getOnDiskExtension() {
-		return "";
+		XMLNode node = getDxl().selectSingleNode("//code/lotusscript");
+		if (node != null)
+			return ".lsa";
+		node = getDxl().selectSingleNode("//code//formula");
+		if (node != null)
+			return ".fa";
+		node = getDxl().selectSingleNode("//code/javaproject");
+		if (node != null)
+			return ".ja";
+		return ".TODO";
+		// Formula = fa
+		// LotusScript = lsa
+		// importedJava = ija
+		// java = ja
+		// action = aa
 	}
 }

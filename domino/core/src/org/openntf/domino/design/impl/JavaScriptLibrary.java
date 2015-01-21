@@ -16,7 +16,10 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaScriptLibrary {
+/**
+ * A client side JavaScriptLibrary
+ */
+public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -45,6 +48,7 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 		}
 	}
 
+	@Override
 	public Map<String, byte[]> getClassData() {
 		// For this one, we'll need the note in the database
 		Document doc = getDocument();
@@ -82,6 +86,7 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getClassSource() {
 		Map<String, String> classSource = new TreeMap<String, String>();
 		for (XMLNode node : getDxl().selectNodes("/scriptlibrary/code/javaproject/java")) {
@@ -90,4 +95,24 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 
 		return classSource;
 	}
+
+	@Override
+	public String getOnDiskFolder() {
+		return "Code/ScriptLibraries";
+	}
+
+	@Override
+	public String getOnDiskExtension() {
+		return ".js";
+	}
+
+	//	@Override
+	//	public void writeOnDiskFile(final File odsFile) throws IOException {
+	//		// TODO Check for $Scriptlib_error => throw exception if item exists
+	//		PrintWriter pw = new PrintWriter(odsFile);
+	//		for (XMLNode rawitemdata : getDxl().selectNodes("//code/javascript")) {
+	//			pw.write(rawitemdata.getText());
+	//		}
+	//		pw.close();
+	//	}
 }

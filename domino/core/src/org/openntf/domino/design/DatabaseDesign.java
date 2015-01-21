@@ -285,4 +285,13 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 */
 	public boolean isAppFlagSet(final String flagName);
 
+	/**
+	 * Returns all design elements matching to the according formula. The type of the design element is autot detected
+	 * 
+	 * @param formula
+	 *            the formula
+	 * @return a subclass of DesignBase
+	 */
+	DesignCollection<DesignBase> getDesignElements(String formula);
+
 }
