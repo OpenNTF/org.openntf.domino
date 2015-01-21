@@ -1,5 +1,7 @@
 package org.openntf.conference.graph;
 
+import java.util.HashMap;
+
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
@@ -53,6 +55,8 @@ public class DataInitializer implements Runnable {
 	}
 
 	public void loadData(final org.openntf.domino.Session s, final FramedTransactionalGraph<DGraph> framedGraph) {
+		HashMap<String, Location> locs = new HashMap<String, Location>();
+		HashMap<String, Track> tracks = new HashMap<String, Track>();
 		try {
 			Database srcDb = s.getDatabase(s.getServerName(), SRC_DATA_PATH);
 			if (null == srcDb) {
@@ -66,19 +70,40 @@ public class DataInitializer implements Runnable {
 			View sessions = srcDb.getView("Sessions");
 			for (Document doc : sessions.getAllDocuments()) {
 				if (!doc.hasItem("$Conflict")) {	// ignore conflicts
-					Location loc = framedGraph.addVertex(doc.getItemValueString("Location"), Location.class);
+					String locKey = doc.getItemValueString("Location");
+					Location loc;
+					if (!locs.containsKey(locKey)) {
+						loc = framedGraph.addVertex(null, Location.class);
+						loc.setAddress(doc.getItemValueString("Location"));
+						locs.put(locKey, loc);
+						System.out.println("Added location - " + locKey);
+					} else {
+						loc = locs.get(locKey);
+						System.out.println("Retrieved location - " + locKey);
+					}
 
-					Track track = framedGraph.addVertex(doc.getItemValueString("Categories"), Track.class);
-					track.setDescription(track.getTitle());
+					String trackKey = doc.getItemValueString("Categories");
+					Track track;
+					if (tracks.containsKey(trackKey)) {
+						track = framedGraph.addVertex(trackKey, Track.class);
+						track.setTitle(doc.getItemValueString("Categories"));
+						track.setDescription(doc.getItemValueString("Categories"));
+						tracks.put(trackKey, track);
+						System.out.println("Added track - " + trackKey);
+					} else {
+						track = tracks.get(trackKey);
+						System.out.println("Retrieved track - " + trackKey);
+					}
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later
 
 					Presentation sess = framedGraph.addVertex(code, Presentation.class);
-					sess.addLocation(loc);
 					sess.setTitle(doc.getItemValueString("Subject"));
 					sess.setDescription(doc.getItemValueString("Abstract"));
 					sess.setStatus(Event.Status.CONFIRMED);
+					System.out.println("Assigning location - " + locKey + " to session " + doc.getItemValueString("Subject"));
+					sess.addLocation(loc);
 					track.addIncludesSession(sess);
 
 				}
