@@ -40,6 +40,8 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
+import com.ibm.commons.util.StringUtil;
+
 public abstract class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
@@ -213,6 +215,23 @@ public abstract class FileResource extends AbstractDesignNoteBase implements org
 			fileNamesNode = fileNamesNode.selectSingleNode("text");
 		}
 		fileNamesNode.setText(title);
+	}
+
+	@Override
+	public String getDesignTemplateName() {
+		List<Object> templateNameValue = getItemValue("$Class");
+		if (!templateNameValue.isEmpty()) {
+			Object val = templateNameValue.get(0);
+			if (val != null && StringUtil.isNotEmpty(String.valueOf(val))) {
+				return String.valueOf(val);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setDesignTemplateName(final String designTemplateName) {
+		setItemValue("$Class", designTemplateName);
 	}
 
 	@Override
