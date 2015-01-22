@@ -28,7 +28,7 @@ public interface Presentation extends Event {
 	public String getSessionId();
 
 	@TypedProperty("SessionID")
-	public void setSessionId();
+	public void setSessionId(String sessionid);
 
 	@TypedProperty("Level")
 	public String getLevel();

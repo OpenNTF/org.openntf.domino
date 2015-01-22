@@ -7,9 +7,9 @@ import org.openntf.domino.graph2.builtin.social.Rates;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DFramedGraphFactory;
+import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DGraph;
 
-import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
@@ -24,7 +24,7 @@ public class ConferenceGraph {
 	public static final String SOCIAL_PATH = "conference/social.nsf";
 	public static final String DEFAULT_PATH = "conference/default.nsf";
 
-	private FramedTransactionalGraph<DGraph> framedGraph_;
+	private DFramedTransactionalGraph<DGraph> framedGraph_;
 
 	public ConferenceGraph() {
 		initialize();
@@ -78,10 +78,10 @@ public class ConferenceGraph {
 		JavaHandlerModule jhm = new JavaHandlerModule();
 		Module module = config.getModule();
 		DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
-		framedGraph_ = factory.create(graph);
+		framedGraph_ = (DFramedTransactionalGraph) factory.create(graph);
 	}
 
-	public FramedTransactionalGraph<DGraph> getFramedGraph() {
+	public DFramedTransactionalGraph<DGraph> getFramedGraph() {
 		return framedGraph_;
 	}
 

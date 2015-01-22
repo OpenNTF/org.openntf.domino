@@ -5,19 +5,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.openntf.conference.graph.Group.Type;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Strings;
 
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedTransactionalGraph;
+import com.tinkerpop.frames.VertexFrame;
 
 public class DataInitializer implements Runnable {
 	private long marktime;
@@ -30,6 +35,26 @@ public class DataInitializer implements Runnable {
 
 	@Override
 	public void run() {
+		ConferenceGraph graph = new ConferenceGraph();
+		DFramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
+		DGraph baseGraph = framedGraph.getBaseGraph();
+		Iterable<Vertex> vertices = baseGraph.getVertices("@", "Form=\"Presentation\"");
+		//NTF There's no specific need to do it this way. I just wanted to test the TypeField-based framing
+
+		for (Vertex vertex : vertices) {
+			VertexFrame frame = framedGraph.frame(vertex, DVertexFrame.class);
+			if (frame instanceof Presentation) {
+				StringBuilder sb = new StringBuilder();
+				Map<String, Object> jsonMap = framedGraph.toJsonableMap(frame);
+				for (String key : jsonMap.keySet()) {
+					sb.append(key + ": \"" + String.valueOf(jsonMap.get(key)) + "\", ");
+				}
+				System.out.println("{" + sb.toString() + "}");
+			}
+		}
+	}
+
+	public void run2() {
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
 		try {
@@ -131,6 +156,8 @@ public class DataInitializer implements Runnable {
 					sess.setTitle(doc.getItemValueString("Subject"));
 					sess.setDescription(doc.getItemValueString("Abstract"));
 					sess.setStatus(Event.Status.CONFIRMED);
+					sess.setSessionId(doc.getItemValueString("SessionID"));
+					sess.setLevel(doc.getItemValueString("Level"));
 					System.out.println("Assigning location - " + locKey + " to session " + doc.getItemValueString("Subject"));
 					sess.addLocation(loc);
 					track.addIncludesSession(sess);

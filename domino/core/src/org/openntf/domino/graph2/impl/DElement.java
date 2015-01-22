@@ -82,7 +82,20 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
+
 					result = doc.getItemValue(propertyName, T);
+					if (result == null) {
+						try {
+							Object raw = doc.get(propertyName);
+							result = TypeUtils.objectToClass(raw, T, doc.getAncestorSession());
+							//							if ("@CreatedDate".equalsIgnoreCase(propertyName)) {
+							//								System.out.println("@CreatedDate requested and we got "
+							//										+ (result == null ? "null" : result.getClass().getName()));
+							//							}
+						} catch (Throwable t) {
+							log_.log(Level.WARNING, "Invalid property for document " + propertyName);
+						}
+					}
 				} else {
 					result = T.cast(delegate.get(propertyName));
 				}
@@ -102,6 +115,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 		} else {
 			if (result != null && !T.isAssignableFrom(result.getClass())) {
+				System.out.println(propertyName + " returned a " + result.getClass().getName() + " when we asked for a " + T.getName());
 				try {
 					Map<String, Object> delegate = getDelegate();
 					if (delegate instanceof Document) {
@@ -136,7 +150,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public <T> T getProperty(final String key) {
-		return getProperty(key, java.lang.Object.class);
+		if ("form".equalsIgnoreCase(key)) {
+			return getProperty(key, String.class);
+		}
+		Object result = getProperty(key, java.lang.Object.class);
+		return (T) result;
 	}
 
 	@Override
