@@ -1,20 +1,92 @@
 package org.openntf.domino.graph2.impl;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import javolution.util.FastMap;
+
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
+import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedTransactionalGraph;
+import com.tinkerpop.frames.VertexFrame;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
 
 	public DFramedTransactionalGraph(final T baseGraph, final FramedGraphConfiguration config) {
 		super(baseGraph, config);
+	}
+
+	public Map<String, Object> toJsonableMap(final VertexFrame frame) {
+		Map<String, Object> result = new FastMap<String, Object>();
+		result.put("id", frame.asVertex().getId());
+		result.put("type", getTypeManager().resolve(frame).getName());
+		Class<?>[] interfaces = frame.getClass().getInterfaces();
+		if (interfaces.length > 0) {
+			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);
+			for (String key : crystals.keySet()) {
+				Method crystal = crystals.get(key);
+				if (crystal != null) {
+					try {
+						Object raw = crystal.invoke(frame, (Object[]) null);
+						result.put(key, raw);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("No method found for key " + key);
+				}
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Object> toJsonableMap(final EdgeFrame frame) {
+		Map<String, Object> result = new FastMap<String, Object>();
+		Class<?>[] interfaces = frame.getClass().getInterfaces();
+		if (interfaces.length > 0) {
+			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);
+			for (String key : crystals.keySet()) {
+				Method crystal = crystals.get(key);
+				if (crystal != null) {
+					try {
+						Object raw = crystal.invoke(frame, (Object[]) null);
+						result.put(key, raw);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	protected DTypeRegistry getTypeRegistry() {
+		Graph graph = this.getBaseGraph();
+		if (graph instanceof DGraph) {
+			DConfiguration config = (DConfiguration) ((DGraph) graph).getConfiguration();
+			return config.getTypeRegistry();
+		}
+		return null;
+	}
+
+	protected DTypeManager getTypeManager() {
+		Graph graph = this.getBaseGraph();
+		if (graph instanceof DGraph) {
+			DConfiguration config = (DConfiguration) ((DGraph) graph).getConfiguration();
+			return config.getTypeManager();
+		}
+		return null;
 	}
 
 	private String getTypedId(final Object id) {

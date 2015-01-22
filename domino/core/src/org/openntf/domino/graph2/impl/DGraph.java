@@ -1,11 +1,12 @@
 package org.openntf.domino.graph2.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javolution.util.FastSet;
 import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
@@ -25,6 +26,7 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Features;
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.MultiIterable;
 
 public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@SuppressWarnings("unused")
@@ -89,17 +91,20 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Iterable<Vertex> getVertices() {
-		FastSet<Vertex> result = new FastSet<Vertex>();
+		List<Iterable<Vertex>> storeList = new ArrayList<Iterable<Vertex>>();
 		for (DElementStore store : getElementStores().values()) {
-			result.addAll(store.getCachedVertices());
+			storeList.add(store.getVertices());
 		}
-		return result.unmodifiable();
+		return new MultiIterable<Vertex>(storeList);
 	}
 
 	@Override
 	public Iterable<Vertex> getVertices(final String key, final Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Iterable<Vertex>> storeList = new ArrayList<Iterable<Vertex>>();
+		for (DElementStore store : getElementStores().values()) {
+			storeList.add(store.getVertices(key, value));
+		}
+		return new MultiIterable<Vertex>(storeList);
 	}
 
 	@Override
@@ -133,17 +138,20 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Iterable<Edge> getEdges() {
-		FastSet<Edge> result = new FastSet<Edge>();
+		List<Iterable<Edge>> storeList = new ArrayList<Iterable<Edge>>();
 		for (DElementStore store : getElementStores().values()) {
-			result.addAll(store.getCachedEdges());
+			storeList.add(store.getEdges());
 		}
-		return result.unmodifiable();
+		return new MultiIterable<Edge>(storeList);
 	}
 
 	@Override
 	public Iterable<Edge> getEdges(final String key, final Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Iterable<Edge>> storeList = new ArrayList<Iterable<Edge>>();
+		for (DElementStore store : getElementStores().values()) {
+			storeList.add(store.getEdges(key, value));
+		}
+		return new MultiIterable<Edge>(storeList);
 	}
 
 	@Override

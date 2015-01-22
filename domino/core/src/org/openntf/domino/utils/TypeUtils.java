@@ -260,7 +260,7 @@ public enum TypeUtils {
 						result = toBigStrings(o);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(o);
-					} else if (CType == Enum.class) {
+					} else if (Enum.class.isAssignableFrom(T)) {
 						result = toEnums(o);
 					} else if (Class.class.isAssignableFrom(CType)) {
 						result = toClasses(o);
@@ -290,7 +290,7 @@ public enum TypeUtils {
 		} else {
 			if (T == String.class) {
 				result = String.valueOf(o);
-			} else if (T == Enum.class) {
+			} else if (Enum.class.isAssignableFrom(T)) {
 				String str = String.valueOf(o);
 				result = toEnum(str);
 			} else if (T == BigString.class) {
@@ -428,7 +428,7 @@ public enum TypeUtils {
 						result = toBigStrings(v);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(v);
-					} else if (CType == Enum.class) {
+					} else if (Enum.class.isAssignableFrom(T)) {
 						result = toEnums(v);
 					} else if (Class.class.isAssignableFrom(CType)) {
 						result = toClasses(v);
@@ -458,7 +458,7 @@ public enum TypeUtils {
 		} else {
 			if (T == String.class) {
 				result = join(v);
-			} else if (T == Enum.class) {
+			} else if (Enum.class.isAssignableFrom(T)) {
 				String str = join(v);
 				//				System.out.println("Attempting to convert string " + str + " to Enum");
 				result = toEnum(str);

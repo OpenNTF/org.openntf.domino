@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-com.tinkerpop.blueprints.TransactionalGraph {
+		com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -19,6 +19,9 @@ com.tinkerpop.blueprints.TransactionalGraph {
 			String result = "";
 			if (key == null)
 				return "";
+			if ("@".equals(key)) {
+				return String.valueOf(value);
+			}
 			if (value instanceof Number) {
 				result = key + "=" + value;
 			} else if (value instanceof DateTime) {

@@ -8,14 +8,17 @@ import org.openntf.domino.Document;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.impl.DVertex;
 
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("form")
 @JavaHandlerClass(DVertexFrame.DVertexFrameImpl.class)
 public interface DVertexFrame extends Editable {
 	@TypedProperty(value = "@CreatedDate", derived = true)
+	//	@JavaHandler
 	public Date getCreated();
 
 	@TypedProperty(value = "@ModifiedDate", derived = true)
@@ -33,7 +36,7 @@ public interface DVertexFrame extends Editable {
 	//TODO NTF Future
 	//	public String[] getReaders();
 
-	public abstract static class DVertexFrameImpl implements DVertexFrame {
+	public abstract static class DVertexFrameImpl implements DVertexFrame, JavaHandlerContext<Vertex> {
 		@Override
 		public Document asDocument() {
 			Object raw = asVertex();
@@ -75,6 +78,19 @@ public interface DVertexFrame extends Editable {
 				}
 			}
 			return result;
+		}
+
+		@Override
+		public Date getCreated() {
+			System.out.println("Impl.getCreated() called");
+			Date result = null;
+			Object raw = ((DVertex) asVertex()).getProperty("@CreatedDate", Date.class);
+			if (raw instanceof Date) {
+				return result;
+			} else {
+				System.out.println("Looked for a Date but got a " + (raw == null ? "null" : raw.getClass().getName()));
+				return new Date(0);
+			}
 		}
 	}
 
