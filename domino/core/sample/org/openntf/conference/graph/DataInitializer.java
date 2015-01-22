@@ -35,6 +35,8 @@ public class DataInitializer implements Runnable {
 
 	@Override
 	public void run() {
+		long testStartTime = System.nanoTime();
+		marktime = System.nanoTime();
 		ConferenceGraph graph = new ConferenceGraph();
 		DFramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
 		DGraph baseGraph = framedGraph.getBaseGraph();
@@ -52,6 +54,9 @@ public class DataInitializer implements Runnable {
 				System.out.println("{" + sb.toString() + "}");
 			}
 		}
+		long testEndTime = System.nanoTime();
+		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
+
 	}
 
 	public void run2() {

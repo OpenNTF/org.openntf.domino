@@ -13,12 +13,20 @@ import javolution.util.FastMap;
 
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.annotations.TypedProperty;
+import org.openntf.domino.graph2.builtin.DEdgeFrame;
+import org.openntf.domino.graph2.builtin.DVertexFrame;
 
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.ClassUtilities;
+import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.AbstractModule;
 import com.tinkerpop.frames.modules.Module;
+import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeManager;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -30,29 +38,34 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	private static final Logger log_ = Logger.getLogger(DConfiguration.class.getName());
 
 	public static class DTypedGraphModuleBuilder extends TypedGraphModuleBuilder {
-		private DTypeRegistry localTypeRegistry = new DTypeRegistry();
+		private DTypeRegistry localTypeRegistry_ = new DTypeRegistry();
+		private DTypeManager localManager_;
 
 		@Override
 		public TypedGraphModuleBuilder withClass(final Class<?> type) {
-			localTypeRegistry.add(type);
+			localTypeRegistry_.add(type);
 			return this;
 		}
 
 		@Override
 		public Module build() {
-			final TypeManager manager = new TypeManager(localTypeRegistry);
+			localManager_ = new DTypeManager(localTypeRegistry_);
 			return new AbstractModule() {
 
 				@Override
 				public void doConfigure(final FramedGraphConfiguration config) {
-					config.addTypeResolver(manager);
-					config.addFrameInitializer(manager);
+					config.addTypeResolver(localManager_);
+					config.addFrameInitializer(localManager_);
 				}
 			};
 		}
 
 		public DTypeRegistry getTypeRegistry() {
-			return localTypeRegistry;
+			return localTypeRegistry_;
+		}
+
+		public DTypeManager getTypeManager() {
+			return localManager_;
 		}
 	}
 
@@ -146,6 +159,53 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			getterMap_.put(type, getters);
 			setterMap_.put(type, setters);
 		}
+	}
+
+	public static class DTypeManager extends TypeManager {
+		private DTypeRegistry typeRegistry_;
+
+		public DTypeManager(final DTypeRegistry typeRegistry) {
+			super(typeRegistry);
+			typeRegistry_ = typeRegistry;
+		}
+
+		@Override
+		public Class<?>[] resolveTypes(final Vertex v, final Class<?> defaultType) {
+			return new Class<?>[] { resolve(v, defaultType), VertexFrame.class };
+		}
+
+		@Override
+		public Class<?>[] resolveTypes(final Edge e, final Class<?> defaultType) {
+			return new Class<?>[] { resolve(e, defaultType), EdgeFrame.class };
+		}
+
+		public Class<?> resolve(final Element e, final Class<?> defaultType) {
+			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(defaultType);
+			if (typeHoldingTypeField != null) {
+				String value = e.getProperty(typeHoldingTypeField.getAnnotation(TypeField.class).value());
+				Class<?> type = value == null ? null : typeRegistry_.getType(typeHoldingTypeField, value);
+				if (type != null) {
+					return type;
+				}
+			}
+			return defaultType;
+		}
+
+		public Class<?> resolve(final VertexFrame vertex, final Class<?> defaultType) {
+			return resolve(vertex.asVertex(), defaultType);
+		}
+
+		public Class<?> resolve(final EdgeFrame edge, final Class<?> defaultType) {
+			return resolve(edge.asEdge(), defaultType);
+		}
+
+		public Class<?> resolve(final VertexFrame vertex) {
+			return resolve(vertex.asVertex(), DVertexFrame.class);
+		}
+
+		public Class<?> resolve(final EdgeFrame edge) {
+			return resolve(edge.asEdge(), DEdgeFrame.class);
+		}
 
 	}
 
@@ -155,6 +215,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	private transient DGraph graph_;
 	private transient Module module_;
 	private DTypeRegistry typeRegistry_;
+	private DTypeManager typeManager_;
 
 	public DConfiguration() {
 		// TODO Auto-generated constructor stub
@@ -217,7 +278,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 	}
 
-	private TypedGraphModuleBuilder getTypedBuilder() {
+	private DTypedGraphModuleBuilder getTypedBuilder() {
 		DTypedGraphModuleBuilder typedBuilder = new DTypedGraphModuleBuilder();
 		for (DElementStore store : getElementStores().values()) {
 			for (Class<?> klazz : store.getTypes()) {
@@ -231,8 +292,9 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	@Override
 	public Module getModule() {
 		if (module_ == null) {
-			TypedGraphModuleBuilder builder = getTypedBuilder();
+			DTypedGraphModuleBuilder builder = getTypedBuilder();
 			module_ = builder.build();
+			typeManager_ = builder.getTypeManager();
 		}
 		return module_;
 	}
@@ -240,6 +302,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	@Override
 	public DTypeRegistry getTypeRegistry() {
 		return typeRegistry_;
+	}
+
+	@Override
+	public DTypeManager getTypeManager() {
+		return typeManager_;
 	}
 
 	@Override

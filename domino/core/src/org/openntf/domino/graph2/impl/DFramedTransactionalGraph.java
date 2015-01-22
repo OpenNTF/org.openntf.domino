@@ -6,6 +6,7 @@ import java.util.Map;
 import javolution.util.FastMap;
 
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -29,7 +30,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	public Map<String, Object> toJsonableMap(final VertexFrame frame) {
 		Map<String, Object> result = new FastMap<String, Object>();
 		result.put("id", frame.asVertex().getId());
-		result.put("type", frame.getClass().getName());
+		result.put("type", getTypeManager().resolve(frame).getName());
 		Class<?>[] interfaces = frame.getClass().getInterfaces();
 		if (interfaces.length > 0) {
 			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);
@@ -75,6 +76,15 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (graph instanceof DGraph) {
 			DConfiguration config = (DConfiguration) ((DGraph) graph).getConfiguration();
 			return config.getTypeRegistry();
+		}
+		return null;
+	}
+
+	protected DTypeManager getTypeManager() {
+		Graph graph = this.getBaseGraph();
+		if (graph instanceof DGraph) {
+			DConfiguration config = (DConfiguration) ((DGraph) graph).getConfiguration();
+			return config.getTypeManager();
 		}
 		return null;
 	}
