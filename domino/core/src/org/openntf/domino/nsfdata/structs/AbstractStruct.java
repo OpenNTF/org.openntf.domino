@@ -53,6 +53,7 @@ public abstract class AbstractStruct extends Struct implements Externalizable {
 
 	public long getPayload(final byte[] result, final long offset) {
 		ByteBuffer data = getData().duplicate();
+		data.position(data.position() + size());
 		long length = Math.min(getVariableSize(), result.length - offset);
 		data.get(result, (int) offset, (int) length);
 		return length;

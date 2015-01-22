@@ -122,6 +122,13 @@ public abstract class AbstractDesignOnDisk implements DesignBase {
 
 	}
 
+	public void writeOnDiskMeta(final File odsFile) throws IOException {
+		PrintWriter fo = new PrintWriter(odsFile);
+		fo.write(getDxlString());
+		fo.close();
+
+	}
+
 	//------------------------------ ondisk end --------------------------------
 	protected abstract XMLDocument getDxl();
 

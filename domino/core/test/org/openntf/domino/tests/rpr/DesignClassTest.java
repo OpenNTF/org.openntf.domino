@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
+import org.openntf.domino.design.impl.HasMetadata;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.ext.Database;
 import org.openntf.domino.ext.Session;
@@ -26,7 +27,7 @@ public class DesignClassTest {
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
 		DesignCollection<DesignBase> elems = design
-				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) & @IsAvailable($xres)");
+				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) ");
 		System.out.println("Count: " + elems.getCount());
 
 		File root = new File("D:/daten/temp/ods");
@@ -40,6 +41,9 @@ public class DesignClassTest {
 				File odsFile = new File(root, elem.getOnDiskPath());
 				odsFile.getParentFile().mkdirs(); // ensure the path exists
 				elem.writeOnDiskFile(odsFile);
+				if (elem instanceof HasMetadata) {
+					((HasMetadata) elem).writeOnDiskMeta(new File(odsFile.getAbsolutePath() + ".metadata"));
+				}
 			} catch (OpenNTFNotesException ne) {
 				ne.printStackTrace();
 				System.out.println(elem.getOnDiskPath());
