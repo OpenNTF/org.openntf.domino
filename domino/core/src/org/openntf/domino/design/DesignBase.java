@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javax.xml.transform.Transformer;
+
 import org.openntf.domino.Database;
 
 /**
@@ -31,7 +33,7 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * @return the DXL of the design element, as a String
 	 */
-	public String getDxlString();
+	public String getDxlString(Transformer filter);
 
 	/**
 	 * @return whether hidden from web

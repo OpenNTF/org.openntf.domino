@@ -26,7 +26,7 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	/**
 	 * @return the file data in the given item as a byte array
 	 */
-	public byte[] getFileData(final String itemName);
+	//public byte[] getFileData(final String itemName);
 
 	/**
 	 * @param fileData
@@ -34,7 +34,7 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	 */
 	public void setFileData(final byte[] fileData);
 
-	public void setFileData(String itemName, byte[] fileData);
+	//public void setFileData(String itemName, byte[] fileData);
 
 	public java.util.Collection<String> getItemNames();
 

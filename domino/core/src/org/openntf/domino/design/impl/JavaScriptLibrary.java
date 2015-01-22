@@ -19,7 +19,7 @@ import org.openntf.domino.utils.xml.XMLNode;
 /**
  * A client side JavaScriptLibrary
  */
-public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
+public class JavaScriptLibrary extends AbstractDesignDataResource implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -106,6 +106,17 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 		return ".js";
 	}
 
+	@Override
+	public byte[] getFileData() {
+		// TODO Auto-generated method stub
+		return getFileData("$JavaScriptLibrary");
+	}
+
+	//	@Override
+	//	protected boolean useNoteFormat() {
+	//		return false;
+	//	}
+	//
 	//	@Override
 	//	public void writeOnDiskFile(final File odsFile) throws IOException {
 	//		// TODO Check for $Scriptlib_error => throw exception if item exists

@@ -16,21 +16,10 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.DxlExporter;
-import org.openntf.domino.DxlImporter;
-import org.openntf.domino.Session;
-import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.xml.XMLDocument;
-import org.openntf.domino.utils.xml.XMLNode;
-import org.xml.sax.SAXException;
 
 /**
  * @author jgallagher
@@ -41,55 +30,17 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
-	private String noteId_;
-	private transient Database database_;
-	private transient Document document_;
-	private XMLDocument dxl_;
-
 	protected AbstractDesignBase(final Document document) {
-		this(document.getAncestorDatabase());
-		noteId_ = document.getNoteID();
-		document_ = document;
+		super(document);
 	}
 
 	protected AbstractDesignBase(final Database database) {
-		database_ = database;
+		super(database);
 	}
 
-	/**
-	 * Called, when serializing the object. Needed to support lazy dxl initalization representation
-	 * 
-	 * @param out
-	 * @throws IOException
-	 */
-	private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
-		getDxl();
-		out.defaultWriteObject();
-	}
-
-	/**
-	 * Called, when deserializing the object
-	 * 
-	 * @param in
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	private void readObject(final java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		// TODO: Reattach the database?
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.design.DesignBase#getDxlString()
-	 */
 	@Override
-	public String getDxlString() {
-		try {
-			return getDxl().getXml();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+	protected final boolean useNoteFormat() {
+		return false;
 	}
 
 	/*
@@ -99,7 +50,7 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	 */
 	@Override
 	public boolean isHideFromNotes() {
-		return getDocumentElement().getAttribute("hide").equals("notes");
+		return getDocumentElement().getAttribute("hide").contains("notes");
 	}
 
 	/*
@@ -109,7 +60,7 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	 */
 	@Override
 	public boolean isHideFromWeb() {
-		return getDocumentElement().getAttribute("hide").equals("web");
+		return getDocumentElement().getAttribute("hide").contains("web");
 	}
 
 	/*
@@ -142,9 +93,18 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 		return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
 	}
 
-	@Override
-	public void reattach(final Database database) {
-		database_ = database;
+	protected void setHide(final String platform, final boolean hide) {
+		String platforms = getDxl().getFirstChild().getAttribute("hide");
+		if (hide) {
+			if (platforms.contains(platform))
+				return;
+			platforms += " " + platform;
+		} else {
+			if (!platforms.contains(platform))
+				return;
+			platforms = platforms.replace(platform, "");
+		}
+		getDocumentElement().setAttribute("hide", platforms.trim());
 	}
 
 	/*
@@ -154,13 +114,7 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	 */
 	@Override
 	public void setHideFromNotes(final boolean hideFromNotes) {
-		String hide = getDxl().getFirstChild().getAttribute("hide");
-		if (hideFromNotes && !hide.contains("notes")) {
-			hide += " notes";
-		} else if (!hideFromNotes && hide.contains("notes")) {
-			hide = hide.replace("notes", "");
-		}
-		getDocumentElement().setAttribute("hide", hide.trim());
+		setHide("notes", hideFromNotes);
 	}
 
 	/*
@@ -170,13 +124,8 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	 */
 	@Override
 	public void setHideFromWeb(final boolean hideFromWeb) {
-		String hide = getDxl().getFirstChild().getAttribute("hide");
-		if (hideFromWeb && !hide.contains("web")) {
-			hide += " web";
-		} else if (!hideFromWeb && hide.contains("web")) {
-			hide = hide.replace("web", "");
-		}
-		getDocumentElement().setAttribute("hide", hide.trim());
+		setHide("web", hideFromWeb);
+
 	}
 
 	/*
@@ -207,135 +156,6 @@ public abstract class AbstractDesignBase extends AbstractDesignOnDisk {
 	@Override
 	public void setPropagatePreventChanges(final boolean propagatePreventChanges) {
 		getDocumentElement().setAttribute("propagatenoreplace", String.valueOf(propagatePreventChanges));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.Design#getDocument()
-	 */
-	@Override
-	public Document getDocument() {
-		if (noteId_ != null && !noteId_.isEmpty()) {
-			return database_.getDocumentByID(noteId_);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.Design#getNoteID()
-	 */
-	@Override
-	public String getNoteID() {
-		return noteId_;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.Design#getUniversalID()
-	 */
-	@Override
-	public String getUniversalID() {
-		XMLNode node = getDxl().selectSingleNode("//noteinfo");
-		if (node != null) {
-			return node.getAttribute("unid");
-		}
-		return "";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
-	 */
-	@Override
-	public Database getAncestorDatabase() {
-		return database_;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
-	 */
-	@Override
-	public Session getAncestorSession() {
-		return getAncestorDatabase().getAncestorSession();
-	}
-
-	@Override
-	public boolean save() {
-
-		DxlImporter importer = getAncestorSession().createDxlImporter();
-		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
-		importer.setReplicaRequiredForReplaceOrUpdate(false);
-		Database database = getAncestorDatabase();
-		try {
-			importer.importDxl(getDxl().getXml(), database);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-			return false;
-		}
-		noteId_ = importer.getFirstImportedNoteID();
-
-		// Reset the DXL so that it can pick up new noteinfo
-		Document document = database.getDocumentByID(noteId_);
-		loadDxl(document.generateXML());
-
-		return true;
-	}
-
-	protected XMLDocument getDxl() {
-		if (dxl_ == null) {
-
-			DxlExporter exporter = database_.getAncestorSession().createDxlExporter();
-			exporter.setOutputDOCTYPE(false);
-			// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
-			if (document_ != null) {
-				loadDxl(exporter.exportDxl(document_));
-			} else {
-				loadDxl(exporter.exportDxl(database_));
-			}
-		}
-		return dxl_;
-	}
-
-	protected XMLNode getDocumentElement() {
-		return getDxl().getDocumentElement();
-	}
-
-	protected void loadDxl(final String xml) {
-
-		dxl_ = new XMLDocument();
-		try {
-			dxl_.loadString(xml);
-		} catch (SAXException e) {
-			DominoUtils.handleException(e);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		} catch (ParserConfigurationException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	protected void loadDxl(final InputStream is) {
-		dxl_ = new XMLDocument();
-		try {
-			dxl_.loadInputStream(is);
-		} catch (SAXException e) {
-			DominoUtils.handleException(e);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		} catch (ParserConfigurationException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	protected XMLNode getDxlNode(final String xpathString) {
-		return getDxl().selectSingleNode(xpathString);
 	}
 
 }

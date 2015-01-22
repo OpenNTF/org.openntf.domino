@@ -3,7 +3,9 @@
  */
 package org.openntf.domino.utils.xml;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -12,10 +14,13 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -33,7 +38,8 @@ import org.w3c.dom.NodeList;
  */
 public class XMLNode implements Map<String, Object>, Serializable {
 	private static final long serialVersionUID = 2304991412510751453L;
-
+	private static TransformerFactory tFactory = TransformerFactory.newInstance();
+	public static Transformer DEFAULT_TRANSFORMER = createTransformer(null);
 	protected org.w3c.dom.Node node_ = null;
 	private transient XPath xPath_ = null;
 	private Map<String, Object> getResults_ = new HashMap<String, Object>();
@@ -48,6 +54,29 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	public XMLNode selectSingleNode(final String xpathString) {
 		XMLNodeList result = this.selectNodes(xpathString);
 		return result.size() == 0 ? null : result.get(0);
+	}
+
+	public static Transformer createTransformer(final InputStream xsltStream) {
+		Transformer transformer = null;
+		try {
+			if (xsltStream == null) {
+				transformer = tFactory.newTransformer();
+			} else {
+				Source filter = new StreamSource(xsltStream);
+				transformer = tFactory.newTransformer(filter);
+			}
+			// We don't want the XML declaration in front
+			//transformer.setOutputProperty("omit-xml-declaration", "yes");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		} catch (TransformerConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return transformer;
 	}
 
 	public XMLNodeList selectNodes(final String xpathString) {
@@ -237,31 +266,33 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.getResults_.get(path);
 	}
 
-	public String getXml() throws IOException {
-
-		StreamResult xResult = null;
-		DOMSource source = null;
-
+	public String getXml(Transformer transformer) throws IOException {
 		try {
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer = tFactory.newTransformer();
-			xResult = new StreamResult(new StringWriter());
-			source = new DOMSource(this.node_);
-			// We don't want the XML declaration in front
-			//transformer.setOutputProperty("omit-xml-declaration", "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			transformer.transform(source, xResult);
-			return xResult.getWriter().toString();
-
+			if (transformer == null)
+				transformer = DEFAULT_TRANSFORMER;
+			StreamResult result = new StreamResult(new StringWriter());
+			DOMSource source = new DOMSource(this.node_);
+			transformer.transform(source, result);
+			return result.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return null;
+	}
 
+	public void getXml(Transformer transformer, final File out) throws IOException {
+		try {
+			if (transformer == null)
+				transformer = DEFAULT_TRANSFORMER;
+
+			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
+			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
+			StreamResult result = new StreamResult(out.toURI().toString());
+			DOMSource source = new DOMSource(this.node_);
+			transformer.transform(source, result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private XPath getXPath() {

@@ -40,10 +40,10 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public abstract class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
+public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
+	private static final Logger log_ = Logger.getLogger(AbstractDesignDataResource.class.getName());
 
 	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
 	private static final char DESIGN_FLAG_HIDEFROMDESIGNLIST = '~';
@@ -52,11 +52,11 @@ public abstract class FileResource extends AbstractDesignNoteBase implements org
 	private static final String DEFAULT_FILEDATA_FIELD = "$FileData";
 	private static final String MIMETYPE_FIELD = "$MimeType";
 
-	protected FileResource(final Document document) {
+	protected AbstractDesignDataResource(final Document document) {
 		super(document);
 	}
 
-	protected FileResource(final Database database) {
+	protected AbstractDesignDataResource(final Database database) {
 		super(database);
 
 		try {
@@ -68,7 +68,7 @@ public abstract class FileResource extends AbstractDesignNoteBase implements org
 		}
 	}
 
-	protected FileResource(final Database database, final String dxlResource) {
+	protected AbstractDesignDataResource(final Database database, final String dxlResource) {
 		super(database);
 
 		try {

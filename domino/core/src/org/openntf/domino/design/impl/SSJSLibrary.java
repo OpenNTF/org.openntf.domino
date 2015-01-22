@@ -19,10 +19,11 @@ package org.openntf.domino.design.impl;
 import org.openntf.domino.Document;
 
 /**
+ * 
  * @author Roland Praml
  * 
  */
-public class SSJSLibrary extends FileResource implements HasMetadata {
+public class SSJSLibrary extends AbstractDesignDataResource implements HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -42,9 +43,9 @@ public class SSJSLibrary extends FileResource implements HasMetadata {
 		return ".jss";
 	}
 
-	@Override
-	public byte[] getFileData() {
-		return getFileData("$ServerJavaScriptLibrary");
-	}
+	//	@Override
+	//	public byte[] getFileData() {
+	//		return getFileData("$ServerJavaScriptLibrary");
+	//	}
 
 }

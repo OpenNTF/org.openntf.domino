@@ -9,7 +9,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
 // TODO MetaData
-public class LotusScriptLibrary extends AbstractDesignNoteBase implements org.openntf.domino.design.LotusScriptLibrary, HasMetadata {
+public class LotusScriptLibrary extends AbstractDesignDataResource implements org.openntf.domino.design.LotusScriptLibrary, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**

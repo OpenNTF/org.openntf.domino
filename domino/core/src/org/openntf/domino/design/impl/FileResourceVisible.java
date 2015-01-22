@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class FileResourceVisible extends FileResource implements HasMetadata {
+public class FileResourceVisible extends AbstractDesginFileResource implements HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**

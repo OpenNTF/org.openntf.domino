@@ -16,18 +16,15 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
  * 
  */
-public class StyleSheet extends FileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
+public class StyleSheet extends AbstractDesginFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
@@ -36,32 +33,32 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 		super(document);
 	}
 
-	public StyleSheet(final Database database) {
-		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
-	}
-
-	@Override
-	public String getContent() {
-		try {
-			return new String(getFileData(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public void setContent(final String content) {
-		try {
-			if (content == null) {
-				setFileData("".getBytes("UTF-8"));
-			} else {
-				setFileData(content.getBytes("UTF-8"));
-			}
-		} catch (UnsupportedEncodingException e) {
-			DominoUtils.handleException(e);
-		}
-	}
+	//	public StyleSheet(final Database database) {
+	//		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
+	//	}
+	//
+	//	@Override
+	//	public String getContent() {
+	//		try {
+	//			return new String(getFileData(), "UTF-8");
+	//		} catch (UnsupportedEncodingException e) {
+	//			DominoUtils.handleException(e);
+	//			return null;
+	//		}
+	//	}
+	//
+	//	@Override
+	//	public void setContent(final String content) {
+	//		try {
+	//			if (content == null) {
+	//				setFileData("".getBytes("UTF-8"));
+	//			} else {
+	//				setFileData(content.getBytes("UTF-8"));
+	//			}
+	//		} catch (UnsupportedEncodingException e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
 
 	@Override
 	public String getOnDiskFolder() {
@@ -71,6 +68,18 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 	@Override
 	public String getOnDiskExtension() {
 		return ".css";
+	}
+
+	@Override
+	public String getContent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setContent(final String content) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

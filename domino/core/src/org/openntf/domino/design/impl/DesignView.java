@@ -79,4 +79,5 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 	public String getOnDiskExtension() {
 		return ".view";
 	}
+
 }

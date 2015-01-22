@@ -16,6 +16,8 @@ import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+import com.ibm.commons.util.StringUtil;
+
 @RunWith(DominoJUnitRunner.class)
 public class DesignClassTest {
 
@@ -27,22 +29,29 @@ public class DesignClassTest {
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
 		DesignCollection<DesignBase> elems = design
-				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) ");
+				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) & !@IsAvailable($ACLDigest) "
+						//+ "");
+						+ "& @contains($TITLE;{.js}) ");
 		System.out.println("Count: " + elems.getCount());
 
 		File root = new File("D:/daten/temp/ods");
 
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {
-			System.out.println("class: " + elem.getClass().getName() + ":");
 			//System.out.println(elem.getClass().getSimpleName() + "'" + elem.getNoteID() + "\t" + elem.getName() + "\t"
 			//		+ elem.getDocument().getItemValueString("$FLAGS"));
 			try {
-				File odsFile = new File(root, elem.getOnDiskPath());
+				String odp = elem.getOnDiskPath();
+				if (StringUtil.isEmpty(odp)) {
+					odp = elem.getNoteID() + ".note";
+				}
+				File odsFile = new File(root, odp);
+				System.out.println(elem.getClass().getName() + "\t\t\t" + odsFile);
 				odsFile.getParentFile().mkdirs(); // ensure the path exists
 				elem.writeOnDiskFile(odsFile);
 				if (elem instanceof HasMetadata) {
-					((HasMetadata) elem).writeOnDiskMeta(new File(odsFile.getAbsolutePath() + ".metadata"));
+					File meta = new File(odsFile.getAbsolutePath() + ".metadata");
+					((HasMetadata) elem).writeOnDiskMeta(meta);
 				}
 			} catch (OpenNTFNotesException ne) {
 				ne.printStackTrace();
