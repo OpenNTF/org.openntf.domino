@@ -18,6 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Event")
 public abstract interface Event extends Commentable, Likeable, Rateable {
+	@TypeValue(HappeningOn.LABEL)
 	public static interface HappeningOn extends DEdgeFrame {
 		public static final String LABEL = "HappeningOn";
 
@@ -28,6 +29,7 @@ public abstract interface Event extends Commentable, Likeable, Rateable {
 		public Event getEvent();
 	}
 
+	@TypeValue(HappeningAt.LABEL)
 	public static interface HappeningAt extends DEdgeFrame {
 		public static final String LABEL = "HappeningAt";
 

@@ -13,6 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Track")
 public interface Track extends DVertexFrame {
+	@TypeValue(Includes.LABEL)
 	public static interface Includes extends DEdgeFrame {
 		public static final String LABEL = "Includes";
 

@@ -15,6 +15,7 @@ import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
@@ -58,6 +59,12 @@ public class DataInitializer implements Runnable {
 
 			loadData(s, framedGraph);
 
+			Iterable<Presentation> pres = framedGraph.getVertices(null, null, Presentation.class);
+
+			for (Presentation presentation : pres) {
+				System.out.println(presentation.getTitle());
+			}
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -78,47 +85,44 @@ public class DataInitializer implements Runnable {
 			Group ibm_champion = framedGraph.addVertex("IBM Champions", Group.class);
 			ibm_champion.setType(Group.Type.PROGRAM);
 
+			SimpleDateFormat sdf = new SimpleDateFormat();
 			View sessions = srcDb.getView("Sessions");
 			for (Document doc : sessions.getAllDocuments()) {
 				if (!doc.hasItem("$Conflict")) {	// ignore conflicts
 					String locKey = doc.getItemValueString("Location");
-					Location loc = framedGraph.addVertex(null, Location.class);
-					loc.setAddress(doc.getItemValueString("Location"));
-					locs.put(locKey, loc);
-					System.out.println("Added location - " + locKey);
+					Location loc = framedGraph.addVertex(locKey, Location.class);
+					if (Strings.isBlankString(loc.getName())) {
+						loc.setName(doc.getItemValueString("Location"));
+					}
 
 					String trackKey = doc.getItemValueString("Categories");
 					Track track = framedGraph.addVertex(trackKey, Track.class);
-					track.setTitle(doc.getItemValueString("Categories"));
-					track.setDescription(doc.getItemValueString("Categories"));
-					tracks.put(trackKey, track);
-					System.out.println("Added track - " + trackKey);
+					if (Strings.isBlankString(track.getTitle())) {
+						track.setTitle(doc.getItemValueString("Categories"));
+						track.setDescription(doc.getItemValueString("Categories"));
+					}
 
-					Date sDate = doc.getItemValue("StartDate", Date.class);
-					Date sTime = doc.getItemValue("StartDateTime", Date.class);
-					Date eDate = doc.getItemValue("StartDate", Date.class);
-					Date eTime = doc.getItemValue("StartDateTime", Date.class);
-					Calendar sCalDate = Calendar.getInstance();
-					Calendar sCalTime = Calendar.getInstance();
-					Calendar eCalDate = Calendar.getInstance();
-					Calendar eCalTime = Calendar.getInstance();
+					Date startDate = (Date) doc.getItemValue("StartDate", Date.class);
+					Date startDateTime = (Date) doc.getItemValue("StartDateTime", Date.class);
+					Date endDate = (Date) doc.getItemValue("EndDate", Date.class);
+					Date endDateTime = (Date) doc.getItemValue("EndDateTime", Date.class);
 
-					sCalDate.setTime(sDate);
-					sCalTime.setTime(sTime);
-					eCalDate.setTime(eDate);
-					eCalTime.setTime(eTime);
+					Calendar startCal = new GregorianCalendar();
+					startCal.setTime(startDate);
+					startCal.set(Calendar.HOUR, startDateTime.getHours());
+					startCal.set(Calendar.MINUTE, startDateTime.getMinutes());
+					startCal.set(Calendar.SECOND, startDateTime.getSeconds());
 
-					Calendar sCal = new GregorianCalendar(sCalDate.get(Calendar.YEAR), sCalDate.get(Calendar.MONTH),
-							sCalDate.get(Calendar.DAY_OF_MONTH), sCalTime.get(Calendar.HOUR), sCalTime.get(Calendar.MINUTE),
-							sCalTime.get(Calendar.SECOND));
-					Calendar eCal = new GregorianCalendar(eCalDate.get(Calendar.YEAR), eCalDate.get(Calendar.MONTH),
-							eCalDate.get(Calendar.DAY_OF_MONTH), eCalTime.get(Calendar.HOUR), eCalTime.get(Calendar.MINUTE),
-							eCalTime.get(Calendar.SECOND));
+					Calendar endCal = new GregorianCalendar();
+					endCal.setTime(endDate);
+					endCal.set(Calendar.HOUR, endDateTime.getHours());
+					endCal.set(Calendar.MINUTE, endDateTime.getMinutes());
+					endCal.set(Calendar.SECOND, endDateTime.getSeconds());
 
-					TimeSlot ts = framedGraph.addVertex(DATE_FORMAT.format(sCal.getTime()) + "~" + DATE_FORMAT.format(eCal.getTime()),
-							TimeSlot.class);
-					ts.setStartTime(sCal.getTime());
-					ts.setEndTime(eCal.getTime());
+					String tsKey = sdf.format(startCal.getTime()) + " - " + sdf.format(endCal.getTime());
+					TimeSlot ts = framedGraph.addVertex(tsKey, TimeSlot.class);
+					ts.setStartTime(startCal.getTime());
+					ts.setEndTime(endCal.getTime());
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later

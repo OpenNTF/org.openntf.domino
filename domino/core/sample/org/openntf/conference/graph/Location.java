@@ -19,6 +19,12 @@ public interface Location extends Commentable, Likeable, Rateable {
 		RESTAURANT, REFRESHMENTS, BAR, OUTDOOR;
 	}
 
+	@TypedProperty("Name")
+	public String getName();
+
+	@TypedProperty("Name")
+	public void setName(String name);
+
 	@TypedProperty("Latitude")
 	public Double getLatitude();
 

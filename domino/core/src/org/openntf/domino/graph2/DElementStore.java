@@ -65,4 +65,16 @@ public interface DElementStore extends Externalizable {
 
 	public Set<Edge> getCachedEdges();
 
+	public Iterable<Vertex> getVertices();
+
+	public Iterable<Edge> getEdges();
+
+	public Iterable<Vertex> getVertices(String formulaFilter);
+
+	public Iterable<Edge> getEdges(String formulaFilter);
+
+	public Iterable<Vertex> getVertices(String key, Object value);
+
+	public Iterable<Edge> getEdges(String key, Object value);
+
 }

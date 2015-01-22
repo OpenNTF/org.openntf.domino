@@ -85,4 +85,44 @@ public class ConferenceGraph {
 		return framedGraph_;
 	}
 
+	public Attendee getAttendee(final Object key, final boolean create) {
+		Attendee result = getAttendee(key);
+		if (result == null && create) {
+			result = getFramedGraph().addVertex(key, Attendee.class);
+		}
+		return result;
+	}
+
+	public Attendee getAttendee(final Object key) {
+		return getFramedGraph().getVertex(key, Attendee.class);
+	}
+
+	public Group getGroup(final Object key, final boolean create) {
+		Group result = getGroup(key);
+		if (result == null && create) {
+			result = getFramedGraph().addVertex(key, Group.class);
+		}
+		return result;
+	}
+
+	public Group getGroup(final Object key) {
+		return getFramedGraph().getVertex(key, Group.class);
+	}
+
+	public <T extends Event> T getEvent(final Object key) {
+		return (T) getFramedGraph().getVertex(key, Event.class);
+	}
+
+	public TimeSlot getTimeSlot(final Object key) {
+		return getFramedGraph().getVertex(key, TimeSlot.class);
+	}
+
+	public Iterable<TimeSlot> getTimeSlots() {
+		return getFramedGraph().getVertices(null, null, TimeSlot.class);
+	}
+
+	public Location getLocation(final Object key) {
+		return getFramedGraph().getVertex(key, Location.class);
+	}
+
 }
