@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openntf.conference.graph.Event.Status;
 import org.openntf.conference.graph.Group.Type;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -42,12 +43,12 @@ public class DataInitializer implements Runnable {
 		DGraph baseGraph = framedGraph.getBaseGraph();
 		Iterable<Vertex> vertices = baseGraph.getVertices("@", "Form=\"Presentation\"");
 		//NTF There's no specific need to do it this way. I just wanted to test the TypeField-based framing
-
+		Map<String, Object> jsonMap = null;
 		for (Vertex vertex : vertices) {
 			VertexFrame frame = framedGraph.frame(vertex, DVertexFrame.class);
 			if (frame instanceof Presentation) {
 				StringBuilder sb = new StringBuilder();
-				Map<String, Object> jsonMap = framedGraph.toJsonableMap(frame);
+				jsonMap = framedGraph.toJsonableMap(frame);
 				for (String key : jsonMap.keySet()) {
 					sb.append(key + ": \"" + String.valueOf(jsonMap.get(key)) + "\", ");
 				}
@@ -56,6 +57,16 @@ public class DataInitializer implements Runnable {
 		}
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
+
+		VertexFrame frame = framedGraph.fromJsonableMap(jsonMap);
+		System.out.println("Got a frame of " + frame.getClass().getName());
+		if (frame instanceof Presentation) {
+			((Presentation) frame).setStatus(Status.CANCELLED);
+			System.out.println("Result: " + ((Presentation) frame).getStatus());
+		} else {
+			System.out.println("Didn't get a Presentation. GOt a " + frame.getClass().getName());
+		}
+		framedGraph.commit();
 
 	}
 

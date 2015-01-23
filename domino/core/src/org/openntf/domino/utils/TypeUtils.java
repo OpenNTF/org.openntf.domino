@@ -233,6 +233,9 @@ public enum TypeUtils {
 		if (o instanceof Collection) {
 			result = collectionToClass((Collection) o, T, session);
 		}
+		if (T.isEnum() && o instanceof String) {
+			result = toEnum(o, T);
+		}
 		Class<?> CType = null;
 		if (T.equals(String[].class)) {
 			result = toStrings(o);
@@ -1247,9 +1250,34 @@ public enum TypeUtils {
 		return classes;
 	}
 
+	public static Enum<?> toEnum(final Object value, final Class<?> enumClass) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
+			return null;
+		Enum<?> result = null;
+		String ename = String.valueOf(value);
+		if (ename.contains(" ")) {
+			ename = String.valueOf(value).substring(ename.indexOf(' ') + 1).trim();
+		}
+		Object[] objs = enumClass.getEnumConstants();
+		if (objs.length > 0) {
+			for (Object obj : objs) {
+				if (obj instanceof Enum) {
+					if (((Enum<?>) obj).name().equals(ename)) {
+						result = (Enum<?>) obj;
+						break;
+					}
+				}
+			}
+		}
+		if (result == null) {
+			throw new DataNotCompatibleException("Unable to discover an Enum by the name of " + ename + " in class " + enumClass);
+		}
+		return result;
+	}
+
 	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {
-		//		ClassLoader cl = Factory.getClassLoader();
-		//		System.out.println("Enum coercion requested from value " + String.valueOf(value));
 		if (value == null)
 			return null;
 		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
@@ -1267,34 +1295,8 @@ public enum TypeUtils {
 		} else {
 			try {
 				Class<?> cls = DominoUtils.getClass(cn);
-				//				System.out.println("Enum coercion with class " + cls.getName());
-				if (cls != null) {
-					Object[] objs = cls.getEnumConstants();
-					if (objs.length > 0) {
-						//					System.out.println("Enum coercion into " + cn + " with value " + ename + " started...");
-						//					StringBuilder typenames = new StringBuilder();
-						for (Object obj : objs) {
-							if (obj instanceof Enum) {
-								if (((Enum<?>) obj).name().equals(ename)) {
-									result = (Enum<?>) obj;
-									//								System.out.println("Found a match between " + result.name() + " and " + ename + "!");
-									return result;
-								} else {
-									//								typenames.append(", " + ((Enum) obj).name());
-								}
-							} else {
-								//							System.out.println("Expected encounter an Enum constant, but didn't. Instead found a "
-								//									+ obj.getClass().getName());
-							}
-						}
-						//					System.out.println("Unable to match " + ename + " with any of: " + typenames.toString());
-					} else {
-						//					System.out.println("No enum constants found for class " + cls.getName());
-
-					}
-				}
+				result = toEnum(ename, cls);
 			} catch (Exception e) {
-				//				System.out.println("Failed to find class " + cn + " using a thread's current classloader");
 				DominoUtils.handleException(e);
 			}
 		}

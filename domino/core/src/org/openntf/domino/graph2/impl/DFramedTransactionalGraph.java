@@ -6,6 +6,7 @@ import java.util.Map;
 import javolution.util.FastMap;
 
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
 import org.openntf.domino.utils.DominoUtils;
@@ -25,6 +26,59 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	public DFramedTransactionalGraph(final T baseGraph, final FramedGraphConfiguration config) {
 		super(baseGraph, config);
+	}
+
+	public VertexFrame fromJsonableMap(final Map<String, Object> map) {
+		VertexFrame result = null;
+		Object id = map.get("id");
+		Object typeName = map.get("type");
+		Class<? extends VertexFrame> type = null;
+		if (typeName != null) {
+			try {
+				type = (Class<? extends VertexFrame>) Class.forName(String.valueOf(typeName));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if (id == null) {
+			//new vertex
+			if (type == null) {
+				//what are we going to create? How do we even know?
+			} else {
+				result = addVertex(null, type);
+			}
+		} else {
+			if (type == null) {
+				try {
+					result = getVertex(id, DVertexFrame.class);
+				} catch (Throwable t) {
+					//TODO NTF
+					t.printStackTrace();
+				}
+			} else {
+				result = addVertex(id, type);
+			}
+		}
+		if (result != null) {
+			Class<?>[] interfaces = result.getClass().getInterfaces();
+			if (interfaces.length > 0) {
+				Map<String, Method> crystals = getTypeRegistry().getPropertiesSetters(interfaces);
+				for (String key : crystals.keySet()) {
+					Method crystal = crystals.get(key);
+					if (crystal != null) {
+						try {
+							Object raw = map.get(key);
+							crystal.invoke(result, raw);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("No method found for key " + key);
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	public Map<String, Object> toJsonableMap(final VertexFrame frame) {
@@ -53,6 +107,12 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	public Map<String, Object> toJsonableMap(final EdgeFrame frame) {
 		Map<String, Object> result = new FastMap<String, Object>();
+		DEdge dedge = (DEdge) frame.asEdge();
+		result.put("id", dedge.getId());
+		result.put("type", getTypeManager().resolve(frame).getName());
+		result.put("inVertex", dedge.getVertexId(Direction.IN));
+		result.put("outVertex", dedge.getVertexId(Direction.OUT));
+		result.put("label", dedge.getLabel());
 		Class<?>[] interfaces = frame.getClass().getInterfaces();
 		if (interfaces.length > 0) {
 			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);

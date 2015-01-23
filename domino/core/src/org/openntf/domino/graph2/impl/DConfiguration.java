@@ -87,14 +87,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return this;
 		}
 
-		public String getTypeNamesForFrame(final Object element) {
-			StringBuilder sb = new StringBuilder();
-			for (Class<?> klazz : getTypesForFrame(element)) {
-				sb.append(klazz.getSimpleName());
-				sb.append(',');
-			}
-			return sb.toString();
-		}
+		//		public String getTypeNamesForFrame(final Object element) {
+		//			StringBuilder sb = new StringBuilder();
+		//			for (Class<?> klazz : getTypesForFrame(element)) {
+		//				sb.append(klazz.getSimpleName());
+		//				sb.append(',');
+		//			}
+		//			return sb.toString();
+		//		}
 
 		public Class<?>[] getTypesForFrame(final Object element) {
 			return element.getClass().getInterfaces();
@@ -138,9 +138,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			Method[] methods = type.getMethods();
 			for (Method method : methods) {
 				String key = null;
+				boolean derived = false;
 				Annotation typed = method.getAnnotation(TypedProperty.class);
 				if (typed != null) {
 					key = ((TypedProperty) typed).value();
+					derived = ((TypedProperty) typed).derived();
 				} else {
 					Annotation property = method.getAnnotation(Property.class);
 					if (property != null) {
@@ -151,7 +153,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					if (ClassUtilities.isGetMethod(method)) {
 						getters.put(key, method);
 					}
-					if (ClassUtilities.isSetMethod(method)) {
+					if (ClassUtilities.isSetMethod(method) && !derived) {
 						setters.put(key, method);
 					}
 				}
