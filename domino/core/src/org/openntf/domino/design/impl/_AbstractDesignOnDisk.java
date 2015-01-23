@@ -44,7 +44,7 @@ import com.ibm.commons.util.StringUtil;
  * 
  */
 @SuppressWarnings("serial")
-public abstract class AbstractDesignOnDisk implements DesignBase {
+public abstract class _AbstractDesignOnDisk implements DesignBase {
 	private static Transformer ODP_META_TRANSFORMER = createTransformer("dxl_metafilter.xslt");
 
 	private transient Database database_;
@@ -56,13 +56,13 @@ public abstract class AbstractDesignOnDisk implements DesignBase {
 	//	private static final String DEFAULT_ENCODING = "<?xml version='1.0'?>";
 
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(AbstractDesignOnDisk.class.getName());
+	private static final Logger log_ = Logger.getLogger(_AbstractDesignOnDisk.class.getName());
 
-	public AbstractDesignOnDisk(final Database database) {
+	public _AbstractDesignOnDisk(final Database database) {
 		database_ = database;
 	}
 
-	protected AbstractDesignOnDisk(final Document document) {
+	protected _AbstractDesignOnDisk(final Document document) {
 		setDocument(document);
 	}
 

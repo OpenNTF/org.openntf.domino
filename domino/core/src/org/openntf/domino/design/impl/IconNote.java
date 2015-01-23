@@ -25,7 +25,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
-public class IconNote extends AbstractDesignNoteBase implements org.openntf.domino.design.IconNote {
+public class IconNote extends AbstractDesignBaseNamed implements org.openntf.domino.design.IconNote {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IconNote.class.getName());
@@ -130,4 +130,5 @@ public class IconNote extends AbstractDesignNoteBase implements org.openntf.domi
 	public String getOnDiskExtension() {
 		return "";
 	}
+
 }

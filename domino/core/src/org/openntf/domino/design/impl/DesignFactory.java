@@ -17,7 +17,6 @@
 package org.openntf.domino.design.impl;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.design.DesignBase;
 
 /**
  * @author jgallagher
@@ -235,13 +234,13 @@ enum DesignFactory {
 			return new JarResource(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_FILE_DL)) {
-			return new FileResourceVisible(doc);
+			return new FileResource(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_FILE_HIDDEN)) {
 			String flagsExt = doc.getItemValueString("$FlagsExt");
 			if (testFlag(flagsExt, "+w"))
 				return new FileResourceWebContent(doc);
-			return new FileResourceHidden(doc);
+			return new FileResource(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_NAVIGATORSWEB)) {
 			return new Navigator(doc);
@@ -338,51 +337,50 @@ enum DesignFactory {
 			// everything else is treated as FORM
 			return new DesignForm(doc);
 		} else {
-			System.out.println("############################################################################################"
-					+ doc.getItemValueString("$TITLE") + " " + flags);
+			// e.g. the $BEProfileR7
 			return new OtherDesignElement(doc);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T fromDocument(final Document doc, final Class<? extends org.openntf.domino.design.DesignBase> T) {
-		if (T == null) {
-			return (T) fromDocument(doc);
-		}
-		// TODO: Replace the code below by this
-		if (false) {
-			DesignBase ret = fromDocument(doc);
-			if (T.isAssignableFrom(ret.getClass())) {
-				return (T) ret;
+	/*
+		@SuppressWarnings("unchecked")
+		public static <T> T fromDocument(final Document doc, final Class<? extends org.openntf.domino.design.DesignBase> T) {
+			if (T == null) {
+				return (T) fromDocument(doc);
 			}
-			throw new ClassCastException("something went wrong");
+			// TODO: Replace the code below by this
+			if (false) {
+				DesignBase ret = fromDocument(doc);
+				if (T.isAssignableFrom(ret.getClass())) {
+					return (T) ret;
+				}
+				throw new ClassCastException("something went wrong");
+			}
+			if (T == ACLNote.class) {
+				return (T) (new ACLNote(doc));
+			} else if (T == AboutDocument.class) {
+				return (T) (new AboutDocument(doc));
+			} else if (T == FileResource.class) {
+				return (T) (new FileResource(doc));
+			} else if (T == DesignForm.class) {
+				return (T) (new DesignForm(doc));
+			} else if (T == IconNote.class) {
+				return (T) (new IconNote(doc));
+			} else if (T == ReplicationFormula.class) {
+				return (T) (new ReplicationFormula(doc));
+			} else if (T == UsingDocument.class) {
+				return (T) (new UsingDocument(doc));
+			} else if (T == DesignView.class) {
+				return (T) (new DesignView(doc));
+				//		} else if (T == JavaResource.class) {
+				//			return (T) (new JavaResource(doc));
+			} else if (T == JarResource.class) {
+				return (T) (new JarResource(doc));
+			} else if (T == XPage.class) {
+				return (T) (new XPage(doc));
+			} else if (T == JavaScriptLibrary.class) {
+				return (T) (new JavaScriptLibrary(doc));
+			}
+			return null;
 		}
-		if (T == ACLNote.class) {
-			return (T) (new ACLNote(doc));
-		} else if (T == AboutDocument.class) {
-			return (T) (new AboutDocument(doc));
-		} else if (T == FileResource.class) {
-			return (T) (new FileResourceVisible(doc));
-		} else if (T == DesignForm.class) {
-			return (T) (new DesignForm(doc));
-		} else if (T == IconNote.class) {
-			return (T) (new IconNote(doc));
-		} else if (T == ReplicationFormula.class) {
-			return (T) (new ReplicationFormula(doc));
-		} else if (T == UsingDocument.class) {
-			return (T) (new UsingDocument(doc));
-		} else if (T == DesignView.class) {
-			return (T) (new DesignView(doc));
-			//		} else if (T == JavaResource.class) {
-			//			return (T) (new JavaResource(doc));
-		} else if (T == JarResource.class) {
-			return (T) (new JarResource(doc));
-		} else if (T == XPage.class) {
-			return (T) (new XPage(doc));
-		} else if (T == JavaScriptLibrary.class) {
-			return (T) (new JavaScriptLibrary(doc));
-		}
-		return null;
-	}
-
+	*/
 }

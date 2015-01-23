@@ -35,6 +35,11 @@ public class JavaLibrary extends AbstractDesignBaseNamed {
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "Code/ScriptLibraries";
 	}

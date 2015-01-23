@@ -19,6 +19,9 @@ package org.openntf.domino.design;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
 
 import javax.xml.transform.Transformer;
 
@@ -29,6 +32,15 @@ import org.openntf.domino.Database;
  * 
  */
 public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, Serializable {
+
+	enum ItemFlag {
+		_SIGN, _SUMMARY
+	}
+
+	public static final Set<ItemFlag> FLAG_NONE = EnumSet.noneOf(ItemFlag.class);
+	public static final Set<ItemFlag> FLAG_SIGN = EnumSet.of(ItemFlag._SIGN);
+	public static final Set<ItemFlag> FLAG_SUMMARY = EnumSet.of(ItemFlag._SUMMARY);
+	public static final Set<ItemFlag> FLAG_SIGN_SUMMARY = EnumSet.of(ItemFlag._SIGN, ItemFlag._SUMMARY);
 
 	/**
 	 * @return the DXL of the design element, as a String
@@ -104,4 +116,6 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	public String getOnDiskPath();
 
 	public void writeOnDiskFile(File odsFile) throws IOException;
+
+	public Collection<String> getItemNames();
 }

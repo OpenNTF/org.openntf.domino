@@ -33,6 +33,11 @@ public class DataConnectionResource extends AbstractDesignBaseNamed /* implement
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "Data/DataConnections";
 	}

@@ -46,6 +46,12 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		// RAW-format is set to false, otherwise it is difficult to determine file extension
+		return false;
+	}
+
+	@Override
 	public byte[] getImageData() {
 		return parseBase64Binary(getImageNode().getText());
 	}

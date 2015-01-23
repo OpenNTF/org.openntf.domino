@@ -37,6 +37,11 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 		super(document);
 	}
 
+	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
 	protected Folder(final Database database) {
 		super(database);
 

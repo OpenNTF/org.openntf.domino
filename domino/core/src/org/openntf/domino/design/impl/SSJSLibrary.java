@@ -23,7 +23,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class SSJSLibrary extends AbstractDesignDataResource implements HasMetadata {
+public class SSJSLibrary extends AbstractDesignFileResource implements HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**

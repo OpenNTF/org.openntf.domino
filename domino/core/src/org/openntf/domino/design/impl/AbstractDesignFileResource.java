@@ -20,14 +20,10 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -40,25 +36,25 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
+public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.FileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(AbstractDesignDataResource.class.getName());
+	private static final Logger log_ = Logger.getLogger(AbstractDesignFileResource.class.getName());
 
+	/* for web apps, this file is ready for primetime */
 	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
-	private static final char DESIGN_FLAG_HIDEFROMDESIGNLIST = '~';
 	private static final char DESIGN_FLAG_READONLY = '&';
 
 	private static final String DEFAULT_FILEDATA_FIELD = "$FileData";
 	private static final String MIMETYPE_FIELD = "$MimeType";
 
-	protected AbstractDesignDataResource(final Document document) {
+	protected AbstractDesignFileResource(final Document document) {
 		super(document);
 	}
 
-	protected AbstractDesignDataResource(final Database database) {
+	protected AbstractDesignFileResource(final Database database) {
 		super(database);
-
+		// TODO What is this?
 		try {
 			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
 			loadDxl(is);
@@ -68,7 +64,7 @@ public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase 
 		}
 	}
 
-	protected AbstractDesignDataResource(final Database database, final String dxlResource) {
+	protected AbstractDesignFileResource(final Database database, final String dxlResource) {
 		super(database);
 
 		try {
@@ -80,18 +76,26 @@ public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase 
 		}
 	}
 
-	@Override
-	public byte[] getFileData() {
-		return getFileData(DEFAULT_FILEDATA_FIELD);
-	}
-
 	/*
 	 *  (non-Javadoc)
-		 * 
-		 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
-		 */
+	 * 
+	 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
+	 */
+	@Override
+	public byte[] getFileData() {
+		if (useRawFormat())
+			return getFileDataRaw(DEFAULT_FILEDATA_FIELD);
+		String rawData = getDxl().selectSingleNode("//filedata").getText();
+		return parseBase64Binary(rawData);
+	}
 
-	public byte[] getFileData(final String itemName) {
+	/**
+	 * Reads a FileData Item in RAW-mode
+	 * 
+	 * @param itemName
+	 * @return
+	 */
+	protected byte[] getFileDataRaw(final String itemName) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) {
@@ -120,12 +124,19 @@ public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase 
 	}
 
 	@Override
-	public void setFileData(final byte[] fileData) {
-		setFileData(DEFAULT_FILEDATA_FIELD, fileData);
+	public void setFileData(final byte[] data) {
+		if (useRawFormat()) {
+			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
+		} else {
+			XMLNode filedata = getDxl().selectSingleNode("//filedata");
+			if (filedata == null) {
+				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
+			}
+			filedata.setText(printBase64Binary(data));
+		}
 	}
 
-	public void setFileData(final String itemName, final byte[] fileData) {
-		//		try {
+	protected void setFileDataRaw(final String itemName, final byte[] fileData) {
 		// To set the file content, first clear out existing content
 		List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
@@ -172,52 +183,42 @@ public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase 
 
 		// Also set the file size if we're setting the main field
 		if (DEFAULT_FILEDATA_FIELD.equals(itemName)) {
-			XMLNode fileSizeNode = getDocumentElement().selectSingleNode("//item[@name='$FileSize']");
-			if (fileSizeNode == null) {
-				fileSizeNode = getDocumentElement().addChildElement("item");
-				fileSizeNode.setAttribute("name", "$FileSize");
-				fileSizeNode.setAttribute("sign", "true");
-				fileSizeNode = fileSizeNode.addChildElement("number");
-			} else {
-				fileSizeNode = fileSizeNode.selectSingleNode("number");
-			}
-			fileSizeNode.setText(String.valueOf(fileData.length));
+			setItemValue("$FileSize", String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
 		}
-		//		} catch (IOException ioe) {
-		//			DominoUtils.handleException(ioe);
-		//		}
 	}
 
 	@Override
 	public String getMimeType() {
-		return getItemValueString(MIMETYPE_FIELD);
+		if (useRawFormat())
+			return getItemValueString(MIMETYPE_FIELD);
+		return getDocumentElement().getAttribute("mimetype");
 	}
 
 	@Override
 	public void setMimeType(final String mimeType) {
-		setItemValue(MIMETYPE_FIELD, mimeType);
+		if (useRawFormat()) {
+			setItemValue(MIMETYPE_FIELD, mimeType, FLAG_SUMMARY);
+		} else {
+			getDocumentElement().setAttribute("mimetype", mimeType);
+		}
 	}
 
 	@Override
 	public void setName(final String title) {
 		super.setName(title);
-
 		// Also set the $FileNames field
-		XMLNode fileNamesNode = getDocumentElement().selectSingleNode("//item[@name='$FileNames']");
-		if (fileNamesNode == null) {
-			fileNamesNode = getDocumentElement().addChildElement("item");
-			fileNamesNode.setAttribute("name", "$FileNames");
-			fileNamesNode.setAttribute("sign", "true");
-			fileNamesNode = fileNamesNode.addChildElement("text");
-		} else {
-			fileNamesNode = fileNamesNode.selectSingleNode("text");
-		}
-		fileNamesNode.setText(title);
+		setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
 	}
 
+	// TODO: map this to DXL
 	@Override
 	public boolean isReadOnly() {
 		return hasFlag(DESIGN_FLAG_READONLY);
+	}
+
+	@Override
+	public void setReadOnly(final boolean readOnly) {
+		setFlag(DESIGN_FLAG_READONLY, readOnly);
 	}
 
 	@Override
@@ -226,50 +227,7 @@ public abstract class AbstractDesignDataResource extends AbstractDesignNoteBase 
 	}
 
 	@Override
-	public boolean isHideFromDesignList() {
-		return hasFlag(DESIGN_FLAG_HIDEFROMDESIGNLIST);
-	}
-
-	@Override
-	public void setReadOnly(final boolean readOnly) {
-		//setFlag(DESIGN_FLAG_READONLY, readOnly);
-
-	}
-
-	@Override
 	public void setDeployable(final boolean deployable) {
-		//setFlagExt(DESIGN_FLAGEXT_FILE_DEPLOYABLE, deployable);
-	}
-
-	@Override
-	public void setHideFromDesignList(final boolean hideFromDesignList) {
-		//	setFlag(DESIGN_FLAG_HIDEFROMDESIGNLIST, hideFromDesignList);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.FileResource#getItemNames()
-	 */
-	@Override
-	public Collection<String> getItemNames() {
-		Collection<String> result = new TreeSet<String>();
-
-		for (XMLNode node : getDxl().selectNodes("//item")) {
-			String itemName = node.getAttribute("name");
-			if (!itemName.isEmpty()) {
-				result.add(itemName);
-			}
-		}
-
-		return result;
-	}
-
-	@Override
-	public void writeOnDiskFile(final File odsFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(odsFile);
-		fo.write(getFileData());
-		fo.close();
-
+		// TODO Auto-generated method stub
 	}
 }

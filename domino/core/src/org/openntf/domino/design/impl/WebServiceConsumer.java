@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class WebServiceConsumer extends AbstractDesignNoteBase /* implements TODO */{
+public class WebServiceConsumer extends AbstractDesignBaseNamed /* implements TODO */{
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -30,6 +30,11 @@ public class WebServiceConsumer extends AbstractDesignNoteBase /* implements TOD
 	 */
 	protected WebServiceConsumer(final Document document) {
 		super(document);
+	}
+
+	@Override
+	protected boolean useRawFormat() {
+		return true;
 	}
 
 	@Override

@@ -32,7 +32,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
-public abstract class JavaResource extends FileResource implements org.openntf.domino.design.JavaResource {
+public class JavaResource extends FileResource implements org.openntf.domino.design.JavaResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JavaResource.class.getName());
@@ -77,7 +77,7 @@ public abstract class JavaResource extends FileResource implements org.openntf.d
 
 		Map<String, byte[]> result = new HashMap<String, byte[]>();
 		for (int i = 0; i < names.size(); i++) {
-			byte[] classData = getFileData("$ClassData" + i);
+			byte[] classData = getFileDataRaw("$ClassData" + i);
 			if (classData.length > 0) {
 				result.put(names.get(i), classData);
 			}
@@ -112,7 +112,7 @@ public abstract class JavaResource extends FileResource implements org.openntf.d
 			XMLNode sizeText = sizeNode.addChildElement("number");
 			sizeText.setTextContent(String.valueOf(classEntry.getValue().length));
 
-			setFileData("$ClassData" + index, classEntry.getValue());
+			setFileDataRaw("$ClassData" + index, classEntry.getValue());
 
 			XMLNode name = indexNode.addChildElement("text");
 			name.setTextContent("WEB-INF/classes/" + DominoUtils.javaBinaryNameToFilePath(classEntry.getKey(), "/"));

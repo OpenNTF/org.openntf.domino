@@ -18,19 +18,24 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
  * @author jgallagher
  * 
  */
-public class StyleSheet extends AbstractDesginFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
+public class StyleSheet extends AbstractDesignFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
 
 	public StyleSheet(final Document document) {
 		super(document);
+	}
+
+	public StyleSheet(final Database database) {
+		super(database);
 	}
 
 	//	public StyleSheet(final Database database) {
@@ -78,6 +83,12 @@ public class StyleSheet extends AbstractDesginFileResource implements org.opennt
 
 	@Override
 	public void setContent(final String content) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setDeployable(final boolean deployable) {
 		// TODO Auto-generated method stub
 
 	}

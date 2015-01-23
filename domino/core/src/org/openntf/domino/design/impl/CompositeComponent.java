@@ -33,6 +33,11 @@ public class CompositeComponent extends FileResource implements HasMetadata/* im
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return true; // does not support non raw
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "CompositeApplications/Components";
 	}

@@ -33,7 +33,11 @@ public class DesignAgent extends AbstractDesignBaseNamed /* implements TODO */{
 		super(document);
 	}
 
-	// 
+	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
 	@Override
 	public String getOnDiskFolder() {
 		return "Code/Agents";

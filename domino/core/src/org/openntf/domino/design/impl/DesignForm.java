@@ -38,6 +38,11 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 		super(document);
 	}
 
+	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -80,7 +85,7 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 
 	@Override
 	public void setXPageAlt(final String xpageAlt) {
-		setItemValue("$XPageAlt", xpageAlt);
+		setItemValue("$XPageAlt", xpageAlt, FLAG_SIGN_SUMMARY);
 	}
 
 	@Override
@@ -91,7 +96,7 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 
 	@Override
 	public void setXPageAltClient(final String xpageAltClient) {
-		setItemValue("$XPageAltClient", xpageAltClient);
+		setItemValue("$XPageAltClient", xpageAltClient, FLAG_SIGN_SUMMARY);
 	}
 
 	@Override

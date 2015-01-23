@@ -22,19 +22,19 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class FileResourceVisible extends AbstractDesginFileResource implements HasMetadata {
+public class _FileResourceHidden extends AbstractDesignFileResource/* implements TODO */{
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected FileResourceVisible(final Document document) {
+	protected _FileResourceHidden(final Document document) {
 		super(document);
 	}
 
 	@Override
 	public String getOnDiskFolder() {
-		return "Resources/Files";
+		return "";
 	}
 
 	@Override
@@ -42,4 +42,13 @@ public class FileResourceVisible extends AbstractDesginFileResource implements H
 		return "";
 	}
 
+	@Override
+	protected boolean mustEncode(final String resName) {
+		return false;
+	}
+
+	public void setDeployable(boolean deployable) {
+		// TODO Auto-generated method stub
+		
+	}
 }

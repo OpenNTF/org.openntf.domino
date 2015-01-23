@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,8 +24,13 @@ import java.util.logging.Logger;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.DesignBaseNamed;
+import org.openntf.formula.function.TextFunctions;
+
+import com.ibm.commons.util.StringUtil;
 
 /**
+ * A named DesignNote
+ * 
  * @author jgallagher
  * 
  */
@@ -33,83 +39,135 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
 
-	/**
-	 * @param document
-	 */
-	protected AbstractDesignBaseNamed(final Document document) {
-		super(document);
-	}
-
-	protected AbstractDesignBaseNamed(final Database database) {
+	public AbstractDesignBaseNamed(final Database database) {
 		super(database);
 	}
 
+	public AbstractDesignBaseNamed(final Document document) {
+		super(document);
+	}
+
+	protected List<String> getTitlesRaw() {
+		String titles = getItemValueStrings(TITLE_ITEM, "|");
+		return Arrays.asList(titles.split("\\|"));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.design.DesignBase#getAliases()
+	 * @see org.openntf.domino.design.DesignBaseNamed#getAliases()
 	 */
 	@Override
 	public List<String> getAliases() {
-		return Arrays.asList(getDxl().getAttribute("alias").split("\\|"));
+		String aliases;
+		if (useRawFormat()) {
+			// Aliases are all the $TITLE values after the first
+			aliases = getItemValueStrings(TITLE_ITEM, "|");
+			aliases = TextFunctions.atRight(aliases, "|");
+		} else {
+			aliases = getDxl().getAttribute("alias");
+		}
+		if (StringUtil.isEmpty(aliases)) {
+			return new ArrayList<String>();
+		} else {
+			return Arrays.asList(aliases.split("\\|"));
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.design.DesignBase#getAlias()
+	 * @see org.openntf.domino.design.DesignBaseNamed#getAlias()
 	 */
 	@Override
 	public String getAlias() {
-		return getDxl().getAttribute("alias");
+		if (useRawFormat()) {
+			String[] aliases = getAliases().toArray(new String[] {});
+			return StringUtil.concatStrings(aliases, '|', false);
+		} else {
+			return getDxl().getAttribute("alias");
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.design.DesignBase#getName()
+	 * @see org.openntf.domino.design.DesignBaseNamed#getName()
 	 */
 	@Override
 	public String getName() {
-		return getDocumentElement().getAttribute("name");
+		if (useRawFormat()) {
+			String title = getItemValueString(TITLE_ITEM);
+			int pos = title.indexOf('|');
+			if (pos < 0)
+				return title;
+			return title.substring(0, pos);
+		} else {
+			return getDocumentElement().getAttribute("name");
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.design.DesignBase#setAlias(java.lang.String)
+	 * @see org.openntf.domino.design.DesignBaseNamed#setAlias(java.lang.String)
 	 */
 	@Override
 	public void setAlias(final String alias) {
-		getDocumentElement().setAttribute("alias", alias);
+		if (useRawFormat()) {
+			List<String> result = new ArrayList<String>(2);
+			result.add(getName());
+			result.add(alias);
+			setItemValue(TITLE_ITEM, result, FLAG_SIGN_SUMMARY);
+		} else {
+			getDocumentElement().setAttribute("alias", alias);
+		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.design.DesignBase#setAliases(java.lang.Iterable)
+	 * @see org.openntf.domino.design.DesignBaseNamed#setAliases(java.lang.Iterable)
 	 */
 	@Override
 	public void setAliases(final Iterable<String> aliases) {
-		StringBuilder result = new StringBuilder();
-		boolean added = false;
-		for (String alias : aliases) {
-			if (added)
-				result.append("|");
-			result.append(alias);
-			added = true;
+		if (useRawFormat()) {
+			List<String> titles = getItemValueStrings(TITLE_ITEM);
+			List<String> result = new ArrayList<String>(2);
+			result.add(titles.size() > 0 ? titles.get(0) : "");
+			for (String alias : aliases) {
+				result.add(alias);
+			}
+			setItemValue(TITLE_ITEM, titles, FLAG_SIGN_SUMMARY);
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (String alias : aliases) {
+				if (sb.length() > 0)
+					sb.append('|');
+				sb.append(alias);
+			}
+			getDocumentElement().setAttribute("alias", sb.toString());
 		}
-		getDocumentElement().setAttribute("alias", result.toString());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.design.DesignBase#setName(java.lang.String)
+	 * @see org.openntf.domino.design.DesignBaseNamed#setName(java.lang.String)
 	 */
 	@Override
 	public void setName(final String name) {
-		getDocumentElement().setAttribute("name", name);
+		if (useRawFormat()) {
+			List<String> result = getItemValueStrings(TITLE_ITEM);
+			if (result.size() > 0) {
+				result.set(0, name);
+			} else {
+				result.add(name);
+			}
+			setItemValue(TITLE_ITEM, result, FLAG_SIGN_SUMMARY);
+		} else {
+			getDocumentElement().setAttribute("name", name);
+		}
 	}
 
 }

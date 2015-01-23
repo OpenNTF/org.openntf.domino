@@ -7,6 +7,7 @@
 	<!-- skip all <filedata> tags in fileresources -->
 	<xsl:template match="//fileresource/filedata"/>
 	<xsl:template match="//stylesheetresource/filedata"/>
+	<xsl:template match="//scriptlibrary/code"/>
 	
 	<!-- clean up image resources -->
 	<xsl:template match="//imageresource/gif"/>

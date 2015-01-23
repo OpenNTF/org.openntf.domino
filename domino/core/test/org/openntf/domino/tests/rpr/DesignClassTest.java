@@ -30,8 +30,8 @@ public class DesignClassTest {
 		// -X = no AgentData
 		DesignCollection<DesignBase> elems = design
 				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) & !@IsAvailable($ACLDigest) "
-						//+ "");
-						+ "& @contains($TITLE;{.js}) ");
+						+ "");
+		//+ "& @contains($TITLE;{.js}) ");
 		System.out.println("Count: " + elems.getCount());
 
 		File root = new File("D:/daten/temp/ods");
@@ -41,6 +41,7 @@ public class DesignClassTest {
 			//System.out.println(elem.getClass().getSimpleName() + "'" + elem.getNoteID() + "\t" + elem.getName() + "\t"
 			//		+ elem.getDocument().getItemValueString("$FLAGS"));
 			try {
+				//elem.getDxlString(null)
 				String odp = elem.getOnDiskPath();
 				if (StringUtil.isEmpty(odp)) {
 					odp = elem.getNoteID() + ".note";

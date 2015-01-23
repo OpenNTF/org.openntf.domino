@@ -33,6 +33,11 @@ public class DesignApplet extends AbstractDesignBaseNamed /* implements TODO */{
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "Resources/Applets";
 	}

@@ -41,6 +41,11 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 		super(document);
 	}
 
+	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
 	protected DesignView(final Database database) {
 		super(database);
 

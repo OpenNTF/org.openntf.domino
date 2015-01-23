@@ -39,6 +39,7 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 		clazz_ = clazz;
 	}
 
+	@Override
 	public int getCount() {
 		return collection_.getCount();
 	}
@@ -75,11 +76,15 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 		 * 
 		 * @see java.util.Iterator#next()
 		 */
+		@SuppressWarnings("unchecked")
 		@Override
 		public T next() {
 			String noteId = iterator_.next();
 			Document doc = collection_.getAncestorDatabase().getDocumentByID(noteId);
-			return DesignFactory.fromDocument(doc, clazz_);
+			DesignBase ret = DesignFactory.fromDocument(doc);
+			if (clazz_ != null && !clazz_.isAssignableFrom(ret.getClass()))
+				throw new ClassCastException("Cannot cast " + ret.getClass().getName() + " to " + clazz_.getName());
+			return (T) ret;
 		}
 
 		/*

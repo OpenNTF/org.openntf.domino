@@ -36,8 +36,6 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 
 	//public void setFileData(String itemName, byte[] fileData);
 
-	public java.util.Collection<String> getItemNames();
-
 	/**
 	 * @return mime type
 	 */
@@ -59,14 +57,14 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	 */
 	public boolean isDeployable();
 
-	/**
-	 * @return whether the file resource is hidden from the design list in Designer (e.g. WebContent files)
-	 */
-	public boolean isHideFromDesignList();
+	//	/**
+	//	 * @return whether the file resource is hidden from the design list in Designer (e.g. WebContent files)
+	//	 */
+	//	public boolean isHideFromDesignList();
 
 	public void setReadOnly(final boolean readOnly);
 
 	public void setDeployable(final boolean deployable);
 
-	public void setHideFromDesignList(final boolean hideFromDesignList);
+	//	public void setHideFromDesignList(final boolean hideFromDesignList);
 }

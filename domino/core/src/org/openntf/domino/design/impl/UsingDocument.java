@@ -34,6 +34,11 @@ public class UsingDocument extends AbstractDesignBase implements org.openntf.dom
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
+	@Override
 	public String getName() {
 		return "UsingDocument";
 	}

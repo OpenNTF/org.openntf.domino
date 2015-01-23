@@ -33,6 +33,11 @@ public class SharedActionsNote extends AbstractDesignBase /* implements TODO */{
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
+	@Override
 	public String getName() {
 		return "Shared Actions";
 	}
