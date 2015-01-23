@@ -20,8 +20,6 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -71,14 +69,6 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 			DominoUtils.handleException(e);
 			return null;
 		}
-	}
-
-	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(odpFile);
-		fo.write(getImageData());
-		fo.close();
-
 	}
 
 	@Override

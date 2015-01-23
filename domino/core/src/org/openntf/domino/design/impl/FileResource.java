@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -26,7 +24,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 
-public class FileResource extends AbstractDesignFileResource implements org.openntf.domino.design.FileResource {
+public final class FileResource extends AbstractDesignFileResource implements org.openntf.domino.design.FileResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	//	private static final long serialVersionUID = 1L;
@@ -88,16 +86,5 @@ public class FileResource extends AbstractDesignFileResource implements org.open
 	@Override
 	public String getOnDiskExtension() {
 		return "";
-	}
-
-	/**
-	 * The ODS file that is written here is the file content
-	 */
-	@Override
-	public void writeOnDiskFile(final File odsFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(odsFile);
-		fo.write(getFileData());
-		fo.close();
-
 	}
 }

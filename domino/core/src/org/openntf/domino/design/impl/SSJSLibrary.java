@@ -34,6 +34,11 @@ public class SSJSLibrary extends AbstractDesignFileResource implements HasMetada
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return false;
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "Code/ScriptLibraries";
 	}
@@ -43,9 +48,9 @@ public class SSJSLibrary extends AbstractDesignFileResource implements HasMetada
 		return ".jss";
 	}
 
-	//	@Override
-	//	public byte[] getFileData() {
-	//		return getFileData("$ServerJavaScriptLibrary");
-	//	}
+	@Override
+	public byte[] getFileData() {
+		return getFileDataRaw("$ServerJavaScriptLibrary");
+	}
 
 }

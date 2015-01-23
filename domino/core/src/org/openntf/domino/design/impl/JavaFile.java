@@ -24,7 +24,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class JavaFile extends FileResource implements HasMetadata /* implements TODO */{
+public class JavaFile extends AbstractDesignFileResource implements HasMetadata /* implements TODO */{
 	private static final long serialVersionUID = 1L;
 
 	/**

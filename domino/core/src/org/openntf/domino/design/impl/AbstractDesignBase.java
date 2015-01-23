@@ -535,7 +535,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 			exporter.setForceNoteFormat(useRawFormat());
 
 			// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
-			String xml = exporter.exportDxl(document_);
+			String xml = doExport(exporter);
 
 			if (!useRawFormat()) {
 				String part = xml.substring(0, 64);
@@ -545,6 +545,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 			loadDxl(xml);
 		}
 		return dxl_;
+	}
+
+	protected String doExport(final DxlExporter exporter) {
+		return exporter.exportDxl(document_);
 	}
 
 	protected final XMLNode getDocumentElement() {

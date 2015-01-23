@@ -240,7 +240,7 @@ enum DesignFactory {
 			String flagsExt = doc.getItemValueString("$FlagsExt");
 			if (testFlag(flagsExt, "+w"))
 				return new FileResourceWebContent(doc);
-			return new FileResource(doc);
+			return new FileResourceHidden(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_NAVIGATORSWEB)) {
 			return new Navigator(doc);

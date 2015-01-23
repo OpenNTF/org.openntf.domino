@@ -23,7 +23,7 @@ import org.openntf.domino.Document;
  * 
  */
 // TODO Metadata
-public class CompositeWiring extends FileResource implements HasMetadata /* implements TODO */{
+public class CompositeWiring extends AbstractDesignFileResource implements HasMetadata /* implements TODO */{
 	private static final long serialVersionUID = 1L;
 
 	/**

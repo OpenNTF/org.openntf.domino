@@ -21,7 +21,7 @@ import org.openntf.domino.utils.xml.XMLNode;
 /**
  * A client side JavaScriptLibrary
  */
-public class JavaScriptLibrary extends FileResource implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
+public class JavaScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**

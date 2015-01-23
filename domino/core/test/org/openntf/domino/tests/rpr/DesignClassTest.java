@@ -9,7 +9,6 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
 import org.openntf.domino.design.impl.HasMetadata;
-import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.ext.Database;
 import org.openntf.domino.ext.Session;
 import org.openntf.domino.junit.DominoJUnitRunner;
@@ -29,8 +28,8 @@ public class DesignClassTest {
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
 		DesignCollection<DesignBase> elems = design
-				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7}) & !@IsAvailable($ACLDigest) "
-						+ "");
+				.getDesignElements("!@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}:{$BEProfileR7})  ");
+		//		+ "& @IsAvailable($ACLDigest) ");
 		//+ "& @contains($TITLE;{.js}) ");
 		System.out.println("Count: " + elems.getCount());
 
@@ -54,7 +53,7 @@ public class DesignClassTest {
 					File meta = new File(odsFile.getAbsolutePath() + ".metadata");
 					((HasMetadata) elem).writeOnDiskMeta(meta);
 				}
-			} catch (OpenNTFNotesException ne) {
+			} catch (Exception ne) {
 				ne.printStackTrace();
 				System.out.println(elem.getOnDiskPath());
 			}

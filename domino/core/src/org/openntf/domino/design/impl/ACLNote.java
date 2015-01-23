@@ -19,6 +19,8 @@ package org.openntf.domino.design.impl;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.DxlExporter;
+import org.openntf.domino.NoteCollection;
 
 /**
  * @author jgallagher
@@ -37,6 +39,11 @@ public class ACLNote extends AbstractDesignBase implements org.openntf.domino.de
 	}
 
 	@Override
+	protected boolean useRawFormat() {
+		return true;
+	}
+
+	@Override
 	public String getOnDiskFolder() {
 		return "AppProperties";
 	}
@@ -48,6 +55,19 @@ public class ACLNote extends AbstractDesignBase implements org.openntf.domino.de
 
 	@Override
 	public String getName() {
-		return "acl.properties";
+		return "database.properties";
+	}
+
+	/**
+	 * Special case for ACL
+	 */
+	@Override
+	protected String doExport(final DxlExporter exporter) {
+		NoteCollection nnc = getAncestorDatabase().createNoteCollection(false);
+		nnc.setSelectAcl(true);
+		nnc.setSelectIcon(true);
+		nnc.buildCollection();
+		System.out.println("NNC" + nnc.getCount());
+		return exporter.exportDxl(nnc);
 	}
 }

@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class Theme extends FileResource implements HasMetadata {
+public class Theme extends AbstractDesignFileResource implements HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**

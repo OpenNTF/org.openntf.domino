@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class FileResourceWebContent extends FileResource/* implements TODO */{
+public class FileResourceWebContent extends AbstractDesignFileResource {
 	private static final long serialVersionUID = 1L;
 
 	/**

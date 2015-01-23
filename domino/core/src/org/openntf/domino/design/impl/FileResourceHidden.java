@@ -22,14 +22,19 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class _FileResourceHidden extends AbstractDesignFileResource/* implements TODO */{
+public class FileResourceHidden extends AbstractDesignFileResource/* implements TODO */{
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected _FileResourceHidden(final Document document) {
+	protected FileResourceHidden(final Document document) {
 		super(document);
+	}
+
+	@Override
+	protected boolean useRawFormat() {
+		return true;
 	}
 
 	@Override
@@ -47,8 +52,10 @@ public class _FileResourceHidden extends AbstractDesignFileResource/* implements
 		return false;
 	}
 
-	public void setDeployable(boolean deployable) {
+	@Override
+	public void setDeployable(final boolean deployable) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
 }

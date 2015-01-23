@@ -20,6 +20,8 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -208,6 +210,18 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		super.setName(title);
 		// Also set the $FileNames field
 		setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
+	}
+
+	/**
+	 * The ODS file that is written here is the file content
+	 */
+
+	@Override
+	public void writeOnDiskFile(final File odsFile) throws IOException {
+		FileOutputStream fo = new FileOutputStream(odsFile);
+		fo.write(getFileData());
+		fo.close();
+
 	}
 
 	// TODO: map this to DXL

@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class CompositeComponent extends FileResource implements HasMetadata/* implements TODO */{
+public class CompositeComponent extends AbstractDesignFileResource implements HasMetadata/* implements TODO */{
 	private static final long serialVersionUID = 1L;
 
 	/**

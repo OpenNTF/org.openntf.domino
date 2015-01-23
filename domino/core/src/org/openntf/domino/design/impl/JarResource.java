@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class JarResource extends FileResource implements org.openntf.domino.design.JarResource, HasMetadata {
+public class JarResource extends AbstractDesignFileResource implements org.openntf.domino.design.JarResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JarResource.class.getName());
