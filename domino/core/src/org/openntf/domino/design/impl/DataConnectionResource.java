@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class DataConnectionResource extends AbstractDesignBaseNamed /* implements TODO */{
+public final class DataConnectionResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.DataConnectionResource {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,8 @@ public class DataConnectionResource extends AbstractDesignBaseNamed /* implement
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Data/DataConnections";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".dcr";
 	}
 
 }

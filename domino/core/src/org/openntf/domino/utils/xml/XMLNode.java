@@ -278,7 +278,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			StreamResult result = new StreamResult(new StringWriter());
 			DOMSource source = new DOMSource(this.node_);
 			transformer.transform(source, result);
-			return result.toString();
+			return result.getWriter().toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

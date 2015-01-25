@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class FileResourceHidden extends AbstractDesignFileResource/* implements TODO */{
+public final class FileResourceHidden extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceHidden {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,9 @@ public class FileResourceHidden extends AbstractDesignFileResource/* implements 
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
+		// FileResourceHidden is exported in RAW-format. There is no DXL representation
 		return true;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
 	}
 
 	@Override

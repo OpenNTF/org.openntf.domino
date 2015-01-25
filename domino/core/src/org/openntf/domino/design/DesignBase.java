@@ -37,6 +37,10 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 		_SIGN, _SUMMARY
 	}
 
+	enum DxlFormat {
+		NONE, RAWNOTE, DXL
+	}
+
 	public static final Set<ItemFlag> FLAG_NONE = EnumSet.noneOf(ItemFlag.class);
 	public static final Set<ItemFlag> FLAG_SIGN = EnumSet.of(ItemFlag._SIGN);
 	public static final Set<ItemFlag> FLAG_SUMMARY = EnumSet.of(ItemFlag._SUMMARY);
@@ -95,25 +99,25 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	 */
 	public boolean save();
 
-	/**
-	 * Every element should have an (abstract) name
-	 * 
-	 * @return
-	 */
-	public String getName();
+	//	/**
+	//	 * Every element should have an (abstract) name
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public String getName();
 
 	/**
 	 * Retruns the On-Disk folder component
 	 * 
 	 * @return
 	 */
-	public String getOnDiskFolder();
-
-	public String getOnDiskName();
-
-	public String getOnDiskExtension();
-
-	public String getOnDiskPath();
+	//	public String getOnDiskFolder();
+	//
+	//	public String getOnDiskName();
+	//
+	//	public String getOnDiskExtension();
+	//
+	//	public String getOnDiskPath();
 
 	public void writeOnDiskFile(File odsFile) throws IOException;
 

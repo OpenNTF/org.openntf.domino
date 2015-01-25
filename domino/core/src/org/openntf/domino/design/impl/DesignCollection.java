@@ -41,6 +41,8 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 
 	@Override
 	public int getCount() {
+		if (collection_ == null)
+			return 0;
 		return collection_.getCount();
 	}
 
@@ -58,7 +60,7 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 		private final Iterator<String> iterator_;
 
 		protected DesignIterator() {
-			iterator_ = collection_.iterator();
+			iterator_ = collection_ == null ? null : collection_.iterator();
 		}
 
 		/*
@@ -68,7 +70,7 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 		 */
 		@Override
 		public boolean hasNext() {
-			return iterator_.hasNext();
+			return iterator_ == null ? false : iterator_.hasNext();
 		}
 
 		/*
@@ -83,7 +85,10 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 			Document doc = collection_.getAncestorDatabase().getDocumentByID(noteId);
 			DesignBase ret = DesignFactory.fromDocument(doc);
 			if (clazz_ != null && !clazz_.isAssignableFrom(ret.getClass()))
-				throw new ClassCastException("Cannot cast " + ret.getClass().getName() + " to " + clazz_.getName());
+				throw new ClassCastException("Cannot cast " + ret.getClass().getName() + //
+						" ($TITLE=" + doc.getItemValueString("$TITLE") + //
+						", $Flags=" + doc.getItemValueString("$FLAGS") + //
+						", NoteID=" + doc.getNoteID() + ") to " + clazz_.getName());
 			return (T) ret;
 		}
 

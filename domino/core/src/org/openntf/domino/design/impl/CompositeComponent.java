@@ -22,7 +22,8 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class CompositeComponent extends AbstractDesignFileResource implements HasMetadata/* implements TODO */{
+public final class CompositeComponent extends AbstractDesignFileResource implements HasMetadata,
+		org.openntf.domino.design.CompositeComponent {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +34,9 @@ public class CompositeComponent extends AbstractDesignFileResource implements Ha
 	}
 
 	@Override
-	protected boolean useRawFormat() {
-		return true; // does not support non raw
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "CompositeApplications/Components";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
+	protected boolean enforceRawFormat() {
+		// CompositeComponent is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 }

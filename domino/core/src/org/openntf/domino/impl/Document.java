@@ -44,6 +44,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.DxlExporter;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
@@ -66,6 +67,7 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Name;
+import org.openntf.domino.ext.NoteClass;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
@@ -80,6 +82,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.LMBCSUtils;
 import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.TypeUtils;
+import org.openntf.domino.utils.xml.XMLDocument;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
@@ -101,6 +104,40 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		SOFT_FALSE, SOFT_TRUE, HARD_FALSE, HARD_TRUE;
 	}
 
+	protected class ExtendedNoteInfos {
+		protected NoteClass noteClass;
+		protected boolean isDefault;
+		protected boolean isPrivate;
+
+		protected ExtendedNoteInfos() {
+			long start = System.nanoTime();
+			if (Document.this.hasItem("$ACLDigest")) { // the DXL of an ACL is empty
+				noteClass = NoteClass.ACL;
+				isDefault = true;
+			} else {
+				DxlExporter exporter = getAncestorSession().createDxlExporter();
+				try {
+					Vector<String> items = new Vector<String>();
+					items.add("-dummy-");
+					exporter.setRestrictToItemNames(items);
+					exporter.setForceNoteFormat(true);
+					exporter.setOutputDOCTYPE(false);
+					start = System.nanoTime() - start;
+					XMLDocument dxl = new XMLDocument();
+					dxl.loadString(exporter.exportDxl(Document.this));
+					String cls = dxl.getDocumentElement().getAttribute("class");
+					noteClass = NoteClass.valueOf(cls.toUpperCase());
+					isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
+					isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if (noteClass == null)
+				noteClass = NoteClass.UNKNOWN;
+		}
+	}
+
 	private RemoveType removeType_;
 
 	private boolean isDirty_ = false;
@@ -114,6 +151,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 
 	private boolean shouldResurrect_ = false;
 	private Boolean containMimes_ = null;
+
+	protected transient ExtendedNoteInfos extendedNoteInfos_;
 
 	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
 	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
@@ -4254,5 +4293,29 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	@Override
 	public String toString() {
 		return getAncestorDatabase().getApiPath() + "/" + unid_;
+	}
+
+	@Override
+	public NoteClass getNoteClass() {
+		if (extendedNoteInfos_ == null) {
+			extendedNoteInfos_ = new ExtendedNoteInfos();
+		}
+		return extendedNoteInfos_.noteClass;
+	}
+
+	@Override
+	public boolean isDefault() {
+		if (extendedNoteInfos_ == null) {
+			extendedNoteInfos_ = new ExtendedNoteInfos();
+		}
+		return extendedNoteInfos_.isDefault;
+	}
+
+	@Override
+	public boolean isPrivate() {
+		if (extendedNoteInfos_ == null) {
+			extendedNoteInfos_ = new ExtendedNoteInfos();
+		}
+		return extendedNoteInfos_.isDefault;
 	}
 }

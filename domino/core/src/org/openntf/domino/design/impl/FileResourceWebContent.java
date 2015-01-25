@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class FileResourceWebContent extends AbstractDesignFileResource {
+public final class FileResourceWebContent extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceWebContent {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,13 +33,9 @@ public class FileResourceWebContent extends AbstractDesignFileResource {
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "WebContent";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
+	protected boolean enforceRawFormat() {
+		// FileResourceWebContainer is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 	@Override

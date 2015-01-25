@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class Subform extends AbstractDesignBaseNamed /* implements TODO */{
+public class Subform extends AbstractDesignBaseNamed implements org.openntf.domino.design.Subform {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,8 @@ public class Subform extends AbstractDesignBaseNamed /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "SharedElements/Subforms";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".subform";
 	}
 
 }

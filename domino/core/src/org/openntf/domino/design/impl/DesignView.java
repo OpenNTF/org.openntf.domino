@@ -42,7 +42,7 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
 	}
 
@@ -74,15 +74,4 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 			formula.setTextContent(selectionFormula);
 		}
 	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Views";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".view";
-	}
-
 }

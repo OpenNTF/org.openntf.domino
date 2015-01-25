@@ -9,7 +9,8 @@ import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
 // TODO MetaData
-public class LotusScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.LotusScriptLibrary, HasMetadata {
+public final class LotusScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.LotusScriptLibrary,
+		HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -17,6 +18,19 @@ public class LotusScriptLibrary extends AbstractDesignFileResource implements or
 	 */
 	protected LotusScriptLibrary(final Document document) {
 		super(document);
+	}
+
+	@Override
+	protected boolean enforceRawFormat() {
+		//return false;
+
+		// it is complex to transform a script library from the "<code event='...'>" tags to a .lss file
+		// The LSS file contains "header" for each code event like this:
+		// '++LotusScript Development Environment:2:5:(Options):0:74
+		// '++LotusScript Development Environment:2:5:(Declarations):0:10
+		// '++LotusScript Development Environment:2:5:(Forward):0:1
+
+		return true; // so that's why we force RAW format
 	}
 
 	protected LotusScriptLibrary(final Database database) {
@@ -39,23 +53,14 @@ public class LotusScriptLibrary extends AbstractDesignFileResource implements or
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "Code/ScriptLibraries";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".lss";
-	}
-
-	@Override
-	public void writeOnDiskFile(final File odsFile) throws IOException {
+	public void writeOnDiskFile(final File odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
-		PrintWriter pw = new PrintWriter(odsFile);
+		PrintWriter pw = new PrintWriter(odpFile);
 		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
 			pw.write(rawitemdata.getText());
 		}
 		pw.close();
+		odpFile.setLastModified(getDocLastModified().getTime());
 	}
 
 }

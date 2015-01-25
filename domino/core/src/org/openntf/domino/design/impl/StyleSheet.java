@@ -16,20 +16,16 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
  * 
  */
-public class StyleSheet extends AbstractDesignFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
+public final class StyleSheet extends AbstractDesignFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
@@ -43,7 +39,7 @@ public class StyleSheet extends AbstractDesignFileResource implements org.opennt
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
 	}
 
@@ -75,16 +71,6 @@ public class StyleSheet extends AbstractDesignFileResource implements org.opennt
 	//	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "Resources/StyleSheets";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".css";
-	}
-
-	@Override
 	public String getContent() {
 		// TODO Auto-generated method stub
 		return null;
@@ -102,13 +88,4 @@ public class StyleSheet extends AbstractDesignFileResource implements org.opennt
 
 	}
 
-	@Override
-	public void writeOnDiskFile(final File odsFile) throws IOException {
-		// TODO Check for $Scriptlib_error => throw exception if item exists
-		PrintWriter pw = new PrintWriter(odsFile);
-		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
-			pw.write(rawitemdata.getText());
-		}
-		pw.close();
-	}
 }

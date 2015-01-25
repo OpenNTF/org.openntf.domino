@@ -60,13 +60,18 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	@Override
 	public List<String> getAliases() {
 		String aliases;
-		if (useRawFormat()) {
+		switch (getDxlFormat(false)) {
+		case DXL:
+			aliases = getDxl().getAttribute("alias");
+			break;
+		default:
 			// Aliases are all the $TITLE values after the first
 			aliases = getItemValueStrings(TITLE_ITEM, "|");
 			aliases = TextFunctions.atRight(aliases, "|");
-		} else {
-			aliases = getDxl().getAttribute("alias");
+			break;
+
 		}
+
 		if (StringUtil.isEmpty(aliases)) {
 			return new ArrayList<String>();
 		} else {
@@ -81,11 +86,12 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public String getAlias() {
-		if (useRawFormat()) {
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDxl().getAttribute("alias");
+		default:
 			String[] aliases = getAliases().toArray(new String[] {});
 			return StringUtil.concatStrings(aliases, '|', false);
-		} else {
-			return getDxl().getAttribute("alias");
 		}
 	}
 
@@ -96,14 +102,15 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public String getName() {
-		if (useRawFormat()) {
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("name");
+		default:
 			String title = getItemValueString(TITLE_ITEM);
 			int pos = title.indexOf('|');
 			if (pos < 0)
 				return title;
 			return title.substring(0, pos);
-		} else {
-			return getDocumentElement().getAttribute("name");
 		}
 	}
 
@@ -114,13 +121,16 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public void setAlias(final String alias) {
-		if (useRawFormat()) {
+		switch (getDxlFormat(true)) {
+		case DXL:
+			getDocumentElement().setAttribute("alias", alias);
+			break;
+		default:
 			List<String> result = new ArrayList<String>(2);
 			result.add(getName());
 			result.add(alias);
 			setItemValue(TITLE_ITEM, result, FLAG_SIGN_SUMMARY);
-		} else {
-			getDocumentElement().setAttribute("alias", alias);
+			break;
 		}
 	}
 
@@ -131,15 +141,8 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public void setAliases(final Iterable<String> aliases) {
-		if (useRawFormat()) {
-			List<String> titles = getItemValueStrings(TITLE_ITEM);
-			List<String> result = new ArrayList<String>(2);
-			result.add(titles.size() > 0 ? titles.get(0) : "");
-			for (String alias : aliases) {
-				result.add(alias);
-			}
-			setItemValue(TITLE_ITEM, titles, FLAG_SIGN_SUMMARY);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			StringBuilder sb = new StringBuilder();
 			for (String alias : aliases) {
 				if (sb.length() > 0)
@@ -147,6 +150,16 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 				sb.append(alias);
 			}
 			getDocumentElement().setAttribute("alias", sb.toString());
+			break;
+		default:
+			List<String> titles = getItemValueStrings(TITLE_ITEM);
+			List<String> result = new ArrayList<String>(2);
+			result.add(titles.size() > 0 ? titles.get(0) : "");
+			for (String alias : aliases) {
+				result.add(alias);
+			}
+			setItemValue(TITLE_ITEM, titles, FLAG_SIGN_SUMMARY);
+			break;
 		}
 	}
 
@@ -157,7 +170,11 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public void setName(final String name) {
-		if (useRawFormat()) {
+		switch (getDxlFormat(true)) {
+		case DXL:
+			getDocumentElement().setAttribute("name", name);
+			break;
+		default:
 			List<String> result = getItemValueStrings(TITLE_ITEM);
 			if (result.size() > 0) {
 				result.set(0, name);
@@ -165,8 +182,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 				result.add(name);
 			}
 			setItemValue(TITLE_ITEM, result, FLAG_SIGN_SUMMARY);
-		} else {
-			getDocumentElement().setAttribute("name", name);
+			break;
 		}
 	}
 

@@ -38,7 +38,7 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
 	}
 
@@ -54,13 +54,4 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 		}
 	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "Folders";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".folder";
-	}
 }

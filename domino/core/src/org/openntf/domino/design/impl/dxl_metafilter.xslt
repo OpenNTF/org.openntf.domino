@@ -28,6 +28,7 @@
 	<xsl:template match="//note/item[@name='$ScriptLib']"/>
 	<xsl:template match="//note/item[@name='$ScriptLib_O']"/>
 	<xsl:template match="//note/item[@name='$JavaScriptLibrary']"/>
+	<xsl:template match="//note/item[@name='$ServerJavaScriptLibrary']"/>
 
 	<!-- The .xsp-config file in CustomControls -->
 	<xsl:template match="//note/item[@name='$ConfigSize']"/>

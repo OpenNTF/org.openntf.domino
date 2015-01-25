@@ -38,7 +38,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.FileResource {
+public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.AnyFileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignFileResource.class.getName());
@@ -85,10 +85,14 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 	@Override
 	public byte[] getFileData() {
-		if (useRawFormat())
+		switch (getDxlFormat(true)) {
+		case DXL:
+			String rawData = getDxl().selectSingleNode("//filedata").getText();
+			return parseBase64Binary(rawData);
+		default:
 			return getFileDataRaw(DEFAULT_FILEDATA_FIELD);
-		String rawData = getDxl().selectSingleNode("//filedata").getText();
-		return parseBase64Binary(rawData);
+
+		}
 	}
 
 	/**
@@ -127,14 +131,15 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 	@Override
 	public void setFileData(final byte[] data) {
-		if (useRawFormat()) {
-			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			XMLNode filedata = getDxl().selectSingleNode("//filedata");
 			if (filedata == null) {
 				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
 			}
 			filedata.setText(printBase64Binary(data));
+		default:
+			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
 		}
 	}
 
@@ -191,17 +196,21 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 	@Override
 	public String getMimeType() {
-		if (useRawFormat())
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("mimetype");
+		default:
 			return getItemValueString(MIMETYPE_FIELD);
-		return getDocumentElement().getAttribute("mimetype");
+		}
 	}
 
 	@Override
 	public void setMimeType(final String mimeType) {
-		if (useRawFormat()) {
-			setItemValue(MIMETYPE_FIELD, mimeType, FLAG_SUMMARY);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			getDocumentElement().setAttribute("mimetype", mimeType);
+		default:
+			setItemValue(MIMETYPE_FIELD, mimeType, FLAG_SUMMARY);
 		}
 	}
 
@@ -217,10 +226,11 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 
 	@Override
-	public void writeOnDiskFile(final File odsFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(odsFile);
+	public void writeOnDiskFile(final File odpFile) throws IOException {
+		FileOutputStream fo = new FileOutputStream(odpFile);
 		fo.write(getFileData());
 		fo.close();
+		odpFile.setLastModified(getDocLastModified().getTime());
 
 	}
 

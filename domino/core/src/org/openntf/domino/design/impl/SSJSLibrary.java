@@ -23,7 +23,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class SSJSLibrary extends AbstractDesignFileResource implements HasMetadata {
+public final class SSJSLibrary extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.SSJSLibrary {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -34,18 +34,11 @@ public class SSJSLibrary extends AbstractDesignFileResource implements HasMetada
 	}
 
 	@Override
-	protected boolean useRawFormat() {
-		return false;
-	}
+	protected boolean enforceRawFormat() {
+		//return false;
 
-	@Override
-	public String getOnDiskFolder() {
-		return "Code/ScriptLibraries";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".jss";
+		//we use RAW format for script libraries, so that we are "on disk compatible"
+		return true;
 	}
 
 	@Override

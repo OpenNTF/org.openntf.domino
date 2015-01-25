@@ -294,4 +294,12 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 */
 	DesignCollection<DesignBase> getDesignElements(String formula);
 
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(Class<T> type);
+
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type, final String name);
+
+	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(Class<T> type, String name);
+
+	public <T extends DesignBase> T getDesignElementByName(Class<T> type, String name);
+
 }

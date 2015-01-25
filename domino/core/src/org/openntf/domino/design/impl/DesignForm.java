@@ -39,7 +39,7 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
 	}
 
@@ -104,13 +104,4 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 		getFields().swap(a, b);
 	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "Forms";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".form";
-	}
 }

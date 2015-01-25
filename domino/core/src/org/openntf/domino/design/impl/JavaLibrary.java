@@ -24,7 +24,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class JavaLibrary extends AbstractDesignBaseNamed {
+public class JavaLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaLibrary {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -35,18 +35,8 @@ public class JavaLibrary extends AbstractDesignBaseNamed {
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Code/ScriptLibraries";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".javalib";
 	}
 
 }

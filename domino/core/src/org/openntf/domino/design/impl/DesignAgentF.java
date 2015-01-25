@@ -20,45 +20,22 @@ import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * @author Roland Praml
  * 
+ * @author Roland Praml
  */
-public class DesignAgent extends AbstractDesignBaseNamed /* implements TODO */{
+public class DesignAgentF extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected DesignAgent(final Document document) {
+	protected DesignAgentF(final Document document) {
 		super(document);
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
 	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "Code/Agents";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		XMLNode node = getDxl().selectSingleNode("//code/lotusscript");
-		if (node != null)
-			return ".lsa";
-		node = getDxl().selectSingleNode("//code//formula");
-		if (node != null)
-			return ".fa";
-		node = getDxl().selectSingleNode("//code/javaproject");
-		if (node != null)
-			return ".ja";
-		return ".TODO";
-		// Formula = fa
-		// LotusScript = lsa
-		// importedJava = ija
-		// java = ja
-		// action = aa
-	}
 }

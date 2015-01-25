@@ -42,6 +42,11 @@ public final class FileResource extends AbstractDesignFileResource implements or
 		super(document);
 	}
 
+	@Override
+	protected boolean enforceRawFormat() {
+		return false;
+	}
+
 	protected FileResource(final Database database) {
 		super(database);
 
@@ -78,13 +83,4 @@ public final class FileResource extends AbstractDesignFileResource implements or
 
 	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "Resources/Files";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
-	}
 }

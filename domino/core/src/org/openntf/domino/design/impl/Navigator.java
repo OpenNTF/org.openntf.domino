@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class Navigator extends AbstractDesignBaseNamed /* implements TODO */{
+public class Navigator extends AbstractDesignBaseNamed implements org.openntf.domino.design.Navigator {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,10 @@ public class Navigator extends AbstractDesignBaseNamed /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
+		// Navigator is exported in RAW-format. There is no DXL representation
 		return true;
-	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "SharedElements/Navigators";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".navigator";
 	}
 
 }

@@ -34,23 +34,8 @@ public class UsingDocument extends AbstractDesignBase implements org.openntf.dom
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "UsingDocument";
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Resources";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
 	}
 
 }

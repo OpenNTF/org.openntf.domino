@@ -27,44 +27,30 @@ import javax.imageio.ImageIO;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
  * 
  */
-public class ImageResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.ImageResource, HasMetadata {
+public final class ImageResource extends AbstractDesignFileResource implements org.openntf.domino.design.ImageResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
-	private transient XMLNode imageNode_;
 
 	public ImageResource(final Document document) {
 		super(document);
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		// RAW-format is set to false, otherwise it is difficult to determine file extension
 		return false;
 	}
 
 	@Override
-	public byte[] getImageData() {
-		return parseBase64Binary(getImageNode().getText());
-	}
-
-	private XMLNode getImageNode() {
-		if (imageNode_ == null) {
-			imageNode_ = getDxl().selectSingleNode("//jpeg|//gif|//png");
-		}
-		return imageNode_;
-	}
-
-	@Override
 	public BufferedImage getImage() {
 		try {
-			return ImageIO.read(new ByteArrayInputStream(getImageData()));
+			return ImageIO.read(new ByteArrayInputStream(getFileData()));
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -72,12 +58,14 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "Resources/Images";
-	}
+	public byte[] getFileData() {
+		switch (getDxlFormat(true)) {
+		case DXL:
+			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText();
+			return parseBase64Binary(rawData);
+		default:
+			return getFileDataRaw("$ImageData");
 
-	@Override
-	public String getOnDiskExtension() {
-		return "." + getImageNode().getNodeName().replace("jpeg", "jpg");
+		}
 	}
 }

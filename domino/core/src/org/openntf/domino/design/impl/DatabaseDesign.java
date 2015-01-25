@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -33,6 +34,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DesignBase;
+import org.openntf.domino.design.JavaResource;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.commons.util.StringUtil;
@@ -48,19 +50,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	/*
 	 * Some handy constant Note IDs for getting specific elements. h/t http://www.nsftools.com/tips/NotesTips.htm#defaultelements
 	 */
-	private static final String ABOUT_NOTE = "FFFF0002";
-	private static final String DEFAULT_FORM = "FFFF0004";
-	private static final String DEFAULT_VIEW = "FFFF0008";
-	private static final String ICON_NOTE = "FFFF0010";
+	public static final String ABOUT_NOTE = "FFFF0002";
+	public static final String DEFAULT_FORM = "FFFF0004";
+	public static final String DEFAULT_VIEW = "FFFF0008";
+	public static final String ICON_NOTE = "FFFF0010";
 
 	// Design collections are pretty impossible to work with using the Java API: the exported DXL is
 	// blank and the raw $Collection data isn't readable as an Item
 	@SuppressWarnings("unused")
-	private static final String DESIGN_COLLECTION = "FFFF0020";
+	public static final String DESIGN_COLLECTION = "FFFF0020";
 
-	private static final String ACL_NOTE = "FFFF0040";
-	private static final String USING_NOTE = "FFFF0100";
-	private static final String REPLICATION_FORMULA = "FFFF0800";
+	public static final String ACL_NOTE = "FFFF0040";
+	public static final String USING_NOTE = "FFFF0100";
+	public static final String REPLICATION_FORMULA = "FFFF0800";
 
 	private transient Properties props;
 
@@ -278,21 +280,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	 */
 	@Override
 	public JavaResource getJavaResource(final String name) {
-		if (DominoUtils.isUnid(name)) {
-			Document doc = database_.getDocumentByUNID(name);
-			return new JavaResource(doc);
-		} else {
-			NoteCollection notes = getNoteCollection(
-					String.format(" @Contains($Flags; 'g') & @Contains($Flags; '[') & @Explode($TITLE; '|')=\"%s\" ",
-							DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
-
-			String noteId = notes.getFirstNoteID();
-			if (!noteId.isEmpty()) {
-				Document doc = database_.getDocumentByID(noteId);
-				return new JavaResource(doc);
-			}
-		}
-		return null;
+		return getDesignElementByName(JavaResource.class, name);
 	}
 
 	/*
@@ -301,9 +289,8 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResources()
 	 */
 	@Override
-	public DesignCollection<org.openntf.domino.design.JavaResource> getJavaResources() {
-		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
-		return new DesignCollection<org.openntf.domino.design.JavaResource>(notes, JavaResource.class);
+	public DesignCollection<JavaResource> getJavaResources() {
+		return getDesignElements(JavaResource.class);
 	}
 
 	/* (non-Javadoc)
@@ -655,4 +642,33 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 				EnumSet.of(SelectOption.ALL_BUT_NOT, SelectOption.DOCUMENTS, SelectOption.PROFILES));
 		return new DesignCollection<DesignBase>(notes, null);
 	}
+
+	@Override
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type) {
+		return getDesignElements(type, null);
+	}
+
+	@Override
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type, final String search) {
+		return DesignFactory.search(database_, type, search);
+	}
+
+	@Override
+	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(final Class<T> type, final String name) {
+		return DesignFactory.search(database_, type,
+				String.format("@Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)));
+	}
+
+	@Override
+	public <T extends DesignBase> T getDesignElementByName(final Class<T> type, final String name) {
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
+			return (T) DesignFactory.fromDocument(doc);
+		}
+		Iterator<T> elems = getDesignElementsByName(type, name).iterator();
+		if (elems.hasNext())
+			return elems.next();
+		return null;
+	}
+
 }

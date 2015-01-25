@@ -37,6 +37,12 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 		super(document);
 	}
 
+	@Override
+	protected boolean enforceRawFormat() {
+		// IconNote is exported in RAW-format. There is no DXL representation
+		return true;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,21 +120,6 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 			}
 		}
 		return new String[] {};
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Resources";
-	}
-
-	@Override
-	public String getOnDiskName() {
-		return "IconNote";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
 	}
 
 }

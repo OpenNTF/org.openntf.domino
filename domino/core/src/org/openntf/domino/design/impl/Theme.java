@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class Theme extends AbstractDesignFileResource implements HasMetadata {
+public final class Theme extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.Theme {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,13 +33,9 @@ public class Theme extends AbstractDesignFileResource implements HasMetadata {
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "Resources/Themes";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return null;
+	protected boolean enforceRawFormat() {
+		// Theme is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 }

@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class DatabaseScript extends AbstractDesignBase /* implements TODO */{
+public final class DatabaseScript extends AbstractDesignBase implements org.openntf.domino.design.DatabaseScript {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,23 +33,8 @@ public class DatabaseScript extends AbstractDesignBase /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Code";
-	}
-
-	@Override
-	public String getName() {
-		return "dbscript";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".lsdb";
 	}
 
 }

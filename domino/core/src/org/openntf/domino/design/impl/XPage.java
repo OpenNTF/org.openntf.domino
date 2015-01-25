@@ -25,7 +25,7 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class XPage extends JavaResource implements org.openntf.domino.design.XPage, HasMetadata {
+public class XPage extends AbstractJavaResource implements org.openntf.domino.design.XPage, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
@@ -34,17 +34,14 @@ public class XPage extends JavaResource implements org.openntf.domino.design.XPa
 		super(document);
 	}
 
+	@Override
+	protected boolean enforceRawFormat() {
+		// XPage is exported in RAW-format. There is no DXL representation
+		return true;
+	}
+
 	protected XPage(final Database database) {
 		super(database);
 	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "XPages";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
-	}
 }

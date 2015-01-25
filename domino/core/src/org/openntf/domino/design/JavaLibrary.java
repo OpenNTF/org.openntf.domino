@@ -14,37 +14,12 @@
  * permissions and limitations under the License.
  */
 
-package org.openntf.domino.design.impl;
-
-import org.openntf.domino.Document;
+package org.openntf.domino.design;
 
 /**
  * @author Roland Praml
  * 
  */
-public class WebserviceProvider extends AbstractDesignBaseNamed /* implements TODO */{
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected WebserviceProvider(final Document document) {
-		super(document);
-	}
-
-	@Override
-	protected boolean useRawFormat() {
-		return true;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Code/WebServices";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".lws";
-	}
+public interface JavaLibrary extends DesignBaseNamed {
 
 }

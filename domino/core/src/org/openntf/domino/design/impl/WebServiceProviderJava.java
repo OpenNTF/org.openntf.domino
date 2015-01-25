@@ -19,34 +19,23 @@ package org.openntf.domino.design.impl;
 import org.openntf.domino.Document;
 
 /**
- * A java file (for xpages)
- * 
  * @author Roland Praml
  * 
  */
-public class JavaFile extends AbstractDesignFileResource implements HasMetadata /* implements TODO */{
+public class WebServiceProviderJava extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceProvider {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected JavaFile(final Document document) {
+	protected WebServiceProviderJava(final Document document) {
 		super(document);
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "Code/Java";
-	}
-
-	@Override
-	public String getOnDiskName() {
-		return getName();
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
+	protected boolean enforceRawFormat() {
+		// WebServiceProvider is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 }

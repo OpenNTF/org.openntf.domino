@@ -45,6 +45,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.DxlExporter;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
 import org.openntf.domino.NoteCollection;
@@ -55,11 +56,12 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
-import org.openntf.domino.design.impl.DatabaseDesign;
-import org.openntf.domino.design.impl.IconNote;
+import org.openntf.domino.design.DatabaseDesign;
+import org.openntf.domino.design.IconNote;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
@@ -1017,9 +1019,38 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		}
 	}
 
+	private Boolean designProtected_;
+
+	public boolean isDesignProtected() {
+		if (designProtected_ == null) {
+			Document iconNote = getDocumentByID(org.openntf.domino.design.impl.DatabaseDesign.ICON_NOTE);
+			designProtected_ = Boolean.FALSE;
+			try {
+				if (iconNote != null) {
+					DxlExporter exporter = getAncestorSession().createDxlExporter();
+					exporter.exportDxl(iconNote);
+				}
+
+			} catch (OpenNTFNotesException e) {
+				designProtected_ = Boolean.TRUE;
+			}
+
+		}
+		return designProtected_.booleanValue();
+	}
+
+	private transient DatabaseDesign design_;
+
 	@Override
 	public DatabaseDesign getDesign() {
-		return new DatabaseDesign(this);
+		if (design_ == null) {
+			if (isDesignProtected()) {
+				design_ = new org.openntf.domino.design.impl.ProtectedDatabaseDesign(this);
+			} else {
+				design_ = new org.openntf.domino.design.impl.DatabaseDesign(this);
+			}
+		}
+		return design_;
 	}
 
 	@Override

@@ -17,12 +17,13 @@
 package org.openntf.domino.design.impl;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.design.SharedActions;
 
 /**
  * @author Roland Praml
  * 
  */
-public class SharedActionsNote extends AbstractDesignBase /* implements TODO */{
+public class SharedActionsNote extends AbstractDesignBase implements SharedActions {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,23 +34,8 @@ public class SharedActionsNote extends AbstractDesignBase /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getName() {
-		return "Shared Actions";
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Code/actions";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return "";
 	}
 
 }

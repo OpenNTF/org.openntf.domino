@@ -20,10 +20,7 @@ package org.openntf.domino.design;
  * @author jgallagher
  * 
  */
-public interface DesignForm extends DesignBaseNamed {
-	public FormField addField();
-
-	public FormFieldList getFields();
+public interface DesignForm extends AnyFormOrSubform {
 
 	public String getXPageAlt();
 
@@ -33,5 +30,4 @@ public interface DesignForm extends DesignBaseNamed {
 
 	public void setXPageAltClient(String xpageAltClient);
 
-	public void swapFields(final int a, final int b);
 }

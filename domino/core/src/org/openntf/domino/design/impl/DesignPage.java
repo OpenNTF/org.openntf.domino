@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class DesignPage extends AbstractDesignBaseNamed /* implements TODO */{
+public class DesignPage extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignPage {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,8 @@ public class DesignPage extends AbstractDesignBaseNamed /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Pages";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".page";
 	}
 
 }

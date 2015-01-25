@@ -25,7 +25,7 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class CustomControl extends JavaResource implements org.openntf.domino.design.XPage, HasMetadata {
+public final class CustomControl extends AbstractJavaResource implements org.openntf.domino.design.CustomControl, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());
@@ -39,12 +39,9 @@ public class CustomControl extends JavaResource implements org.openntf.domino.de
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "CustomControls";
+	protected boolean enforceRawFormat() {
+		// CustomControl is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
-	@Override
-	public String getOnDiskExtension() {
-		return "";
-	}
 }

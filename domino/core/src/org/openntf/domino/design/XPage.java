@@ -20,6 +20,6 @@ package org.openntf.domino.design;
  * @author jgallagher
  * 
  */
-public interface XPage extends JavaResource {
+public interface XPage extends XspResource {
 
 }

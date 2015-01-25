@@ -23,7 +23,7 @@ import org.openntf.domino.Document;
  * 
  */
 // TODO Metadata
-public class CompositeWiring extends AbstractDesignFileResource implements HasMetadata /* implements TODO */{
+public final class CompositeWiring extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeWiring {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -34,13 +34,10 @@ public class CompositeWiring extends AbstractDesignFileResource implements HasMe
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "CompositeApplications/WiringProperties";
-	}
+	protected boolean enforceRawFormat() {
+		// CompositeWiring is exported in RAW-format. There is no DXL representation
+		return true;
 
-	@Override
-	public String getOnDiskExtension() {
-		return ".wsdl";
 	}
 
 }

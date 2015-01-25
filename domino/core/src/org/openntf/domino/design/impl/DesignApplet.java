@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class DesignApplet extends AbstractDesignBaseNamed /* implements TODO */{
+public class DesignApplet extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignApplet {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,8 @@ public class DesignApplet extends AbstractDesignBaseNamed /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Resources/Applets";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".applet";
 	}
 
 }

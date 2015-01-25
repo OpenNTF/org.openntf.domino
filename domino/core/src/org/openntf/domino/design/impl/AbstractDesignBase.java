@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,6 +36,7 @@ import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DesignBase;
+import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -50,6 +52,7 @@ import com.ibm.commons.util.StringUtil;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractDesignBase implements DesignBase {
+
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
@@ -71,6 +74,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	private XMLDocument dxl_;
 
+	private DxlFormat dxlFormat_ = DxlFormat.NONE;
+
+	private transient ODPMapping odpMapping_;
+
+	private Date lastModified_;
+
 	/**
 	 * Create a new DesignBase based on the given database. You may add content to this DesignBase and save it afterwards.
 	 * 
@@ -79,6 +88,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public AbstractDesignBase(final Database database) {
 		database_ = database;
+		loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
 	}
 
 	/**
@@ -90,12 +100,25 @@ public abstract class AbstractDesignBase implements DesignBase {
 		setDocument(document);
 	}
 
-	/**
-	 * Indicates, wether this Note should be exported in Raw-Format.
-	 */
-	protected boolean useRawFormat() {
-		return true;
+	protected DxlFormat getDxlFormat(final boolean detect) {
+		if (detect)
+			getDxl();
+		return dxlFormat_;
 	}
+
+	protected abstract boolean enforceRawFormat();
+
+	//	/**
+	//	 * The preferd ODA Format (to fix bugs)
+	//	 * @return
+	//	 */
+	//	protected abstract DxlFormat preferedOdaFormat();
+	//	/**
+	//	 * Indicates, wether this Note should be exported in Raw-Format.
+	//	 */
+	//	protected boolean enforceRawFormat() {
+	//		return true;
+	//	}
 
 	/*
 	 * (non-Javadoc)
@@ -104,9 +127,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final boolean isHideFromNotes() {
-		if (useRawFormat())
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("hide").contains("notes");
+		default:
 			return hasFlag(DESIGN_FLAG_HIDE_FROM_NOTES);
-		return getDocumentElement().getAttribute("hide").contains("notes");
+		}
 	}
 
 	/*
@@ -116,9 +142,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final boolean isHideFromWeb() {
-		if (useRawFormat())
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("hide").contains("web");
+		default:
 			return hasFlag(DESIGN_FLAG_HIDE_FROM_WEB);
-		return getDocumentElement().getAttribute("hide").contains("web");
+		}
 	}
 
 	/*
@@ -128,9 +157,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final boolean isNeedsRefresh() {
-		if (useRawFormat())
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("refresh").equals("true");
+		default:
 			return hasFlag(DESIGN_FLAG_NEEDSREFRESH);
-		return getDocumentElement().getAttribute("refresh").equals("true");
+		}
 	}
 
 	/*
@@ -140,9 +172,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final boolean isPreventChanges() {
-		if (useRawFormat())
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("noreplace").equals("true");
+		default:
 			return hasFlag(DESIGN_FLAG_PRESERVE);
-		return getDocumentElement().getAttribute("noreplace").equals("true");
+		}
 	}
 
 	/*
@@ -152,15 +187,20 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final boolean isPropagatePreventChanges() {
-		if (useRawFormat())
+		switch (getDxlFormat(false)) {
+		case DXL:
+			return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
+		default:
 			return hasFlag(DESIGN_FLAG_PROPAGATE_NOCHANGE);
-		return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
+		}
 	}
 
 	/*
 	 * Helper for Non-raw Notes
 	 */
 	protected void setHide(final String platform, final boolean hide) {
+		if (getDxlFormat(false) != DxlFormat.DXL)
+			throw new IllegalStateException("Not in DXL Format");
 		String platforms = getDxl().getFirstChild().getAttribute("hide");
 		if (hide) {
 			if (platforms.contains(platform))
@@ -181,10 +221,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final void setHideFromNotes(final boolean hideFromNotes) {
-		if (useRawFormat()) {
-			setFlag(DESIGN_FLAG_HIDE_FROM_NOTES, hideFromNotes);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			setHide("notes", hideFromNotes);
+		default:
+			setFlag(DESIGN_FLAG_HIDE_FROM_NOTES, hideFromNotes);
 		}
 	}
 
@@ -195,10 +236,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public void setHideFromWeb(final boolean hideFromWeb) {
-		if (useRawFormat()) {
-			setFlag(DESIGN_FLAG_HIDE_FROM_WEB, hideFromWeb);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			setHide("web", hideFromWeb);
+		default:
+			setFlag(DESIGN_FLAG_HIDE_FROM_WEB, hideFromWeb);
 		}
 	}
 
@@ -209,10 +251,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public void setNeedsRefresh(final boolean needsRefresh) {
-		if (useRawFormat()) {
-			setFlag(DESIGN_FLAG_NEEDSREFRESH, needsRefresh);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			getDocumentElement().setAttribute("refresh", String.valueOf(needsRefresh));
+		default:
+			setFlag(DESIGN_FLAG_NEEDSREFRESH, needsRefresh);
 		}
 	}
 
@@ -223,10 +266,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public void setPreventChanges(final boolean preventChanges) {
-		if (useRawFormat()) {
-			setFlag(DESIGN_FLAG_PRESERVE, preventChanges);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			getDocumentElement().setAttribute("noreplace", String.valueOf(preventChanges));
+		default:
+			setFlag(DESIGN_FLAG_PRESERVE, preventChanges);
 		}
 	}
 
@@ -237,16 +281,19 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public void setPropagatePreventChanges(final boolean propagatePreventChanges) {
-		if (useRawFormat()) {
-			setFlag(DESIGN_FLAG_PROPAGATE_NOCHANGE, propagatePreventChanges);
-		} else {
+		switch (getDxlFormat(true)) {
+		case DXL:
 			getDocumentElement().setAttribute("propagatenoreplace", String.valueOf(propagatePreventChanges));
+		default:
+			setFlag(DESIGN_FLAG_PROPAGATE_NOCHANGE, propagatePreventChanges);
 		}
 	}
 
 	// -------------- Flags stuff
 
 	protected String getFlags() {
+		if (getDxlFormat(true) != DxlFormat.RAWNOTE)
+			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE");
 		return getItemValueString(FLAGS_ITEM);
 	}
 
@@ -270,6 +317,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	// FlagsExt
 	protected String getFlagsExt() {
+		getDxlFormat(true); // as far as I know, this item is also 
 		return getItemValueString(FLAGS_EXT_ITEM);
 	}
 
@@ -366,40 +414,71 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return sb.toString();
 	}
 
-	/**
-	 * Returns the folder of this designelemnt in the ODP
-	 * 
-	 * @return the folder (e.g. Code/Java)
-	 */
-	@Override
-	public abstract String getOnDiskFolder();
+	//	/**
+	//	 * Returns the folder of this designelemnt in the ODP
+	//	 * 
+	//	 * @return the folder (e.g. Code/Java)
+	//	 */
+	//	@Override
+	//	public abstract String getOnDiskFolder();
 
 	/**
 	 * Returns the name of this resource
 	 * 
 	 * @return the name (e.g. org/openntf/myJavaClass)
 	 */
-	@Override
-	public String getOnDiskName() {
-		return encodeResourceName(getName());
+
+	protected String getOnDiskName() {
+		String odpName = getOdpMapping().getFileName();
+
+		String extension = "";
+		String ret;
+		if (odpName == null) { // no name specified
+			if (this instanceof DesignBaseNamed) {
+				ret = encodeResourceName(((DesignBaseNamed) this).getName());
+			} else {
+				ret = getUniversalID();
+			}
+		} else if (odpName.startsWith("*")) {
+			ret = ((DesignBaseNamed) this).getName();
+		} else if (!odpName.startsWith(".")) {
+			ret = odpName;
+		} else {
+			if (this instanceof DesignBaseNamed) {
+				ret = encodeResourceName(((DesignBaseNamed) this).getName());
+			} else {
+				ret = getUniversalID();
+			}
+			extension = odpName;
+		}
+		if (!ret.endsWith(extension))
+			ret = ret + extension;
+		return ret;
 	}
 
-	/**
-	 * Returns the extension of the ODP-file (e.g. ".java")
-	 * 
-	 * @return the extension
-	 */
-	@Override
-	public abstract String getOnDiskExtension();
+	//	/**
+	//	 * Returns the extension of the ODP-file (e.g. ".java")
+	//	 * 
+	//	 * @return the extension
+	//	 */
+	//	protected String getOnDiskExtension() {
+	//		return "";
+	//	}
+
+	protected ODPMapping getOdpMapping() {
+		if (odpMapping_ == null) {
+			odpMapping_ = ODPMapping.valueOf(getClass());
+		}
+		return odpMapping_;
+	}
 
 	/**
 	 * Returns the full path in an ODP of this resoruce
 	 * 
 	 * @return the full path (e.g. Code/Java/org/openntf/myJavaClass.java)
 	 */
-	@Override
 	public String getOnDiskPath() {
-		String path = getOnDiskFolder();
+		String path = getOdpMapping().getFolder();
 		if (path == null)
 			return null;
 		if (path.length() > 0) {
@@ -407,12 +486,6 @@ public abstract class AbstractDesignBase implements DesignBase {
 		} else {
 			path = getOnDiskName();
 		}
-		if (path == null)
-			return null;
-
-		String ext = getOnDiskExtension();
-		if (ext != null && !path.endsWith(ext))
-			path = path + ext;
 		return path;
 	}
 
@@ -438,11 +511,13 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public void writeOnDiskFile(final File odpFile) throws IOException {
 		getDxl().getXml(getOdpTransformer(), odpFile);
+		odpFile.setLastModified(getDocLastModified().getTime());
 	}
 
 	// TODO
 	public final void writeOnDiskMeta(final File odpFile) throws IOException {
 		getDxl().getXml(getOdpMetaTransformer(), odpFile);
+		odpFile.setLastModified(getDocLastModified().getTime());
 	}
 
 	//------------------------------ ondisk end --------------------------------
@@ -456,6 +531,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		database_ = document.getAncestorDatabase();
 		universalId_ = document.getUniversalID(); // we must save the UNID. because NoteID may change on various instances
 		document_ = document;
+		lastModified_ = document.getLastModifiedDate();
 		dxl_ = null;
 	}
 
@@ -532,17 +608,27 @@ public abstract class AbstractDesignBase implements DesignBase {
 		if (dxl_ == null) {
 			DxlExporter exporter = getAncestorSession().createDxlExporter();
 			exporter.setOutputDOCTYPE(false);
-			exporter.setForceNoteFormat(useRawFormat());
+			exporter.setForceNoteFormat(enforceRawFormat());
 
 			// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
 			String xml = doExport(exporter);
-
-			if (!useRawFormat()) {
-				String part = xml.substring(0, 64);
-				if (part.contains("<note"))
-					throw new IllegalStateException(getClass().getSimpleName() + ": The DXL exported returned a DXL in RAW format: " + part);
-			}
 			loadDxl(xml);
+			if (dxl_ == null)
+				throw new IllegalStateException(getClass().getSimpleName() + ": Could not load DXL");
+			XMLNode docRoot = getDocumentElement();
+			if (docRoot.getNodeName() == "note") {
+				if (!enforceRawFormat()) {
+					throw new UnsupportedOperationException(getClass().getSimpleName()
+							+ ": got note in RAW format. this was not expected. NoteID " + (document_ == null ? "" : document_.getNoteID()));
+				}
+				dxlFormat_ = DxlFormat.RAWNOTE;
+			} else {
+				if (enforceRawFormat()) {
+					throw new UnsupportedOperationException(getClass().getSimpleName() + ": Raw format was enforced, but we got a "
+							+ docRoot.getNodeName());
+				}
+				dxlFormat_ = DxlFormat.DXL;
+			}
 		}
 		return dxl_;
 	}
@@ -621,6 +707,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 *            the value to set
 	 */
 	public final void setItemValue(final String itemName, final Object value, final Set<ItemFlag> flags) {
+		getDxlFormat(true); // load DXL before modification
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node == null) {
 			node = getDxl().selectSingleNode("/*").addChildElement("item");
@@ -672,6 +759,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the values as String (if ItemName is a multi value item, the first value is returned)
 	 */
 	public final String getItemValueString(final String itemName) {
+		if (dxlFormat_ == DxlFormat.NONE)
+			return document_.getItemValueString(itemName);
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {
 			node = node.selectSingleNode(".//number | .//text");
@@ -692,13 +781,22 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final String getItemValueStrings(final String itemName, final String delimiter) {
 		StringBuffer sb = new StringBuffer();
-		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
-		if (node != null) {
-			List<XMLNode> nodes = node.selectNodes(".//number | .//text");
-			for (XMLNode child : nodes) {
+
+		if (dxlFormat_ == DxlFormat.NONE) {
+			for (Object value : document_.getItemValue(itemName)) {
 				if (sb.length() > 0)
 					sb.append(delimiter);
-				sb.append(child.getText());
+				sb.append(value);
+			}
+		} else {
+			XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+			if (node != null) {
+				List<XMLNode> nodes = node.selectNodes(".//number | .//text");
+				for (XMLNode child : nodes) {
+					if (sb.length() > 0)
+						sb.append(delimiter);
+					sb.append(child.getText());
+				}
 			}
 		}
 		return sb.toString();
@@ -731,6 +829,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the values as List<Object> (text entries are returned as String, number entries as Double)
 	 */
 	public final List<Object> getItemValue(final String itemName) {
+		if (dxlFormat_ == DxlFormat.NONE)
+			return document_.getItemValue(itemName);
 		List<Object> result = new ArrayList<Object>();
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {
@@ -754,6 +854,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the values as List<String>
 	 */
 	public final List<String> getItemValueStrings(final String itemName) {
+		if (dxlFormat_ == DxlFormat.NONE)
+			return document_.getItemValue(itemName, String.class);
 		List<String> result = new ArrayList<String>();
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {
@@ -798,6 +900,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
 		getDxl();
 		out.defaultWriteObject();
+	}
+
+	public Date getDocLastModified() {
+		return lastModified_;
 	}
 
 }

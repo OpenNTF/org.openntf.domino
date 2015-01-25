@@ -14,6 +14,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.Session;
+import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -21,7 +22,7 @@ import org.openntf.domino.utils.xml.XMLNode;
 /**
  * A client side JavaScriptLibrary
  */
-public class JavaScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
+public final class JavaScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -32,8 +33,11 @@ public class JavaScriptLibrary extends AbstractDesignFileResource implements org
 	}
 
 	@Override
-	protected boolean useRawFormat() {
-		return false;
+	protected boolean enforceRawFormat() {
+		//return false;
+
+		//we use RAW format for script libraries, so that we are "on disk compatible"
+		return true;
 	}
 
 	protected JavaScriptLibrary(final Database database) {
@@ -103,16 +107,6 @@ public class JavaScriptLibrary extends AbstractDesignFileResource implements org
 		return classSource;
 	}
 
-	@Override
-	public String getOnDiskFolder() {
-		return "Code/ScriptLibraries";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".js";
-	}
-
 	/*
 	 *  (non-Javadoc)
 	 * 
@@ -120,7 +114,7 @@ public class JavaScriptLibrary extends AbstractDesignFileResource implements org
 	 */
 	@Override
 	public byte[] getFileData() {
-		if (useRawFormat())
+		if (enforceRawFormat())
 			return getFileDataRaw("$JavaScriptLibrary");
 		return getDxl().selectSingleNode("//code/javascript").getText().getBytes();
 	}
@@ -132,14 +126,17 @@ public class JavaScriptLibrary extends AbstractDesignFileResource implements org
 	//
 	//	@Override
 	@Override
-	public void writeOnDiskFile(final File odsFile) throws IOException {
+	public void writeOnDiskFile(final File odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
-		if (useRawFormat()) {
-			super.writeOnDiskFile(odsFile);
+		String content;
+		if (enforceRawFormat()) {
+			content = ODSUtils.fromLMBCS(getFileData());
 		} else {
-			PrintWriter pw = new PrintWriter(odsFile);
-			pw.write(getDxl().selectSingleNode("//code/javascript").getText());
-			pw.close();
+			content = getDxl().selectSingleNode("//code/javascript").getText();
 		}
+		PrintWriter pw = new PrintWriter(odpFile);
+		pw.write(content);
+		pw.close();
+		odpFile.setLastModified(getDocLastModified().getTime());
 	}
 }

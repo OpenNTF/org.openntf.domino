@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class OtherDesignElement extends AbstractDesignBase /* implements TODO */{
+public class OtherDesignElement extends AbstractDesignBase {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,21 +33,8 @@ public class OtherDesignElement extends AbstractDesignBase /* implements TODO */
 	}
 
 	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		// TODO Auto-generated method stub
-		return null;
+	protected boolean enforceRawFormat() {
+		return true;
 	}
 
 }

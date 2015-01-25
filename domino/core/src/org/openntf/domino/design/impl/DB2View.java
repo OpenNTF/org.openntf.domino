@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class DB2View extends AbstractDesignBaseNamed /* implements TODO */{
+public final class DB2View extends AbstractDesignBaseNamed implements org.openntf.domino.design.DB2View {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,18 +33,8 @@ public class DB2View extends AbstractDesignBaseNamed /* implements TODO */{
 	}
 
 	@Override
-	protected boolean useRawFormat() {
+	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public String getOnDiskFolder() {
-		return "Data/DB2AccessViews";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".db2v";
 	}
 
 }

@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public class CompositeApp extends AbstractDesignFileResource implements HasMetadata/* implements TODO */{
+public final class CompositeApp extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeApp {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,13 +33,9 @@ public class CompositeApp extends AbstractDesignFileResource implements HasMetad
 	}
 
 	@Override
-	public String getOnDiskFolder() {
-		return "CompositeApplications/Applications";
-	}
-
-	@Override
-	public String getOnDiskExtension() {
-		return ".ca";
+	protected boolean enforceRawFormat() {
+		// CompositeApp is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 }

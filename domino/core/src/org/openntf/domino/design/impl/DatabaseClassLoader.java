@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
+import org.openntf.domino.design.JavaResource;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
@@ -72,7 +73,7 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
 			Document doc = design_.getAncestorDatabase().getDocumentByID(noteId);
-			JavaResource res = new JavaResource(doc);
+			JavaResource res = (JavaResource) DesignFactory.fromDocument(doc);
 			// Load up our class queue with the data
 			unloadedClasses_.putAll(res.getClassData());
 			// Now attempt to load the named class
