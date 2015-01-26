@@ -17,17 +17,15 @@
 package org.openntf.domino.design.impl;
 
 import java.lang.annotation.Annotation;
-import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Document;
-import org.openntf.domino.NoteCollection;
-import org.openntf.domino.NoteCollection.SelectOption;
-import org.openntf.domino.design.JavaResource;
+import org.openntf.domino.design.DatabaseDesign;
+import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
@@ -66,14 +64,10 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 
 		String binaryName = DominoUtils.escapeForFormulaString(DominoUtils.javaBinaryNameToFilePath(name, "/"));
 
-		// Check for appropriate design elements in the DB
-		NoteCollection notes = design_.getNoteCollection(String.format(
-				" @Contains($Flags; 'g') & (@Contains($Flags; '[') | @Contains($Flags; 'K')) & $ClassIndexItem='WEB-INF/classes/%s' ",
-				binaryName), EnumSet.of(SelectOption.MISC_FORMAT));
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = design_.getAncestorDatabase().getDocumentByID(noteId);
-			JavaResource res = (JavaResource) DesignFactory.fromDocument(doc);
+		Iterator<XspResource> classes = design_.getDesignElements(XspResource.class,
+				String.format("$ClassIndexItem='WEB-INF/classes/%s' ", binaryName)).iterator();
+		if (classes.hasNext()) {
+			XspResource res = classes.next();
 			// Load up our class queue with the data
 			unloadedClasses_.putAll(res.getClassData());
 			// Now attempt to load the named class
@@ -86,13 +80,11 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 		}
 
 		// It's also possible that it's stored only as a .class file (e.g. secondary, non-inner classes in a .java)
-		notes = design_.getNoteCollection(
-				String.format(" @Contains($Flags; 'g') & @Contains($Flags; 'C') & $FileNames='WEB-INF/classes/%s' ", binaryName),
-				EnumSet.of(SelectOption.MISC_FORMAT));
-		noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = design_.getAncestorDatabase().getDocumentByID(noteId);
-			FileResource res = new FileResource(doc);
+
+		Iterator<FileResourceWebContent> webContentFiles = design_.getDesignElements(FileResourceWebContent.class,
+				String.format("$FileNames='WEB-INF/classes/%s' ", binaryName)).iterator();
+		if (webContentFiles.hasNext()) {
+			FileResourceWebContent res = webContentFiles.next();
 			byte[] classData = res.getFileData();
 			return defineClass(name, classData, 0, classData.length);
 		}
@@ -103,6 +95,7 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 		// If we're here, see if we should look through the Jars - load them all now
 		if (includeJars_ && !loadedJars_) {
 			for (org.openntf.domino.design.JarResource jar : design_.getJarResources()) {
+				System.out.println(jar.getName());
 				unloadedClasses_.putAll(jar.getClassData());
 			}
 			loadedJars_ = true;
@@ -115,7 +108,8 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 
 		// Now do the same for Java script libraries
 		if (includeLibraries_ && !loadedLibraries_) {
-			for (org.openntf.domino.design.JavaScriptLibrary lib : design_.getJavaScriptLibraries()) {
+			for (org.openntf.domino.design.ScriptLibraryJava lib : design_.getScriptLibrariesJava()) {
+				System.out.println(lib.getName());
 				Map<String, byte[]> classData = lib.getClassData();
 				unloadedClasses_.putAll(classData);
 			}

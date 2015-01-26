@@ -312,7 +312,7 @@ enum DesignFactory {
 			return new CustomControl(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_JAVAFILE)) {
-			return new JavaResource(doc);
+			return new XspJavaResource(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_WIDGET)) {
 			return new CompositeComponent(doc);
@@ -325,9 +325,11 @@ enum DesignFactory {
 		}
 		if (testFlag(flags, DFLAGPAT_FILE_HIDDEN)) {
 			String flagsExt = doc.getItemValueString("$FlagsExt");
-			if (testFlag(flagsExt, "+w"))
+			if (testFlag(flagsExt, "+w")) {
 				return new FileResourceWebContent(doc);
-			return new FileResourceHidden(doc);
+			} else {
+				return new FileResourceHidden(doc);
+			}
 		}
 		if (testFlag(flags, DFLAGPAT_NAVIGATORSWEB)) {
 			return new Navigator(doc);
@@ -350,18 +352,18 @@ enum DesignFactory {
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_LS)) {
 			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
 				return new WebServiceConsumerLS(doc);
-			return new LotusScriptLibrary(doc);
+			return new ScriptLibraryLS(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JAVA)) {
 			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
 				return new WebServiceConsumerJava(doc);
-			return new JavaLibrary(doc);
+			return new ScriptLibraryJava(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JS)) {
-			return new JavaScriptLibrary(doc);
+			return new ScriptLibraryCSJS(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_SERVER_JS)) {
-			return new SSJSLibrary(doc);
+			return new ScriptLibrarySSJS(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_DATABASESCRIPT)) {
 			return new DatabaseScript(doc);
@@ -477,15 +479,7 @@ enum DesignFactory {
 			coll.setSelectMiscFormatElements(true);
 			selectFormula += " & " + buildFlagFormula(DFLAGPAT_STYLEKIT);
 
-		} else if (org.openntf.domino.design.XPage.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE);
-
-		} else if (org.openntf.domino.design.CustomControl.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC);
-
-		} else if (org.openntf.domino.design.JavaResource.class.isAssignableFrom(type)) {
+		} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
 			coll.setSelectMiscFormatElements(true);
 			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE);
 
@@ -536,21 +530,30 @@ enum DesignFactory {
 				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA);
 			}
 
-		} else if (org.openntf.domino.design.LotusScriptLibrary.class.isAssignableFrom(type)) {
-			coll.setSelectScriptLibraries(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W})";
+		} else if (org.openntf.domino.design.ScriptLibrary.class.isAssignableFrom(type)) {
+			if (org.openntf.domino.design.ScriptLibraryLS.class.isAssignableFrom(type)) {
+				coll.setSelectScriptLibraries(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W})";
 
-		} else if (org.openntf.domino.design.JavaLibrary.class.isAssignableFrom(type)) {
-			coll.setSelectScriptLibraries(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W})";
+			} else if (org.openntf.domino.design.ScriptLibraryJava.class.isAssignableFrom(type)) {
+				coll.setSelectScriptLibraries(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W})";
 
-		} else if (org.openntf.domino.design.JavaScriptLibrary.class.isAssignableFrom(type)) {
-			coll.setSelectScriptLibraries(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS);
+			} else if (org.openntf.domino.design.ScriptLibraryCSJS.class.isAssignableFrom(type)) {
+				coll.setSelectScriptLibraries(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS);
 
-		} else if (org.openntf.domino.design.SSJSLibrary.class.isAssignableFrom(type)) {
-			coll.setSelectScriptLibraries(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS);
+			} else if (org.openntf.domino.design.ScriptLibrarySSJS.class.isAssignableFrom(type)) {
+				coll.setSelectScriptLibraries(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS);
+			} else {
+				// ALL script libraries:
+				coll.setSelectScriptLibraries(true);
+				selectFormula += " & ((" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W}))";
+				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W}))";
+				selectFormula += " | ( " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS) + ")";
+				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS) + "))";
+			}
 
 		} else if (org.openntf.domino.design.DatabaseScript.class.isAssignableFrom(type)) {
 			coll.setSelectDatabaseScript(true);
@@ -640,10 +643,23 @@ enum DesignFactory {
 
 		} else if (org.openntf.domino.design.DesignForm.class.isAssignableFrom(type)) {
 			coll.setSelectForms(true);
-		} else if (org.openntf.domino.design.JavaResource.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVARESOURCE);
 
+		} else if (org.openntf.domino.design.XspResource.class.isAssignableFrom(type)) {
+			if (org.openntf.domino.design.XPage.class.isAssignableFrom(type)) {
+				coll.setSelectMiscFormatElements(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE);
+
+			} else if (org.openntf.domino.design.CustomControl.class.isAssignableFrom(type)) {
+				coll.setSelectMiscFormatElements(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC);
+
+			} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
+				coll.setSelectMiscFormatElements(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE);
+			} else {
+				coll.setSelectMiscFormatElements(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVARESOURCE);
+			}
 		} else {
 			throw new IllegalArgumentException("Class " + type.getName() + " is unsupported");
 		}
@@ -696,5 +712,5 @@ enum DesignFactory {
 			}
 			return null;
 		}
-	*/
+	 */
 }

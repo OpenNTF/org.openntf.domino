@@ -23,13 +23,13 @@ import org.openntf.domino.Document;
  * @author Roland Praml
  * 
  */
-public final class SSJSLibrary extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.SSJSLibrary {
+public final class ScriptLibrarySSJS extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.ScriptLibrarySSJS {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected SSJSLibrary(final Document document) {
+	protected ScriptLibrarySSJS(final Document document) {
 		super(document);
 	}
 

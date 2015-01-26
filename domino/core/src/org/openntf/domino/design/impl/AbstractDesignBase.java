@@ -575,7 +575,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public final Document getDocument() {
 		if (!StringUtil.isEmpty(universalId_)) {
-			return database_.getDocumentByID(universalId_);
+			return database_.getDocumentByUNID(universalId_);
 		}
 		return null;
 	}
@@ -668,7 +668,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	@Override
-	public final boolean save() {
+	public boolean save() {
 
 		DxlImporter importer = getAncestorSession().createDxlImporter();
 		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
@@ -855,7 +855,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final List<String> getItemValueStrings(final String itemName) {
 		if (dxlFormat_ == DxlFormat.NONE)
-			return document_.getItemValue(itemName, String.class);
+			return document_.getItemValues(itemName, String.class);
 		List<String> result = new ArrayList<String>();
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {

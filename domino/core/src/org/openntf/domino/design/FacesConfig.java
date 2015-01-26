@@ -10,7 +10,7 @@ import java.util.Map;
  */
 
 // This will help: http://www.horstmann.com/corejsf/faces-config.html
-public interface FacesConfig extends FileResource {
+public interface FacesConfig {
 
 	public List<String> getActionListeners();
 

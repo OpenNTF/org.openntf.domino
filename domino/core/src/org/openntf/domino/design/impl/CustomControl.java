@@ -25,7 +25,7 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public final class CustomControl extends AbstractJavaResource implements org.openntf.domino.design.CustomControl, HasMetadata {
+public final class CustomControl extends AbstractXspResource implements org.openntf.domino.design.CustomControl, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());

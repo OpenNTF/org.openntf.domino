@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -32,21 +33,21 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
-public abstract class AbstractJavaResource extends AbstractDesignFileResource implements org.openntf.domino.design.JavaResource {
+public abstract class AbstractXspResource extends AbstractDesignFileResource implements XspResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(AbstractJavaResource.class.getName());
+	private static final Logger log_ = Logger.getLogger(AbstractXspResource.class.getName());
 
 	private static final String CLASS_INDEX_ITEM = "$ClassIndexItem";
 
-	protected AbstractJavaResource(final Document document) {
+	protected AbstractXspResource(final Document document) {
 		super(document);
 	}
 
 	/**
 	 * @param database
 	 */
-	protected AbstractJavaResource(final Database database) {
+	protected AbstractXspResource(final Database database) {
 		super(database);
 	}
 
@@ -55,12 +56,13 @@ public abstract class AbstractJavaResource extends AbstractDesignFileResource im
 	 */
 	@Override
 	public Collection<String> getClassNames() {
+		List<String> classIndex = getItemValueStrings(CLASS_INDEX_ITEM);
 		List<String> names = new ArrayList<String>();
-		for (XMLNode node : getDxl().selectNodes("//item[@name='" + CLASS_INDEX_ITEM + "']//text")) {
-			// Classes begin with "WEB-INF/classes/"
-			String path = node.getText();
+		for (String path : classIndex) {
 			if (path.startsWith("WEB-INF/classes/")) {
 				names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
+			} else {
+				names.add(""); // add blank entries, otherwise the wrong $ClassData item will be located
 			}
 		}
 		return names;

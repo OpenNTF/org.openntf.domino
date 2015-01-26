@@ -15,6 +15,7 @@ import org.openntf.domino.design.AboutDocument;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
+import org.openntf.domino.design.impl.DatabaseClassLoader;
 import org.openntf.domino.design.impl.ODPMapping;
 import org.openntf.domino.design.impl.OnDiskProject;
 import org.openntf.domino.design.impl.OtherDesignElement;
@@ -25,8 +26,21 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 @RunWith(DominoJUnitRunner.class)
 public class DesignClassTest {
+	//@Test
+	public void testDBClassLoader() throws ClassNotFoundException {
+		Session sess = Factory.getSession(SessionType.CURRENT);
+		Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/proglib4work2.nsf");
+		ClassLoader cl = new DatabaseClassLoader(db.getDesign(), Factory.getClassLoader(), true, true);
+		Class<?> cls = cl.loadClass("de.foconis.core.util.LSStringUtil"); // XPage - java
+		System.out.println(cls);
+		cls = cl.loadClass("org.junit.Assert"); // JAR
+		System.out.println(cls);
+		//Class<?> cls = cl.loadClass("com.googlecode.htmlcompressor.compressor.Compressor");
+		cls = cl.loadClass("FocMessageDigestFactory"); // Script-Lib
+		System.out.println(cls);
+	}
 
-	@Test
+	//@Test
 	public void testDesignFactory() throws IOException {
 
 		Session sess = Factory.getSession(SessionType.CURRENT);
@@ -76,7 +90,7 @@ public class DesignClassTest {
 					cnt = counter.get(cls).get();
 				}
 				if (j == cnt) {
-					//					System.out.println(j + "\t " + cnt + "\t" + cls.getName());
+					System.out.println(j + "\t " + cnt + "\t" + cls.getName());
 				} else {
 					System.err.println(j + "\t " + cnt + "\t" + cls.getName());
 				}
@@ -87,11 +101,14 @@ public class DesignClassTest {
 		System.out.println("Total design elements " + i);
 	}
 
-	//@Test
+	@Test
 	public void testDesignClass() throws IOException {
 
 		Session sess = Factory.getSession(SessionType.CURRENT);
-		Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/empty.ns9");
+		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/empty.ns9");
+		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/empty2.nsf");
+		Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/proglib4work2.nsf");
+		testDb(db);
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
 		DesignCollection<DesignBase> elems = design
@@ -101,7 +118,7 @@ public class DesignClassTest {
 		//+ "& @contains($TITLE;{gadproxy}) ");
 		System.out.println("Count: " + elems.getCount());
 
-		File root = new File("D:/daten/temp/ods2");
+		File root = new File("D:/daten/temp/ods3");
 		OnDiskProject odp = new OnDiskProject(root);
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {

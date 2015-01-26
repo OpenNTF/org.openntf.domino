@@ -16,10 +16,15 @@
 
 package org.openntf.domino.design;
 
+import java.util.Map;
+
 /**
  * @author Roland Praml
  * 
  */
-public interface JavaLibrary extends DesignBaseNamed {
+public interface ScriptLibraryJava extends ScriptLibrary {
+	public Map<String, byte[]> getClassData();
+
+	public Map<String, String> getClassSource();
 
 }

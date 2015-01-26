@@ -16,13 +16,14 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml
  * 
  */
-public final class FileResourceWebContent extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceWebContent {
+public class FileResourceWebContent extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceWebContent {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -30,6 +31,11 @@ public final class FileResourceWebContent extends AbstractDesignFileResource imp
 	 */
 	protected FileResourceWebContent(final Document document) {
 		super(document);
+	}
+
+	public FileResourceWebContent(final Database database) {
+		// TODO Auto-generated constructor stub
+		super(database);
 	}
 
 	@Override

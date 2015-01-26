@@ -24,12 +24,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.design.XspXmlContent;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
@@ -104,14 +107,16 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	protected byte[] getFileDataRaw(final String itemName) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) {
+			for (XMLNode rawitemdata : getDxl().selectNodes(//
+					"//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) {
+
 				String rawData = rawitemdata.getText();
 				byte[] thisData = parseBase64Binary(rawData);
 				byteStream.write(thisData);
 			}
-			byte[] data = byteStream.toByteArray();
 
-			if (data.length > 0) {
+			if (byteStream.size() > 0) {
+				byte[] data = byteStream.toByteArray();
 				CData cdata = new CData(data);
 				CDObject obj = CDObject.create(cdata);
 				// Files may be attached either as FILE or as EVENT... (ssjs for example) Damn. This makes everything quite complex
@@ -121,7 +126,16 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 					return ((CDResourceEvent) obj).getFileData();
 				throw new IllegalStateException("Cannot decode " + obj.getClass().getName());
 			} else {
-				return data;
+				byteStream = new ByteArrayOutputStream();
+				for (XMLNode rawitemdata : getDxl().selectNodes(//
+						"//file[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/filedata")) {
+
+					String rawData = rawitemdata.getText();
+					byte[] thisData = parseBase64Binary(rawData);
+					byteStream.write(thisData);
+				}
+				return byteStream.toByteArray();
+
 			}
 		} catch (IOException ioe) {
 			DominoUtils.handleException(ioe);
@@ -253,5 +267,26 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	@Override
 	public void setDeployable(final boolean deployable) {
 		// TODO Auto-generated method stub
+	}
+
+	public <T extends XspXmlContent> T getAsXml(final Class<T> schema) {
+		try {
+			Constructor<T> ctor = schema.getConstructor(FileResource.class);
+			return ctor.newInstance(this);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

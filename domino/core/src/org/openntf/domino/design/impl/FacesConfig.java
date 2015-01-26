@@ -4,9 +4,6 @@
 package org.openntf.domino.design.impl;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,11 +14,8 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.design.XspXmlContent;
 import org.openntf.domino.utils.xml.ModifiableStringNodeList;
-import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;
 
@@ -31,57 +25,61 @@ import org.xml.sax.SAXException;
  */
 // TODO Make the "remove" methods mark the object as unusable in some way
 // TODO Verify that null-value is actually legal in XPages
-public class FacesConfig extends FileResource implements org.openntf.domino.design.FacesConfig {
+public class FacesConfig extends XspXmlContent implements org.openntf.domino.design.FacesConfig {
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FacesConfig.class.getName());
 
-	private final XMLDocument xml_ = new XMLDocument();
-
 	/**
 	 * @param document
 	 *            The design note used to represent an existing faces-config.xml file
 	 */
-	public FacesConfig(final Document document) {
-		super(document);
-
-		try {
-			xml_.loadString(new String(getFileData()));
-		} catch (SAXException e) {
-			DominoUtils.handleException(e);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		} catch (ParserConfigurationException e) {
-			DominoUtils.handleException(e);
+	public FacesConfig(final DatabaseDesign databaseDesign) {
+		FileResourceWebContent facesConfig = databaseDesign
+				.getDesignElementByName(FileResourceWebContent.class, "WEB-INF/faces-config.xml");
+		if (facesConfig != null) {
+			setContainer(facesConfig);
+		} else {
+			facesConfig = new org.openntf.domino.design.impl.FileResourceWebContent(databaseDesign.getAncestorDatabase());
+			facesConfig.setName("WEB-INF/faces-config.xml");
+			setContainer(facesConfig);
+			try {
+				getXml().loadString("<faces-config/>");
+			} catch (SAXException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	/**
-	 * @param database
-	 *            The database in which to create a new faces-config file
-	 */
-
-	public FacesConfig(final Database database) {
-		super(database);
-
-		try {
-			xml_.loadString("<faces-config/>");
-		} catch (SAXException e) {
-			DominoUtils.handleException(e);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		} catch (ParserConfigurationException e) {
-			DominoUtils.handleException(e);
-		}
-	}
+	//	/**
+	//	 * @param database
+	//	 *            The database in which to create a new faces-config file
+	//	 */
+	//
+	//	public FacesConfig(final Database database) {
+	//		super(database);
+	//		try {
+	//			getXml().loadString("<faces-config/>");
+	//		} catch (SAXException e) {
+	//			DominoUtils.handleException(e);
+	//		} catch (IOException e) {
+	//			DominoUtils.handleException(e);
+	//		} catch (ParserConfigurationException e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getActionListeners()
 	 */
 	@Override
 	public List<String> getActionListeners() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "action-listener");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "action-listener");
 	}
 
 	/* (non-Javadoc)
@@ -89,7 +87,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public org.openntf.domino.design.FacesConfig.Converter addConverter() {
-		return new Converter(xml_.selectSingleNode("/faces-config").addChildElement("converter"));
+		return new Converter(getXml().selectSingleNode("/faces-config").addChildElement("converter"));
 	}
 
 	/* (non-Javadoc)
@@ -97,7 +95,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<org.openntf.domino.design.FacesConfig.Converter> getConverters() {
-		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(this, xml_, "/faces-config", "converter",
+		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(this, getXml(), "/faces-config", "converter",
 				Converter.class);
 	}
 
@@ -106,7 +104,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public org.openntf.domino.design.FacesConfig.ManagedBean addManagedBean() {
-		return new ManagedBean(xml_.selectSingleNode("/faces-config").addChildElement("managed-bean"));
+		return new ManagedBean(getXml().selectSingleNode("/faces-config").addChildElement("managed-bean"));
 	}
 
 	/* (non-Javadoc)
@@ -114,8 +112,8 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<org.openntf.domino.design.FacesConfig.ManagedBean> getManagedBeans() {
-		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(this, xml_, "/faces-config", "managed-bean",
-				ManagedBean.class);
+		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(this, getXml(), "/faces-config",
+				"managed-bean", ManagedBean.class);
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +121,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<String> getMessageBundles() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "message-bundle");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "message-bundle");
 	}
 
 	/* (non-Javadoc)
@@ -131,7 +129,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<String> getNavigationHandlers() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "navigation-handler");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "navigation-handler");
 	}
 
 	/* (non-Javadoc)
@@ -139,7 +137,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<String> getPhaseListeners() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "phase-listener");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "phase-listener");
 	}
 
 	/* (non-Javadoc)
@@ -147,7 +145,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<String> getPropertyResolvers() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "property-resolver");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "property-resolver");
 	}
 
 	/* (non-Javadoc)
@@ -155,7 +153,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<String> getVariableResolvers() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "variable-resolver");
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "variable-resolver");
 	}
 
 	/* (non-Javadoc)
@@ -163,22 +161,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 */
 	@Override
 	public List<String> getViewHandlers() {
-		return new ModifiableStringNodeList(xml_, "/faces-config/application", "view-handler");
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.design.impl.AbstractDesignNoteBase#save()
-	 */
-	@Override
-	public boolean save() {
-		try {
-			setFileData(xml_.getXml().getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			DominoUtils.handleException(e);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
-		return super.save();
+		return new ModifiableStringNodeList(getXml(), "/faces-config/application", "view-handler");
 	}
 
 	public class ManagedBean implements org.openntf.domino.design.FacesConfig.ManagedBean {
@@ -736,70 +719,4 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 		}
 	}
 
-	private static class ModifiableObjectNodeList<E> extends AbstractList<E> {
-		@SuppressWarnings("unused")
-		private static final Logger log_ = Logger.getLogger(ModifiableObjectNodeList.class.getName());
-
-		private final Object context_;
-		private final XMLNode xml_;
-		private final String parentNodePath_;
-		private final String nodeName_;
-		private final Class<? extends E> clazz_;
-
-		public ModifiableObjectNodeList(final Object context, final XMLNode xml, final String parentNodePath, final String nodeName,
-				final Class<? extends E> clazz) {
-			context_ = context;
-			xml_ = xml;
-			parentNodePath_ = parentNodePath;
-			nodeName_ = nodeName;
-			clazz_ = clazz;
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.AbstractList#get(int)
-		 */
-		@Override
-		public E get(final int index) {
-			List<XMLNode> nodes = xml_.selectNodes(parentNodePath_ + "/" + nodeName_);
-			try {
-				return clazz_.getConstructor(context_.getClass(), XMLNode.class).newInstance(context_, nodes.get(index));
-			} catch (IllegalArgumentException e) {
-				DominoUtils.handleException(e);
-				return null;
-			} catch (SecurityException e) {
-				DominoUtils.handleException(e);
-				return null;
-			} catch (InstantiationException e) {
-				DominoUtils.handleException(e);
-				return null;
-			} catch (IllegalAccessException e) {
-				DominoUtils.handleException(e);
-				return null;
-			} catch (InvocationTargetException e) {
-				DominoUtils.handleException(e);
-				return null;
-			} catch (NoSuchMethodException e) {
-				DominoUtils.handleException(e);
-				return null;
-			}
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.AbstractCollection#size()
-		 */
-		@Override
-		public int size() {
-			return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).size();
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.AbstractList#remove(int)
-		 */
-		@Override
-		public E remove(final int index) {
-			E current = get(index);
-			xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index);
-			return current;
-		}
-	}
 }

@@ -19,24 +19,25 @@ package org.openntf.domino.design.impl;
 import org.openntf.domino.Document;
 
 /**
- * a Java - ScriptLibrary
+ * A java file (for xpages)
  * 
  * @author Roland Praml
  * 
  */
-public class JavaLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaLibrary {
+public class XspJavaResource extends AbstractXspResource implements HasMetadata, org.openntf.domino.design.XspJavaResource {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected JavaLibrary(final Document document) {
+	protected XspJavaResource(final Document document) {
 		super(document);
 	}
 
 	@Override
 	protected boolean enforceRawFormat() {
-		return false;
+		// JavaFile is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 }

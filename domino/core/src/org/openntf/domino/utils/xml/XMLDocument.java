@@ -64,4 +64,13 @@ public class XMLDocument extends XMLNode {
 	public static String escapeXPathValue(final String input) {
 		return input.replace("'", "\\'");
 	}
+
+	@Override
+	public String toString() {
+		try {
+			return getXml(null);
+		} catch (IOException e) {
+			return e.getMessage();
+		}
+	}
 }

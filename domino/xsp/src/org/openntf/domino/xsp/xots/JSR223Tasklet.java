@@ -8,8 +8,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.design.AnyFileResource;
 import org.openntf.domino.design.DatabaseDesign;
-import org.openntf.domino.design.FileResource;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
@@ -26,7 +26,7 @@ public class JSR223Tasklet extends AbstractDominoRunnable {
 		scriptExt_ = scriptName.substring(extIndex + 1);
 
 		DatabaseDesign design = database.getDesign();
-		FileResource script = design.getAnyFileResource(scriptName);
+		AnyFileResource script = design.getAnyFileResource(scriptName);
 		script_ = new String(script.getFileData());
 		databasePath_ = database.getApiPath();
 	}

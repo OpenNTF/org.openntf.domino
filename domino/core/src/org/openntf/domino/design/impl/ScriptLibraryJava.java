@@ -1,10 +1,9 @@
 package org.openntf.domino.design.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
@@ -12,9 +11,7 @@ import java.util.jar.JarInputStream;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.Session;
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -22,13 +19,13 @@ import org.openntf.domino.utils.xml.XMLNode;
 /**
  * A client side JavaScriptLibrary
  */
-public final class JavaScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.JavaScriptLibrary, HasMetadata {
+public final class ScriptLibraryJava extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryJava, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected JavaScriptLibrary(final Document document) {
+	protected ScriptLibraryJava(final Document document) {
 		super(document);
 	}
 
@@ -40,7 +37,7 @@ public final class JavaScriptLibrary extends AbstractDesignFileResource implemen
 		return true;
 	}
 
-	protected JavaScriptLibrary(final Database database) {
+	protected ScriptLibraryJava(final Database database) {
 		super(database);
 
 		try {
@@ -59,21 +56,22 @@ public final class JavaScriptLibrary extends AbstractDesignFileResource implemen
 		}
 	}
 
+	Map<String, byte[]> classData;
+
 	@Override
 	public Map<String, byte[]> getClassData() {
 		// For this one, we'll need the note in the database
-		Document doc = getDocument();
-		if (doc != null) {
+		if (classData == null) {
+			classData = new TreeMap<String, byte[]>();
 			try {
-				EmbeddedObject obj = doc.getAttachment("%%object%%.jar");
+				byte[] jarData = getFileDataRaw("%%object%%.jar");
 
-				InputStream objInputStream = obj.getInputStream();
+				InputStream objInputStream = new ByteArrayInputStream(jarData);
 				JarInputStream jis = new JarInputStream(objInputStream);
 				JarEntry entry = jis.getNextJarEntry();
-				Map<String, byte[]> classData = new TreeMap<String, byte[]>();
 				while (entry != null) {
 					String name = entry.getName();
-					if (name.endsWith(".class")) {
+					if (name.endsWith(".class")) { //TODO our classloader should support resources also!
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						while (jis.available() > 0) {
 							bos.write(jis.read());
@@ -86,15 +84,13 @@ public final class JavaScriptLibrary extends AbstractDesignFileResource implemen
 				jis.close();
 				objInputStream.close();
 
-				return classData;
-
-			} catch (IOException e) {
-				DominoUtils.handleException(e);
-				return null;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		}
 
-		return null;
+		}
+		return classData;
+
 	}
 
 	@Override
@@ -107,36 +103,4 @@ public final class JavaScriptLibrary extends AbstractDesignFileResource implemen
 		return classSource;
 	}
 
-	/*
-	 *  (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
-	 */
-	@Override
-	public byte[] getFileData() {
-		if (enforceRawFormat())
-			return getFileDataRaw("$JavaScriptLibrary");
-		return getDxl().selectSingleNode("//code/javascript").getText().getBytes();
-	}
-
-	//	@Override
-	//	protected boolean useNoteFormat() {
-	//		return false;
-	//	}
-	//
-	//	@Override
-	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
-		// TODO Check for $Scriptlib_error => throw exception if item exists
-		String content;
-		if (enforceRawFormat()) {
-			content = ODSUtils.fromLMBCS(getFileData());
-		} else {
-			content = getDxl().selectSingleNode("//code/javascript").getText();
-		}
-		PrintWriter pw = new PrintWriter(odpFile);
-		pw.write(content);
-		pw.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
-	}
 }

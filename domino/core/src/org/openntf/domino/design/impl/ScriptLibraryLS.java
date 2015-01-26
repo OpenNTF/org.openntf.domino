@@ -9,14 +9,14 @@ import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
 // TODO MetaData
-public final class LotusScriptLibrary extends AbstractDesignFileResource implements org.openntf.domino.design.LotusScriptLibrary,
+public final class ScriptLibraryLS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryLS,
 		HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected LotusScriptLibrary(final Document document) {
+	protected ScriptLibraryLS(final Document document) {
 		super(document);
 	}
 
@@ -33,7 +33,7 @@ public final class LotusScriptLibrary extends AbstractDesignFileResource impleme
 		return true; // so that's why we force RAW format
 	}
 
-	protected LotusScriptLibrary(final Database database) {
+	protected ScriptLibraryLS(final Database database) {
 		super(database);
 		throw new UnsupportedOperationException("There is still something todo!");
 		//		try {

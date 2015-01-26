@@ -17,6 +17,9 @@
 package org.openntf.domino.design.impl;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.design.FormField;
+import org.openntf.domino.design.FormFieldList;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author Roland Praml
@@ -35,6 +38,45 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
+	}
+
+	@Override
+	public FormField addField() {
+		XMLNode body = getDxl().selectSingleNode("/subform/body/richtext");
+
+		// Create an appropriate paragraph definition
+		XMLNode finalPardef = getDxl().selectSingleNode("//pardef[last()]");
+		int nextId = Integer.valueOf(finalPardef.getAttribute("id")) + 1;
+		XMLNode pardef = body.addChildElement("pardef");
+		pardef.setAttribute("id", String.valueOf(nextId));
+		pardef.setAttribute("hide", "notes web mobile");
+
+		// Now create the par and the field
+		XMLNode par = body.addChildElement("par");
+		par.setAttribute("def", pardef.getAttribute("id"));
+
+		// Now add the field
+		XMLNode field = par.addChildElement("field");
+		field.setAttribute("kind", "editable");
+		field.setAttribute("name", "");
+		field.setAttribute("type", "text");
+
+		return new org.openntf.domino.design.impl.FormField(field);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignForm#getFields()
+	 */
+	@Override
+	public FormFieldList getFields() {
+		return new org.openntf.domino.design.impl.FormFieldList(this, "//field");
+	}
+
+	@Override
+	public void swapFields(final int a, final int b) {
+		getFields().swap(a, b);
 	}
 
 }

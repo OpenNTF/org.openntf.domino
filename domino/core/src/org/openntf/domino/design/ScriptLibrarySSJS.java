@@ -14,30 +14,12 @@
  * permissions and limitations under the License.
  */
 
-package org.openntf.domino.design.impl;
-
-import org.openntf.domino.Document;
+package org.openntf.domino.design;
 
 /**
- * A java file (for xpages)
- * 
  * @author Roland Praml
  * 
  */
-public final class JavaResource extends AbstractJavaResource implements HasMetadata, org.openntf.domino.design.JavaResource {
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected JavaResource(final Document document) {
-		super(document);
-	}
-
-	@Override
-	protected boolean enforceRawFormat() {
-		// JavaFile is exported in RAW-format. There is no DXL representation
-		return true;
-	}
+public interface ScriptLibrarySSJS extends ScriptLibrary {
 
 }

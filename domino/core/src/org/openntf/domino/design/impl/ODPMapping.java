@@ -20,11 +20,11 @@ public enum ODPMapping {
 	DESIGN_AGENT_LS("Code/Agents", ".lsa", DesignAgentLS.class), //
 	DESIGN_AGENT_A("Code/Agents", ".aa", DesignAgentA.class), //
 	JAR_RESOURCE("Code/Jars", null, JarResource.class), //
-	JAVA_FILE("Code/Java", "*", JavaResource.class), //
-	JAVA_LIBRARY("Code/ScriptLibraries", ".javalib", JavaLibrary.class), //
-	SSJS_LIBRARY("Code/ScriptLibraries", ".jss", SSJSLibrary.class), //
-	JAVA_SCRIPT_LIBRARY("Code/ScriptLibraries", ".js", JavaScriptLibrary.class), //
-	LOTUS_SCRIPT_LIBRARY("Code/ScriptLibraries", ".lss", LotusScriptLibrary.class), //
+	JAVA_FILE("Code/Java", "*", XspJavaResource.class), //
+	SCRIPT_LIBRARY_JAVA("Code/ScriptLibraries", ".javalib", ScriptLibraryJava.class), //
+	SCRIPT_LIBRARY_SSJS("Code/ScriptLibraries", ".jss", ScriptLibrarySSJS.class), //
+	SCRIPT_LIBRARY_CSJS("Code/ScriptLibraries", ".js", ScriptLibraryCSJS.class), //
+	SCRIPT_LIBRARY_LS("Code/ScriptLibraries", ".lss", ScriptLibraryLS.class), //
 	WEB_SERVICE_CONSUMER_LS("Code/WebServiceConsumer", ".lswsc", WebServiceConsumerLS.class), //
 	WEB_SERVICE_CONSUMER_JAVA("Code/WebServiceConsumer", ".javalib", WebServiceConsumerJava.class), //
 	WEB_SERVICE_PROVIDER_LS("Code/WebServices", ".lws", WebServiceProviderLS.class), //
@@ -68,7 +68,6 @@ public enum ODPMapping {
 	DESIGN_VIEW("Views", ".view", DesignView.class), //
 
 	FILE_RESOURCE_WEB_CONTENT("WebContent", null, FileResourceWebContent.class), //
-
 	XPAGE("XPages", null, XPage.class), //
 
 	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), //

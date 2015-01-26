@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design;
 
+
 /**
- * @author Roland Praml
+ * @author jgallagher
  * 
  */
-public interface SSJSLibrary extends DesignBaseNamed {
+public interface XspJavaResource extends XspResource {
 
 }
