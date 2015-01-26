@@ -19,10 +19,10 @@ public interface Item {
 	 * 
 	 * @param T
 	 *            Class to return values as
-	 * @return values as an instance of Class<?> T
+	 * @return values as an instance of Class<T> type
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public <T> T getValues(final Class<?> T);
+	public <T> T getValues(final Class<T> type);
 
 	/**
 	 * Gets the last modified date of the Item, casting it to a Java Date

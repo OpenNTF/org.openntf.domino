@@ -1201,13 +1201,13 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
+	public <T> T getItemValue(final String name, final Class<T> type) throws ItemNotFoundException, DataNotCompatibleException {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
 
 		// RPr: this should be equal to the code below.
 		MIMEEntity entity = getMIMEEntity(name);
 		if (entity == null) {
-			return TypeUtils.itemValueToClass(this, name, T);
+			return TypeUtils.itemValueToClass(this, name, type);
 		} else {
 			try {
 				return (T) Documents.getItemValueMIME(this, name, entity);
@@ -1215,6 +1215,19 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				closeMIMEEntities(false, name);
 			}
 		}
+	}
+
+	@Override
+	public <T> List<T> getItemValues(final String name, final Class<T> type) throws ItemNotFoundException, DataNotCompatibleException {
+		Vector<Object> vals = getItemValue(name);
+		if (type.isArray() || Iterable.class.isAssignableFrom(type)) {
+			throw new IllegalArgumentException("Type '" + type.getName() + "' is not scalar.");
+		}
+		T[] tmp = (T[]) Array.newInstance(type, vals.size());
+		for (int i = 0; i < vals.size(); i++) {
+			tmp[i] = TypeUtils.objectToClass(vals.get(i), type, getAncestorSession());
+		}
+		return Arrays.asList(tmp);
 	}
 
 	/*
@@ -1226,7 +1239,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 */
 
 	/*@SuppressWarnings("unchecked")
-	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
+	public <T> T getItemValue(final String name, final Class<T> type) throws ItemNotFoundException, DataNotCompatibleException {
 		checkMimeOpen();
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
@@ -4243,9 +4256,9 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	}
 
 	@Override
-	public <T> T getItemSeriesValues(final CharSequence name, final Class<?> T) {
+	public <T> T getItemSeriesValues(final CharSequence name, final Class<T> type) {
 		T result = null;
-		result = TypeUtils.vectorToClass(getItemSeriesValues(name), T, getAncestorSession());
+		result = TypeUtils.vectorToClass(getItemSeriesValues(name), type, getAncestorSession());
 		return result;
 	}
 

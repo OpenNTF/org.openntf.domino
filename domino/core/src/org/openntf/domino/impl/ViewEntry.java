@@ -511,14 +511,14 @@ public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, l
 	}
 
 	@Override
-	public <T> T getColumnValue(final String columnName, final Class<?> T) {
+	public <T> T getColumnValue(final String columnName, final Class<T> type) {
 		Object rawResult = getColumnValue(columnName);
 		if (rawResult instanceof Vector) {
-			return TypeUtils.collectionToClass((Vector<?>) rawResult, T, this.getAncestorSession());
+			return TypeUtils.collectionToClass((Vector<?>) rawResult, type, this.getAncestorSession());
 		} else {
 			Vector<Object> v = new Vector<Object>();
 			v.add(rawResult);
-			return TypeUtils.collectionToClass(v, T, this.getAncestorSession());
+			return TypeUtils.collectionToClass(v, type, this.getAncestorSession());
 		}
 	}
 

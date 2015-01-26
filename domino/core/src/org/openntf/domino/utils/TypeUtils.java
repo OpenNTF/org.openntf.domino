@@ -45,29 +45,29 @@ public enum TypeUtils {
 	public static final String[] DEFAULT_STR_ARRAY = { "" };
 
 	@SuppressWarnings("unchecked")
-	public static <T> T getDefaultInstance(final Class<?> T) {
-		if (T.isArray())
-			if (T.getComponentType() == String.class) {
+	public static <T> T getDefaultInstance(final Class<T> type) {
+		if (type.isArray())
+			if (type.getComponentType() == String.class) {
 				return (T) DEFAULT_STR_ARRAY.clone();
 			} else {
-				return (T) Array.newInstance(T.getComponentType(), 0);
+				return (T) Array.newInstance(type.getComponentType(), 0);
 			}
-		if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
+		if (Boolean.class.equals(type) || Boolean.TYPE.equals(type))
 			return (T) Boolean.FALSE;
-		if (Integer.class.equals(T) || Integer.TYPE.equals(T))
+		if (Integer.class.equals(type) || Integer.TYPE.equals(type))
 			return (T) Integer.valueOf(0);
-		if (Long.class.equals(T) || Long.TYPE.equals(T))
+		if (Long.class.equals(type) || Long.TYPE.equals(type))
 			return (T) Long.valueOf(0l);
-		if (Short.class.equals(T) || Short.TYPE.equals(T))
+		if (Short.class.equals(type) || Short.TYPE.equals(type))
 			return (T) Short.valueOf("0");
-		if (Double.class.equals(T) || Double.TYPE.equals(T))
+		if (Double.class.equals(type) || Double.TYPE.equals(type))
 			return (T) Double.valueOf(0d);
-		if (Float.class.equals(T) || Float.TYPE.equals(T))
+		if (Float.class.equals(type) || Float.TYPE.equals(type))
 			return (T) Float.valueOf(0f);
-		if (String.class.equals(T))
+		if (String.class.equals(type))
 			return (T) "";
 		try {
-			return (T) T.newInstance();
+			return type.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -90,38 +90,38 @@ public enum TypeUtils {
 	//	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<?> T) {
+	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<T> type) {
 		String noteid = doc.getNoteID();
 		boolean hasItem = doc.hasItem(itemName);
 		if (!hasItem) {
 			// System.out.println("Item " + itemName + " doesn't exist in document " + doc.getNoteID() + " in "
 			// + doc.getAncestorDatabase().getFilePath() + " so we can't return a " + T.getName());
 			Class<?> CType = null;
-			if (T.isArray()) {
-				CType = T.getComponentType();
+			if (type.isArray()) {
+				CType = type.getComponentType();
 				if (CType.isPrimitive()) {
 					throw new ItemNotFoundException("Item " + itemName + " was not found on document " + noteid
 							+ " so we cannot return an array of " + CType.getName());
 				} else {
 					return null;
 				}
-			} else if (T.isPrimitive()) {
+			} else if (type.isPrimitive()) {
 				throw new ItemNotFoundException("Item " + itemName + " was not found on document " + noteid + " so we cannot return a "
-						+ T.getName());
+						+ type.getName());
 			} else {
 				return null;
 			}
 		}
-		Object result = itemValueToClass(doc.getFirstItem(itemName), T);
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
+		Object result = itemValueToClass(doc.getFirstItem(itemName), type);
+		if (result != null && !type.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName()
 					+ " in item " + itemName + " for document id " + noteid);
 		}
 		return (T) result;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static <T> T itemValueToClass(final Item item, final Class<?> T) {
+	public static <T> T itemValueToClass(final Item item, final Class<T> type) {
 		// Object o = item.getAncestorDocument().getItemValue(item.getName());
 		Vector v = item.getValues();
 		if (v == null) {
@@ -130,7 +130,7 @@ public enum TypeUtils {
 		Session session = item.getAncestorSession();
 		T result = null;
 		try {
-			result = collectionToClass(v, T, session);
+			result = collectionToClass(v, type, session);
 		} catch (DataNotCompatibleException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
 			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid);
@@ -205,30 +205,30 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static <T> T objectToClass(final Object o, final Class<?> T, final Session session) {
-		return convertToTarget(o, T, session);
+	public static <T> T objectToClass(final Object o, final Class<T> type, final Session session) {
+		return convertToTarget(o, type, session);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T convertToTarget(final Object o, final Class<?> T, final Session session) {
+	public static <T> T convertToTarget(final Object o, final Class<T> type, final Session session) {
 		if (o == null) {
 			return null;
 		}
 		Object result = null;
 		if (o instanceof Collection) {
-			result = collectionToClass((Collection) o, T, session);
+			result = collectionToClass((Collection) o, type, session);
 		}
 		Class<?> CType = null;
-		if (T.equals(String[].class)) {
+		if (type.equals(String[].class)) {
 			result = toStrings(o);
 			return (T) result;
 		}
-		if (T.isArray()) {
-			if (String[].class.equals(T)) {
+		if (type.isArray()) {
+			if (String[].class.equals(type)) {
 				// System.out.println("Shallow route to string array");
 				result = toStrings(o);
 			} else {
-				CType = T.getComponentType();
+				CType = type.getComponentType();
 				if (CType.isPrimitive()) {
 					try {
 						result = toPrimitiveArray(o, CType);
@@ -266,36 +266,36 @@ public enum TypeUtils {
 					}
 				}
 			}
-		} else if (T.isPrimitive()) {
+		} else if (type.isPrimitive()) {
 			try {
-				result = toPrimitive(o, T);
+				result = toPrimitive(o, type);
 			} catch (DataNotCompatibleException e) {
 				throw e;
 			}
 		} else {
-			if (T == String.class) {
+			if (type == String.class) {
 				result = String.valueOf(o);
-			} else if (T == Enum.class) {
+			} else if (type == Enum.class) {
 				String str = String.valueOf(o);
 				result = toEnum(str);
-			} else if (T == BigString.class) {
+			} else if (type == BigString.class) {
 				result = new BigString(String.valueOf(o));
-			} else if (T == Pattern.class) {
+			} else if (type == Pattern.class) {
 				result = Pattern.compile(String.valueOf(o));
-			} else if (Class.class.isAssignableFrom(T)) {
+			} else if (Class.class.isAssignableFrom(type)) {
 				String cn = String.valueOf(o);
 				Class<?> cls = DominoUtils.getClass(cn);
 				result = cls;
-			} else if (Formula.class.isAssignableFrom(T)) {
+			} else if (Formula.class.isAssignableFrom(type)) {
 				Formula formula = new org.openntf.domino.helpers.Formula(String.valueOf(o));
 				result = formula;
-			} else if (java.util.Collection.class.equals(T)) {
+			} else if (java.util.Collection.class.equals(type)) {
 				result = new ArrayList();
 				((ArrayList) result).add(o);
 
-			} else if (java.util.Collection.class.isAssignableFrom(T)) {
+			} else if (java.util.Collection.class.isAssignableFrom(type)) {
 				try {
-					result = T.newInstance();
+					result = type.newInstance();
 					Collection coll = (Collection) result;
 					coll.addAll(toSerializables(o));
 				} catch (IllegalAccessException e) {
@@ -303,16 +303,16 @@ public enum TypeUtils {
 				} catch (InstantiationException e) {
 					DominoUtils.handleException(e);
 				}
-			} else if (T == Date.class) {
+			} else if (type == Date.class) {
 				result = toDate(o);
-			} else if (T == org.openntf.domino.DateTime.class) {
+			} else if (type == org.openntf.domino.DateTime.class) {
 				if (session != null) {
 					result = session.createDateTime(toDate(o));
 				} else {
 					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
 							+ " to DateTime without a valid Session object");
 				}
-			} else if (T == org.openntf.domino.Name.class) {
+			} else if (type == org.openntf.domino.Name.class) {
 				if (session != null) {
 
 					result = session.createName(String.valueOf(o));
@@ -321,17 +321,17 @@ public enum TypeUtils {
 					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
 							+ " to Name without a valid Session object");
 				}
-			} else if (Boolean.class.equals(T)) {
+			} else if (Boolean.class.equals(type)) {
 				result = toBoolean(o);
-			} else if (Number.class.isAssignableFrom(T)) {
-				result = toNumber(o, T);
+			} else if (Number.class.isAssignableFrom(type)) {
+				result = toNumber(o, type);
 			} else {
-				result = T.cast(o);
+				result = type.cast(o);
 			}
 		}
 
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		if (result != null && !type.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName());
 		}
 		return (T) result;
 	}
@@ -361,27 +361,27 @@ public enum TypeUtils {
 		}
 	}
 
-	public static <T> T vectorToClass(final Collection<?> v, final Class<?> T, final Session session) {
-		return collectionToClass(v, T, session);
+	public static <T> T vectorToClass(final Collection<?> v, final Class<T> type, final Session session) {
+		return collectionToClass(v, type, session);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T collectionToClass(final Collection v, final Class<?> T, final Session session) {
+	public static <T> T collectionToClass(final Collection v, final Class<T> type, final Session session) {
 		if (v == null) {
 			return null;
 		}
 		Object result = null;
 		Class<?> CType = null;
-		if (T.equals(String[].class)) {
+		if (type.equals(String[].class)) {
 			result = toStrings(v);
 			return (T) result;
 		}
-		if (T.isArray()) {
-			if (T == String[].class) {
+		if (type.isArray()) {
+			if (type == String[].class) {
 				// System.out.println("Shallow route to string array");
 				result = toStrings(v);
 			} else {
-				CType = T.getComponentType();
+				CType = type.getComponentType();
 				if (CType.isPrimitive()) {
 					try {
 						result = toPrimitiveArray(v, CType);
@@ -419,39 +419,39 @@ public enum TypeUtils {
 					}
 				}
 			}
-		} else if (T.isPrimitive()) {
+		} else if (type.isPrimitive()) {
 			try {
-				result = toPrimitive(v, T);
+				result = toPrimitive(v, type);
 			} catch (DataNotCompatibleException e) {
 				throw e;
 			}
 		} else {
-			if (T == String.class) {
+			if (type == String.class) {
 				result = join(v);
-			} else if (T == Enum.class) {
+			} else if (type == Enum.class) {
 				String str = join(v);
 				//				System.out.println("Attempting to convert string " + str + " to Enum");
 				result = toEnum(str);
 				//				System.out.println("result was " + (result == null ? "null" : result.getClass().getName()));
-			} else if (T == BigString.class) {
+			} else if (type == BigString.class) {
 				result = new BigString(join(v));
-			} else if (T == Pattern.class) {
+			} else if (type == Pattern.class) {
 				result = Pattern.compile(join(v));
-			} else if (Class.class.isAssignableFrom(T)) {
+			} else if (Class.class.isAssignableFrom(type)) {
 				String cn = join(v);
 				Class<?> cls = DominoUtils.getClass(cn);
 				result = cls;
-			} else if (Formula.class.isAssignableFrom(T)) {
+			} else if (Formula.class.isAssignableFrom(type)) {
 				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
 				result = formula;
-			} else if (T == java.util.Collection.class) {
+			} else if (type == java.util.Collection.class) {
 				result = new ArrayList();
 				if (v != null) {
 					((ArrayList) result).addAll(v);
 				}
-			} else if (java.util.Collection.class.isAssignableFrom(T)) {
+			} else if (java.util.Collection.class.isAssignableFrom(type)) {
 				try {
-					result = T.newInstance();
+					result = type.newInstance();
 					Collection coll = (Collection) result;
 					coll.addAll(DominoUtils.toSerializable(v));
 				} catch (IllegalAccessException e) {
@@ -459,15 +459,15 @@ public enum TypeUtils {
 				} catch (InstantiationException e) {
 					DominoUtils.handleException(e);
 				}
-			} else if (T == Date.class) {
+			} else if (type == Date.class) {
 				result = toDate(v);
-			} else if (T == org.openntf.domino.DateTime.class) {
+			} else if (type == org.openntf.domino.DateTime.class) {
 				if (session != null) {
 					result = session.createDateTime(toDate(v));
 				} else {
 					throw new IllegalArgumentException("Cannont convert a Vector to DateTime without a valid Session object");
 				}
-			} else if (T == org.openntf.domino.Name.class) {
+			} else if (type == org.openntf.domino.Name.class) {
 				if (session != null) {
 					if (v.isEmpty()) {
 						result = session.createName("");
@@ -479,7 +479,7 @@ public enum TypeUtils {
 					throw new IllegalArgumentException("Cannont convert a Vector to Name without a valid Session object");
 
 				}
-			} else if (T == Boolean.class) {
+			} else if (type == Boolean.class) {
 				if (v.isEmpty()) {
 					result = Boolean.FALSE;
 				} else {
@@ -488,8 +488,8 @@ public enum TypeUtils {
 				}
 			} else {
 				if (!v.isEmpty()) {
-					if (Number.class.isAssignableFrom(T)) {
-						result = toNumber(v, T);
+					if (Number.class.isAssignableFrom(type)) {
+						result = toNumber(v, type);
 					} else {
 						Iterator it = v.iterator();
 						result = it.next();
@@ -498,8 +498,8 @@ public enum TypeUtils {
 			}
 		}
 
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		if (result != null && !type.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName());
 		}
 		return (T) result;
 	}
@@ -507,39 +507,39 @@ public enum TypeUtils {
 	private static final Logger log_ = Logger.getLogger(TypeUtils.class.getName());
 
 	@SuppressWarnings("unchecked")
-	public static <T> T toNumberArray(final Object value, final Class<?> T) {
+	public static <T> T toNumberArray(final Object value, final Class<T> type) {
 		if (value == null)
 			return null;
 		if (value instanceof Collection) {
-			return (T) collectionToNumberArray((Collection<Object>) value, T);
+			return collectionToNumberArray((Collection<Object>) value, type);
 		} else if (value.getClass().isArray()) {
 			Object[] arr = (Object[]) value;
-			Object[] result = (Object[]) Array.newInstance(T, arr.length);
+			Object[] result = (Object[]) Array.newInstance(type, arr.length);
 			for (int i = 0; i < arr.length; i++) {
-				result[i++] = toNumber(arr[i], T);
+				result[i++] = toNumber(arr[i], type);
 			}
 			return (T) result;
 		} else {
-			Object[] result = (Object[]) Array.newInstance(T, 1);
-			result[0] = toNumber(value, T);
+			Object[] result = (Object[]) Array.newInstance(type, 1);
+			result[0] = toNumber(value, type);
 			return (T) result;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T collectionToNumberArray(final Collection<Object> value, final Class<?> T) {
+	public static <T> T collectionToNumberArray(final Collection<Object> value, final Class<T> type) {
 		int size = value.size();
-		Object[] result = (Object[]) Array.newInstance(T, size);
+		Object[] result = (Object[]) Array.newInstance(type, size);
 		int i = 0;
 		Iterator<Object> it = value.iterator();
 		while (it.hasNext()) {
-			result[i++] = toNumber(it.next(), T);
+			result[i++] = toNumber(it.next(), type);
 		}
 		return (T) result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T toNumber(final Object value, final Class<?> T) throws DataNotCompatibleException {
+	public static <T> T toNumber(final Object value, final Class<T> type) throws DataNotCompatibleException {
 		// System.out.println("Starting toNumber to get type " + T.getName() + " from a value of type " + value.getClass().getName());
 		if (value == null)
 			return null;
@@ -552,7 +552,7 @@ public enum TypeUtils {
 		}
 		// System.out.println("LocalValue is type " + localValue.getClass().getName() + ": " + String.valueOf(localValue));
 
-		if (T == Integer.class) {
+		if (type == Integer.class) {
 			if (localValue instanceof String) {
 				result = (T) Integer.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
@@ -562,17 +562,17 @@ public enum TypeUtils {
 			} else if (localValue instanceof Long) {
 				result = (T) Integer.valueOf(((Long) localValue).intValue());
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == Long.class) {
+		} else if (type == Long.class) {
 			if (localValue instanceof String) {
 				result = (T) Long.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Long.valueOf(((Double) localValue).longValue());
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == Double.class) {
+		} else if (type == Double.class) {
 			if (localValue instanceof String) {
 				result = (T) Double.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
@@ -584,61 +584,61 @@ public enum TypeUtils {
 			} else if (localValue instanceof Float) {
 				result = (T) Double.valueOf(((Float) localValue).doubleValue());
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == Short.class) {
+		} else if (type == Short.class) {
 			if (localValue instanceof String) {
 				result = (T) Short.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Short.valueOf(((Double) localValue).shortValue());
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == Byte.class) {
+		} else if (type == Byte.class) {
 			if (localValue instanceof String) {
 				result = (T) Byte.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Byte.valueOf(((Double) localValue).byteValue());
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == Float.class) {
+		} else if (type == Float.class) {
 			if (localValue instanceof String) {
 				result = (T) Float.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Float.valueOf(((Double) localValue).floatValue());
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == BigDecimal.class) {
+		} else if (type == BigDecimal.class) {
 			if (localValue instanceof String) {
 				result = (T) new BigDecimal((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) new BigDecimal((Double) localValue);
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == BigInteger.class) {
+		} else if (type == BigInteger.class) {
 			if (localValue instanceof String) {
 				result = (T) new BigInteger((String) localValue);
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == AtomicInteger.class) {
+		} else if (type == AtomicInteger.class) {
 			if (localValue instanceof String) {
 				result = (T) new AtomicInteger(Integer.valueOf((String) localValue));
 			} else if (localValue instanceof Double) {
 				result = (T) new AtomicInteger(Integer.valueOf(((Double) localValue).intValue()));
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (T == AtomicLong.class) {
+		} else if (type == AtomicLong.class) {
 			if (localValue instanceof String) {
 				result = (T) new AtomicLong(Long.valueOf((String) localValue));
 			} else if (localValue instanceof Double) {
 				result = (T) new AtomicLong(Long.valueOf(((Double) localValue).longValue()));
 			} else {
-				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
 		}
 		return result;

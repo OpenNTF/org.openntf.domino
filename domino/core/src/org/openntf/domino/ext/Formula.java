@@ -19,14 +19,14 @@ public interface Formula extends Externalizable {
 
 	public Vector<Object> getValue();
 
-	public <T> T getValue(final Class<?> T);
+	public <T> T getValue(final Class<T> type);
 
 	public Vector<Object> getValue(final org.openntf.domino.Session session);
 
-	public <T> T getValue(final org.openntf.domino.Session session, final Class<?> T);
+	public <T> T getValue(final org.openntf.domino.Session session, final Class<T> type);
 
 	public Vector<Object> getValue(final org.openntf.domino.Document document);
 
-	public <T> T getValue(final org.openntf.domino.Document document, final Class<?> T);
+	public <T> T getValue(final org.openntf.domino.Document document, final Class<T> type);
 
 }

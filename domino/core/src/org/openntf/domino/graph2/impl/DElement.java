@@ -72,7 +72,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty(final String propertyName, final Class<?> T) {
+	public <T> T getProperty(final String propertyName, final Class<T> type) {
 		//TODO NTF cached properties should be automatically reset if the base Document is known to have changed
 		Object result = null;
 		Map<String, Object> props = getProps();
@@ -82,9 +82,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
-					result = doc.getItemValue(propertyName, T);
+					result = doc.getItemValue(propertyName, type);
 				} else {
-					result = T.cast(delegate.get(propertyName));
+					result = type.cast(delegate.get(propertyName));
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
@@ -101,16 +101,16 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		} else if (result == Null.INSTANCE) {
 
 		} else {
-			if (result != null && !T.isAssignableFrom(result.getClass())) {
+			if (result != null && !type.isAssignableFrom(result.getClass())) {
 				try {
 					Map<String, Object> delegate = getDelegate();
 					if (delegate instanceof Document) {
 						Document doc = (Document) delegate;
-						result = doc.getItemValue(propertyName, T);
+						result = doc.getItemValue(propertyName, type);
 					} else {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
-							result = T.cast(delegate.get(propertyName));
+							result = type.cast(delegate.get(propertyName));
 						}
 					}
 					if (result == null) {
@@ -135,7 +135,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	@Override
-	public <T> T getProperty(final String key) {
+	public Object getProperty(final String key) {
 		return getProperty(key, java.lang.Object.class);
 	}
 
@@ -226,9 +226,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	@Override
-	public <T> T removeProperty(final String key) {
+	public Object removeProperty(final String key) {
 		getParent().startTransaction(this);
-		T result = getProperty(key);
+		Object result = getProperty(key);
 		Map<String, Object> props = getProps();
 		props.remove(key);
 		Map<String, Object> source = getDelegate();
@@ -266,13 +266,13 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	@Override
-	public <T> T getProperty(final String key, final Class<?> T, final boolean allowNull) {
-		T result = getProperty(key, T);
+	public <T> T getProperty(final String key, final Class<T> type, final boolean allowNull) {
+		T result = getProperty(key, type);
 		if (allowNull) {
 			return result;
 		} else {
 			if (result == null || Null.INSTANCE == result) {
-				return TypeUtils.getDefaultInstance(T);
+				return TypeUtils.getDefaultInstance(type);
 			} else {
 				return result;
 			}
