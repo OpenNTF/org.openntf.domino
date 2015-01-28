@@ -58,7 +58,7 @@ public class DataInitializer implements Runnable {
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 
-		VertexFrame frame = framedGraph.fromJsonableMap(jsonMap);
+		VertexFrame frame = framedGraph.toVertexFrame(jsonMap);
 		System.out.println("Got a frame of " + frame.getClass().getName());
 		if (frame instanceof Presentation) {
 			((Presentation) frame).setStatus(Status.CANCELLED);

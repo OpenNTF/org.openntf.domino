@@ -6,6 +6,7 @@ import java.util.Map;
 import javolution.util.FastMap;
 
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
@@ -28,7 +29,42 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		super(baseGraph, config);
 	}
 
-	public VertexFrame fromJsonableMap(final Map<String, Object> map) {
+	public EdgeFrame toEdgeFrame(final Map<String, Object> map) {
+		EdgeFrame result = null;
+		Object id = map.get("id");
+		Object typeName = map.get("type");
+		Class<? extends EdgeFrame> type = null;
+		if (typeName != null) {
+			try {
+				type = (Class<? extends EdgeFrame>) Class.forName(String.valueOf(typeName));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if (id == null) {
+			//new vertex
+			if (type == null) {
+				//what are we going to create? How do we even know?
+			} else {
+				//				result = addEdge(null, type);
+			}
+		} else {
+			if (type == null) {
+				try {
+					result = getEdge(id, DEdgeFrame.class);
+				} catch (Throwable t) {
+					//TODO NTF
+					t.printStackTrace();
+				}
+			} else {
+				//				result = addEdge(id, type);
+			}
+		}
+
+		return result;
+	}
+
+	public VertexFrame toVertexFrame(final Map<String, Object> map) {
 		VertexFrame result = null;
 		Object id = map.get("id");
 		Object typeName = map.get("type");
