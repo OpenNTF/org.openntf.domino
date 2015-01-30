@@ -1,15 +1,8 @@
 package org.openntf.domino.config;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import lotus.domino.NotesThread;
-
 import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.Session;
-import org.openntf.domino.View;
-import org.openntf.domino.exceptions.PermissionDeniedException;
+import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -19,104 +12,64 @@ import org.openntf.domino.utils.Factory.SessionType;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class Configuration {
-	Database odaDb_;
-	Document currentConfig_;
+public enum Configuration {
+	;
+	private static DominoExecutor executor_;
+	private static Database odaDb_;
+	private static boolean inititalized;
+
 	public static String ODA_NSF = "oda.nsf"; // TODO: Notes.ini
 
-	public Configuration() {
-		this(Factory.getSession(SessionType.NATIVE));
-	}
+	//
+	//	public Configuration() {
+	//		this(Factory.getSession(SessionType.NATIVE));
+	//	}
 
-	public Configuration(final Session session) {
-		super();
-		try {
-			odaDb_ = session.getDatabase(ODA_NSF);
-			if (odaDb_ == null) {
-				Factory.println("WARNING", "cannot find " + ODA_NSF + ". - using default values.");
-				return;
-			}
-			if (!odaDb_.isOpen())
-				throw new PermissionDeniedException("DB not open.");
-		} catch (Exception e) {
-			Factory.println("ERROR", "cannot open " + ODA_NSF + ": " + e.toString() + " - using default values.");
-		}
-		odaDb_ = null;
-	}
-
-	public Map<String, Object> getConfiguration(final String serverName) {
-		if (odaDb_ == null)
-			return new HashMap<String, Object>();
-
-		if (currentConfig_ != null) {
-			if (serverName.equals(currentConfig_.getItemValueString("ServerName")))
-				return currentConfig_;
-			if (currentConfig_.isDirty()) {
-				currentConfig_.save();
+	protected static synchronized DominoExecutor getExecutor() {
+		if (executor_ == null) {
+			if (Factory.isStarted()) {
+				executor_ = new DominoExecutor(1);
 			}
 		}
-
-		View luView = odaDb_.getView("$lookupConfiguration");
-		currentConfig_ = luView.getFirstDocumentByKey(serverName);
-		if (currentConfig_ == null) {
-			currentConfig_ = odaDb_.createDocument();
-			currentConfig_.replaceItemValue("Form", "Configuration");
-			currentConfig_.replaceItemValue("ServerName", serverName);
-			currentConfig_.save();
-			luView.refresh();
-		}
-		return currentConfig_;
+		return executor_;
 	}
 
-	public Map<String, Object> getConfiguration() {
-		return getConfiguration(Factory.getLocalServerName());
+	protected static Database getOdaDb() {
+		if (inititalized)
+			return odaDb_;
+		return initOdaDb();
 	}
 
-	public void save() {
-		if (currentConfig_ != null) {
-			if (currentConfig_.isDirty()) {
-				currentConfig_.save();
-			}
-		}
-	}
-
-	public int getConfigValueInt(final String name, final int def) {
-		Map<String, Object> map = getConfiguration();
-		Object ret = map.get(name);
-		if (ret instanceof Number) {
-			return ((Number) ret).intValue();
-		}
-
-		if (ret instanceof String) {
+	private synchronized static Database initOdaDb() {
+		if (!inititalized) {
+			inititalized = true;
 			try {
-				return Integer.parseInt((String) ret);
-			} catch (NumberFormatException e) {
-			}
-		}
-		map.put(name, def);
-		return def;
-	}
-
-	public static int sGetConfigValueInt(final String name, final int def) {
-		if (Factory.isInitialized()) {
-			Configuration cfg = new Configuration();
-			try {
-				return cfg.getConfigValueInt(name, def);
-			} finally {
-				cfg.save();
-			}
-		} else {
-			NotesThread.sinitThread();
-			try {
-				Factory.initThread(Factory.STRICT_THREAD_CONFIG);
-				try {
-					return sGetConfigValueInt(name, def);
-				} finally {
-					Factory.termThread();
+				// ODA-DB is thread safe, so we may cahce it :)
+				Session sess = Factory.getSession(SessionType.CURRENT);
+				Database db = sess.getDatabase(ODA_NSF);
+				if (db == null) {
+					Factory.println("WARNING", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName()
+							+ ". - using default values.");
+				} else if (!db.isOpen()) {
+					Factory.println("ERROR", "cannot open " + ODA_NSF + " as user " + sess.getEffectiveUserName()
+							+ ". - using default values.");
+				} else {
+					odaDb_ = db;
+					Factory.println(Configuration.class, "Using " + db + " as configuration database.");
 				}
-			} finally {
-				NotesThread.stermThread();
+			} catch (Exception e) {
+				Factory.println("ERROR", "cannot open " + ODA_NSF + ": " + e.toString() + " - using default values.");
 			}
 		}
+		return odaDb_;
 	}
+
+	public static ConfigurationProperties getServerConfiguration(final String serverName) {
+		return new ServerConfigurationProperties(serverName);
+	}
+
+	public static ConfigurationProperties getServerConfiguration() {
+		return getServerConfiguration(Factory.getLocalServerName());
+	}
+
 }

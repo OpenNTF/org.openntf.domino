@@ -107,9 +107,10 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 				if ((annot.session() != Tasklet.Session.NONE) && sessionFactory == null) {
 					throw new IllegalStateException("Could not create a Fatory for " + annot.session());
 				}
-				if (sessionFactory != null) {
-					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
-				}
+				// 30.01.15/RPr: no longer neccessary
+				//				if (sessionFactory != null) {
+				//					Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+				//				}
 			}
 
 			if (context == null) {

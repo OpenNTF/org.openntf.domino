@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import lotus.domino.NotesException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
@@ -101,13 +103,14 @@ public class DesignClassTest {
 		System.out.println("Total design elements " + i);
 	}
 
-	@Test
+	//@Test
 	public void testDesignClass() throws IOException {
 
 		Session sess = Factory.getSession(SessionType.CURRENT);
 		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/empty.ns9");
 		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/empty2.nsf");
-		Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/proglib4work2.nsf");
+		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/proglib4work2.nsf");
+		Database db = sess.getDatabase("srv-01-ndev2!!entwicklung/alex/proglib4work22.nsf");
 		testDb(db);
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
@@ -167,5 +170,30 @@ public class DesignClassTest {
 		AboutDocument abd = new org.openntf.domino.design.impl.AboutDocument(db);
 
 		abd.save();
+	}
+
+	@Test
+	public void testDXLImport() throws NotesException {
+		lotus.domino.Session session = lotus.domino.NotesFactory.createSession(); //Factory.getSession(SessionType.CURRENT);
+		lotus.domino.Database db = session.getDatabase("", "D:/Daten/notesdaten_9/empty2.nsf");
+		lotus.domino.Stream stream = session.createStream();
+		stream.open("d:/daten/form_dxl.txt", "UTF-8");
+		lotus.domino.DxlImporter importer = session.createDxlImporter();
+		importer.setDesignImportOption(6);
+		importer.setCompileLotusScript(false);
+		importer.setExitOnFirstFatalError(false);
+		importer.setReplicaRequiredForReplaceOrUpdate(false);
+
+		String dxl = stream.readText();
+		stream.close();
+		System.out.println("Importing....");
+		try {
+			importer.importDxl(dxl, db);
+			System.out.println(importer.getFirstImportedNoteID());
+		} catch (NotesException e) {
+			e.printStackTrace();
+			System.err.println(importer.getLog());
+		}
+
 	}
 }

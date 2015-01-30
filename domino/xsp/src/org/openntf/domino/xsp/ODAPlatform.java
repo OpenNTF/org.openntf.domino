@@ -49,7 +49,7 @@ public enum ODAPlatform {
 		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 		verifyIGetEntryByKey();
 
-		int xotsTasks = Configuration.sGetConfigValueInt("XotsTasks", 10);
+		int xotsTasks = Configuration.getServerConfiguration().getConfigValueInt("XotsTasks", 10);
 
 		if (xotsTasks > 0) {
 			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
