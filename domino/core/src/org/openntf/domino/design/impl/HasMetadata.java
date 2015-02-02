@@ -7,4 +7,5 @@ public interface HasMetadata {
 
 	void writeOnDiskMeta(File file) throws IOException;
 
+	void readOnDiskMeta(File file);
 }

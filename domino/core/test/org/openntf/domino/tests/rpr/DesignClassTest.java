@@ -11,10 +11,11 @@ import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
-import org.openntf.domino.design.AboutDocument;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
+import org.openntf.domino.design.DesignForm;
+import org.openntf.domino.design.DesignView;
 import org.openntf.domino.design.impl.DatabaseClassLoader;
 import org.openntf.domino.design.impl.ODPMapping;
 import org.openntf.domino.design.impl.OnDiskProject;
@@ -101,13 +102,15 @@ public class DesignClassTest {
 		System.out.println("Total design elements " + i);
 	}
 
-	@Test
+	//@Test
 	public void testDesignClass() throws IOException {
 
 		Session sess = Factory.getSession(SessionType.CURRENT);
 		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/empty.ns9");
 		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/empty2.nsf");
-		Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/proglib4work2.nsf");
+		//Database db = sess.getDatabase("D:/Daten/test/proglib4work22.nsf");
+		Database db = sess.getDatabase("names.nsf");
+
 		testDb(db);
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
@@ -118,14 +121,14 @@ public class DesignClassTest {
 		//+ "& @contains($TITLE;{gadproxy}) ");
 		System.out.println("Count: " + elems.getCount());
 
-		File root = new File("D:/daten/temp/ods3");
-		OnDiskProject odp = new OnDiskProject(root);
+		File root = new File("D:\\Daten\\Notesdaten_901\\workspace\\proglib4work2_odp");
+		OnDiskProject odp = new OnDiskProject(root, db, OnDiskProject.SyncDirection.SYNC);
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {
 			//System.out.println(elem.getClass().getSimpleName() + "'" + elem.getNoteID() + "\t" + elem.getName() + "\t"
 			//		+ elem.getDocument().getItemValueString("$FLAGS"));
 			try {
-				odp.export(elem);
+				odp.doExport(elem);
 				//				//elem.getDxlString(null)
 				//				String odp = elem.getOnDiskPath();
 				//				if (StringUtil.isEmpty(odp)) {
@@ -158,14 +161,17 @@ public class DesignClassTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testCreation() {
 		DbDirectory dbdir = Factory.getSession(SessionType.CURRENT).getDbDirectory("");
 
-		Database db = dbdir.createDatabase("D:/Daten/notesdaten_9/localdb/pw" + System.currentTimeMillis() + ".nsf", true);
+		Database db = dbdir.createDatabase("D:/Daten/notesdaten_901/localdb/pw" + System.currentTimeMillis() + ".nsf", true);
 
-		AboutDocument abd = new org.openntf.domino.design.impl.AboutDocument(db);
+		DesignForm form = new org.openntf.domino.design.impl.DesignForm(db);
+		form.save();
 
-		abd.save();
+		DesignView view = new org.openntf.domino.design.impl.DesignView(db);
+		view.save();
+
 	}
 }

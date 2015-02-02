@@ -3,14 +3,16 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Scanner;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 // TODO MetaData
-public final class ScriptLibraryLS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryLS,
-		HasMetadata {
+public final class ScriptLibraryLS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryLS, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -33,9 +35,9 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		return true; // so that's why we force RAW format
 	}
 
-	protected ScriptLibraryLS(final Database database) {
+	public ScriptLibraryLS(final Database database) {
 		super(database);
-		throw new UnsupportedOperationException("There is still something todo!");
+		//throw new UnsupportedOperationException("There is still something todo!");
 		//		try {
 		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_lotusscriptlibrary.xml");
 		//			loadDxl(is);
@@ -60,7 +62,54 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 			pw.write(rawitemdata.getText());
 		}
 		pw.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
+		updateLastModified(odpFile);
 	}
 
+	protected void createScriptLibItem(final String text) {
+		XMLNode documentNode = getDxl().selectSingleNode("//note");
+		XMLNode fileDataNode = documentNode.addChildElement("item");
+		fileDataNode.setAttribute("name", "$ScriptLib");
+		fileDataNode = fileDataNode.addChildElement("text");
+		fileDataNode.setAttribute("sign", "true");
+		fileDataNode.setAttribute("summary", "false");
+		fileDataNode.setText(text);
+	}
+
+	@Override
+	public final void readOnDiskFile(final File file) {
+
+		try {
+			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$ScriptLib']");
+			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
+				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
+			}
+
+			StringBuilder fileContents = null;
+			Scanner scanner = new Scanner(file);
+
+			try {
+				while (scanner.hasNextLine()) {
+					if (fileContents == null) {
+						fileContents = new StringBuilder(65000);
+					}
+					fileContents.append(scanner.nextLine());
+					fileContents.append('\n');
+
+					if (fileContents.length() > 60000) {
+						createScriptLibItem(fileContents.toString());
+						fileContents = null;
+					}
+				}
+				if (fileContents != null) {
+					createScriptLibItem(fileContents.toString());
+				}
+			} finally {
+				scanner.close();
+			}
+
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
+
+	}
 }

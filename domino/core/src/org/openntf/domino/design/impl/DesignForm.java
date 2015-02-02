@@ -19,6 +19,7 @@ package org.openntf.domino.design.impl;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -36,6 +37,10 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 	 */
 	protected DesignForm(final Document document) {
 		super(document);
+	}
+
+	public DesignForm(final Database db) {
+		super(db);
 	}
 
 	@Override

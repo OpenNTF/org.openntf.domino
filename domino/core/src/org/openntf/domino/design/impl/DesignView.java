@@ -16,13 +16,10 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -46,16 +43,16 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 		return false;
 	}
 
-	protected DesignView(final Database database) {
+	public DesignView(final Database database) {
 		super(database);
 
-		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_view.xml");
-			loadDxl(is);
-			is.close();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
+		//		try {
+		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_view.xml");
+		//			loadDxl(is);
+		//			is.close();
+		//		} catch (IOException e) {
+		//			DominoUtils.handleException(e);
+		//		}
 	}
 
 	@Override

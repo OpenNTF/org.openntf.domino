@@ -21,6 +21,7 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -244,8 +245,20 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		FileOutputStream fo = new FileOutputStream(odpFile);
 		fo.write(getFileData());
 		fo.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
+		updateLastModified(odpFile);
+	}
 
+	@Override
+	public void readOnDiskFile(final File odpFile) {
+		try {
+			FileInputStream fis = new FileInputStream(odpFile);
+			byte[] data = new byte[(int) odpFile.length()];
+			fis.read(data);
+			fis.close();
+			setFileData(data);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	// TODO: map this to DXL

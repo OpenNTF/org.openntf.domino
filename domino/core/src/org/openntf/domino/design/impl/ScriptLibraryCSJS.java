@@ -19,9 +19,13 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Scanner;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * a Java - ScriptLibrary
@@ -74,6 +78,40 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 		PrintWriter pw = new PrintWriter(odpFile);
 		pw.write(content);
 		pw.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
+		updateLastModified(odpFile);
+	}
+
+	@Override
+	public final void readOnDiskFile(final File file) {
+		//TODO checkme
+		try {
+			List<XMLNode> fileDataNodes = getDxl().selectNodes("//code/javascript");
+			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
+				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
+			}
+
+			StringBuilder fileContents = new StringBuilder();
+			Scanner scanner = new Scanner(file);
+
+			try {
+				while (scanner.hasNextLine()) {
+					fileContents.append(scanner.nextLine());
+					fileContents.append('\n');
+				}
+			} finally {
+				scanner.close();
+			}
+
+			XMLNode documentNode = getDxl().selectSingleNode("//scriptlibrary");
+			XMLNode fileDataNode = documentNode.addChildElement("code");
+			fileDataNode = fileDataNode.addChildElement("javascript");
+			fileDataNode.setAttribute("sign", "true");
+			fileDataNode.setAttribute("summary", "false");
+			fileDataNode.setText(fileContents.toString());
+
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
+
 	}
 }

@@ -111,7 +111,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public void removeAttribute(final String attribute) {
 		Node attr = this.node_.getAttributes().getNamedItem(attribute);
-		attr.getParentNode().removeChild(attr);
+		if (attr != null) {
+			attr.getParentNode().removeChild(attr);
+		}
 	}
 
 	public void setAttribute(final String attribute, final String value) {

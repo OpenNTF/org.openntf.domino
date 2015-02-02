@@ -70,28 +70,27 @@ public enum ODPMapping {
 	FILE_RESOURCE_WEB_CONTENT("WebContent", null, FileResourceWebContent.class), //
 	XPAGE("XPages", null, XPage.class), //
 
-	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), //
-
 	// other design elements
 	AGENT_DATA("Other/AgentData", ".agentdata", AgentData.class), //
 	OTHER_DESIGN_ELEMENT("Other/Unknown", null, OtherDesignElement.class), //
 	REPLICATION_FORMULA("Other/ReplicationFormulas", null, ReplicationFormula.class), //
 	SAVED_QUERY("Other/SavedQueries", null, SavedQuery.class), //
 
+	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), // has to be the last one!
 	;
 
 	/** The folder where this element is stored */
 	private final String onDiskFolder_;
 
 	/** The file extension of this element. e.g. "*.lss". If null, all files in the folder are considered as type of this design element */
-	private final String onDiskFileName_;
+	private final String onDiskFileExtension_;
 
 	/** class of the design element */
 	private final Class<? extends AbstractDesignBase> clazz_;
 
-	private ODPMapping(final String onDiskFolder, final String onDiskFileName, final Class<? extends AbstractDesignBase> clazz) {
+	private ODPMapping(final String onDiskFolder, final String onDiskFileExtension, final Class<? extends AbstractDesignBase> clazz) {
 		onDiskFolder_ = onDiskFolder;
-		onDiskFileName_ = onDiskFileName;
+		onDiskFileExtension_ = onDiskFileExtension;
 		clazz_ = clazz;
 	}
 
@@ -111,8 +110,8 @@ public enum ODPMapping {
 		return onDiskFolder_;
 	}
 
-	public String getFileName() {
-		return onDiskFileName_;
+	public String getOnDiskFileExtension() {
+		return onDiskFileExtension_;
 	}
 
 }
