@@ -3,29 +3,26 @@ package org.openntf.conference.graph;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 import org.openntf.conference.graph.Group.Type;
 import org.openntf.domino.Database;
-import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
-import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
-import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
-public class DataInitializer implements Runnable {
+public class DataDumper implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	public DataInitializer() {
+	public DataDumper() {
 
 	}
 
@@ -33,44 +30,32 @@ public class DataInitializer implements Runnable {
 	public void run() {
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
-		try {
-			timelog("Beginning dataInitializer...");
-
-			// Get / create databases
-			Session s = Factory.getSession(SessionType.NATIVE);
-			Database attendees = s.getDatabase(s.getServerName(), ConferenceGraph.ATTENDEE_PATH, true);
-			attendees.getAllDocuments().removeAll(true);
-			Database events = s.getDatabase(s.getServerName(), ConferenceGraph.EVENT_PATH, true);
-			events.getAllDocuments().removeAll(true);
-			Database groups = s.getDatabase(s.getServerName(), ConferenceGraph.GROUP_PATH, true);
-			groups.getAllDocuments().removeAll(true);
-			Database invites = s.getDatabase(s.getServerName(), ConferenceGraph.INVITE_PATH, true);
-			invites.getAllDocuments().removeAll(true);
-			Database location = s.getDatabase(s.getServerName(), ConferenceGraph.LOCATION_PATH, true);
-			location.getAllDocuments().removeAll(true);
-			Database times = s.getDatabase(s.getServerName(), ConferenceGraph.TIMES_PATH, true);
-			times.getAllDocuments().removeAll(true);
-			Database defaults = s.getDatabase(s.getServerName(), ConferenceGraph.DEFAULT_PATH, true);
-			defaults.getAllDocuments().removeAll(true);
-
-			// Initialize the graph
-			ConferenceGraph graph = new ConferenceGraph();
-			//			graph.initialize();	//NTF already done in constructor
-			FramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
-
-			loadData(s, framedGraph);
-
-			Iterable<Presentation> pres = framedGraph.getVertices(null, null, Presentation.class);
-
-			for (Presentation presentation : pres) {
-				System.out.println(presentation.getTitle());
-			}
-
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
+		ConferenceGraph graph = new ConferenceGraph();
+		DFramedTransactionalGraph<DGraph> framedGraph = graph.getFramedGraph();
+		DGraph baseGraph = framedGraph.getBaseGraph();
+		//		Iterable<Vertex> vertices = baseGraph.getVertices("@", "Form=\"Presentation\"");
+		//		//NTF There's no specific need to do it this way. I just wanted to test the TypeField-based framing
+		//
+		//		for (Vertex vertex : vertices) {
+		//			VertexFrame frame = framedGraph.frame(vertex, DVertexFrame.class);
+		//			if (frame instanceof Presentation) {
+		//				StringBuilder sb = new StringBuilder();
+		//				Map<String, Object> jsonMap = framedGraph.toJsonableMap(frame);
+		//				for (String key : jsonMap.keySet()) {
+		//					sb.append(key + ": \"" + String.valueOf(jsonMap.get(key)) + "\", ");
+		//				}
+		//				System.out.println("{" + sb.toString() + "}");
+		//			}
+		//		}
 		long testEndTime = System.nanoTime();
+
+		Presentation pres = framedGraph.getVertex("ID114", Presentation.class);
+		Iterable<TimeSlot> times = pres.getTimes();
+		for (TimeSlot ts : times) {
+			System.out.println(DATE_FORMAT.format(ts.getStartTime()) + " - " + DATE_FORMAT.format(ts.getEndTime()));
+		}
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
+
 	}
 
 	public void loadData(final org.openntf.domino.Session s, final FramedTransactionalGraph<DGraph> framedGraph) {
@@ -103,24 +88,22 @@ public class DataInitializer implements Runnable {
 						track.setDescription(doc.getItemValueString("Categories"));
 					}
 
-					Date sDate = (Date) doc.getItemValue("StartDate", Date.class);
-					DateTime sDateTime = (DateTime) doc.getItemValue("StartDateTime", DateTime.class);
-					Date eDate = (Date) doc.getItemValue("EndDate", Date.class);
-					DateTime eDateTime = (DateTime) doc.getItemValue("EndDateTime", DateTime.class);
+					Date startDate = (Date) doc.getItemValue("StartDate", Date.class);
+					Date startDateTime = (Date) doc.getItemValue("StartDateTime", Date.class);
+					Date endDate = (Date) doc.getItemValue("EndDate", Date.class);
+					Date endDateTime = (Date) doc.getItemValue("EndDateTime", Date.class);
 
-					Date startDateTime = sdf.parse(sDateTime.getGMTTime());
-					startDateTime.setYear(sDate.getYear());
-					startDateTime.setMonth(sDate.getMonth());
-					startDateTime.setDate(sDate.getDate());
-					Calendar startCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
-					startCal.setTime(startDateTime);
+					Calendar startCal = new GregorianCalendar();
+					startCal.setTime(startDate);
+					startCal.set(Calendar.HOUR, startDateTime.getHours());
+					startCal.set(Calendar.MINUTE, startDateTime.getMinutes());
+					startCal.set(Calendar.SECOND, startDateTime.getSeconds());
 
-					Date endDateTime = sdf.parse(eDateTime.getGMTTime());
-					endDateTime.setYear(eDate.getYear());
-					endDateTime.setMonth(eDate.getMonth());
-					endDateTime.setDate(eDate.getDate());
-					Calendar endCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
-					endCal.setTime(endDateTime);
+					Calendar endCal = new GregorianCalendar();
+					endCal.setTime(endDate);
+					endCal.set(Calendar.HOUR, endDateTime.getHours());
+					endCal.set(Calendar.MINUTE, endDateTime.getMinutes());
+					endCal.set(Calendar.SECOND, endDateTime.getSeconds());
 
 					String tsKey = sdf.format(startCal.getTime()) + " - " + sdf.format(endCal.getTime());
 					TimeSlot ts = framedGraph.addVertex(tsKey, TimeSlot.class);
@@ -183,7 +166,7 @@ public class DataInitializer implements Runnable {
 	}
 
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(new DataInitializer(), TestRunnerUtil.NATIVE_SESSION);
+		TestRunnerUtil.runAsDominoThread(new DataDumper(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public void timelog(final String message) {
