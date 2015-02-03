@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.openntf.conference.graph.Group.Type;
 import org.openntf.domino.Database;
@@ -52,7 +53,7 @@ public class DataDumper implements Runnable {
 		Presentation pres = framedGraph.getVertex("ID114", Presentation.class);
 		Iterable<TimeSlot> times = pres.getTimes();
 		for (TimeSlot ts : times) {
-			System.out.println(DATE_FORMAT.format(ts.getStartTime()) + " - " + DATE_FORMAT.format(ts.getEndTime()));
+			System.out.println(DATE_FORMAT.format(ts.getStartTime().getTime()) + " - " + DATE_FORMAT.format(ts.getEndTime().getTime()));
 		}
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 
@@ -93,13 +94,13 @@ public class DataDumper implements Runnable {
 					Date endDate = (Date) doc.getItemValue("EndDate", Date.class);
 					Date endDateTime = (Date) doc.getItemValue("EndDateTime", Date.class);
 
-					Calendar startCal = new GregorianCalendar();
+					Calendar startCal = new GregorianCalendar(TimeZone.getTimeZone("EST"));
 					startCal.setTime(startDate);
 					startCal.set(Calendar.HOUR, startDateTime.getHours());
 					startCal.set(Calendar.MINUTE, startDateTime.getMinutes());
 					startCal.set(Calendar.SECOND, startDateTime.getSeconds());
 
-					Calendar endCal = new GregorianCalendar();
+					Calendar endCal = new GregorianCalendar(TimeZone.getTimeZone("EST"));
 					endCal.setTime(endDate);
 					endCal.set(Calendar.HOUR, endDateTime.getHours());
 					endCal.set(Calendar.MINUTE, endDateTime.getMinutes());
@@ -107,8 +108,8 @@ public class DataDumper implements Runnable {
 
 					String tsKey = sdf.format(startCal.getTime()) + " - " + sdf.format(endCal.getTime());
 					TimeSlot ts = framedGraph.addVertex(tsKey, TimeSlot.class);
-					ts.setStartTime(startCal.getTime());
-					ts.setEndTime(endCal.getTime());
+					ts.setStartTime(startCal);
+					ts.setEndTime(endCal);
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later

@@ -3,6 +3,7 @@ package org.openntf.conference.graph;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 
@@ -23,7 +24,6 @@ import com.tinkerpop.frames.FramedTransactionalGraph;
 public class DataInitializer implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public DataInitializer() {
 
@@ -86,7 +86,9 @@ public class DataInitializer implements Runnable {
 			Group ibm_champion = framedGraph.addVertex("IBM Champions", Group.class);
 			ibm_champion.setType(Group.Type.PROGRAM);
 
-			SimpleDateFormat sdf = new SimpleDateFormat();
+			SimpleDateFormat tempDf = new SimpleDateFormat();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			sdf.setTimeZone(TimeZone.getTimeZone("EST"));
 			View sessions = srcDb.getView("Sessions");
 			for (Document doc : sessions.getAllDocuments()) {
 				if (!doc.hasItem("$Conflict")) {	// ignore conflicts
@@ -108,24 +110,27 @@ public class DataInitializer implements Runnable {
 					Date eDate = (Date) doc.getItemValue("EndDate", Date.class);
 					DateTime eDateTime = (DateTime) doc.getItemValue("EndDateTime", DateTime.class);
 
-					Date startDateTime = sdf.parse(sDateTime.getGMTTime());
+					Date startDateTime = tempDf.parse(sDateTime.getLocalTime());
+					startDateTime = sdf.parse(sdf.format(startDateTime));
 					startDateTime.setYear(sDate.getYear());
 					startDateTime.setMonth(sDate.getMonth());
 					startDateTime.setDate(sDate.getDate());
-					Calendar startCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
-					startCal.setTime(startDateTime);
+					Calendar sDateCal = GregorianCalendar.getInstance(TimeZone.getTimeZone("EST"));
+					sDateCal.setTime(startDateTime);
 
-					Date endDateTime = sdf.parse(eDateTime.getGMTTime());
+					Date endDateTime = tempDf.parse(eDateTime.getLocalTime());
+					endDateTime = sdf.parse(sdf.format(endDateTime));
 					endDateTime.setYear(eDate.getYear());
 					endDateTime.setMonth(eDate.getMonth());
 					endDateTime.setDate(eDate.getDate());
-					Calendar endCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
-					endCal.setTime(endDateTime);
+					Calendar eDateCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
+					eDateCal.setTime(endDateTime);
 
-					String tsKey = sdf.format(startCal.getTime()) + " - " + sdf.format(endCal.getTime());
+					String tsKey = sdf.format(startDateTime) + " - " + sdf.format(endDateTime);
 					TimeSlot ts = framedGraph.addVertex(tsKey, TimeSlot.class);
-					ts.setStartTime(startCal.getTime());
-					ts.setEndTime(endCal.getTime());
+
+					ts.setStartTime(sDateCal);
+					ts.setEndTime(eDateCal);
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later
