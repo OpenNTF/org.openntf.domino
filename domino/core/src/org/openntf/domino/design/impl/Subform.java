@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.FormField;
 import org.openntf.domino.design.FormFieldList;
@@ -33,6 +34,10 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 	 */
 	protected Subform(final Document document) {
 		super(document);
+	}
+
+	protected Subform(final Database database) {
+		super(database);
 	}
 
 	@Override

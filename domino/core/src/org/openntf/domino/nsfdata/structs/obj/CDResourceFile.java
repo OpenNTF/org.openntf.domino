@@ -1,7 +1,9 @@
 package org.openntf.domino.nsfdata.structs.obj;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.openntf.domino.nsfdata.structs.cd.CDFILEHEADER;
 import org.openntf.domino.nsfdata.structs.cd.CDFILESEGMENT;
@@ -73,7 +75,7 @@ public class CDResourceFile extends CDObject {
 
 	}
 
-	public ByteBuffer getData() {
+	public List<ByteBuffer> getChunks() {
 		// Determine how many file segments will be needed based on the inferred size cap
 		if (segments_ == null) {
 			int chunks = fileData_.length / SEGMENT_SIZE_CAP;
@@ -96,25 +98,37 @@ public class CDResourceFile extends CDObject {
 				segments_[i].init();
 				segments_[i].Header.setSigIdentifier(CDSignature.FILESEGMENT.getBaseValue());
 				segments_[i].SegSize.set(segSize);
-				segments_[i].setFileData(fileData_);
+				byte[] data = new byte[dataSize];
+				System.arraycopy(fileData_, dataOffset, data, 0, dataSize);
+				segments_[i].setFileData(data);
 				segments_[i].Header.setRecordLength(segments_[i].size() + segments_[i].getVariableSize());
 				totalSize += segments_[i].getTotalSize();
 			}
 		}
 
-		ByteBuffer result = ByteBuffer.allocate(totalSize);
+		List<ByteBuffer> resList = new ArrayList<ByteBuffer>();
 
 		//		ByteBuffer headerBuffer = header_.getByteBuffer();
 		//		headerBuffer.position(0);
-		result.put(header_.getBytes());
+		boolean first = true;
 		for (CDFILESEGMENT seg : segments_) {
+			int size = (int) seg.getTotalSize();
+			if (first) {
+				size += header_.getTotalSize();
+			}
+			ByteBuffer byteBuf = ByteBuffer.allocate(size);
+			if (first) {
+				byteBuf.put(header_.getBytes());
+			}
 			//			ByteBuffer segBuffer = seg.getByteBuffer();
 			//			segBuffer.position(0);
 			byte[] segBytes = seg.getBytes();
-			result.put(segBytes);
+			byteBuf.put(segBytes);
+			byteBuf.position(0);
+			first = false;
+			resList.add(byteBuf);
 		}
-		result.position(0);
-		return result;
+		return resList;
 	}
 
 	public byte[] getFileData() {

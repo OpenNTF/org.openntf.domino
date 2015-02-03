@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public final class DB2View extends AbstractDesignBaseNamed implements org.opennt
 	 */
 	protected DB2View(final Document document) {
 		super(document);
+	}
+
+	protected DB2View(final Database database) {
+		super(database);
 	}
 
 	@Override

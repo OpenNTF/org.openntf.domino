@@ -33,8 +33,7 @@ public class FileResourceWebContent extends AbstractDesignFileResource implement
 		super(document);
 	}
 
-	public FileResourceWebContent(final Database database) {
-		// TODO Auto-generated constructor stub
+	protected FileResourceWebContent(final Database database) {
 		super(database);
 	}
 

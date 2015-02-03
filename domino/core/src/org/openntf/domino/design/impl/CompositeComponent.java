@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -31,6 +32,10 @@ public final class CompositeComponent extends AbstractDesignFileResource impleme
 	 */
 	protected CompositeComponent(final Document document) {
 		super(document);
+	}
+
+	protected CompositeComponent(final Database database) {
+		super(database);
 	}
 
 	@Override

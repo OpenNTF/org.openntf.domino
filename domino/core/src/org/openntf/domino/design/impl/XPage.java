@@ -34,14 +34,19 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 		super(document);
 	}
 
+	protected XPage(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		// XPage is exported in RAW-format. There is no DXL representation
 		return true;
 	}
 
-	protected XPage(final Database database) {
-		super(database);
+	@Override
+	public void setFileData(final byte[] data) {
+		// TODO Auto-generated method stub
+		super.setFileData(data);
 	}
-
 }

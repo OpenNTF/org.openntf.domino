@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.utils.DominoUtils;
@@ -41,6 +42,10 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	 */
 	protected ScriptLibraryCSJS(final Document document) {
 		super(document);
+	}
+
+	protected ScriptLibraryCSJS(final Database database) {
+		super(database);
 	}
 
 	@Override

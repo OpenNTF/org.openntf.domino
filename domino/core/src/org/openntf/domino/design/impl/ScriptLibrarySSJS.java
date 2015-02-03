@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -31,6 +32,10 @@ public final class ScriptLibrarySSJS extends AbstractDesignFileResource implemen
 	 */
 	protected ScriptLibrarySSJS(final Document document) {
 		super(document);
+	}
+
+	protected ScriptLibrarySSJS(final Database database) {
+		super(database);
 	}
 
 	@Override

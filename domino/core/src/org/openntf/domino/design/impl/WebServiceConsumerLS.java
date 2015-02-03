@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org
 	 */
 	protected WebServiceConsumerLS(final Document document) {
 		super(document);
+	}
+
+	protected WebServiceConsumerLS(final Database database) {
+		super(database);
 	}
 
 	@Override

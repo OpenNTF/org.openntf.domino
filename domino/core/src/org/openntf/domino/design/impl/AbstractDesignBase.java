@@ -451,8 +451,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return ret;
 	}
 
+	public void setOnDiskName(final String name) {
+		setName(name);
+	}
+
 	protected String getName() {
 		return getUniversalID();
+	}
+
+	protected void setName(final String name) {
+
 	}
 
 	/**
@@ -674,8 +682,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 		XMLNode docRoot = getDocumentElement();
 		if (docRoot.getNodeName() == "note") {
 			if (!enforceRawFormat()) {
-				throw new UnsupportedOperationException(getClass().getSimpleName()
-						+ ": got note in RAW format. this was not expected. NoteID " + (document_ == null ? "" : document_.getNoteID()));
+				System.err.println(getClass().getSimpleName() + ": got note in RAW format. this was not expected. NoteID "
+						+ (document_ == null ? "" : document_.getNoteID()));
 			}
 			dxlFormat_ = DxlFormat.RAWNOTE;
 		} else {
@@ -731,7 +739,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 			return false;
 		}
 		try {
-			document_.recycle();
+			if (document_ != null) {
+				document_.recycle();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

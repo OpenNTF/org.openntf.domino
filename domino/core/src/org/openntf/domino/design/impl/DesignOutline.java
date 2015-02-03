@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public class DesignOutline extends AbstractDesignBaseNamed implements org.opennt
 	 */
 	protected DesignOutline(final Document document) {
 		super(document);
+	}
+
+	protected DesignOutline(final Database database) {
+		super(database);
 	}
 
 	@Override

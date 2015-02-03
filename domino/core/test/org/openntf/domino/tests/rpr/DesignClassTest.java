@@ -14,8 +14,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
-import org.openntf.domino.design.DesignForm;
-import org.openntf.domino.design.DesignView;
 import org.openntf.domino.design.impl.DatabaseClassLoader;
 import org.openntf.domino.design.impl.ODPMapping;
 import org.openntf.domino.design.impl.OnDiskProject;
@@ -167,11 +165,11 @@ public class DesignClassTest {
 
 		Database db = dbdir.createDatabase("D:/Daten/notesdaten_901/localdb/pw" + System.currentTimeMillis() + ".nsf", true);
 
-		DesignForm form = new org.openntf.domino.design.impl.DesignForm(db);
-		form.save();
-
-		DesignView view = new org.openntf.domino.design.impl.DesignView(db);
-		view.save();
+		//		DesignForm form = new org.openntf.domino.design.impl.DesignForm(db);
+		//		form.save();
+		//
+		//		DesignView view = new org.openntf.domino.design.impl.DesignView(db);
+		//		view.save();
 
 	}
 }

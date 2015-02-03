@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -32,6 +33,10 @@ public class XspJavaResource extends AbstractXspResource implements HasMetadata,
 	 */
 	protected XspJavaResource(final Document document) {
 		super(document);
+	}
+
+	protected XspJavaResource(final Database database) {
+		super(database);
 	}
 
 	@Override

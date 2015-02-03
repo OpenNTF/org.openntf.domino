@@ -16,16 +16,21 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
  * 
  */
-public final class CustomControl extends AbstractXspResource implements org.openntf.domino.design.CustomControl, HasMetadata {
+public final class CustomControl extends AbstractXspResource implements org.openntf.domino.design.CustomControl, HasMetadata, HasConfig {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());
@@ -42,6 +47,35 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	protected boolean enforceRawFormat() {
 		// CustomControl is exported in RAW-format. There is no DXL representation
 		return true;
+	}
+
+	@Override
+	public void writeOnDiskConfig(final File configFile) throws IOException {
+		FileOutputStream fo = new FileOutputStream(configFile);
+		fo.write(getConfigData());
+		fo.close();
+		updateLastModified(configFile);
+	}
+
+	protected byte[] getConfigData() {
+		return getFileDataRaw(DEFAULT_CONFIGDATA_FIELD);
+	}
+
+	@Override
+	public void readOnDiskConfig(final File configFile) {
+		try {
+			FileInputStream fis = new FileInputStream(configFile);
+			byte[] data = new byte[(int) configFile.length()];
+			fis.read(data);
+			fis.close();
+			setConfigData(data);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	protected void setConfigData(final byte[] data) {
+		setFileDataRaw(DEFAULT_CONFIGDATA_FIELD, data);
 	}
 
 }

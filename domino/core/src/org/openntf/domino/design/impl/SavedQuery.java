@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public class SavedQuery extends AbstractDesignBaseNamed implements org.openntf.d
 	 */
 	protected SavedQuery(final Document document) {
 		super(document);
+	}
+
+	protected SavedQuery(final Database database) {
+		super(database);
 	}
 
 	@Override

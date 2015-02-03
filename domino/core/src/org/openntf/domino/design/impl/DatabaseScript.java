@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public final class DatabaseScript extends AbstractDesignBase implements org.open
 	 */
 	protected DatabaseScript(final Document document) {
 		super(document);
+	}
+
+	protected DatabaseScript(final Database database) {
+		super(database);
 	}
 
 	@Override

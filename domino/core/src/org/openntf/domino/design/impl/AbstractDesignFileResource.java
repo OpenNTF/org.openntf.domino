@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -51,7 +51,11 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
 	private static final char DESIGN_FLAG_READONLY = '&';
 
-	private static final String DEFAULT_FILEDATA_FIELD = "$FileData";
+	public static final String DEFAULT_FILEDATA_FIELD = "$FileData";
+	public static final String DEFAULT_CONFIGDATA_FIELD = "$ConfigData";
+	public static final String DEFAULT_FILESIZE_FIELD = "$FileSize";
+	public static final String DEFAULT_CONFIGSIZE_FIELD = "$ConfigSize";
+
 	private static final String MIMETYPE_FIELD = "$MimeType";
 
 	protected AbstractDesignFileResource(final Document document) {
@@ -60,14 +64,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 	protected AbstractDesignFileResource(final Database database) {
 		super(database);
-		// TODO What is this?
-		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
-			loadDxl(is);
-			is.close();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
 	}
 
 	protected AbstractDesignFileResource(final Database database, final String dxlResource) {
@@ -153,6 +149,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
 			}
 			filedata.setText(printBase64Binary(data));
+			break;
 		default:
 			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
 		}
@@ -170,42 +167,21 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		//			byte[] reconData = record.getBytes();
 		CDResourceFile record = new CDResourceFile("");
 		record.setFileData(fileData);
-		byte[] reconData = record.getData().array();
 
-		// Write out the first chunk
-		int firstChunk = reconData.length > 20544 ? 20544 : reconData.length;
-		String firstChunkData = printBase64Binary(Arrays.copyOfRange(reconData, 0, firstChunk));
-		XMLNode documentNode = getDxl().selectSingleNode("//note");
-		XMLNode fileDataNode = documentNode.addChildElement("item");
-		fileDataNode.setAttribute("name", itemName);
-		fileDataNode = fileDataNode.addChildElement("rawitemdata");
-		fileDataNode.setAttribute("type", "1");
-		fileDataNode.setText(firstChunkData);
-
-		// Write out any remaining chunks
-		int remaining = reconData.length - firstChunk;
-		int chunks = remaining / 20516;
-		if (remaining % 20516 > 0) {
-			chunks++;
-		}
-		int offset = firstChunk;
-		for (int i = 0; i < chunks; i++) {
-			int chunkSize = remaining > 20516 ? 20516 : remaining;
-			String chunkData = printBase64Binary(Arrays.copyOfRange(reconData, offset, offset + chunkSize));
-
-			fileDataNode = documentNode.addChildElement("item");
+		for (ByteBuffer chk : record.getChunks()) {
+			XMLNode documentNode = getDxl().selectSingleNode("//note");
+			XMLNode fileDataNode = documentNode.addChildElement("item");
 			fileDataNode.setAttribute("name", itemName);
 			fileDataNode = fileDataNode.addChildElement("rawitemdata");
 			fileDataNode.setAttribute("type", "1");
-			fileDataNode.setText(chunkData);
-
-			remaining -= 20516;
-			offset += chunkSize;
+			fileDataNode.setText(printBase64Binary(chk.array()));
 		}
 
 		// Also set the file size if we're setting the main field
 		if (DEFAULT_FILEDATA_FIELD.equals(itemName)) {
-			setItemValue("$FileSize", String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
+			setItemValue(DEFAULT_FILESIZE_FIELD, String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
+		} else if (DEFAULT_CONFIGDATA_FIELD.equals(itemName)) {
+			setItemValue(DEFAULT_CONFIGSIZE_FIELD, String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
 		}
 	}
 
@@ -241,18 +217,18 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(odpFile);
+	public void writeOnDiskFile(final File file) throws IOException {
+		FileOutputStream fo = new FileOutputStream(file);
 		fo.write(getFileData());
 		fo.close();
-		updateLastModified(odpFile);
+		updateLastModified(file);
 	}
 
 	@Override
-	public void readOnDiskFile(final File odpFile) {
+	public void readOnDiskFile(final File file) {
 		try {
-			FileInputStream fis = new FileInputStream(odpFile);
-			byte[] data = new byte[(int) odpFile.length()];
+			FileInputStream fis = new FileInputStream(file);
+			byte[] data = new byte[(int) file.length()];
 			fis.read(data);
 			fis.close();
 			setFileData(data);

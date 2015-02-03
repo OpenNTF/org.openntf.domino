@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public class WebServiceProviderJava extends AbstractDesignBaseNamed implements o
 	 */
 	protected WebServiceProviderJava(final Document document) {
 		super(document);
+	}
+
+	protected WebServiceProviderJava(final Database database) {
+		super(database);
 	}
 
 	@Override

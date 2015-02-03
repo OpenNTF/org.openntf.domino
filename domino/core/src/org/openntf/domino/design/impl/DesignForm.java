@@ -39,7 +39,7 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 		super(document);
 	}
 
-	public DesignForm(final Database db) {
+	protected DesignForm(final Database db) {
 		super(db);
 	}
 

@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.SharedActions;
 
@@ -31,6 +32,10 @@ public class SharedActionsNote extends AbstractDesignBase implements SharedActio
 	 */
 	protected SharedActionsNote(final Document document) {
 		super(document);
+	}
+
+	protected SharedActionsNote(final Database database) {
+		super(database);
 	}
 
 	@Override

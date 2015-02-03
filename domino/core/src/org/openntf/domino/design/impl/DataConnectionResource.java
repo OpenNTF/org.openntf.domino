@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public final class DataConnectionResource extends AbstractDesignBaseNamed implem
 	 */
 	protected DataConnectionResource(final Document document) {
 		super(document);
+	}
+
+	protected DataConnectionResource(final Database database) {
+		super(database);
 	}
 
 	@Override

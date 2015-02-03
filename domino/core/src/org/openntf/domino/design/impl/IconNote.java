@@ -18,6 +18,7 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -35,6 +36,10 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 	 */
 	protected IconNote(final Document document) {
 		super(document);
+	}
+
+	protected IconNote(final Database database) {
+		super(database);
 	}
 
 	@Override

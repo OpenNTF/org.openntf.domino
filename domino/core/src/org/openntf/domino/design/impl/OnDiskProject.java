@@ -150,8 +150,7 @@ public class OnDiskProject {
 
 	public void syncDesign() {
 		DatabaseDesign design = db.getDesign();
-		DesignCollection<DesignBase> elems = design
-				.getDesignElements(" !@Contains($Flags;{X}) & !($TITLE={WEB-INF/classes/plugin/Activator.class}) ");
+		DesignCollection<DesignBase> elems = design.getDesignElements(" !@Contains($Flags;{X}) & !@Begins($TITLE;{WEB-INF/classes}) ");
 
 		System.out.println("Start Design Sync");
 
@@ -391,12 +390,16 @@ public class OnDiskProject {
 	}
 
 	public void doImport(final org.openntf.domino.design.DesignBase elem_, final File file) throws IOException {
-		AbstractDesignBaseNamed elem = (AbstractDesignBaseNamed) elem_;
+		AbstractDesignBase elem = (AbstractDesignBase) elem_;
 		String name = elem.getName();
 		String unid = elem.getUniversalID();
 		if (elem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + ".metadata");
 			((HasMetadata) elem).readOnDiskMeta(metaFile);
+		}
+		if (elem instanceof HasConfig) {
+			File configFile = new File(file.getAbsolutePath() + "-config");
+			((HasConfig) elem).readOnDiskConfig(configFile);
 		}
 		elem.readOnDiskFile(file);
 		elem.setName(name);
@@ -410,13 +413,17 @@ public class OnDiskProject {
 		if (StringUtil.isEmpty(odp)) {
 			odp = elem.getNoteID() + ".note";
 		}
-		File odsFile = new File(diskDir_, odp);
-		//System.out.println(elem.getClass().getName() + "\t\t\t" + odsFile + "\t" + elem.getNoteID());
-		odsFile.getParentFile().mkdirs(); // ensure the path exists
-		elem.writeOnDiskFile(odsFile);
+		File file = new File(diskDir_, odp);
+
+		file.getParentFile().mkdirs(); // ensure the path exists
+		elem.writeOnDiskFile(file);
 		if (elem instanceof HasMetadata) {
-			File meta = new File(odsFile.getAbsolutePath() + ".metadata");
-			((HasMetadata) elem).writeOnDiskMeta(meta);
+			File metaFile = new File(file.getAbsolutePath() + ".metadata");
+			((HasMetadata) elem).writeOnDiskMeta(metaFile);
+		}
+		if (elem instanceof HasConfig) {
+			File configFile = new File(file.getAbsolutePath() + "-config");
+			((HasConfig) elem).writeOnDiskConfig(configFile);
 		}
 
 	}
@@ -427,7 +434,7 @@ public class OnDiskProject {
 				if (!isDocDir(file)) {
 					updateMapRecursive(file);
 				}
-			} else if (!isTimeStampsFile(file) && !isMetadataFile(file)) {
+			} else if (!isTimeStampsFile(file) && !isMetadataFile(file) && !isConfigFile(file)) {
 				OnDiskFile odf = new OnDiskFile(diskDir_, file);
 				if (!files_.containsKey(odf.getFullName().toLowerCase())) {
 					if (direction != SyncDirection.EXPORT) {
@@ -451,6 +458,10 @@ public class OnDiskProject {
 		return file.getName().endsWith(".metadata");
 	}
 
+	protected boolean isConfigFile(final File file) {
+		return ODPMapping.CUSTOM_CONTROL.getFolder().equals(file.getParentFile().getName()) && file.getName().endsWith(".xsp-config");
+	}
+
 	protected boolean isTimeStampsFile(final File file) {
 		return file.getName().startsWith(".timeStamps");
 	}
@@ -469,9 +480,11 @@ public class OnDiskProject {
 		} else if (designElem_ == null) {
 			odf = odf_;
 			try {
-				Constructor<?> ctor = odf.getImplementingClass().getConstructor(Database.class);
-				elem = (AbstractDesignBase) ctor.newInstance();
-				if (odf.getState() != State.WAS_CREATED || odf.getState() != State.IMPORT) {
+				System.out.println("Creating " + odf.getFullName());
+				Constructor<?> ctor = odf.getImplementingClass().getDeclaredConstructor(Database.class);
+				elem = (AbstractDesignBase) ctor.newInstance(db);
+				elem.setOnDiskName(odf.getName());
+				if (odf.getState() != State.WAS_CREATED && odf.getState() != State.IMPORT) {
 					odf.setState(State.DELETE);
 				}
 			} catch (IllegalAccessException e) {
@@ -498,32 +511,33 @@ public class OnDiskProject {
 		}
 
 		if (odf == null) {
-			//not found -> new
+			//not found -> new if direction != import
 			File file = new File(diskDir_, elem.getOnDiskPath());
 			odf = new OnDiskFile(diskDir_, file);
-			odf.setState(State.CREATE);
-			files_.put(odf.getFullName().toLowerCase(), odf);
+			if (this.direction != SyncDirection.IMPORT) {
+				odf.setState(State.CREATE);
+				files_.put(odf.getFullName().toLowerCase(), odf);
+			}
 		}
 
 		File file = odf.getFile();
 		file.getParentFile().mkdirs(); // ensure the path exists
 
-		Document doc = db.getDocumentByUNID(elem.getUniversalID());
+		//Document doc = db.getDocumentByUNID(elem.getUniversalID());
 
-		long lastModifiedDoc = doc.getLastModifiedDate().getTime();
+		long lastModifiedDoc = elem.getLastModified() == null ? 0 : elem.getLastModified().getTime();
 		long lastModifiedFile = file.lastModified();
 		long lastModifiedSync = 0;
 
 		lastModifiedSync = odf.getTimeStamp();
 
 		if (odf.getState() == State.DELETE) {
-			System.out.println("Deleting file " + file.getName());
+			System.out.println("Deleting file " + file.getAbsolutePath());
 			//files_.remove(odf);
-			//file.delete();
+			file.delete();
 		} else if (odf.getState() == State.WAS_DELETED) {
-			System.out.println("Deleting design element document " + doc.getUniversalID());
-			//lastModifiedMap.remove(file.getAbsoluteFile());
-			//doc.removePermanently(true);
+			System.out.println("Deleting design element " + odf.getFullName());
+			db.getDocumentByUNID(elem.getUniversalID()).removePermanently(true);
 		} else if (odf.getState() == State.CREATE || odf.getState() == State.EXPORT || odf.getState() == State.SYNC
 				&& lastModifiedDoc > lastModifiedSync) {
 

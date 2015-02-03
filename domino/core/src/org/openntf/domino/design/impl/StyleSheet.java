@@ -30,11 +30,11 @@ public final class StyleSheet extends AbstractDesignFileResource implements org.
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
 
-	public StyleSheet(final Document document) {
+	protected StyleSheet(final Document document) {
 		super(document);
 	}
 
-	public StyleSheet(final Database database) {
+	protected StyleSheet(final Database database) {
 		super(database);
 	}
 

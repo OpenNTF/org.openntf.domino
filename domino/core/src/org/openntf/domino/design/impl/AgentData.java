@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public class AgentData extends AbstractDesignBase implements org.openntf.domino.
 	 */
 	protected AgentData(final Document document) {
 		super(document);
+	}
+
+	protected AgentData(final Database database) {
+		super(database);
 	}
 
 	@Override

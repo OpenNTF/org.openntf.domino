@@ -38,21 +38,13 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 		super(document);
 	}
 
+	protected DesignView(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	public DesignView(final Database database) {
-		super(database);
-
-		//		try {
-		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_view.xml");
-		//			loadDxl(is);
-		//			is.close();
-		//		} catch (IOException e) {
-		//			DominoUtils.handleException(e);
-		//		}
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Folder.class.getName());
 
-	public Folder(final Document document) {
+	protected Folder(final Document document) {
 		super(document);
 	}
 

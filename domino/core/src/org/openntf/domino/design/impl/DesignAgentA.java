@@ -16,8 +16,8 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * 
@@ -31,6 +31,10 @@ public class DesignAgentA extends AbstractDesignBaseNamed implements org.openntf
 	 */
 	protected DesignAgentA(final Document document) {
 		super(document);
+	}
+
+	protected DesignAgentA(final Database database) {
+		super(database);
 	}
 
 	@Override

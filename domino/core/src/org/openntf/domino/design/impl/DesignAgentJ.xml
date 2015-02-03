@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<agent hide="v3" xmlns="http://www.lotus.com/dxl" default="false" enabled="true" private="false" profile="false" version="9.0" noreplace="false" useapplet="false" formulatype="modifydocs" treatashtml="false" publicaccess="false" restrictions="restricted" runaswebuser="false" showinsearch="false" designerversion="8.5.3" storehighlights="false" maintenanceversion="1.2" allowremotedebugging="false" clientbackgroundthread="false">
+<trigger type="actionsmenu"/>
+<documentset type="selected"/>
+<code event="action">
+<javaproject class="JavaAgent.class" codepath="D:\daten\notesdaten_9" imported="false">
+<java name="JavaAgent.java">import lotus.domino.*;
+
+public class JavaAgent extends AgentBase {
+
+    public void NotesMain() {
+
+      try {
+          Session session = getSession();
+          AgentContext agentContext = session.getAgentContext();
+
+          // (Your code goes here)
+
+      } catch(Exception e) {
+          e.printStackTrace();
+       }
+   }
+}</java>
+</javaproject>
+</code>
+<item name="$JavaCompilerSource" seal="false" sign="false" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<text>1.3</text>
+</item>
+<item name="$JavaCompilerTarget" seal="false" sign="false" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<text>1.2</text>
+</item>
+</agent>

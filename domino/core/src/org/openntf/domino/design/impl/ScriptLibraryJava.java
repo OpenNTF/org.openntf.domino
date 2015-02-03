@@ -2,7 +2,6 @@ package org.openntf.domino.design.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,9 +10,7 @@ import java.util.jar.JarInputStream;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -40,20 +37,20 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 	protected ScriptLibraryJava(final Database database) {
 		super(database);
 
-		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_javascriptlibrary.xml");
-			loadDxl(is);
-			is.close();
-
-			// Set some defaults
-			Session session = getAncestorSession();
-			String dataDirectory = session.getEnvironmentString("Directory", true);
-			XMLDocument dxl = getDxl();
-			dxl.selectSingleNode("/scriptlibrary/code/javaproject").setAttribute("codepath", dataDirectory);
-
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
+		//		try {
+		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_javascriptlibrary.xml");
+		//			loadDxl(is);
+		//			is.close();
+		//
+		//			// Set some defaults
+		//			Session session = getAncestorSession();
+		//			String dataDirectory = session.getEnvironmentString("Directory", true);
+		//			XMLDocument dxl = getDxl();
+		//			dxl.selectSingleNode("/scriptlibrary/code/javaproject").setAttribute("codepath", dataDirectory);
+		//
+		//		} catch (IOException e) {
+		//			DominoUtils.handleException(e);
+		//		}
 	}
 
 	Map<String, byte[]> classData;

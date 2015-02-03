@@ -17,16 +17,22 @@
 package org.openntf.domino.design.impl;
 
 import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
@@ -37,8 +43,12 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
 
-	public ImageResource(final Document document) {
+	protected ImageResource(final Document document) {
 		super(document);
+	}
+
+	protected ImageResource(final Database database) {
+		super(database);
 	}
 
 	@Override
@@ -65,7 +75,46 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 			return parseBase64Binary(rawData);
 		default:
 			return getFileDataRaw("$ImageData");
+		}
+	}
 
+	@Override
+	public void setFileData(final byte[] fileData) {
+		switch (getDxlFormat(true)) {
+		case DXL:
+			XMLNode node = getDxl().selectSingleNode("//imageresource");
+			XMLNode itemNode = node.selectSingleNode("item");
+			XMLNode imgNode = null;
+
+			ImageInputStream iis;
+			try {
+				iis = ImageIO.createImageInputStream(new ByteArrayInputStream(fileData));
+
+				// get all currently registered readers that recognize the image format
+				Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+
+				if (!iter.hasNext()) {
+					throw new RuntimeException("No readers found!");
+				}
+
+				// get the first reader
+				ImageReader reader = iter.next();
+				iis.close();
+
+				if (itemNode != null) {
+					imgNode = node.insertChildElementBefore(reader.getFormatName(), itemNode);
+				} else {
+					imgNode = node.addChildElement(reader.getFormatName());
+				}
+
+				imgNode.setText(printBase64Binary(fileData));
+
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
+			break;
+		default:
+			setFileDataRaw("$ImageData", fileData);
 		}
 	}
 }

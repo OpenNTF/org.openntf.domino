@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -30,6 +31,10 @@ public class DesignApplet extends AbstractDesignBaseNamed implements org.openntf
 	 */
 	protected DesignApplet(final Document document) {
 		super(document);
+	}
+
+	protected DesignApplet(final Database database) {
+		super(database);
 	}
 
 	@Override

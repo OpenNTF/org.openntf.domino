@@ -18,6 +18,7 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.NoteCollection;
@@ -39,6 +40,10 @@ public final class ACLNote extends AbstractDesignBase implements org.openntf.dom
 	 */
 	protected ACLNote(final Document document) {
 		super(document);
+	}
+
+	protected ACLNote(final Database database) {
+		super(database);
 	}
 
 	@Override
