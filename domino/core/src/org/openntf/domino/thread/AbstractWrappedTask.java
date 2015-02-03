@@ -2,12 +2,12 @@ package org.openntf.domino.thread;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Callable;
 
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
@@ -19,13 +19,12 @@ import org.openntf.domino.xots.Tasklet;
  * 
  */
 public abstract class AbstractWrappedTask implements IWrappedTask {
-
 	private Object wrappedTask;
 
 	protected Tasklet.Scope scope;
 	protected Tasklet.Context context;
 	protected ISessionFactory sessionFactory;
-	protected boolean bubbleException;
+	protected Factory.ThreadConfig sourceThreadConfig;
 
 	/**
 	 * Determines the sessionType under which the current runnable should run. The first non-null value of the following list is returned
@@ -56,14 +55,12 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
 		}
 
-		// save current bubbleExceptions settings
-		bubbleException = DominoUtils.getBubbleExceptions();
-
 		if (task instanceof Tasklet.Interface) {
 			Tasklet.Interface dominoRunnable = (Tasklet.Interface) task;
 			sessionFactory = dominoRunnable.getSessionFactory();
 			scope = dominoRunnable.getScope();
 			context = dominoRunnable.getContext();
+			sourceThreadConfig = dominoRunnable.getThreadConfig();
 		}
 		Tasklet annot = task.getClass().getAnnotation(Tasklet.class);
 
@@ -126,7 +123,22 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 			if (scope == null) {
 				scope = Tasklet.Scope.NONE;
 			}
+			if (sourceThreadConfig == null) {
+				switch (annot.threadConfig()) {
+				case CLONE:
+					sourceThreadConfig = Factory.getThreadConfig();
+					break;
+				case PERMISSIVE:
+					sourceThreadConfig = Factory.PERMISSIVE_THREAD_CONFIG;
+					break;
+				case STRICT:
+					sourceThreadConfig = Factory.STRICT_THREAD_CONFIG;
+					break;
+				}
+			}
 		}
+		if (sourceThreadConfig == null)
+			sourceThreadConfig = Factory.getThreadConfig();
 	}
 
 	/**
@@ -169,5 +181,47 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 			return ((Tasklet.Interface) task).getDescription();
 		}
 		return task.getClass().getSimpleName();
+	}
+
+	/**
+	 * Common method that does setUp/tearDown before executing the wrapped object
+	 * 
+	 * @param callable
+	 * @param runnable
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object callOrRun() throws Exception {
+
+		NotesThread.sinitThread();
+		Factory.initThread(sourceThreadConfig);
+		try {
+			return invokeWrappedTask();
+		} finally {
+			Factory.termThread();
+			NotesThread.stermThread();
+		}
+	}
+
+	protected Object invokeWrappedTask() throws Exception {
+		Thread thread = Thread.currentThread();
+		ClassLoader oldCl = thread.getContextClassLoader();
+		Object wrappedTask = getWrappedTask();
+		ClassLoader runCl = wrappedTask.getClass().getClassLoader();
+		thread.setContextClassLoader(runCl);
+
+		if (sessionFactory != null) {
+			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+		}
+		try {
+			if (wrappedTask instanceof Callable) {
+				return ((Callable<?>) wrappedTask).call();
+			} else {
+				((Runnable) wrappedTask).run();
+				return null;
+			}
+		} finally {
+			thread.setContextClassLoader(oldCl);
+		}
 	}
 }

@@ -27,7 +27,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	 * 
 	 * @param <V>
 	 */
-	private static class DominoWrappedCallable<V> extends DominoWrappedTask implements IWrappedCallable<V> {
+	private static class DominoWrappedCallable<V> extends AbstractWrappedTask implements IWrappedCallable<V> {
 
 		public DominoWrappedCallable(final Callable<V> runnable) {
 			setWrappedTask(runnable);
@@ -46,7 +46,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	 * @author Roland Praml, FOCONIS AG
 	 * 
 	 */
-	private static class DominoWrappedRunnable extends DominoWrappedTask implements IWrappedRunnable {
+	private static class DominoWrappedRunnable extends AbstractWrappedTask implements IWrappedRunnable {
 
 		public DominoWrappedRunnable(final java.lang.Runnable runnable) {
 			setWrappedTask(runnable);

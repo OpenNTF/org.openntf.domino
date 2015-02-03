@@ -3,6 +3,7 @@ package org.openntf.domino.xsp;
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
 import org.openntf.domino.config.Configuration;
+import org.openntf.domino.config.ConfigurationProperties;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -25,6 +26,7 @@ public enum ODAPlatform {
 	// TODO: create an OSGI-command
 	public static final boolean _debug = false;
 	public static final boolean debugAll = false;
+	private static int xotsStopDelay;
 
 	/**
 	 * Start up the ODAPlatform.
@@ -48,9 +50,10 @@ public enum ODAPlatform {
 		// Setup the named factories 4 XPages
 		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 		verifyIGetEntryByKey();
-
-		int xotsTasks = Configuration.getServerConfiguration().getConfigValueInt("XotsTasks", 10);
-
+		ConfigurationProperties cfg = Configuration.getServerConfiguration();
+		int xotsTasks = cfg.getConfigValueInt("XotsTasks", 10);
+		// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
+		xotsStopDelay = cfg.getConfigValueInt("XotsStopDelay", 15);
 		if (xotsTasks > 0) {
 			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
 			Xots.start(executor);
@@ -67,11 +70,6 @@ public enum ODAPlatform {
 	 */
 	public static void stop() {
 		if (Xots.isStarted()) {
-			int xotsStopDelay = 15;
-			try {
-				xotsStopDelay = Integer.parseInt(getEnvironmentString("xots_stop_delay"));
-			} catch (NumberFormatException e) {
-			}
 			Xots.stop(xotsStopDelay);
 		}
 		Factory.shutdown();

@@ -4,9 +4,13 @@ import java.util.concurrent.Callable;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
+
+import com.ibm.commons.util.StringUtil;
 
 public class ServerConfigurationProperties extends ConfigurationProperties {
 
@@ -31,11 +35,12 @@ public class ServerConfigurationProperties extends ConfigurationProperties {
 			Factory.println("ServerConfiguration", "ERROR: View '$lookupConfiguration' not found in " + odaDb_);
 			return null;
 		}
+		luView.refresh();
 		Document currentConfig_ = luView.getFirstDocumentByKey(serverName_);
 		if (currentConfig_ == null) {
 			currentConfig_ = odaDb_.createDocument();
 			currentConfig_.replaceItemValue("Form", "Configuration");
-			currentConfig_.replaceItemValue("ServerName", serverName_);
+			currentConfig_.replaceItemValue("ServerName", serverName_).setNames(true);
 			currentConfig_.save();
 			luView.refresh();
 		}
@@ -52,7 +57,7 @@ public class ServerConfigurationProperties extends ConfigurationProperties {
 		return new _Setter(key, value);
 	}
 
-	@Tasklet(session = Tasklet.Session.NATIVE)
+	@Tasklet(session = Tasklet.Session.NATIVE, threadConfig = Tasklet.ThreadConfig.STRICT)
 	protected class _Getter implements Callable<Object> {
 
 		private String key;
@@ -64,13 +69,20 @@ public class ServerConfigurationProperties extends ConfigurationProperties {
 
 		@Override
 		public Object call() {
-			Document doc = getDocument();
-			return doc == null ? null : doc.get(key);
+			Session sess = Factory.getSession(SessionType.CURRENT);
+			String s = sess.getEnvironmentString("ODA_" + key);
+			if (!StringUtil.isEmpty(s)) {
+				Factory.println("INFO", "using notes.ini value ODA_" + key + "=" + s);
+				return s;
+			} else {
+				Document doc = getDocument();
+				return doc == null ? null : doc.get(key);
+			}
 		}
 
 	}
 
-	@Tasklet(session = Tasklet.Session.NATIVE)
+	@Tasklet(session = Tasklet.Session.NATIVE, threadConfig = Tasklet.ThreadConfig.STRICT)
 	protected class _Setter implements Runnable {
 
 		private String key;

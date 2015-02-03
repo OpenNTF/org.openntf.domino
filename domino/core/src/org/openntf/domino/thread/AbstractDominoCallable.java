@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
 
 /**
@@ -56,6 +57,11 @@ public abstract class AbstractDominoCallable<T> extends Observable implements Ta
 	@Override
 	public synchronized void stop() {
 		shouldStop_ = true;
+	}
+
+	@Override
+	public Factory.ThreadConfig getThreadConfig() {
+		return null;
 	}
 
 	@Override

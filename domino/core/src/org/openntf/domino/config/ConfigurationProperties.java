@@ -12,6 +12,8 @@ import javolution.util.FastMap;
 
 import org.openntf.domino.thread.DominoExecutor;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * 
  * @author Roland Praml, FOCONIS AG
@@ -71,6 +73,22 @@ public abstract class ConfigurationProperties {
 			try {
 				return Integer.parseInt((String) ret);
 			} catch (NumberFormatException e) {
+			}
+		}
+		put(name, def);
+		return def;
+	}
+
+	public String getConfigValueString(final String name, final String def) {
+		Object ret = get(name);
+		if (ret instanceof List) {
+			List<?> l = (List<?>) ret;
+			ret = l.size() > 0 ? l.get(0) : null;
+		}
+		if (ret != null) {
+			String s = String.valueOf(ret);
+			if (!StringUtil.isEmpty(s)) {
+				return s;
 			}
 		}
 		put(name, def);

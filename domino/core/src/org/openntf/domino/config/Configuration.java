@@ -44,8 +44,13 @@ public enum Configuration {
 		if (!inititalized) {
 			inititalized = true;
 			try {
-				// ODA-DB is thread safe, so we may cahce it :)
+				// ODA-DB is thread safe, so we may cache it :)
 				Session sess = Factory.getSession(SessionType.CURRENT);
+				String s = sess.getEnvironmentString("ODA_NSF");
+				if (!s.isEmpty()) {
+					ODA_NSF = s;
+					Factory.println("INFO", "Using notes.ini variable ODA_NSF=" + ODA_NSF);
+				}
 				Database db = sess.getDatabase(ODA_NSF);
 				if (db == null) {
 					Factory.println("WARNING", "cannot find " + ODA_NSF + " as user " + sess.getEffectiveUserName()
