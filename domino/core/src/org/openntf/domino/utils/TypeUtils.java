@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -322,21 +321,12 @@ public enum TypeUtils {
 				}
 			} else if (T == Date.class) {
 				result = toDate(o);
-			} else if (T == Calendar.class) {
+			} else if (java.util.Calendar.class.isAssignableFrom(T)) {
 				Date tmpDate = toDate(o);
 				if (null == tmpDate) {
 					result = null;
 				} else {
 					Calendar tmp = Calendar.getInstance();
-					tmp.setTime(tmpDate);
-					result = tmp;
-				}
-			} else if (T == GregorianCalendar.class) {
-				Date tmpDate = toDate(o);
-				if (null == tmpDate) {
-					result = null;
-				} else {
-					Calendar tmp = new GregorianCalendar();
 					tmp.setTime(tmpDate);
 					result = tmp;
 				}
@@ -511,21 +501,12 @@ public enum TypeUtils {
 				}
 			} else if (T == Date.class) {
 				result = toDate(v);
-			} else if (T == Calendar.class) {
+			} else if (java.util.Calendar.class.isAssignableFrom(T)) {
 				Date tmpDate = toDate(v);
 				if (null == tmpDate) {
 					result = null;
 				} else {
 					Calendar tmp = Calendar.getInstance();
-					tmp.setTime(tmpDate);
-					result = tmp;
-				}
-			} else if (T == GregorianCalendar.class) {
-				Date tmpDate = toDate(v);
-				if (null == tmpDate) {
-					result = null;
-				} else {
-					Calendar tmp = new GregorianCalendar();
 					tmp.setTime(tmpDate);
 					result = tmp;
 				}

@@ -21,7 +21,6 @@ import com.tinkerpop.frames.FramedTransactionalGraph;
 public class DataDumper implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public DataDumper() {
 
@@ -50,10 +49,19 @@ public class DataDumper implements Runnable {
 		//		}
 		long testEndTime = System.nanoTime();
 
+		SimpleDateFormat DATE_FORMAT_UK = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DATE_FORMAT_UK.setTimeZone(TimeZone.getDefault());
+		SimpleDateFormat DATE_FORMAT_EST = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DATE_FORMAT_EST.setTimeZone(TimeZone.getTimeZone("EST"));
+
 		Presentation pres = framedGraph.getVertex("ID114", Presentation.class);
 		Iterable<TimeSlot> times = pres.getTimes();
 		for (TimeSlot ts : times) {
-			System.out.println(DATE_FORMAT.format(ts.getStartTime().getTime()) + " - " + DATE_FORMAT.format(ts.getEndTime().getTime()));
+			Calendar sTime = ts.getStartTime();
+			Calendar eTime = ts.getEndTime();
+			System.out.println("GMT Time: " + DATE_FORMAT_UK.format(sTime.getTime()) + " - " + DATE_FORMAT_UK.format(eTime.getTime()));
+
+			System.out.println("EST Time: " + DATE_FORMAT_EST.format(sTime.getTime()) + " - " + DATE_FORMAT_EST.format(eTime.getTime()));
 		}
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 
