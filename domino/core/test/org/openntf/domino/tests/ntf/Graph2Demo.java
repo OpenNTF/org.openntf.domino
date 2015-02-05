@@ -12,7 +12,6 @@ import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.User;
 import org.openntf.domino.graph2.builtin.social.Rateable;
-import org.openntf.domino.graph2.builtin.social.Rates;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DFramedGraphFactory;
@@ -33,7 +32,6 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
 public class Graph2Demo implements Runnable {
 	private long marktime;
@@ -335,6 +333,13 @@ public class Graph2Demo implements Runnable {
 		edgeDb.getAllDocuments().removeAll(true);
 		Database usersDb = session.getDatabase(usersId);
 		usersDb.getAllDocuments().removeAll(true);
+		//		Database nabDb = session.getDatabase("", "names.nsf");
+		//		Document ntfDoc = nabDb.getDocumentByUNID(ntfUnid);
+		//		ntfDoc.removeItem("_COUNT_OPEN_OUT_rates");
+		//		ntfDoc.removeItem("_OPEN_OUT_rates");
+		//		ntfDoc.removeItem("_ODA_GRAPHTYPE");
+		//		ntfDoc.save();
+
 		session.recycle();
 		System.gc();
 	}
@@ -350,37 +355,37 @@ public class Graph2Demo implements Runnable {
 			timelog("Beginning Star Wars re-read test...");
 
 			DElementStore crewStore = new DElementStore();
-			crewStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(crewId));
+			crewStore.setStoreKey(crewId);
 			crewStore.addType(Crew.class);
 			DElementStore movieStore = new DElementStore();
-			movieStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(movieId));
+			movieStore.setStoreKey(movieId);
 			movieStore.addType(Movie.class);
 			DElementStore characterStore = new DElementStore();
-			characterStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(characterId));
+			characterStore.setStoreKey(characterId);
 			characterStore.addType(Character.class);
 			DElementStore edgeStore = new DElementStore();
-			edgeStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(edgeId));
+			edgeStore.setStoreKey(edgeId);
 			DElementStore usersStore = new DElementStore();
-			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
-			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
+			usersStore.setStoreKey(nabId);
+			usersStore.setProxyStoreKey(usersId);
 			usersStore.addType(User.class);
 
 			DConfiguration config = new DConfiguration();
+			graph = new DGraph(config);
 			config.addElementStore(crewStore);
 			config.addElementStore(movieStore);
 			config.addElementStore(characterStore);
 			config.addElementStore(edgeStore);
 			config.addElementStore(usersStore);
-			config.setDefaultElementStore(NoteCoordinate.Utils.getLongFromReplid(edgeId));
-			graph = new DGraph(config);
+			config.setDefaultElementStore(edgeStore.getStoreKey());
 
 			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = new TypedGraphModuleBuilder().withClass(User.class).withClass(Movie.class).withClass(Character.class)
-					.withClass(Crew.class).build();
+			Module module = config.getModule();
 			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 
-			User ntfUser = framedGraph.getVertex(nabId + ntfUnid, User.class);
+			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(Long.toHexString(usersStore.getStoreKey()), ntfUnid);
+			User ntfUser = framedGraph.getVertex(nc, User.class);
 
 			Movie newhopeMovie = framedGraph.getVertex("Star Wars", Movie.class);
 			Movie empireMovie = framedGraph.getVertex("The Empire Strikes Back", Movie.class);
@@ -390,11 +395,9 @@ public class Graph2Demo implements Runnable {
 			Movie revengeMovie = framedGraph.getVertex("Revenge of the Sith", Movie.class);
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + newhopeMovie.getTitle() + " " + newhopeMovie.getRaterRating(ntfUser) + " stars!");
+			System.out.println("Don't miss " + newhopeMovie.getTitle() + " rated " + newhopeMovie.getRaterRating(ntfUser) + " stars");
 			Iterable<Starring> starrings = newhopeMovie.getStarring();
-			int starringCount = 0;
 			for (Starring starring : starrings) {
-				starringCount++;
 				Crew crew = starring.getStar();
 				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
 				if (chars.hasNext()) {
@@ -404,25 +407,9 @@ public class Graph2Demo implements Runnable {
 					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " (" + crew.asVertex().getId() + ")");
 				}
 			}
-			if (starringCount == 0) {
-				System.out.println("Starring was empty for " + newhopeMovie.getTitle() + ". Trying inversion...");
-				starrings = newhopeMovie.getStarringInvert();
-				starringCount = 0;
-				for (Starring starring : starrings) {
-					starringCount++;
-					Crew crew = starring.getStar();
-					Iterator<Character> chars = crew.getPortraysCharacters().iterator();
-					if (chars.hasNext()) {
-						Character character = chars.next();
-						System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
-					} else {
-						System.out.println(crew.getFirstName() + " " + crew.getLastName() + " (" + crew.asVertex().getId() + ")");
-					}
-				}
-			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + empireMovie.getTitle() /*+ " " + empireMovie.getRaterRating(ntfUser) + " stars!"*/);
+			System.out.println("Don't miss " + empireMovie.getTitle() + " rated " + empireMovie.getRaterRating(ntfUser) + " stars");
 			starrings = empireMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -436,8 +423,50 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + jediMovie.getTitle() /*+ " " + jediMovie.getRaterRating(ntfUser) + " stars!"*/);
+			System.out.println("Don't miss " + jediMovie.getTitle() + " rated " + jediMovie.getRaterRating(ntfUser) + " stars");
 			starrings = jediMovie.getStarring();
+			for (Starring starring : starrings) {
+				Crew crew = starring.getStar();
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
+			}
+
+			System.out.println("***************************");
+			System.out.println("Don't miss " + phantomMovie.getTitle());
+			starrings = phantomMovie.getStarring();
+			for (Starring starring : starrings) {
+				Crew crew = starring.getStar();
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
+			}
+
+			System.out.println("***************************");
+			System.out.println("Don't miss " + clonesMovie.getTitle());
+			starrings = clonesMovie.getStarring();
+			for (Starring starring : starrings) {
+				Crew crew = starring.getStar();
+				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
+				if (chars.hasNext()) {
+					Character character = chars.next();
+					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
+				} else {
+					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
+			}
+
+			System.out.println("***************************");
+			System.out.println("Don't miss " + revengeMovie.getTitle());
+			starrings = revengeMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
 				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
@@ -463,33 +492,32 @@ public class Graph2Demo implements Runnable {
 			timelog("Beginning Star Wars graph test...");
 
 			DElementStore crewStore = new DElementStore();
-			crewStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(crewId));
+			crewStore.setStoreKey(crewId);
 			crewStore.addType(Crew.class);
 			DElementStore movieStore = new DElementStore();
-			movieStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(movieId));
+			movieStore.setStoreKey(movieId);
 			movieStore.addType(Movie.class);
 			DElementStore characterStore = new DElementStore();
-			characterStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(characterId));
+			characterStore.setStoreKey(characterId);
 			characterStore.addType(Character.class);
 			DElementStore edgeStore = new DElementStore();
-			edgeStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(edgeId));
+			edgeStore.setStoreKey(edgeId);
 			DElementStore usersStore = new DElementStore();
-			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
-			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
+			usersStore.setStoreKey(nabId);
+			usersStore.setProxyStoreKey(usersId);
 			usersStore.addType(User.class);
 
 			DConfiguration config = new DConfiguration();
+			graph = new DGraph(config);
 			config.addElementStore(crewStore);
 			config.addElementStore(movieStore);
 			config.addElementStore(characterStore);
 			config.addElementStore(edgeStore);
 			config.addElementStore(usersStore);
-			config.setDefaultElementStore(NoteCoordinate.Utils.getLongFromReplid(edgeId));
-			graph = new DGraph(config);
+			config.setDefaultElementStore(edgeStore.getStoreKey());
 
 			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = new TypedGraphModuleBuilder().withClass(User.class).withClass(Movie.class).withClass(Character.class)
-					.withClass(Crew.class).build();
+			Module module = config.getModule();
 			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 
@@ -499,22 +527,25 @@ public class Graph2Demo implements Runnable {
 			//			((org.openntf.domino.Database) edgeStore.getStoreDelegate()).getAllDocuments().removeAll(true);
 			//			((org.openntf.domino.Database) usersStore.getProxyStoreDelegate()).getAllDocuments().removeAll(true);
 
-			User ntfUser = framedGraph.getVertex(nabId + ntfUnid, User.class);
+			//			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(Long.toHexString(usersStore.getStoreKey()), ntfUnid);
+			//			User ntfUser = framedGraph.getVertex(nc, User.class);
+			//			System.out.println("ntfUser " + ntfUser.asVertex().getId());
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
-			Rates ntfRatesNH = ntfUser.addRates(newhopeMovie);
-			ntfRatesNH.setRating(4);
+			System.out.println("newhopeMovie " + newhopeMovie.asVertex().getId());
+			//			Rates ntfRatesNH = ntfUser.addRates(newhopeMovie);
+			//			ntfRatesNH.setRating(4);
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			Rates ntfRatesESB = ntfUser.addRates(empireMovie);
-			ntfRatesESB.setRating(5);
+			//			Rates ntfRatesESB = ntfUser.addRates(empireMovie);
+			//			ntfRatesESB.setRating(5);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
-			Rates ntfRatesRoJ = ntfUser.addRates(jediMovie);
-			ntfRatesRoJ.setRating(5);
+			//			Rates ntfRatesRoJ = ntfUser.addRates(jediMovie);
+			//			ntfRatesRoJ.setRating(5);
 
 			Movie phantomMovie = framedGraph.addVertex("The Phantom Menace", Movie.class);
 			phantomMovie.setTitle("The Phantom Menace");

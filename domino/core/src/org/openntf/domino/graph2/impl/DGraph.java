@@ -109,13 +109,13 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Edge addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
-		Edge result = null;
+		DEdge result = null;
 		//		if (id != null) {
 		//			System.out.println("TEMP DEBUG: Adding " + label + " edge with id " + String.valueOf(id));
-		result = findElementStore(id).addEdge(id);
-		((DEdge) result).setLabel(label);
-		((DEdge) result).setInVertex(inVertex);
-		((DEdge) result).setOutVertex(outVertex);
+		result = (DEdge) findElementStore(id).addEdge(id);
+		result.setLabel(label);
+		result.setInVertex(inVertex);
+		result.setOutVertex(outVertex);
 		//		} else {
 		//			//TODO NTF implementation
 		//			System.out.println("TEMP DEBUG: id is null so we don't have an implementation yet.");

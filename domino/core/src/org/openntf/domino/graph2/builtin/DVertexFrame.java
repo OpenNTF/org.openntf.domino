@@ -18,7 +18,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 @JavaHandlerClass(DVertexFrame.DVertexFrameImpl.class)
 public interface DVertexFrame extends Editable {
 	@TypedProperty(value = "@CreatedDate", derived = true)
-	//	@JavaHandler
 	public Date getCreated();
 
 	@TypedProperty(value = "@ModifiedDate", derived = true)
@@ -26,6 +25,9 @@ public interface DVertexFrame extends Editable {
 
 	@JavaHandler
 	public Document asDocument();
+
+	@JavaHandler
+	public Map<CharSequence, Object> asMap();
 
 	@JavaHandler
 	public String[] getEditors();
@@ -52,8 +54,8 @@ public interface DVertexFrame extends Editable {
 					+ (raw == null ? "null" : raw.getClass().getName()));
 		}
 
+		@Override
 		public Map<CharSequence, Object> asMap() {
-			//TODO NTF
 			Object raw = asVertex();
 			if (raw instanceof DVertex) {
 				Object delegate = ((DVertex) raw).getDelegate();
@@ -80,18 +82,18 @@ public interface DVertexFrame extends Editable {
 			return result;
 		}
 
-		@Override
-		public Date getCreated() {
-			System.out.println("Impl.getCreated() called");
-			Date result = null;
-			Object raw = ((DVertex) asVertex()).getProperty("@CreatedDate", Date.class);
-			if (raw instanceof Date) {
-				return result;
-			} else {
-				System.out.println("Looked for a Date but got a " + (raw == null ? "null" : raw.getClass().getName()));
-				return new Date(0);
-			}
-		}
+		//		@Override
+		//		public Date getCreated() {
+		//			//			System.out.println("Impl.getCreated() called");
+		//			Date result = null;
+		//			Object raw = ((DVertex) asVertex()).getProperty("@CreatedDate", Date.class);
+		//			if (raw instanceof Date) {
+		//				return result;
+		//			} else {
+		//				System.out.println("Looked for a Date but got a " + (raw == null ? "null" : raw.getClass().getName()));
+		//				return new Date(0);
+		//			}
+		//		}
 	}
 
 }

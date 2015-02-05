@@ -39,7 +39,7 @@ import org.openntf.domino.utils.Strings;
  */
 
 public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
-		Comparable<Name>, Cloneable {
+Comparable<Name>, Cloneable {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
@@ -944,17 +944,20 @@ public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domin
 		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
 	}
 
+	private Collection<String> groupNames_;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<String> getGroups(final String serverName) {
-		Collection<String> result = null;
-		try {
-			DominoServer server = new DominoServer(serverName);
-			result = server.getNamesList(getCanonical());
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		if (groupNames_ == null) {
+			try {
+				DominoServer server = new DominoServer(serverName);
+				groupNames_ = server.getNamesList(getCanonical());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
 		}
-		return result;
+		return groupNames_;
 	}
 
 	@Override

@@ -110,27 +110,27 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 			}
 		}
 
-		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final NoteCollection notecoll, final String nid) {
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final NoteCollection notecoll, final String nid) {
 			return new org.openntf.domino.big.impl.NoteCoordinate(notecoll, nid);
 		}
 
-		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final Document doc) {
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final Document doc) {
 			return new org.openntf.domino.big.impl.NoteCoordinate(doc);
 		}
 
-		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final CharSequence replicaid, final CharSequence unid) {
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final CharSequence replicaid, final CharSequence unid) {
 			return new org.openntf.domino.big.impl.NoteCoordinate(replicaid, unid);
 		}
 
-		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final CharSequence metaversalid) {
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final CharSequence metaversalid) {
 			return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
 		}
 
-		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final byte[] bytes) {
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final byte[] bytes) {
 			return new org.openntf.domino.big.impl.NoteCoordinate(bytes);
 		}
 
-		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCollection(final long db, final long x, final long y) {
+		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final long db, final long x, final long y) {
 			return new org.openntf.domino.big.impl.NoteCoordinate(db, x, y);
 		}
 	}

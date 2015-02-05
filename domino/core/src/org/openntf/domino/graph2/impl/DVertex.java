@@ -284,8 +284,15 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		DEdgeList result = null;
 		result = outCache.get(label);
 		if (result == null) {
-			result = getParent().getEdgesFromIds(this, getOutEdgesSet(label));
-			outCache.put(label, result);
+			try {
+				result = getParent().getEdgesFromIds(this, getOutEdgesSet(label));
+				outCache.put(label, result);
+			} catch (IllegalStateException ise) {
+				System.out.println("ISE returned during getOutEdgeCache for label " + label + " from Vertex " + getId());
+			}
+		}
+		if (result == null) {
+			result = new DEdgeList(this);
 		}
 		return result.atomic();
 	}

@@ -191,13 +191,15 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Long getProxyStoreKey() {
 		if (proxyDelegateKey_ == null) {
-			Object delegate = getStoreDelegate();
-			if (delegate != null) {
-				if (delegate instanceof Database) {
-					String rid = ((Database) delegate).getReplicaID();
-					proxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
-				} else {
-					//TODO Some other mechanism to get the key
+			if (provisionalProxyDelegateKey_ != null) {
+				Object delegate = getProxyStoreDelegate();
+				if (delegate != null) {
+					if (delegate instanceof Database) {
+						String rid = ((Database) delegate).getReplicaID();
+						proxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
+					} else {
+						//TODO Some other mechanism to get the key
+					}
 				}
 			}
 		}
@@ -393,7 +395,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	protected boolean isProxied() {
-		return proxyDelegateKey_ != null;
+		return getProxyStoreKey() != null;
 	}
 
 	protected Serializable getKeyProperty(final Map<String, Object> delegate) {
@@ -475,7 +477,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (result == null) {
 			System.out
-					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		}
 		if (result != null) {
 			if (type.equals(Element.class)) {
@@ -619,7 +621,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectionFormula(org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
 			nc.buildCollection();
 			for (String noteid : nc) {
-				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
 			}
 		} else {
 			//TODO NTF implement alternative
@@ -638,7 +640,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectionFormula(formulaFilter);
 			nc.buildCollection();
 			for (String noteid : nc) {
-				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
 			}
 		} else {
 			//TODO NTF implement alternative
@@ -668,7 +670,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER);
 			nc.buildCollection();
 			for (String noteid : nc) {
-				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
 			}
 		} else {
 			//TODO NTF implement alternative
@@ -687,7 +689,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectionFormula(formulaFilter);
 			nc.buildCollection();
 			for (String noteid : nc) {
-				result.add(NoteCoordinate.Utils.getNoteCollection(nc, noteid));
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
 			}
 		} else {
 			//TODO NTF implement alternative

@@ -44,15 +44,31 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 		Edge result = null;
 		switch (adjacency.direction()) {
 		case OUT:
-			result = ((DVertex) vertex).findOutEdge(newVertex, adjacency.label());
+			try {
+				result = ((DVertex) vertex).findOutEdge(newVertex, adjacency.label());
+			} catch (IllegalStateException ise) {
+				//NTF this is a legitimate condition, since the edge does not yet exist!
+			}
 			break;
 		case IN:
-			result = ((DVertex) vertex).findInEdge(newVertex, adjacency.label());
+			try {
+				result = ((DVertex) vertex).findInEdge(newVertex, adjacency.label());
+			} catch (IllegalStateException ise) {
+				//NTF this is a legitimate state, since the edge does not yet exist!
+			}
 			break;
 		case BOTH:
-			result = ((DVertex) vertex).findOutEdge(newVertex, adjacency.label());
+			try {
+				result = ((DVertex) vertex).findOutEdge(newVertex, adjacency.label());
+			} catch (IllegalStateException ise) {
+				//NTF this is a legitimate state, since the edge does not yet exist!
+			}
 			if (result == null) {
-				result = ((DVertex) vertex).findInEdge(newVertex, adjacency.label());
+				try {
+					result = ((DVertex) vertex).findInEdge(newVertex, adjacency.label());
+				} catch (IllegalStateException ise) {
+					//NTF this is a legitimate state, since the edge does not yet exist!
+				}
 			}
 			break;
 		default:
