@@ -102,9 +102,19 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 				iis.close();
 
 				if (itemNode != null) {
-					imgNode = node.insertChildElementBefore(reader.getFormatName(), itemNode);
+					//png images have to be in a <jpeg></jpeg> - node!
+					if ("png".equals(reader.getFormatName())) {
+						imgNode = node.insertChildElementBefore("jpeg", itemNode);
+					} else {
+						imgNode = node.insertChildElementBefore(reader.getFormatName(), itemNode);
+					}
 				} else {
-					imgNode = node.addChildElement(reader.getFormatName());
+					//png images have to be in a <jpeg></jpeg> - node!
+					if ("png".equals(reader.getFormatName())) {
+						imgNode = node.addChildElement("jpeg");
+					} else {
+						imgNode = node.addChildElement(reader.getFormatName());
+					}
 				}
 
 				imgNode.setText(printBase64Binary(fileData));

@@ -149,6 +149,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
 			}
 			if (data.length == 0) {
+				//cannot import empty filedata - node
 				filedata.setText(printBase64Binary(new byte[] { 32 }));
 			} else {
 				filedata.setText(printBase64Binary(data));

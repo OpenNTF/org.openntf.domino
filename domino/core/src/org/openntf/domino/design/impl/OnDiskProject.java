@@ -519,7 +519,6 @@ public class OnDiskProject {
 		} else if (syncObject instanceof OnDiskFile) {
 			odf = (OnDiskFile) syncObject;
 			try {
-				System.out.println("Creating " + odf.getFullName());
 				Constructor<?> ctor = odf.getImplementingClass().getDeclaredConstructor(Database.class);
 				elem = (AbstractDesignBase) ctor.newInstance(db);
 				elem.setOnDiskName(odf.getName());

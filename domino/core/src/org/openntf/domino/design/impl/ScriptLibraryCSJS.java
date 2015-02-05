@@ -115,6 +115,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 			fileDataNode = fileDataNode.addChildElement("javascript");
 
 			if (fileContents.toString().trim().length() == 0) {
+				//cannot import empty code/javascript - node
 				fileDataNode.setText("var i;");
 			} else {
 				fileDataNode.setText(fileContents.toString());
