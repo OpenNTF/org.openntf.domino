@@ -21,7 +21,7 @@ import org.openntf.domino.Document;
 
 /**
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  */
 public class DesignAgentF extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
 	private static final long serialVersionUID = 1L;

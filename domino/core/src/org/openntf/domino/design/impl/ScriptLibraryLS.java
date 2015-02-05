@@ -11,7 +11,12 @@ import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
-// TODO MetaData
+/**
+ * A LotusScript Library.
+ * 
+ * @author Alexander Wagner, FOCONIS AG
+ * 
+ */
 public final class ScriptLibraryLS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryLS, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
@@ -55,7 +60,7 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
+	public void writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
 		PrintWriter pw = new PrintWriter(odpFile);
 		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {

@@ -21,7 +21,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.design.SharedActions;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class SharedActionsNote extends AbstractDesignBase implements SharedActions {

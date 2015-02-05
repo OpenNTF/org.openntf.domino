@@ -106,11 +106,6 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//	 */
 	//	public String getName();
 
-	/**
-	 * Retruns the On-Disk folder component
-	 * 
-	 * @return
-	 */
 	//	public String getOnDiskFolder();
 	//
 	//	public String getOnDiskName();
@@ -119,7 +114,7 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//
 	//	public String getOnDiskPath();
 
-	public void writeOnDiskFile(File odsFile) throws IOException;
+	public void writeOnDiskFile(File odsFile, boolean useTransformer) throws IOException;
 
 	public Collection<String> getItemNames();
 }

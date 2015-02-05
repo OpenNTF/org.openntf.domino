@@ -20,8 +20,9 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
+ * A Server Side JavaScript - Library.
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class ScriptLibrarySSJS extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.ScriptLibrarySSJS {

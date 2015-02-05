@@ -174,7 +174,8 @@ enum DesignFactory {
 	 * Builds a formula that matches on <code>pattern</code>
 	 * 
 	 * @param pattern
-	 * @return
+	 *            The pattern that should be applied.
+	 * @return The Flags as String.
 	 */
 	public static String buildFlagFormula(final String pattern) {
 		if (pattern.length() < 1)

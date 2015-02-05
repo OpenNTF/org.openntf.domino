@@ -29,9 +29,9 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * a Java - ScriptLibrary
+ * A Client Side JavaScript Library.
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryCSJS {
@@ -66,7 +66,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
+	public void writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
 		String content;
 		if (enforceRawFormat()) {

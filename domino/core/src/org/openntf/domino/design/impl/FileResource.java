@@ -24,6 +24,11 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 
+/**
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
 public final class FileResource extends AbstractDesignFileResource implements org.openntf.domino.design.FileResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 

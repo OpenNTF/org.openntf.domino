@@ -23,7 +23,7 @@ import org.openntf.domino.design.FormFieldList;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class Subform extends AbstractDesignBaseNamed implements org.openntf.domino.design.Subform {

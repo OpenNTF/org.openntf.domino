@@ -20,7 +20,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class CompositeApp extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeApp {

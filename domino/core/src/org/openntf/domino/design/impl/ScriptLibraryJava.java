@@ -14,7 +14,9 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * A client side JavaScriptLibrary
+ * A Java - ScriptLibrary.
+ * 
+ * @author Roland Praml, FOCONIS AG
  */
 public final class ScriptLibraryJava extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryJava, HasMetadata {
 	private static final long serialVersionUID = 1L;

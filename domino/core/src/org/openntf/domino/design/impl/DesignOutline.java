@@ -20,7 +20,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class DesignOutline extends AbstractDesignBaseNamed implements org.openntf.domino.design.Outline {

@@ -65,7 +65,6 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	// Design collections are pretty impossible to work with using the Java API: the exported DXL is
 	// blank and the raw $Collection data isn't readable as an Item
-	@SuppressWarnings("unused")
 	public static final String DESIGN_COLLECTION = "FFFF0020";
 
 	public static final String ACL_NOTE = "FFFF0040";
@@ -512,6 +511,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return getDesignElementByName(type, name, false);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends DesignBase> T getDesignElementByName(final Class<T> type, final String name, final boolean create) {
 		if (DominoUtils.isUnid(name)) {
 			Document doc = database_.getDocumentByUNID(name);

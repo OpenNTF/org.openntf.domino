@@ -16,6 +16,11 @@
 
 package org.openntf.domino.design;
 
+/**
+ * 
+ * @author jgallagher
+ * 
+ */
 public interface AnyFileResource extends DesignBaseNamed, org.openntf.domino.types.DatabaseDescendant {
 
 	/**

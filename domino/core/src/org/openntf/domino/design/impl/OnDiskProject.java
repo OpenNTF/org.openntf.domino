@@ -1,5 +1,5 @@
 /*
- * Copyright 2015
+ * Copyright 2013
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -13,6 +13,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
+
 package org.openntf.domino.design.impl;
 
 import java.io.BufferedInputStream;
@@ -97,7 +98,7 @@ public class OnDiskProject {
 	Map<String, Long> lastModifiedMapDocs_ = null;
 	private File timeStampsDocs_;
 
-	private boolean gitFriendly = false;
+	private boolean gitFriendly = false; //TODO enable Transformer for Design-Export
 	private boolean exportMetadata = true;
 
 	public OnDiskProject(final File diskDir, final Database db, final SyncDirection direction) {
@@ -128,6 +129,7 @@ public class OnDiskProject {
 		return tr;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void prepareMap() {
 		try {
 			timeStampsDesign_ = new File(diskDir_, ".timeStampsDesign_" + db.getReplicaID());
@@ -155,6 +157,7 @@ public class OnDiskProject {
 	 * Synchronizes all Documents in the view of viewName in the NSF with the {@link OnDiskProject}.
 	 * 
 	 * @param viewName
+	 *            The name of the view.
 	 */
 	public void syncDocs(final String viewName) {
 		try {
@@ -447,7 +450,7 @@ public class OnDiskProject {
 		File file = new File(diskDir_, odp);
 
 		file.getParentFile().mkdirs(); // ensure the path exists
-		elem.writeOnDiskFile(file);
+		elem.writeOnDiskFile(file, gitFriendly);
 		if (exportMetadata && elem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + ".metadata");
 			((HasMetadata) elem).writeOnDiskMeta(metaFile);
@@ -508,6 +511,7 @@ public class OnDiskProject {
 	 * Synchronizes a SyncObject which is a DesignBase or a OnDiskFile.
 	 * 
 	 * @param syncObject
+	 *            The object that should be synchronized.
 	 */
 	public void sync(final SyncObject syncObject) {
 		OnDiskFile odf;
@@ -669,5 +673,13 @@ public class OnDiskProject {
 			}
 		}
 		return resList;
+	}
+
+	public void setGitFriendly(final boolean gitFriendly) {
+		this.gitFriendly = gitFriendly;
+	}
+
+	public void setExportMetadata(final boolean exportMetadata) {
+		this.exportMetadata = exportMetadata;
 	}
 }

@@ -464,8 +464,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	/**
+	 * Returns the name of the Folder in that this DesignElement is.
 	 * 
-	 * @return
+	 * @return The name of the Folder.
 	 */
 	public String getOnDiskFolder() {
 		return getOdpMapping().getFolder();
@@ -513,10 +514,13 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return ODP_META_TRANSFORMER;
 	}
 
-	// TODO
 	@Override
-	public void writeOnDiskFile(final File file) throws IOException {
-		getDxl().getXml(getOdpTransformer(), file);
+	public void writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
+		if (useTransformer) {
+			getDxl().getXml(getOdpTransformer(), file);
+		} else {
+			getDxl().getXml(null, file);
+		}
 		updateLastModified(file);
 	}
 
@@ -539,12 +543,24 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
-	// TODO
+	/**
+	 * Creates or updates a meta file.
+	 * 
+	 * @param metaFile
+	 *            The file that should be written.
+	 * 
+	 */
 	public final void writeOnDiskMeta(final File metaFile) throws IOException {
 		getDxl().getXml(getOdpMetaTransformer(), metaFile);
 		updateLastModified(metaFile);
 	}
 
+	/**
+	 * Reads the content of a meta file into the dxl content of this Design Element.
+	 * 
+	 * @param metaFile
+	 *            The file that should be read.
+	 */
 	public final void readOnDiskMeta(final File metaFile) {
 		if (metaFile.exists()) {
 			loadDxl(metaFile);
@@ -728,6 +744,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean save() {
 
@@ -749,6 +766,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 		try {
 			if (document_ != null) {
+				//document has to be recycled manually here, in order to set a new Document afterwards.
 				document_.recycle();
 			}
 		} catch (NotesException e) {

@@ -20,7 +20,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class DatabaseScript extends AbstractDesignBase implements org.openntf.domino.design.DatabaseScript {

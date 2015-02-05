@@ -42,6 +42,11 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
+/**
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
 public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.AnyFileResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
@@ -224,7 +229,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 
 	@Override
-	public void writeOnDiskFile(final File file) throws IOException {
+	public void writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
 		FileOutputStream fo = new FileOutputStream(file);
 		fo.write(getFileData());
 		fo.close();
