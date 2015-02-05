@@ -50,13 +50,13 @@ public final class FileResource extends AbstractDesignFileResource implements or
 	protected FileResource(final Database database) {
 		super(database);
 
-		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
-			loadDxl(is);
-			is.close();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
+		//		try {
+		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
+		//			loadDxl(is);
+		//			is.close();
+		//		} catch (IOException e) {
+		//			DominoUtils.handleException(e);
+		//		}
 	}
 
 	protected FileResource(final Database database, final String dxlResource) {

@@ -625,6 +625,15 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	public void setUniversalId(final String unid) {
 		universalId_ = unid;
+
+		XMLNode root = getDxl().getFirstChild();
+		XMLNode node = root.selectSingleNode("//noteinfo");
+
+		if (node == null) {
+			XMLNode firstNode = root.getFirstChild();
+			node = root.insertChildElementBefore("noteinfo", firstNode);
+		}
+		node.setAttribute("unid", unid);
 	}
 
 	/*

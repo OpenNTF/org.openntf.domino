@@ -65,12 +65,6 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 		return getDxl().selectSingleNode("//code/javascript").getText().getBytes();
 	}
 
-	//	@Override
-	//	protected boolean useNoteFormat() {
-	//		return false;
-	//	}
-	//
-	//	@Override
 	@Override
 	public void writeOnDiskFile(final File odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
@@ -78,7 +72,12 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 		if (enforceRawFormat()) {
 			content = ODSUtils.fromLMBCS(getFileData());
 		} else {
-			content = getDxl().selectSingleNode("//code/javascript").getText();
+			XMLNode jsNode = getDxl().selectSingleNode("//code/javascript");
+			if (jsNode != null) {
+				content = jsNode.getText();
+			} else {
+				content = "";
+			}
 		}
 		PrintWriter pw = new PrintWriter(odpFile);
 		pw.write(content);
@@ -88,9 +87,11 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 
 	@Override
 	public final void readOnDiskFile(final File file) {
-		//TODO checkme
+		if (getDxlFormat(true) != DxlFormat.DXL) {
+			throw new UnsupportedOperationException("cannot import raw CSJS-Library");
+		}
 		try {
-			List<XMLNode> fileDataNodes = getDxl().selectNodes("//code/javascript");
+			List<XMLNode> fileDataNodes = getDxl().selectNodes("//code");
 			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 			}
@@ -109,10 +110,15 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 
 			XMLNode documentNode = getDxl().selectSingleNode("//scriptlibrary");
 			XMLNode fileDataNode = documentNode.addChildElement("code");
+			fileDataNode.setAttribute("event", "library");
+			fileDataNode.setAttribute("for", "web");
 			fileDataNode = fileDataNode.addChildElement("javascript");
-			fileDataNode.setAttribute("sign", "true");
-			fileDataNode.setAttribute("summary", "false");
-			fileDataNode.setText(fileContents.toString());
+
+			if (fileContents.toString().trim().length() == 0) {
+				fileDataNode.setText("var i;");
+			} else {
+				fileDataNode.setText(fileContents.toString());
+			}
 
 		} catch (IOException e) {
 			DominoUtils.handleException(e);

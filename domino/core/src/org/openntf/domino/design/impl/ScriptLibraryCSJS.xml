@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scriptlibrary hide="v3 v4strict" name="emptyScriptLibrary" xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" designerversion="8.5.3" maintenanceversion="1.2">
-<code event="options">
-<lotusscript>Option Public
-Option Declare
-
-</lotusscript>
+<scriptlibrary hide="v3 v4strict" xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" designerversion="8.5.3" maintenanceversion="1.2">
+<code event="library" for="web">
+<javascript>
+</javascript>
 </code>
 </scriptlibrary>

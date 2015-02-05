@@ -148,7 +148,11 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 			if (filedata == null) {
 				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
 			}
-			filedata.setText(printBase64Binary(data));
+			if (data.length == 0) {
+				filedata.setText(printBase64Binary(new byte[] { 32 }));
+			} else {
+				filedata.setText(printBase64Binary(data));
+			}
 			break;
 		default:
 			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
@@ -209,7 +213,9 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public void setName(final String title) {
 		super.setName(title);
 		// Also set the $FileNames field
-		setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
+		if (enforceRawFormat()) {
+			setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
+		}
 	}
 
 	/**

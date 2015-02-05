@@ -414,9 +414,9 @@ enum DesignFactory {
 				Integer assist = doc.getItemValue("$AssistType", Integer.class);
 				if (assist == 65413)
 					return new DesignAgentLS(doc);
-				if (assist == 65426)
+				if (assist == 65426 || assist == 65412)
 					return new DesignAgentF(doc);
-				if (assist == 65427) {
+				if (assist == 65427) { //assist == 65428?
 					if (testFlag(flags, "+J"))
 						return new DesignAgentJ(doc);
 					return new DesignAgentIJ(doc);

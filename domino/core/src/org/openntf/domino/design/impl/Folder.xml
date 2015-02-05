@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folder xmlns="http://www.lotus.com/dxl" bgcolor="white" default="false" headers="beveled" private="false" version="9.0" direction="lefttoright" noreplace="true" onrefresh="displayindicator" useapplet="false" onopengoto="lastopened" rowspacing="1" showinmenu="false" showmargin="true" shrinkrows="false" uniquekeys="false" marginwidth="0px" totalscolor="black" treatashtml="false" unreadcolor="black" unreadmarks="none" indexdiscard="inactive45days" indexrefresh="autofirstuse" publicaccess="false" rowlinecount="1" showswitcher="false" colorizeicons="false" defaultdesign="false" headerbgcolor="white" marginbgcolor="white" opencollapsed="false" shownavigator="false" boldunreadrows="false" designerversion="8.5.3" evaluateactions="false" headerlinecount="1" showhierarchies="false" extendlastcolumn="false" hidecolumnheader="false" hidemarginborder="false" allowdocselection="false" allownewdocuments="false" maintenanceversion="1.2" allowcustomizations="true" showresponsehierarchy="true">
+<column align="left" width="10" hidden="false" editable="false" hideinr5="false" itemname="$0" twisties="false" resizable="true" linenumber="1" sortnocase="true" tileviewer="top" categorized="false" showascolor="false" showasicons="false" showaslinks="false" readingorder="lefttoright" sortnoaccent="true" viewisnarrow="top" responsesonly="false" userdefinable="false" extwindowwidth="false" hidedetailrows="false" hidecolumntitle="false" justifysecondrow="false" deferindexcreation="false" separatemultiplevalues="false">
+<columnheader align="left" title="#" readingorder="lefttoright">
+<font size="9pt" style="bold"/>
+</columnheader>
+<code event="value">
+<formula>@DocNumber</formula>
+</code>
+</column>
+<item name="$Name" seal="false" sign="true" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<text>emptyFolder</text>
+</item>
+</folder>

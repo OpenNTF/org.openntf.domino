@@ -1,3 +1,18 @@
+/*
+ * Copyright 2015
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.design.impl;
 
 import java.io.BufferedInputStream;
@@ -45,12 +60,18 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
+import org.openntf.domino.design.SyncObject;
 import org.openntf.domino.design.impl.OnDiskFile.State;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
 
 import com.ibm.commons.util.StringUtil;
 
+/**
+ * 
+ * @author Alexander Wagner, FOCONIS AG
+ * 
+ */
 public class OnDiskProject {
 
 	public enum SyncDirection {
@@ -76,11 +97,14 @@ public class OnDiskProject {
 	Map<String, Long> lastModifiedMapDocs_ = null;
 	private File timeStampsDocs_;
 
+	private boolean gitFriendly = false;
+	private boolean exportMetadata = true;
+
 	public OnDiskProject(final File diskDir, final Database db, final SyncDirection direction) {
 		diskDir_ = diskDir;
 		this.db = db;
 		this.direction = direction;
-		//deserialize and update design files map
+		//deserialize and update map
 		prepareMap();
 	}
 
@@ -109,12 +133,12 @@ public class OnDiskProject {
 			timeStampsDesign_ = new File(diskDir_, ".timeStampsDesign_" + db.getReplicaID());
 
 			if (timeStampsDesign_.exists()) {
-				//deserialize map
-				InputStream file = new FileInputStream(timeStampsDesign_);
-				InputStream buffer = new BufferedInputStream(file);
-				ObjectInput input = new ObjectInputStream(buffer);
-				files_ = (Map<String, OnDiskFile>) input.readObject();
-				input.close();
+				//deserialize timeStamp of design file map
+				InputStream fis = new FileInputStream(timeStampsDesign_);
+				InputStream bisr = new BufferedInputStream(fis);
+				ObjectInput ois = new ObjectInputStream(bisr);
+				files_ = (Map<String, OnDiskFile>) ois.readObject();
+				ois.close();
 			} else {
 				files_ = new HashMap<String, OnDiskFile>();
 			}
@@ -127,6 +151,11 @@ public class OnDiskProject {
 		updateMapRecursive(diskDir_);
 	}
 
+	/**
+	 * Synchronizes all Documents in the view of viewName in the NSF with the {@link OnDiskProject}.
+	 * 
+	 * @param viewName
+	 */
 	public void syncDocs(final String viewName) {
 		try {
 			setUpDocSync();
@@ -148,6 +177,9 @@ public class OnDiskProject {
 		}
 	}
 
+	/**
+	 * Synchronizes all DesignElements of the NSF with the {@link OnDiskProject}.
+	 */
 	public void syncDesign() {
 		DatabaseDesign design = db.getDesign();
 		DesignCollection<DesignBase> elems = design.getDesignElements(" !@Contains($Flags;{X}) & !@Begins($TITLE;{WEB-INF/classes}) ");
@@ -155,11 +187,11 @@ public class OnDiskProject {
 		System.out.println("Start Design Sync");
 
 		for (DesignBase elem : elems) {
-			sync(elem, null);
+			sync(elem);
 		}
 
 		for (OnDiskFile odf : getUnprocessedFiles()) {
-			sync(null, odf);
+			sync(odf);
 		}
 
 		saveMap();
@@ -208,15 +240,14 @@ public class OnDiskProject {
 
 		DxlExporter dxlExporter = db.getAncestorSession().createDxlExporter();
 
-		//Exporter konfigurieren
+		//configure DxlExporter
 		dxlExporter.setForceNoteFormat(false);
 		dxlExporter.setExitOnFirstFatalError(false);
 		dxlExporter.setDoctypeSYSTEM("");
 		dxlExporter.setRichTextOption(DxlExporter.RichTextOption.DXL);
 		dxlExporter.setMIMEOption(DxlExporter.MIMEOption.RAW);
 
-		//Dokumente durchgehen, neue Files erstellen, Dokumente löschen oder vorhandene Files updaten falls erforderlich
-
+		//iterate over Documents in view
 		for (ViewEntry entry : view.getAllEntries()) {
 			if (entry.isDocument()) {
 				Document doc = entry.getDocument();
@@ -255,8 +286,8 @@ public class OnDiskProject {
 
 		Stream stream = db.getAncestorSession().createStream();
 
+		//Case "Force-Export", "Sync-Export" -> export Document from NSF to file in ODP
 		if (this.direction == SyncDirection.EXPORT || (this.direction != SyncDirection.IMPORT && lastModifiedDoc > lastModifiedSync)) {
-			// immer exportieren
 			stream.open(file.getAbsolutePath(), "UTF-8");
 			stream.truncate();
 			stream.writeText(transformXslt(dxlExporter.exportDxl(doc)));
@@ -268,9 +299,9 @@ public class OnDiskProject {
 
 			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedDoc);
 
+			//Case "File was deleted in ODP" -> delete Document in NSF
 		} else {
 			if (!file.exists()) {
-				//lösche Dokument
 				System.out.println("delete document " + doc.getUniversalID());
 				lastModifiedMapDocs_.remove(file.getAbsoluteFile());
 				doc.removePermanently(true);
@@ -309,22 +340,18 @@ public class OnDiskProject {
 
 		DxlImporter dxlImporter = db.getAncestorSession().createDxlImporter();
 
-		//Importer konfigurieren
+		//configure DxlImporter
 		dxlImporter.setDocumentImportOption(DxlImporter.DocumentImportOption.REPLACE_ELSE_IGNORE);
 		dxlImporter.setExitOnFirstFatalError(false);
 		dxlImporter.setCompileLotusScript(false);
 		dxlImporter.setReplicaRequiredForReplaceOrUpdate(false);
 
-		//Files durchgehen, neue Dokumente erstellen, Files löschen oder vorhandene Dokumente updaten falls erforderlich
+		//iterate over Files in ODP
 		for (File subDir : docDir_.listFiles()) {
-
 			if (subDir.isDirectory()) {
-
 				for (File file : subDir.listFiles()) {
-
 					importOneDoc(file, dxlImporter, exportedFiles);
 				}
-
 			}
 		}
 		System.out.println("End Doc Import");
@@ -346,6 +373,7 @@ public class OnDiskProject {
 
 		Stream stream = db.getAncestorSession().createStream();
 
+		//Case "Force-Import", "Sync-Import" -> import Document in NSF from ODP-File
 		if (this.direction == SyncDirection.IMPORT || (this.direction != SyncDirection.EXPORT && lastModifiedFile > lastModifiedSync)) {
 			stream.open(file.getAbsolutePath(), "UTF-8");
 
@@ -367,7 +395,6 @@ public class OnDiskProject {
 				doc.save();
 			}
 
-			//immer importieren
 			stream.open(file.getAbsolutePath(), "UTF-8");
 			stream.setPosition(0);
 			dxlImporter.importDxl(stream, db);
@@ -377,11 +404,11 @@ public class OnDiskProject {
 
 			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedFile);
 
+			//Case "Document was deleted in NSF" -> delete file in ODP
 		} else {
 
 			if (!exportedFiles.contains(file.getAbsolutePath())) {
-				//lösche File
-				System.out.println("delete file " + file.getName());
+				System.out.println("Deleting file " + file.getAbsolutePath());
 				lastModifiedMapDocs_.remove(file.getAbsolutePath());
 				file.delete();
 			}
@@ -393,9 +420,11 @@ public class OnDiskProject {
 		AbstractDesignBase elem = (AbstractDesignBase) elem_;
 		String name = elem.getName();
 		String unid = elem.getUniversalID();
-		if (elem instanceof HasMetadata) {
+		if (exportMetadata && elem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + ".metadata");
-			((HasMetadata) elem).readOnDiskMeta(metaFile);
+			if (metaFile.exists()) {
+				((HasMetadata) elem).readOnDiskMeta(metaFile);
+			}
 		}
 		if (elem instanceof HasConfig) {
 			File configFile = new File(file.getAbsolutePath() + "-config");
@@ -403,7 +432,9 @@ public class OnDiskProject {
 		}
 		elem.readOnDiskFile(file);
 		elem.setName(name);
-		elem.setUniversalId(unid);
+		if (StringUtil.isNotEmpty(unid)) {
+			elem.setUniversalId(unid);
+		}
 		elem.save();
 	}
 
@@ -417,7 +448,7 @@ public class OnDiskProject {
 
 		file.getParentFile().mkdirs(); // ensure the path exists
 		elem.writeOnDiskFile(file);
-		if (elem instanceof HasMetadata) {
+		if (exportMetadata && elem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + ".metadata");
 			((HasMetadata) elem).writeOnDiskMeta(metaFile);
 		}
@@ -429,25 +460,28 @@ public class OnDiskProject {
 	}
 
 	protected void updateMapRecursive(final File root) {
-		for (File file : root.listFiles()) {
-			if (file.isDirectory()) {
-				if (!isDocDir(file)) {
-					updateMapRecursive(file);
-				}
-			} else if (!isTimeStampsFile(file) && !isMetadataFile(file) && !isConfigFile(file)) {
-				OnDiskFile odf = new OnDiskFile(diskDir_, file);
-				if (!files_.containsKey(odf.getFullName().toLowerCase())) {
-					if (direction != SyncDirection.EXPORT) {
-						odf.setState(State.WAS_CREATED);
-						files_.put(odf.getFullName().toLowerCase(), odf);
+
+		if (root.listFiles() != null) {
+			for (File file : root.listFiles()) {
+				if (file.isDirectory()) {
+					if (!isDocDir(file)) {
+						updateMapRecursive(file);
 					}
-				} else {
-					if (direction == SyncDirection.SYNC) {
-						files_.get(odf.getFullName().toLowerCase()).setState(State.SYNC);
-					} else if (direction == SyncDirection.EXPORT) {
-						files_.get(odf.getFullName().toLowerCase()).setState(State.EXPORT);
-					} else if (direction == SyncDirection.IMPORT) {
-						files_.get(odf.getFullName().toLowerCase()).setState(State.IMPORT);
+				} else if (!isTimeStampsFile(file) && !isMetadataFile(file) && !isConfigFile(file)) {
+					OnDiskFile odf = new OnDiskFile(diskDir_, file);
+					if (!files_.containsKey(odf.getFullName().toLowerCase())) {
+						if (direction != SyncDirection.EXPORT) {
+							odf.setState(State.WAS_CREATED);
+							files_.put(odf.getFullName().toLowerCase(), odf);
+						}
+					} else {
+						if (direction == SyncDirection.SYNC) {
+							files_.get(odf.getFullName().toLowerCase()).setState(State.SYNC);
+						} else if (direction == SyncDirection.EXPORT) {
+							files_.get(odf.getFullName().toLowerCase()).setState(State.EXPORT);
+						} else if (direction == SyncDirection.IMPORT) {
+							files_.get(odf.getFullName().toLowerCase()).setState(State.IMPORT);
+						}
 					}
 				}
 			}
@@ -470,23 +504,25 @@ public class OnDiskProject {
 		return file.getName().equals(DOC_DIR);
 	}
 
-	public void sync(final org.openntf.domino.design.DesignBase designElem_, final OnDiskFile odf_) {
+	/**
+	 * Synchronizes a SyncObject which is a DesignBase or a OnDiskFile.
+	 * 
+	 * @param syncObject
+	 */
+	public void sync(final SyncObject syncObject) {
 		OnDiskFile odf;
 		AbstractDesignBase elem;
 
-		if (odf_ == null) {
-			elem = (AbstractDesignBase) designElem_;
+		if (syncObject instanceof AbstractDesignBase) {
+			elem = (AbstractDesignBase) syncObject;
 			odf = find(elem);
-		} else if (designElem_ == null) {
-			odf = odf_;
+		} else if (syncObject instanceof OnDiskFile) {
+			odf = (OnDiskFile) syncObject;
 			try {
 				System.out.println("Creating " + odf.getFullName());
 				Constructor<?> ctor = odf.getImplementingClass().getDeclaredConstructor(Database.class);
 				elem = (AbstractDesignBase) ctor.newInstance(db);
 				elem.setOnDiskName(odf.getName());
-				if (odf.getState() != State.WAS_CREATED && odf.getState() != State.IMPORT) {
-					odf.setState(State.DELETE);
-				}
 			} catch (IllegalAccessException e) {
 				DominoUtils.handleException(e);
 				return;
@@ -507,37 +543,61 @@ public class OnDiskProject {
 				return;
 			}
 		} else {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Cannot sync Object of class " + syncObject.getClass().getName());
 		}
 
+		//OnDiskFile not found in TimeStamp Map
 		if (odf == null) {
-			//not found -> new if direction != import
 			File file = new File(diskDir_, elem.getOnDiskPath());
 			odf = new OnDiskFile(diskDir_, file);
+
+			//set state "CREATE", if direction is not Force-Import
 			if (this.direction != SyncDirection.IMPORT) {
 				odf.setState(State.CREATE);
 				files_.put(odf.getFullName().toLowerCase(), odf);
+			} else {
+				odf.setState(State.WAS_DELETED);
+			}
+		} else {
+			//OnDiskFile is an element of getUnprocessedFiles(), if state == null
+			if (odf.getState() == null) {
+				//set State "WAS_DELETED", if direction is not Force-Export
+				if (this.direction != SyncDirection.EXPORT) {
+					odf.setState(State.WAS_DELETED);
+				} else {
+					odf.setState(State.EXPORT);
+				}
 			}
 		}
 
 		File file = odf.getFile();
 		file.getParentFile().mkdirs(); // ensure the path exists
 
-		//Document doc = db.getDocumentByUNID(elem.getUniversalID());
-
 		long lastModifiedDoc = elem.getLastModified() == null ? 0 : elem.getLastModified().getTime();
 		long lastModifiedFile = file.lastModified();
-		long lastModifiedSync = 0;
+		long lastModifiedSync = odf.getTimeStamp();
 
-		lastModifiedSync = odf.getTimeStamp();
-
+		//Case "DesignElement was deleted in NSF" -> "File has to be deleted in ODP"
 		if (odf.getState() == State.DELETE) {
 			System.out.println("Deleting file " + file.getAbsolutePath());
-			//files_.remove(odf);
+			files_.remove(odf.getFullName().toLowerCase());
+			if (elem instanceof HasMetadata) {
+				File metaFile = new File(file.getAbsoluteFile() + ".metadata");
+				metaFile.delete();
+			}
+			if (elem instanceof HasConfig) {
+				File configFile = new File(file.getAbsoluteFile() + "-config");
+				configFile.delete();
+			}
 			file.delete();
+
+			//Case "File was deleted in ODP" -> "DesignElement has to be deleted in NSF"
 		} else if (odf.getState() == State.WAS_DELETED) {
 			System.out.println("Deleting design element " + odf.getFullName());
+			files_.remove(odf.getFullName().toLowerCase());
 			db.getDocumentByUNID(elem.getUniversalID()).removePermanently(true);
+
+			//Case "DesignElement was created in NSF", "Force-Export", "Sync-Export" -> "File has to be created/updated in ODP"
 		} else if (odf.getState() == State.CREATE || odf.getState() == State.EXPORT || odf.getState() == State.SYNC
 				&& lastModifiedDoc > lastModifiedSync) {
 
@@ -551,6 +611,7 @@ public class OnDiskProject {
 			}
 			odf.setTimeStamp(lastModifiedDoc);
 
+			//Case "File was created in ODP", "Force-Import", "Sync-Import" -> "DesignElement has to be created/updated in NSF"
 		} else if (odf.getState() == State.WAS_CREATED || odf.getState() == State.IMPORT || odf.getState() == State.SYNC
 				&& lastModifiedFile > lastModifiedSync) {
 			System.out.println("Importing " + file.getAbsolutePath());
@@ -562,32 +623,52 @@ public class OnDiskProject {
 			odf.setTimeStamp(elem.getLastModified().getTime());
 		}
 
+		odf.setProcessed(true);
+
 	}
 
+	/**
+	 * Searches the corresponding OnDiskFile to the DesignElement.
+	 * 
+	 * @param elem
+	 *            the DesignElement
+	 * @return the corresponding OnDiskFile
+	 */
 	protected OnDiskFile find(final AbstractDesignBase elem) {
 		return files_.get((elem.getClass().getName() + ":" + elem.getOnDiskName()).toLowerCase());
 	}
 
+	/**
+	 * Serializes the map of the design file time stamps.
+	 */
 	public void saveMap() {
 		try {
-			//serialize design files map
-			OutputStream file = new FileOutputStream(timeStampsDesign_);
-			OutputStream buffer = new BufferedOutputStream(file);
-			ObjectOutput output = new ObjectOutputStream(buffer);
-			output.writeObject(files_);
-			output.close();
+			//serialize TimeStamp Map of design files
+			OutputStream fos = new FileOutputStream(timeStampsDesign_);
+			OutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutput oos = new ObjectOutputStream(bos);
+			oos.writeObject(files_);
+			oos.close();
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
+	/**
+	 * Returns all OnDiskFiles that don't have a corresponding DesignElement in the NSF (anymore/not yet).
+	 * 
+	 * @return a list of unprocessed OnDiskFiles.
+	 */
 	public List<OnDiskFile> getUnprocessedFiles() {
-		List<OnDiskFile> unprocessed = new ArrayList<OnDiskFile>();
+		List<OnDiskFile> resList = new ArrayList<OnDiskFile>();
 		for (OnDiskFile file : files_.values()) {
-			if (file.getState() == State.WAS_DELETED || file.getState() == State.WAS_CREATED) {
-				unprocessed.add(file);
+			if (!file.isProcessed()) {
+				resList.add(file);
+				if (file.getState() != State.WAS_CREATED && file.getState() != State.IMPORT) {
+					file.setState(State.DELETE);
+				}
 			}
 		}
-		return unprocessed;
+		return resList;
 	}
 }

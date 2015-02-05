@@ -31,7 +31,7 @@ import org.openntf.domino.Database;
  * @author jgallagher
  * 
  */
-public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, Serializable {
+public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, SyncObject, Serializable {
 
 	enum ItemFlag {
 		_SIGN, _SUMMARY

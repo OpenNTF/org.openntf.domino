@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sharedfield xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" designerversion="8.5.3" maintenanceversion="1.2">
+<field kind="editable" sign="false" type="text" protected="false" allowtabout="false" defaultfocus="false" storelocally="false" showdelimiters="true" allowmultivalues="false" useappletinbrowser="false" dataconnectionfield="data" computeaftervalidation="false"/>
+</sharedfield>
