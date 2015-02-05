@@ -74,9 +74,9 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		XMLNode documentNode = getDxl().selectSingleNode("//note");
 		XMLNode fileDataNode = documentNode.addChildElement("item");
 		fileDataNode.setAttribute("name", "$ScriptLib");
-		fileDataNode = fileDataNode.addChildElement("text");
 		fileDataNode.setAttribute("sign", "true");
 		fileDataNode.setAttribute("summary", "false");
+		fileDataNode = fileDataNode.addChildElement("text");
 		fileDataNode.setText(text);
 	}
 
@@ -95,12 +95,12 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 			try {
 				while (scanner.hasNextLine()) {
 					if (fileContents == null) {
-						fileContents = new StringBuilder(65000);
+						fileContents = new StringBuilder(32000);
 					}
 					fileContents.append(scanner.nextLine());
 					fileContents.append('\n');
 
-					if (fileContents.length() > 60000) {
+					if (fileContents.length() > 30000) {
 						createScriptLibItem(fileContents.toString());
 						fileContents = null;
 					}
