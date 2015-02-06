@@ -66,7 +66,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
+	public boolean writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
 		String content;
 		if (enforceRawFormat()) {
@@ -79,14 +79,15 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 				content = "";
 			}
 		}
-		PrintWriter pw = new PrintWriter(odpFile);
+		PrintWriter pw = new PrintWriter(odpFile, "UTF-8");
 		pw.write(content);
 		pw.close();
 		updateLastModified(odpFile);
+		return true;
 	}
 
 	@Override
-	public final void readOnDiskFile(final File file) {
+	public boolean readOnDiskFile(final File file) {
 		if (getDxlFormat(true) != DxlFormat.DXL) {
 			throw new UnsupportedOperationException("cannot import raw CSJS-Library");
 		}
@@ -124,6 +125,6 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 		}
-
+		return true;
 	}
 }

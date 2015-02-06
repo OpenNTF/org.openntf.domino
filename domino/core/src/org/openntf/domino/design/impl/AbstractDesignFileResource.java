@@ -229,15 +229,16 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 
 	@Override
-	public void writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
+	public boolean writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
 		FileOutputStream fo = new FileOutputStream(file);
 		fo.write(getFileData());
 		fo.close();
 		updateLastModified(file);
+		return true;
 	}
 
 	@Override
-	public void readOnDiskFile(final File file) {
+	public boolean readOnDiskFile(final File file) {
 		try {
 			FileInputStream fis = new FileInputStream(file);
 			byte[] data = new byte[(int) file.length()];
@@ -247,6 +248,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 		}
+		return true;
 	}
 
 	// TODO: map this to DXL

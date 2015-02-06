@@ -102,4 +102,12 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 		return classSource;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".javalib");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

@@ -114,7 +114,9 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//
 	//	public String getOnDiskPath();
 
-	public void writeOnDiskFile(File odsFile, boolean useTransformer) throws IOException;
+	public boolean readOnDiskFile(File file) throws IOException;
+
+	public boolean writeOnDiskFile(File file, boolean useTransformer) throws IOException;
 
 	public Collection<String> getItemNames();
 }

@@ -109,4 +109,12 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 		getFields().swap(a, b);
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".form");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

@@ -20,34 +20,25 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml, FOCONIS AG
+ * 
+ * @author Alexander Wagner, FOCONIS AG
  * 
  */
-public class SharedColumn extends AbstractDesignBaseNamed implements org.openntf.domino.design.SharedColumn {
+public class XPageFile extends AbstractXspResource implements org.openntf.domino.design.XPageFile, HasMetadata {
+
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param document
-	 */
-	protected SharedColumn(final Document document) {
+	protected XPageFile(final Document document) {
 		super(document);
 	}
 
-	protected SharedColumn(final Database database) {
+	protected XPageFile(final Database database) {
 		super(database);
 	}
 
 	@Override
 	protected boolean enforceRawFormat() {
-		return false;
+		return true;
 	}
 
-	@Override
-	public void setName(String title) {
-		int ind = title.lastIndexOf(".column");
-		if (ind >= 0) {
-			title = title.substring(0, ind);
-		}
-		super.setName(title);
-	}
 }

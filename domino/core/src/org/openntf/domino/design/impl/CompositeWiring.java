@@ -42,7 +42,14 @@ public final class CompositeWiring extends AbstractDesignFileResource implements
 	protected boolean enforceRawFormat() {
 		// CompositeWiring is exported in RAW-format. There is no DXL representation
 		return true;
-
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".wsdl");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

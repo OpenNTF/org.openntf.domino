@@ -84,4 +84,12 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		getFields().swap(a, b);
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".subform");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

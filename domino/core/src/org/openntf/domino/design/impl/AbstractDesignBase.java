@@ -515,17 +515,20 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	@Override
-	public void writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
+	public boolean writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
 		if (useTransformer) {
-			getDxl().getXml(getOdpTransformer(), file);
+			getDxl().write(getOdpTransformer(), file);
 		} else {
-			getDxl().getXml(null, file);
+			getDxl().write(null, file);
 		}
 		updateLastModified(file);
+		return true;
 	}
 
-	public void readOnDiskFile(final File file) throws IOException {
+	@Override
+	public boolean readOnDiskFile(final File file) throws IOException {
 		loadDxl(file);
+		return true;
 	}
 
 	/**
@@ -551,7 +554,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * 
 	 */
 	public final void writeOnDiskMeta(final File metaFile) throws IOException {
-		getDxl().getXml(getOdpMetaTransformer(), metaFile);
+		getDxl().write(getOdpMetaTransformer(), metaFile);
 		updateLastModified(metaFile);
 	}
 
@@ -754,9 +757,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 		importer.setExitOnFirstFatalError(false);
 		importer.setReplicaRequiredForReplaceOrUpdate(false);
 
-		Database database = getAncestorDatabase();
+		Database db = getAncestorDatabase();
 		try {
-			importer.importDxl(getDxl().getXml(OnDiskProject.createImportTransformer()), database);
+			importer.importDxl(getDxl().getXml(OnDiskProject.createImportTransformer()), db);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			if (importer != null) {
@@ -773,7 +776,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 			DominoUtils.handleException(e);
 		}
 		// Reset the DXL so that it can pick up new noteinfo
-		setDocument(database.getDocumentByID(importer.getFirstImportedNoteID()));
+		setDocument(db.getDocumentByID(importer.getFirstImportedNoteID()));
 		return true;
 	}
 

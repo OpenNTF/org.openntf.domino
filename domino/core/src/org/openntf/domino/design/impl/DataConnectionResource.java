@@ -42,4 +42,12 @@ public final class DataConnectionResource extends AbstractDesignBaseNamed implem
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".dcr");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

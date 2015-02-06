@@ -44,9 +44,4 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 		return true;
 	}
 
-	@Override
-	public void setFileData(final byte[] data) {
-		// TODO Auto-generated method stub
-		super.setFileData(data);
-	}
 }

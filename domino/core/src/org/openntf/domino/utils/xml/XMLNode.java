@@ -287,7 +287,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void getXml(Transformer transformer, final File out) throws IOException {
+	public void write(Transformer transformer, final File out) throws IOException {
 		try {
 			if (transformer == null)
 				transformer = DEFAULT_TRANSFORMER;

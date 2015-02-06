@@ -40,7 +40,7 @@ public final class DbImage extends AbstractDesignBase implements org.openntf.dom
 
 	@Override
 	protected boolean enforceRawFormat() {
-		return true;
+		return false;
 	}
 
 }

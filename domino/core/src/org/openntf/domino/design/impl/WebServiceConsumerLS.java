@@ -43,4 +43,12 @@ public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org
 		return true;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".lswsc");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

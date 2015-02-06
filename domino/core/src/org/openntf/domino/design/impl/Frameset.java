@@ -42,4 +42,12 @@ public class Frameset extends AbstractDesignBaseNamed implements org.openntf.dom
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".frameset");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

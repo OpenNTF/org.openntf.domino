@@ -63,4 +63,13 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 			formula.setTextContent(selectionFormula);
 		}
 	}
+
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".view");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

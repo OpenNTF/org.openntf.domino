@@ -20,7 +20,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +62,7 @@ import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
 import org.openntf.domino.design.SyncObject;
 import org.openntf.domino.design.impl.OnDiskFile.State;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
 
@@ -81,8 +81,8 @@ public class OnDiskProject {
 
 	static TransformerFactory tFactory = TransformerFactory.newInstance();
 
-	public final static Transformer ImportTransformer = createImportTransformer();
-	public final static Transformer ExportTransformer = createExportTransformer();
+	public static Transformer ImportTransformer = createImportTransformer();
+	public static Transformer ExportTransformer = createExportTransformer();
 
 	private static final String DOC_DIR = "Documents";
 	public final static String NOTEINFO_UNID = "noteinfo unid=\"";
@@ -110,23 +110,25 @@ public class OnDiskProject {
 	}
 
 	public static Transformer createImportTransformer() {
-		Transformer tr = null;
-		try {
-			tr = tFactory.newTransformer(new StreamSource(OnDiskProject.class.getResourceAsStream("importFilter.xslt")));
-		} catch (TransformerConfigurationException e) {
-			DominoUtils.handleException(e);
+		if (ImportTransformer == null) {
+			try {
+				ImportTransformer = tFactory.newTransformer(new StreamSource(OnDiskProject.class.getResourceAsStream("importFilter.xslt")));
+			} catch (TransformerConfigurationException e) {
+				DominoUtils.handleException(e);
+			}
 		}
-		return tr;
+		return ImportTransformer;
 	}
 
 	public static Transformer createExportTransformer() {
-		Transformer tr = null;
-		try {
-			tr = tFactory.newTransformer(new StreamSource(OnDiskProject.class.getResourceAsStream("exportFilter.xslt")));
-		} catch (TransformerConfigurationException e) {
-			DominoUtils.handleException(e);
+		if (ExportTransformer == null) {
+			try {
+				ExportTransformer = tFactory.newTransformer(new StreamSource(OnDiskProject.class.getResourceAsStream("exportFilter.xslt")));
+			} catch (TransformerConfigurationException e) {
+				DominoUtils.handleException(e);
+			}
 		}
-		return tr;
+		return ExportTransformer;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -419,7 +421,7 @@ public class OnDiskProject {
 
 	}
 
-	public void doImport(final org.openntf.domino.design.DesignBase elem_, final File file) throws IOException {
+	public boolean doImport(final org.openntf.domino.design.DesignBase elem_, final File file) throws IOException {
 		AbstractDesignBase elem = (AbstractDesignBase) elem_;
 		String name = elem.getName();
 		String unid = elem.getUniversalID();
@@ -433,15 +435,17 @@ public class OnDiskProject {
 			File configFile = new File(file.getAbsolutePath() + "-config");
 			((HasConfig) elem).readOnDiskConfig(configFile);
 		}
-		elem.readOnDiskFile(file);
+		if (!elem.readOnDiskFile(file)) {
+			return false;
+		}
 		elem.setName(name);
 		if (StringUtil.isNotEmpty(unid)) {
 			elem.setUniversalId(unid);
 		}
-		elem.save();
+		return elem.save();
 	}
 
-	public void doExport(final org.openntf.domino.design.DesignBase elem_) throws IOException {
+	public boolean doExport(final org.openntf.domino.design.DesignBase elem_) throws IOException {
 		AbstractDesignBase elem = (AbstractDesignBase) elem_;
 		String odp = elem.getOnDiskPath();
 		if (StringUtil.isEmpty(odp)) {
@@ -450,7 +454,6 @@ public class OnDiskProject {
 		File file = new File(diskDir_, odp);
 
 		file.getParentFile().mkdirs(); // ensure the path exists
-		elem.writeOnDiskFile(file, gitFriendly);
 		if (exportMetadata && elem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + ".metadata");
 			((HasMetadata) elem).writeOnDiskMeta(metaFile);
@@ -459,7 +462,7 @@ public class OnDiskProject {
 			File configFile = new File(file.getAbsolutePath() + "-config");
 			((HasConfig) elem).writeOnDiskConfig(configFile);
 		}
-
+		return elem.writeOnDiskFile(file, gitFriendly);
 	}
 
 	protected void updateMapRecursive(final File root) {
@@ -601,29 +604,39 @@ public class OnDiskProject {
 			db.getDocumentByUNID(elem.getUniversalID()).removePermanently(true);
 
 			//Case "DesignElement was created in NSF", "Force-Export", "Sync-Export" -> "File has to be created/updated in ODP"
-		} else if (odf.getState() == State.CREATE || odf.getState() == State.EXPORT || odf.getState() == State.SYNC
-				&& lastModifiedDoc > lastModifiedSync) {
+		} else if (odf.getState() == State.CREATE
+				|| ((odf.getState() == State.EXPORT || odf.getState() == State.SYNC) && lastModifiedDoc > lastModifiedSync)) {
 
 			System.out.println("Exporting " + file.getAbsolutePath());
 			try {
-				doExport(elem);
-			} catch (FileNotFoundException fnfe) {
-				System.err.println("Catched " + fnfe.getMessage());
+				if (doExport(elem)) {
+					odf.setTimeStamp(lastModifiedDoc);
+				}
 			} catch (IOException e) {
 				DominoUtils.handleException(e);
+			} catch (OpenNTFNotesException e) {
+				System.err.println("Could not export " + odf.getFullName());
+				e.printStackTrace();
 			}
-			odf.setTimeStamp(lastModifiedDoc);
 
 			//Case "File was created in ODP", "Force-Import", "Sync-Import" -> "DesignElement has to be created/updated in NSF"
-		} else if (odf.getState() == State.WAS_CREATED || odf.getState() == State.IMPORT || odf.getState() == State.SYNC
-				&& lastModifiedFile > lastModifiedSync) {
+		} else if (odf.getState() == State.WAS_CREATED
+				|| ((odf.getState() == State.IMPORT || odf.getState() == State.SYNC) && lastModifiedFile > lastModifiedSync)) {
 			System.out.println("Importing " + file.getAbsolutePath());
 			try {
-				doImport(elem, file);
+				if (doImport(elem, file)) {
+					odf.setTimeStamp(elem.getLastModified().getTime());
+				}
 			} catch (IOException e) {
 				DominoUtils.handleException(e);
+			} catch (OpenNTFNotesException e) {
+				System.err.println("Could not import " + odf.getFullName());
+				e.printStackTrace();
 			}
-			odf.setTimeStamp(elem.getLastModified().getTime());
+
+			//Case "is in sync"
+		} else {
+			System.out.println(file.getAbsolutePath() + " is in sync");
 		}
 
 		odf.setProcessed(true);

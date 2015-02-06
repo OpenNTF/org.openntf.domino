@@ -42,4 +42,12 @@ public class DesignOutline extends AbstractDesignBaseNamed implements org.opennt
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".outline");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

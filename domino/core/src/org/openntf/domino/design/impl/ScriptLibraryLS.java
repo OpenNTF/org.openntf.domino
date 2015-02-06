@@ -60,14 +60,15 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
+	public boolean writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
-		PrintWriter pw = new PrintWriter(odpFile);
+		PrintWriter pw = new PrintWriter(odpFile, "UTF-8");
 		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
 			pw.write(rawitemdata.getText());
 		}
 		pw.close();
 		updateLastModified(odpFile);
+		return true;
 	}
 
 	protected void createScriptLibItem(final String text) {
@@ -81,7 +82,7 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public final void readOnDiskFile(final File file) {
+	public boolean readOnDiskFile(final File file) {
 
 		try {
 			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$ScriptLib']");
@@ -90,7 +91,7 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 			}
 
 			StringBuilder fileContents = null;
-			Scanner scanner = new Scanner(file);
+			Scanner scanner = new Scanner(file, "UTF-8");
 
 			try {
 				while (scanner.hasNextLine()) {
@@ -111,10 +112,18 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 			} finally {
 				scanner.close();
 			}
-
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 		}
+		return true;
+	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".lss");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
 	}
 }

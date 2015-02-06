@@ -52,4 +52,12 @@ public final class ScriptLibrarySSJS extends AbstractDesignFileResource implemen
 		return getFileDataRaw("$ServerJavaScriptLibrary");
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".jss");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

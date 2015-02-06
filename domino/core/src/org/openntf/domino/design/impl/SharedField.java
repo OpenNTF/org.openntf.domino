@@ -42,4 +42,12 @@ public class SharedField extends AbstractDesignBaseNamed implements org.openntf.
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".field");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

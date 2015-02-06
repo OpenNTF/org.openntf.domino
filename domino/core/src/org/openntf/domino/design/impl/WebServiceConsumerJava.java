@@ -43,4 +43,12 @@ public class WebServiceConsumerJava extends AbstractDesignBaseNamed implements o
 		return true;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".javalib");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

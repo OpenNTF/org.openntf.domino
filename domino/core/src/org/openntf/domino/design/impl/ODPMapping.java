@@ -51,7 +51,8 @@ public enum ODPMapping {
 	COMPOSITE_COMPONENT("CompositeApplications/Components", null, CompositeComponent.class), //
 	COMPOSITE_WIRING("CompositeApplications/WiringProperties", ".wsdl", CompositeWiring.class), //
 
-	CUSTOM_CONTROL("CustomControls", null, CustomControl.class), //
+	CUSTOM_CONTROL("CustomControls", ".xsp", CustomControl.class), //
+	CUSTOM_CONTROL_FILE("CustomControls", null, CustomControlFile.class), //
 
 	DATA_CONNECTION_RESOURCE("Data/DataConnections", ".dcr", DataConnectionResource.class), //
 	DB2_VIEW("Data/DB2AccessViews", ".db2v", DB2View.class), //
@@ -84,7 +85,9 @@ public enum ODPMapping {
 	DESIGN_VIEW("Views", ".view", DesignView.class), //
 
 	FILE_RESOURCE_WEB_CONTENT("WebContent", null, FileResourceWebContent.class), //
-	XPAGE("XPages", null, XPage.class), //
+
+	XPAGE("XPages", ".xsp", XPage.class), //
+	XPAGE_FILE("XPages", null, XPageFile.class), //
 
 	// other design elements
 	AGENT_DATA("Other/AgentData", ".agentdata", AgentData.class), //

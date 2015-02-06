@@ -42,4 +42,12 @@ public class DesignPage extends AbstractDesignBaseNamed implements org.openntf.d
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".page");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }
