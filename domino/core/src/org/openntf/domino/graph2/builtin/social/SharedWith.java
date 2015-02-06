@@ -5,13 +5,12 @@ import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
-public interface CommentsAbout extends DEdgeFrame {
-	public static final String LABEL = "commentsAbout";
-
-	@OutVertex
-	public Comment getComment();
+public interface SharedWith extends DEdgeFrame {
+	public static final String LABEL = "sharedWith";
 
 	@InVertex
-	public Commentable getCommentable();
+	public Sharer getSharer();
 
+	@OutVertex
+	public Share getShare();
 }

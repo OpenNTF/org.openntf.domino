@@ -6,7 +6,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 
 public interface CommentsOn extends DEdgeFrame {
-	public static final String LABEL_COMMENTSON = "commentsOn";
+	public static final String LABEL = "commentsOn";
 
 	@OutVertex
 	public Commenter getCommenter();

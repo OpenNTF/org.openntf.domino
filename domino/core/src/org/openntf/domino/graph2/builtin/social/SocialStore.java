@@ -9,8 +9,16 @@ public class SocialStore extends DElementStore {
 		this.addType(Comment.class);
 		this.addType(CommentsOn.class);
 		this.addType(CommentsAbout.class);
+		this.addType(Commentable.class);
 		this.addType(Likes.class);
+		this.addType(Likeable.class);
 		this.addType(Rates.class);
+		this.addType(Rateable.class);
+		this.addType(Share.class);
+		this.addType(ShareAbout.class);
+		this.addType(SharedBy.class);
+		this.addType(SharedWith.class);
+		this.addType(Shareable.class);
 	}
 
 	public void setSocializerDelegateStore(final DElementStore store) {

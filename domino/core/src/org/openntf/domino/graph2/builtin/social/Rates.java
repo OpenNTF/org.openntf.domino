@@ -7,7 +7,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Rates")
 public interface Rates extends DEdgeFrame {
-	public static final String LABEL_RATES = "rates";
+	public static final String LABEL = "rates";
 
 	@TypedProperty("Rating")
 	public int getRating();

@@ -6,24 +6,24 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
 
-public interface Commentable extends DVertexFrame {
-	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public Iterable<CommentsAbout> getCommentsAbout();
+public interface Shareable extends DVertexFrame {
+	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public Iterable<ShareAbout> getShareAbout();
 
-	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public CommentsAbout addCommentsAbout(Comment comment);
+	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public ShareAbout addShareAbout(Share share);
 
-	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public void removeCommentsAbout(Comment comment);
+	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public void removeShareAbout(Share share);
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public Iterable<Comment> getComments();
+	@AdjacencyUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public Iterable<Share> getShares();
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public Comment addComment(Comment comment);
+	@AdjacencyUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public Share addShare(Share share);
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public void removeComment(Comment comment);
+	@AdjacencyUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public void removeShare(Share share);
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public Iterable<Mentions> getMentions();
@@ -42,5 +42,4 @@ public interface Commentable extends DVertexFrame {
 
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public void removeMentioned(Socializer mentioned);
-
 }

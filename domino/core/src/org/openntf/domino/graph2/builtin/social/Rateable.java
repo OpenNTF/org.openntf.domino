@@ -18,22 +18,22 @@ public interface Rateable extends DVertexFrame {
 	@JavaHandler
 	public double getAverageRating();
 
-	@IncidenceUnique(label = Rates.LABEL_RATES, direction = Direction.IN)
+	@IncidenceUnique(label = Rates.LABEL, direction = Direction.IN)
 	public Iterable<Rates> getRates();
 
-	@IncidenceUnique(label = Rates.LABEL_RATES, direction = Direction.IN)
+	@IncidenceUnique(label = Rates.LABEL, direction = Direction.IN)
 	public Rates addRates(Rater rater);
 
-	@IncidenceUnique(label = Rates.LABEL_RATES, direction = Direction.IN)
+	@IncidenceUnique(label = Rates.LABEL, direction = Direction.IN)
 	public Rates findRates(Rater rater);
 
-	@IncidenceUnique(label = Rates.LABEL_RATES, direction = Direction.IN)
+	@IncidenceUnique(label = Rates.LABEL, direction = Direction.IN)
 	public void removeRates(Rater rater);
 
-	@AdjacencyUnique(label = Rates.LABEL_RATES, direction = Direction.IN)
+	@AdjacencyUnique(label = Rates.LABEL, direction = Direction.IN)
 	public Iterable<Rater> getRatesRater();
 
-	@AdjacencyUnique(label = Rates.LABEL_RATES, direction = Direction.IN)
+	@AdjacencyUnique(label = Rates.LABEL, direction = Direction.IN)
 	public Rater addRatesRater(Rater rater);
 
 	public abstract static class RateableImpl implements Rateable, JavaHandlerContext<Vertex> {
