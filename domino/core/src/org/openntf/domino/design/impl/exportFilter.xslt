@@ -41,7 +41,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
   </xsl:template>
   <!-- Designelements will start here -->
   <!-- We Don't want the NoteInfo element. We don't care who updated or signed the element  -->
-  <xsl:template match="n:noteinfo|n:updatedby|n:wassignedby|n:revisions"/>
+  <xsl:template match="noteinfo|updatedby|wassignedby|revisions"/>
   <!-- For binary DXL elements replicaid and version are stored on a <note> element -->
   <xsl:template match="//@replicaid"/>
   <xsl:template match="//@version"/>

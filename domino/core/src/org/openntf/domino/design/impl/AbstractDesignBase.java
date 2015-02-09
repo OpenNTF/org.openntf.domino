@@ -58,7 +58,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
-	private static Transformer ODP_META_TRANSFORMER = createTransformer("dxl_metafilter.xslt");
+	private static Transformer ODP_META_TRANSFORMER = createTransformer("metaFilter.xslt");
 
 	private static final char DESIGN_FLAG_PRESERVE = 'P';
 	private static final char DESIGN_FLAG_PROPAGATE_NOCHANGE = 'r';
@@ -351,7 +351,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return
 	 */
 	protected static Transformer createTransformer(final String resource) {
-		return XMLNode.createTransformer(AbstractDesignBase.class.getResourceAsStream(resource));
+		return OnDiskProject.createTransformer(OnDiskProject.class.getResourceAsStream(resource));
 	}
 
 	/**
@@ -502,7 +502,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the transformer
 	 */
 	protected Transformer getOdpTransformer() {
-		return null;
+		return OnDiskProject.ExportTransformer;
 	}
 
 	/**
@@ -517,9 +517,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public boolean writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
 		if (useTransformer) {
-			getDxl().write(getOdpTransformer(), file);
+			getDxl().writeXml(getOdpTransformer(), file);
 		} else {
-			getDxl().write(null, file);
+			getDxl().writeXml(null, file);
 		}
 		updateLastModified(file);
 		return true;
@@ -554,7 +554,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * 
 	 */
 	public final void writeOnDiskMeta(final File metaFile) throws IOException {
-		getDxl().write(getOdpMetaTransformer(), metaFile);
+		getDxl().writeXml(getOdpMetaTransformer(), metaFile);
 		updateLastModified(metaFile);
 	}
 
@@ -593,7 +593,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public final String getDxlString(final Transformer filter) {
 		try {
-			return getDxl().getXml(filter);
+			return getDxl().readXml(filter);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -759,7 +759,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 		Database db = getAncestorDatabase();
 		try {
-			importer.importDxl(getDxl().getXml(OnDiskProject.createImportTransformer()), db);
+			importer.importDxl(getDxl().readXml(OnDiskProject.ImportTransformer), db);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			if (importer != null) {

@@ -84,6 +84,12 @@ public class OnDiskProject {
 	public static Transformer ImportTransformer = createImportTransformer();
 	public static Transformer ExportTransformer = createExportTransformer();
 
+	public static final String TIMESTAMPS_DESIGN_PREFIX = ".timeStampsDesign_";
+	public static final String TIMESTAMPS_DOCS_PREFIX = ".timeStampsDocs_";
+	public static final String METADATA_SUFFIX = ".metadata";
+	public static final String XSP_CONFIG_SUFFIX = ".xsp-config";
+	public static final String CONFIG_SUFFIX = "-config";
+
 	private static final String DOC_DIR = "Documents";
 	public final static String NOTEINFO_UNID = "noteinfo unid=\"";
 
@@ -109,24 +115,25 @@ public class OnDiskProject {
 		prepareMap();
 	}
 
+	public static Transformer createTransformer(final InputStream stream) {
+		try {
+			return tFactory.newTransformer(new StreamSource(stream));
+		} catch (TransformerConfigurationException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
 	public static Transformer createImportTransformer() {
 		if (ImportTransformer == null) {
-			try {
-				ImportTransformer = tFactory.newTransformer(new StreamSource(OnDiskProject.class.getResourceAsStream("importFilter.xslt")));
-			} catch (TransformerConfigurationException e) {
-				DominoUtils.handleException(e);
-			}
+			ImportTransformer = createTransformer(OnDiskProject.class.getResourceAsStream("importFilter.xslt"));
 		}
 		return ImportTransformer;
 	}
 
 	public static Transformer createExportTransformer() {
 		if (ExportTransformer == null) {
-			try {
-				ExportTransformer = tFactory.newTransformer(new StreamSource(OnDiskProject.class.getResourceAsStream("exportFilter.xslt")));
-			} catch (TransformerConfigurationException e) {
-				DominoUtils.handleException(e);
-			}
+			ExportTransformer = createTransformer(OnDiskProject.class.getResourceAsStream("exportFilter.xslt"));
 		}
 		return ExportTransformer;
 	}
@@ -134,7 +141,7 @@ public class OnDiskProject {
 	@SuppressWarnings("unchecked")
 	protected void prepareMap() {
 		try {
-			timeStampsDesign_ = new File(diskDir_, ".timeStampsDesign_" + db.getReplicaID());
+			timeStampsDesign_ = new File(diskDir_, TIMESTAMPS_DESIGN_PREFIX + db.getReplicaID());
 
 			if (timeStampsDesign_.exists()) {
 				//deserialize timeStamp of design file map
@@ -210,7 +217,7 @@ public class OnDiskProject {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void setUpDocSync() throws IOException, ClassNotFoundException {
-		this.timeStampsDocs_ = new File(diskDir_, ".timeStampsDocs_" + db.getReplicaID());
+		this.timeStampsDocs_ = new File(diskDir_, TIMESTAMPS_DOCS_PREFIX + db.getReplicaID());
 
 		lastModifiedMapDocs_ = new HashMap<String, Long>();
 		if (timeStampsDocs_.exists()) {
@@ -426,13 +433,13 @@ public class OnDiskProject {
 		String name = elem.getName();
 		String unid = elem.getUniversalID();
 		if (exportMetadata && elem instanceof HasMetadata) {
-			File metaFile = new File(file.getAbsolutePath() + ".metadata");
+			File metaFile = new File(file.getAbsolutePath() + METADATA_SUFFIX);
 			if (metaFile.exists()) {
 				((HasMetadata) elem).readOnDiskMeta(metaFile);
 			}
 		}
 		if (elem instanceof HasConfig) {
-			File configFile = new File(file.getAbsolutePath() + "-config");
+			File configFile = new File(file.getAbsolutePath() + CONFIG_SUFFIX);
 			((HasConfig) elem).readOnDiskConfig(configFile);
 		}
 		if (!elem.readOnDiskFile(file)) {
@@ -455,11 +462,11 @@ public class OnDiskProject {
 
 		file.getParentFile().mkdirs(); // ensure the path exists
 		if (exportMetadata && elem instanceof HasMetadata) {
-			File metaFile = new File(file.getAbsolutePath() + ".metadata");
+			File metaFile = new File(file.getAbsolutePath() + METADATA_SUFFIX);
 			((HasMetadata) elem).writeOnDiskMeta(metaFile);
 		}
 		if (elem instanceof HasConfig) {
-			File configFile = new File(file.getAbsolutePath() + "-config");
+			File configFile = new File(file.getAbsolutePath() + CONFIG_SUFFIX);
 			((HasConfig) elem).writeOnDiskConfig(configFile);
 		}
 		return elem.writeOnDiskFile(file, gitFriendly);
@@ -495,15 +502,15 @@ public class OnDiskProject {
 	}
 
 	protected boolean isMetadataFile(final File file) {
-		return file.getName().endsWith(".metadata");
+		return file.getName().endsWith(METADATA_SUFFIX);
 	}
 
 	protected boolean isConfigFile(final File file) {
-		return ODPMapping.CUSTOM_CONTROL.getFolder().equals(file.getParentFile().getName()) && file.getName().endsWith(".xsp-config");
+		return ODPMapping.CUSTOM_CONTROL.getFolder().equals(file.getParentFile().getName()) && file.getName().endsWith(XSP_CONFIG_SUFFIX);
 	}
 
 	protected boolean isTimeStampsFile(final File file) {
-		return file.getName().startsWith(".timeStamps");
+		return file.getName().startsWith(TIMESTAMPS_DESIGN_PREFIX) || file.getName().startsWith(TIMESTAMPS_DOCS_PREFIX);
 	}
 
 	protected boolean isDocDir(final File file) {
@@ -588,11 +595,11 @@ public class OnDiskProject {
 			System.out.println("Deleting file " + file.getAbsolutePath());
 			files_.remove(odf.getFullName().toLowerCase());
 			if (elem instanceof HasMetadata) {
-				File metaFile = new File(file.getAbsoluteFile() + ".metadata");
+				File metaFile = new File(file.getAbsoluteFile() + METADATA_SUFFIX);
 				metaFile.delete();
 			}
 			if (elem instanceof HasConfig) {
-				File configFile = new File(file.getAbsoluteFile() + "-config");
+				File configFile = new File(file.getAbsoluteFile() + CONFIG_SUFFIX);
 				configFile.delete();
 			}
 			file.delete();

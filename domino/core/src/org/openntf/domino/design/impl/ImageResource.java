@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -71,7 +72,7 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 	public byte[] getFileData() {
 		switch (getDxlFormat(true)) {
 		case DXL:
-			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText();
+			String rawData = getDxl().selectSingleNode("//jpeg|//gif").getText();
 			return parseBase64Binary(rawData);
 		default:
 			return getFileDataRaw("$ImageData");
@@ -82,6 +83,7 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 	public void setFileData(final byte[] fileData) {
 		switch (getDxlFormat(true)) {
 		case DXL:
+
 			XMLNode node = getDxl().selectSingleNode("//imageresource");
 			XMLNode itemNode = node.selectSingleNode("item");
 			XMLNode imgNode = null;
@@ -101,20 +103,20 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 				ImageReader reader = iter.next();
 				iis.close();
 
+				String imgFormat = reader.getFormatName();
+				//png images have to be in a <jpeg></jpeg> - node!
+				imgFormat = "png".equals(imgFormat) ? "jpeg" : imgFormat.toLowerCase();
+
+				//remove old nodes
+				List<XMLNode> imgDataNodes = getDxl().selectNodes("//" + imgFormat);
+				for (int i = imgDataNodes.size() - 1; i >= 0; i--) {
+					imgDataNodes.get(i).getParentNode().removeChild(imgDataNodes.get(i));
+				}
+
 				if (itemNode != null) {
-					//png images have to be in a <jpeg></jpeg> - node!
-					if ("png".equals(reader.getFormatName())) {
-						imgNode = node.insertChildElementBefore("jpeg", itemNode);
-					} else {
-						imgNode = node.insertChildElementBefore(reader.getFormatName().toLowerCase(), itemNode);
-					}
+					imgNode = node.insertChildElementBefore(imgFormat, itemNode);
 				} else {
-					//png images have to be in a <jpeg></jpeg> - node!
-					if ("png".equals(reader.getFormatName())) {
-						imgNode = node.addChildElement("jpeg");
-					} else {
-						imgNode = node.addChildElement(reader.getFormatName().toLowerCase());
-					}
+					imgNode = node.addChildElement(imgFormat);
 				}
 
 				imgNode.setText(printBase64Binary(fileData));

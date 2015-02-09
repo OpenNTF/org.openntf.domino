@@ -68,7 +68,7 @@ public class XMLDocument extends XMLNode {
 	@Override
 	public String toString() {
 		try {
-			return getXml(null);
+			return readXml(null);
 		} catch (IOException e) {
 			return e.getMessage();
 		}

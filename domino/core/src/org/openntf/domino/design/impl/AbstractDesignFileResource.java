@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.design.XspXmlContent;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
