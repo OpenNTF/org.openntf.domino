@@ -5,6 +5,8 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
 
+import org.eclipse.osgi.baseadaptor.loader.BaseClassLoader;
+import org.openntf.domino.config.Configuration;
 import org.openntf.domino.thread.AbstractWrappedTask;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
@@ -45,7 +47,9 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 		NotesContext.initThread(ctx);
 
 		try {
-			Factory.initThread(ODAPlatform.getAppThreadConfig(module.getNotesApplication()));
+			// checkme: What should we use here?
+			//Factory.initThread(ODAPlatform.getAppThreadConfig(module.getNotesApplication()));
+			Factory.initThread(sourceThreadConfig);
 			try {
 				return invokeTasklet(ctx, codeModule);
 			} catch (Exception e) {
@@ -88,7 +92,6 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 			}
 		}
 
-		DominoUtils.setBubbleExceptions(bubbleException);
 		if (sessionFactory != null) {
 			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
 			org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
@@ -104,7 +107,25 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 			try {
 				Object wrappedTask = getWrappedTask();
 				XotsDominoExecutor.initModule(ctx, mcl, wrappedTask);
-				return invokeObject(wrappedTask);
+
+				XotsConfigurationProperties config = null;
+				if (mcl instanceof BaseClassLoader) {
+					String bundle = ((BaseClassLoader) mcl).getClasspathManager().getBaseData().getSymbolicName();
+					config = Configuration.getXotsBundleConfiguration(bundle, wrappedTask.getClass().getName());
+				} else {
+					config = Configuration.getXotsNSFConfiguration(module.getDatabasePath(), wrappedTask.getClass().getName());
+				}
+
+				try {
+					config.logStart();
+					Object ret = invokeObject(wrappedTask);
+					config.logSuccess();
+					return ret;
+				} catch (Exception e) {
+					config.logError(e);
+					throw e;
+				}
+
 			} finally {
 				switchClassLoader(oldCl);
 			}

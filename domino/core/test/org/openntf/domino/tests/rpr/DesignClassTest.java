@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import lotus.domino.NotesException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
+import org.openntf.domino.design.AboutDocument;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
@@ -106,9 +109,8 @@ public class DesignClassTest {
 		Session sess = Factory.getSession(SessionType.CURRENT);
 		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/empty.ns9");
 		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/empty2.nsf");
-		//Database db = sess.getDatabase("D:/Daten/test/proglib4work22.nsf");
-		Database db = sess.getDatabase("names.nsf");
-
+		//Database db = sess.getDatabase("D:/Daten/notesdaten_9/localdb/proglib4work2.nsf");
+		Database db = sess.getDatabase("srv-01-ndev2!!entwicklung/alex/proglib4work22.nsf");
 		testDb(db);
 		DatabaseDesign design = db.getDesign();
 		// -X = no AgentData
@@ -119,14 +121,14 @@ public class DesignClassTest {
 		//+ "& @contains($TITLE;{gadproxy}) ");
 		System.out.println("Count: " + elems.getCount());
 
-		File root = new File("D:\\Daten\\Notesdaten_901\\workspace\\proglib4work2_odp");
-		OnDiskProject odp = new OnDiskProject(root, db, OnDiskProject.SyncDirection.SYNC);
+		File root = new File("D:/daten/temp/ods3");
+		OnDiskProject odp = new OnDiskProject(root);
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {
 			//System.out.println(elem.getClass().getSimpleName() + "'" + elem.getNoteID() + "\t" + elem.getName() + "\t"
 			//		+ elem.getDocument().getItemValueString("$FLAGS"));
 			try {
-				odp.doExport(elem);
+				odp.export(elem);
 				//				//elem.getDxlString(null)
 				//				String odp = elem.getOnDiskPath();
 				//				if (StringUtil.isEmpty(odp)) {
@@ -159,17 +161,39 @@ public class DesignClassTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testCreation() {
 		DbDirectory dbdir = Factory.getSession(SessionType.CURRENT).getDbDirectory("");
 
-		Database db = dbdir.createDatabase("D:/Daten/notesdaten_901/localdb/pw" + System.currentTimeMillis() + ".nsf", true);
+		Database db = dbdir.createDatabase("D:/Daten/notesdaten_9/localdb/pw" + System.currentTimeMillis() + ".nsf", true);
 
-		//		DesignForm form = new org.openntf.domino.design.impl.DesignForm(db);
-		//		form.save();
-		//
-		//		DesignView view = new org.openntf.domino.design.impl.DesignView(db);
-		//		view.save();
+		AboutDocument abd = new org.openntf.domino.design.impl.AboutDocument(db);
+
+		abd.save();
+	}
+
+	@Test
+	public void testDXLImport() throws NotesException {
+		lotus.domino.Session session = lotus.domino.NotesFactory.createSession(); //Factory.getSession(SessionType.CURRENT);
+		lotus.domino.Database db = session.getDatabase("", "D:/Daten/notesdaten_9/empty2.nsf");
+		lotus.domino.Stream stream = session.createStream();
+		stream.open("d:/daten/form_dxl.txt", "UTF-8");
+		lotus.domino.DxlImporter importer = session.createDxlImporter();
+		importer.setDesignImportOption(6);
+		importer.setCompileLotusScript(false);
+		importer.setExitOnFirstFatalError(false);
+		importer.setReplicaRequiredForReplaceOrUpdate(false);
+
+		String dxl = stream.readText();
+		stream.close();
+		System.out.println("Importing....");
+		try {
+			importer.importDxl(dxl, db);
+			System.out.println(importer.getFirstImportedNoteID());
+		} catch (NotesException e) {
+			e.printStackTrace();
+			System.err.println(importer.getLog());
+		}
 
 	}
 }

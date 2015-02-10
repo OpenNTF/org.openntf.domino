@@ -325,7 +325,6 @@ public class XotsDominoExecutor extends DominoExecutor {
 				// Set up the "TopLevelXPageSigner == Signer of the runnable
 				// As soon as we are in a xspnsf, we do not have a SessionFactory!
 
-				System.out.println("Loading Class from NSF:" + url);
 				ctx.setSignerSessionRights("WEB-INF/classes/" + str);
 
 				// RPr: There is a bug: you can decide if you want to use "sessionAsSigner" or "sessionAsSignerFullAccess"

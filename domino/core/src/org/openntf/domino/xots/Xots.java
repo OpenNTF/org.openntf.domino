@@ -70,6 +70,7 @@ public class Xots {
 		Factory.println(Xots.class, "Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
 
 		executor_ = executor;
+
 	}
 
 	/**
@@ -121,6 +122,7 @@ public class Xots {
 			Factory.println(Xots.class, " XPages OSGi Tasklet Service not running");
 		}
 	}
+
 	//
 	//	// ---- delegate methods
 	//
