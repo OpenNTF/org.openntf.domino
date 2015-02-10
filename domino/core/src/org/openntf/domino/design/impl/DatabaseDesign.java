@@ -41,6 +41,7 @@ import org.openntf.domino.design.DesignForm;
 import org.openntf.domino.design.DesignView;
 import org.openntf.domino.design.FileResource;
 import org.openntf.domino.design.FileResourceHidden;
+import org.openntf.domino.design.FileResourceWebContent;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
@@ -442,7 +443,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public synchronized String[] getXspProperty(final String propertyName) {
 		if (props == null) {
 			props = new Properties();
-			FileResourceHidden res = getHiddenFileResource("WEB-INF/xsp.properties");
+			FileResourceWebContent res = getDesignElementByName(FileResourceWebContent.class, "WEB-INF/xsp.properties");
 			if (res != null) {
 				try {
 					props.load(new ByteArrayInputStream(res.getFileData()));

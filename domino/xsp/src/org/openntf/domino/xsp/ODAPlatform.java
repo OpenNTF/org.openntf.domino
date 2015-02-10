@@ -1,9 +1,12 @@
 package org.openntf.domino.xsp;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
 import org.openntf.domino.config.Configuration;
-import org.openntf.domino.config.ConfigurationProperties;
+import org.openntf.domino.config.ServerConfiguration;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -17,6 +20,7 @@ import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 import org.openntf.service.ServiceLocatorFinder;
 
 import com.ibm.commons.Platform;
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.runtime.Application;
 import com.ibm.domino.napi.c.BackendBridge;
@@ -50,13 +54,30 @@ public enum ODAPlatform {
 		// Setup the named factories 4 XPages
 		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 		verifyIGetEntryByKey();
-		ConfigurationProperties cfg = Configuration.getServerConfiguration();
-		int xotsTasks = cfg.getConfigValueInt("XotsTasks", 10);
+		ServerConfiguration cfg = Configuration.getServerConfiguration();
+		int xotsTasks = cfg.getXotsTasks();
 		// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
-		xotsStopDelay = cfg.getConfigValueInt("XotsStopDelay", 15);
+		xotsStopDelay = cfg.getXotsStopDelay();
 		if (xotsTasks > 0) {
 			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
 			Xots.start(executor);
+
+			List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
+
+			for (Object tasklet : tasklets) {
+				if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
+					ClassLoader cl = tasklet.getClass().getClassLoader();
+
+					Factory.println("XOTS", "Registering tasklet " + tasklet);
+
+					if (tasklet instanceof Callable<?>) {
+						Xots.getService().submit((Callable<?>) tasklet);
+					} else {
+						Xots.getService().submit((Runnable) tasklet);
+					}
+				}
+			}
+
 		}
 
 	}

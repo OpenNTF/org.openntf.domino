@@ -248,4 +248,12 @@ public @interface Tasklet {
 	 * @return the schedules
 	 */
 	String[] schedule() default "";
+
+	/**
+	 * Should the scheduled tasklet run on all servers?
+	 * 
+	 * @return
+	 */
+	boolean onAllServers() default false;
+
 }
