@@ -1,6 +1,6 @@
 package org.openntf.conference.graph;
 
-import java.util.Date;
+import java.util.Calendar;
 
 import org.openntf.conference.graph.Event.HappeningOn;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
@@ -21,9 +21,9 @@ public interface TimeSlot extends DVertexFrame {
 		public Integer getDuration() {
 			Integer result = Integer.valueOf(0);
 			try {
-				Date start = getStartTime();
-				Date end = getEndTime();
-				long msDifference = end.getTime() - start.getTime();
+				Calendar start = getStartTime();
+				Calendar end = getEndTime();
+				long msDifference = end.getTime().getTime() - start.getTime().getTime();
 				result = Integer.valueOf(Long.valueOf(msDifference / 60000).intValue());
 			} catch (Throwable t) {
 				//TODO what?
@@ -33,16 +33,16 @@ public interface TimeSlot extends DVertexFrame {
 	}
 
 	@TypedProperty("Starttime")
-	public Date getStartTime();
+	public Calendar getStartTime();
 
 	@TypedProperty("Starttime")
-	public void setStartTime(Date startTime);
+	public void setStartTime(Calendar startTime);
 
 	@TypedProperty("Endtime")
-	public Date getEndTime();
+	public Calendar getEndTime();
 
 	@TypedProperty("Endtime")
-	public void setEndTime(Date endTime);
+	public void setEndTime(Calendar endTime);
 
 	@JavaHandler
 	public Integer getDuration();	//in minutes

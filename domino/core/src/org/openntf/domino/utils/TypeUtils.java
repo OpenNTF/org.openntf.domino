@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -323,6 +324,15 @@ public enum TypeUtils {
 				}
 			} else if (T == Date.class) {
 				result = toDate(o);
+			} else if (java.util.Calendar.class.isAssignableFrom(T)) {
+				Date tmpDate = toDate(o);
+				if (null == tmpDate) {
+					result = null;
+				} else {
+					Calendar tmp = Calendar.getInstance();
+					tmp.setTime(tmpDate);
+					result = tmp;
+				}
 			} else if (T == org.openntf.domino.DateTime.class) {
 				if (session != null) {
 					result = session.createDateTime(toDate(o));
@@ -494,6 +504,15 @@ public enum TypeUtils {
 				}
 			} else if (T == Date.class) {
 				result = toDate(v);
+			} else if (java.util.Calendar.class.isAssignableFrom(T)) {
+				Date tmpDate = toDate(v);
+				if (null == tmpDate) {
+					result = null;
+				} else {
+					Calendar tmp = Calendar.getInstance();
+					tmp.setTime(tmpDate);
+					result = tmp;
+				}
 			} else if (T == org.openntf.domino.DateTime.class) {
 				if (session != null) {
 					result = session.createDateTime(toDate(v));
