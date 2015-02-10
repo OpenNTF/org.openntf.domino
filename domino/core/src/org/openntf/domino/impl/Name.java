@@ -39,7 +39,7 @@ import org.openntf.domino.utils.Strings;
  */
 
 public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
-Comparable<Name>, Cloneable {
+		Comparable<Name>, Cloneable {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
@@ -433,6 +433,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAbbreviated() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Abbreviated);
 	}
 
@@ -443,6 +444,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAddr821() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Addr821);
 	}
 
@@ -453,6 +455,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAddr822Comment1() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment1);
 	}
 
@@ -463,6 +466,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAddr822Comment2() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment2);
 	}
 
@@ -473,6 +477,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAddr822Comment3() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment3);
 	}
 
@@ -483,6 +488,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAddr822LocalPart() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Addr822LocalPart);
 	}
 
@@ -493,6 +499,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getAddr822Phrase() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Addr822Phrase);
 	}
 
@@ -502,6 +509,7 @@ Comparable<Name>, Cloneable {
 	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
 	public String getAddr822Full() {
+		parse();
 		return this.getNamePartsMap().getRFC822name().getAddr822Full();
 	}
 
@@ -511,6 +519,7 @@ Comparable<Name>, Cloneable {
 	 * @see org.openntf.arpa.RFC822name#getAddr822FullFirstLast()
 	 */
 	public String getAddr822FullFirstLast() {
+		parse();
 		return this.getNamePartsMap().getRFC822name().getAddr822FullFirstLast();
 	}
 
@@ -521,6 +530,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getADMD() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.ADMD);
 	}
 
@@ -531,6 +541,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getCanonical() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Canonical);
 	}
 
@@ -541,6 +552,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getCommon() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Common);
 	}
 
@@ -551,6 +563,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getCountry() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Country);
 	}
 
@@ -561,6 +574,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getGeneration() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Generation);
 	}
 
@@ -571,6 +585,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getGiven() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Given);
 	}
 
@@ -581,6 +596,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getInitials() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Initials);
 	}
 
@@ -591,6 +607,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getKeyword() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Keyword);
 	}
 
@@ -601,6 +618,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getLanguage() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Language);
 	}
 
@@ -611,6 +629,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getOrganization() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Organization);
 	}
 
@@ -621,6 +640,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getOrgUnit1() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.OrgUnit1);
 	}
 
@@ -631,6 +651,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getOrgUnit2() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.OrgUnit2);
 	}
 
@@ -641,6 +662,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getOrgUnit3() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.OrgUnit3);
 	}
 
@@ -651,6 +673,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getOrgUnit4() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.OrgUnit4);
 	}
 
@@ -661,6 +684,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getPRMD() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.PRMD);
 	}
 
@@ -670,6 +694,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public NameFormat getNameFormat() {
+		parse();
 		return getNamePartsMap().getNameFormat();
 	}
 
@@ -691,6 +716,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getRFC82xInternetAddress() {
+		parse();
 		return this.getAddr822FullFirstLast();
 	}
 
@@ -701,6 +727,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getSurname() {
+		parse();
 		return this.getNamePart(NamePartsMap.Key.Surname);
 	}
 
@@ -711,6 +738,7 @@ Comparable<Name>, Cloneable {
 	 */
 	@Override
 	public String getIDprefix() {
+		parse();
 		return this.getNamePartsMap().getIDprefix();
 	}
 
@@ -723,10 +751,8 @@ Comparable<Name>, Cloneable {
 	 * 
 	 * @return Flag indicating if any of the values are equal to the string.
 	 */
-	public boolean equalsIgnoreCase(final String string) {
-		return (Strings.isBlankString(string)) ? false : (string.equalsIgnoreCase(this.getCanonical())
-				|| string.equalsIgnoreCase(this.getAbbreviated()) || string.equalsIgnoreCase(this.getCommon()) || this.getNamePartsMap()
-				.equalsIgnoreCase(string));
+	public boolean equalsIgnoreCase(final String compString) {
+		return (Strings.isBlankString(compString)) ? false : compString.equalsIgnoreCase(source_);
 	}
 
 	/**
@@ -922,7 +948,7 @@ Comparable<Name>, Cloneable {
 			return DominoUtils.GREATER_THAN;
 		}
 
-		return (arg0.equals(arg1)) ? DominoUtils.EQUAL : arg0.getAbbreviated().compareTo(arg1.getAbbreviated());
+		return (arg0.equals(arg1)) ? DominoUtils.EQUAL : arg0.source_.compareTo(arg1.source_);
 	}
 
 	/* (non-Javadoc)
