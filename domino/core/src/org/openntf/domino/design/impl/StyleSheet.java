@@ -43,9 +43,6 @@ public final class StyleSheet extends AbstractDesignFileResource implements org.
 		return false;
 	}
 
-	//	public StyleSheet(final Database database) {
-	//		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
-	//	}
 	//
 	//	@Override
 	//	public String getContent() {

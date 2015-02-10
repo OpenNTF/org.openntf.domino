@@ -27,6 +27,10 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		super(document);
 	}
 
+	protected ScriptLibraryLS(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		//return false;
@@ -38,25 +42,6 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		// '++LotusScript Development Environment:2:5:(Forward):0:1
 
 		return true; // so that's why we force RAW format
-	}
-
-	public ScriptLibraryLS(final Database database) {
-		super(database);
-		//throw new UnsupportedOperationException("There is still something todo!");
-		//		try {
-		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_lotusscriptlibrary.xml");
-		//			loadDxl(is);
-		//			is.close();
-		//
-		//			// Set some defaults
-		//			Session session = getAncestorSession();
-		//			String dataDirectory = session.getEnvironmentString("Directory", true);
-		//			XMLDocument dxl = getDxl();
-		//			dxl.selectSingleNode("/scriptlibrary/code/javaproject").setAttribute("codepath", dataDirectory);
-		//
-		//		} catch (IOException e) {
-		//			DominoUtils.handleException(e);
-		//		}
 	}
 
 	@Override

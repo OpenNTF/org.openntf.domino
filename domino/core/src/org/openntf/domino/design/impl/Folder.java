@@ -34,21 +34,13 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 		super(document);
 	}
 
+	protected Folder(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	protected Folder(final Database database) {
-		super(database);
-
-		//		try {
-		//			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml");
-		//			loadDxl(is);
-		//			is.close();
-		//		} catch (IOException e) {
-		//			DominoUtils.handleException(e);
-		//		}
 	}
 
 	@Override

@@ -31,7 +31,7 @@ import com.ibm.commons.util.StringUtil;
  * @author jgallagher
  * 
  */
-enum DesignFactory {
+public enum DesignFactory {
 	INSTANCE;
 
 	//public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~";

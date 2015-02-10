@@ -112,19 +112,6 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			return new AboutDocument(doc);
 		} else if (create) {
 			return new AboutDocument(getAncestorDatabase());
-			//			try {
-			//				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpaboutdocument.xml");
-			//				String dxl = StreamUtil.readString(is);
-			//				is.close();
-			//				DxlImporter importer = getAncestorSession().createDxlImporter();
-			//				importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
-			//				importer.setReplicaRequiredForReplaceOrUpdate(false);
-			//				importer.importDxl(dxl, database_);
-			//				doc = database_.getDocumentByID(ABOUT_NOTE);
-			//				return new AboutDocument(doc);
-			//			} catch (IOException e) {
-			//				DominoUtils.handleException(e);
-			//			}
 		}
 		return null;
 	}
@@ -338,7 +325,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			return new UsingDocument(doc);
 		} else if (create) {
 			try {
-				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpusingdocument.xml");
+				InputStream is = AboutDocument.class.getResourceAsStream("UsingDocument.xml");
 				String dxl = StreamUtil.readString(is);
 				is.close();
 				DxlImporter importer = getAncestorSession().createDxlImporter();
