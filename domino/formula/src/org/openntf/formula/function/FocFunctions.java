@@ -212,7 +212,7 @@ public enum FocFunctions {
 	public static ValueHolder atCallback(final ValueHolder[] params) {
 		final String className = params[0].getString(0);
 		final String methodName = params[1].getString(0);
-		if (!className.startsWith("de.foconis."))
+		if (!className.startsWith("de.foconis.lib.util.cb."))
 			throw new IllegalArgumentException("Invalid class name");
 		int numPars = params.length - 2;
 		final Class<?>[] parTypes = new Class<?>[numPars];
