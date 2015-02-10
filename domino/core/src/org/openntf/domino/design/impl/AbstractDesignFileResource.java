@@ -160,7 +160,13 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 			}
 			break;
 		default:
-			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
+			if (data.length == 0) {
+				//cannot import empty filedata - node
+				setFileDataRaw(DEFAULT_FILEDATA_FIELD, new byte[] { 32 });
+			} else {
+				setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
+			}
+
 		}
 	}
 

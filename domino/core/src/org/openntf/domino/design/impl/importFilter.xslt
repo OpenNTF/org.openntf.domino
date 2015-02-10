@@ -14,7 +14,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
   <xsl:output method="xml" indent="no"/>
   <xsl:output encoding="UTF-8"/>
 <!-- Strip whitespace so that when we remove elements it does not leave ugly blank gaps -->
-  <xsl:preserve-space elements="javascript"/>
+  <xsl:preserve-space elements="javascript|item[@name='$FileData']|rawitemdata|filedata"/>
   <xsl:strip-space elements="*"/>
   
   <xsl:template match="node() | @*" name="identity">
