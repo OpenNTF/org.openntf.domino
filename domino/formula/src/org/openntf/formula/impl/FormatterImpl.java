@@ -288,7 +288,7 @@ public class FormatterImpl implements Formatter {
 	}
 
 	public String formatCalDateTime(final Calendar cal) {
-		return formatCalDateTime(cal, TIMEFORMAT_LONG);
+		return formatCalDateTime(cal, TIMEFORMAT_MEDIUM);
 	}
 
 	public String formatCalDateTime(final Calendar cal, final int timeFormat) {
