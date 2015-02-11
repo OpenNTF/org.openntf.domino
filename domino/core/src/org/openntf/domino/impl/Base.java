@@ -739,7 +739,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				if (value instanceof java.util.Date) {
 					dt = lsess.createDateTime((java.util.Date) value);
 				} else if (value instanceof org.openntf.formula.DateTime) {
-					dt = lsess.createDateTime(((org.openntf.formula.DateTime) value).toJavaDate());
+					org.openntf.formula.DateTime fdt = (org.openntf.formula.DateTime) value;
+					dt = lsess.createDateTime(fdt.toJavaDate());
+					if (fdt.isAnyDate())
+						dt.setAnyDate();
+					if (fdt.isAnyTime())
+						dt.setAnyTime();
 				} else {
 					dt = lsess.createDateTime((java.util.Calendar) value);
 				}
