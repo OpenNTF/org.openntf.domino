@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import org.eclipse.osgi.baseadaptor.loader.BaseClassLoader;
 import org.openntf.domino.config.Configuration;
+import org.openntf.domino.config.XotsConfiguration;
 import org.openntf.domino.thread.AbstractWrappedTask;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
@@ -108,7 +109,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 				Object wrappedTask = getWrappedTask();
 				XotsDominoExecutor.initModule(ctx, mcl, wrappedTask);
 
-				XotsConfigurationProperties config = null;
+				XotsConfiguration config = null;
 				if (mcl instanceof BaseClassLoader) {
 					String bundle = ((BaseClassLoader) mcl).getClasspathManager().getBaseData().getSymbolicName();
 					config = Configuration.getXotsBundleConfiguration(bundle, wrappedTask.getClass().getName());
