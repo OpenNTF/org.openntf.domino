@@ -63,6 +63,14 @@ public class AtFunctionGeneric extends AtFunction {
 		}
 	}
 
+	public int getMinArgs() {
+		return minArgs;
+	}
+
+	public int getMaxArgs() {
+		return maxArgs;
+	}
+
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException {
 		try {
 			switch (paramCount) {
