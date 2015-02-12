@@ -368,4 +368,15 @@ public interface Document {
 	boolean isDefault();
 
 	boolean isPrivate();
+
+	/**
+	 * Add a separate $REF field to display a document in a hierarchical view. NOTE: you must add code to the select formula in the view
+	 * that copies the value of <code>itemName</code> (=$REFxxx) back to original $REF field for these documents. See this example:
+	 * 
+	 * <pre>
+	 *  @If(Form="YourForm"; FIELD $REF := $REFxxx; "");
+	 *  SELECT Form = ...
+	 * </pre>
+	 */
+	public void makeResponse(final lotus.domino.Document doc, String itemName);
 }

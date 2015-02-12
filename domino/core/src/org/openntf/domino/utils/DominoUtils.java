@@ -291,8 +291,9 @@ public enum DominoUtils {
 			ne.addExceptionDetails(hed);
 			throw ne;
 		}
-		if (getBubbleExceptions())
+		if (getBubbleExceptions()) {
 			throw new OpenNTFNotesException(details, t, hed);
+		}
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
@@ -852,7 +853,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

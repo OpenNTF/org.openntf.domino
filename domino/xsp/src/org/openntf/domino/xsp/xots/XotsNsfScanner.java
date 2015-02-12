@@ -35,7 +35,8 @@ import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFXspClassResource;
 scope = Tasklet.Scope.SERVER, 				// one scan per server may run concurrent
 context = Tasklet.Context.PLUGIN, 			// in the context of a plugn
 schedule = { "startup", "periodic:90m" }, 	// on Startup and every 90 minutes
-onAllServers = true							// on all servers
+onAllServers = true,						// on all servers
+threadConfig = Tasklet.ThreadConfig.STRICT  // and strict thread config. BubbleExceptions = TRUE
 )
 /**
  * A Runnable that scans for tasklet classes on a specified server
@@ -66,6 +67,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	public void run() {
 		Factory.println(this, "Scan started");
 		List<ScheduleData> ret = scan();
+		Factory.println(this, "-------------------------------------------------");
 		Factory.println(this, "Scan stopped. Found tasklets: ");
 		for (ScheduleData sd : ret) {
 			Factory.println(this, sd);

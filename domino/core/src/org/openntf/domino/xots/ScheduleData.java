@@ -25,14 +25,9 @@ public abstract class ScheduleData {
 	public abstract XotsConfiguration getConfiguration();
 
 	protected void init(final String[] schedules, final boolean onAllServers) {
-		//		getConfiguration().put("SchedulesDefault", schedules);
-		//		getConfiguration().put("OnAllServers", onAllServers);
-		//
-		//		getConfiguration().putIfAbsent("Schedules", schedules);
-		//		if (onAllServers) {
-		//			getConfiguration().put("RunOnServer", "*"); // not changeable
-		//		} else {
-		//			getConfiguration().putIfAbsent("RunOnServer", "$CLUSTER1");
-		//		}
+		XotsConfiguration cfg = getConfiguration();
+		cfg.setSchedulesDefault(schedules);
+		cfg.setOnAllServers(onAllServers);
+
 	}
 }

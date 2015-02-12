@@ -63,6 +63,7 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.schema.IDatabaseSchema;
@@ -79,7 +80,7 @@ import com.ibm.icu.util.GregorianCalendar;
  * The Class Database.
  */
 public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-		org.openntf.domino.Database {
+org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -1100,7 +1101,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 				getDelegate().open();
 			}
 			return fromLotus(getDelegate().getDocumentByID(noteid), Document.SCHEMA, this);
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e, this, "NoteId=" + noteid);
 			return null;
 
@@ -3050,8 +3051,13 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			setDelegate(d, true);
 			/* No special logging, since by now Database is a BaseThreadSafe */
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
+		} catch (NotesException e) {
+			if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
+				throw new UserAccessException("User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server "
+						+ server_, e);
+			} else {
+				DominoUtils.handleException(e, this);
+			}
 		}
 	}
 

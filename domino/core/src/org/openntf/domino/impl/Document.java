@@ -1223,11 +1223,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		if (type.isArray() || Iterable.class.isAssignableFrom(type)) {
 			throw new IllegalArgumentException("Type '" + type.getName() + "' is not scalar.");
 		}
-		T[] tmp = (T[]) Array.newInstance(type, vals.size());
+		List<T> tmp = new ArrayList<T>(vals.size());
 		for (int i = 0; i < vals.size(); i++) {
-			tmp[i] = TypeUtils.objectToClass(vals.get(i), type, getAncestorSession());
+			tmp.add(TypeUtils.objectToClass(vals.get(i), type, getAncestorSession()));
 		}
-		return Arrays.asList(tmp);
+		return tmp;
 	}
 
 	/*
@@ -2267,6 +2267,37 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			markDirty("$ref", true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void makeResponse(final lotus.domino.Document doc, final String itemName) {
+		if (itemName == null || itemName.equalsIgnoreCase("$ref")) {
+			makeResponse(doc);
+		} else {
+			checkMimeOpen();
+			beginEdit();
+			try {
+				// making a response field with different name is a litte bit difficult.
+				// NOTE: we could use ODA objects instead of lotus objects to avoid try/finally nightmare
+				// but I did not want to add that overhead here.
+				lotus.domino.Document lotusTmpDoc = getDelegate().getParentDatabase().createDocument();
+				try {
+					lotusTmpDoc.makeResponse(toLotus(doc)); // first: make the temp doc to a response document
+					lotus.domino.Item lotusRefItem = lotusTmpDoc.getFirstItem("$REF");
+					try {
+						lotusRefItem.copyItemToDocument(getDelegate(), itemName); // next: copy the $REF item back to the delegate
+					} finally {
+						lotusRefItem.recycle(); // finally: recycle the whole things 
+					}
+				} finally {
+					lotusTmpDoc.recycle();
+				}
+				markDirty(itemName, true);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+			}
+
 		}
 	}
 

@@ -261,7 +261,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 	}
 
 	public XotsDominoExecutor(final int corePoolSize) {
-		super(corePoolSize);
+		super(corePoolSize, "Xots");
 	}
 
 	/**

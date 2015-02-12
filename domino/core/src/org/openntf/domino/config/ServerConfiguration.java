@@ -12,12 +12,31 @@ public class ServerConfiguration extends ConfigurationObject {
 	}
 
 	@Override
-	protected String[] keys() {
-		return new String[] { "ServerName", // the name of the server. e.g. CN=srv-01-xdev/O=FOCONIS 
-				"ServerAlias", // the alias. e.g. $CLUSTER1
-				"XotsTasks", // count of Xots-Tasks
-				"XotsStopDelay" // seconds to wait for stop
+	protected Object[] schema() {
+		// @formatter:off
+		return new Object[] {
+				"ServerName", 		String.class, 
+				"ServerAlias", 		String.class,
+				"XotsTasks", 		Integer.class,
+				"XotsStopDelay", 	Integer.class
 		};
+		// @formatter:on
+	}
+
+	public String getServerName() {
+		return get("ServerName");
+	}
+
+	public String getServerAlias() {
+		return get("ServerAlias");
+	}
+
+	public int getXotsTasks() {
+		return get("XotsTasks", 10);
+	}
+
+	public int getXotsStopDelay() {
+		return get("XotsStopDelay", 15);
 	}
 
 	/**
@@ -45,14 +64,6 @@ public class ServerConfiguration extends ConfigurationObject {
 			currentConfig_.save();
 		}
 		return currentConfig_;
-	}
-
-	public int getXotsTasks() {
-		return getConfigValueInt("XotsTasks", 10);
-	}
-
-	public int getXotsStopDelay() {
-		return getConfigValueInt("XotsStopDelay", 15);
 	}
 
 }

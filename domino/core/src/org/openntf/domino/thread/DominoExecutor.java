@@ -71,10 +71,14 @@ public class DominoExecutor extends AbstractDominoExecutor {
 	 * Constructor of the DominoExecutor
 	 * 
 	 */
-	public DominoExecutor(final int corePoolSize) {
-		super(corePoolSize);
+	public DominoExecutor(final int corePoolSize, final String executorName) {
+		super(corePoolSize, executorName);
 		setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
 		setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+	}
+
+	public DominoExecutor(final int corePoolSize) {
+		this(corePoolSize, "Unnamed");
 	}
 
 	/**

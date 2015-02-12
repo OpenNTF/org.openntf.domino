@@ -57,8 +57,7 @@ public enum Configuration {
 			// TODO Auto-generated method stub
 			synchronized (dirtyObjects) {
 				for (ConfigurationObject obj : dirtyObjects) {
-					System.out.println("Flushing object " + obj.getClass().getName());
-					obj.flush();
+					obj.syncCache();
 				}
 				dirtyObjects.clear();
 			}
@@ -87,7 +86,7 @@ public enum Configuration {
 	protected static synchronized DominoExecutor getExecutor() {
 		if (executor_ == null) {
 			if (Factory.isStarted()) {
-				executor_ = new DominoExecutor(2);
+				executor_ = new DominoExecutor(2, "Config");
 				executor_.scheduleAtFixedRate(new ObjectFlusher(), 5, 5, TimeUnit.SECONDS);
 				Factory.addShutdownHook(SHUTDOWN_HOOK);
 			}

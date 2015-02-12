@@ -9,9 +9,6 @@ import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.Tasklet;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
-
 public class XotsConfiguration extends ConfigurationObject {
 
 	private String apiPath_;
@@ -35,6 +32,76 @@ public class XotsConfiguration extends ConfigurationObject {
 		isDatabase_ = isDatabase;
 	}
 
+	@Override
+	protected Object[] schema() {
+		// @formatter:off
+		return new Object[] {
+				"SchedulesDefault", String[].class,
+				"OnAllServers", 	Boolean.class,
+				"TaskletName", 		String.class,
+				"ApiPaths", 		String[].class,
+				"Enabled", 			Boolean.class,
+				"Location", 		String.class,
+				"ReplicaId", 		String.class,
+				"Bundle", 			String.class,
+				"ApplicationName",	String.class
+		};
+		// @formatter:on
+	}
+
+	public String[] getSchedulesDefault() {
+		return get("SchedulesDefault");
+	}
+
+	public void setSchedulesDefault(final String[] schedules) {
+		if (get("Schedules") == null) {
+			put("Schedules", schedules);
+		}
+		put("SchedulesDefault", schedules);
+	}
+
+	public boolean isOnAllServers() {
+		return get("OnAllServers");
+	}
+
+	public void setOnAllServers(final boolean onAllServers) {
+		if (onAllServers) {
+			put("RunOnServer", "*"); // not changeable
+		} else {
+			if (get("RunOnServer") == null) {
+				put("RunOnServer", "$CLUSTER1");
+			}
+		}
+		put("OnAllServers", onAllServers);
+	}
+
+	public String getTaskletName() {
+		return get("TaskletName");
+	}
+
+	public String[] getApiPaths() {
+		return get("ApiPaths");
+	}
+
+	public boolean isEnabled() {
+		return get("Enabled");
+	}
+
+	public String getLocation() {
+		return get("Location");
+	}
+
+	public String getReplicaId() {
+		return get("ReplicaId");
+	}
+
+	public String getBundle() {
+		return get("Bundle");
+	}
+
+	public String getApplicationName() {
+		return get("ApplicationName");
+	}
 
 	/**
 	 * Returns the document for this server
@@ -47,7 +114,6 @@ public class XotsConfiguration extends ConfigurationObject {
 		if (odaDb_ == null)
 			return null;
 
-		String server = Factory.getLocalServerName();
 		Database db = null;
 		String unid;
 		boolean dirty = false;
@@ -58,36 +124,36 @@ public class XotsConfiguration extends ConfigurationObject {
 			unid = Configuration.computeUNID(bundle_ + ":" + taskletName_, odaDb_); // use a valid ReplicaID
 		}
 
-		Document currentConfig_ = odaDb_.getDocumentByUNID(unid);
-		if (currentConfig_ == null) {
+		Document currentConfig = odaDb_.getDocumentByUNID(unid);
+		if (currentConfig == null) {
 			if (!create)
 				return null;
-			currentConfig_ = odaDb_.createDocument();
-			currentConfig_.setUniversalID(unid);
-			currentConfig_.replaceItemValue("Form", "XotsTasklet");
-			currentConfig_.replaceItemValue("TaskletName", taskletName_);
-			currentConfig_.replaceItemValue("ApiPaths", apiPath_); // APIPath is just for UI - internally we always use replica ID
-			currentConfig_.replaceItemValue("Enabled", true);
+			currentConfig = odaDb_.createDocument();
+			currentConfig.setUniversalID(unid);
+			currentConfig.replaceItemValue("Form", "XotsTasklet");
+			currentConfig.replaceItemValue("TaskletName", taskletName_);
+			currentConfig.replaceItemValue("ApiPaths", apiPath_); // APIPath is just for UI - internally we always use replica ID
+			currentConfig.replaceItemValue("Enabled", true);
 			if (isDatabase_) {
-				currentConfig_.replaceItemValue("ReplicaId", db.getReplicaID());
-				currentConfig_.replaceItemValue("Location", "NSF");
+				currentConfig.replaceItemValue("ReplicaId", db.getReplicaID());
+				currentConfig.replaceItemValue("Location", "NSF");
 			} else {
-				currentConfig_.replaceItemValue("Bundle", bundle_);
-				currentConfig_.replaceItemValue("Location", "BUNDLE");
+				currentConfig.replaceItemValue("Bundle", bundle_);
+				currentConfig.replaceItemValue("Location", "BUNDLE");
 			}
 
-			currentConfig_.replaceItemValue("$ConflictAction", "3"); // merge - no conflicts
+			currentConfig.replaceItemValue("$ConflictAction", "3"); // merge - no conflicts
 			dirty = true;
 		}
 
 		// update the DB-Title in document
-		if (db != null && !db.getTitle().equals(currentConfig_.getItemValueString("ApplicationName"))) {
-			currentConfig_.replaceItemValue("ApplicationName", db.getTitle());
+		if (db != null && !db.getTitle().equals(currentConfig.getItemValueString("ApplicationName"))) {
+			currentConfig.replaceItemValue("ApplicationName", db.getTitle());
 			dirty = true;
 		}
 		// add all api-paths of all servers 
 		boolean found = false;
-		List<String> paths = currentConfig_.getItemValues("ApiPaths", String.class);
+		List<String> paths = currentConfig.getItemValues("ApiPaths", String.class);
 		for (String apiPath : paths) {
 			if (apiPath.equalsIgnoreCase(apiPath_)) {
 				found = true;
@@ -97,14 +163,14 @@ public class XotsConfiguration extends ConfigurationObject {
 
 		if (!found) {
 			paths.add(apiPath_);
-			currentConfig_.replaceItemValue("ApiPaths", paths);
+			currentConfig.replaceItemValue("ApiPaths", paths);
 			dirty = true;
 		}
 
 		if (dirty) {
-			currentConfig_.save();
+			currentConfig.save();
 		}
-		return currentConfig_;
+		return currentConfig;
 	}
 
 	@Tasklet(session = Tasklet.Session.NATIVE, threadConfig = Tasklet.ThreadConfig.STRICT)
@@ -120,15 +186,17 @@ public class XotsConfiguration extends ConfigurationObject {
 		}
 
 		protected Document getLogDocument() {
-			Document doc = getDocument(true);
-			if (doc != null) {
-				for (Document resp : doc.getResponses()) {
+			Document taskletDoc = getDocument(true);
+			if (taskletDoc != null) {
+				for (Document resp : taskletDoc.getResponses()) {
 					if (resp.getItemValueString("Server").equals(Factory.getLocalServerName())) {
 						return resp;
 					}
 				}
-				Document resp = doc.getAncestorDatabase().createDocument();
-				resp.makeResponse(doc);
+				Document srvDoc = new ServerConfiguration(Factory.getLocalServerName()).getDocument(true);
+				Document resp = taskletDoc.getAncestorDatabase().createDocument();
+				resp.makeResponse(srvDoc, "$REFServer");
+				resp.makeResponse(taskletDoc);
 				resp.replaceItemValue("Server", Factory.getLocalServerName()).setNames(true);
 				resp.replaceItemValue("Form", "XotsLog");
 				resp.replaceItemValue("Tasklet", taskletName_);
@@ -144,6 +212,7 @@ public class XotsConfiguration extends ConfigurationObject {
 			Document doc = getLogDocument();
 			if (doc != null) {
 				for (int i = 0; i < keys.length; i++) {
+					System.out.println("Writing " + keys[i] + "=" + values[i]);
 					doc.put(keys[i], values[i]);
 				}
 				doc.save();
@@ -153,6 +222,7 @@ public class XotsConfiguration extends ConfigurationObject {
 
 	public void logStart() {
 		// TODO Auto-generated method stub
+		System.out.println("### LOGSTART");
 		DominoExecutor executor = Configuration.getExecutor();
 		if (executor != null) {
 			String[] keys = new String[3];
@@ -171,6 +241,7 @@ public class XotsConfiguration extends ConfigurationObject {
 	}
 
 	public void logError(final Exception e) {
+		System.out.println("### LOGERR " + e);
 		DominoExecutor executor = Configuration.getExecutor();
 		if (executor != null) {
 			String[] keys = new String[4];
@@ -192,6 +263,7 @@ public class XotsConfiguration extends ConfigurationObject {
 	}
 
 	public void logSuccess() {
+		System.out.println("### LOGSUCCESS");
 		DominoExecutor executor = Configuration.getExecutor();
 		if (executor != null) {
 			String[] keys = new String[2];
@@ -206,8 +278,4 @@ public class XotsConfiguration extends ConfigurationObject {
 		}
 	}
 
-	protected String[] keys() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

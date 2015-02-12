@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * @author nfreeman
  * 
  */
-public class UserAccessException extends RuntimeException {
+public class UserAccessException extends OpenNTFNotesException {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(UserAccessException.class.getName());
 	private static final long serialVersionUID = 1L;
