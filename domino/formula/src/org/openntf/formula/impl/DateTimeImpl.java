@@ -38,6 +38,7 @@ public class DateTimeImpl implements DateTime, Externalizable {
 		in.readInt();
 		_locale = (Locale) in.readObject();
 		_cal = Calendar.getInstance(_locale);
+		_cal.setTimeInMillis(in.readLong());
 		_noDate = in.readBoolean();
 		_noTime = in.readBoolean();
 	}
