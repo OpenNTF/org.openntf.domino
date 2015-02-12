@@ -178,8 +178,12 @@ public class OnDiskProject {
 					docDir_.mkdir();
 				}
 
+				View view = db.getView(viewName);
+				if (view == null) {
+					return;
+				}
 				Set<String> exportedFiles = new HashSet<String>();
-				exportDocs(viewName, exportedFiles);
+				exportDocs(view, exportedFiles);
 				importDocs(exportedFiles);
 			} finally {
 				tearDownDocSync();
@@ -244,11 +248,9 @@ public class OnDiskProject {
 		output.close();
 	}
 
-	protected void exportDocs(final String viewName, final Set<String> exportedFiles) throws TransformerConfigurationException,
+	protected void exportDocs(final View view, final Set<String> exportedFiles) throws TransformerConfigurationException,
 			UnsupportedEncodingException {
 		System.out.println("Start Doc Export");
-
-		View view = db.getView(viewName);
 
 		DxlExporter dxlExporter = db.getAncestorSession().createDxlExporter();
 
