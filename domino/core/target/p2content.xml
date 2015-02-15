@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='org.openntf.domino' version='1.5.0.201411032143'>
+    <update id='org.openntf.domino' range='[0.0.0,1.5.0.201411032143)' severity='0'/>
+    <properties size='5'>
+      <property name='org.eclipse.equinox.p2.name' value='OpenNTF Domino API Core'/>
+      <property name='org.eclipse.equinox.p2.provider' value='OpenNTF'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='org.openntf.domino'/>
+      <property name='maven-version' value='1.5.0-SNAPSHOT'/>
+    </properties>
+    <provides size='45'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.openntf.domino' version='1.5.0.201411032143'/>
+      <provided namespace='osgi.bundle' name='org.openntf.domino' version='1.5.0.201411032143'/>
+      <provided namespace='java.package' name='org.openntf.arpa' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.calendars' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.annotations' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.big' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.big.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.design' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.design.cd' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.design.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.email' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.events' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.exceptions' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.ext' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.formula' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.graph' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.graph2' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.graph2.annotations' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.graph2.exception' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.graph2.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.helpers' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.i18n' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.instrument' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.iterators' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.logging' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.napi' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.nsfdata' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.nsfdata.impldxl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.nsfdata.impldxl.item' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.nsfdata.structs' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.nsfdata.structs.cd' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.schema' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.schema.exceptions' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.schema.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.schema.types' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.thread' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.thread.deprecated' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.thread.model' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.transactions' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.types' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.utils' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.domino.utils.xml' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <requires size='9'>
+      <required namespace='osgi.bundle' name='com.ibm.icu.base' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='com.ibm.commons' range='9.0.0'/>
+      <required namespace='osgi.bundle' name='com.google.guava' range='18.0.0'/>
+      <required namespace='osgi.bundle' name='com.ibm.notes.java.api' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='com.tinkerpop' range='2.6.0'/>
+      <required namespace='osgi.bundle' name='asm' range='5.0.3'/>
+      <required namespace='osgi.bundle' name='javolution' range='6.1.0'/>
+      <required namespace='osgi.bundle' name='org.openntf.formula' range='1.5.0'/>
+      <required namespace='java.package' name='lotus.domino' range='0.0.0'/>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='org.openntf.domino' version='1.5.0.201411032143'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: org.openntf.domino;singleton:=true&#xA;Bundle-Version: 1.5.0.201411032143&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

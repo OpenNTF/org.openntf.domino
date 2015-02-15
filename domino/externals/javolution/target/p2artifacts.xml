@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<artifacts size='1'>
+  <artifact classifier='osgi.bundle' id='javolution' version='6.1.0.201411032143'>
+    <properties size='5'>
+      <property name='artifact.size' value='482136'/>
+      <property name='download.size' value='482136'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='javolution'/>
+      <property name='maven-version' value='6.1.0.qualifier'/>
+    </properties>
+  </artifact>
+</artifacts>

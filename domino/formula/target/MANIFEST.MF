@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Implementation-Vendor: FOCONIS AG
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Implementation-Vendor-URL: http://www.foconis.de
+Built-By: praml
+Bundle-SymbolicName: org.openntf.formula;singleton:=true
+Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1"
+Export-Package: org.openntf.formula,org.openntf.formula.annotation,org
+ .openntf.formula.ast,org.openntf.formula.function,org.openntf.formula
+ .impl,org.openntf.formula.parse
+Build-Date: 20140409031821
+Bundle-Version: 1.5.0.201411032143
+Bundle-ClassPath: .
+Ant-Version: Apache Ant(TM) version 1.8.4 compiled on May 22 2012
+Bundle-Vendor: foconis.de
+Bundle-Name: OpenNTF Formula Engine
+Created-By: JDK 1.7.0_51 (Oracle Corporation)
+Implementation-Title: OpenNTF Domino Formula engine
+Implementation-Version: 1.0.0_20140409031821
+Bundle-ManifestVersion: 2
+
