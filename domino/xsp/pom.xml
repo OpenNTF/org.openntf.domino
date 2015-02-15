@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openntf.domino</groupId>
+		<artifactId>domino</artifactId>
+		<version>1.5.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>org.openntf.domino.xsp</artifactId>
+	<name>OpenNTF Domino API XPages plugin</name>
+	<packaging>eclipse-plugin</packaging>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory> 
+	</build>
+	<organization>
+		<name>OpenNTF</name>
+		<url>http://www.openntf.org</url>
+	</organization>
+
+	<!-- <dependencies> <dependency> <groupId>org.openntf.domino</groupId> <artifactId>core</artifactId> 
+		<version>latest</version> </dependency> <dependency> <groupId>org.openntf.domino</groupId> 
+		<artifactId>formula</artifactId> <version>latest</version> </dependency> 
+		<dependency> <groupId>ibm.domino</groupId> <artifactId>jsf-api</artifactId> 
+		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
+		<artifactId>extlib</artifactId> <version>9.0.1</version> </dependency> <dependency> 
+		<groupId>ibm.domino</groupId> <artifactId>bootstrap</artifactId> <version>9.0.1</version> 
+		</dependency> <dependency> <groupId>ibm.domino</groupId> <artifactId>napi</artifactId> 
+		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
+		<artifactId>adapter</artifactId> <version>9.0.1</version> </dependency> <dependency> 
+		<groupId>ibm.domino</groupId> <artifactId>xspDomino</artifactId> <version>9.0.1</version> 
+		</dependency> <dependency> <groupId>ibm.domino</groupId> <artifactId>xspExtension</artifactId> 
+		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
+		<artifactId>xspCore</artifactId> <version>9.0.1</version> </dependency> <dependency> 
+		<groupId>ibm.domino</groupId> <artifactId>jscript</artifactId> <version>9.0.1</version> 
+		</dependency> <dependency> <groupId>ibm.domino</groupId> <artifactId>extlibControls</artifactId> 
+		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
+		<artifactId>extlibDomino</artifactId> <version>9.0.1</version> </dependency> 
+		<dependency> <groupId>ibm.domino</groupId> <artifactId>xspDesigner</artifactId> 
+		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
+		<artifactId>designerRuntime</artifactId> <version>9.0.1</version> </dependency> 
+		<dependency> <groupId>ibm.domino</groupId> <artifactId>eclipseRuntime</artifactId> 
+		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
+		<artifactId>servlet</artifactId> <version>9.0.1</version> </dependency> </dependencies> -->
+
+</project>

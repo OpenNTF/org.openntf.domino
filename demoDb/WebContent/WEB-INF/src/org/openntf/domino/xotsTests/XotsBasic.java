@@ -17,16 +17,13 @@ import java.util.Map;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
-import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xots.XotsBaseTasklet;
 import org.openntf.domino.xots.XotsDaemon;
-import org.openntf.domino.xots.annotations.Persistent;
-import org.openntf.domino.xots.annotations.Persistent.Scope;
 
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
-@Persistent(scope = Scope.USER)
+//@Persistent(scope = Scope.USER)
 public class XotsBasic extends XotsBaseTasklet {
 	private static final long serialVersionUID = 1L;
 	private String apiPath;
@@ -36,22 +33,20 @@ public class XotsBasic extends XotsBaseTasklet {
 		Database db = Factory.getSession().getCurrentDatabase();
 		setApiPath(db.getApiPath());
 
-		ExtLibUtil.getApplicationScope().put("MessageFromXots",
-				"Please refresh page to see message (set from constructor)");
+		ExtLibUtil.getApplicationScope().put("MessageFromXots", "Please refresh page to see message (set from constructor)");
 		ExtLibUtil.getApplicationScope().put("MessageFromXotsConstructor", "Nothing yet (set from constructor)");
 		setApplicationScope(ExtLibUtil.getApplicationScope());
-		this.setRunAs("Admin");
-		this.setSessionType(DominoSessionType.NAMED);
+		//this.setRunAs("Admin");
+		//this.setSessionType(DominoSessionType.NAMED);
 	}
 
 	public void queue() {
-		XotsDaemon.addToQueue(this);
+		XotsDaemon.queue(this);
 	}
 
-	@Override
 	public void run() {
 		try {
-			Session sess = this.getSession();
+			Session sess = Factory.getSession();
 			Database db = sess.getDatabase(getApiPath());
 
 			String msg = "User is " + sess.getEffectiveUserName();
@@ -63,7 +58,7 @@ public class XotsBasic extends XotsBaseTasklet {
 		}
 	}
 
-	public void setApiPath(String apiPath) {
+	public void setApiPath(final String apiPath) {
 		this.apiPath = apiPath;
 	}
 
@@ -71,7 +66,7 @@ public class XotsBasic extends XotsBaseTasklet {
 		return apiPath;
 	}
 
-	public void setApplicationScope(Map<String, Object> applicationScope) {
+	public void setApplicationScope(final Map<String, Object> applicationScope) {
 		this.applicationScope = applicationScope;
 	}
 
