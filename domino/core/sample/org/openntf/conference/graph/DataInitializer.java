@@ -143,10 +143,10 @@ public class DataInitializer implements Runnable {
 						track.setDescription(doc.getItemValueString("Categories"));
 					}
 
-					Date startDate = (Date) doc.getItemValue("StartDate", Date.class);
-					Date startDateTime = (Date) doc.getItemValue("StartDateTime", Date.class);
-					Date endDate = (Date) doc.getItemValue("EndDate", Date.class);
-					Date endDateTime = (Date) doc.getItemValue("EndDateTime", Date.class);
+					Date startDate = doc.getItemValue("StartDate", Date.class);
+					Date startDateTime = doc.getItemValue("StartDateTime", Date.class);
+					Date endDate = doc.getItemValue("EndDate", Date.class);
+					Date endDateTime = doc.getItemValue("EndDateTime", Date.class);
 
 					Calendar startCal = new GregorianCalendar();
 					startCal.setTime(startDate);
@@ -162,8 +162,8 @@ public class DataInitializer implements Runnable {
 
 					String tsKey = sdf.format(startCal.getTime()) + " - " + sdf.format(endCal.getTime());
 					TimeSlot ts = framedGraph.addVertex(tsKey, TimeSlot.class);
-					ts.setStartTime(startCal.getTime());
-					ts.setEndTime(endCal.getTime());
+					//					ts.setStartTime(startCal.getTime());
+					//					ts.setEndTime(endCal.getTime());
 
 					String code = doc.getItemValueString("SessionID");
 					// Not sure if I can combine these, that's for later

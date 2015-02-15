@@ -1,5 +1,7 @@
 package org.openntf.domino.junit;
 
+import java.util.Collection;
+
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
@@ -59,6 +61,75 @@ public enum TestRunnerUtil {
 		Factory.shutdown();
 	}
 
+	public static void runAsDominoThread(final Class<? extends Runnable>[] runClasses, final ISessionFactory sf, final int instances) {
+		Factory.startup();
+		lotus.domino.NotesThread.sinitThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
+		Factory.setSessionFactory(sf, SessionType.CURRENT);
+		Thread[] t = new Thread[instances * runClasses.length];
+
+		int classCount = 0;
+		for (Class<? extends Runnable> r : runClasses) {
+			int tInst = classCount++ * instances;
+			for (int i = 0; i < instances; i++) {
+				try {
+					t[tInst + i] = new DominoThread(r.newInstance(), "TestDominoRunner-" + tInst);
+					t[tInst + i].start();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+			for (int i = 0; i < t.length; i++) {
+				t[i].join();
+			}
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Factory.termThread();
+		lotus.domino.NotesThread.stermThread();
+		Factory.shutdown();
+	}
+
+	public static void runAsDominoThread(final Collection<Class<? extends Runnable>> runClasses, final ISessionFactory sf,
+			final int instances) {
+		Factory.startup();
+		lotus.domino.NotesThread.sinitThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
+		Factory.setSessionFactory(sf, SessionType.CURRENT);
+		Thread[] t = new Thread[instances * runClasses.size()];
+
+		for (Class<? extends Runnable> r : runClasses) {
+			for (int i = 0; i < instances; i++) {
+				try {
+					t[i] = new DominoThread(r.newInstance(), "TestRunner-" + i);
+					t[i].start();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+			for (int i = 0; i < t.length; i++) {
+				t[i].join();
+			}
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Factory.termThread();
+		lotus.domino.NotesThread.stermThread();
+		Factory.shutdown();
+	}
+
 	public static void runAsDominoThread(final Class<? extends Runnable> r, final ISessionFactory sf, final int instances) {
 		Factory.startup();
 		lotus.domino.NotesThread.sinitThread();
@@ -98,7 +169,7 @@ public enum TestRunnerUtil {
 		Thread[] t = new Thread[instances];
 		for (int i = 0; i < instances; i++) {
 			try {
-				t[i] = new lotus.domino.NotesThread(r.newInstance(), "TestRunner-" + i);
+				t[i] = new lotus.domino.NotesThread(r.newInstance(), "TestNotesRunner-" + i);
 				t[i].start();
 				Thread.sleep(300); // sleep some millis, as the legacy notes API may crash
 			} catch (IllegalAccessException e) {

@@ -15,9 +15,9 @@ public interface DElement extends com.tinkerpop.blueprints.Element {
 
 	public boolean hasProperty(String key);
 
-	public <T> T getProperty(String key, Class<?> T);
+	public <T> T getProperty(String key, Class<T> type);
 
-	public <T> T getProperty(String key, Class<?> T, boolean allowNull);
+	public <T> T getProperty(String key, Class<T> type, boolean allowNull);
 
 	public int incrementProperty(String key);
 

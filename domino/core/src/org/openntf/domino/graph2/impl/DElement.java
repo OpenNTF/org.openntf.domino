@@ -2,17 +2,21 @@ package org.openntf.domino.graph2.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javolution.util.FastMap;
-import javolution.util.FastSet;
-import javolution.util.function.Equalities;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.big.impl.NoteCoordinate;
+//import javolution.util.FastMap;
+//import javolution.util.FastSet;
+//import javolution.util.function.Equalities;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
@@ -39,40 +43,40 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		return (org.openntf.domino.graph2.impl.DGraph) parent_;
 	}
 
-	private FastSet<String> changedProperties_;
+	private Set<String> changedProperties_;
 
-	private FastSet<String> getChangedPropertiesInt() {
+	private Set<String> getChangedPropertiesInt() {
 		if (changedProperties_ == null) {
-			changedProperties_ = new FastSet<String>(Equalities.LEXICAL_CASE_INSENSITIVE).atomic();
+			changedProperties_ = Collections.synchronizedSet(new TreeSet<String>(String.CASE_INSENSITIVE_ORDER));
 		}
 		return changedProperties_;
 	}
 
-	private FastSet<String> removedProperties_;
+	private Set<String> removedProperties_;
 
-	private FastSet<String> getRemovedPropertiesInt() {
+	private Set<String> getRemovedPropertiesInt() {
 		if (removedProperties_ == null) {
-			removedProperties_ = new FastSet<String>(Equalities.LEXICAL_CASE_INSENSITIVE).atomic();
+			removedProperties_ = Collections.synchronizedSet(new TreeSet<String>(String.CASE_INSENSITIVE_ORDER));
 		}
 		return removedProperties_;
 	}
 
-	private FastMap<String, Object> props_;
+	private Map<String, Object> props_;
 
-	private FastMap<String, Object> getProps() {
+	private Map<String, Object> getProps() {
 		if (props_ == null) {
-			FastMap<String, Object> localProps = new FastMap<String, Object>(Equalities.LEXICAL_CASE_INSENSITIVE);
+			Map<String, Object> localProps = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
 			for (String key : getDelegate().keySet()) {
 				localProps.put(key, Deferred.INSTANCE);
 			}
-			props_ = localProps.atomic();
+			props_ = Collections.synchronizedMap(localProps);
 		}
 		return props_;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty(final String propertyName, final Class<?> T) {
+	public <T> T getProperty(final String propertyName, final Class<T> type) {
 		//TODO NTF cached properties should be automatically reset if the base Document is known to have changed
 		Object result = null;
 		Map<String, Object> props = getProps();
@@ -83,21 +87,17 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
 
-					result = doc.getItemValue(propertyName, T);
+					result = doc.getItemValue(propertyName, type);
 					if (result == null) {
 						try {
 							Object raw = doc.get(propertyName);
-							result = TypeUtils.objectToClass(raw, T, doc.getAncestorSession());
-							//							if ("@CreatedDate".equalsIgnoreCase(propertyName)) {
-							//								System.out.println("@CreatedDate requested and we got "
-							//										+ (result == null ? "null" : result.getClass().getName()));
-							//							}
+							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
 						} catch (Throwable t) {
 							log_.log(Level.WARNING, "Invalid property for document " + propertyName);
 						}
 					}
 				} else {
-					result = T.cast(delegate.get(propertyName));
+					result = type.cast(delegate.get(propertyName));
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
@@ -114,17 +114,18 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		} else if (result == Null.INSTANCE) {
 
 		} else {
-			if (result != null && !T.isAssignableFrom(result.getClass())) {
-				System.out.println(propertyName + " returned a " + result.getClass().getName() + " when we asked for a " + T.getName());
+			if (result != null && !type.isAssignableFrom(result.getClass())) {
+				System.out.println(propertyName + " returned a " + result.getClass().getName() + " when we asked for a " + type.getName());
+
 				try {
 					Map<String, Object> delegate = getDelegate();
 					if (delegate instanceof Document) {
 						Document doc = (Document) delegate;
-						result = doc.getItemValue(propertyName, T);
+						result = doc.getItemValue(propertyName, type);
 					} else {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
-							result = T.cast(delegate.get(propertyName));
+							result = type.cast(delegate.get(propertyName));
 						}
 					}
 					if (result == null) {
@@ -151,7 +152,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public <T> T getProperty(final String key) {
 		if ("form".equalsIgnoreCase(key)) {
-			return getProperty(key, String.class);
+			return (T) getProperty(key, String.class);
 		}
 		Object result = getProperty(key, java.lang.Object.class);
 		return (T) result;
@@ -159,7 +160,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Set<String> getPropertyKeys() {
-		return getProps().keySet().unmodifiable();
+		return Collections.unmodifiableSet(getProps().keySet());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -244,9 +245,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	@Override
-	public <T> T removeProperty(final String key) {
+	public Object removeProperty(final String key) {
 		getParent().startTransaction(this);
-		T result = getProperty(key);
+		Object result = getProperty(key);
 		Map<String, Object> props = getProps();
 		props.remove(key);
 		Map<String, Object> source = getDelegate();
@@ -284,13 +285,13 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	@Override
-	public <T> T getProperty(final String key, final Class<?> T, final boolean allowNull) {
-		T result = getProperty(key, T);
+	public <T> T getProperty(final String key, final Class<T> type, final boolean allowNull) {
+		T result = getProperty(key, type);
 		if (allowNull) {
 			return result;
 		} else {
 			if (result == null || Null.INSTANCE == result) {
-				return TypeUtils.getDefaultInstance(T);
+				return TypeUtils.getDefaultInstance(type);
 			} else {
 				return result;
 			}
@@ -353,7 +354,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	protected void applyChanges() {
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
-		FastSet<String> changes = getChangedPropertiesInt();
+		Set<String> changes = getChangedPropertiesInt();
 		if (!props.isEmpty() && !changes.isEmpty()) {
 			//			System.out.println("TEMP DEBUG: Writing " + getChangedPropertiesInt().size() + " changed properties for " + getId());
 			for (String s : getChangedPropertiesInt()) {

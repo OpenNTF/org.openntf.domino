@@ -1,5 +1,6 @@
 package org.openntf.domino.design.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,23 +11,33 @@ import java.util.jar.JarInputStream;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaScriptLibrary {
+/**
+ * A client side JavaScriptLibrary
+ */
+public final class ScriptLibraryJava extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryJava, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected JavaScriptLibrary(final Document document) {
+	protected ScriptLibraryJava(final Document document) {
 		super(document);
 	}
 
-	protected JavaScriptLibrary(final Database database) {
+	@Override
+	protected boolean enforceRawFormat() {
+		//return false;
+
+		//we use RAW format for script libraries, so that we are "on disk compatible"
+		return true;
+	}
+
+	protected ScriptLibraryJava(final Database database) {
 		super(database);
 
 		try {
@@ -45,20 +56,22 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 		}
 	}
 
+	Map<String, byte[]> classData;
+
+	@Override
 	public Map<String, byte[]> getClassData() {
 		// For this one, we'll need the note in the database
-		Document doc = getDocument();
-		if (doc != null) {
+		if (classData == null) {
+			classData = new TreeMap<String, byte[]>();
 			try {
-				EmbeddedObject obj = doc.getAttachment("%%object%%.jar");
+				byte[] jarData = getFileDataRaw("%%object%%.jar");
 
-				InputStream objInputStream = obj.getInputStream();
+				InputStream objInputStream = new ByteArrayInputStream(jarData);
 				JarInputStream jis = new JarInputStream(objInputStream);
 				JarEntry entry = jis.getNextJarEntry();
-				Map<String, byte[]> classData = new TreeMap<String, byte[]>();
 				while (entry != null) {
 					String name = entry.getName();
-					if (name.endsWith(".class")) {
+					if (name.endsWith(".class")) { //TODO our classloader should support resources also!
 						ByteArrayOutputStream bos = new ByteArrayOutputStream();
 						while (jis.available() > 0) {
 							bos.write(jis.read());
@@ -71,17 +84,16 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 				jis.close();
 				objInputStream.close();
 
-				return classData;
-
-			} catch (IOException e) {
-				DominoUtils.handleException(e);
-				return null;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		}
 
-		return null;
+		}
+		return classData;
+
 	}
 
+	@Override
 	public Map<String, String> getClassSource() {
 		Map<String, String> classSource = new TreeMap<String, String>();
 		for (XMLNode node : getDxl().selectNodes("/scriptlibrary/code/javaproject/java")) {
@@ -90,4 +102,5 @@ public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.op
 
 		return classSource;
 	}
+
 }

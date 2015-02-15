@@ -19,9 +19,38 @@ public class AgentBase extends lotus.domino.AgentBase {
 	 */
 	@Override
 	public Session getSession() {
-		Factory.startup();
-		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
+		// RPr: Startup and init is probably wrong here
+		// Factory.startup();
+		// Factory.initThread(Factory.STRICT_THREAD_CONFIG);
 		return Factory.fromLotus(super.getSession(), Session.SCHEMA, null);
+	}
+
+	/**
+	 * The NotesMain should not longer be overwritten. Use DominoMain instead.
+	 */
+	@Override
+	public void NotesMain() {
+		boolean doShutdown = false;
+		if (!Factory.isStarted()) {
+			Factory.startup();
+			doShutdown = true;
+		}
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
+		try {
+			DominoMain();
+		} finally {
+			Factory.termThread();
+			if (doShutdown) {
+				Factory.shutdown();
+			}
+		}
+
+	}
+
+	/**
+	 * Implement your code here
+	 */
+	public void DominoMain() {
 	}
 
 	/**

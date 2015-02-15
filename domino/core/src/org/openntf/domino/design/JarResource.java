@@ -22,6 +22,6 @@ import java.util.Map;
  * @author jgallagher
  * 
  */
-public interface JarResource extends FileResource {
+public interface JarResource extends AnyFileResource {
 	public Map<String, byte[]> getClassData();
 }

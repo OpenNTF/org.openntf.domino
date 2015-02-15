@@ -53,6 +53,13 @@ public @interface Tasklet {
 		public String[] getDynamicSchedule();
 
 		public String getDescription();
+
+		/**
+		 * Returns the thread config or null, then the thread config will be cloned
+		 * 
+		 * @return the thread config or null
+		 */
+		public Factory.ThreadConfig getThreadConfig();
 	}
 
 	/**
@@ -197,11 +204,31 @@ public @interface Tasklet {
 		XSPFORCE
 	}
 
+	public enum ThreadConfig {
+		/**
+		 * Clone the ThreadConfig
+		 */
+		CLONE,
+		/**
+		 * Use {@link org.openntf.domino.utils.Factory#STRICT_THREAD_CONFIG} as Thread configuration (=all Fixes, AutoMime.WRAP_32K,
+		 * bubbleExceptions = true)
+		 */
+		STRICT,
+
+		/**
+		 * Use {@link org.openntf.domino.utils.Factory#PERMISSIVE_THREAD_CONFIG} as Thread configuration (=all Fixes, AutoMime.WRAP_ALL,
+		 * bubbleExceptions = false)
+		 */
+		PERMISSIVE
+	}
+
 	Tasklet.Session session() default Tasklet.Session.CLONE;
 
 	Tasklet.Scope scope() default Tasklet.Scope.APPLICATION;
 
 	Tasklet.Context context() default Tasklet.Context.DEFAULT;
+
+	Tasklet.ThreadConfig threadConfig() default Tasklet.ThreadConfig.CLONE;
 
 	/**
 	 * specifies the schedule.
@@ -221,4 +248,12 @@ public @interface Tasklet {
 	 * @return the schedules
 	 */
 	String[] schedule() default "";
+
+	/**
+	 * Should the scheduled tasklet run on all servers?
+	 * 
+	 * @return
+	 */
+	boolean onAllServers() default false;
+
 }

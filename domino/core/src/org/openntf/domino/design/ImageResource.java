@@ -22,8 +22,7 @@ import java.awt.image.BufferedImage;
  * @author jgallagher
  * 
  */
-public interface ImageResource extends DesignBaseNamed {
-	public byte[] getImageData();
+public interface ImageResource extends AnyFileResource {
 
 	public BufferedImage getImage();
 }

@@ -18,9 +18,10 @@ import org.openntf.domino.thread.AbstractDominoCallable;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.xots.ScheduleData;
 import org.openntf.domino.xots.Tasklet;
-import org.openntf.domino.xots.Tasklet.Interface;
 import org.openntf.domino.xots.Xots;
+import org.openntf.domino.xots.XotsUtil;
 
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
@@ -29,7 +30,14 @@ import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFResource;
 import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFXspClassResource;
 
 // tell http osgi xots run bundle:org.openntf.domino.xsp org.openntf.domino.xsp.xots.XotsNsfScanner
-@Tasklet(session = Tasklet.Session.NATIVE, scope = Tasklet.Scope.NONE, context = Tasklet.Context.PLUGIN, schedule = "periodic:90m")
+
+@Tasklet(session = Tasklet.Session.NATIVE, 	// use server's session
+scope = Tasklet.Scope.SERVER, 				// one scan per server may run concurrent
+context = Tasklet.Context.PLUGIN, 			// in the context of a plugn
+schedule = { "startup", "periodic:90m" }, 	// on Startup and every 90 minutes
+onAllServers = true,						// on all servers
+threadConfig = Tasklet.ThreadConfig.STRICT  // and strict thread config. BubbleExceptions = TRUE
+)
 /**
  * A Runnable that scans for tasklet classes on a specified server
  * 
@@ -59,6 +67,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	public void run() {
 		Factory.println(this, "Scan started");
 		List<ScheduleData> ret = scan();
+		Factory.println(this, "-------------------------------------------------");
 		Factory.println(this, "Scan stopped. Found tasklets: ");
 		for (ScheduleData sd : ret) {
 			Factory.println(this, sd);
@@ -148,7 +157,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 				Map<String, NSFResource> resources = vfs.getAllResources();
 				ClassLoader mcl = module.getModuleClassLoader();
 
-				String replicaID = ctx.getCurrentDatabase().getReplicaID();
+				String dbPath = ctx.getCurrentDatabase().getFilePath();
 
 				for (NSFResource resource : resources.values()) {
 					if (resource instanceof NSFXspClassResource) {
@@ -157,29 +166,16 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 						// Check all classes, but not xsp.*
 						if (path.startsWith("WEB-INF/classes/") && path.endsWith(".class") && !path.startsWith("WEB-INF/classes/xsp/")) {
 							String className = path.substring(16, path.length() - 6).replace('/', '.');
-
 							try {
 								Class<?> clazz = mcl.loadClass(className);
-								Tasklet annot = clazz.getAnnotation(Tasklet.class);
-								if (annot != null) {
-									String[] schedDefs = annot.schedule();
-									String[] effectiveSchedDefs = null;
-
-									for (String schedDef : schedDefs) {
-										if (!schedDef.equals("")) {
-											effectiveSchedDefs = schedDefs;
-											if (schedDef.equals("dynamic")) {
-												Tasklet.Interface ti = (Interface) clazz.newInstance();
-												effectiveSchedDefs = ti.getDynamicSchedule();
-												break;
-											}
-										}
-									}
-									if (effectiveSchedDefs != null) {
-										ret.add(new ScheduleData(replicaID, className, apiPath, effectiveSchedDefs));
-									}
-
+								ScheduleData data = XotsUtil.getSchedule(dbPath, clazz);
+								if (data != null) {
+									ret.add(data);
 								}
+								//if (effectiveSchedDefs != null) {
+								//	ret.add(new ScheduleDataNSF(replicaID, className, apiPath, effectiveSchedDefs));
+								//}
+
 							} catch (Exception e) {
 								Factory.println(this, "Cannot load: " + className + ". " + e.getMessage());
 							}
@@ -216,7 +212,6 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 		try {
 			Database template = db.getXPageSharedDesignTemplate();
 			DatabaseDesign design = template == null ? db.getDesign() : template.getDesign();
-
 			if (design.isAPIEnabled()) {
 				log_.info("ODA enabled database: " + db.getApiPath());
 				return Xots.getService().submit(new XotsClassScanner(db.getApiPath()));

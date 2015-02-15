@@ -60,7 +60,7 @@ public class DProxyVertex extends DVertex {
 	}
 
 	@Override
-	public <T> T getProperty(final String key) {
+	public Object getProperty(final String key) {
 		if (isGraphKey(key)) {
 			return super.getProperty(key);
 		} else {
@@ -86,7 +86,7 @@ public class DProxyVertex extends DVertex {
 	}
 
 	@Override
-	public <T> T removeProperty(final String key) {
+	public Object removeProperty(final String key) {
 		if (isGraphKey(key)) {
 			return super.removeProperty(key);
 		} else {

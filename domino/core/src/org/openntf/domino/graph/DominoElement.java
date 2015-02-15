@@ -291,12 +291,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public <T> T getProperty(final String key) {
-		return getProperty(key, java.lang.Object.class);
+		return (T) getProperty(key, java.lang.Object.class);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty(final String propertyName, final Class<?> T) {
+	public <T> T getProperty(final String propertyName, final Class<T> type) {
 		Object result = null;
 		String key = propertyName;
 		Map<String, Serializable> props = getProps();
@@ -308,7 +308,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			//			}
 			try {
 				Document doc = getRawDocument();
-				result = doc.getItemValue(propertyName, T);
+				result = doc.getItemValue(propertyName, type);
 				if (result == null) {
 					//					synchronized (props) {
 					props.put(key, Null.INSTANCE);
@@ -328,14 +328,14 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		} else if (result == Null.INSTANCE) {
 
 		} else {
-			if (result != null && !T.isAssignableFrom(result.getClass())) {
+			if (result != null && !type.isAssignableFrom(result.getClass())) {
 				//				if ("PROGNAME".equalsIgnoreCase(propertyName)) {
 				//					System.out.println("DEBUG: " + propertyName + " result is a " + result.getClass().getSimpleName());
 				//				}
 				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
 				try {
 					Document doc = getRawDocument();
-					result = doc.getItemValue(propertyName, T);
+					result = doc.getItemValue(propertyName, type);
 					if (result == null) {
 						//						synchronized (props) {
 						props.put(key, Null.INSTANCE);
@@ -370,34 +370,34 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getProperty(final String propertyName, final Class<?> T, final boolean allowNull) {
-		T result = getProperty(propertyName, T);
+	public <T> T getProperty(final String propertyName, final Class<T> type, final boolean allowNull) {
+		T result = getProperty(propertyName, type);
 		if (allowNull) {
 			return result;
 		} else {
 			if (result == null || Null.INSTANCE == result) {
-				if (T.isArray())
-					if (T.getComponentType() == String.class) {
+				if (type.isArray())
+					if (type.getComponentType() == String.class) {
 						return (T) DEFAULT_STR_ARRAY;
 					} else {
-						return (T) Array.newInstance(T.getComponentType(), 0);
+						return (T) Array.newInstance(type.getComponentType(), 0);
 					}
-				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
+				if (Boolean.class.equals(type) || Boolean.TYPE.equals(type))
 					return (T) Boolean.FALSE;
-				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
+				if (Integer.class.equals(type) || Integer.TYPE.equals(type))
 					return (T) Integer.valueOf(0);
-				if (Long.class.equals(T) || Long.TYPE.equals(T))
+				if (Long.class.equals(type) || Long.TYPE.equals(type))
 					return (T) Long.valueOf(0l);
-				if (Short.class.equals(T) || Short.TYPE.equals(T))
+				if (Short.class.equals(type) || Short.TYPE.equals(type))
 					return (T) Short.valueOf("0");
-				if (Double.class.equals(T) || Double.TYPE.equals(T))
+				if (Double.class.equals(type) || Double.TYPE.equals(type))
 					return (T) Double.valueOf(0d);
-				if (Float.class.equals(T) || Float.TYPE.equals(T))
+				if (Float.class.equals(type) || Float.TYPE.equals(type))
 					return (T) Float.valueOf(0f);
-				if (String.class.equals(T))
+				if (String.class.equals(type))
 					return (T) "";
 				try {
-					return (T) T.newInstance();
+					return type.newInstance();
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

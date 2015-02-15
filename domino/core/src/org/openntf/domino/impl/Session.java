@@ -397,12 +397,12 @@ org.openntf.domino.Session {
 	 */
 	@Override
 	public Name createName(final String name, final String lang) {
-		Name ret = getFactory().create(Name.SCHEMA, this, null);
-		//		ret.parse(name, lang);
-		((org.openntf.domino.impl.Name) ret).setSource(name);
-		if (lang != null)
-			((org.openntf.domino.impl.Name) ret).setLang(lang);
-		return ret;
+		if (lang == null)
+			return createName(name);
+		String[] meta = new String[2];
+		meta[0] = name;
+		meta[1] = lang;
+		return getFactory().create(Name.SCHEMA, this, meta);
 	}
 
 	/*
@@ -412,7 +412,7 @@ org.openntf.domino.Session {
 	 */
 	@Override
 	public org.openntf.domino.Name createName(final String name) {
-		return createName(name, null);
+		return getFactory().create(Name.SCHEMA, this, name);
 	}
 
 	/*

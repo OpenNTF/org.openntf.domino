@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class ImageResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.ImageResource {
+public final class ImageResource extends AbstractDesignFileResource implements org.openntf.domino.design.ImageResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
@@ -42,17 +42,30 @@ public class ImageResource extends AbstractDesignBaseNamed implements org.opennt
 	}
 
 	@Override
-	public byte[] getImageData() {
-		return parseBase64Binary(getDxl().selectSingleNode("//jpeg").getText());
+	protected boolean enforceRawFormat() {
+		// RAW-format is set to false, otherwise it is difficult to determine file extension
+		return false;
 	}
 
 	@Override
 	public BufferedImage getImage() {
 		try {
-			return ImageIO.read(new ByteArrayInputStream(getImageData()));
+			return ImageIO.read(new ByteArrayInputStream(getFileData()));
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			return null;
+		}
+	}
+
+	@Override
+	public byte[] getFileData() {
+		switch (getDxlFormat(true)) {
+		case DXL:
+			String rawData = getDxl().selectSingleNode("//jpeg|//gif|//png").getText();
+			return parseBase64Binary(rawData);
+		default:
+			return getFileDataRaw("$ImageData");
+
 		}
 	}
 }

@@ -1,7 +1,5 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
-import java.nio.ByteBuffer;
-
 import org.openntf.domino.nsfdata.structs.AbstractStruct;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -13,11 +11,12 @@ public abstract class CDRecord extends AbstractStruct {
 		getHeader().setRecordLength(size());
 	}
 
-	@Override
-	public void init(final ByteBuffer data) {
-		super.init(data);
-		getHeader().setRecordLength(data.limit() - data.position());
-	}
+	// RPr: we must not overwrite the length. SIG should have parsed the correct length already
+	//	@Override
+	//	public void init(final ByteBuffer data) {
+	//		super.init(data);
+	//		getHeader().setRecordLength(data.limit() - data.position());
+	//	}
 
 	public abstract SIG getHeader();
 }

@@ -20,7 +20,7 @@ package org.openntf.domino.types;
  * The Interface Design.
  */
 public interface Design {
-	
+
 	/**
 	 * Gets the note id.
 	 * 

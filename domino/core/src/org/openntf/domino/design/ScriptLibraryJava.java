@@ -16,17 +16,15 @@
 
 package org.openntf.domino.design;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
- * @author jgallagher
+ * @author Roland Praml
  * 
  */
-public interface JavaResource extends FileResource {
-	public Collection<String> getClassNames();
-
+public interface ScriptLibraryJava extends ScriptLibrary {
 	public Map<String, byte[]> getClassData();
 
-	public void setClassData(Map<String, byte[]> classData);
+	public Map<String, String> getClassSource();
+
 }

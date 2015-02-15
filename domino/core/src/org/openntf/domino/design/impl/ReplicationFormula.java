@@ -24,7 +24,7 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class ReplicationFormula extends AbstractDesignBase implements org.openntf.domino.design.ReplicationFormula {
+public class ReplicationFormula extends AbstractDesignBaseNamed implements org.openntf.domino.design.ReplicationFormula {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ReplicationFormula.class.getName());
@@ -34,6 +34,11 @@ public class ReplicationFormula extends AbstractDesignBase implements org.opennt
 	 */
 	protected ReplicationFormula(final Document document) {
 		super(document);
+	}
+
+	@Override
+	protected boolean enforceRawFormat() {
+		return true;
 	}
 
 }

@@ -1360,6 +1360,10 @@ public enum Factory {
 		return started;
 	}
 
+	public static boolean isInitialized() {
+		return threadVariables_.get() != null;
+	}
+
 	public static void setUserLocale(final Locale loc) {
 		getThreadVariables().userLocale = loc;
 	}

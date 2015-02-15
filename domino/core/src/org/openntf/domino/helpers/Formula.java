@@ -259,9 +259,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * @see org.openntf.domino.ext.Formula#getValue(java.lang.Class)
 	 */
 	@Override
-	public <T> T getValue(final Class<?> T) {
+	public <T> T getValue(final Class<T> type) {
 		Vector<Object> v = getValue();
-		return TypeUtils.collectionToClass(v, T, getSession());
+		return TypeUtils.collectionToClass(v, type, getSession());
 	}
 
 	/*
@@ -283,9 +283,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * @see org.openntf.domino.ext.Formula#getValue(java.lang.Class)
 	 */
 	@Override
-	public <T> T getValue(final Session session, final Class<?> T) {
+	public <T> T getValue(final Session session, final Class<T> type) {
 		Vector<Object> v = getValue(session);
-		return TypeUtils.collectionToClass(v, T, session);
+		return TypeUtils.collectionToClass(v, type, session);
 	}
 
 	/*
@@ -307,9 +307,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * @see org.openntf.domino.ext.Formula#getValue(org.openntf.domino.Document, java.lang.Class)
 	 */
 	@Override
-	public <T> T getValue(final Document document, final Class<?> T) {
+	public <T> T getValue(final Document document, final Class<T> type) {
 		Vector<Object> v = getValue(document);
-		return TypeUtils.collectionToClass(v, T, document.getAncestorSession());
+		return TypeUtils.collectionToClass(v, type, document.getAncestorSession());
 	}
 
 	/*

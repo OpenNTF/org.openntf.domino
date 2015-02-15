@@ -1698,92 +1698,98 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 	 */
 	@Override
 	public void setSelectOptions(final Set<SelectOption> options) {
+		boolean select = true;
+		if (options.contains(SelectOption.ALL_BUT_NOT)) {
+			selectAllNotes(true);
+			select = false;
+		}
 		for (SelectOption option : options) {
 			switch (option) {
 			case ACL:
-				setSelectAcl(true);
+				setSelectAcl(select);
 				break;
 			case ACTIONS:
-				setSelectActions(true);
+				setSelectActions(select);
 				break;
 			case AGENTS:
-				setSelectAgents(true);
+				setSelectAgents(select);
 				break;
 			case DATABASE_SCRIPT:
-				setSelectDatabaseScript(true);
+				setSelectDatabaseScript(select);
 				break;
 			case DATA_CONNECTIONS:
-				setSelectDataConnections(true);
+				setSelectDataConnections(select);
 				break;
 			case DOCUMENTS:
-				setSelectDocuments(true);
+				setSelectDocuments(select);
 				break;
 			case FOLDERS:
-				setSelectFolders(true);
+				setSelectFolders(select);
 				break;
 			case FORMS:
-				setSelectForms(true);
+				setSelectForms(select);
 				break;
 			case FRAMESETS:
-				setSelectFramesets(true);
+				setSelectFramesets(select);
 				break;
 			case HELP_ABOUT:
-				setSelectHelpAbout(true);
+				setSelectHelpAbout(select);
 				break;
 			case HELP_INDEX:
-				setSelectHelpIndex(true);
+				setSelectHelpIndex(select);
 				break;
 			case HELP_USING:
-				setSelectHelpUsing(true);
+				setSelectHelpUsing(select);
 				break;
 			case ICON:
-				setSelectIcon(true);
+				setSelectIcon(select);
 				break;
 			case IMAGE_RESOURCES:
-				setSelectImageResources(true);
+				setSelectImageResources(select);
 				break;
 			case JAVA_RESOURCES:
-				setSelectJavaResources(true);
+				setSelectJavaResources(select);
 				break;
 			case MISC_CODE:
-				setSelectMiscCodeElements(true);
+				setSelectMiscCodeElements(select);
 				break;
 			case MISC_FORMAT:
-				setSelectMiscFormatElements(true);
+				setSelectMiscFormatElements(select);
 				break;
 			case MISC_INDEX:
-				setSelectMiscIndexElements(true);
+				setSelectMiscIndexElements(select);
 				break;
 			case NAVIGATORS:
-				setSelectNavigators(true);
+				setSelectNavigators(select);
 				break;
 			case OUTLINES:
-				setSelectOutlines(true);
+				setSelectOutlines(select);
 				break;
 			case PAGES:
-				setSelectPages(true);
+				setSelectPages(select);
 				break;
 			case PROFILES:
-				setSelectProfiles(true);
+				setSelectProfiles(select);
 				break;
 			case REPLICATION_FORMULAS:
-				setSelectReplicationFormulas(true);
+				setSelectReplicationFormulas(select);
 				break;
 			case SCRIPT_LIBRARIES:
-				setSelectScriptLibraries(true);
+				setSelectScriptLibraries(select);
 				break;
 			case SHARED_FIELDS:
-				setSelectSharedFields(true);
+				setSelectSharedFields(select);
 				break;
 			case STYLESHEETS:
-				setSelectStylesheetResources(true);
+				setSelectStylesheetResources(select);
 				break;
 			case SUBFORMS:
-				setSelectSubforms(true);
+				setSelectSubforms(select);
 				break;
 			case VIEWS:
-				setSelectViews(true);
+				setSelectViews(select);
 				break;
+
 			}
 		}
 	}

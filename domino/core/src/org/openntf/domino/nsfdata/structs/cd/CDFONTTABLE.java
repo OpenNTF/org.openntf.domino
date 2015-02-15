@@ -1,5 +1,7 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
+import java.util.Arrays;
+
 import org.openntf.domino.nsfdata.structs.AbstractStruct;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
@@ -80,11 +82,11 @@ public class CDFONTTABLE extends CDRecord {
 			return ODSUtils.fromLMBCS(Name);
 		}
 
-		//		@Override
-		//		public String toString() {
-		//			return "[" + getClass().getSimpleName() + ": ID=" + getId() + ", TrueType=" + isTrueType() + ", Pitch=" + getPitch()
-		//					+ ", Family=" + getFamily() + ", Name=" + getName() + "]";
-		//		}
+		@Override
+		public String toString() {
+			return "[" + getClass().getSimpleName() + ": TrueType=" + isTrueType() + ", Pitch=" + getPitch() + ", Family=" + getFamily()
+					+ ", Name=" + getName() + "]";
+		}
 	}
 
 	public final WSIG Header = inner(new WSIG());
@@ -101,5 +103,10 @@ public class CDFONTTABLE extends CDRecord {
 
 	public CDFACE[] getFonts() {
 		return (CDFACE[]) getVariableElement("FontFaces");
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Fonts=" + Fonts.get() + ", FontFaces=" + Arrays.asList(getFonts()) + "]";
 	}
 }

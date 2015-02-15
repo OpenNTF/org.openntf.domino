@@ -26,7 +26,7 @@ public class FormFieldList extends AbstractDesignComponentList<FormField> implem
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FormFieldList.class.getName());
 
-	protected FormFieldList(final DesignForm parent, final String pattern) {
+	protected FormFieldList(final AbstractDesignBase parent, final String pattern) {
 		super(parent, pattern);
 	}
 

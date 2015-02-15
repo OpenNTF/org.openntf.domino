@@ -16,18 +16,16 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
  * 
  */
-public class StyleSheet extends FileResource implements org.openntf.domino.design.StyleSheet {
+public final class StyleSheet extends AbstractDesignFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
@@ -37,27 +35,57 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 	}
 
 	public StyleSheet(final Database database) {
-		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
+		super(database);
 	}
 
+	@Override
+	protected boolean enforceRawFormat() {
+		return false;
+	}
+
+	//	public StyleSheet(final Database database) {
+	//		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
+	//	}
+	//
+	//	@Override
+	//	public String getContent() {
+	//		try {
+	//			return new String(getFileData(), "UTF-8");
+	//		} catch (UnsupportedEncodingException e) {
+	//			DominoUtils.handleException(e);
+	//			return null;
+	//		}
+	//	}
+	//
+	//	@Override
+	//	public void setContent(final String content) {
+	//		try {
+	//			if (content == null) {
+	//				setFileData("".getBytes("UTF-8"));
+	//			} else {
+	//				setFileData(content.getBytes("UTF-8"));
+	//			}
+	//		} catch (UnsupportedEncodingException e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
+
+	@Override
 	public String getContent() {
-		try {
-			return new String(getFileData(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	@Override
 	public void setContent(final String content) {
-		try {
-			if (content == null) {
-				setFileData("".getBytes("UTF-8"));
-			} else {
-				setFileData(content.getBytes("UTF-8"));
-			}
-		} catch (UnsupportedEncodingException e) {
-			DominoUtils.handleException(e);
-		}
+		// TODO Auto-generated method stub
+
 	}
+
+	@Override
+	public void setDeployable(final boolean deployable) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

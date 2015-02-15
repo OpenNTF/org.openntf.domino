@@ -32,13 +32,19 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class JarResource extends FileResource implements org.openntf.domino.design.JarResource {
+public final class JarResource extends AbstractDesignFileResource implements org.openntf.domino.design.JarResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JarResource.class.getName());
 
 	protected JarResource(final Document document) {
 		super(document);
+	}
+
+	@Override
+	protected boolean enforceRawFormat() {
+		// JarResource is exported in RAW-format. There is no DXL representation
+		return true;
 	}
 
 	/*
@@ -75,4 +81,5 @@ public class JarResource extends FileResource implements org.openntf.domino.desi
 			return null;
 		}
 	}
+
 }

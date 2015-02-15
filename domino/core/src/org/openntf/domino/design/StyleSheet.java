@@ -20,7 +20,7 @@ package org.openntf.domino.design;
  * @author jgallagher
  * 
  */
-public interface StyleSheet extends FileResource {
+public interface StyleSheet extends DesignBaseNamed {
 	/**
 	 * @return the content of the style sheet
 	 */

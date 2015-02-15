@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -32,21 +33,21 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
-public class JavaResource extends FileResource implements org.openntf.domino.design.JavaResource {
+public abstract class AbstractXspResource extends AbstractDesignFileResource implements XspResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(JavaResource.class.getName());
+	private static final Logger log_ = Logger.getLogger(AbstractXspResource.class.getName());
 
 	private static final String CLASS_INDEX_ITEM = "$ClassIndexItem";
 
-	protected JavaResource(final Document document) {
+	protected AbstractXspResource(final Document document) {
 		super(document);
 	}
 
 	/**
 	 * @param database
 	 */
-	protected JavaResource(final Database database) {
+	protected AbstractXspResource(final Database database) {
 		super(database);
 	}
 
@@ -55,12 +56,13 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 	 */
 	@Override
 	public Collection<String> getClassNames() {
+		List<String> classIndex = getItemValueStrings(CLASS_INDEX_ITEM);
 		List<String> names = new ArrayList<String>();
-		for (XMLNode node : getDxl().selectNodes("//item[@name='" + CLASS_INDEX_ITEM + "']//text")) {
-			// Classes begin with "WEB-INF/classes/"
-			String path = node.getText();
+		for (String path : classIndex) {
 			if (path.startsWith("WEB-INF/classes/")) {
 				names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
+			} else {
+				names.add(""); // add blank entries, otherwise the wrong $ClassData item will be located
 			}
 		}
 		return names;
@@ -77,7 +79,7 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 
 		Map<String, byte[]> result = new HashMap<String, byte[]>();
 		for (int i = 0; i < names.size(); i++) {
-			byte[] classData = getFileData("$ClassData" + i);
+			byte[] classData = getFileDataRaw("$ClassData" + i);
 			if (classData.length > 0) {
 				result.put(names.get(i), classData);
 			}
@@ -112,7 +114,7 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 			XMLNode sizeText = sizeNode.addChildElement("number");
 			sizeText.setTextContent(String.valueOf(classEntry.getValue().length));
 
-			setFileData("$ClassData" + index, classEntry.getValue());
+			setFileDataRaw("$ClassData" + index, classEntry.getValue());
 
 			XMLNode name = indexNode.addChildElement("text");
 			name.setTextContent("WEB-INF/classes/" + DominoUtils.javaBinaryNameToFilePath(classEntry.getKey(), "/"));
@@ -120,4 +122,5 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 			index++;
 		}
 	}
+
 }

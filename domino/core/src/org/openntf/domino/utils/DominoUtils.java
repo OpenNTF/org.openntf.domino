@@ -55,6 +55,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
+import org.openntf.domino.ext.Name.NamePartKey;
 import org.openntf.domino.logging.LogUtils;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -292,8 +293,9 @@ public enum DominoUtils {
 			ne.addExceptionDetails(hed);
 			throw ne;
 		}
-		if (getBubbleExceptions())
+		if (getBubbleExceptions()) {
 			throw new OpenNTFNotesException(details, t, hed);
+		}
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
@@ -417,9 +419,9 @@ public enum DominoUtils {
 				int start = m.start() + 3;
 				int end = m.end();
 				if (start < end) {
-					map.put(NamePartsMap.Key.Common, name.subSequence(start, end).toString());
+					map.put(NamePartKey.Common, name.subSequence(start, end).toString());
 				} else {
-					map.put(NamePartsMap.Key.Common, name.toString());
+					map.put(NamePartKey.Common, name.toString());
 				}
 			}
 			m = Names.O_MATCH.matcher(name);
@@ -427,9 +429,9 @@ public enum DominoUtils {
 				int start = m.start() + 2;
 				int end = m.end();
 				if (start < end) {
-					map.put(NamePartsMap.Key.Organization, name.subSequence(start, end).toString());
+					map.put(NamePartKey.Organization, name.subSequence(start, end).toString());
 				} else {
-					map.put(NamePartsMap.Key.Organization, name.toString());
+					map.put(NamePartKey.Organization, name.toString());
 				}
 			}
 			m = Names.C_MATCH.matcher(name);
@@ -437,9 +439,9 @@ public enum DominoUtils {
 				int start = m.start() + 2;
 				int end = m.end();
 				if (start < end) {
-					map.put(NamePartsMap.Key.Country, name.subSequence(start, end).toString());
+					map.put(NamePartKey.Country, name.subSequence(start, end).toString());
 				} else {
-					map.put(NamePartsMap.Key.Country, name.toString());
+					map.put(NamePartKey.Country, name.toString());
 				}
 			}
 			m = Names.OU_MATCH.matcher(name);
@@ -449,13 +451,13 @@ public enum DominoUtils {
 				int end = m.end();
 				if (start < end) {
 					if (i == 0)
-						map.put(NamePartsMap.Key.OrgUnit1, name.subSequence(start, end).toString());
+						map.put(NamePartKey.OrgUnit1, name.subSequence(start, end).toString());
 					if (i == 1)
-						map.put(NamePartsMap.Key.OrgUnit2, name.subSequence(start, end).toString());
+						map.put(NamePartKey.OrgUnit2, name.subSequence(start, end).toString());
 					if (i == 2)
-						map.put(NamePartsMap.Key.OrgUnit3, name.subSequence(start, end).toString());
+						map.put(NamePartKey.OrgUnit3, name.subSequence(start, end).toString());
 					if (i == 3)
-						map.put(NamePartsMap.Key.OrgUnit4, name.subSequence(start, end).toString());
+						map.put(NamePartKey.OrgUnit4, name.subSequence(start, end).toString());
 				}
 			}
 		}

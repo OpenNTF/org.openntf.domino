@@ -591,8 +591,8 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 	}
 
 	@Override
-	public <T> T getValues(final Class<?> T) {
-		return TypeUtils.itemValueToClass(this, T);
+	public <T> T getValues(final Class<T> type) {
+		return TypeUtils.itemValueToClass(this, type);
 	}
 
 	/*

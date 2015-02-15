@@ -20,7 +20,7 @@ package org.openntf.domino.design;
  * @author jgallagher
  * 
  */
-public interface DesignView extends Folder {
+public interface DesignView extends AnyFolderOrView {
 	public String getSelectionFormula();
 
 	public void setSelectionFormula(final String selectionFormula);

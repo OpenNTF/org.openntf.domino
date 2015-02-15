@@ -58,7 +58,10 @@ public interface Session {
 		DOC_UNID_NULLS,
 
 		/** ViewEntries should return correct column values. (Constant values are ommited) */
-		VIEWENTRY_RETURN_CONSTANT_VALUES
+		VIEWENTRY_RETURN_CONSTANT_VALUES,
+
+		/** Alternative implementation of Names */
+		ODA_NAMES
 	}
 
 	/**

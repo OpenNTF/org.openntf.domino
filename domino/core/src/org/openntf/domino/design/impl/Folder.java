@@ -37,6 +37,11 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 		super(document);
 	}
 
+	@Override
+	protected boolean enforceRawFormat() {
+		return false;
+	}
+
 	protected Folder(final Database database) {
 		super(database);
 
@@ -48,4 +53,5 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 			DominoUtils.handleException(e);
 		}
 	}
+
 }

@@ -153,7 +153,23 @@ public interface Document {
 	 *             if the values cannot be cast to the Java class T
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
+	public <T> T getItemValue(final String name, final Class<T> type) throws ItemNotFoundException, DataNotCompatibleException;
+
+	/**
+	 * Gets an Item value as list, Elements in list are casted it to a specific class, e.g. java.lang.String.class
+	 * 
+	 * @param name
+	 *            Item name to retrieve the value from
+	 * @param T
+	 *            Java class to cast value to
+	 * @return Java object of type List<T>, containing the values from the object
+	 * @throws ItemNotFoundException
+	 *             if the Item does not exist
+	 * @throws DataNotCompatibleException
+	 *             if the values cannot be cast to the Java class T
+	 * @since org.openntf.domino 2.5.0
+	 */
+	public <T> List<T> getItemValues(final String name, final Class<T> type) throws ItemNotFoundException, DataNotCompatibleException;
 
 	/**
 	 * Replaces an item value, setting the Item as Summary type or not
@@ -233,7 +249,7 @@ public interface Document {
 	 */
 	public String getMetaversalID(String serverName);
 
-	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
+	// public <T> T getItemValue(String name, Class<T> type, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 
 	/**
 	 * Attempts to force deletion of the document, using soft deletion, if enabled
@@ -335,7 +351,7 @@ public interface Document {
 
 	public List<?> getItemSeriesValues(CharSequence name);
 
-	public <T> T getItemSeriesValues(CharSequence name, Class<?> T);
+	public <T> T getItemSeriesValues(CharSequence name, Class<T> type);
 
 	public Map<String, List<Object>> getItemTable(CharSequence... itemnames);
 
@@ -346,4 +362,21 @@ public interface Document {
 	public void setItemTablePivot(final List<Map<String, Object>> pivot);
 
 	public Name getItemValueName(String itemName);
+
+	public NoteClass getNoteClass();
+
+	boolean isDefault();
+
+	boolean isPrivate();
+
+	/**
+	 * Add a separate $REF field to display a document in a hierarchical view. NOTE: you must add code to the select formula in the view
+	 * that copies the value of <code>itemName</code> (=$REFxxx) back to original $REF field for these documents. See this example:
+	 * 
+	 * <pre>
+	 *  @If(Form="YourForm"; FIELD $REF := $REFxxx; "");
+	 *  SELECT Form = ...
+	 * </pre>
+	 */
+	public void makeResponse(final lotus.domino.Document doc, String itemName);
 }

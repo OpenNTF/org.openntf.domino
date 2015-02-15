@@ -88,19 +88,19 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 *            name of a hidden file resource
 	 * @return a hidden file resource
 	 */
-	public FileResource getHiddenFileResource(String name);
+	public FileResourceHidden getHiddenFileResource(String name);
 
 	/**
 	 * @return a collection of all "hidden" file resources (e.g. Eclipse/JSF artifacts and Java class files)
 	 */
-	public DesignCollection<FileResource> getHiddenFileResources();
+	public DesignCollection<FileResourceHidden> getHiddenFileResources();
 
 	/**
 	 * @param name
 	 *            name of any type of file resource (file, Java, etc.)
 	 * @return the named file resource
 	 */
-	public FileResource getAnyFileResource(String name);
+	public AnyFileResource getAnyFileResource(String name);
 
 	/**
 	 * @param name
@@ -143,12 +143,12 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 *            name of a Java resource in "path" format (e.g. "some/package/name/SomeClassName.java")
 	 * @return the named Java resource
 	 */
-	public JavaResource getJavaResource(String name);
+	public XspJavaResource getXspJavaResource(String name);
 
 	/**
 	 * @return a collection of all Java resources in the database
 	 */
-	public DesignCollection<JavaResource> getJavaResources();
+	public DesignCollection<XspJavaResource> getXspJavaResources();
 
 	/**
 	 * @return a SortedSet of the Java class names defined in Java resources in the database in "canonical" format (e.g.
@@ -250,14 +250,14 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	/**
 	 * @return a collection of all Java script libraries in the database
 	 */
-	public DesignCollection<JavaScriptLibrary> getJavaScriptLibraries();
+	public DesignCollection<ScriptLibraryJava> getScriptLibrariesJava();
 
 	/**
 	 * @param name
 	 *            name of a Java script library in the database
 	 * @return the named Java script library
 	 */
-	public JavaScriptLibrary getJavaScriptLibrary(String name);
+	public ScriptLibraryJava getScriptLibraryJava(String name);
 
 	/**
 	 * Gets an XSP-Property from WEB-INF/xsp.properties
@@ -284,5 +284,22 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public boolean isAppFlagSet(final String flagName);
+
+	/**
+	 * Returns all design elements matching to the according formula. The type of the design element is autot detected
+	 * 
+	 * @param formula
+	 *            the formula
+	 * @return a subclass of DesignBase
+	 */
+	DesignCollection<DesignBase> getDesignElements(String formula);
+
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(Class<T> type);
+
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type, final String name);
+
+	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(Class<T> type, String name);
+
+	public <T extends DesignBase> T getDesignElementByName(Class<T> type, String name);
 
 }

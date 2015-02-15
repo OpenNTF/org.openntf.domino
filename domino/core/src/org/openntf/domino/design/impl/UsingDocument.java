@@ -33,4 +33,9 @@ public class UsingDocument extends AbstractDesignBase implements org.openntf.dom
 		super(document);
 	}
 
+	@Override
+	protected boolean enforceRawFormat() {
+		return false;
+	}
+
 }

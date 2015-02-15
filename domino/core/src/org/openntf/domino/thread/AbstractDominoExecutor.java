@@ -15,6 +15,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
@@ -102,6 +103,8 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		}
 	};
 
+	private String executorName_;
+
 	protected Calendar getNow() {
 		now_.clear();
 		return now_;
@@ -122,8 +125,9 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	 * Creates a new {@link AbstractDominoExecutor}. Specify the
 	 * 
 	 */
-	public AbstractDominoExecutor(final int corePoolSize) {
+	public AbstractDominoExecutor(final int corePoolSize, final String executorName) {
 		super(corePoolSize, createThreadFactory());
+		executorName_ = executorName;
 		Factory.addShutdownHook(shutdownHook);
 	}
 
@@ -196,6 +200,20 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 			return scheduler.isPeriodic();
 		}
 
+		/**
+		 * log exception
+		 */
+		@Override
+		protected void setException(Throwable t) {
+			super.setException(t);
+			if (t instanceof ExecutionException) {
+				t = ((ExecutionException) t).getCause();
+				log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t);
+			} else {
+				log_.log(Level.SEVERE, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t);
+			}
+		}
+
 		private void runPeriodic() {
 
 			scheduler.eventStart(getNow());
@@ -217,11 +235,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 					super.run();
 				}
 			} finally {
-				try {
-					this.get();
-				} catch (Throwable t) {
-					log_.log(Level.WARNING, "Task '" + getWrappedTask().getDescription() + "' failed: " + t.toString(), t);
-				}
 				synchronized (this) {
 					this.runner = null;
 				}
@@ -346,10 +359,10 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		super.beforeExecute(thread, runnable);
 		if (runnable instanceof DominoFutureTask) {
 			DominoFutureTask<?> task = (DominoFutureTask<?>) runnable;
-			thread.setName("XOTS: " + task.getWrappedTask().getDescription() + " - " + new Date());
+			thread.setName(executorName_ + ": " + task.getWrappedTask().getDescription() + " - " + new Date());
 			task.setState(TaskState.RUNNING);
 		} else {
-			thread.setName("XOTS: #" + thread.getId());
+			thread.setName(executorName_ + ": #" + thread.getId());
 		}
 	}
 

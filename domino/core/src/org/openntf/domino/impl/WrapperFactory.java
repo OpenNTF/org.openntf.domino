@@ -42,6 +42,7 @@ import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.utils.DominoUtils;
@@ -342,6 +343,8 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		long cpp = 0;
 		// most frequently used objects
 		if (lotus instanceof lotus.domino.Name) {
+			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES))
+				return new org.openntf.domino.impl.NameODA((lotus.domino.Name) lotus, (Session) parent);
 			return new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, (Session) parent);
 		}
 
@@ -795,7 +798,18 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		}
 
 		if (schema == Name.SCHEMA) {
-			return (T) new org.openntf.domino.impl.Name((Session) parent); // no metadata
+			String name = null;
+			String lang = null;
+			if (metaData instanceof String)
+				name = (String) metaData;
+			else {
+				String[] sArr = (String[]) metaData;
+				name = sArr[0];
+				lang = sArr[1];
+			}
+			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES))
+				return (T) new org.openntf.domino.impl.NameODA((Session) parent, name, lang);
+			return (T) new org.openntf.domino.impl.Name((Session) parent, name, lang);
 		}
 
 		if (schema == Document.SCHEMA) {

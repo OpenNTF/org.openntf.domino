@@ -1,7 +1,12 @@
 package org.openntf.domino.xsp;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
+import org.openntf.domino.config.Configuration;
+import org.openntf.domino.config.ServerConfiguration;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -15,6 +20,7 @@ import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 import org.openntf.service.ServiceLocatorFinder;
 
 import com.ibm.commons.Platform;
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.runtime.Application;
 import com.ibm.domino.napi.c.BackendBridge;
@@ -24,6 +30,7 @@ public enum ODAPlatform {
 	// TODO: create an OSGI-command
 	public static final boolean _debug = false;
 	public static final boolean debugAll = false;
+	private static int xotsStopDelay;
 
 	/**
 	 * Start up the ODAPlatform.
@@ -33,7 +40,7 @@ public enum ODAPlatform {
 	 * <li>startup the {@link Factory}</li>
 	 * <li>Configure the Factory with proper {@link INamedSessionFactory}s for XPages</li>
 	 * <li>Call {@link #verifyIGetEntryByKey()}</li>
-	 * <li>Start the {@link Xots} with 10 threads (if it is not completely disabled with "xots_tasks=0" in Notes.ini)</li>
+	 * <li>Start the {@link Xots} with 10 threads (if it is not completely disabled with "XotsTasks=0" in oda.nsf)</li>
 	 * </ol>
 	 * 
 	 * This is done automatically on server start or can manually invoked with<br>
@@ -44,19 +51,33 @@ public enum ODAPlatform {
 		// Here is all the init/term stuff done
 		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
 		Factory.startup();
-
 		// Setup the named factories 4 XPages
 		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 		verifyIGetEntryByKey();
-
-		int xotsTasks = 10;
-		try {
-			xotsTasks = Integer.parseInt(getEnvironmentString("xots_tasks"));
-		} catch (NumberFormatException e) {
-		}
+		ServerConfiguration cfg = Configuration.getServerConfiguration();
+		int xotsTasks = cfg.getXotsTasks();
+		// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
+		xotsStopDelay = cfg.getXotsStopDelay();
 		if (xotsTasks > 0) {
 			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
 			Xots.start(executor);
+
+			List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
+
+			for (Object tasklet : tasklets) {
+				if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
+					ClassLoader cl = tasklet.getClass().getClassLoader();
+
+					Factory.println("XOTS", "Registering tasklet " + tasklet);
+
+					if (tasklet instanceof Callable<?>) {
+						Xots.getService().submit((Callable<?>) tasklet);
+					} else {
+						Xots.getService().submit((Runnable) tasklet);
+					}
+				}
+			}
+
 		}
 
 	}
@@ -70,11 +91,6 @@ public enum ODAPlatform {
 	 */
 	public static void stop() {
 		if (Xots.isStarted()) {
-			int xotsStopDelay = 15;
-			try {
-				xotsStopDelay = Integer.parseInt(getEnvironmentString("xots_stop_delay"));
-			} catch (NumberFormatException e) {
-			}
 			Xots.stop(xotsStopDelay);
 		}
 		Factory.shutdown();

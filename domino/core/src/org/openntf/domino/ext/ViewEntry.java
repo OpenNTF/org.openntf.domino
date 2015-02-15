@@ -60,7 +60,7 @@ public interface ViewEntry {
 	 * @return Column value, cast to the specific class
 	 * @since org.openntf.domino 5.0.0
 	 */
-	public <T> T getColumnValue(String columnName, Class<?> T);
+	public <T> T getColumnValue(String columnName, Class<T> type);
 
 	/**
 	 * Gets the position of the entry with each level of the hierarchy separated by a '.'

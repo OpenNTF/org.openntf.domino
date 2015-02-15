@@ -26,6 +26,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.utils.Strings;
+
 /**
  * Carrier and parsing object for various RFC822 name parts.
  * 
@@ -372,7 +374,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 
 			} else {
 				for (final String s : this.values()) {
-					if (ISO.startsWithIgnoreCase(s, prefix)) {
+					if (Strings.startsWithIgnoreCase(s, prefix)) {
 						return true;
 					}
 				}

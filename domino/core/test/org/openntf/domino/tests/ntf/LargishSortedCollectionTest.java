@@ -7,6 +7,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.helpers.DocumentSorter;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -14,15 +15,7 @@ public class LargishSortedCollectionTest implements Runnable {
 	private static int THREAD_COUNT = 1;
 
 	public static void main(final String[] args) {
-		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
-		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new LargishSortedCollectionTest());
-		}
-		de.shutdown();
-		//		for (int i = 0; i < 4; i++) {
-		//			DominoThread thread = new DominoThread(new LargishSortedCollectionTest(), "My thread " + i);
-		//			thread.start();
-		//		}
+		TestRunnerUtil.runAsDominoThread(new LargishSortedCollectionTest(), TestRunnerUtil.NATIVE_SESSION);
 	}
 
 	public LargishSortedCollectionTest() {

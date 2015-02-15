@@ -17,12 +17,11 @@ package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javolution.util.FastMap;
 
 import lotus.domino.Base;
 
@@ -45,7 +44,8 @@ public class DominoReferenceCache {
 
 	/** The delegate map contains the value wrapped in phantomReferences) **/
 	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
-	private Map<lotus.domino.Base, DominoReference> map = new FastMap<lotus.domino.Base, DominoReference>();
+	@SuppressWarnings("restriction")
+	private Map<lotus.domino.Base, DominoReference> map = new IdentityHashMap<lotus.domino.Base, DominoReference>(2048);
 
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
@@ -194,7 +194,10 @@ public class DominoReferenceCache {
 
 	public long finishThreadSafes() {
 		long ret = 0;
-		for (DominoReference ref : map.values()) {
+		//NTF can't remove values from a map while iterating over them...
+		Object[] raws = map.values().toArray();
+		for (Object raw : raws) {
+			DominoReference ref = (DominoReference) raw;
 			if (!(ref.get() instanceof BaseThreadSafe))
 				continue;
 			if (ref.recycle())
