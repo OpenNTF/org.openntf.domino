@@ -263,7 +263,7 @@ public class OnDiskProject {
 		workingState = WorkingState.DESIGNSYNC;
 
 		try {
-			log(LogLevel.INFO, "Start Design Sync, synchronizing " + totalNSF + " (NSF) Design Elements with" + totalODP + " (ODP) Files");
+			log(LogLevel.INFO, "Start Design Sync, synchronizing " + totalNSF + " (NSF) Design Elements with " + totalODP + " (ODP) Files");
 
 			for (DesignBase elem : elems) {
 				sync(elem);
