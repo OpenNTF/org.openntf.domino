@@ -28,13 +28,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -79,6 +81,14 @@ public class OnDiskProject {
 		EXPORT, IMPORT, SYNC;
 	}
 
+	public enum LogLevel {
+		SEVERE, INFO
+	}
+
+	public enum WorkingState {
+		PREPARING, DESIGNSYNC, DOCEXPORT, DOCIMPORT
+	}
+
 	static TransformerFactory tFactory = TransformerFactory.newInstance();
 
 	public static Transformer ImportTransformer = createImportTransformer();
@@ -91,7 +101,9 @@ public class OnDiskProject {
 	public static final String CONFIG_SUFFIX = "-config";
 
 	private static final String DOC_DIR = "Documents";
-	public final static String NOTEINFO_UNID = "noteinfo unid=\"";
+	private static final String NOTEINFO_UNID = "noteinfo unid=\"";
+	private static final String LOG_DIR = "Logs";
+	private static final String LOG_FILE_PREFIX = "log_";
 
 	private File diskDir_;
 	private Database db;
@@ -100,19 +112,60 @@ public class OnDiskProject {
 	private File timeStampsDesign_;
 	private Map<String, OnDiskFile> files_;
 
+	private PrintStream logStream_;
+	private File logDir_;
+	private File logFile_;
+
 	private File docDir_;
-	Map<String, Long> lastModifiedMapDocs_ = null;
+	private Map<String, Long> lastModifiedMapDocs_ = null;
 	private File timeStampsDocs_;
 
-	private boolean gitFriendly = false; //TODO enable Transformer for Design-Export
+	private boolean gitFriendly = false;
 	private boolean exportMetadata = true;
+	private boolean enableLog = true;
+
+	private WorkingState workingState = WorkingState.PREPARING;
+	private String currentFile = "";
+	private int workingIdx = 0;
+
+	private int total = 0;
+
+	private int amountDocsInSync = 0;
+	private int amountDocsExported = 0;
+	private int amountDocsImported = 0;
+	private int amountDocsDeletedODP = 0;
+	private int amountDocsDeletedNSF = 0;
+
+	private int amountDesignElementsInSync = 0;
+	private int amountDesignElementsExported = 0;
+	private int amountDesignElementsImported = 0;
+	private int amountDesignElementsDeletedODP = 0;
+	private int amountDesignElementsDeletedNSF = 0;
+	private int amountDesignElementsFailed = 0;
 
 	public OnDiskProject(final File diskDir, final Database db, final SyncDirection direction) {
 		diskDir_ = diskDir;
 		this.db = db;
 		this.direction = direction;
 		//deserialize and update map
+		prepareLogger();
 		prepareMap();
+	}
+
+	protected void prepareLogger() {
+		logDir_ = new File(this.diskDir_, LOG_DIR);
+		if (!logDir_.exists()) {
+			logDir_.mkdir();
+		}
+		try {
+			Date now = new Date();
+			String dateString = new SimpleDateFormat("yyyyMMyy_HHmmss").format(now);
+			logFile_ = new File(logDir_, LOG_FILE_PREFIX + dateString + ".txt");
+			logFile_.createNewFile();
+			logStream_ = new PrintStream(logFile_);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	public static Transformer createTransformer(final InputStream stream) {
@@ -195,23 +248,34 @@ public class OnDiskProject {
 
 	/**
 	 * Synchronizes all DesignElements of the NSF with the {@link OnDiskProject}.
+	 * 
 	 */
 	public void syncDesign() {
+
 		DatabaseDesign design = db.getDesign();
 		DesignCollection<DesignBase> elems = design.getDesignElements(" !@Contains($Flags;{X}) & !@Begins($TITLE;{WEB-INF/classes}) ");
+		total += elems.getCount();
 
-		System.out.println("Start Design Sync");
+		workingState = WorkingState.DESIGNSYNC;
 
-		for (DesignBase elem : elems) {
-			sync(elem);
+		try {
+			log(LogLevel.INFO, "Start Design Sync, synchronizing " + total + " Design Elements");
+
+			for (DesignBase elem : elems) {
+				sync(elem);
+			}
+
+			for (OnDiskFile odf : getUnprocessedFiles()) {
+				sync(odf);
+			}
+
+			saveMap();
+			log(LogLevel.INFO, "End Design Sync, exported: " + amountDesignElementsExported + ", imported: " + amountDesignElementsImported
+					+ ", in sync: " + amountDesignElementsInSync + ", deleted (ODP): " + amountDesignElementsDeletedODP
+					+ ", deleted (NSF): " + amountDesignElementsDeletedNSF + ", failed: " + amountDesignElementsFailed);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
 		}
-
-		for (OnDiskFile odf : getUnprocessedFiles()) {
-			sync(odf);
-		}
-
-		saveMap();
-		System.out.println("End Design Sync");
 	}
 
 	/**
@@ -248,9 +312,12 @@ public class OnDiskProject {
 		output.close();
 	}
 
-	protected void exportDocs(final View view, final Set<String> exportedFiles) throws TransformerConfigurationException,
-			UnsupportedEncodingException {
-		System.out.println("Start Doc Export");
+	protected void exportDocs(final View view, final Set<String> exportedFiles) throws TransformerConfigurationException, IOException {
+		total = view.getAllEntries().getCount();
+		workingIdx = 0;
+		workingState = WorkingState.DOCEXPORT;
+
+		log(LogLevel.INFO, "Start Doc Export, synchronizing " + total + " documents");
 
 		DxlExporter dxlExporter = db.getAncestorSession().createDxlExporter();
 
@@ -263,6 +330,7 @@ public class OnDiskProject {
 
 		//iterate over Documents in view
 		for (ViewEntry entry : view.getAllEntries()) {
+			workingIdx++;
 			if (entry.isDocument()) {
 				Document doc = entry.getDocument();
 
@@ -274,12 +342,13 @@ public class OnDiskProject {
 				}
 
 				File file = new File(subDir, URLEncoder.encode((String) colValues.get(1), "UTF-8") + ".xml");
+				currentFile = file.getAbsolutePath();
 				exportedFiles.add(file.getAbsolutePath());
-
 				exportOneDoc(doc, file, dxlExporter);
 			}
 		}
-		System.out.println("End Doc Export");
+		log(LogLevel.INFO, "End Doc Export, exported: " + amountDocsExported + ", in sync: " + amountDocsInSync + ", deleted (NSF): "
+				+ amountDocsDeletedNSF);
 	}
 
 	/**
@@ -288,8 +357,10 @@ public class OnDiskProject {
 	 * @param file
 	 * @param dxlExporter
 	 * @param tr
+	 * @throws IOException
 	 */
-	protected void exportOneDoc(final Document doc, final File file, final DxlExporter dxlExporter) {
+	protected void exportOneDoc(final Document doc, final File file, final DxlExporter dxlExporter) throws IOException {
+		currentFile = file.getAbsolutePath();
 
 		long lastModifiedDoc = doc.getLastModifiedDate().getTime();
 
@@ -302,6 +373,8 @@ public class OnDiskProject {
 
 		//Case "Force-Export", "Sync-Export" -> export Document from NSF to file in ODP
 		if (this.direction == SyncDirection.EXPORT || (this.direction != SyncDirection.IMPORT && lastModifiedDoc > lastModifiedSync)) {
+			log(LogLevel.INFO, "Exporting file " + file.getAbsolutePath());
+
 			stream.open(file.getAbsolutePath(), "UTF-8");
 			stream.truncate();
 			stream.writeText(transformXslt(dxlExporter.exportDxl(doc)));
@@ -309,16 +382,22 @@ public class OnDiskProject {
 
 			file.setLastModified(lastModifiedDoc);
 
-			System.out.println("Update file " + file.getAbsolutePath());
+			amountDocsExported++;
 
 			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedDoc);
 
 			//Case "File was deleted in ODP" -> delete Document in NSF
 		} else {
 			if (!file.exists()) {
-				System.out.println("delete document " + doc.getUniversalID());
+
+				log(LogLevel.INFO, "Deleting document " + file.getAbsolutePath());
+
 				lastModifiedMapDocs_.remove(file.getAbsoluteFile());
 				doc.removePermanently(true);
+
+				amountDocsDeletedNSF++;
+			} else {
+				amountDocsInSync++;
 			}
 		}
 
@@ -348,9 +427,23 @@ public class OnDiskProject {
 	 * 
 	 * @param docDir
 	 * @param exportedFiles
+	 * @throws IOException
 	 */
-	protected void importDocs(final Set<String> exportedFiles) {
-		System.out.println("Start Doc Import");
+	protected void importDocs(final Set<String> exportedFiles) throws IOException {
+		List<File> importFiles = new ArrayList<File>();
+		for (File subDir : docDir_.listFiles()) {
+			if (subDir.isDirectory()) {
+				for (File file : subDir.listFiles()) {
+					importFiles.add(file);
+				}
+			}
+		}
+
+		total = importFiles.size();
+		workingIdx = 0;
+		workingState = WorkingState.DOCIMPORT;
+
+		log(LogLevel.INFO, "Start Doc Import, synchronizing " + total + " documents");
 
 		DxlImporter dxlImporter = db.getAncestorSession().createDxlImporter();
 
@@ -361,14 +454,14 @@ public class OnDiskProject {
 		dxlImporter.setReplicaRequiredForReplaceOrUpdate(false);
 
 		//iterate over Files in ODP
-		for (File subDir : docDir_.listFiles()) {
-			if (subDir.isDirectory()) {
-				for (File file : subDir.listFiles()) {
-					importOneDoc(file, dxlImporter, exportedFiles);
-				}
-			}
+		for (File file : importFiles) {
+			workingIdx++;
+			currentFile = file.getAbsolutePath();
+			importOneDoc(file, dxlImporter, exportedFiles);
 		}
-		System.out.println("End Doc Import");
+
+		log(LogLevel.INFO, "End Doc Import, imported: " + amountDocsImported + ", in sync: " + amountDocsInSync + ", deleted (ODP): "
+				+ amountDocsDeletedODP);
 	}
 
 	/**
@@ -376,8 +469,11 @@ public class OnDiskProject {
 	 * @param file
 	 * @param dxlImporter
 	 * @param exportedFiles
+	 * @throws IOException
 	 */
-	protected void importOneDoc(final File file, final DxlImporter dxlImporter, final Set<String> exportedFiles) {
+	protected void importOneDoc(final File file, final DxlImporter dxlImporter, final Set<String> exportedFiles) throws IOException {
+		currentFile = file.getAbsolutePath();
+
 		long lastModifiedFile = file.lastModified();
 
 		long lastModifiedSync = 0;
@@ -409,12 +505,14 @@ public class OnDiskProject {
 				doc.save();
 			}
 
+			log(LogLevel.INFO, "Importing document " + file.getAbsolutePath());
+
 			stream.open(file.getAbsolutePath(), "UTF-8");
 			stream.setPosition(0);
 			dxlImporter.importDxl(stream, db);
 			stream.close();
 
-			System.out.println("Update doc " + file.getAbsolutePath());
+			amountDocsImported++;
 
 			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedFile);
 
@@ -422,9 +520,15 @@ public class OnDiskProject {
 		} else {
 
 			if (!exportedFiles.contains(file.getAbsolutePath())) {
-				System.out.println("Deleting file " + file.getAbsolutePath());
+
+				log(LogLevel.INFO, "Deleting file " + file.getAbsolutePath());
+
 				lastModifiedMapDocs_.remove(file.getAbsolutePath());
 				file.delete();
+
+				amountDocsDeletedODP++;
+			} else {
+				amountDocsInSync++;
 			}
 		}
 
@@ -479,11 +583,13 @@ public class OnDiskProject {
 		if (root.listFiles() != null) {
 			for (File file : root.listFiles()) {
 				if (file.isDirectory()) {
-					if (!isDocDir(file)) {
+					if (!isDocDir(file) && !isLogDir(file)) {
 						updateMapRecursive(file);
 					}
 				} else if (!isTimeStampsFile(file) && !isMetadataFile(file) && !isConfigFile(file)) {
 					OnDiskFile odf = new OnDiskFile(diskDir_, file);
+					total++;
+
 					if (!files_.containsKey(odf.getFullName().toLowerCase())) {
 						if (direction != SyncDirection.EXPORT) {
 							odf.setState(State.WAS_CREATED);
@@ -519,15 +625,22 @@ public class OnDiskProject {
 		return file.getName().equals(DOC_DIR);
 	}
 
+	protected boolean isLogDir(final File file) {
+		return file.getName().equals(LOG_DIR);
+	}
+
 	/**
 	 * Synchronizes a SyncObject which is a DesignBase or a OnDiskFile.
 	 * 
 	 * @param syncObject
 	 *            The object that should be synchronized.
+	 * @throws IOException
+	 *             if I/O-Error occur.
 	 */
-	public void sync(final SyncObject syncObject) {
+	public void sync(final SyncObject syncObject) throws IOException {
 		OnDiskFile odf;
 		AbstractDesignBase elem;
+		workingIdx++;
 
 		if (syncObject instanceof AbstractDesignBase) {
 			elem = (AbstractDesignBase) syncObject;
@@ -574,6 +687,7 @@ public class OnDiskProject {
 				odf.setState(State.WAS_DELETED);
 			}
 		} else {
+			workingIdx++;
 			//OnDiskFile is an element of getUnprocessedFiles(), if state == null
 			if (odf.getState() == null) {
 				//set State "WAS_DELETED", if direction is not Force-Export
@@ -586,6 +700,9 @@ public class OnDiskProject {
 		}
 
 		File file = odf.getFile();
+
+		currentFile = file.getAbsolutePath();
+
 		file.getParentFile().mkdirs(); // ensure the path exists
 
 		long lastModifiedDoc = elem.getLastModified() == null ? 0 : elem.getLastModified().getTime();
@@ -594,7 +711,9 @@ public class OnDiskProject {
 
 		//Case "DesignElement was deleted in NSF" -> "File has to be deleted in ODP"
 		if (odf.getState() == State.DELETE) {
-			System.out.println("Deleting file " + file.getAbsolutePath());
+
+			log(LogLevel.INFO, "Deleting File " + file.getAbsolutePath());
+
 			files_.remove(odf.getFullName().toLowerCase());
 			if (elem instanceof HasMetadata) {
 				File metaFile = new File(file.getAbsoluteFile() + METADATA_SUFFIX);
@@ -606,46 +725,62 @@ public class OnDiskProject {
 			}
 			file.delete();
 
+			amountDesignElementsDeletedODP++;
+
 			//Case "File was deleted in ODP" -> "DesignElement has to be deleted in NSF"
 		} else if (odf.getState() == State.WAS_DELETED) {
-			System.out.println("Deleting design element " + odf.getFullName());
+
+			log(LogLevel.INFO, "Deleting Design Element " + file.getAbsolutePath());
+
 			files_.remove(odf.getFullName().toLowerCase());
 			db.getDocumentByUNID(elem.getUniversalID()).removePermanently(true);
+
+			amountDesignElementsDeletedNSF++;
 
 			//Case "DesignElement was created in NSF", "Force-Export", "Sync-Export" -> "File has to be created/updated in ODP"
 		} else if (odf.getState() == State.CREATE
 				|| ((odf.getState() == State.EXPORT || odf.getState() == State.SYNC) && lastModifiedDoc > lastModifiedSync)) {
 
-			System.out.println("Exporting " + file.getAbsolutePath());
+			log(LogLevel.INFO, "Exporting " + file.getAbsolutePath());
+
 			try {
 				if (doExport(elem)) {
 					odf.setTimeStamp(lastModifiedDoc);
+					amountDesignElementsExported++;
 				}
 			} catch (IOException e) {
 				DominoUtils.handleException(e);
 			} catch (OpenNTFNotesException e) {
-				System.err.println("Could not export " + odf.getFullName());
+				amountDesignElementsFailed++;
+				log(LogLevel.SEVERE, "Could not export " + odf.getFullName());
+				e.printStackTrace(logStream_);
 				e.printStackTrace();
 			}
 
 			//Case "File was created in ODP", "Force-Import", "Sync-Import" -> "DesignElement has to be created/updated in NSF"
 		} else if (odf.getState() == State.WAS_CREATED
 				|| ((odf.getState() == State.IMPORT || odf.getState() == State.SYNC) && lastModifiedFile > lastModifiedSync)) {
-			System.out.println("Importing " + file.getAbsolutePath());
+
+			log(LogLevel.INFO, "Importing " + file.getAbsolutePath());
+
 			try {
 				if (doImport(elem, file)) {
 					odf.setTimeStamp(elem.getLastModified().getTime());
+					amountDesignElementsImported++;
 				}
 			} catch (IOException e) {
 				DominoUtils.handleException(e);
 			} catch (OpenNTFNotesException e) {
-				System.err.println("Could not import " + odf.getFullName());
+				amountDesignElementsFailed++;
+				log(LogLevel.SEVERE, "Could not import " + odf.getFullName());
+				e.printStackTrace(logStream_);
 				e.printStackTrace();
 			}
 
 			//Case "is in sync"
 		} else {
-			System.out.println(file.getAbsolutePath() + " is in sync");
+			amountDesignElementsInSync++;
+			//System.out.println(file.getAbsolutePath() + " is in sync");
 		}
 
 		odf.setProcessed(true);
@@ -679,6 +814,13 @@ public class OnDiskProject {
 		}
 	}
 
+	public void close() {
+		logStream_.close();
+		if (!enableLog) {
+			logFile_.delete();
+		}
+	}
+
 	/**
 	 * Returns all OnDiskFiles that don't have a corresponding DesignElement in the NSF (anymore/not yet).
 	 * 
@@ -704,4 +846,42 @@ public class OnDiskProject {
 	public void setExportMetadata(final boolean exportMetadata) {
 		this.exportMetadata = exportMetadata;
 	}
+
+	public void setEnableLog(final boolean enableLog) {
+		this.enableLog = enableLog;
+	}
+
+	protected void log(final LogLevel level, final String message) throws IOException {
+		if (!enableLog) {
+			return;
+		}
+
+		String prefix = "";
+
+		if (level == LogLevel.SEVERE) {
+			prefix = "[SEVERE] ";
+		} else if (level == LogLevel.INFO) {
+			prefix = "[INFO] ";
+		}
+
+		//byte[] bytes = (prefix + message + "\n").getBytes();
+		logStream_.println(prefix + message);
+	}
+
+	public int getWorkingIndex() {
+		return workingIdx;
+	}
+
+	public int getTotal() {
+		return total;
+	}
+
+	public WorkingState getWorkingState() {
+		return workingState;
+	}
+
+	public String getCurrentFile() {
+		return currentFile;
+	}
+
 }
