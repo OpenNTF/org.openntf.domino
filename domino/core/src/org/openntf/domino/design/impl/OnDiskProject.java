@@ -159,7 +159,7 @@ public class OnDiskProject {
 		}
 		try {
 			Date now = new Date();
-			String dateString = new SimpleDateFormat("yyyyMMyy_HHmmss").format(now);
+			String dateString = new SimpleDateFormat("yyyyMMdd_HHmmss").format(now);
 			logFile_ = new File(logDir_, LOG_FILE_PREFIX + dateString + ".txt");
 			logFile_.createNewFile();
 			logStream_ = new PrintStream(logFile_);
@@ -865,7 +865,7 @@ public class OnDiskProject {
 		}
 
 		Date now = new Date();
-		String dateString = new SimpleDateFormat("yyyy/MM/yy HH:mm:ss").format(now);
+		String dateString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(now);
 
 		//byte[] bytes = (prefix + message + "\n").getBytes();
 		logStream_.println("[" + dateString + "] " + prefix + message);
