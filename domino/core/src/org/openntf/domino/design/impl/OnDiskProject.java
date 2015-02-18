@@ -864,8 +864,11 @@ public class OnDiskProject {
 			prefix = "[INFO] ";
 		}
 
+		Date now = new Date();
+		String dateString = new SimpleDateFormat("yyyy/MM/yy HH:mm:ss").format(now);
+
 		//byte[] bytes = (prefix + message + "\n").getBytes();
-		logStream_.println(prefix + message);
+		logStream_.println("[" + dateString + "] " + prefix + message);
 	}
 
 	public int getWorkingIndex() {
