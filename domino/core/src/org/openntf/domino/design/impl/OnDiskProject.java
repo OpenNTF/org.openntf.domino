@@ -100,6 +100,8 @@ public class OnDiskProject {
 	public static final String XSP_CONFIG_SUFFIX = ".xsp-config";
 	public static final String CONFIG_SUFFIX = "-config";
 
+	private static final int TIMESTAMPS_OFFSET = 15000;
+
 	private static final String DOC_DIR = "Documents";
 	private static final String NOTEINFO_UNID = "noteinfo unid=\"";
 	private static final String LOG_DIR = "Logs";
@@ -159,7 +161,7 @@ public class OnDiskProject {
 		}
 		try {
 			Date now = new Date();
-			String dateString = new SimpleDateFormat("yyyyMMyy_HHmmss").format(now);
+			String dateString = new SimpleDateFormat("yyyyMMdd_HHmmss").format(now);
 			logFile_ = new File(logDir_, LOG_FILE_PREFIX + dateString + ".txt");
 			logFile_.createNewFile();
 			logStream_ = new PrintStream(logFile_);
@@ -745,7 +747,7 @@ public class OnDiskProject {
 
 			try {
 				if (doExport(elem)) {
-					odf.setTimeStamp(lastModifiedDoc);
+					odf.setTimeStamp(lastModifiedDoc + TIMESTAMPS_OFFSET);
 					amountDesignElementsExported++;
 				}
 			} catch (IOException e) {
@@ -765,7 +767,7 @@ public class OnDiskProject {
 
 			try {
 				if (doImport(elem, file)) {
-					odf.setTimeStamp(elem.getLastModified().getTime());
+					odf.setTimeStamp(elem.getLastModified().getTime() + TIMESTAMPS_OFFSET);
 					amountDesignElementsImported++;
 				}
 			} catch (IOException e) {
@@ -865,7 +867,7 @@ public class OnDiskProject {
 		}
 
 		Date now = new Date();
-		String dateString = new SimpleDateFormat("yyyy/MM/yy HH:mm:ss").format(now);
+		String dateString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(now);
 
 		//byte[] bytes = (prefix + message + "\n").getBytes();
 		logStream_.println("[" + dateString + "] " + prefix + message);
