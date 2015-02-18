@@ -256,12 +256,14 @@ public class OnDiskProject {
 
 		DatabaseDesign design = db.getDesign();
 		DesignCollection<DesignBase> elems = design.getDesignElements(" !@Contains($Flags;{X}) & !@Begins($TITLE;{WEB-INF/classes}) ");
-		total += elems.getCount();
+		int totalODP = total;
+		int totalNSF = elems.getCount();
+		total += totalNSF;
 
 		workingState = WorkingState.DESIGNSYNC;
 
 		try {
-			log(LogLevel.INFO, "Start Design Sync, synchronizing " + total + " Design Elements");
+			log(LogLevel.INFO, "Start Design Sync, synchronizing " + totalNSF + " (NSF) Design Elements with" + totalODP + " (ODP) Files");
 
 			for (DesignBase elem : elems) {
 				sync(elem);
@@ -443,6 +445,7 @@ public class OnDiskProject {
 
 		total = importFiles.size();
 		workingIdx = 0;
+		amountDocsInSync = 0;
 		workingState = WorkingState.DOCIMPORT;
 
 		log(LogLevel.INFO, "Start Doc Import, synchronizing " + total + " documents");
