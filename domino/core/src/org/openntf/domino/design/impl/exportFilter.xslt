@@ -13,8 +13,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
   <!-- Indent the result tree for more consistency when doing a diff - and it looks much nicer :) -->
   <xsl:output method="xml" indent="yes" xslt:indent-amount="4"/>
   <xsl:output encoding="UTF-8"/>
-<!-- Strip whitespace so that when we remove elements it does not leave ugly blank gaps 
-  <xsl:strip-space elements="*"/>-->
+<!-- Strip whitespace so that when we remove elements it does not leave ugly blank gaps -->
+  <xsl:strip-space elements="*"/>
 <!-- 
   Start: Removal templates
     
