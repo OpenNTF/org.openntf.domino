@@ -22,7 +22,22 @@ Unless required by applicable law or agreed to in writing, software distributed 
     we do not want in the result tree.
 
 -->
-  <!-- Filter for Documents. We just copy the noteinfo/@unid and all items in alphabetical order -->
+  <!-- Filter for Documents. pardef appears after importing -->
+  <xsl:template match="//n:document/n:item[@name='$FocHistory']/n:richtext/n:pardef"/>
+  <xsl:template match="//n:document/n:item[@name='$FocHistory']/n:richtext/n:par[@def]">
+  <xsl:element name="{name(.)}">
+      <xsl:for-each select="@*">
+        <xsl:if test="name(.)!='def'">
+          <xsl:attribute name="{name(.)}">
+            <xsl:value-of select="."/>
+          </xsl:attribute>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:apply-templates />
+    </xsl:element>
+  </xsl:template>
+  
+   <!-- Filter for Documents. We just copy the noteinfo/@unid and all items in alphabetical order -->
   <xsl:template match="//n:document">
     <xsl:copy>
       <xsl:attribute name="form">
@@ -61,31 +76,31 @@ Unless required by applicable law or agreed to in writing, software distributed 
          item->$JavaCompilerSource item->$JavaComplierTarget
 
     -->
-  <xsl:template match="//n:agent/n:rundata"/>
-  <xsl:template match="//n:agent/n:designchange"/>
-  <xsl:template match="//n:javaproject/@codepath"/>
+  <xsl:template match="//agent/rundata"/>
+  <xsl:template match="//agent/designchange"/>
+  <xsl:template match="//javaproject/@codepath"/>
   <!-- not 100% but I don't like the sound of These! Not in the DTD in help anyway -->
-  <xsl:template match="//n:folder/@formatnoteid"/>
-  <xsl:template match="//n:view/@formatnoteid"/>
+  <xsl:template match="//folder/@formatnoteid"/>
+  <xsl:template match="//view/@formatnoteid"/>
 <!-- 
         For the Database Properties Non-Binary DXL.
         Most of these attributes/elements are guaranteed to be different on different developer copies
     -->
-  <xsl:template match="//n:database/@path"/>
-  <xsl:template match="//n:database/n:databaseinfo/@dbid"/>
-  <xsl:template match="//n:database/n:databaseinfo/@percentused"/>
-  <xsl:template match="//n:database/n:databaseinfo/@numberofdocuments"/>
-  <xsl:template match="//n:database/n:databaseinfo/@diskspace"/>
-  <xsl:template match="//n:database/n:databaseinfo/@odsversion"/>
-  <xsl:template match="//n:database/n:databaseinfo/n:datamodified"/>
-  <xsl:template match="//n:database/n:databaseinfo/n:designmodified"/>
-  <xsl:template match="//n:database/n:fulltextsettings"/>
+  <xsl:template match="//database/@path"/>
+  <xsl:template match="//database/databaseinfo/@dbid"/>
+  <xsl:template match="//database/databaseinfo/@percentused"/>
+  <xsl:template match="//database/databaseinfo/@numberofdocuments"/>
+  <xsl:template match="//database/databaseinfo/@diskspace"/>
+  <xsl:template match="//database/databaseinfo/@odsversion"/>
+  <xsl:template match="//database/databaseinfo/datamodified"/>
+  <xsl:template match="//database/databaseinfo/designmodified"/>
+  <xsl:template match="//database/fulltextsettings"/>
 <!-- 
         Ignore the database ACL
         Note: You may or may not want to do this! 
         In my case I have no need to keep acl in source repo.
     -->
-  <xsl:template match="//n:database/n:acl"/>
+  <xsl:template match="//database/acl"/>
 <!-- 
          Remove any items that begin with $ and end with _O
          for example
@@ -98,24 +113,24 @@ Unless required by applicable law or agreed to in writing, software distributed 
          These items will come back to the Design Element after a recompile, they
          just won't end up in your repository, which is good news, because they are like .class files.
      -->
-  <xsl:template match="//n:item">
+  <xsl:template match="//item">
     <xsl:if test="not(starts-with(@name,'$') and substring(@name,string-length(@name)-1,2) = '_O')">
       <xsl:call-template name="identity"/>
     </xsl:if>
   </xsl:template>
   <!-- Ignore the DesignerVersion Item  and this random FileModDT one -->
-  <xsl:template match="//n:item[@name='$DesignerVersion']"/>
-  <xsl:template match="//n:item[@name='$$ScriptName']"/>
-  <xsl:template match="//n:item[@name='$ScriptLib_error']"/>
-  <xsl:template match="//n:item[@name='$Class']"/>
-  <xsl:template match="//n:item[@name='$Comment']"/>
-  <xsl:template match="//n:item[@name='TmpViewDesignCollation']"/>
-  <xsl:template match="//n:item/@sign"/>
-  <xsl:template match="//n:item[@name='$CIAOOwner']"/>
-  <xsl:template match="//n:item[@name='$CIAOTime']"/>
-  <xsl:template match="//n:item[@name='$CIAOCheckOutTime']"/>
-  <xsl:template match="//n:imageresource/n:item[@name='$FileModDT']"/>
-  <xsl:template match="//n:imageresource/n:item[@name='$EditFilePath']"/>
+  <xsl:template match="//item[@name='$DesignerVersion']"/>
+  <xsl:template match="//item[@name='$$ScriptName']"/>
+  <xsl:template match="//item[@name='$ScriptLib_error']"/>
+  <xsl:template match="//item[@name='$Class']"/>
+  <xsl:template match="//item[@name='$Comment']"/>
+  <xsl:template match="//item[@name='TmpViewDesignCollation']"/>
+  <xsl:template match="//item/@sign"/>
+  <xsl:template match="//item[@name='$CIAOOwner']"/>
+  <xsl:template match="//item[@name='$CIAOTime']"/>
+  <xsl:template match="//item[@name='$CIAOCheckOutTime']"/>
+  <xsl:template match="//imageresource/item[@name='$FileModDT']"/>
+  <xsl:template match="//imageresource/item[@name='$EditFilePath']"/>
 <!-- 
          For any node not specified in one of the above templates, 
          simply copy it to the result tree.
