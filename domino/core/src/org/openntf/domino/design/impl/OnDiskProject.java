@@ -388,7 +388,7 @@ public class OnDiskProject {
 
 			amountDocsExported++;
 
-			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedDoc);
+			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedDoc + TIMESTAMPS_OFFSET);
 
 			//Case "File was deleted in ODP" -> delete Document in NSF
 		} else {
@@ -519,7 +519,7 @@ public class OnDiskProject {
 
 			amountDocsImported++;
 
-			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedFile);
+			lastModifiedMapDocs_.put(file.getAbsolutePath(), lastModifiedFile + TIMESTAMPS_OFFSET);
 
 			//Case "Document was deleted in NSF" -> delete file in ODP
 		} else {
