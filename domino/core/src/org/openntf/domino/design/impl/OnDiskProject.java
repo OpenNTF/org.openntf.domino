@@ -44,7 +44,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
@@ -93,6 +95,9 @@ public class OnDiskProject {
 
 	public static Transformer ImportTransformer = createImportTransformer();
 	public static Transformer ExportTransformer = createExportTransformer();
+
+	private DocumentBuilderFactory docFactory_;
+	private DocumentBuilder docBuilder_;
 
 	public static final String TIMESTAMPS_DESIGN_PREFIX = ".timeStampsDesign_";
 	public static final String TIMESTAMPS_DOCS_PREFIX = ".timeStampsDocs_";
@@ -149,8 +154,15 @@ public class OnDiskProject {
 		diskDir_ = diskDir;
 		this.db = db;
 		this.direction = direction;
-		//deserialize and update map
+		docFactory_ = DocumentBuilderFactory.newInstance();
+		docFactory_.setNamespaceAware(true);
+		try {
+			docBuilder_ = docFactory_.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			DominoUtils.handleException(e);
+		}
 		prepareLogger();
+		//deserialize and update map
 		prepareMap();
 	}
 
@@ -409,10 +421,8 @@ public class OnDiskProject {
 
 	protected String transformXslt(final String dxl) {
 		try {
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			docFactory.setNamespaceAware(true);
 			InputSource input = new InputSource(new StringReader(dxl));
-			org.w3c.dom.Document document = docFactory.newDocumentBuilder().parse(input);
+			org.w3c.dom.Document document = docBuilder_.parse(input);
 
 			DOMSource source = new DOMSource(document.getDocumentElement());
 			StringWriter sw = new StringWriter();
