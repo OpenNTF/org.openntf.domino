@@ -22,21 +22,9 @@ Unless required by applicable law or agreed to in writing, software distributed 
     we do not want in the result tree.
 
 -->
-  <!-- Filter for Documents. pardef appears after importing -->
-  <xsl:template match="//n:document/n:item[@name='$FocHistory']/n:richtext/n:pardef"/>
-  <xsl:template match="//n:document/n:item[@name='$FocHistory']/n:richtext/n:par[@def]">
-  <xsl:element name="{name(.)}">
-      <xsl:for-each select="@*">
-        <xsl:if test="name(.)!='def'">
-          <xsl:attribute name="{name(.)}">
-            <xsl:value-of select="."/>
-          </xsl:attribute>
-        </xsl:if>
-      </xsl:for-each>
-      <xsl:apply-templates />
-    </xsl:element>
-  </xsl:template>
-  
+  <!-- Filter for Documents. delete history stuff -->
+  <xsl:template match="//n:document/n:item[starts-with(@n:name,'$FocHistory')]"/>
+ 
    <!-- Filter for Documents. We just copy the noteinfo/@unid and all items in alphabetical order -->
   <xsl:template match="//n:document">
     <xsl:copy>
