@@ -159,10 +159,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	public Formula(final String expression) throws FormulaSyntaxException {
 		this();
 		try {
-			setExpression(expression);
+			setExpression(expression, true);
 		} catch (FormulaSyntaxException fe) {
 			isValid_ = false;
-			log_.log(Level.INFO, "Error confirming formula syntax: " + fe.getExpression() + " (" + fe.getErrorText() + ")");
+			log_.log(Level.WARNING, "Error confirming formula syntax: " + fe.getExpression() + " (" + fe.getErrorText() + ")");
+			throw fe;
 		}
 	}
 

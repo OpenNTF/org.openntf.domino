@@ -5,6 +5,10 @@ import java.util.Map;
 
 import org.openntf.domino.graph2.impl.DGraph;
 
+import com.tinkerpop.frames.modules.Module;
+import com.tinkerpop.frames.modules.typedgraph.TypeManager;
+import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
+
 public interface DConfiguration extends Externalizable {
 
 	public Map<Class<?>, Long> getTypeMap();
@@ -14,6 +18,12 @@ public interface DConfiguration extends Externalizable {
 	public void addElementStore(DElementStore store);
 
 	public DGraph getGraph();
+
+	public Module getModule();
+
+	public TypeRegistry getTypeRegistry();
+
+	public TypeManager getTypeManager();
 
 	public void setGraph(DGraph graph);
 

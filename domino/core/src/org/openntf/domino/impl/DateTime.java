@@ -39,7 +39,7 @@ import com.ibm.icu.util.GregorianCalendar;
  * The Class DateTime.
  */
 public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements
-org.openntf.domino.DateTime {
+		org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -937,7 +937,9 @@ org.openntf.domino.DateTime {
 	public int compare(final org.openntf.formula.DateTime sdt1, final org.openntf.formula.DateTime sdt2) {
 		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
 			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
-		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());
+		if (sdt1 instanceof DateTime)
+			return sdt2.compare(sdt2, sdt1);
+		return sdt1.compare(sdt1, sdt2);
 	}
 
 	@Override

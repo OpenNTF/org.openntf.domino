@@ -8,8 +8,10 @@ import org.openntf.domino.Document;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.impl.DVertex;
 
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 @TypeField("form")
@@ -25,6 +27,9 @@ public interface DVertexFrame extends Editable {
 	public Document asDocument();
 
 	@JavaHandler
+	public Map<CharSequence, Object> asMap();
+
+	@JavaHandler
 	public String[] getEditors();
 
 	//TODO NTF Future
@@ -33,7 +38,7 @@ public interface DVertexFrame extends Editable {
 	//TODO NTF Future
 	//	public String[] getReaders();
 
-	public abstract static class DVertexFrameImpl implements DVertexFrame {
+	public abstract static class DVertexFrameImpl implements DVertexFrame, JavaHandlerContext<Vertex> {
 		@Override
 		public Document asDocument() {
 			Object raw = asVertex();
@@ -49,8 +54,8 @@ public interface DVertexFrame extends Editable {
 					+ (raw == null ? "null" : raw.getClass().getName()));
 		}
 
+		@Override
 		public Map<CharSequence, Object> asMap() {
-			//TODO NTF
 			Object raw = asVertex();
 			if (raw instanceof DVertex) {
 				Object delegate = ((DVertex) raw).getDelegate();
@@ -76,6 +81,19 @@ public interface DVertexFrame extends Editable {
 			}
 			return result;
 		}
+
+		//		@Override
+		//		public Date getCreated() {
+		//			//			System.out.println("Impl.getCreated() called");
+		//			Date result = null;
+		//			Object raw = ((DVertex) asVertex()).getProperty("@CreatedDate", Date.class);
+		//			if (raw instanceof Date) {
+		//				return result;
+		//			} else {
+		//				System.out.println("Looked for a Date but got a " + (raw == null ? "null" : raw.getClass().getName()));
+		//				return new Date(0);
+		//			}
+		//		}
 	}
 
 }

@@ -24,6 +24,60 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 	}
 
 	@SuppressWarnings("rawtypes")
+	private Edge addEdge(final IncidenceUnique incidence, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex) {
+		Edge result = null;
+		switch (incidence.direction()) {
+		case OUT:
+			result = framedGraph.addEdge(null, vertex, newVertex, incidence.label());
+			break;
+		case IN:
+			result = framedGraph.addEdge(null, newVertex, vertex, incidence.label());
+			break;
+		case BOTH:
+			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private Edge findEdge(final IncidenceUnique adjacency, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex) {
+		Edge result = null;
+		switch (adjacency.direction()) {
+		case OUT:
+			try {
+				result = ((DVertex) vertex).findOutEdge(newVertex, adjacency.label());
+			} catch (IllegalStateException ise) {
+				//NTF this is a legitimate condition, since the edge does not yet exist!
+			}
+			break;
+		case IN:
+			try {
+				result = ((DVertex) vertex).findInEdge(newVertex, adjacency.label());
+			} catch (IllegalStateException ise) {
+				//NTF this is a legitimate state, since the edge does not yet exist!
+			}
+			break;
+		case BOTH:
+			try {
+				result = ((DVertex) vertex).findOutEdge(newVertex, adjacency.label());
+			} catch (IllegalStateException ise) {
+				//NTF this is a legitimate state, since the edge does not yet exist!
+			}
+			if (result == null) {
+				try {
+					result = ((DVertex) vertex).findInEdge(newVertex, adjacency.label());
+				} catch (IllegalStateException ise) {
+					//NTF this is a legitimate state, since the edge does not yet exist!
+				}
+			}
+			break;
+		default:
+			break;
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final IncidenceUnique annotation, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
@@ -49,58 +103,22 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 				return framedGraph.frame(e, returnType);
 			}
 		} else if (AnnotationUtilities.isFindMethod(method)) {
-			System.out.println("DEBUG: Invoking AdjacencyUnique FIND method");
+			Vertex newVertex;
 			Edge resultEdge = null;
-			Vertex argVertex = ((VertexFrame) arguments[0]).asVertex();
-			switch (incidence.direction()) {
-			case OUT:
-				DVertex inVertex = (DVertex) vertex;
-				DVertex outVertex = (DVertex) argVertex;
-				resultEdge = outVertex.findOutEdge(inVertex, incidence.label());
-				if (resultEdge != null) {
-					return framedGraph.frame(resultEdge, method.getReturnType());
-				}
-			case IN:
-				inVertex = (DVertex) argVertex;
-				outVertex = (DVertex) vertex;
-				resultEdge = inVertex.findInEdge(outVertex, incidence.label());
-				if (resultEdge != null) {
-					return framedGraph.frame(resultEdge, method.getReturnType());
-				}
-			case BOTH:
-				inVertex = (DVertex) vertex;
-				outVertex = (DVertex) argVertex;
-				resultEdge = inVertex.findEdge(outVertex, incidence.label());
-				if (resultEdge != null) {
-					return framedGraph.frame(resultEdge, method.getReturnType());
-				}
+			newVertex = ((VertexFrame) arguments[0]).asVertex();
+			resultEdge = findEdge(incidence, framedGraph, vertex, newVertex);
+			if (resultEdge != null) {
+				return framedGraph.frame(resultEdge, method.getReturnType());
 			}
 		} else if (ClassUtilities.isAddMethod(method)) {
+			Vertex newVertex;
 			Edge resultEdge = null;
-			Vertex argVertex = ((VertexFrame) arguments[0]).asVertex();
-			switch (incidence.direction()) {
-			case OUT:
-				DVertex inVertex = (DVertex) vertex;
-				DVertex outVertex = (DVertex) argVertex;
-				resultEdge = outVertex.findOutEdge(inVertex, incidence.label());
-				if (resultEdge != null) {
-					return framedGraph.frame(resultEdge, method.getReturnType());
-				}
-				Edge e1 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
-				return framedGraph.frame(e1, method.getReturnType());
-			case IN:
-				inVertex = (DVertex) argVertex;
-				outVertex = (DVertex) vertex;
-				resultEdge = inVertex.findInEdge(outVertex, incidence.label());
-				if (resultEdge != null) {
-					return framedGraph.frame(resultEdge, method.getReturnType());
-				}
-				Edge e2 = framedGraph.addEdge(null, outVertex, inVertex, incidence.label());
-				return framedGraph.frame(e2, method.getReturnType());
-			case BOTH:
-				throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
+			newVertex = ((VertexFrame) arguments[0]).asVertex();
+			resultEdge = findEdge(incidence, framedGraph, vertex, newVertex);
+			if (resultEdge == null) {
+				resultEdge = addEdge(incidence, framedGraph, vertex, newVertex);
 			}
-
+			return framedGraph.frame(resultEdge, method.getReturnType());
 		} else if (ClassUtilities.isRemoveMethod(method)) {
 			framedGraph.removeEdge(((EdgeFrame) arguments[0]).asEdge());
 			return null;

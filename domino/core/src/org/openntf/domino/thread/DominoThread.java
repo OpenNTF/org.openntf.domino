@@ -193,7 +193,6 @@ public class DominoThread extends NotesThread {
 	@Override
 	public void termThread() {
 		log_.fine("DEBUG: Terminating a " + toString());
-		Factory.termThread();
 		Factory.removeShutdownHook(shutdownHook);
 		super.termThread();
 	}

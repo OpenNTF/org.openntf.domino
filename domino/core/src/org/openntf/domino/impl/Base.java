@@ -23,6 +23,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -739,9 +740,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				if (value instanceof java.util.Date) {
 					dt = lsess.createDateTime((java.util.Date) value);
 				} else if (value instanceof org.openntf.formula.DateTime) {
-					dt = lsess.createDateTime(((org.openntf.formula.DateTime) value).toJavaDate());
+					org.openntf.formula.DateTime fdt = (org.openntf.formula.DateTime) value;
+					dt = lsess.createDateTime(fdt.toJavaDate());
+					if (fdt.isAnyDate())
+						dt.setAnyDate();
+					if (fdt.isAnyTime())
+						dt.setAnyTime();
 				} else {
-					dt = lsess.createDateTime((java.util.Calendar) value);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					java.util.Calendar intermediate = (java.util.Calendar) value;
+					dt = lsess.createDateTime(sdf.format(intermediate.getTime()) + " " + intermediate.getTimeZone().getID());
 				}
 				if (recycleThis != null) {
 					recycleThis.add(dt);

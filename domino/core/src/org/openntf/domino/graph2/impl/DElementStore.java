@@ -15,6 +15,7 @@ import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -36,6 +37,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	private Object proxyDelegate_;
 	private Long proxyDelegateKey_;
 	private Object provisionalProxyDelegateKey_;
+	private transient Map<Object, NoteCoordinate> keyCache_;
 	private transient Map<Object, Element> elementCache_;
 	private transient org.openntf.domino.graph2.DConfiguration configuration_;
 
@@ -48,6 +50,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			elementCache_ = new FastMap<Object, Element>().atomic();
 		}
 		return elementCache_;
+	}
+
+	protected Map<Object, NoteCoordinate> getKeyCache() {
+		if (keyCache_ == null) {
+			keyCache_ = new FastMap<Object, NoteCoordinate>().atomic();
+		}
+		return keyCache_;
 	}
 
 	public DElementStore() {
@@ -182,13 +191,15 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Long getProxyStoreKey() {
 		if (proxyDelegateKey_ == null) {
-			Object delegate = getStoreDelegate();
-			if (delegate != null) {
-				if (delegate instanceof Database) {
-					String rid = ((Database) delegate).getReplicaID();
-					proxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
-				} else {
-					//TODO Some other mechanism to get the key
+			if (provisionalProxyDelegateKey_ != null) {
+				Object delegate = getProxyStoreDelegate();
+				if (delegate != null) {
+					if (delegate instanceof Database) {
+						String rid = ((Database) delegate).getReplicaID();
+						proxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
+					} else {
+						//TODO Some other mechanism to get the key
+					}
 				}
 			}
 		}
@@ -206,9 +217,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			setStoreKey(NoteCoordinate.Utils.getLongFromReplid(storeKey));
 		} else {
 			if (storeKey.toString().contains("!!")) {
-				//TODO load from APIPath
+				provisionalDelegateKey_ = storeKey;
 			} else {
-				//TODO load from local path
+				provisionalDelegateKey_ = storeKey;
 			}
 		}
 	}
@@ -225,9 +236,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(storeKey));
 		} else {
 			if (storeKey.toString().contains("!!")) {
-				//TODO load from APIPath
+				this.provisionalProxyDelegateKey_ = storeKey;
 			} else {
-				//TODO load from local path
+				this.provisionalProxyDelegateKey_ = storeKey;
 			}
 		}
 	}
@@ -267,6 +278,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
 				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -286,6 +298,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
 				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 			}
 		}
 		return result;
@@ -309,16 +322,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (chk != null) {
 			result = (Edge) chk;
 		} else {
-			if (id == null) {
-
-			}
 			Object localkey = localizeKey(id);
 			Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
 			if (delegate != null) {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
-				//				System.out.println("TEMP DEBUG: Returning edge " + result.getId());
 				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -329,6 +339,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (id == null)
 			return null;
 		Element chk = getElementCache().get(id);
+		if (chk == null) {
+			NoteCoordinate nc = getKeyCache().get(id);
+			if (nc != null) {
+				chk = getElementCache().get(nc);
+			}
+		}
 		if (chk != null) {
 			if (type.isAssignableFrom(chk.getClass())) {
 				return chk;
@@ -353,6 +369,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
 				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
 			}
 		}
 		return result;
@@ -378,7 +395,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	protected boolean isProxied() {
-		return proxyDelegateKey_ != null;
+		return getProxyStoreKey() != null;
 	}
 
 	protected Serializable getKeyProperty(final Map<String, Object> delegate) {
@@ -460,7 +477,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (result == null) {
 			System.out
-					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		}
 		if (result != null) {
 			if (type.equals(Element.class)) {
@@ -552,6 +569,38 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
+	public Iterable<Vertex> getVertices() {
+		return new DVertexIterable(this, getVertexIds());
+	}
+
+	@Override
+	public Iterable<Edge> getEdges() {
+		return new DEdgeIterable(this, getEdgeIds());
+	}
+
+	@Override
+	public Iterable<Vertex> getVertices(final String formulaFilter) {
+		return new DVertexIterable(this, getVertexIds(formulaFilter));
+	}
+
+	@Override
+	public Iterable<Edge> getEdges(final String formulaFilter) {
+		return new DEdgeIterable(this, getEdgeIds(formulaFilter));
+	}
+
+	@Override
+	public Iterable<Vertex> getVertices(final String key, final Object value) {
+		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getVertexFormula(key, value);
+		return getVertices(formulaFilter);
+	}
+
+	@Override
+	public Iterable<Edge> getEdges(final String key, final Object value) {
+		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getEdgeFormula(key, value);
+		return getEdges(formulaFilter);
+	}
+
+	@Override
 	public Set<Vertex> getCachedVertices() {
 		FastSet<Vertex> result = new FastSet<Vertex>();
 		for (Element elem : getElementCache().values()) {
@@ -560,6 +609,44 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		return result.unmodifiable();
+	}
+
+	protected Iterable<NoteCoordinate> getVertexIds() {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
+	}
+
+	protected Iterable<NoteCoordinate> getVertexIds(final String formulaFilter) {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(formulaFilter);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
 	}
 
 	@Override
@@ -571,6 +658,44 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		return result.unmodifiable();
+	}
+
+	protected Iterable<NoteCoordinate> getEdgeIds() {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
+	}
+
+	protected Iterable<NoteCoordinate> getEdgeIds(final String formulaFilter) {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(formulaFilter);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
 	}
 
 }

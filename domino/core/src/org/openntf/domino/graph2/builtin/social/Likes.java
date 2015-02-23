@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Likes")
 public interface Likes extends DEdgeFrame {
-	public static final String LABEL_LIKEABLE = "likes";
+	public static final String LABEL = "likes";
 
 	@OutVertex
 	Liker getLiker();

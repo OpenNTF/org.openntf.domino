@@ -86,6 +86,10 @@ public interface Name {
 		 */
 		FLATERROR(false, true),
 		/**
+		 * A Domino hierarchical name
+		 */
+		DOMINO(true, false),
+		/**
 		 * A hierarchical name
 		 */
 		HIERARCHICAL(true, false),

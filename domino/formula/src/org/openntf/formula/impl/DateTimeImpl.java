@@ -7,9 +7,11 @@ import static com.ibm.icu.util.Calendar.MINUTE;
 import static com.ibm.icu.util.Calendar.MONTH;
 import static com.ibm.icu.util.Calendar.SECOND;
 import static com.ibm.icu.util.Calendar.YEAR;
-import static com.ibm.icu.util.Calendar.getInstance;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
 import java.util.Locale;
 
@@ -18,46 +20,69 @@ import org.openntf.formula.Formulas;
 
 import com.ibm.icu.util.Calendar;
 
-public class DateTimeImpl implements DateTime, Serializable {
-	private static final long serialVersionUID = -4270572924947814291L;
-	private Locale iLocale;
-	private Calendar iCal;
-	private boolean iNoDate = false;
-	private boolean iNoTime = false;
+public class DateTimeImpl implements DateTime, Externalizable {
+	private Locale _locale;
+	private Calendar _cal;
+	private boolean _noDate = false;
+	private boolean _noTime = false;
+
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeInt(20150211);
+		out.writeObject(_locale);
+		out.writeLong(_cal.getTimeInMillis());
+		out.writeBoolean(_noDate);
+		out.writeBoolean(_noTime);
+	}
+
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		in.readInt();
+		_locale = (Locale) in.readObject();
+		_cal = Calendar.getInstance(_locale);
+		_cal.setTimeInMillis(in.readLong());
+		_noDate = in.readBoolean();
+		_noTime = in.readBoolean();
+	}
+
+	/**
+	 * @deprecated needed for {@link Externalizable} - do not use!
+	 */
+	@Deprecated
+	public DateTimeImpl() {
+	}
 
 	DateTimeImpl(final Locale loc) {
-		iLocale = loc;
-		iCal = getInstance(loc);
+		_locale = loc;
+		_cal = Calendar.getInstance(loc);
 	}
 
 	public void adjustDay(final int n) {
-		if (!iNoDate)
-			iCal.add(DAY_OF_MONTH, n);
+		if (!_noDate)
+			_cal.add(DAY_OF_MONTH, n);
 	}
 
 	public void adjustHour(final int n) {
-		if (!iNoTime)
-			iCal.add(HOUR_OF_DAY, n);
+		if (!_noTime)
+			_cal.add(HOUR_OF_DAY, n);
 	}
 
 	public void adjustMinute(final int n) {
-		if (!iNoTime)
-			iCal.add(MINUTE, n);
+		if (!_noTime)
+			_cal.add(MINUTE, n);
 	}
 
 	public void adjustMonth(final int n) {
-		if (!iNoDate)
-			iCal.add(MONTH, n);
+		if (!_noDate)
+			_cal.add(MONTH, n);
 	}
 
 	public void adjustSecond(final int n) {
-		if (!iNoTime)
-			iCal.add(SECOND, n);
+		if (!_noTime)
+			_cal.add(SECOND, n);
 	}
 
 	public void adjustYear(final int n) {
-		if (!iNoDate)
-			iCal.add(YEAR, n);
+		if (!_noDate)
+			_cal.add(YEAR, n);
 	}
 
 	public void convertToZone(final int zone, final boolean isDST) {
@@ -66,23 +91,23 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public String getDateOnly() {
-		if (iNoDate)
+		if (_noDate)
 			return "";
-		return Formulas.getFormatter(iLocale).formatCalDateOnly(iCal);
+		return Formulas.getFormatter(_locale).formatCalDateOnly(_cal);
 	}
 
 	public String getLocalTime() {
-		if (iNoDate)
+		if (_noDate)
 			return getTimeOnly();
-		if (iNoTime)
+		if (_noTime)
 			return getDateOnly();
-		return Formulas.getFormatter(iLocale).formatCalDateTime(iCal);
+		return Formulas.getFormatter(_locale).formatCalDateTime(_cal);
 	}
 
 	public String getTimeOnly() {
-		if (iNoTime)
+		if (_noTime)
 			return "";
-		return Formulas.getFormatter(iLocale).formatCalTimeOnly(iCal);
+		return Formulas.getFormatter(_locale).formatCalTimeOnly(_cal);
 	}
 
 	public int getTimeZone() {
@@ -98,11 +123,11 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public boolean isAnyDate() {
-		return iNoDate;
+		return _noDate;
 	}
 
 	public boolean isAnyTime() {
-		return iNoTime;
+		return _noTime;
 	}
 
 	public boolean isDST() {
@@ -112,18 +137,18 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public void setAnyDate() {
-		iNoDate = true;
+		_noDate = true;
 	}
 
 	public void setAnyTime() {
-		iNoTime = true;
+		_noTime = true;
 	}
 
 	public void setLocalDate(final int year, final int month, final int day) {
-		iCal.set(YEAR, year);
-		iCal.set(MONTH, month - 1);
-		iCal.set(DAY_OF_MONTH, day);
-		iNoDate = false;
+		_cal.set(YEAR, year);
+		_cal.set(MONTH, month - 1);
+		_cal.set(DAY_OF_MONTH, day);
+		_noDate = false;
 	}
 
 	public void setLocalTime(final java.util.Calendar otherCal) {
@@ -131,17 +156,17 @@ public class DateTimeImpl implements DateTime, Serializable {
 	}
 
 	public void setLocalTime(final Date date) {
-		iCal.setTime(date);
-		iNoDate = false;
-		iNoTime = false;
+		_cal.setTime(date);
+		_noDate = false;
+		_noTime = false;
 	}
 
 	public void setLocalTime(final int hour, final int minute, final int second, final int hundredth) {
-		iCal.set(HOUR_OF_DAY, hour);
-		iCal.set(MINUTE, minute);
-		iCal.set(SECOND, second);
-		iCal.set(MILLISECOND, hundredth * 10);
-		iNoTime = false;
+		_cal.set(HOUR_OF_DAY, hour);
+		_cal.set(MINUTE, minute);
+		_cal.set(SECOND, second);
+		_cal.set(MILLISECOND, hundredth * 10);
+		_noTime = false;
 	}
 
 	public void setLocalTime(final String time) {
@@ -150,9 +175,9 @@ public class DateTimeImpl implements DateTime, Serializable {
 
 	public void setLocalTime(final String time, final boolean parseLenient) {
 		boolean[] noDT = new boolean[2];
-		iCal = Formulas.getFormatter(iLocale).parseDateToCal(time, noDT, parseLenient);
-		iNoDate = noDT[0];
-		iNoTime = noDT[1];
+		_cal = Formulas.getFormatter(_locale).parseDateToCal(time, noDT, parseLenient);
+		_noDate = noDT[0];
+		_noTime = noDT[1];
 	}
 
 	public void setNow() {
@@ -165,15 +190,15 @@ public class DateTimeImpl implements DateTime, Serializable {
 
 	public double timeDifferenceDouble(final DateTime dt) {
 		// What if isAnyDate or isAnyTime for one of these?
-		return (iCal.getTimeInMillis() - dt.toJavaCal().getTimeInMillis()) / 1000;
+		return (_cal.getTimeInMillis() - dt.toJavaCal().getTimeInMillis()) / 1000;
 	}
 
 	public Date toJavaDate() {
-		return iCal.getTime();
+		return _cal.getTime();
 	}
 
 	public Calendar toJavaCal() {
-		return iCal;
+		return _cal;
 	}
 
 	@Override

@@ -17,8 +17,12 @@
 
 package org.openntf.formula.function;
 
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Date;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
@@ -202,5 +206,40 @@ public enum FocFunctions {
 	private static ValueHolder p1To9(final FormulaContext ctx, final int i) {
 		return atP(ctx, new ValueHolder[] { ValueHolder.valueOf(i) });
 	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount({ 2, 99 })
+	public static ValueHolder atCallback(final ValueHolder[] params) {
+		final String className = params[0].getString(0);
+		final String methodName = params[1].getString(0);
+		if (!className.startsWith("de.foconis.lib.util.cb."))
+			throw new IllegalArgumentException("Invalid class name");
+		int numPars = params.length - 2;
+		final Class<?>[] parTypes = new Class<?>[numPars];
+		final Object[] parValues = new Object[numPars];
+		for (int i = 0; i < numPars; i++) {
+			parValues[i] = params[i + 2].getObject(0);
+			parTypes[i] = parValues[i].getClass();
+		}
+		Object o = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			public Object run() {
+				ClassLoader cl = Thread.currentThread().getContextClassLoader();
+				if (cl == null)
+					return null;
+				try {
+					Class<?> c = cl.loadClass(className);
+					Method m = c.getMethod(methodName, parTypes);
+					return m.invoke(c.newInstance(), parValues);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+		});
+		if (o == null)
+			throw new MissingResourceException("Can't call callback method", className, methodName);
+		return ValueHolder.valueOf(o);
+	}
+
 	/*----------------------------------------------------------------------------*/
 }

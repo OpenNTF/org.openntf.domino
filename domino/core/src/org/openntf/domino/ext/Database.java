@@ -157,16 +157,9 @@ public interface Database extends Base {
 	public int compactWithOptions(final Set<CompactOption> options, final String spaceThreshold);
 
 	/**
-	 * @param itemValues
-	 *            Map of fields and values with which to initialize a document
-	 * @return the newly created document
-	 * @since org.openntf.domino 1.0.0
-	 */
-	public Document createDocument(final Map<String, Object> itemValues);
-
-	/**
 	 * @param keyValuePairs
-	 *            an object of key value pairs with which to initialize a document
+	 *            an object of key value pairs with which to initialize a document or<br/>
+	 *            Map of fields and values with which to initialize a document
 	 * @return the newly created document
 	 * @since org.openntf.domino 1.0.0
 	 */

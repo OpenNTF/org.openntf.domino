@@ -14,6 +14,7 @@ public interface DEdge extends DElement, com.tinkerpop.blueprints.Edge {
 	public static final String IN_NAME = "_OPEN_IN";
 	public static final String LABEL_NAME = "_OPEN_LABEL";
 	public static final String OUT_NAME = "_OPEN_OUT";
+	public static final String FORMULA_FILTER = DElement.TYPE_FIELD + "=\"" + GRAPH_TYPE_VALUE + "\"";
 
 	public Vertex getOtherVertex(Vertex vertex);
 

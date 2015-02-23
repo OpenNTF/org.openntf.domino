@@ -60,6 +60,7 @@ import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.session.NamedSessionFactory;
 import org.openntf.domino.session.NativeSessionFactory;
+import org.openntf.domino.session.PasswordSessionFactory;
 import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
@@ -150,6 +151,11 @@ public enum Factory {
 		FULL_ACCESS(6, "FULL_ACCESS"),
 
 		/**
+		 * Returns a Session with full access.
+		 */
+		PASSWORD(7, "PASSWORD"),
+
+		/**
 		 * for internal use only!
 		 */
 		_NAMED_internal(-1, "NAMED"),
@@ -161,7 +167,7 @@ public enum Factory {
 
 		;
 
-		static int SIZE = 7;
+		static int SIZE = 8;
 		int index;
 		String alias;
 
@@ -868,6 +874,55 @@ public enum Factory {
 		return getSession(SessionType.SIGNER);
 	}
 
+	public static org.openntf.domino.Session getSession(final SessionType mode, final String paramString) {
+		ThreadVariables tv = getThreadVariables();
+		org.openntf.domino.Session result = tv.sessionHolders[mode.index];
+		if (result == null || result.isDead()) {
+			ISessionFactory sf = getSessionFactory(mode);
+			if (mode == SessionType.PASSWORD) {
+				result = ((PasswordSessionFactory) sf).createSession(paramString);
+				result = sf.createSession();
+				result.setSessionType(mode);
+				tv.sessionHolders[mode.index] = result;
+				tv.ownSessions.put(mode.alias, result);
+
+				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
+				if (currentChk == null) {
+					tv.sessionHolders[SessionType.CURRENT.index] = result;
+					tv.ownSessions.put(SessionType.CURRENT.alias, result);
+				}
+			} else if (sf != null) {
+				result = sf.createSession();
+				result.setSessionType(mode);
+				tv.sessionHolders[mode.index] = result;
+				// Per default. Session objects are not recycled by the ODA and thats OK so.
+				// this is our own session which will be recycled in terminate
+				tv.ownSessions.put(mode.alias, result);
+
+				//TODO NTF per RPr we can remove this when we have an alternative way to designate an internal session
+				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
+				if (currentChk == null) {
+					tv.sessionHolders[SessionType.CURRENT.index] = result;
+					tv.ownSessions.put(SessionType.CURRENT.alias, result);
+				}
+				//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
+				//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+			}
+			if (result == null) {
+				log_.severe("Unable to get the session of type " + mode.alias
+						+ ". This probably means that you are running in an unsupported configuration "
+						+ "or you forgot to set up your context at the start of the operation. "
+						+ "If you're running in XPages, check the xsp.properties of your database. "
+						+ "If you are running in an Agent, make sure you start with a call to "
+						+ "Factory.setSession() and pass in your lotus.domino.Session");
+			}
+		} else {
+			//			System.out.println("TEMP DEBUG: Found an existing session " + System.identityHashCode(result) + " of type " + mode.name()
+			//					+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
+		}
+		return result;
+	}
+
 	/**
 	 * 
 	 * @param mode
@@ -889,6 +944,12 @@ public enum Factory {
 				// Per default. Session objects are not recycled by the ODA and thats OK so.
 				// this is our own session which will be recycled in terminate
 				tv.ownSessions.put(mode.alias, result);
+
+				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
+				if (currentChk == null) {
+					tv.sessionHolders[SessionType.CURRENT.index] = result;
+					tv.ownSessions.put(SessionType.CURRENT.alias, result);
+				}
 				//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
 				//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));
 			}

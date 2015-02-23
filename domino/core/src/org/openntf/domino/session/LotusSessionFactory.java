@@ -48,7 +48,7 @@ enum LotusSessionFactory {
 	private static Method M_FindOrCreateSession = getSessionMethod("FindOrCreateSession", long.class, int.class);
 
 	private static lotus.domino.local.Session FindOrCreateSession(final long cpp_id, final int unknown) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	IllegalAccessException, InvocationTargetException {
 		return (lotus.domino.local.Session) M_FindOrCreateSession.invoke(null, cpp_id, unknown);
 	}
 
@@ -56,7 +56,7 @@ enum LotusSessionFactory {
 	private static Method M_NCreateSession = getSessionMethod("NCreateSession", int.class);
 
 	private static long NCreateSession(final int unknown) throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	InvocationTargetException {
 		return (Long) M_NCreateSession.invoke(null, unknown);
 	}
 
@@ -75,7 +75,7 @@ enum LotusSessionFactory {
 	private static Method M_NCreateTrustedSession = getSessionMethod("NCreateTrustedSession", boolean.class);
 
 	private static long NCreateTrustedSession(final boolean unknown) throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	InvocationTargetException {
 		return (Long) M_NCreateTrustedSession.invoke(null, unknown);
 	}
 
@@ -93,7 +93,7 @@ enum LotusSessionFactory {
 	private static Method M_NCreateSessionWithFullAccess = getSessionMethod("NCreateSessionWithFullAccess", String.class);
 
 	private static long NCreateSessionWithFullAccess(final String userName) throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	InvocationTargetException {
 		return (Long) M_NCreateSessionWithFullAccess.invoke(null, userName);
 	}
 
@@ -111,7 +111,7 @@ enum LotusSessionFactory {
 	private static Method M_NCreateSessionWithTokenEx = getSessionMethod("NCreateSessionWithTokenEx", String.class);
 
 	private static long NCreateSessionWithTokenEx(final String userName) throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
+	InvocationTargetException {
 		return (Long) M_NCreateSessionWithTokenEx.invoke(null, userName);
 	}
 
@@ -120,6 +120,26 @@ enum LotusSessionFactory {
 			long l = NCreateSessionWithTokenEx(paramString);
 			Session ret = FindOrCreateSession(l, 0);
 			F_webuser.set(ret, true);
+			return ret;
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	// ----------------- createSessionWithTokenEx --------------
+	private static Method M_NCreateSessionWithPasswd = getSessionMethod("NCreateSessionWithPasswd", String.class);
+
+	private static long NCreateSessionWithPasswd(final String password) throws IllegalArgumentException, IllegalAccessException,
+	InvocationTargetException {
+		return (Long) M_NCreateSessionWithPasswd.invoke(null, password);
+	}
+
+	static Session createSessionWithPassword(final String paramString) {
+		try {
+			long l = NCreateSessionWithPasswd(paramString);
+			Session ret = FindOrCreateSession(l, 0);
+			//			F_webuser.set(ret, true);
 			return ret;
 		} catch (Exception e) {
 			DominoUtils.handleException(e);

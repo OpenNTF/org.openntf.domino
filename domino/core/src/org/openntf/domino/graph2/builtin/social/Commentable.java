@@ -7,21 +7,40 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import com.tinkerpop.blueprints.Direction;
 
 public interface Commentable extends DVertexFrame {
-	@IncidenceUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
+	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public Iterable<CommentsAbout> getCommentsAbout();
 
-	@IncidenceUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
+	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public CommentsAbout addCommentsAbout(Comment comment);
 
-	@IncidenceUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
+	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public void removeCommentsAbout(Comment comment);
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
+	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public Iterable<Comment> getComments();
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
+	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public Comment addComment(Comment comment);
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT, direction = Direction.IN)
+	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public void removeComment(Comment comment);
+
+	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Iterable<Mentions> getMentions();
+
+	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Mentions addMentions(Socializer mentioned);
+
+	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public void removeMentions(Socializer mentioned);
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Iterable<Socializer> getMentioned();
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Socializer addMentioned(Socializer mentioned);
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public void removeMentioned(Socializer mentioned);
+
 }

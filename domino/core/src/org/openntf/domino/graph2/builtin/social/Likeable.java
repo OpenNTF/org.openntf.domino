@@ -9,21 +9,21 @@ import com.tinkerpop.blueprints.Direction;
 
 public interface Likeable extends DVertexFrame {
 
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE, direction = Direction.IN)
+	@IncidenceUnique(label = Likes.LABEL, direction = Direction.IN)
 	public Iterable<Likes> getLikedBy();
 
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE, direction = Direction.IN)
+	@IncidenceUnique(label = Likes.LABEL, direction = Direction.IN)
 	public Likes addLikedBy(Liker user);
 
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE, direction = Direction.IN)
+	@IncidenceUnique(label = Likes.LABEL, direction = Direction.IN)
 	public Likes findLikedBy(Liker user);
 
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE, direction = Direction.IN)
+	@IncidenceUnique(label = Likes.LABEL, direction = Direction.IN)
 	public void removeLikedBy(User user);
 
-	@AdjacencyUnique(label = Likes.LABEL_LIKEABLE, direction = Direction.IN)
+	@AdjacencyUnique(label = Likes.LABEL, direction = Direction.IN)
 	public Iterable<User> getLikedByUsers();
 
-	@AdjacencyUnique(label = Likes.LABEL_LIKEABLE, direction = Direction.IN)
+	@AdjacencyUnique(label = Likes.LABEL, direction = Direction.IN)
 	public User addLikedByUser(User user);
 }

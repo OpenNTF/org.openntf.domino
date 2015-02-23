@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -114,8 +115,23 @@ public enum TypeUtils {
 		}
 		Object result = itemValueToClass(doc.getFirstItem(itemName), type);
 		if (result != null && !type.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName()
-					+ " in item " + itemName + " for document id " + noteid);
+			if (type.isPrimitive()) {
+				if (Integer.TYPE.equals(type) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(type) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(type) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(type) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName()
+						+ " in item " + itemName + " for document id " + noteid);
+			}
 		}
 		return (T) result;
 	}
@@ -218,6 +234,9 @@ public enum TypeUtils {
 		if (o instanceof Collection) {
 			result = collectionToClass((Collection) o, type, session);
 		}
+		if (type.isEnum() && o instanceof String) {
+			result = toEnum(o, type);
+		}
 		Class<?> CType = null;
 		if (type.equals(String[].class)) {
 			result = toStrings(o);
@@ -245,7 +264,7 @@ public enum TypeUtils {
 						result = toBigStrings(o);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(o);
-					} else if (CType == Enum.class) {
+					} else if (Enum.class.isAssignableFrom(type)) {
 						result = toEnums(o);
 					} else if (Class.class.isAssignableFrom(CType)) {
 						result = toClasses(o);
@@ -275,12 +294,12 @@ public enum TypeUtils {
 		} else {
 			if (type == String.class) {
 				result = String.valueOf(o);
-			} else if (type == Enum.class) {
+			} else if (Enum.class.isAssignableFrom(type)) {
 				String str = String.valueOf(o);
 				result = toEnum(str);
-			} else if (type == BigString.class) {
+			} else if (BigString.class.isAssignableFrom(type)) {
 				result = new BigString(String.valueOf(o));
-			} else if (type == Pattern.class) {
+			} else if (Pattern.class.isAssignableFrom(type)) {
 				result = Pattern.compile(String.valueOf(o));
 			} else if (Class.class.isAssignableFrom(type)) {
 				String cn = String.valueOf(o);
@@ -292,7 +311,6 @@ public enum TypeUtils {
 			} else if (java.util.Collection.class.equals(type)) {
 				result = new ArrayList();
 				((ArrayList) result).add(o);
-
 			} else if (java.util.Collection.class.isAssignableFrom(type)) {
 				try {
 					result = type.newInstance();
@@ -303,20 +321,27 @@ public enum TypeUtils {
 				} catch (InstantiationException e) {
 					DominoUtils.handleException(e);
 				}
-			} else if (type == Date.class) {
+			} else if (Date.class.isAssignableFrom(type)) {
 				result = toDate(o);
-			} else if (type == org.openntf.domino.DateTime.class) {
+			} else if (java.util.Calendar.class.isAssignableFrom(type)) {
+				Date tmpDate = toDate(o);
+				if (null == tmpDate) {
+					result = null;
+				} else {
+					Calendar tmp = Calendar.getInstance();
+					tmp.setTime(tmpDate);
+					result = tmp;
+				}
+			} else if (org.openntf.domino.DateTime.class.isAssignableFrom(type)) {
 				if (session != null) {
 					result = session.createDateTime(toDate(o));
 				} else {
 					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
 							+ " to DateTime without a valid Session object");
 				}
-			} else if (type == org.openntf.domino.Name.class) {
+			} else if (org.openntf.domino.Name.class.isAssignableFrom(type)) {
 				if (session != null) {
-
 					result = session.createName(String.valueOf(o));
-
 				} else {
 					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
 							+ " to Name without a valid Session object");
@@ -331,7 +356,22 @@ public enum TypeUtils {
 		}
 
 		if (result != null && !type.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName());
+			if (type.isPrimitive()) {
+				if (Integer.TYPE.equals(type) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(type) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(type) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(type) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName());
+			}
 		}
 		return (T) result;
 	}
@@ -398,7 +438,7 @@ public enum TypeUtils {
 						result = toBigStrings(v);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(v);
-					} else if (CType == Enum.class) {
+					} else if (Enum.class.isAssignableFrom(type)) {
 						result = toEnums(v);
 					} else if (Class.class.isAssignableFrom(CType)) {
 						result = toClasses(v);
@@ -428,14 +468,14 @@ public enum TypeUtils {
 		} else {
 			if (type == String.class) {
 				result = join(v);
-			} else if (type == Enum.class) {
+			} else if (Enum.class.isAssignableFrom(type)) {
 				String str = join(v);
 				//				System.out.println("Attempting to convert string " + str + " to Enum");
 				result = toEnum(str);
 				//				System.out.println("result was " + (result == null ? "null" : result.getClass().getName()));
-			} else if (type == BigString.class) {
+			} else if (BigString.class.isAssignableFrom(type)) {
 				result = new BigString(join(v));
-			} else if (type == Pattern.class) {
+			} else if (Pattern.class.isAssignableFrom(type)) {
 				result = Pattern.compile(join(v));
 			} else if (Class.class.isAssignableFrom(type)) {
 				String cn = join(v);
@@ -459,15 +499,24 @@ public enum TypeUtils {
 				} catch (InstantiationException e) {
 					DominoUtils.handleException(e);
 				}
-			} else if (type == Date.class) {
+			} else if (Date.class.isAssignableFrom(type)) {
 				result = toDate(v);
-			} else if (type == org.openntf.domino.DateTime.class) {
+			} else if (java.util.Calendar.class.isAssignableFrom(type)) {
+				Date tmpDate = toDate(v);
+				if (null == tmpDate) {
+					result = null;
+				} else {
+					Calendar tmp = Calendar.getInstance();
+					tmp.setTime(tmpDate);
+					result = tmp;
+				}
+			} else if (org.openntf.domino.DateTime.class.isAssignableFrom(type)) {
 				if (session != null) {
 					result = session.createDateTime(toDate(v));
 				} else {
 					throw new IllegalArgumentException("Cannont convert a Vector to DateTime without a valid Session object");
 				}
-			} else if (type == org.openntf.domino.Name.class) {
+			} else if (org.openntf.domino.Name.class.isAssignableFrom(type)) {
 				if (session != null) {
 					if (v.isEmpty()) {
 						result = session.createName("");
@@ -499,7 +548,22 @@ public enum TypeUtils {
 		}
 
 		if (result != null && !type.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName());
+			if (type.isPrimitive()) {
+				if (Integer.TYPE.equals(type) && result instanceof Integer) {
+					return (T) result;
+				}
+				if (Long.TYPE.equals(type) && result instanceof Long) {
+					return (T) result;
+				}
+				if (Boolean.TYPE.equals(type) && result instanceof Boolean) {
+					return (T) result;
+				}
+				if (Double.TYPE.equals(type) && result instanceof Double) {
+					return (T) result;
+				}
+			} else {
+				log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName());
+			}
 		}
 		return (T) result;
 	}
@@ -1202,9 +1266,34 @@ public enum TypeUtils {
 		return classes;
 	}
 
+	public static Enum<?> toEnum(final Object value, final Class<?> enumClass) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
+			return null;
+		Enum<?> result = null;
+		String ename = String.valueOf(value);
+		if (ename.contains(" ")) {
+			ename = String.valueOf(value).substring(ename.indexOf(' ') + 1).trim();
+		}
+		Object[] objs = enumClass.getEnumConstants();
+		if (objs.length > 0) {
+			for (Object obj : objs) {
+				if (obj instanceof Enum) {
+					if (((Enum<?>) obj).name().equals(ename)) {
+						result = (Enum<?>) obj;
+						break;
+					}
+				}
+			}
+		}
+		if (result == null) {
+			throw new DataNotCompatibleException("Unable to discover an Enum by the name of " + ename + " in class " + enumClass);
+		}
+		return result;
+	}
+
 	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {
-		//		ClassLoader cl = Factory.getClassLoader();
-		//		System.out.println("Enum coercion requested from value " + String.valueOf(value));
 		if (value == null)
 			return null;
 		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
@@ -1222,34 +1311,8 @@ public enum TypeUtils {
 		} else {
 			try {
 				Class<?> cls = DominoUtils.getClass(cn);
-				//				System.out.println("Enum coercion with class " + cls.getName());
-				if (cls != null) {
-					Object[] objs = cls.getEnumConstants();
-					if (objs.length > 0) {
-						//					System.out.println("Enum coercion into " + cn + " with value " + ename + " started...");
-						//					StringBuilder typenames = new StringBuilder();
-						for (Object obj : objs) {
-							if (obj instanceof Enum) {
-								if (((Enum<?>) obj).name().equals(ename)) {
-									result = (Enum<?>) obj;
-									//								System.out.println("Found a match between " + result.name() + " and " + ename + "!");
-									return result;
-								} else {
-									//								typenames.append(", " + ((Enum) obj).name());
-								}
-							} else {
-								//							System.out.println("Expected encounter an Enum constant, but didn't. Instead found a "
-								//									+ obj.getClass().getName());
-							}
-						}
-						//					System.out.println("Unable to match " + ename + " with any of: " + typenames.toString());
-					} else {
-						//					System.out.println("No enum constants found for class " + cls.getName());
-
-					}
-				}
+				result = toEnum(ename, cls);
 			} catch (Exception e) {
-				//				System.out.println("Failed to find class " + cn + " using a thread's current classloader");
 				DominoUtils.handleException(e);
 			}
 		}

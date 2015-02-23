@@ -19,12 +19,13 @@
 package org.openntf.arpa;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import org.openntf.domino.ext.Name.NameFormat;
 import org.openntf.domino.ext.Name.NamePartKey;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -34,7 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  */
-public class NamePartsMap extends HashMap<NamePartKey, String> implements Serializable {
+public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serializable {
 
 	// Enum Key moved to Interface ext-Name (org.openntf.domino.ext.Name.NamePartKey)
 
@@ -82,12 +83,13 @@ public class NamePartsMap extends HashMap<NamePartKey, String> implements Serial
 	private static final Logger log_ = Logger.getLogger(NamePartsMap.class.getName());
 	private static final long serialVersionUID = 1L;
 	private RFC822name _rfc822name;
+	private NameFormat _nameFormat = NameFormat.FLAT;
 
 	/**
 	 * * Zero-Argument Constructor
 	 */
 	public NamePartsMap() {
-		super();
+		super(NamePartKey.class);
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class NamePartsMap extends HashMap<NamePartKey, String> implements Serial
 	 *            String from which to construct the object
 	 */
 	public NamePartsMap(final String string) {
-		super();
+		super(NamePartKey.class);
 		this.parse(string);
 	}
 
@@ -111,7 +113,7 @@ public class NamePartsMap extends HashMap<NamePartKey, String> implements Serial
 	 *            RFC822name for the object.
 	 */
 	public NamePartsMap(final String string, final RFC822name rfc822name) {
-		super();
+		super(NamePartKey.class);
 		this.parse(string);
 		this.setRFC822name(rfc822name);
 	}
@@ -126,7 +128,7 @@ public class NamePartsMap extends HashMap<NamePartKey, String> implements Serial
 	 *            String from which to construct the RFC822name for the object.
 	 */
 	public NamePartsMap(final String string, final String rfc822string) {
-		super();
+		super(NamePartKey.class);
 		this.parse(string);
 		this.parseRFC82xContent(rfc822string);
 	}
@@ -278,6 +280,8 @@ public class NamePartsMap extends HashMap<NamePartKey, String> implements Serial
 				return this.getRFC822name().getAddr822Phrase();
 
 			case Canonical: {
+				if (_nameFormat.equals(NameFormat.HIERARCHICAL))
+					return this.get(NamePartKey.SourceString);
 				final String common = this.get(NamePartKey.Common);
 				final String ou1 = this.get(NamePartKey.OrgUnit1);
 				final String ou2 = this.get(NamePartKey.OrgUnit2);
@@ -538,170 +542,182 @@ public class NamePartsMap extends HashMap<NamePartKey, String> implements Serial
 	 *            Flag indicating if this method is allowed to recursively call itself.
 	 */
 	private boolean parse(final String string, final boolean allowRecursion) {
-		try {
-			String common = "";
-			final String[] ous = new String[] { "", "", "", "" };
-			String organization = "";
-			String country = "";
+		if (DominoUtils.isHierarchicalName(string)) {
+			_nameFormat = NameFormat.DOMINO;
+			DominoUtils.parseNamesPartMap(string, this);	//TODO NTF should replace later with just a thrown exception if it's not hierarchical
+		} else {
+			try {
+				String common = "";
+				final String[] ous = new String[] { "", "", "", "" };
+				String organization = "";
+				String country = "";
 
-			if (!ISO.isBlankString(string)) {
-				if (ISO.PatternRFC822.matcher(string).matches()) {
-					this.parseRFC82xContent(string);
-					if (allowRecursion) {
-						final String phrase = this.getRFC822name().getAddr822Phrase();
-						return this.parse((phrase.indexOf('/') < 0) ? this.getRFC822name().getAddr822PhraseFirstLast() : phrase, false);
+				if (!ISO.isBlankString(string)) {
+					if (ISO.PatternRFC822.matcher(string).matches()) {
+						this.parseRFC82xContent(string);
+						if (allowRecursion) {
+							final String phrase = this.getRFC822name().getAddr822Phrase();
+							return this.parse((phrase.indexOf('/') < 0) ? this.getRFC822name().getAddr822PhraseFirstLast() : phrase, false);
+						}
+
+						return false;
 					}
 
-					return false;
-				}
+					if (string.indexOf('/') < 0) {
+						common = string;
 
-				if (string.indexOf('/') < 0) {
-					common = string;
+					} else {
+						// break the source into component words and parse them
+						final String[] words = string.split("/");
+						if (words.length > 0) {
+							int idx = 0;
 
-				} else {
-					// break the source into component words and parse them
-					final String[] words = string.split("/");
-					if (words.length > 0) {
-						int idx = 0;
+							if (string.indexOf('=') > 0) {
+								// use canonical logic
+								try {
+									TreeMap<Integer, String> undefinedValues = null;
+									int Oidx = -1;
+									int Cidx = -1;
+									for (int i = (words.length - 1); i >= 0; i--) {
+										final String word = words[i].trim();
+										if (word.indexOf('=') > 0) {
+											final String[] nibbles = word.split("=");
+											if (nibbles.length > 1) {
+												final String key = nibbles[0];
+												final String value = nibbles[1];
 
-						if (string.indexOf('=') > 0) {
-							// use canonical logic
-							try {
-								TreeMap<Integer, String> undefinedValues = null;
-								int Oidx = -1;
-								int Cidx = -1;
-								for (int i = (words.length - 1); i >= 0; i--) {
-									final String word = words[i].trim();
-									if (word.indexOf('=') > 0) {
-										final String[] nibbles = word.split("=");
-										if (nibbles.length > 1) {
-											final String key = nibbles[0];
-											final String value = nibbles[1];
+												if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
+													country = value;
+													Cidx = i;
 
-											if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
-												country = value;
-												Cidx = i;
+												} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
+													organization = value;
+													Oidx = i;
 
-											} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
-												organization = value;
-												Oidx = i;
+												} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
+													if (idx < 4) {
+														ous[idx] = value;
+													}
+													idx++;
 
-											} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
-												if (idx < 4) {
-													ous[idx] = value;
+												} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
+													common = value;
 												}
-												idx++;
-
-											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
-												common = value;
-											}
-										} else {
-											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
-													+ "\"");
-										}
-
-									} else {
-										// no '=' in word
-										if (null == undefinedValues) {
-											undefinedValues = new TreeMap<Integer, String>();
-										}
-										undefinedValues.put(new Integer(i), word);
-									}
-								}
-
-								if (null != undefinedValues) {
-									// at least one undefined value (such as a
-									// wildcard) exists.
-									final Iterator<Map.Entry<Integer, String>> it = undefinedValues.entrySet().iterator();
-									while (it.hasNext()) {
-										final Map.Entry<Integer, String> entry = it.next();
-										final int idxEntry = entry.getKey().intValue();
-										if (0 == idxEntry) {
-											if (ISO.isBlankString(common)) {
-												common = entry.getValue();
 											} else {
-												for (String s : ous) {
-													if (ISO.isBlankString(s)) {
-														s = entry.getValue();
+												throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \""
+														+ string + "\"");
+											}
+
+										} else {
+											// no '=' in word
+											if (null == undefinedValues) {
+												undefinedValues = new TreeMap<Integer, String>();
+											}
+											undefinedValues.put(new Integer(i), word);
+										}
+									}
+
+									if (null != undefinedValues) {
+										// at least one undefined value (such as a
+										// wildcard) exists.
+										final Iterator<Map.Entry<Integer, String>> it = undefinedValues.entrySet().iterator();
+										while (it.hasNext()) {
+											final Map.Entry<Integer, String> entry = it.next();
+											final int idxEntry = entry.getKey().intValue();
+											if (0 == idxEntry) {
+												if (ISO.isBlankString(common)) {
+													common = entry.getValue();
+												} else {
+													for (String s : ous) {
+														if (ISO.isBlankString(s)) {
+															s = entry.getValue();
+															break;
+														}
+													}
+												}
+
+											} else if ((Cidx < 0) && (idxEntry == (words.length - 1))) {
+												if (ISO.isBlankString(organization)) {
+													organization = entry.getValue();
+												} else {
+													country = entry.getValue();
+												}
+
+											} else if (idxEntry == Cidx) {
+												organization = entry.getValue();
+
+											} else if (idxEntry == Oidx) {
+												for (String orgunit : ous) {
+													if (ISO.isBlankString(orgunit)) {
+														orgunit = entry.getValue();
 														break;
 													}
 												}
 											}
-
-										} else if ((Cidx < 0) && (idxEntry == (words.length - 1))) {
-											if (ISO.isBlankString(organization)) {
-												organization = entry.getValue();
-											} else {
-												country = entry.getValue();
-											}
-
-										} else if (idxEntry == Cidx) {
-											organization = entry.getValue();
-
-										} else if (idxEntry == Oidx) {
-											for (String orgunit : ous) {
-												if (ISO.isBlankString(orgunit)) {
-													orgunit = entry.getValue();
-													break;
-												}
-											}
 										}
 									}
+
+								} catch (final Exception e) {
+									DominoUtils.handleException(e, "Source String: \"" + string + "\"");
 								}
 
-							} catch (final Exception e) {
-								DominoUtils.handleException(e, "Source String: \"" + string + "\"");
-							}
-
-						} else {
-							// use abbreviated logic
-							common = words[0].trim();
-							if (words.length > 1) {
-								int orgpos = (words.length - 1);
-								organization = words[orgpos];
-								if (ISO.isCountryCode2(organization)) {
-									// organization could be a country code,
-									if (orgpos > 1) {
-										// Treat organization as a country code
-										// and
-										// re-aquire the organization
-										country = organization;
-										orgpos--;
-										organization = words[orgpos];
+							} else {
+								// use abbreviated logic
+								common = words[0].trim();
+								if (words.length > 1) {
+									int orgpos = (words.length - 1);
+									organization = words[orgpos];
+									if (ISO.isCountryCode2(organization)) {
+										// organization could be a country code,
+										if (orgpos > 1) {
+											// Treat organization as a country code
+											// and
+											// re-aquire the organization
+											country = organization;
+											orgpos--;
+											organization = words[orgpos];
+										}
 									}
-								}
 
-								int oupos = orgpos - 1;
-								while (oupos > 0) {
-									ous[idx] = words[oupos];
+									int oupos = orgpos - 1;
+									while (oupos > 0) {
+										ous[idx] = words[oupos];
 
-									oupos--;
-									idx++;
-									if (idx > 3) {
-										break;
+										oupos--;
+										idx++;
+										if (idx > 3) {
+											break;
+										}
 									}
 								}
 							}
 						}
+
 					}
-
 				}
+
+				this.put(NamePartKey.Common, common);
+				this.put(NamePartKey.OrgUnit1, ous[0]);
+				this.put(NamePartKey.OrgUnit2, ous[1]);
+				this.put(NamePartKey.OrgUnit3, ous[2]);
+				this.put(NamePartKey.OrgUnit4, ous[3]);
+				this.put(NamePartKey.Organization, organization);
+				this.put(NamePartKey.Country, country);
+
+				return true;
+
+			} catch (final Exception e) {
+				DominoUtils.handleException(e, "Source String: \"" + string + "\"");
 			}
-
-			this.put(NamePartKey.Common, common);
-			this.put(NamePartKey.OrgUnit1, ous[0]);
-			this.put(NamePartKey.OrgUnit2, ous[1]);
-			this.put(NamePartKey.OrgUnit3, ous[2]);
-			this.put(NamePartKey.OrgUnit4, ous[3]);
-			this.put(NamePartKey.Organization, organization);
-			this.put(NamePartKey.Country, country);
-
-			return true;
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e, "Source String: \"" + string + "\"");
 		}
-
 		return false;
+	}
+
+	public boolean isHiearchical() {
+		return _nameFormat == NameFormat.DOMINO || _nameFormat == NameFormat.HIERARCHICAL;
+	}
+
+	public NameFormat getNameFormat() {
+		return _nameFormat;
 	}
 }

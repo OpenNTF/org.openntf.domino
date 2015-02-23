@@ -46,6 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
+import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Item;
@@ -54,6 +55,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
+import org.openntf.domino.ext.Name.NamePartKey;
 import org.openntf.domino.logging.LogUtils;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -408,6 +410,57 @@ public enum DominoUtils {
 
 	public static boolean isHierarchicalName(final CharSequence name) {
 		return (Strings.isBlankString(name.toString())) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
+	}
+
+	public static void parseNamesPartMap(final CharSequence name, final NamePartsMap map) {
+		if (isHierarchicalName(name)) {
+			Matcher m = Names.CN_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					map.put(NamePartKey.Common, name.subSequence(start, end).toString());
+				} else {
+					map.put(NamePartKey.Common, name.toString());
+				}
+			}
+			m = Names.O_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					map.put(NamePartKey.Organization, name.subSequence(start, end).toString());
+				} else {
+					map.put(NamePartKey.Organization, name.toString());
+				}
+			}
+			m = Names.C_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					map.put(NamePartKey.Country, name.subSequence(start, end).toString());
+				} else {
+					map.put(NamePartKey.Country, name.toString());
+				}
+			}
+			m = Names.OU_MATCH.matcher(name);
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					if (i == 0)
+						map.put(NamePartKey.OrgUnit1, name.subSequence(start, end).toString());
+					if (i == 1)
+						map.put(NamePartKey.OrgUnit2, name.subSequence(start, end).toString());
+					if (i == 2)
+						map.put(NamePartKey.OrgUnit3, name.subSequence(start, end).toString());
+					if (i == 3)
+						map.put(NamePartKey.OrgUnit4, name.subSequence(start, end).toString());
+				}
+			}
+		}
 	}
 
 	public static String toAbbreviatedName(final CharSequence name) {
@@ -853,7 +906,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-			// TODO Need to work out how to get from properties file in NSF
+				// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

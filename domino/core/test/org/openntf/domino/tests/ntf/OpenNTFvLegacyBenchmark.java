@@ -409,13 +409,17 @@ public enum OpenNTFvLegacyBenchmark {
 	}
 
 	public static void main(final String[] args) {
-		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
-		TestRunnerUtil.runAsDominoThread(ODALegacyDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
 		TestRunnerUtil.runAsNotesThread(RawLegacyDoer.class, THREAD_COUNT);
 
-		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
-		TestRunnerUtil.runAsDominoThread(ODALegacyDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
-		TestRunnerUtil.runAsNotesThread(RawLegacyDoer.class, THREAD_COUNT);
+		Class[] classes = new Class[2];
+		classes[0] = OpenNTFDoer.class;
+		classes[1] = ODALegacyDoer.class;
+		TestRunnerUtil.runAsDominoThread(classes, TestRunnerUtil.NATIVE_SESSION, 2);
+		TestRunnerUtil.runAsNotesThread(RawLegacyDoer.class, 4);
+		//		TestRunnerUtil.runAsDominoThread(ODALegacyDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+
+		//		TestRunnerUtil.runAsDominoThread(OpenNTFDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
+		//		TestRunnerUtil.runAsDominoThread(ODALegacyDoer.class, TestRunnerUtil.NATIVE_SESSION, THREAD_COUNT);
 		System.out.println("Main complete");
 	}
 }

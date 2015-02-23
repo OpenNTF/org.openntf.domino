@@ -129,7 +129,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 		long testStartTime = System.nanoTime();
 		NoteCollection nc = db.createNoteCollection(false);
 		nc.selectAllDataNotes(true);
-		nc.setSelectionFormula("@Contains(Title; \"B\")"); //NTF comment or uncomment this to toggle testing selection formula impact
+		nc.setSelectionFormula("@Begins(Title; \"B\")"); //NTF comment or uncomment this to toggle testing selection formula impact
 		nc.buildCollection();
 		int[] nids = nc.getNoteIDs();
 
@@ -142,7 +142,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 		}
 		long documentTime = System.nanoTime();
 		documentBuildNS = documentTime - collectionTime;
-		int pageSize = 100;
+		int pageSize = 1000;
 		int pageStart = 2014;
 
 		assertTrue("found too few documents to perform test", documents.length > (pageStart + pageSize));

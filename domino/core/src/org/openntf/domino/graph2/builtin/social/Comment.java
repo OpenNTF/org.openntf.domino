@@ -15,40 +15,40 @@ public interface Comment extends Likeable {
 	@TypedProperty("Body")
 	public void setBody(String body);
 
-	@IncidenceUnique(label = CommentsOn.LABEL_COMMENTSON, direction = Direction.IN)
+	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
 	public CommentsOn getCommentsOn();
 
-	@IncidenceUnique(label = CommentsOn.LABEL_COMMENTSON, direction = Direction.IN)
-	public CommentsOn addCommentsOn(Commenter comment);
+	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
+	public CommentsOn addCommentsOn(Commenter commenter);
 
-	@IncidenceUnique(label = CommentsOn.LABEL_COMMENTSON, direction = Direction.IN)
-	public void removeCommentsOn(Commenter comment);
+	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
+	public void removeCommentsOn(Commenter commenter);
 
-	@AdjacencyUnique(label = CommentsOn.LABEL_COMMENTSON, direction = Direction.IN)
+	@AdjacencyUnique(label = CommentsOn.LABEL, direction = Direction.IN)
 	public Commenter getCommenter();
 
-	@AdjacencyUnique(label = CommentsOn.LABEL_COMMENTSON, direction = Direction.IN)
+	@AdjacencyUnique(label = CommentsOn.LABEL, direction = Direction.IN)
 	public Commenter addCommenter(Commenter commenter);
 
-	@AdjacencyUnique(label = CommentsOn.LABEL_COMMENTSON, direction = Direction.IN)
+	@AdjacencyUnique(label = CommentsOn.LABEL, direction = Direction.IN)
 	public void removeCommenter(Commenter commenter);
 
-	@IncidenceUnique(label = CommentsAbout.LABEL_COMMENTSABOUT)
+	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public CommentsAbout getCommentsAbout();
 
-	@IncidenceUnique(label = CommentsAbout.LABEL_COMMENTSABOUT)
+	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public CommentsAbout addCommentsAbout(Commentable commentable);
 
-	@IncidenceUnique(label = CommentsAbout.LABEL_COMMENTSABOUT)
+	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public void removeCommentsAbout(Commentable commentable);
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT)
+	@AdjacencyUnique(label = CommentsAbout.LABEL)
 	public Iterable<Commentable> getCommentable();
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT)
+	@AdjacencyUnique(label = CommentsAbout.LABEL)
 	public Commentable addCommentable(Commentable commentable);
 
-	@AdjacencyUnique(label = CommentsAbout.LABEL_COMMENTSABOUT)
+	@AdjacencyUnique(label = CommentsAbout.LABEL)
 	public void removeCommentable(Commentable commentable);
 
 }

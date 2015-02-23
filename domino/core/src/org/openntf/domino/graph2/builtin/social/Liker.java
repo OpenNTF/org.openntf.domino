@@ -5,22 +5,22 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 
 public interface Liker extends DVertexFrame {
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE)
+	@IncidenceUnique(label = Likes.LABEL)
 	public Iterable<Likes> getLikes();
 
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE)
+	@IncidenceUnique(label = Likes.LABEL)
 	public Likes addLikes(Likeable likeable);
 
-	@IncidenceUnique(label = Likes.LABEL_LIKEABLE)
+	@IncidenceUnique(label = Likes.LABEL)
 	public void removeLikes(Likeable likeable);
 
-	@AdjacencyUnique(label = Likes.LABEL_LIKEABLE)
+	@AdjacencyUnique(label = Likes.LABEL)
 	public Iterable<Likeable> getLikesLikeables();
 
-	@AdjacencyUnique(label = Likes.LABEL_LIKEABLE)
+	@AdjacencyUnique(label = Likes.LABEL)
 	public Likeable addLikesLikeable(Likeable likeable);
 
-	@AdjacencyUnique(label = Likes.LABEL_LIKEABLE)
+	@AdjacencyUnique(label = Likes.LABEL)
 	public void removeLikesLikeable(Likeable likeable);
 
 }

@@ -82,7 +82,7 @@ import com.ibm.icu.util.Calendar;
  */
 
 public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
-		org.openntf.domino.Session {
+org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -1874,7 +1874,8 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	@Override
 	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID, final String serverName) {
 		if (metaversalID.length() != 48) {
-			throw new IllegalArgumentException("MetaversalIDs must be 48 characters in length (16 for replicaID, 32 for unid)");
+			throw new IllegalArgumentException(
+					"MetaversalIDs must be 48 characters in length (16 for replicaID, 32 for unid). Value passed was " + metaversalID);
 		}
 		String replid = metaversalID.substring(0, 16);
 		String unid = metaversalID.substring(16);

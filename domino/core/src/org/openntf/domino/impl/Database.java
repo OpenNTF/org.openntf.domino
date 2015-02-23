@@ -430,26 +430,19 @@ org.openntf.domino.Database {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.Database#createDocument(java.util.Map)
-	 */
-	@Override
-	public Document createDocument(final Map<String, Object> itemValues) {
-		Document doc = this.createDocument();
-		for (Map.Entry<String, Object> entry : itemValues.entrySet()) {
-			doc.replaceItemValue(entry.getKey(), entry.getValue());
-		}
-		return doc;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.openntf.domino.Database#createDocument(java.lang.Object[])
 	 */
 	@Override
 	public Document createDocument(final Object... keyValuePairs) {
 		Document doc = this.createDocument();
-		if (keyValuePairs.length >= 2) {
+		if (keyValuePairs.length == 1) {
+			if (keyValuePairs[0] instanceof Map) {
+				Map<String, Object> itemValues = (Map) keyValuePairs[0];
+				for (Map.Entry<String, Object> entry : itemValues.entrySet()) {
+					doc.replaceItemValue(entry.getKey(), entry.getValue());
+				}
+			}
+		} else if (keyValuePairs.length >= 2) {
 			for (int i = 0; i < keyValuePairs.length; i += 2) {
 				doc.replaceItemValue(keyValuePairs[i].toString(), keyValuePairs[i + 1]);
 			}
