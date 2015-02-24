@@ -19,7 +19,6 @@ import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignCollection;
 import org.openntf.domino.design.impl.DatabaseClassLoader;
 import org.openntf.domino.design.impl.ODPMapping;
-import org.openntf.domino.design.impl.OnDiskProject;
 import org.openntf.domino.design.impl.OtherDesignElement;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.junit.DominoJUnitRunner;
@@ -122,13 +121,13 @@ public class DesignClassTest {
 		System.out.println("Count: " + elems.getCount());
 
 		File root = new File("D:/daten/temp/ods3");
-		OnDiskProject odp = new OnDiskProject(root);
+		//OnDiskProject odp = new OnDiskProject(root);
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {
 			//System.out.println(elem.getClass().getSimpleName() + "'" + elem.getNoteID() + "\t" + elem.getName() + "\t"
 			//		+ elem.getDocument().getItemValueString("$FLAGS"));
 			try {
-				odp.export(elem);
+				//odp.export(elem);
 				//				//elem.getDxlString(null)
 				//				String odp = elem.getOnDiskPath();
 				//				if (StringUtil.isEmpty(odp)) {

@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class CompositeComponent extends AbstractDesignFileResource implements HasMetadata,
@@ -31,6 +32,10 @@ public final class CompositeComponent extends AbstractDesignFileResource impleme
 	 */
 	protected CompositeComponent(final Document document) {
 		super(document);
+	}
+
+	protected CompositeComponent(final Database database) {
+		super(database);
 	}
 
 	@Override

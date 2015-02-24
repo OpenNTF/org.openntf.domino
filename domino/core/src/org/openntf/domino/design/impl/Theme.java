@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class Theme extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.Theme {
@@ -30,6 +31,10 @@ public final class Theme extends AbstractDesignFileResource implements HasMetada
 	 */
 	protected Theme(final Document document) {
 		super(document);
+	}
+
+	protected Theme(final Database database) {
+		super(database);
 	}
 
 	@Override

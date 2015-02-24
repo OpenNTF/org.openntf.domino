@@ -1,4 +1,20 @@
-package org.openntf.domino.design;
+/*
+ * Copyright 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
+
+package org.openntf.domino.design.impl;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,12 +25,16 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openntf.domino.design.impl.AbstractDesignFileResource;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;
 
+/**
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
 public class XspXmlContent {
 	// The XML File content (for faces.config, xpages/customControls)
 	private XMLDocument xml_;
@@ -117,7 +137,7 @@ public class XspXmlContent {
 		// TODO Auto-generated method stub
 		if (xml_ != null) {
 			try {
-				container_.setFileData(xml_.getXml(null).getBytes("UTF-8"));
+				container_.setFileData(xml_.readXml(null).getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				DominoUtils.handleException(e);
 			} catch (IOException e) {

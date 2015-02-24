@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class SavedQuery extends AbstractDesignBaseNamed implements org.openntf.domino.design.SavedQuery {
@@ -30,6 +31,10 @@ public class SavedQuery extends AbstractDesignBaseNamed implements org.openntf.d
 	 */
 	protected SavedQuery(final Document document) {
 		super(document);
+	}
+
+	protected SavedQuery(final Database database) {
+		super(database);
 	}
 
 	@Override

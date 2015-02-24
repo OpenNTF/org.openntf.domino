@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<helpusingdocument xmlns="http://www.lotus.com/dxl" default="true" private="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" publicaccess="false" designerversion="8.5.3" renderpassthrough="true" maintenanceversion="1.2">
+<body>
+<richtext>
+<pardef id="1" hide="" list="none" align="left" newpage="false" spaceafter="1" linespacing="1" spacebefore="1" readingorder="lefttoright"/>
+<par def="1">UsingDocument</par>
+</richtext>
+</body>
+</helpusingdocument>

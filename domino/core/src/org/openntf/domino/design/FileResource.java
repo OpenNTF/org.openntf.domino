@@ -16,6 +16,11 @@
 
 package org.openntf.domino.design;
 
+/**
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
 public interface FileResource extends AnyFileResource {
 
 }

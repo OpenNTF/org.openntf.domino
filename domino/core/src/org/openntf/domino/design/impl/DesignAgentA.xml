@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<agent hide="v3"  xmlns="http://www.lotus.com/dxl" default="false" enabled="true" private="false" profile="false" version="9.0" agenttype="simpleaction" noreplace="false" useapplet="false" formulatype="modifydocs" treatashtml="false" publicaccess="false" restrictions="restricted" runaswebuser="false" showinsearch="false" designerversion="8.5.3" storehighlights="false" maintenanceversion="1.2" allowremotedebugging="false" clientbackgroundthread="false">
+<trigger type="actionsmenu"/>
+<documentset type="selected"/>
+</agent>

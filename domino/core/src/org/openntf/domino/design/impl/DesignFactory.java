@@ -16,6 +16,10 @@
 
 package org.openntf.domino.design.impl;
 
+import static org.openntf.domino.design.impl.AbstractDesignBase.FLAGS_EXT_ITEM;
+import static org.openntf.domino.design.impl.AbstractDesignBase.FLAGS_ITEM;
+import static org.openntf.domino.design.impl.AbstractDesignBase.TITLE_ITEM;
+
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
@@ -174,7 +178,8 @@ public enum DesignFactory {
 	 * Builds a formula that matches on <code>pattern</code>
 	 * 
 	 * @param pattern
-	 * @return
+	 *            The pattern that should be applied.
+	 * @return The Flags as String.
 	 */
 	public static String buildFlagFormula(final String pattern) {
 		if (pattern.length() < 1)
@@ -297,7 +302,7 @@ public enum DesignFactory {
 		if (doc.hasItem("IconBitmap") && doc.getNoteClass() == NoteClass.ICON)
 			return new IconNote(doc);
 		// RPr: Flags :) Dont ask! accept it! (Tested with a database that contains at least one element of each type)
-		String flags = doc.getItemValueString("$Flags");
+		String flags = doc.getItemValueString(FLAGS_ITEM);
 
 		if (testFlag(flags, DFLAGPAT_FOLDER_ALL_VERSIONS)) {
 			return new Folder(doc);
@@ -306,10 +311,18 @@ public enum DesignFactory {
 			return new Theme(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_XSPPAGE)) {
-			return new XPage(doc);
+			if (doc.hasItem(TITLE_ITEM) && doc.getItemValueString(TITLE_ITEM).endsWith(".xsp")) {
+				return new XPage(doc);
+			} else {
+				return new XPageFile(doc);
+			}
 		}
 		if (testFlag(flags, DFLAGPAT_XSPCC)) {
-			return new CustomControl(doc);
+			if (doc.hasItem(TITLE_ITEM) && doc.getItemValueString(TITLE_ITEM).endsWith(".xsp")) {
+				return new CustomControl(doc);
+			} else {
+				return new CustomControlFile(doc);
+			}
 		}
 		if (testFlag(flags, DFLAGPAT_JAVAFILE)) {
 			return new XspJavaResource(doc);
@@ -324,7 +337,7 @@ public enum DesignFactory {
 			return new FileResource(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_FILE_HIDDEN)) {
-			String flagsExt = doc.getItemValueString("$FlagsExt");
+			String flagsExt = doc.getItemValueString(FLAGS_EXT_ITEM);
 			if (testFlag(flagsExt, "+w")) {
 				return new FileResourceWebContent(doc);
 			} else {
@@ -350,12 +363,12 @@ public enum DesignFactory {
 			return new SavedQuery(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_LS)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
+			if (testFlag(doc.getItemValueString(FLAGS_EXT_ITEM), "+W"))
 				return new WebServiceConsumerLS(doc);
 			return new ScriptLibraryLS(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JAVA)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
+			if (testFlag(doc.getItemValueString(FLAGS_EXT_ITEM), "+W"))
 				return new WebServiceConsumerJava(doc);
 			return new ScriptLibraryJava(doc);
 		}
@@ -414,9 +427,9 @@ public enum DesignFactory {
 				Integer assist = doc.getItemValue("$AssistType", Integer.class);
 				if (assist == 65413)
 					return new DesignAgentLS(doc);
-				if (assist == 65426)
+				if (assist == 65426 || assist == 65412)
 					return new DesignAgentF(doc);
-				if (assist == 65427) {
+				if (assist == 65427) { //assist == 65428?
 					if (testFlag(flags, "+J"))
 						return new DesignAgentJ(doc);
 					return new DesignAgentIJ(doc);

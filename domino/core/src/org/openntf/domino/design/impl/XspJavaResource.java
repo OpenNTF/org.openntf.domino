@@ -16,12 +16,13 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
  * A java file (for xpages)
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class XspJavaResource extends AbstractXspResource implements HasMetadata, org.openntf.domino.design.XspJavaResource {
@@ -32,6 +33,10 @@ public class XspJavaResource extends AbstractXspResource implements HasMetadata,
 	 */
 	protected XspJavaResource(final Document document) {
 		super(document);
+	}
+
+	protected XspJavaResource(final Database database) {
+		super(database);
 	}
 
 	@Override

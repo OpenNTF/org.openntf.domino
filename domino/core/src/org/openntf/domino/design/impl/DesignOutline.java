@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class DesignOutline extends AbstractDesignBaseNamed implements org.openntf.domino.design.Outline {
@@ -32,9 +33,21 @@ public class DesignOutline extends AbstractDesignBaseNamed implements org.opennt
 		super(document);
 	}
 
+	protected DesignOutline(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".outline");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

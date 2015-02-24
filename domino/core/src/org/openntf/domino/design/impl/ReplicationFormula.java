@@ -18,6 +18,7 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -34,6 +35,10 @@ public class ReplicationFormula extends AbstractDesignBaseNamed implements org.o
 	 */
 	protected ReplicationFormula(final Document document) {
 		super(document);
+	}
+
+	protected ReplicationFormula(final Database database) {
+		super(database);
 	}
 
 	@Override

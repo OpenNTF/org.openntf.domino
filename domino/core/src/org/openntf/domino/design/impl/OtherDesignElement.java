@@ -16,10 +16,14 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class OtherDesignElement extends AbstractDesignBase {
@@ -32,9 +36,39 @@ public class OtherDesignElement extends AbstractDesignBase {
 		super(document);
 	}
 
+	protected OtherDesignElement(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return true;
 	}
 
+	@Override
+	public boolean save() {
+		//String unid = getDxl().selectSingleNode("//noteinfo").getAttribute("unid");
+		//
+		//		Document doc = getAncestorDatabase().getDocumentByUNID(unid);
+		//		if (doc == null) {
+		//			doc = getAncestorDatabase().createDocument();
+		//			doc.setUniversalID(unid);
+		//			doc.save();
+		//		}
+		System.out.println("Cannot import " + this.getClass().getName() + ":" + getName());
+		return false;
+		//		return super.save();
+	}
+
+	@Override
+	public boolean writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
+		System.out.println(this.getClass().getName() + ":" + getName() + " will not be exported.");
+		return false;
+	}
+
+	@Override
+	public boolean readOnDiskFile(final File file) throws IOException {
+		System.out.println(this.getClass().getName() + ":" + file.getName() + " will not be imported.");
+		return false;
+	}
 }

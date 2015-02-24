@@ -111,7 +111,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public void removeAttribute(final String attribute) {
 		Node attr = this.node_.getAttributes().getNamedItem(attribute);
-		attr.getParentNode().removeChild(attr);
+		if (attr != null) {
+			attr.getParentNode().removeChild(attr);
+		}
 	}
 
 	public void setAttribute(final String attribute, final String value) {
@@ -271,7 +273,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.getResults_.get(path);
 	}
 
-	public String getXml(Transformer transformer) throws IOException {
+	public String readXml(Transformer transformer) throws IOException {
 		try {
 			if (transformer == null)
 				transformer = DEFAULT_TRANSFORMER;
@@ -285,14 +287,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void getXml(Transformer transformer, final File out) throws IOException {
+	public void writeXml(Transformer transformer, final File outputFile) throws IOException {
 		try {
 			if (transformer == null)
 				transformer = DEFAULT_TRANSFORMER;
 
 			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
 			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
-			StreamResult result = new StreamResult(out.toURI().toString());
+			StreamResult result = new StreamResult(outputFile.toURI().toString());
 			DOMSource source = new DOMSource(this.node_);
 			transformer.transform(source, result);
 		} catch (Exception e) {

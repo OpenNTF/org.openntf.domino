@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sharedactions hide="v3 v4strict" maxid="1" xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" designerversion="8.5.3" maintenanceversion="1.2">
+<action id="1" hide="" align="left" showinbar="true" showinmenu="true" displaytype="button" graphicalign="left" readingorder="lefttoright" onlyiconinbar="false" publishonolelaunch="false" showinrightbuttonmenu="false"/>
+</sharedactions>

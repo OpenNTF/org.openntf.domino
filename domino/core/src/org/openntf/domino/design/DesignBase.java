@@ -31,7 +31,7 @@ import org.openntf.domino.Database;
  * @author jgallagher
  * 
  */
-public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, Serializable {
+public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, SyncObject, Serializable {
 
 	enum ItemFlag {
 		_SIGN, _SUMMARY
@@ -106,11 +106,6 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//	 */
 	//	public String getName();
 
-	/**
-	 * Retruns the On-Disk folder component
-	 * 
-	 * @return
-	 */
 	//	public String getOnDiskFolder();
 	//
 	//	public String getOnDiskName();
@@ -119,7 +114,9 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//
 	//	public String getOnDiskPath();
 
-	public void writeOnDiskFile(File odsFile) throws IOException;
+	public boolean readOnDiskFile(File file) throws IOException;
+
+	public boolean writeOnDiskFile(File file, boolean useTransformer) throws IOException;
 
 	public Collection<String> getItemNames();
 }

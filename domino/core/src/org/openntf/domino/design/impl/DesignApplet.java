@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class DesignApplet extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignApplet {
@@ -32,9 +33,21 @@ public class DesignApplet extends AbstractDesignBaseNamed implements org.openntf
 		super(document);
 	}
 
+	protected DesignApplet(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".applet");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

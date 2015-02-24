@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<note class="view" xmlns="http://www.lotus.com/dxl" version="9.0" maintenanceversion="1.2">
+<item name="$TITLE" seal="false" sign="false" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<text>Navigator</text>
+</item>
+<item name="$Flags" seal="false" sign="false" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<text>G3</text>
+</item>
+</note>

@@ -16,12 +16,12 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  */
 public class DesignAgentF extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
 	private static final long serialVersionUID = 1L;
@@ -33,9 +33,21 @@ public class DesignAgentF extends AbstractDesignBaseNamed implements org.openntf
 		super(document);
 	}
 
+	protected DesignAgentF(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".fa");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

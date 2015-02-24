@@ -18,6 +18,7 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -31,6 +32,10 @@ public class UsingDocument extends AbstractDesignBase implements org.openntf.dom
 
 	protected UsingDocument(final Document document) {
 		super(document);
+	}
+
+	protected UsingDocument(final Database database) {
+		super(database);
 	}
 
 	@Override

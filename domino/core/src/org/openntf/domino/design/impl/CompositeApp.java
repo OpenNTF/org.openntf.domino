@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class CompositeApp extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeApp {
@@ -32,10 +33,22 @@ public final class CompositeApp extends AbstractDesignFileResource implements Ha
 		super(document);
 	}
 
+	protected CompositeApp(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		// CompositeApp is exported in RAW-format. There is no DXL representation
 		return true;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".ca");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

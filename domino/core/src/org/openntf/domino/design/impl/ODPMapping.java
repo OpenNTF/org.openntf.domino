@@ -1,3 +1,19 @@
+/*
+ * Copyright 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
+
 package org.openntf.domino.design.impl;
 
 /**
@@ -35,7 +51,8 @@ public enum ODPMapping {
 	COMPOSITE_COMPONENT("CompositeApplications/Components", null, CompositeComponent.class), //
 	COMPOSITE_WIRING("CompositeApplications/WiringProperties", ".wsdl", CompositeWiring.class), //
 
-	CUSTOM_CONTROL("CustomControls", null, CustomControl.class), //
+	CUSTOM_CONTROL("CustomControls", ".xsp", CustomControl.class), //
+	CUSTOM_CONTROL_FILE("CustomControls", null, CustomControlFile.class), //
 
 	DATA_CONNECTION_RESOURCE("Data/DataConnections", ".dcr", DataConnectionResource.class), //
 	DB2_VIEW("Data/DB2AccessViews", ".db2v", DB2View.class), //
@@ -68,9 +85,9 @@ public enum ODPMapping {
 	DESIGN_VIEW("Views", ".view", DesignView.class), //
 
 	FILE_RESOURCE_WEB_CONTENT("WebContent", null, FileResourceWebContent.class), //
-	XPAGE("XPages", null, XPage.class), //
 
-	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), //
+	XPAGE("XPages", ".xsp", XPage.class), //
+	XPAGE_FILE("XPages", null, XPageFile.class), //
 
 	// other design elements
 	AGENT_DATA("Other/AgentData", ".agentdata", AgentData.class), //
@@ -78,20 +95,21 @@ public enum ODPMapping {
 	REPLICATION_FORMULA("Other/ReplicationFormulas", null, ReplicationFormula.class), //
 	SAVED_QUERY("Other/SavedQueries", null, SavedQuery.class), //
 
+	FILE_RESOURCE_HIDDEN("", null, FileResourceHidden.class), // has to be the last one!
 	;
 
 	/** The folder where this element is stored */
 	private final String onDiskFolder_;
 
 	/** The file extension of this element. e.g. "*.lss". If null, all files in the folder are considered as type of this design element */
-	private final String onDiskFileName_;
+	private final String onDiskFileExtension_;
 
 	/** class of the design element */
 	private final Class<? extends AbstractDesignBase> clazz_;
 
-	private ODPMapping(final String onDiskFolder, final String onDiskFileName, final Class<? extends AbstractDesignBase> clazz) {
+	private ODPMapping(final String onDiskFolder, final String onDiskFileExtension, final Class<? extends AbstractDesignBase> clazz) {
 		onDiskFolder_ = onDiskFolder;
-		onDiskFileName_ = onDiskFileName;
+		onDiskFileExtension_ = onDiskFileExtension;
 		clazz_ = clazz;
 	}
 
@@ -111,8 +129,8 @@ public enum ODPMapping {
 		return onDiskFolder_;
 	}
 
-	public String getFileName() {
-		return onDiskFileName_;
+	public String getOnDiskFileExtension() {
+		return onDiskFileExtension_;
 	}
 
 }

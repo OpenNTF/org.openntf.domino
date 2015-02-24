@@ -20,7 +20,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class FileResourceWebContent extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceWebContent {
@@ -33,8 +33,7 @@ public class FileResourceWebContent extends AbstractDesignFileResource implement
 		super(document);
 	}
 
-	public FileResourceWebContent(final Database database) {
-		// TODO Auto-generated constructor stub
+	protected FileResourceWebContent(final Database database) {
 		super(database);
 	}
 

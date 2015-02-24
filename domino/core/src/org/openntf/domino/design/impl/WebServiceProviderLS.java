@@ -16,10 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class WebServiceProviderLS extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceProvider {
@@ -32,10 +33,22 @@ public class WebServiceProviderLS extends AbstractDesignBaseNamed implements org
 		super(document);
 	}
 
+	protected WebServiceProviderLS(final Database database) {
+		super(database);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		// WebServiceProvider is exported in RAW-format. There is no DXL representation
 		return true;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".lws");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

@@ -25,6 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -39,6 +40,10 @@ public final class JarResource extends AbstractDesignFileResource implements org
 
 	protected JarResource(final Document document) {
 		super(document);
+	}
+
+	protected JarResource(final Database database) {
+		super(database);
 	}
 
 	@Override

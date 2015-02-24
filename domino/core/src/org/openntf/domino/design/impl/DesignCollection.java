@@ -83,6 +83,7 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 		public T next() {
 			String noteId = iterator_.next();
 			Document doc = collection_.getAncestorDatabase().getDocumentByID(noteId);
+
 			DesignBase ret = DesignFactory.fromDocument(doc);
 			if (clazz_ != null && !clazz_.isAssignableFrom(ret.getClass()))
 				throw new ClassCastException("Cannot cast " + ret.getClass().getName() + //
