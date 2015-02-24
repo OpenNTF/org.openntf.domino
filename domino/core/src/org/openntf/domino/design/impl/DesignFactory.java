@@ -660,11 +660,19 @@ public enum DesignFactory {
 		} else if (org.openntf.domino.design.XspResource.class.isAssignableFrom(type)) {
 			if (org.openntf.domino.design.XPage.class.isAssignableFrom(type)) {
 				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE) + " & @EndsWith($TITLE, \".xsp\")";
+
+			} else if (org.openntf.domino.design.XPageFile.class.isAssignableFrom(type)) {
+				coll.setSelectMiscFormatElements(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE) + " & !@EndsWith($TITLE, \".xsp\")";
 
 			} else if (org.openntf.domino.design.CustomControl.class.isAssignableFrom(type)) {
 				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC) + " & @EndsWith($TITLE, \".xsp\")";
+
+			} else if (org.openntf.domino.design.CustomControlFile.class.isAssignableFrom(type)) {
+				coll.setSelectMiscFormatElements(true);
+				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC) + " & !@EndsWith($TITLE, \".xsp\")";
 
 			} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
 				coll.setSelectMiscFormatElements(true);

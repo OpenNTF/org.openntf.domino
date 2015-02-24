@@ -197,6 +197,8 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 
 			String flags = "-";
 			String flagsExt = "-";
+			Boolean filterXsp = null;
+
 			int noteClass = NotesConstants.NOTE_CLASS_ALL;
 			if (org.openntf.domino.design.DesignView.class.isAssignableFrom(type)) {
 				noteClass = NotesConstants.NOTE_CLASS_VIEW;
@@ -362,8 +364,20 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 
 				if (org.openntf.domino.design.XPage.class.isAssignableFrom(type)) {
 					flags = DFLAGPAT_XSPPAGE;
+					filterXsp = Boolean.TRUE;
+
+				} else if (org.openntf.domino.design.XPageFile.class.isAssignableFrom(type)) {
+					flags = DFLAGPAT_XSPPAGE;
+					filterXsp = Boolean.FALSE;
+
 				} else if (org.openntf.domino.design.CustomControl.class.isAssignableFrom(type)) {
 					flags = DFLAGPAT_XSPCC;
+					filterXsp = Boolean.TRUE;
+
+				} else if (org.openntf.domino.design.CustomControlFile.class.isAssignableFrom(type)) {
+					flags = DFLAGPAT_XSPCC;
+					filterXsp = Boolean.FALSE;
+
 				} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
 					flags = DFLAGPAT_JAVAFILE;
 				} else {
@@ -382,23 +396,12 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 					if (org.openntf.domino.design.DesignAgent.class.isAssignableFrom(type)) {
 						// argh... why is this soooo complex, IBM?
 						if (org.openntf.domino.design.impl.DesignAgentF.class.isAssignableFrom(type)) {
-							if ("65426".equals(entry.assistType)) {
+							if ("65426".equals(entry.assistType) || "65412".equals(entry.assistType)) {
 								coll.add(entry.noteId);
 							}
 
 						} else if (org.openntf.domino.design.impl.DesignAgentLS.class.isAssignableFrom(type)) {
 							if ("65413".equals(entry.assistType)) {
-								coll.add(entry.noteId);
-							}
-
-						} else if (org.openntf.domino.design.impl.DesignAgentA.class.isAssignableFrom(type)) {
-							if ("65413".equals(entry.assistType)) {
-								// nop:Formula
-							} else if ("65426".equals(entry.assistType)) {
-								// nop: Java
-							} else if ("65427".equals(entry.assistType)) {
-								// nop: importedJava
-							} else {
 								coll.add(entry.noteId);
 							}
 
@@ -413,18 +416,41 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 								if (!flags.contains("J"))
 									coll.add(entry.noteId);
 							}
+						} else if (org.openntf.domino.design.impl.DesignAgentA.class.isAssignableFrom(type)) {
+							if ("65426".equals(entry.assistType) || "65412".equals(entry.assistType)) {
+								// nop:Formula
+							} else if ("65413".equals(entry.assistType)) {
+								// nop: LS
+							} else if ("65427".equals(entry.assistType)) {
+								// nop: importedJava
+							} else {
+								coll.add(entry.noteId);
+							}
+
+						} else {
+							coll.add(entry.noteId);
 						}
 
-					} else {
+					} else if (filterXsp == null) {
 						coll.add(entry.noteId);
-					}
+					} else {
+						// ADD only files that ends (ends not) with .xsp
+						if (filterXsp.booleanValue()) {
+							if (entry.title.endsWith(".xsp")) {
+								coll.add(entry.noteId);
+							}
+						} else {
+							if (!entry.title.endsWith(".xsp")) {
+								coll.add(entry.noteId);
+							}
+						}
 
+					}
 				}
 			}
+
+			return new DesignCollection<T>(coll, type);
+
 		}
 
-		return new DesignCollection<T>(coll, type);
-
 	}
-
-}
