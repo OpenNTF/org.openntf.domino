@@ -28,16 +28,12 @@ import static org.openntf.domino.design.impl.DesignFactory.DFLAGPAT_XSPPAGE;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.impl.DesignCollection;
 import org.openntf.domino.design.impl.DesignFactory;
-import org.openntf.domino.utils.Factory;
-import org.openntf.domino.xots.Xots;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.domino.napi.NotesCollection;
@@ -46,9 +42,32 @@ import com.ibm.designer.domino.napi.NotesConstants;
 import com.ibm.designer.domino.napi.NotesDatabase;
 import com.ibm.designer.domino.napi.NotesSession;
 import com.ibm.designer.domino.napi.util.NotesIterator;
+import com.ibm.domino.napi.c.BackendBridge;
 
+/**
+ * Class to speed up design related stuff. It accesses directly the DesignIndex (NoteID: FFFF0020). Unfortunately, NAPI classes are required
+ * for this.
+ * 
+ * @author Roland Praml, FOCONIS AG
+ *
+ */
 public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabaseDesign {
 
+	/** The NapiDesignList for the given database */
+	private List<NapiEntry> designList;
+	private Database database_;
+	private boolean init;
+
+	public NapiDatabaseDesign(final Database db) {
+		database_ = db;
+	}
+
+	/**
+	 * An entry in the NapiDesignList
+	 * 
+	 * @author Roland Praml, FOCONIS AG
+	 *
+	 */
 	public static class NapiEntry {
 		public String title;
 		public String flags;
@@ -60,104 +79,80 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 
 	}
 
-	public static class Task implements Callable<List<NapiEntry>> {
-
-		private String server_;
-		private String filePath_;
-
-		public Task(final Database db) {
-			server_ = db.getServer();
-			filePath_ = db.getFilePath();
-		}
-
-		@Override
-		public List<NapiEntry> call() throws Exception {
-			List<NapiEntry> ret = new ArrayList<NapiEntry>();
-
-			NotesSession nsess = new NotesSession();
-			try {
-				NotesDatabase ndb = null;
-				if (server_.equals(Factory.getLocalServerName())) {
-					ndb = nsess.getDatabase("", filePath_);
-				} else {
-					ndb = nsess.getDatabase(server_, filePath_);
-				}
-				try {
-					ndb.open();
-					// $FormulaClass of designCollection = 3724 of 0xFFFF0020
-					// 2048 = 0x0800 = NOTE_CLASS_REPLFORMULA
-					// 1024 = 0x0400 = NOTE_CLASS_FIELD
-					// 512  = 0x0200 = NOTE_CLASS_FILTER
-					// 128  = 0x0080 = NOTE_CLASS_HELP_INDEX
-					// 8    = 0x0008 = NOTE_CLASS_VIEW
-					// 4    = 0x0004 = NOTE_CLASS_FORM
-
-					// --- Summary ---
-					// NOTE_CLASS_DOCUMENT 		0x0001	not required	/* document note */
-					// NOTE_CLASS_INFO 			0x0002	= FFFF0002		/* notefile info (help-about) note */
-					// NOTE_CLASS_FORM 			0x0004	available		/* form note */
-					// NOTE_CLASS_VIEW 			0x0008 	available		/* view note */
-					// NOTE_CLASS_ICON 			0x0010 	= FFFF0010		/* icon note */
-					// NOTE_CLASS_DESIGN 		0x0020	= FFFF0020		/* design note collection */
-					// NOTE_CLASS_ACL 			0x0040 	= FFFF0040		/* acl note */
-					// NOTE_CLASS_HELP_INDEX 	0x0080 	available		/* Notes product help index note */
-					// NOTE_CLASS_HELP 			0x0100 	= FFFF0100		/* designer's help note */
-					// NOTE_CLASS_FILTER 		0x0200 	available		/* filter note */
-					// NOTE_CLASS_FIELD 		0x0400  available		/* field note */
-					// NOTE_CLASS_REPLFORMULA 	0x0800 	available		/* replication formula */
-					// NOTE_CLASS_PRIVATE 		0x1000  not required	/* Private design note, use $PrivateDesign view to locate/classify */
-
-					NotesCollection design = ndb.openCollection(0xFFFF0020, 0);
-					try {
-						int returnMask = 0x8007; // 0x8000 = read summary table, 4 = read class, 2 = read unid, 1 = read note id 
-						NotesIterator iterator = design.readEntries(returnMask, 0, 32);
-						try {
-							while (iterator.hasNext()) {
-								NotesCollectionEntry entry = (NotesCollectionEntry) iterator.next();
-								try {
-									NapiEntry nEntry = new NapiEntry();
-									nEntry.assistType = entry.getItemValueAsString("$AssistType");
-									nEntry.flags = entry.getItemValueAsString("$Flags");
-									nEntry.flagsExt = entry.getItemValueAsString("$FlagsExt");
-									nEntry.title = "|" + entry.getItemValueAsString("$TITLE") + "|";
-									nEntry.noteClass = entry.getNoteClass();
-									nEntry.noteId = entry.getNoteID();
-									nEntry.universalId = entry.getNoteUNID();
-									ret.add(nEntry);
-								} finally {
-									entry.recycle();
-								}
-							}
-						} finally {
-							iterator.recycle();
-						}
-					} finally {
-						design.recycle();
-					}
-				} finally {
-					ndb.recycle();
-				}
-			} finally {
-				nsess.recycle();
-			}
-			return ret;
-		}
-
-	}
-
-	private List<NapiEntry> designList;
-	private Database database_;
-	private boolean init;
-
-	public NapiDatabaseDesign(final Database db) {
-
-		database_ = db;
-
-	}
-
 	public List<NapiEntry> getDesignList() {
 		if (!init) {
 			init = true;
+			try {
+				int ndbHandle = (int) BackendBridge.getDatabaseHandleRO(database_);
+
+				NotesSession nsess = new NotesSession();
+				designList = new ArrayList<NapiEntry>();
+				try {
+					NotesDatabase ndb = nsess.getDatabase(ndbHandle);
+					try {
+						ndb.open();
+						// $FormulaClass of designCollection = 3724 of 0xFFFF0020
+						// 2048 = 0x0800 = NOTE_CLASS_REPLFORMULA
+						// 1024 = 0x0400 = NOTE_CLASS_FIELD
+						// 512  = 0x0200 = NOTE_CLASS_FILTER
+						// 128  = 0x0080 = NOTE_CLASS_HELP_INDEX
+						// 8    = 0x0008 = NOTE_CLASS_VIEW
+						// 4    = 0x0004 = NOTE_CLASS_FORM
+
+						// --- Summary ---
+						// NOTE_CLASS_DOCUMENT 		0x0001	not required	/* document note */
+						// NOTE_CLASS_INFO 			0x0002	= FFFF0002		/* notefile info (help-about) note */
+						// NOTE_CLASS_FORM 			0x0004	available		/* form note */
+						// NOTE_CLASS_VIEW 			0x0008 	available		/* view note */
+						// NOTE_CLASS_ICON 			0x0010 	= FFFF0010		/* icon note */
+						// NOTE_CLASS_DESIGN 		0x0020	= FFFF0020		/* design note collection */
+						// NOTE_CLASS_ACL 			0x0040 	= FFFF0040		/* acl note */
+						// NOTE_CLASS_HELP_INDEX 	0x0080 	available		/* Notes product help index note */
+						// NOTE_CLASS_HELP 			0x0100 	= FFFF0100		/* designer's help note */
+						// NOTE_CLASS_FILTER 		0x0200 	available		/* filter note */
+						// NOTE_CLASS_FIELD 		0x0400  available		/* field note */
+						// NOTE_CLASS_REPLFORMULA 	0x0800 	available		/* replication formula */
+						// NOTE_CLASS_PRIVATE 		0x1000  not required	/* Private design note, use $PrivateDesign view to locate/classify */
+
+						NotesCollection design = ndb.openCollection(0xFFFF0020, 0);
+						try {
+							int returnMask = 0x8007; // 0x8000 = read summary table, 4 = read class, 2 = read unid, 1 = read note id 
+							NotesIterator iterator = design.readEntries(returnMask, 0, 32);
+							try {
+								while (iterator.hasNext()) {
+									NotesCollectionEntry entry = (NotesCollectionEntry) iterator.next();
+									try {
+										NapiEntry nEntry = new NapiEntry();
+										nEntry.assistType = entry.getItemValueAsString("$AssistType");
+										nEntry.flags = entry.getItemValueAsString("$Flags");
+										nEntry.flagsExt = entry.getItemValueAsString("$FlagsExt");
+										nEntry.title = "|" + entry.getItemValueAsString("$TITLE") + "|";
+										nEntry.noteClass = entry.getNoteClass();
+										nEntry.noteId = entry.getNoteID();
+										nEntry.universalId = entry.getNoteUNID();
+										designList.add(nEntry);
+									} finally {
+										entry.recycle();
+									}
+								}
+							} finally {
+								iterator.recycle();
+							}
+						} finally {
+							design.recycle();
+						}
+					} finally {
+						ndb.recycle();
+					}
+				} finally {
+					nsess.recycle();
+				}
+			} catch (Exception e) {
+				designList = null;
+				e.printStackTrace();
+			}
+
+			/*
 			Task t = new Task(database_);
 			try {
 				designList = Xots.getService().submit(t).get();
@@ -166,6 +161,7 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
+			 */
 		}
 		return designList;
 	}
@@ -173,10 +169,7 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 	@Override
 	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(final Class<T> type, String name) {
 		// TODO Auto-generated method stub
-		System.out.println("getDesignElementsByName " + type.getName() + ": " + name);
-
 		NoteCollection coll = database_.createNoteCollection(false);
-
 		// special cases
 		if (org.openntf.domino.design.IconNote.class.isAssignableFrom(type)) {
 			// NOTE_CLASS_ICON 			0x0010 	= FFFF0010		/* icon note */
@@ -385,8 +378,46 @@ public class NapiDatabaseDesign implements org.openntf.domino.design.NapiDatabas
 				if (entry.title.contains(name) && //
 						DesignFactory.testFlag(entry.flags, flags) && //
 						DesignFactory.testFlag(entry.flagsExt, flagsExt)) {
-					System.out.println("Adding " + entry.title + " to collection");
-					coll.add(entry.noteId);
+
+					if (org.openntf.domino.design.DesignAgent.class.isAssignableFrom(type)) {
+						// argh... why is this soooo complex, IBM?
+						if (org.openntf.domino.design.impl.DesignAgentF.class.isAssignableFrom(type)) {
+							if ("65426".equals(entry.assistType)) {
+								coll.add(entry.noteId);
+							}
+
+						} else if (org.openntf.domino.design.impl.DesignAgentLS.class.isAssignableFrom(type)) {
+							if ("65413".equals(entry.assistType)) {
+								coll.add(entry.noteId);
+							}
+
+						} else if (org.openntf.domino.design.impl.DesignAgentA.class.isAssignableFrom(type)) {
+							if ("65413".equals(entry.assistType)) {
+								// nop:Formula
+							} else if ("65426".equals(entry.assistType)) {
+								// nop: Java
+							} else if ("65427".equals(entry.assistType)) {
+								// nop: importedJava
+							} else {
+								coll.add(entry.noteId);
+							}
+
+						} else if (org.openntf.domino.design.impl.DesignAgentJ.class.isAssignableFrom(type)) {
+							if ("65427".equals(entry.assistType)) {
+								if (flags.contains("J"))
+									coll.add(entry.noteId);
+							}
+
+						} else if (org.openntf.domino.design.impl.DesignAgentIJ.class.isAssignableFrom(type)) {
+							if ("65427".equals(entry.assistType)) {
+								if (!flags.contains("J"))
+									coll.add(entry.noteId);
+							}
+						}
+
+					} else {
+						coll.add(entry.noteId);
+					}
 
 				}
 			}

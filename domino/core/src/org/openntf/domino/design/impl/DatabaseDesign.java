@@ -513,6 +513,8 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(final Class<T> type, final String name) {
 		if (napiDesign_ == null && napiDesignFactory != null) {
 			// init:
+			//			long start = System.currentTimeMillis();
+			//			try {
 			napiDesign_ = napiDesignFactory.create(database_);
 			if (napiDesign_ != null) {
 				DesignCollection<T> ret = napiDesign_.getDesignElementsByName(type, name);
@@ -520,10 +522,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 					return ret;
 			}
 			Factory.println(this, "Cannot use NAPI to search for " + type.getClass() + " " + name + " in " + database_);
+			//			} finally {
+			//				start = System.currentTimeMillis() - start;
+			//				System.out.println("NAPI: Took " + start + " ms to read " + type.getClass() + " " + name + " in " + database_);
+			//			}
 		}
-
+		//		long start = System.currentTimeMillis();
+		//		try {
 		return DesignFactory.search(database_, type,
 				String.format("@Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)));
+		//		} finally {
+		//			start = System.currentTimeMillis() - start;
+		//			System.out.println("Notes: Took " + start + " ms to read " + type.getClass() + " " + name + " in " + database_);
+		//		}
 	}
 
 	@Override
