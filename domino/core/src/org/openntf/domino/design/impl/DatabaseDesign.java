@@ -42,9 +42,12 @@ import org.openntf.domino.design.DesignView;
 import org.openntf.domino.design.FileResource;
 import org.openntf.domino.design.FileResourceHidden;
 import org.openntf.domino.design.FileResourceWebContent;
+import org.openntf.domino.design.NapiDatabaseDesign;
+import org.openntf.domino.design.NapiDatabaseDesignFactory;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
@@ -76,6 +79,10 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	private transient Properties props;
 
 	private final Database database_;
+
+	private NapiDatabaseDesign napiDesign_;
+
+	public static NapiDatabaseDesignFactory napiDesignFactory;
 
 	public DatabaseDesign(final Database database) {
 		database_ = database;
@@ -504,6 +511,17 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	@Override
 	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(final Class<T> type, final String name) {
+		if (napiDesign_ == null && napiDesignFactory != null) {
+			// init:
+			napiDesign_ = napiDesignFactory.create(database_);
+			if (napiDesign_ != null) {
+				DesignCollection<T> ret = napiDesign_.getDesignElementsByName(type, name);
+				if (ret != null)
+					return ret;
+			}
+			Factory.println(this, "Cannot use NAPI to search for " + type.getClass() + " " + name + " in " + database_);
+		}
+
 		return DesignFactory.search(database_, type,
 				String.format("@Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)));
 	}

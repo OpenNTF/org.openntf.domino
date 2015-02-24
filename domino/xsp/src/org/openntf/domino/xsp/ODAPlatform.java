@@ -15,6 +15,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.ThreadConfig;
 import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.helpers.OsgiServiceLocatorFactory;
+import org.openntf.domino.xsp.napi.NapiDatabaseDesignFactory;
 import org.openntf.domino.xsp.session.XPageNamedSessionFactory;
 import org.openntf.domino.xsp.xots.XotsDominoExecutor;
 import org.openntf.service.ServiceLocatorFinder;
@@ -48,6 +49,7 @@ public enum ODAPlatform {
 	 * on the server console.
 	 */
 	public static void start() {
+		NapiDatabaseDesignFactory.init();
 		// Here is all the init/term stuff done
 		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
 		Factory.startup();
@@ -61,7 +63,14 @@ public enum ODAPlatform {
 		if (xotsTasks > 0) {
 			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
 			Xots.start(executor);
+			if (!"false".equals(System.getProperty("openntf.tasklet.autostart"))) {
+				startTasklets();
+			}
+		}
+	}
 
+	public static boolean startTasklets() {
+		if (Xots.isStarted()) {
 			List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
 
 			for (Object tasklet : tasklets) {
@@ -77,9 +86,9 @@ public enum ODAPlatform {
 					}
 				}
 			}
-
+			return true;
 		}
-
+		return false;
 	}
 
 	/**
