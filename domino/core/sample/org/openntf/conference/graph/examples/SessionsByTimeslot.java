@@ -1,31 +1,24 @@
 package org.openntf.conference.graph.examples;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.openntf.conference.graph.ConferenceGraph;
 import org.openntf.conference.graph.Event;
-import org.openntf.conference.graph.EventNameComparator;
 import org.openntf.conference.graph.Presentation;
-import org.openntf.conference.graph.PresentationCodeComparator;
 import org.openntf.conference.graph.TimeSlot;
-import org.openntf.conference.graph.Track;
 import org.openntf.domino.junit.TestRunnerUtil;
 
 import com.google.common.collect.Ordering;
-import com.tinkerpop.frames.FramedGraph;
 
 public class SessionsByTimeslot implements Runnable {
 	private long marktime;
 	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM HH:mm");
-	
+
 	public SessionsByTimeslot() {
-		
+
 	}
-	
+
 	@Override
 	public void run() {
 		long testStartTime = System.nanoTime();
@@ -33,35 +26,37 @@ public class SessionsByTimeslot implements Runnable {
 		try {
 			timelog("Beginning Sessions By TimeSlot...");
 			ConferenceGraph graph = new ConferenceGraph();
-			
+
 			Ordering<TimeSlot> byStart = new Ordering<TimeSlot>() {
-				
-				public int compare(TimeSlot t1, TimeSlot t2) {
+
+				@Override
+				public int compare(final TimeSlot t1, final TimeSlot t2) {
 					return t1.getStartTime().compareTo(t2.getStartTime());
 				}
 			};
 
-				Iterable<TimeSlot> times = graph.getTimeSlots();
-				List<TimeSlot> timesSorted = byStart.sortedCopy(times);
-				for (TimeSlot ts : timesSorted) {
-					System.out.println("Sessions running from " + DATE_FORMAT.format(ts.getStartTime().getTime()) + " to " + DATE_FORMAT.format(ts.getEndTime().getTime()));
-					Iterable<Event> presentations = ts.getEvents();
-					for (Event evt : presentations) {
-						if (evt instanceof Presentation) {
-							Presentation pres = (Presentation) evt;
-							System.out.println(pres.getSessionId() + ": " + pres.getTitle());
-						}
-						
+			Iterable<TimeSlot> times = graph.getTimeSlots();
+			List<TimeSlot> timesSorted = byStart.sortedCopy(times);
+			for (TimeSlot ts : timesSorted) {
+				System.out.println("Sessions running from " + DATE_FORMAT.format(ts.getStartTime().getTime()) + " to "
+						+ DATE_FORMAT.format(ts.getEndTime().getTime()));
+				Iterable<Event> presentations = ts.getEvents();
+				for (Event evt : presentations) {
+					if (evt instanceof Presentation) {
+						Presentation pres = (Presentation) evt;
+						System.out.println(pres.getSessionId() + ": " + pres.getTitle());
 					}
-					
+
 				}
+
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 	}
-	
+
 	public void timelog(final String message) {
 		long curtime = System.nanoTime();
 		long elapsed = curtime - marktime;
