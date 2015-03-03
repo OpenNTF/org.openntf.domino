@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -491,5 +492,25 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	public ScheduledFuture<?> runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
 		return queue(new DominoFutureTask(wrap(moduleName, className, ctorArgs), new PeriodicScheduler(0, 0L, TimeUnit.NANOSECONDS)));
 	}
+
+	//	@Override
+	//	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
+	//		return super.newTaskFor(wrap(callable));
+	//	}
+	//
+	//	@Override
+	//	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T type) {
+	//		return super.newTaskFor(wrap(runnable), type);
+	//	};
+
+	@Override
+	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
+		return new DominoFutureTask<T>(wrap(callable), new PeriodicScheduler(0, 0, TimeUnit.MILLISECONDS));
+	}
+
+	@Override
+	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T type) {
+		return new DominoFutureTask<T>(wrap(runnable), type, new PeriodicScheduler(0, 0, TimeUnit.MILLISECONDS));
+	};
 
 }
