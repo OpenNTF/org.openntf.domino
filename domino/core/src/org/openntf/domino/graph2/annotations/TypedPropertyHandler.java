@@ -53,6 +53,11 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
 		if (ClassUtilities.isGetMethod(method)) {
 			Object value = element.getProperty(annotationValue);
+			if (value instanceof java.util.Vector) {
+				if (((java.util.Vector) value).isEmpty()) {
+					value = "";
+				}
+			}
 			return value;
 		} else if (ClassUtilities.isSetMethod(method)) {
 			Object value = arguments[0];
