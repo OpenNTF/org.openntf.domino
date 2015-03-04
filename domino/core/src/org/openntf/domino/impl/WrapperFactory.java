@@ -115,7 +115,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		DominoReferenceCache rc = referenceCache.get();
+		DominoReferenceCache rc = getReferenceCache();
 		result = rc.processQueue(null, null);
 		result += rc.finishThreadSafes();
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
@@ -147,7 +147,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> //
 	T fromLotus(final D lotus, final FactorySchema<T, D, P> schema, final P parent) {
 
-		return fromLotus(lotus, schema, parent, null, referenceCache.get());
+		return fromLotus(lotus, schema, parent, null, getReferenceCache());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -193,7 +193,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> //
 	Collection<T> fromLotus(final Collection<?> lotusColl, final FactorySchema<T, D, P> schema, final P parent) {
 
-		DominoReferenceCache rc = referenceCache.get();
+		DominoReferenceCache rc = getReferenceCache();
 		Collection<lotus.domino.Base> prevent_recycling = getContainingNotesObjects(null, lotusColl);
 
 		Collection<T> result = new ArrayList<T>(lotusColl.size());
@@ -212,7 +212,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> //
 	Vector<T> fromLotusAsVector(final Collection<?> lotusColl, final FactorySchema<T, D, P> schema, final P parent) {
 
-		DominoReferenceCache rc = referenceCache.get();
+		DominoReferenceCache rc = getReferenceCache();
 		Collection<lotus.domino.Base> prevent_recycling = getContainingNotesObjects(null, lotusColl);
 
 		Vector<T> result = new Vector<T>(lotusColl.size());
@@ -281,13 +281,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			cache.processQueue(lotus, prevent_recycling); // recycle all elements but not the current ones
 
 			cache.put(lotus, result);
-			if (lotus instanceof lotus.domino.Session				//
-					|| lotus instanceof lotus.domino.AgentContext) {
-				// these are never recycled by default. If you create your own session, you have to recycle it after use
-				// or setNoRecycle to "false"
-				cache.setNoRecycle(lotus, true);
-				//				System.out.println("DEBUG: Wrapping a new Session with object id: " + System.identityHashCode(lotus));
-			}
+
 		}
 		return result;
 	}
@@ -296,7 +290,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	public void recacheLotusObject(final lotus.domino.Base newLotus, final Base<?> wrapper, final Base<?> parent) {
 		if (wrapper instanceof Document)
 			trackDoc((Document) wrapper, "/recache");
-		DominoReferenceCache rc = referenceCache.get();
+		DominoReferenceCache rc = getReferenceCache();
 		rc.processQueue(newLotus, null); // recycle all elements but not the current ones
 
 		// RPr: What happens here:
@@ -321,9 +315,8 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	}
 
 	@Override
-	public void setNoRecycle(final Base<?> base, final boolean value) {
-
-		referenceCache.get().setNoRecycle(toLotus(base), value);
+	public DominoReferenceCache getReferenceCache() {
+		return referenceCache.get();
 	}
 
 	/**
@@ -710,12 +703,12 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		if (values instanceof Vector) {
 			for (Object val : values) {
 				if (!(val instanceof Number) && !(val instanceof String) && !(val instanceof Date)) {
-					return wrapColumnValues(values, session, getContainingNotesObjects(null, values), referenceCache.get());
+					return wrapColumnValues(values, session, getContainingNotesObjects(null, values), getReferenceCache());
 				}
 			}
 			return (Vector<Object>) values; // values is a vector that contains only Number/String/Date-values. So it is safe
 		}
-		return wrapColumnValues(values, session, getContainingNotesObjects(null, values), referenceCache.get());
+		return wrapColumnValues(values, session, getContainingNotesObjects(null, values), getReferenceCache());
 	}
 
 	/**

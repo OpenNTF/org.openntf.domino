@@ -1599,19 +1599,25 @@ org.openntf.domino.Session {
 			throw new UnableToAcquireSessionException("SessionFactory could not return a Session");
 		}
 
-		getFactory().setNoRecycle(sess, false);
-
 		lotus.domino.Session d = ((Session) sess).getDelegate_unchecked();
+
 		if (d == null) {
 			throw new UnableToAcquireSessionException("The created Session does not have a valid delegate");
 		}
 		try {
 			if (!username_.equals(d.getEffectiveUserName())) {
-				throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:" + d.getEffectiveUserName()
-						+ ", expected:" + username_);
+				try {
+					throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:"
+							+ d.getEffectiveUserName() + ", expected:" + username_);
+				} finally {
+					d.recycle();
+				}
 			}
 		} catch (NotesException e) {
 		}
+		// CHECKME RPr: Don't know if this is really needed
+		getFactory().getReferenceCache().setNoRecycle(d, false);
+
 		setDelegate(d, true);
 		/* No special logging, since by now Session is a BaseThreadSafe */
 	}

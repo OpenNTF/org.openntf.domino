@@ -6,6 +6,7 @@ package org.openntf.domino;
 import java.util.Collection;
 import java.util.Vector;
 
+import org.openntf.domino.impl.DominoReferenceCache;
 import org.openntf.domino.types.FactorySchema;
 
 /**
@@ -114,11 +115,11 @@ public interface WrapperFactory extends Base<lotus.domino.Base> {
 	void recycle(Vector vec);
 
 	/**
-	 * Disables autorecycle for that element. By default, AutoRecycle for Session and AgentContext is always disabled
+	 * Retrns the referenceCache
 	 * 
-	 * @param result
+	 * @return
 	 */
-	void setNoRecycle(final Base<?> base, boolean value);
+	public DominoReferenceCache getReferenceCache();
 
 	/**
 	 * This method is called if a Notes-object was recovered

@@ -80,19 +80,23 @@ import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.LMBCSUtils;
+import org.openntf.domino.utils.NapiUtil;
 import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
+import com.ibm.designer.domino.napi.NotesConstants;
+import com.ibm.designer.domino.napi.NotesNote;
+import com.ibm.domino.napi.c.BackendBridge;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Document.
  */
 public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-		org.openntf.domino.Document {
+org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -102,40 +106,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	 */
 	protected static enum RemoveType {
 		SOFT_FALSE, SOFT_TRUE, HARD_FALSE, HARD_TRUE;
-	}
-
-	protected class ExtendedNoteInfos {
-		protected NoteClass noteClass;
-		protected boolean isDefault;
-		protected boolean isPrivate;
-
-		protected ExtendedNoteInfos() {
-			long start = System.nanoTime();
-			if (Document.this.hasItem("$ACLDigest")) { // the DXL of an ACL is empty
-				noteClass = NoteClass.ACL;
-				isDefault = true;
-			} else {
-				DxlExporter exporter = getAncestorSession().createDxlExporter();
-				try {
-					Vector<String> items = new Vector<String>();
-					items.add("-dummy-");
-					exporter.setRestrictToItemNames(items);
-					exporter.setForceNoteFormat(true);
-					exporter.setOutputDOCTYPE(false);
-					start = System.nanoTime() - start;
-					XMLDocument dxl = new XMLDocument();
-					dxl.loadString(exporter.exportDxl(Document.this));
-					String cls = dxl.getDocumentElement().getAttribute("class");
-					noteClass = NoteClass.valueOf(cls.toUpperCase());
-					isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
-					isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			if (noteClass == null)
-				noteClass = NoteClass.UNKNOWN;
-		}
 	}
 
 	private RemoveType removeType_;
@@ -153,7 +123,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	private boolean shouldResurrect_ = false;
 	private Boolean containMimes_ = null;
 
-	protected transient ExtendedNoteInfos extendedNoteInfos_;
+	private transient Object napiNote_;
 
 	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
 	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
@@ -3214,6 +3184,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		// RPr: Invalidate cached values
 		lastModified_ = null;
 		lastAccessed_ = null;
+		napiNote_ = null;
 	}
 
 	/*
@@ -3400,8 +3371,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3611,6 +3582,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		if (openMIMEEntities_ != null) {
 			openMIMEEntities_.clear();
 		}
+		napiNote_ = null;
+
 		if (noteid_ != null) {
 			try {
 				lotus.domino.Document d = null;
@@ -3695,13 +3668,13 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3932,6 +3905,20 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			//
 			// evaluate("@DocFields",...) is 3 times faster than lotus.domino.Document.getItems()
 			//
+
+			// RPR: getNapiNote().getItemNames() is faster, BUT but returns
+			// only the first 256 ItemNames.... grmpf!
+			//			if (Factory.isNapiPresent()) {
+			//				try {
+			//					String[] keys = getNapiNote().getItemNames();
+			//					for (String key : keys) {
+			//						fieldNames_.add(key);
+			//					}
+			//				} catch (Exception e) {
+			//					e.printStackTrace();
+			//				}
+			//			} 
+
 			try {
 				// This must be done on the raw session!
 				lotus.domino.Session rawSess = toLotus(getAncestorSession());
@@ -3941,11 +3928,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}
-			//			ItemVector items = (ItemVector) this.getItems();
-			//			String[] names = items.getNames();
-			//			for (int i = 0; i < names.length; i++) {
-			//				fieldNames_.add(names[i]);
-			//			}
+
 		}
 		return fieldNames_;
 	}
@@ -4347,27 +4330,133 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return getAncestorDatabase().getApiPath() + "/" + unid_;
 	}
 
+	/**
+	 * Extended Note Attributes support like NoteClass and so on
+	 */
+
+	private NoteAttrs noteAttrs_;
+
+	private static class NoteAttrs {
+
+		protected NoteClass noteClass;
+		protected boolean isDefault;
+		protected boolean isPrivate;
+
+	}
+
+	/**
+	 * Reads the Note-Attrs from DXL (if no NAPI is present. This is SLOOOOW!)
+	 * 
+	 * @return
+	 */
+	private NoteAttrs getNoteFlags() {
+		if (noteAttrs_ == null) {
+			noteAttrs_ = new NoteAttrs();
+			if (Factory.isNapiPresent()) {
+				try {
+					int cl = getNapiNote().getNoteClass();
+					noteAttrs_.noteClass = NoteClass.valueOf(cl);
+					noteAttrs_.isDefault = (cl & NotesConstants.NOTE_CLASS_DEFAULT) > 0;
+					noteAttrs_.isPrivate = (cl & NotesConstants.NOTE_CLASS_PRIVATE) > 0;
+					return noteAttrs_;
+				} catch (Exception e) {
+					e.printStackTrace(); // fall thru to DXL
+				}
+			}
+
+			DxlExporter exporter = getAncestorSession().createDxlExporter();
+			try {
+				Vector<String> items = new Vector<String>();
+				items.add("-dummy-");
+				exporter.setRestrictToItemNames(items);
+				exporter.setForceNoteFormat(true);
+				exporter.setOutputDOCTYPE(false);
+
+				XMLDocument dxl = new XMLDocument();
+				dxl.loadString(exporter.exportDxl(this));
+				String cls = dxl.getDocumentElement().getAttribute("class");
+
+				if ("document".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.DOCUMENT;
+				} else if ("helpaboutdocument".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.INFO;
+				} else if ("form".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.FORM;
+				} else if ("view".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.VIEW;
+				} else if ("icon".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.ICON;
+				} else if ("helpindex".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.HELP_INDEX;
+				} else if ("helpusingdocument".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.HELP;
+				} else if ("filter".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.FILTER;
+				} else if ("sharedfield".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.FIELD;
+				} else if ("replicationformula".equalsIgnoreCase(cls)) {
+					noteAttrs_.noteClass = NoteClass.REPLFORMULA;
+				} else {
+					noteAttrs_.noteClass = null;
+				}
+
+				noteAttrs_.isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
+				noteAttrs_.isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
+			} catch (Exception e) {
+				// Export may fail, if we got an ACL or DESIGN Note
+				//e.printStackTrace();
+			}
+
+			if (noteAttrs_.noteClass == null) {
+				// Special case: ACL note + design note are not exportable!
+				if (hasItem("$ACLDigest")) {
+					noteAttrs_.noteClass = NoteClass.ACL;
+					noteAttrs_.isDefault = true;
+				} else if (!hasItem("$TITLE") && "3724".equals(getItemValueString("$FormulaClass"))) {
+					noteAttrs_.noteClass = NoteClass.DESIGN;
+					noteAttrs_.isDefault = true;
+				} else {
+					noteAttrs_.noteClass = NoteClass.UNKNOWN;
+				}
+			}
+
+		}
+		return noteAttrs_;
+	}
+
 	@Override
 	public NoteClass getNoteClass() {
-		if (extendedNoteInfos_ == null) {
-			extendedNoteInfos_ = new ExtendedNoteInfos();
-		}
-		return extendedNoteInfos_.noteClass;
+
+		return getNoteFlags().noteClass;
 	}
 
 	@Override
 	public boolean isDefault() {
-		if (extendedNoteInfos_ == null) {
-			extendedNoteInfos_ = new ExtendedNoteInfos();
-		}
-		return extendedNoteInfos_.isDefault;
+		return getNoteFlags().isDefault;
 	}
 
 	@Override
 	public boolean isPrivate() {
-		if (extendedNoteInfos_ == null) {
-			extendedNoteInfos_ = new ExtendedNoteInfos();
+		return getNoteFlags().isPrivate;
+	}
+
+	@Override
+	public int getNapiHandle() {
+		if (Factory.isNapiPresent()) {
+			return (int) BackendBridge.getDocumentHandleRW(getDelegate());
 		}
-		return extendedNoteInfos_.isDefault;
+		return 0;
+	}
+
+	@Override
+	public NotesNote getNapiNote() {
+		if (napiNote_ == null) {
+			try {
+				napiNote_ = NapiUtil.createNotesNote(this);
+			} catch (Exception ne) { // cannot catch NotesAPIException 
+				DominoUtils.handleException(ne);
+			}
+		}
+		return (NotesNote) napiNote_;
 	}
 }

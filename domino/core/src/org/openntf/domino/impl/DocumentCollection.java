@@ -29,6 +29,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.NoteClass;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -781,7 +782,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	@Override
 	public void clear() {
-		org.openntf.domino.Document iconNote = this.getParentDatabase().getDocumentByID("FFFF0010");
+		org.openntf.domino.Document iconNote = this.getParentDatabase().getDocumentByID(NoteClass.ICON.defaultID());
 		this.intersect(iconNote);
 		this.remove(iconNote);
 	}

@@ -336,6 +336,7 @@ public enum Factory {
 	private static List<Runnable> shutdownHooks = new ArrayList<Runnable>();
 
 	private static String localServerName;
+	private static boolean napiPresent_;
 
 	private static ThreadVariables getThreadVariables() {
 		ThreadVariables tv = threadVariables_.get();
@@ -668,11 +669,6 @@ public enum Factory {
 	//	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
 	//		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	//	}
-
-	//This should not be needed any more
-	//public static void setNoRecycle(final Base<?> base, final boolean value) {
-	//	getWrapperFactory().setNoRecycle(base, value);
-	//}
 
 	/*
 	 * (non-JavaDoc)
@@ -1257,6 +1253,10 @@ public enum Factory {
 		}
 	}
 
+	public static boolean isNapiPresent() {
+		return napiPresent_;
+	}
+
 	public static synchronized void startup(final lotus.domino.Session session) {
 		if (session instanceof org.openntf.domino.Session) {
 			throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
@@ -1264,7 +1264,14 @@ public enum Factory {
 		if (started) {
 			Factory.println("OpenNTF Domino API is already started. Cannot start it again");
 		}
-
+		try {
+			NapiUtil.init();
+			napiPresent_ = true;
+			Factory.println("Info", "NAPI is present");
+		} catch (Throwable t) {
+			Factory.println("Info", "NAPI not present (Reason: " + t.toString() + ")");
+			napiPresent_ = false;
+		}
 		File iniFile;
 		try {
 			localServerName = session.getUserName();
