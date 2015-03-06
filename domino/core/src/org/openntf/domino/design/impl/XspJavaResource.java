@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * A java file (for xpages)
@@ -27,17 +25,6 @@ import org.openntf.domino.Document;
  */
 public class XspJavaResource extends AbstractXspResource implements HasMetadata, org.openntf.domino.design.XspJavaResource {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected XspJavaResource(final Document document) {
-		super(document);
-	}
-
-	protected XspJavaResource(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

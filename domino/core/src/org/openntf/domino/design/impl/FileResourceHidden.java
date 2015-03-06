@@ -16,26 +16,12 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-
 /**
  * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class FileResourceHidden extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceHidden {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected FileResourceHidden(final Document document) {
-		super(document);
-	}
-
-	protected FileResourceHidden(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

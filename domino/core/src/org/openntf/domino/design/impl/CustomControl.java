@@ -22,8 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
@@ -34,14 +32,6 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());
-
-	protected CustomControl(final Document document) {
-		super(document);
-	}
-
-	protected CustomControl(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

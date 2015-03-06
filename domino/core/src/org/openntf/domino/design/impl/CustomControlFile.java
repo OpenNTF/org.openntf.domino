@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * 
@@ -27,14 +25,6 @@ import org.openntf.domino.Document;
 public class CustomControlFile extends AbstractXspResource implements org.openntf.domino.design.CustomControlFile, HasMetadata {
 
 	private static final long serialVersionUID = 1L;
-
-	protected CustomControlFile(final Document document) {
-		super(document);
-	}
-
-	protected CustomControlFile(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

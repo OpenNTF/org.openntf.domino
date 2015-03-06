@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml, FOCONIS AG
@@ -25,17 +23,6 @@ import org.openntf.domino.Document;
  */
 public final class DatabaseScript extends AbstractDesignBase implements org.openntf.domino.design.DatabaseScript {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected DatabaseScript(final Document document) {
-		super(document);
-	}
-
-	protected DatabaseScript(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

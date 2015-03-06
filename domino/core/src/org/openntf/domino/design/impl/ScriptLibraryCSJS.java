@@ -22,8 +22,6 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -36,17 +34,6 @@ import org.openntf.domino.utils.xml.XMLNode;
  */
 public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryCSJS {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected ScriptLibraryCSJS(final Document document) {
-		super(document);
-	}
-
-	protected ScriptLibraryCSJS(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

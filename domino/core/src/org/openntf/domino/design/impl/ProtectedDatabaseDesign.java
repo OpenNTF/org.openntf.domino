@@ -32,22 +32,22 @@ public class ProtectedDatabaseDesign extends DatabaseDesign {
 	}
 
 	@Override
-	public DesignCollection<DesignBase> getDesignElements(final String formula) {
+	public DesignCollection<DesignBase> searchDesignElements(final String formula) {
 		return new org.openntf.domino.design.impl.DesignCollection<DesignBase>(null, DesignBase.class);
 	}
 
 	@Override
-	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type, final String search) {
+	public <T extends DesignBase> DesignCollection<T> searchDesignElements(final Class<T> type, final String search) {
 		return new org.openntf.domino.design.impl.DesignCollection<T>(null, type);
 	}
 
 	@Override
-	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(final Class<T> type, final String name) {
+	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type, final String name) {
 		return new org.openntf.domino.design.impl.DesignCollection<T>(null, type);
 	}
 
 	@Override
-	public <T extends DesignBase> T getDesignElementByName(final Class<T> type, final String name) {
+	public <T extends DesignBase> T getDesignElement(final Class<T> type, final String name) {
 		return null;
 	}
 }

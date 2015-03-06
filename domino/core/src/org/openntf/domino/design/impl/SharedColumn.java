@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml, FOCONIS AG
@@ -25,17 +23,6 @@ import org.openntf.domino.Document;
  */
 public class SharedColumn extends AbstractDesignBaseNamed implements org.openntf.domino.design.SharedColumn {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected SharedColumn(final Document document) {
-		super(document);
-	}
-
-	protected SharedColumn(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

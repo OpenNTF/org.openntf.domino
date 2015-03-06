@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
@@ -46,7 +45,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.AnyFileResource {
+public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignFileResource.class.getName());
@@ -62,16 +61,8 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 	private static final String MIMETYPE_FIELD = "$MimeType";
 
-	protected AbstractDesignFileResource(final Document document) {
-		super(document);
-	}
-
-	protected AbstractDesignFileResource(final Database database) {
-		super(database);
-	}
-
-	protected AbstractDesignFileResource(final Database database, final String dxlResource) {
-		super(database);
+	protected void init(final Database database, final String dxlResource) {
+		super.init(database);
 
 		try {
 			InputStream is = DesignView.class.getResourceAsStream(dxlResource);
@@ -87,7 +78,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 * 
 	 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
 	 */
-	@Override
 	public byte[] getFileData() {
 		switch (getDxlFormat(true)) {
 		case DXL:
@@ -144,7 +134,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		}
 	}
 
-	@Override
 	public void setFileData(final byte[] data) {
 		switch (getDxlFormat(true)) {
 		case DXL:
@@ -200,7 +189,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		}
 	}
 
-	@Override
 	public String getMimeType() {
 		switch (getDxlFormat(false)) {
 		case DXL:
@@ -210,7 +198,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		}
 	}
 
-	@Override
 	public void setMimeType(final String mimeType) {
 		switch (getDxlFormat(true)) {
 		case DXL:
@@ -257,22 +244,18 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	}
 
 	// TODO: map this to DXL
-	@Override
 	public boolean isReadOnly() {
 		return hasFlag(DESIGN_FLAG_READONLY);
 	}
 
-	@Override
 	public void setReadOnly(final boolean readOnly) {
 		setFlag(DESIGN_FLAG_READONLY, readOnly);
 	}
 
-	@Override
 	public boolean isDeployable() {
 		return hasFlagExt(DESIGN_FLAGEXT_FILE_DEPLOYABLE);
 	}
 
-	@Override
 	public void setDeployable(final boolean deployable) {
 		// TODO Auto-generated method stub
 	}

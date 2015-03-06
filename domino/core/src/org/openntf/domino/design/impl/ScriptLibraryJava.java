@@ -8,8 +8,6 @@ import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -21,23 +19,12 @@ import org.openntf.domino.utils.xml.XMLNode;
 public final class ScriptLibraryJava extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryJava, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param document
-	 */
-	protected ScriptLibraryJava(final Document document) {
-		super(document);
-	}
-
 	@Override
 	protected boolean enforceRawFormat() {
 		//return false;
 
 		//we use RAW format for script libraries, so that we are "on disk compatible"
 		return true;
-	}
-
-	protected ScriptLibraryJava(final Database database) {
-		super(database);
 	}
 
 	Map<String, byte[]> classData;

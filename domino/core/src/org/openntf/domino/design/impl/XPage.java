@@ -18,9 +18,6 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-
 /**
  * @author jgallagher
  * 
@@ -29,14 +26,6 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
-
-	protected XPage(final Document document) {
-		super(document);
-	}
-
-	protected XPage(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

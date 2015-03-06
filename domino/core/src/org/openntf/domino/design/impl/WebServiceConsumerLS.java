@@ -16,26 +16,13 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceConsumer {
+public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceConsumerLS {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected WebServiceConsumerLS(final Document document) {
-		super(document);
-	}
-
-	protected WebServiceConsumerLS(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

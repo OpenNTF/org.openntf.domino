@@ -30,8 +30,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -43,14 +41,6 @@ public final class ImageResource extends AbstractDesignFileResource implements o
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
-
-	protected ImageResource(final Document document) {
-		super(document);
-	}
-
-	protected ImageResource(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

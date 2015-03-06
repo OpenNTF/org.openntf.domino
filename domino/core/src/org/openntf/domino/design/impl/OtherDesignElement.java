@@ -19,7 +19,6 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 
-import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 
 /**
@@ -33,11 +32,7 @@ public class OtherDesignElement extends AbstractDesignBase {
 	 * @param document
 	 */
 	protected OtherDesignElement(final Document document) {
-		super(document);
-	}
-
-	protected OtherDesignElement(final Database database) {
-		super(database);
+		init(document);
 	}
 
 	@Override

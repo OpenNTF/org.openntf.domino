@@ -46,12 +46,11 @@ public class FacesConfig extends XspXmlContent implements org.openntf.domino.des
 	 *            The design note used to represent an existing faces-config.xml file
 	 */
 	public FacesConfig(final DatabaseDesign databaseDesign) {
-		FileResourceWebContent facesConfig = databaseDesign
-				.getDesignElementByName(FileResourceWebContent.class, "WEB-INF/faces-config.xml");
+		FileResourceWebContent facesConfig = databaseDesign.getDesignElement(FileResourceWebContent.class, "WEB-INF/faces-config.xml");
 		if (facesConfig != null) {
 			setContainer(facesConfig);
 		} else {
-			facesConfig = new org.openntf.domino.design.impl.FileResourceWebContent(databaseDesign.getAncestorDatabase());
+			facesConfig = databaseDesign.create(FileResourceWebContent.class);
 			facesConfig.setName("WEB-INF/faces-config.xml");
 			setContainer(facesConfig);
 			try {

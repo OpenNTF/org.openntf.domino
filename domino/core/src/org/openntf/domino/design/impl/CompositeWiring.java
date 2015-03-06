@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml, FOCONIS AG
@@ -26,17 +24,6 @@ import org.openntf.domino.Document;
 // TODO Metadata
 public final class CompositeWiring extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeWiring {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected CompositeWiring(final Document document) {
-		super(document);
-	}
-
-	protected CompositeWiring(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

@@ -16,26 +16,13 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class DesignOutline extends AbstractDesignBaseNamed implements org.openntf.domino.design.Outline {
+public class DesignOutline extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignOutline {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected DesignOutline(final Document document) {
-		super(document);
-	}
-
-	protected DesignOutline(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

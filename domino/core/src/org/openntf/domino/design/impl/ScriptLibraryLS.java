@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -19,17 +17,6 @@ import org.openntf.domino.utils.xml.XMLNode;
  */
 public final class ScriptLibraryLS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryLS, HasMetadata {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected ScriptLibraryLS(final Document document) {
-		super(document);
-	}
-
-	protected ScriptLibraryLS(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

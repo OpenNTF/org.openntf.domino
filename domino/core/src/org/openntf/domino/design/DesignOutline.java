@@ -20,6 +20,6 @@ package org.openntf.domino.design;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public interface Outline extends DesignBaseNamed {
+public interface DesignOutline extends DesignBaseNamed {
 
 }

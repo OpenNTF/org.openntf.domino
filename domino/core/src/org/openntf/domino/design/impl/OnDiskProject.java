@@ -267,7 +267,7 @@ public class OnDiskProject {
 	public void syncDesign() {
 
 		DatabaseDesign design = db.getDesign();
-		DesignCollection<DesignBase> elems = design.getDesignElements(" !@Contains($Flags;{X}) & !@Begins($TITLE;{WEB-INF/classes}) ");
+		DesignCollection<DesignBase> elems = design.getDesignElements(); //(" !@Contains($Flags;{X}) & !@Begins($TITLE;{WEB-INF/classes}) ");
 		int totalODP = total;
 		int totalNSF = elems.getCount();
 		total += totalNSF;

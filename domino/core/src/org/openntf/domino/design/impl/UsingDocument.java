@@ -18,9 +18,6 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-
 /**
  * @author jgallagher
  * 
@@ -29,14 +26,6 @@ public class UsingDocument extends AbstractDesignBase implements org.openntf.dom
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(UsingDocument.class.getName());
-
-	protected UsingDocument(final Document document) {
-		super(document);
-	}
-
-	protected UsingDocument(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

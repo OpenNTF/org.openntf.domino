@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.design.SharedActions;
 
 /**
@@ -26,17 +24,6 @@ import org.openntf.domino.design.SharedActions;
  */
 public class SharedActionsNote extends AbstractDesignBase implements SharedActions {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected SharedActionsNote(final Document document) {
-		super(document);
-	}
-
-	protected SharedActionsNote(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * A Server Side JavaScript - Library.
@@ -27,17 +25,6 @@ import org.openntf.domino.Document;
  */
 public final class ScriptLibrarySSJS extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.ScriptLibrarySSJS {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected ScriptLibrarySSJS(final Document document) {
-		super(document);
-	}
-
-	protected ScriptLibrarySSJS(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

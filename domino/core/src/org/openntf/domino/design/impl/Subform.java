@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.design.FormField;
 import org.openntf.domino.design.FormFieldList;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -28,17 +26,6 @@ import org.openntf.domino.utils.xml.XMLNode;
  */
 public class Subform extends AbstractDesignBaseNamed implements org.openntf.domino.design.Subform {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected Subform(final Document document) {
-		super(document);
-	}
-
-	protected Subform(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

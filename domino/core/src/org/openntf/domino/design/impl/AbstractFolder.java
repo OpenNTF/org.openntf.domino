@@ -18,9 +18,7 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.design.Folder;
+import org.openntf.domino.design.AnyFolderOrView;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -28,20 +26,9 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 @SuppressWarnings("serial")
-public abstract class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
+public abstract class AbstractFolder extends AbstractDesignBaseNamed implements AnyFolderOrView {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractFolder.class.getName());
-
-	/**
-	 * @param document
-	 */
-	protected AbstractFolder(final Document document) {
-		super(document);
-	}
-
-	protected AbstractFolder(final Database database) {
-		super(database);
-	}
 
 	/*
 	 * (non-Javadoc)

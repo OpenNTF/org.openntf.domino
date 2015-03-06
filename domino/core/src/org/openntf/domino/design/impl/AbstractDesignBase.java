@@ -69,6 +69,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	protected static final String FLAGS_ITEM = "$Flags";
 	protected static final String FLAGS_EXT_ITEM = "$FlagsExt";
 	protected static final String TITLE_ITEM = "$TITLE";
+	protected static final String ASSIST_TYPE = "$AssistType";
 
 	private transient Database database_;
 	private transient Document document_;
@@ -88,7 +89,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @param database
 	 *            the Database
 	 */
-	public AbstractDesignBase(final Database database) {
+	protected void init(final Database database) {
 		database_ = database;
 		loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
 	}
@@ -98,7 +99,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * 
 	 * @param document
 	 */
-	protected AbstractDesignBase(final Document document) {
+	protected void init(final Document document) {
 		setDocument(document);
 	}
 
@@ -179,6 +180,39 @@ public abstract class AbstractDesignBase implements DesignBase {
 			return getDocumentElement().getAttribute("noreplace").equals("true");
 		default:
 			return hasFlag(DESIGN_FLAG_PRESERVE);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#isPreventChanges()
+	 */
+	@Override
+	public final boolean isPrivate() {
+		switch (getDxlFormat(true)) {
+		case DXL:
+		case RAWNOTE:
+			return "true".equals(getDocumentElement().getAttribute("private"));
+		default:
+			return document_.isPrivate();
+
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#isPreventChanges()
+	 */
+	@Override
+	public final boolean isDefault() {
+		switch (getDxlFormat(true)) {
+		case DXL:
+		case RAWNOTE:
+			return "true".equals(getDocumentElement().getAttribute("default"));
+		default:
+			return document_.isDefault();
 		}
 	}
 
@@ -662,11 +696,17 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final String getNoteID() {
-		XMLNode node = getDxl().selectSingleNode("//noteinfo");
-		if (node != null) {
-			return node.getAttribute("noteid");
+		switch (getDxlFormat(false)) {
+		case DXL:
+		case RAWNOTE:
+			XMLNode node = getDxl().selectSingleNode("//noteinfo");
+			if (node != null) {
+				return node.getAttribute("noteid");
+			}
+			return "";
+		default:
+			return document_.getNoteID();
 		}
-		return "";
 	}
 
 	protected final XMLDocument getDxl() {
@@ -994,6 +1034,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	public Date getLastModified() {
 		return lastModified_;
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getClass().getSimpleName() + " (NoteId: " + getNoteID() + ")";
 	}
 
 }

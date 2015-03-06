@@ -18,26 +18,12 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-
 /**
  * @author jgallagher
  * 
  */
 public final class AboutDocument extends AbstractDesignBase implements org.openntf.domino.design.AboutDocument {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected AboutDocument(final Document document) {
-		super(document);
-	}
-
-	public AboutDocument(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

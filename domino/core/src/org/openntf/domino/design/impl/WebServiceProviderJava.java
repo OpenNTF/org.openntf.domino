@@ -16,26 +16,13 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 
 /**
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class WebServiceProviderJava extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceProvider {
+public class WebServiceProviderJava extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceProviderJava {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected WebServiceProviderJava(final Document document) {
-		super(document);
-	}
-
-	protected WebServiceProviderJava(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

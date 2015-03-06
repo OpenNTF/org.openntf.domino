@@ -16,13 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
-
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.utils.DominoUtils;
 
 /**
  * 
@@ -32,30 +26,22 @@ import org.openntf.domino.utils.DominoUtils;
 public final class FileResource extends AbstractDesignFileResource implements org.openntf.domino.design.FileResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
-	protected FileResource(final Document document) {
-		super(document);
-	}
-
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
 	}
 
-	protected FileResource(final Database database) {
-		super(database);
-	}
-
-	protected FileResource(final Database database, final String dxlResource) {
-		super(database);
-
-		try {
-			InputStream is = DesignView.class.getResourceAsStream(dxlResource);
-			loadDxl(is);
-			is.close();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
-	}
+	//	protected FileResource(final Database database, final String dxlResource) {
+	//		super(database);
+	//
+	//		try {
+	//			InputStream is = DesignView.class.getResourceAsStream(dxlResource);
+	//			loadDxl(is);
+	//			is.close();
+	//		} catch (IOException e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
 
 	@Override
 	public Collection<String> getItemNames() {

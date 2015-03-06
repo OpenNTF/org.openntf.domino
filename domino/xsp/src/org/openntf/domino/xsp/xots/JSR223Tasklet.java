@@ -26,7 +26,7 @@ public class JSR223Tasklet extends AbstractDominoRunnable {
 		scriptExt_ = scriptName.substring(extIndex + 1);
 
 		DatabaseDesign design = database.getDesign();
-		AnyFileResource script = design.getAnyFileResource(scriptName);
+		AnyFileResource script = design.getDesignElement(AnyFileResource.class, scriptName);
 		script_ = new String(script.getFileData());
 		databasePath_ = database.getApiPath();
 	}

@@ -25,8 +25,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
@@ -37,14 +35,6 @@ public final class JarResource extends AbstractDesignFileResource implements org
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JarResource.class.getName());
-
-	protected JarResource(final Document document) {
-		super(document);
-	}
-
-	protected JarResource(final Database database) {
-		super(database);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
