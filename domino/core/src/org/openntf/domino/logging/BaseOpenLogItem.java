@@ -273,19 +273,38 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		 * BaseOpenLogItem gets shared between calls and _currentDatabase is resurrected.
 		 * So check _currentDbPath variable is actual current path
 		 */
-		if (!StringUtil.equals(_currentDbPath, Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
-			try {
-				_currentDatabase = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
-				_currentDbPath = _currentDatabase.getFilePath();
-			} catch (Exception e) {
-				debugPrint(e);
-			}
+		if (null == _currentDatabase) {
+			setCurrentDatabase();
 		}
 		return _currentDatabase;
 	}
 
+	public void setCurrentDatabase() {
+		Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
+		if (null == currDb) {
+			_currentDatabase = null;
+		} else {
+			if (!StringUtil.equals(_currentDbPath, currDb.getFilePath())) {
+				try {
+					_currentDatabase = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
+				} catch (Exception e) {
+					debugPrint(e);
+				}
+			}
+		}
+	}
+
+	public void setCurrentDatabase(final Database db) {
+		_currentDatabase = db;
+	}
+
 	public String getCurrentDatabasePath() {
-		return _currentDbPath;
+		Database db = getCurrentDatabase();
+		if (null == db) {
+			return "";
+		} else {
+			return db.getFilePath();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -776,7 +795,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
 			logDoc.replaceItemValue("LogEventType", getEventType());
 			logDoc.replaceItemValue("LogMessage", getMessage());
-			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabase().getFilePath());
+			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabasePath());
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
 			// Fixed next line
