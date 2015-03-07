@@ -226,7 +226,7 @@ public class OnDiskProject {
 			DominoUtils.handleException(e);
 		}
 		//update map
-		updateMapRecursive(diskDir_);
+		updateMapRecursive(diskDir_, true);
 	}
 
 	/**
@@ -593,15 +593,16 @@ public class OnDiskProject {
 		return elem.writeOnDiskFile(file, gitFriendly);
 	}
 
-	protected void updateMapRecursive(final File root) {
+	protected void updateMapRecursive(final File root, final boolean isRecursive) {
 
 		if (root.listFiles() != null) {
 			for (File file : root.listFiles()) {
 				if (file.isDirectory()) {
-					if (!isDocDir(file) && !isLogDir(file)) {
-						updateMapRecursive(file);
+
+					if (isRecursive || isDesignDir(file)) {
+						updateMapRecursive(file, false);
 					}
-				} else if (!isTimeStampsFile(file) && !isMetadataFile(file) && !isConfigFile(file)) {
+				} else if (isDesignFile(file)) {
 					OnDiskFile odf = new OnDiskFile(diskDir_, file);
 					total++;
 
@@ -624,24 +625,44 @@ public class OnDiskProject {
 		}
 	}
 
-	protected boolean isMetadataFile(final File file) {
-		return file.getName().endsWith(METADATA_SUFFIX);
+	// Directory, which contains designElements
+	protected boolean isDesignDir(final File file) {
+		String name = file.getName();
+
+		if (name.equalsIgnoreCase(".settings"))
+			return true;
+
+		if (name.startsWith(".git"))
+			return false; // exclude git dir
+
+		if (name.equalsIgnoreCase(DOC_DIR))
+			return false;
+
+		if (name.equalsIgnoreCase(LOG_DIR))
+			return false;
+
+		return true;
 	}
 
-	protected boolean isConfigFile(final File file) {
-		return ODPMapping.CUSTOM_CONTROL.getFolder().equals(file.getParentFile().getName()) && file.getName().endsWith(XSP_CONFIG_SUFFIX);
-	}
+	protected boolean isDesignFile(final File file) {
+		String name = file.getName();
 
-	protected boolean isTimeStampsFile(final File file) {
-		return file.getName().startsWith(TIMESTAMPS_DESIGN_PREFIX) || file.getName().startsWith(TIMESTAMPS_DOCS_PREFIX);
-	}
+		if (name.startsWith(TIMESTAMPS_DESIGN_PREFIX))
+			return false;
 
-	protected boolean isDocDir(final File file) {
-		return file.getName().equals(DOC_DIR);
-	}
+		if (name.startsWith(TIMESTAMPS_DOCS_PREFIX))
+			return false;
 
-	protected boolean isLogDir(final File file) {
-		return file.getName().equals(LOG_DIR);
+		if (name.startsWith(".git"))
+			return false; // 
+
+		if (name.endsWith(METADATA_SUFFIX))
+			return false;
+
+		if (name.endsWith(XSP_CONFIG_SUFFIX))
+			return false;
+
+		return true;
 	}
 
 	/**

@@ -38,39 +38,37 @@ public class OnDiskFile implements SyncObject, Serializable {
 	private File file_;
 	private String name_;
 	private long timeStamp_;
-	private ODPMapping odpMapping;
+	private DesignMapping odpMapping;
 	private transient State state;
 	private transient boolean processed;
 
 	public OnDiskFile(final File parent, final File file) {
 		file_ = file;
 		setProcessed(false);
-		for (ODPMapping mapping : ODPMapping.values()) {
-			File odpFolder = new File(parent, mapping.getFolder());
 
-			if (checkChild(file, odpFolder)) {
-				String ext = mapping.getOnDiskFileExtension();
-				String filePath = file.getAbsolutePath().replace("\\", "/");
-				String folderPath = odpFolder.getAbsolutePath().replace("\\", "/");
+		// example:
+		// parent 	= C:\documents\odp\
+		// file 	= C:\documents\odp\Code\Scriptlibraries\lib.lss
+		// odpFolder= C:\documents\odp\Code\Scriptlibraries
+		// relUri 	= lib.lss
 
-				if (ext == null || filePath.endsWith(ext) || ext.equals("*")) {
-					odpMapping = mapping;
-					if (ext == null || ext.equals("*")) {
-						name_ = filePath.substring(folderPath.length() + 1);
-						return;
-					} else if (ext.startsWith(".")) {
-						if (filePath.endsWith(ext)) {
-							name_ = filePath.substring(folderPath.length() + 1);
-							return;
-						}
-					} else {
-						name_ = ext;
-						return;
-					}
-				}
-			}
+		odpMapping = DesignMapping.valueOf(parent, file);
+		File odpFolder = new File(parent, odpMapping.getOnDiskFolder());
+		URI relUri = odpFolder.toURI().relativize(file.toURI());
+
+		String ext = odpMapping.getOnDiskFileExtension();
+
+		if (ext == null) {
+			// no extension, so use the relative file uri
+			name_ = relUri.getPath();
+		} else if (ext.equals("*")) {
+			// name is "*", so use the unescaped part.
+			name_ = relUri.getPath();
+		} else if (ext.startsWith(".")) {
+			name_ = relUri.getPath();
+		} else {
+			name_ = ext;
 		}
-		throw new IllegalArgumentException("Mapping not found for " + file.getAbsolutePath());
 
 	}
 
@@ -89,7 +87,7 @@ public class OnDiskFile implements SyncObject, Serializable {
 	}
 
 	public Class<?> getImplementingClass() {
-		return odpMapping.getInstanceClass();
+		return odpMapping.getImplClass();
 	}
 
 	public State getState() {
@@ -105,7 +103,7 @@ public class OnDiskFile implements SyncObject, Serializable {
 	}
 
 	public String getFullName() {
-		return odpMapping.getInstanceClass().getName() + ":" + getName();
+		return getImplementingClass().getName() + ":" + getName();
 	}
 
 	public void setTimeStamp(final long timeStamp) {

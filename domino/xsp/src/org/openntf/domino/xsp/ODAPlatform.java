@@ -7,7 +7,6 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
 import org.openntf.domino.config.Configuration;
 import org.openntf.domino.config.ServerConfiguration;
-import org.openntf.domino.design.impl.NapiDatabaseDesignFactory;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.session.INamedSessionFactory;
@@ -49,7 +48,6 @@ public enum ODAPlatform {
 	 * on the server console.
 	 */
 	public static void start() {
-		NapiDatabaseDesignFactory.init();
 		// Here is all the init/term stuff done
 		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
 		Factory.startup();

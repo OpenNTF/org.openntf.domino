@@ -53,7 +53,8 @@ import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_FORMULAONLY;
 import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_JAVAAGENT;
 import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_LOTUSSCRIPT;
 
-import java.util.Arrays;
+import java.io.File;
+import java.net.URI;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.design.DesignBase;
@@ -62,90 +63,90 @@ import org.openntf.domino.ext.NoteClass;
 //@formatter:off
 public enum DesignMapping {
 
-	// Special elements
 
-	// ENUM Name			Interface class											Implementing class				Note Class		....
+	// This is a table that specifies all properties of the different designelements.
+	// ENUM Name			Interface class											Implementing class				On disk Path				On disk Extension	Note Class		....
 
-	DesignView(				org.openntf.domino.design.DesignView.class,				DesignView.class,				NoteClass.VIEW, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
+	DesignView(				org.openntf.domino.design.DesignView.class,				DesignView.class,				"Views", 					".view", 			NoteClass.VIEW, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
 
-	Folder(					org.openntf.domino.design.Folder.class,					Folder.class,					NoteClass.VIEW, 	DFLAGPAT_FOLDER_ALL_VERSIONS),
-	Theme(					org.openntf.domino.design.Theme.class,					Theme.class,					NoteClass.FORM, 	DFLAGPAT_STYLEKIT),
+	Folder(					org.openntf.domino.design.Folder.class,					Folder.class,					"Folders", 					".folder",			NoteClass.VIEW, 	DFLAGPAT_FOLDER_ALL_VERSIONS),
+	Theme(					org.openntf.domino.design.Theme.class,					Theme.class,					"Resources/Themes", 		null,				NoteClass.FORM, 	DFLAGPAT_STYLEKIT),
 
-	CompositeComponent(		org.openntf.domino.design.CompositeComponent.class,		CompositeComponent.class,		NoteClass.FORM, 	DFLAGPAT_WIDGET),
-	JarResource(			org.openntf.domino.design.JarResource.class,			JarResource.class,				NoteClass.FORM,		DFLAGPAT_JAVAJAR),
-	FileResource(			org.openntf.domino.design.FileResource.class,			FileResource.class,				NoteClass.FORM, 	DFLAGPAT_FILE_DL),
-	FileResourceHidden(		org.openntf.domino.design.FileResourceHidden.class,		FileResourceHidden.class,		NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_NO_WEBCONTENTFILE),
-	FileResourceWebContent(	org.openntf.domino.design.FileResourceWebContent.class,	FileResourceWebContent.class,	NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_WEBCONTENTFILE),
+	CompositeComponent(		org.openntf.domino.design.CompositeComponent.class,		CompositeComponent.class,		"CompositeApplications/Components", 	null,	NoteClass.FORM, 	DFLAGPAT_WIDGET),
+	JarResource(			org.openntf.domino.design.JarResource.class,			JarResource.class,				"Code/Jars", 				null,				NoteClass.FORM,		DFLAGPAT_JAVAJAR),
+	FileResource(			org.openntf.domino.design.FileResource.class,			FileResource.class,				"Resources/Files",			null,				NoteClass.FORM, 	DFLAGPAT_FILE_DL),
+	FileResourceHidden(		org.openntf.domino.design.FileResourceHidden.class,		FileResourceHidden.class,		"",	/* = in root folder */	null,				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_NO_WEBCONTENTFILE),
+	FileResourceWebContent(	org.openntf.domino.design.FileResourceWebContent.class,	FileResourceWebContent.class,	"WebContent", 				null,				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_WEBCONTENTFILE),
 
-	Navigator(				org.openntf.domino.design.Navigator.class,				Navigator.class,				NoteClass.VIEW, 	DFLAGPAT_NAVIGATORSWEB),
-	ImageResource(			org.openntf.domino.design.ImageResource.class,			ImageResource.class,			NoteClass.FORM, 	DFLAGPAT_IMAGE_RESOURCES_DESIGN),
-	DataConnectionResource(	org.openntf.domino.design.DataConnectionResource.class,	DataConnectionResource.class,	NoteClass.FILTER, 	DFLAGPAT_DATA_CONNECTION_RESOURCE),
-	Outline(				org.openntf.domino.design.DesignOutline.class,			DesignOutline.class,			NoteClass.FILTER, 	DFLAGPAT_SITEMAP),
-	SavedQuery(				org.openntf.domino.design.SavedQuery.class,				SavedQuery.class,				NoteClass.FILTER, 	DFLAGPAT_QUERY_V4_OBJECT),
+	Navigator(				org.openntf.domino.design.Navigator.class,				Navigator.class,				"SharedElements/Navigators",".navigator",		NoteClass.VIEW, 	DFLAGPAT_NAVIGATORSWEB),
+	ImageResource(			org.openntf.domino.design.ImageResource.class,			ImageResource.class,			"Resources/Images", 		null,				NoteClass.FORM, 	DFLAGPAT_IMAGE_RESOURCES_DESIGN),
+	DataConnectionResource(	org.openntf.domino.design.DataConnectionResource.class,	DataConnectionResource.class,	"Data/DataConnections", 	".dcr",				NoteClass.FILTER, 	DFLAGPAT_DATA_CONNECTION_RESOURCE),
+	Outline(				org.openntf.domino.design.DesignOutline.class,			DesignOutline.class,			"SharedElements/Outlines", 	".outline",			NoteClass.FILTER, 	DFLAGPAT_SITEMAP),
+	SavedQuery(				org.openntf.domino.design.SavedQuery.class,				SavedQuery.class,				"Other/SavedQueries", 		null,				NoteClass.FILTER, 	DFLAGPAT_QUERY_V4_OBJECT),
 
 	// Special case - WebServiceConsumers
-	WebServiceConsumerLS(	org.openntf.domino.design.WebServiceConsumerLS.class,	WebServiceConsumerLS.class,		NoteClass.FILTER,  	DFLAGPAT_SCRIPTLIB_LS, 		DFLAGEXTPAT_WEBSERVICELIB),
-	WebServiceConsumerJava(	org.openntf.domino.design.WebServiceConsumerJava.class,	WebServiceConsumerJava.class,	NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JAVA, 	DFLAGEXTPAT_WEBSERVICELIB),
-	WebServiceConsumer(		org.openntf.domino.design.WebServiceConsumer.class,		null,							NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB, 		DFLAGEXTPAT_WEBSERVICELIB),
+	WebServiceConsumerLS(	org.openntf.domino.design.WebServiceConsumerLS.class,	WebServiceConsumerLS.class,		"Code/WebServiceConsumer", 	".lswsc",			NoteClass.FILTER,  	DFLAGPAT_SCRIPTLIB_LS, 		DFLAGEXTPAT_WEBSERVICELIB),
+	WebServiceConsumerJava(	org.openntf.domino.design.WebServiceConsumerJava.class,	WebServiceConsumerJava.class,	"Code/WebServiceConsumer", 	".javalib",			NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JAVA, 	DFLAGEXTPAT_WEBSERVICELIB),
+	WebServiceConsumer(		org.openntf.domino.design.WebServiceConsumer.class,		null,							null,						null,				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB, 		DFLAGEXTPAT_WEBSERVICELIB),
 
 
 	//	// Special case - WebServiceProviders
-	WebServiceProviderLS(	org.openntf.domino.design.WebServiceProviderLS.class,	WebServiceProviderLS.class,		NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE_LS),
-	WebServiceProviderJava(	org.openntf.domino.design.WebServiceProviderJava.class,	WebServiceProviderJava.class,	NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE_JAVA),
-	WebServiceProvider(		org.openntf.domino.design.WebServiceProvider.class,		null,							NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE),
+	WebServiceProviderLS(	org.openntf.domino.design.WebServiceProviderLS.class,	WebServiceProviderLS.class,		"Code/WebServices", 		".lws",				NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE_LS),
+	WebServiceProviderJava(	org.openntf.domino.design.WebServiceProviderJava.class,	WebServiceProviderJava.class,	"Code/WebServices", 		".jws",				NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE_JAVA),
+	WebServiceProvider(		org.openntf.domino.design.WebServiceProvider.class,		null,							null,						null,				NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE),
 	//
 	//	// Special case - Script libraries
-	ScriptLibraryLS(		org.openntf.domino.design.ScriptLibraryLS.class,		ScriptLibraryLS.class,			NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_LS, 		DFLAGEXTPAT_NO_WEBSERVICELIB),
-	ScriptLibraryJava(		org.openntf.domino.design.ScriptLibraryJava.class,		ScriptLibraryJava.class,		NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JAVA, 	DFLAGEXTPAT_NO_WEBSERVICELIB),
-	ScriptLibraryCSJS(		org.openntf.domino.design.ScriptLibraryCSJS.class,		ScriptLibraryCSJS.class,		NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JS),
-	ScriptLibrarySSJS(		org.openntf.domino.design.ScriptLibrarySSJS.class,		ScriptLibrarySSJS.class,		NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_SERVER_JS),
+	ScriptLibraryLS(		org.openntf.domino.design.ScriptLibraryLS.class,		ScriptLibraryLS.class,			"Code/ScriptLibraries", 	".lss",				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_LS, 		DFLAGEXTPAT_NO_WEBSERVICELIB),
+	ScriptLibraryJava(		org.openntf.domino.design.ScriptLibraryJava.class,		ScriptLibraryJava.class,		"Code/ScriptLibraries", 	".javalib",			NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JAVA, 	DFLAGEXTPAT_NO_WEBSERVICELIB),
+	ScriptLibraryCSJS(		org.openntf.domino.design.ScriptLibraryCSJS.class,		ScriptLibraryCSJS.class,		"Code/ScriptLibraries", 	".js",				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JS),
+	ScriptLibrarySSJS(		org.openntf.domino.design.ScriptLibrarySSJS.class,		ScriptLibrarySSJS.class,		"Code/ScriptLibraries", 	".jss",				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_SERVER_JS),
 	//	// all of the above
-	ScriptLibrary(			org.openntf.domino.design.ScriptLibrary.class,			null,							NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB,			DFLAGEXTPAT_NO_WEBSERVICELIB),
+	ScriptLibrary(			org.openntf.domino.design.ScriptLibrary.class,			null,							null,						null,				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB,			DFLAGEXTPAT_NO_WEBSERVICELIB),
 	//
-	DatabaseScript(			org.openntf.domino.design.DatabaseScript.class,			DatabaseScript.class,			NoteClass.FILTER, 	DFLAGPAT_DATABASESCRIPT),
-	Subform(				org.openntf.domino.design.Subform.class,				Subform.class,					NoteClass.FORM, 	DFLAGPAT_SUBFORM_ALL_VERSIONS),
-	DesignPage(				org.openntf.domino.design.DesignPage.class,				DesignPage.class,				NoteClass.FORM, 	DFLAGPAT_PAGESWEB),
-	AgentData(				org.openntf.domino.design.AgentData.class,				AgentData.class,				NoteClass.FILTER, 	"+X"), // agentData is not part of DesignIndex - I don't think this is really needed!?
-	SharedActions(			org.openntf.domino.design.SharedActions.class,			SharedActionsNote.class,		NoteClass.FORM, 	DFLAGPAT_SACTIONS_DESIGN),
-	DB2View(				org.openntf.domino.design.DB2View.class,				DB2View.class,					NoteClass.FORM, 	DFLAGPAT_DB2ACCESSVIEW),
-	Frameset(				org.openntf.domino.design.Frameset.class,				Frameset.class,					NoteClass.FORM, 	DFLAGPAT_FRAMESET),
-	DesignApplet(			org.openntf.domino.design.DesignApplet.class,			DesignApplet.class,				NoteClass.FORM, 	DFLAGPAT_APPLET_RESOURCE),
-	StyleSheet(				org.openntf.domino.design.StyleSheet.class,				StyleSheet.class,				NoteClass.FORM, 	DFLAGPAT_STYLE_SHEET_RESOURCE),
-	SharedColumn(			org.openntf.domino.design.SharedColumn.class,			SharedColumn.class,				NoteClass.VIEW, 	DFLAGPAT_SHARED_COLS),
-	CompositeApp(			org.openntf.domino.design.CompositeApp.class,			CompositeApp.class,				NoteClass.FORM, 	DFLAGPAT_COMPAPP),
-	CompositeWiring(		org.openntf.domino.design.CompositeWiring.class,		CompositeWiring.class,			NoteClass.FORM, 	DFLAGPAT_COMPDEF),
-	DbImage(				org.openntf.domino.design.DbImage.class,				DbImage.class,					NoteClass.FORM, 	DFLAGPAT_IMAGE_DBICON),
+	DatabaseScript(			org.openntf.domino.design.DatabaseScript.class,			DatabaseScript.class,			"Code", 					"dbscript.lsdb",	NoteClass.FILTER, 	DFLAGPAT_DATABASESCRIPT),
+	Subform(				org.openntf.domino.design.Subform.class,				Subform.class,					"SharedElements/Subforms", 	".subform",			NoteClass.FORM, 	DFLAGPAT_SUBFORM_ALL_VERSIONS),
+	DesignPage(				org.openntf.domino.design.DesignPage.class,				DesignPage.class,				"Pages", 					".page",			NoteClass.FORM, 	DFLAGPAT_PAGESWEB),
+	AgentData(				org.openntf.domino.design.AgentData.class,				AgentData.class,				"Other/AgentData", 			".agentdata",		NoteClass.FILTER, 	"+X"), // agentData is not part of DesignIndex - I don't think this is really needed!?
+	SharedActions(			org.openntf.domino.design.SharedActions.class,			SharedActionsNote.class,		"Code/actions", 			"Shared Actions", 	NoteClass.FORM, 	DFLAGPAT_SACTIONS_DESIGN),
+	DB2View(				org.openntf.domino.design.DB2View.class,				DB2View.class,					"Data/DB2AccessViews", 		".db2v",			NoteClass.FORM, 	DFLAGPAT_DB2ACCESSVIEW),
+	Frameset(				org.openntf.domino.design.Frameset.class,				Frameset.class,					"Framesets", 				".frameset",		NoteClass.FORM, 	DFLAGPAT_FRAMESET),
+	DesignApplet(			org.openntf.domino.design.DesignApplet.class,			DesignApplet.class,				"Resources/Applets", 		".applet",			NoteClass.FORM, 	DFLAGPAT_APPLET_RESOURCE),
+	StyleSheet(				org.openntf.domino.design.StyleSheet.class,				StyleSheet.class,				"Resources/StyleSheets", 	".css",				NoteClass.FORM, 	DFLAGPAT_STYLE_SHEET_RESOURCE),
+	SharedColumn(			org.openntf.domino.design.SharedColumn.class,			SharedColumn.class,				"SharedElements/Columns", 	".column", 			NoteClass.VIEW, 	DFLAGPAT_SHARED_COLS),
+	CompositeApp(			org.openntf.domino.design.CompositeApp.class,			CompositeApp.class,				"CompositeApplications/Applications", ".ca",	NoteClass.FORM, 	DFLAGPAT_COMPAPP),
+	CompositeWiring(		org.openntf.domino.design.CompositeWiring.class,		CompositeWiring.class,			"CompositeApplications/WiringProperties", ".wsdl",NoteClass.FORM, 	DFLAGPAT_COMPDEF),
+	DbImage(				org.openntf.domino.design.DbImage.class,				DbImage.class,					"AppProperties",			"$DBIcon",			NoteClass.FORM, 	DFLAGPAT_IMAGE_DBICON),
 	//
 	//	// very special case - Agents
-	DesignAgentA(			org.openntf.domino.design.DesignAgentA.class,			DesignAgentA.class,				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				false, 	SIG_ACTION_FORMULA, SIG_ACTION_FORMULAONLY, SIG_ACTION_JAVAAGENT, SIG_ACTION_LOTUSSCRIPT),
-	DesignAgentF(			org.openntf.domino.design.DesignAgentF.class,			DesignAgentF.class,				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				true, 	SIG_ACTION_FORMULA, SIG_ACTION_FORMULAONLY ),
-	DesignAgentIJ(			org.openntf.domino.design.DesignAgentIJ.class,			DesignAgentIJ.class,			NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST_IMPORTED_JAVA, 	true, 	SIG_ACTION_JAVAAGENT ),
-	DesignAgentJ(			org.openntf.domino.design.DesignAgentJ.class,			DesignAgentJ.class,				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST_JAVA, 			true,	SIG_ACTION_JAVAAGENT ),
-	DesignAgentLS(			org.openntf.domino.design.DesignAgentLS.class,			DesignAgentLS.class,			NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				true, 	SIG_ACTION_LOTUSSCRIPT ),
+	DesignAgentA(			org.openntf.domino.design.DesignAgentA.class,			DesignAgentA.class,				"Code/Agents", 				".aa",				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				false, 	SIG_ACTION_FORMULA, SIG_ACTION_FORMULAONLY, SIG_ACTION_JAVAAGENT, SIG_ACTION_LOTUSSCRIPT),
+	DesignAgentF(			org.openntf.domino.design.DesignAgentF.class,			DesignAgentF.class,				"Code/Agents", 				".fa", 				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				true, 	SIG_ACTION_FORMULA, SIG_ACTION_FORMULAONLY ),
+	DesignAgentIJ(			org.openntf.domino.design.DesignAgentIJ.class,			DesignAgentIJ.class,			"Code/Agents", 				".ija",				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST_IMPORTED_JAVA, 	true, 	SIG_ACTION_JAVAAGENT ),
+	DesignAgentJ(			org.openntf.domino.design.DesignAgentJ.class,			DesignAgentJ.class,				"Code/Agents", 				".ja", 				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST_JAVA, 			true,	SIG_ACTION_JAVAAGENT ),
+	DesignAgentLS(			org.openntf.domino.design.DesignAgentLS.class,			DesignAgentLS.class,			"Code/Agents", 				".lsa", 			NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				true, 	SIG_ACTION_LOTUSSCRIPT ),
 	//	// all of the above
-	DesignAgent(			org.openntf.domino.design.DesignAgent.class,			null,							NoteClass.FILTER,	DFLAGPAT_AGENTSLIST),
+	DesignAgent(			org.openntf.domino.design.DesignAgent.class,			null,							null,						null,				NoteClass.FILTER,	DFLAGPAT_AGENTSLIST),
 
-	DesignForm(				org.openntf.domino.design.DesignForm.class,				DesignForm.class,				NoteClass.FORM, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
+	DesignForm(				org.openntf.domino.design.DesignForm.class,				DesignForm.class,				"Forms", 					".form",			NoteClass.FORM, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
 	//
 	//	// Special case XPages
-	XPage(					org.openntf.domino.design.XPage.class,					XPage.class,					NoteClass.FORM, 	DFLAGPAT_XSPPAGE, 	Boolean.TRUE),
-	XPageFile(				org.openntf.domino.design.XPageFile.class,				XPageFile.class,				NoteClass.FORM, 	DFLAGPAT_XSPPAGE, 	Boolean.FALSE),
-	CustomControl(			org.openntf.domino.design.CustomControl.class,			CustomControl.class,			NoteClass.FORM, 	DFLAGPAT_XSPCC, 	Boolean.TRUE),
-	CustomControlFile(		org.openntf.domino.design.CustomControlFile.class,		CustomControlFile.class,		NoteClass.FORM, 	DFLAGPAT_XSPCC, 	Boolean.FALSE),
-	XspJavaResource(		org.openntf.domino.design.XspJavaResource.class,		XspJavaResource.class,			NoteClass.FORM, 	DFLAGPAT_JAVAFILE),
-	XspResource(			org.openntf.domino.design.XspResource.class,			null,							NoteClass.FORM, 	DFLAGPAT_JAVARESOURCE),
+	XPage(					org.openntf.domino.design.XPage.class,					XPage.class,					"XPages", 					".xsp",				NoteClass.FORM, 	DFLAGPAT_XSPPAGE, 	Boolean.TRUE),
+	XPageFile(				org.openntf.domino.design.XPageFile.class,				XPageFile.class,				"XPages", 					null,				NoteClass.FORM, 	DFLAGPAT_XSPPAGE, 	Boolean.FALSE),
+	CustomControl(			org.openntf.domino.design.CustomControl.class,			CustomControl.class,			"CustomControls", 			".xsp",				NoteClass.FORM, 	DFLAGPAT_XSPCC, 	Boolean.TRUE),
+	CustomControlFile(		org.openntf.domino.design.CustomControlFile.class,		CustomControlFile.class,		"CustomControls", 			null,				NoteClass.FORM, 	DFLAGPAT_XSPCC, 	Boolean.FALSE),
+	XspJavaResource(		org.openntf.domino.design.XspJavaResource.class,		XspJavaResource.class,			"Code/Java", 				"*",				NoteClass.FORM, 	DFLAGPAT_JAVAFILE),
+	XspResource(			org.openntf.domino.design.XspResource.class,			null,							null,						null,				NoteClass.FORM, 	DFLAGPAT_JAVARESOURCE),
 
 
-	AnyFileResource(		org.openntf.domino.design.AnyFileResource.class,		null,							NoteClass.FORM, 	"(+gi-K[];`_*"),
-	AnyFolderOrView(		org.openntf.domino.design.AnyFolderOrView.class,		null,							NoteClass.VIEW, 	DFLAGPAT_VIEWFORMFOLDER),
-	AnyFormOrSubform(		org.openntf.domino.design.AnyFormOrSubform.class,		null,							NoteClass.FORM, 	DFLAGPAT_VIEWFORMFOLDER),
+	AnyFileResource(		org.openntf.domino.design.AnyFileResource.class,		null,							null,						null,				NoteClass.FORM, 	"(+gi-K[];`_*"),
+	AnyFolderOrView(		org.openntf.domino.design.AnyFolderOrView.class,		null,							null,						null,				NoteClass.VIEW, 	DFLAGPAT_VIEWFORMFOLDER),
+	AnyFormOrSubform(		org.openntf.domino.design.AnyFormOrSubform.class,		null,							null,						null,				NoteClass.FORM, 	DFLAGPAT_VIEWFORMFOLDER),
 
-	SharedField(			org.openntf.domino.design.SharedField.class,			SharedField.class,				NoteClass.FIELD),
-	ReplicationFormula(		org.openntf.domino.design.ReplicationFormula.class,		ReplicationFormula.class,		NoteClass.REPLFORMULA),
-	IconNote(				org.openntf.domino.design.IconNote.class,				IconNote.class,					NoteClass.ICON),
-	UsingDocument(			org.openntf.domino.design.UsingDocument.class,			UsingDocument.class,			NoteClass.HELP),
-	AboutDocument(			org.openntf.domino.design.AboutDocument.class,			AboutDocument.class,			NoteClass.INFO),
-	ACLNote(				org.openntf.domino.design.ACLNote.class,				ACLNote.class,					NoteClass.ACL),
+	SharedField(			org.openntf.domino.design.SharedField.class,			SharedField.class,				"SharedElements/Fields", 	".field",			NoteClass.FIELD),
+	ReplicationFormula(		org.openntf.domino.design.ReplicationFormula.class,		ReplicationFormula.class,		"Other/ReplicationFormulas",null,				NoteClass.REPLFORMULA),
+	IconNote(				org.openntf.domino.design.IconNote.class,				IconNote.class,					"Resources", 				"IconNote", 		NoteClass.ICON),
+	UsingDocument(			org.openntf.domino.design.UsingDocument.class,			UsingDocument.class,			"Resources", 				"UsingDocument", 	NoteClass.HELP),
+	AboutDocument(			org.openntf.domino.design.AboutDocument.class,			AboutDocument.class,			"Resources", 				"AboutDocument",	NoteClass.INFO),
+	ACLNote(				org.openntf.domino.design.ACLNote.class,				ACLNote.class,					"AppProperties",			"database.properties",NoteClass.ACL),
 	//@formatter:on
 	;
 
@@ -157,6 +158,15 @@ public enum DesignMapping {
 	/** $FlagsExt of the DesginNote (maybe null) */
 	private String flagsExt_;
 
+	/** The folder where this element is stored */
+	private final String onDiskFolder_;
+
+	/** The file extension of this element. e.g. "*.lss". If null, all files in the folder are considered as type of this design element */
+	private final String onDiskFileExtension_;
+
+	// lowercase cache - only internally used!
+	private final String lcOnDiskFolder_;
+	private final String lcOnDiskFileExtension_;
 	/**
 	 * Tri-state-value for XPages:
 	 * <ul>
@@ -183,10 +193,14 @@ public enum DesignMapping {
 	 * @param noteClass
 	 *            the NoteClass
 	 */
-	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz,
-			final NoteClass noteClass) {
+	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass) {
 		interfaceClazz_ = iClazz;
 		implClazz_ = clazz;
+		onDiskFolder_ = folder;
+		lcOnDiskFolder_ = folder == null ? null : folder.toLowerCase().concat("/");
+		onDiskFileExtension_ = ext;
+		lcOnDiskFileExtension_ = ext == null ? null : ext.toLowerCase();
 		noteClass_ = noteClass;
 	}
 
@@ -198,9 +212,9 @@ public enum DesignMapping {
 	 * @param flags
 	 *            pattern for $FLAGS
 	 */
-	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz,
-			final NoteClass noteClass, final String flags) {
-		this(iClazz, clazz, noteClass);
+	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags) {
+		this(iClazz, clazz, folder, ext, noteClass);
 		flags_ = flags;
 	}
 
@@ -216,9 +230,9 @@ public enum DesignMapping {
 	 * @param assistFilter
 	 *            the AssistFlags
 	 */
-	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz,
-			final NoteClass noteClass, final String flags, final boolean include, final int... assistFilter) {
-		this(iClazz, clazz, noteClass);
+	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags, final boolean include, final int... assistFilter) {
+		this(iClazz, clazz, folder, ext, noteClass);
 		flags_ = flags;
 		assistFilter_ = assistFilter;
 		include_ = include;
@@ -234,9 +248,9 @@ public enum DesignMapping {
 	 * @param flagsExt
 	 *            pattern for $FLAGSEXT
 	 */
-	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz,
-			final NoteClass noteClass, final String flags, final String flagsExt) {
-		this(iClazz, clazz, noteClass);
+	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags, final String flagsExt) {
+		this(iClazz, clazz, folder, ext, noteClass);
 		flags_ = flags;
 		flagsExt_ = flagsExt;
 	}
@@ -251,17 +265,11 @@ public enum DesignMapping {
 	 * @param filterXsp
 	 *            include/exclude xpages (.xsp)
 	 */
-	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz,
-			final NoteClass noteClass, final String flags, final Boolean filterXsp) {
-		this(iClazz, clazz, noteClass);
+	private DesignMapping(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags, final Boolean filterXsp) {
+		this(iClazz, clazz, folder, ext, noteClass);
 		flags_ = flags;
 		filterXsp_ = filterXsp;
-	}
-
-	@Override
-	public String toString() {
-		return "Filter [noteClass=" + noteClass_ + ", flags=" + flags_ + ", flagsExt=" + flagsExt_ + ", filterXsp=" + filterXsp_
-				+ ", assistFilter=" + Arrays.toString(assistFilter_) + ", include=" + include_ + "]";
 	}
 
 	public NoteClass getNoteClass() {
@@ -369,11 +377,39 @@ public enum DesignMapping {
 		}
 	}
 
+	public static DesignMapping valueOf(final File parent, final File file) {
+		URI relUri = parent.toURI().relativize(file.toURI());
+		if (relUri.isAbsolute()) {
+			throw new IllegalArgumentException(file + " is not relative to " + parent);
+		}
+		String lcPath = relUri.getPath().toLowerCase();
+		for (DesignMapping fact : DesignMapping.values()) {
+			if (fact.lcOnDiskFolder_ != null && fact != DesignMapping.FileResourceHidden) {
+				if (lcPath.startsWith(fact.lcOnDiskFolder_)) {
+					String ext = fact.lcOnDiskFileExtension_;
+					if (ext == null || lcPath.endsWith(ext) || ext.equals("*")) {
+						return fact;
+					}
+				}
+			}
+		}
+
+		return DesignMapping.FileResourceHidden;
+	}
+
 	public Class<? extends DesignBase> getInterfaceClass() {
 		return interfaceClazz_;
 	}
 
 	public Class<? extends AbstractDesignBase> getImplClass() {
 		return implClazz_;
+	}
+
+	public String getOnDiskFolder() {
+		return onDiskFolder_;
+	}
+
+	public String getOnDiskFileExtension() {
+		return onDiskFileExtension_;
 	}
 }

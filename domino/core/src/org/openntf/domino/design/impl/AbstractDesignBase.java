@@ -79,7 +79,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	private DxlFormat dxlFormat_ = DxlFormat.NONE;
 
-	private transient ODPMapping odpMapping_;
+	private transient DesignMapping odpMapping_;
 
 	private Date lastModified_;
 
@@ -95,7 +95,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	/**
-	 * Create a new DesginBase based on the given document. This Method will be invoked by {@link DesignFactory#fromDocument(Document)}
+	 * Create a new DesginBase based on the given document. This Method will be invoked by {@link DesignMapping#fromDocument(Document)}
 	 * 
 	 * @param document
 	 */
@@ -465,7 +465,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 
 	public String getOnDiskName() {
-		String odpExt = getOdpMapping().getOnDiskFileExtension();
+		String odpExt = getMapping().getOnDiskFileExtension();
 
 		String extension = "";
 		String ret;
@@ -503,12 +503,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return The name of the Folder.
 	 */
 	public String getOnDiskFolder() {
-		return getOdpMapping().getFolder();
+		return getMapping().getOnDiskFolder();
 	}
 
-	protected ODPMapping getOdpMapping() {
+	protected DesignMapping getMapping() {
 		if (odpMapping_ == null) {
-			odpMapping_ = ODPMapping.valueOf(getClass());
+			odpMapping_ = DesignMapping.valueOf(getClass());
 		}
 		return odpMapping_;
 	}
@@ -519,7 +519,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the full path (e.g. Code/Java/org/openntf/myJavaClass.java)
 	 */
 	public String getOnDiskPath() {
-		String path = getOdpMapping().getFolder();
+		String path = getOnDiskFolder();
 		if (path == null)
 			return null;
 		if (path.length() > 0) {

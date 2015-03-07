@@ -18,7 +18,6 @@ Export-Package: org.openntf.domino.xsp,
  org.openntf.domino.xsp.junit.test,
  org.openntf.domino.xsp.model,
  org.openntf.domino.xsp.msg,
- org.openntf.domino.xsp.napi, 
  org.openntf.domino.xsp.readers,
  org.openntf.domino.xsp.script,
  org.openntf.domino.xsp.xots
