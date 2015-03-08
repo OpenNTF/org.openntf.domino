@@ -8,10 +8,14 @@ import org.openntf.conference.graph.Attendee;
 import org.openntf.conference.graph.ConferenceGraph;
 import org.openntf.conference.graph.Presentation;
 import org.openntf.conference.graph.Track;
+import org.openntf.domino.graph2.DEdge;
 import org.openntf.domino.graph2.builtin.DVertexFrameComparator;
 import org.openntf.domino.junit.TestRunnerUtil;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class SessionsByTrack implements Runnable {
 	private long marktime;
@@ -59,6 +63,17 @@ public class SessionsByTrack implements Runnable {
 
 					System.out.println(pres.getSessionId() + ": " + pres.getTitle());
 				}
+			}
+
+			// Throws java.lang.ClassCastException: com.sun.proxy.$Proxy11 incompatible with com.tinkerpop.blueprints.Vertex
+			// Yet to track down why
+			List presentations = Lists.newArrayList(graph.getFramedGraph().getVertices(null, null, Presentation.class));
+
+			//GremlinPipeline pipe = new GremlinPipeline(presentations).outE("PresentedBy").outV().dedup();
+			GremlinPipeline pipe = new GremlinPipeline(presentations).outE("PresentedBy");
+			List<DEdge> edges = pipe.toList();
+			for (DEdge edge : edges) {
+				System.out.println(edge.getVertex(Direction.OUT).getId());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
