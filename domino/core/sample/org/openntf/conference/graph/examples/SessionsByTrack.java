@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.openntf.conference.graph.Attendee;
 import org.openntf.conference.graph.ConferenceGraph;
 import org.openntf.conference.graph.Presentation;
 import org.openntf.conference.graph.Track;
@@ -22,12 +23,12 @@ public class SessionsByTrack implements Runnable {
 	@Override
 	public void run() {
 		HashMap<String, String> trackLkup = new HashMap<String, String>();
-		//		trackLkup.put("Special", "Sp");
-		//		trackLkup.put("Strategy/Deployment", "Str");
-		//		trackLkup.put("Administration", "Adm");
+		trackLkup.put("Special", "Sp");
+		trackLkup.put("Strategy/Deployment", "Str");
+		trackLkup.put("Administration", "Adm");
 		trackLkup.put("Development", "Dev");
-		//		trackLkup.put("Business", "Bus");
-		//		trackLkup.put("Commercial", "Comm");
+		trackLkup.put("Business", "Bus");
+		trackLkup.put("Commercial", "Comm");
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
 		try {
@@ -41,7 +42,8 @@ public class SessionsByTrack implements Runnable {
 				Ordering ord = Ordering.from(new DVertexFrameComparator("SessionID"));
 				List<Presentation> presOrdered = ord.sortedCopy(presentations);
 				for (Presentation pres : presOrdered) {
-
+					Attendee att = pres.getPresentingAttendees().iterator().next();
+					System.out.println(att.getFullname());
 					System.out.println(pres.getSessionId() + ": " + pres.getTitle());
 				}
 			}
