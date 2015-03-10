@@ -2,11 +2,9 @@ package org.openntf.domino.design.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
-import java.util.Scanner;
 
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.design.OnDiskConverter;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -32,15 +30,13 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public boolean writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
+	public void writeOnDiskFile(final File odpFile, final OnDiskConverter odsConverter) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
-		PrintWriter pw = new PrintWriter(odpFile, "UTF-8");
+		StringBuilder sb = new StringBuilder();
 		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
-			pw.write(rawitemdata.getText());
+			sb.append(rawitemdata.getText());
 		}
-		pw.close();
-		updateLastModified(odpFile);
-		return true;
+		odsConverter.writeTextFile(sb.toString(), odpFile);
 	}
 
 	protected void createScriptLibItem(final String text) {
@@ -54,40 +50,22 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public boolean readOnDiskFile(final File file) {
+	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
 
-		try {
-			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$ScriptLib']");
-			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
-				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
-			}
-
-			StringBuilder fileContents = null;
-			Scanner scanner = new Scanner(file, "UTF-8");
-
-			try {
-				while (scanner.hasNextLine()) {
-					if (fileContents == null) {
-						fileContents = new StringBuilder(32000);
-					}
-					fileContents.append(scanner.nextLine());
-					fileContents.append('\n');
-
-					if (fileContents.length() > 30000) {
-						createScriptLibItem(fileContents.toString());
-						fileContents = null;
-					}
-				}
-				if (fileContents != null) {
-					createScriptLibItem(fileContents.toString());
-				}
-			} finally {
-				scanner.close();
-			}
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
+		List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$ScriptLib']");
+		for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
+			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
-		return true;
+
+		String content = odsConverter.readTextFile(file);
+		while (content.length() > 30000) {
+			createScriptLibItem(content.substring(0, 30000));
+			content = content.substring(30000);
+		}
+		if (content.length() > 0) {
+			createScriptLibItem(content);
+		}
+
 	}
 
 	@Override

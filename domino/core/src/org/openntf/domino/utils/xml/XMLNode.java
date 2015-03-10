@@ -3,11 +3,8 @@
  */
 package org.openntf.domino.utils.xml;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +15,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -67,9 +62,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			}
 			// We don't want the XML declaration in front
 			//transformer.setOutputProperty("omit-xml-declaration", "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			//transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			//transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			//transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		} catch (TransformerConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -273,34 +268,34 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.getResults_.get(path);
 	}
 
-	public String readXml(Transformer transformer) throws IOException {
-		try {
-			if (transformer == null)
-				transformer = DEFAULT_TRANSFORMER;
-			StreamResult result = new StreamResult(new StringWriter());
-			DOMSource source = new DOMSource(this.node_);
-			transformer.transform(source, result);
-			return result.getWriter().toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+	//	public String readXml(Transformer transformer) throws IOException {
+	//		try {
+	//			if (transformer == null)
+	//				transformer = DEFAULT_TRANSFORMER;
+	//			StreamResult result = new StreamResult(new StringWriter());
+	//			DOMSource source = new DOMSource(this.node_);
+	//			transformer.transform(source, result);
+	//			return result.getWriter().toString();
+	//		} catch (Exception e) {
+	//			e.printStackTrace();
+	//		}
+	//		return null;
+	//	}
 
-	public void writeXml(Transformer transformer, final File outputFile) throws IOException {
-		try {
-			if (transformer == null)
-				transformer = DEFAULT_TRANSFORMER;
-
-			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
-			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
-			StreamResult result = new StreamResult(outputFile.toURI().toString());
-			DOMSource source = new DOMSource(this.node_);
-			transformer.transform(source, result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	//	public void writeXml(Transformer transformer, final File outputFile) throws IOException {
+	//		try {
+	//			if (transformer == null)
+	//				transformer = DEFAULT_TRANSFORMER;
+	//
+	//			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
+	//			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
+	//			StreamResult result = new StreamResult(outputFile.toURI().toString());
+	//			DOMSource source = new DOMSource(this.node_);
+	//			transformer.transform(source, result);
+	//		} catch (Exception e) {
+	//			e.printStackTrace();
+	//		}
+	//	}
 
 	private XPath getXPath() {
 		if (this.xPath_ == null) {

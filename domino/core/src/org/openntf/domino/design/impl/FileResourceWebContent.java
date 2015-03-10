@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-
 /**
  * @author Roland Praml, FOCONIS AG
  * 
@@ -31,7 +30,7 @@ public class FileResourceWebContent extends AbstractDesignFileResource implement
 	}
 
 	@Override
-	protected boolean mustEncode(final String resName) {
+	protected boolean encodeResourceNames() {
 		return false;
 	}
 }

@@ -15,6 +15,11 @@
  */
 package org.openntf.domino.impl;
 
+import static org.openntf.formula.function.TextFunctions.atLeft;
+import static org.openntf.formula.function.TextFunctions.atRight;
+
+import java.util.Scanner;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
@@ -310,7 +315,30 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 			getDelegate().importDxl(dxl, toLotus(db));
 		} catch (NotesException e) {
 			//			DominoUtils.handleException(e, getLog());
-			DominoUtils.handleException(new Exception(getLog(), e));
+			String log = getLog();
+			int line = 0;
+			int col = 0;
+			try {
+				String s = atLeft(atRight(log, "line='"), "'");
+				line = Integer.valueOf(s);
+				s = atLeft(atRight(log, "column='"), "'");
+				col = Integer.valueOf(s);
+				Scanner scanner = new Scanner(dxl);
+
+				while (scanner.hasNextLine()) {
+					s = scanner.nextLine();
+					if (--line == 0)
+						break;
+				}
+				col--;
+				if (s.length() > col) {
+					log = "DXL Fragment: ... " + s.substring(Math.max(col - 50, 0), col) + " ## ERROR ## "
+							+ s.substring(col, Math.min(col + 50, s.length())) + "\n" + log;
+				}
+			} catch (NumberFormatException nfe) {
+
+			}
+			DominoUtils.handleException(new IllegalArgumentException(log, e));
 		}
 	}
 

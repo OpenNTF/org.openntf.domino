@@ -21,17 +21,14 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.design.OnDiskConverter;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
@@ -221,26 +218,13 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 
 	@Override
-	public boolean writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
-		FileOutputStream fo = new FileOutputStream(file);
-		fo.write(getFileData());
-		fo.close();
-		updateLastModified(file);
-		return true;
+	public void writeOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+		odsConverter.writeBinaryFile(file, getFileData());
 	}
 
 	@Override
-	public boolean readOnDiskFile(final File file) {
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			byte[] data = new byte[(int) file.length()];
-			fis.read(data);
-			fis.close();
-			setFileData(data);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
-		return true;
+	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+		setFileData(odsConverter.readBinaryFile(file));
 	}
 
 	// TODO: map this to DXL
@@ -260,24 +244,24 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		// TODO Auto-generated method stub
 	}
 
-	public <T extends XspXmlContent> T getAsXml(final Class<T> schema) {
-		try {
-			Constructor<T> ctor = schema.getConstructor(FileResource.class);
-			return ctor.newInstance(this);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
+	//	public <T extends XspXmlContent> T getAsXml(final Class<T> schema) {
+	//		try {
+	//			Constructor<T> ctor = schema.getConstructor(FileResource.class);
+	//			return ctor.newInstance(this);
+	//		} catch (SecurityException e) {
+	//			e.printStackTrace();
+	//		} catch (NoSuchMethodException e) {
+	//			e.printStackTrace();
+	//		} catch (IllegalArgumentException e) {
+	//			e.printStackTrace();
+	//		} catch (InstantiationException e) {
+	//			e.printStackTrace();
+	//		} catch (IllegalAccessException e) {
+	//			e.printStackTrace();
+	//		} catch (InvocationTargetException e) {
+	//			e.printStackTrace();
+	//		}
+	//
+	//		return null;
+	//	}
 }

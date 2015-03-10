@@ -6,12 +6,15 @@ package org.openntf.domino.utils.xml;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -65,10 +68,24 @@ public class XMLDocument extends XMLNode {
 		return input.replace("'", "\\'");
 	}
 
+	public String readXml() throws IOException {
+		try {
+			StreamResult result = new StreamResult(new StringWriter());
+			DOMSource source = new DOMSource(this.node_);
+			synchronized (DEFAULT_TRANSFORMER) { // Transformers are NOT thread safe!
+				DEFAULT_TRANSFORMER.transform(source, result);
+			}
+			return result.getWriter().toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		try {
-			return readXml(null);
+			return readXml();
 		} catch (IOException e) {
 			return e.getMessage();
 		}

@@ -22,18 +22,36 @@
 			<url>${notes-platform}</url>
 		</repository>
 	</repositories>
-
-	<modules>
-		<module>externals</module>
-		<module>formula</module>
-		<module>core</module>
-		<module>xsp</module>
-		<module>junit4xpages</module>
-		<module>tests</module>
-		<module>org.openntf.domino.feature.group</module>
- 		<module>org.openntf.domino.updatesite</module>
-
-	</modules>
+	
+	
+	<profiles>
+		<profile>
+			<id>fast</id>
+			<modules>
+				<module>formula</module>
+				<module>core</module>
+				<module>xsp</module>
+				<module>org.openntf.domino.feature.group</module>
+ 				<module>org.openntf.domino.updatesite</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>complete</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>externals</module>
+				<module>formula</module>
+				<module>core</module>
+				<module>xsp</module>
+				<module>junit4xpages</module>
+				<module>tests</module>
+				<module>org.openntf.domino.feature.group</module>
+ 				<module>org.openntf.domino.updatesite</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>

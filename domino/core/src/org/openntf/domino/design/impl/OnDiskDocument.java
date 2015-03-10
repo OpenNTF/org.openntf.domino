@@ -25,23 +25,23 @@ import java.net.URI;
  * @author Alexander Wagner, FOCONIS AG
  * 
  */
-public class OnDiskFile implements Serializable {
+public class OnDiskDocument implements Serializable {
 
 	private static final long serialVersionUID = -3298261314433290242L;
 
-	private String name_;
+	//private static final String NOTEINFO_UNID = "noteinfo unid=\"";
+
+	private String path_;
 	private long dbTimeStamp_;
 	private long diskTimeStamp_;
 
-	private DesignMapping odpMapping;
-
 	private transient boolean processed;
 	private transient File file_;
-	private transient String path_;
+
 	private String md5_;
 
-	public OnDiskFile(final File parent, final File file) {
-		setFile(parent, file);
+	public OnDiskDocument(final File parent, final File file) {
+		file_ = file;
 		setProcessed(false);
 
 		// example:
@@ -50,36 +50,17 @@ public class OnDiskFile implements Serializable {
 		// odpFolder= C:\documents\odp\Code\Scriptlibraries
 		// relUri 	= lib.lss
 
-		odpMapping = DesignMapping.valueOf(parent, file);
-		File odpFolder = new File(parent, odpMapping.getOnDiskFolder());
-		URI relUri = odpFolder.toURI().relativize(file.toURI());
-
-		String ext = odpMapping.getOnDiskFileExtension();
-
-		if (ext == null) {
-			// no extension, so use the relative file uri
-			name_ = relUri.getPath();
-		} else if (ext.equals("*")) {
-			// name is "*", so use the unescaped part.
-			name_ = relUri.getPath();
-		} else if (ext.startsWith(".")) {
-			name_ = relUri.getPath();
-		} else {
-			name_ = ext;
-		}
+		URI relUri = parent.toURI().relativize(file.toURI());
+		path_ = relUri.getPath();
 
 	}
 
-	public String getName() {
-		return name_;
+	public String getPath() {
+		return path_;
 	}
 
 	public File getFile() {
 		return file_;
-	}
-
-	public Class<?> getImplementingClass() {
-		return odpMapping.getImplClass();
 	}
 
 	public long getDbTimeStamp() {
@@ -106,9 +87,8 @@ public class OnDiskFile implements Serializable {
 		this.processed = processed;
 	}
 
-	public void setFile(final File parent, final File file) {
+	public void setFile(final File file) {
 		this.file_ = file;
-		path_ = parent.toURI().relativize(file.toURI()).getPath();
 
 	}
 
@@ -120,13 +100,27 @@ public class OnDiskFile implements Serializable {
 		return md5_;
 	}
 
-	public String getPath() {
-		return path_;
-	}
-
 	@Override
 	public String toString() {
-		return "OnDiskFile [name=" + name_ + ", odpMapping=" + odpMapping + ", file=" + file_ + "]";
+		return "OnDiskDocument: " + path_;
 	}
+
+	//	public String getUniversalID() throws FileNotFoundException {
+	//		Scanner scanner = new Scanner(file_);
+	//		try {
+	//
+	//			for (int i = 0; i < 10 && scanner.hasNextLine(); i++) {
+	//				String tmp = scanner.nextLine();
+	//				if (tmp.contains(NOTEINFO_UNID)) {
+	//					tmp = tmp.substring(tmp.indexOf(NOTEINFO_UNID) + NOTEINFO_UNID.length());
+	//					return tmp.substring(0, tmp.indexOf("\""));
+	//				}
+	//			}
+	//		} finally {
+	//			scanner.close();
+	//		}
+	//		return "";
+	//
+	//	}
 
 }

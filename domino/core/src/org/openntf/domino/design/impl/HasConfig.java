@@ -19,6 +19,8 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 
+import org.openntf.domino.design.OnDiskConverter;
+
 /**
  * 
  * @author Alexander Wagner, FOCONIS AG
@@ -26,7 +28,7 @@ import java.io.IOException;
  */
 public interface HasConfig {
 
-	void writeOnDiskConfig(File file) throws IOException;
+	void writeOnDiskConfig(File file, OnDiskConverter odsConverter) throws IOException;
 
-	void readOnDiskConfig(File file);
+	void readOnDiskConfig(File configFile, OnDiskConverter odsConverter) throws IOException;
 }

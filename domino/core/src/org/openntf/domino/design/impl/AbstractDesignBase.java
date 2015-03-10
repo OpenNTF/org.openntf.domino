@@ -17,28 +17,27 @@
 package org.openntf.domino.design.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
+import org.openntf.domino.DxlExporter.RichTextOption;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DesignBase;
+import org.openntf.domino.design.OnDiskConverter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -57,8 +56,6 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
-
-	private static Transformer ODP_META_TRANSFORMER = createTransformer("metaFilter.xslt");
 
 	private static final char DESIGN_FLAG_PRESERVE = 'P';
 	private static final char DESIGN_FLAG_PROPAGATE_NOCHANGE = 'r';
@@ -80,8 +77,6 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private DxlFormat dxlFormat_ = DxlFormat.NONE;
 
 	private transient DesignMapping odpMapping_;
-
-	private Date lastModified_;
 
 	/**
 	 * Create a new DesignBase based on the given database. You may add content to this DesignBase and save it afterwards.
@@ -375,44 +370,20 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return getFlagsExt().indexOf(flag) >= 0;
 	}
 
-	//	private static final String NO_ENCODING = "<?xml version='1.0'?>";
-	//	private static final String DEFAULT_ENCODING = "<?xml version='1.0'?>";
-
-	/**
-	 * Creates a transformer with the given file resource (in this package)
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	protected static Transformer createTransformer(final String resource) {
-		return OnDiskProject.createTransformer(OnDiskProject.class.getResourceAsStream(resource));
+	protected boolean encodeResourceNames() {
+		return true;
 	}
 
-	/**
-	 * Returns, if the resourceName must be encoded
-	 * 
-	 * @param resName
-	 *            the resourceName
-	 * @return true if the resourceName contains invalid characters
-	 */
-	protected boolean mustEncode(final String resName) {
-		for (int i = 0; i < resName.length(); i++) {
-			char ch = resName.charAt(i);
-			switch (ch) {
-			case '/':
-			case '\\':
-			case ':':
-			case '*':
-			case '?':
-			case '<':
-			case '>':
-			case '|':
-			case '"':
-				return true;
-			}
-		}
-		return false;
-	}
+	//	/**
+	//	 * Returns, if the resourceName must be encoded
+	//	 * 
+	//	 * @param resName
+	//	 *            the resourceName
+	//	 * @return true if the resourceName contains invalid characters
+	//	 */
+	//	protected boolean mustEncode(final String resName) {
+	//		return OnDiskUtil.mustEncode(resName);
+	//	}
 
 	/**
 	 * Encodes the resource name, so that it is ODP-compatible
@@ -422,32 +393,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the encoded version (replaces / \ : * &gt; &lt; | " )
 	 */
 	protected String encodeResourceName(final String resName) {
-		if (resName == null)
-			return null;
-		if (!mustEncode(resName))
+		if (encodeResourceNames()) {
+			return OnDiskUtil.encodeResourceName(resName);
+		} else {
 			return resName;
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < resName.length(); i++) {
-			char ch = resName.charAt(i);
-			switch (ch) {
-			case '_':
-			case '/':
-			case '\\':
-			case ':':
-			case '*':
-			case '?':
-			case '<':
-			case '>':
-			case '|':
-			case '"':
-				sb.append('_');
-				sb.append(Integer.toHexString(ch));
-				break;
-			default:
-				sb.append(ch);
-			}
 		}
-		return sb.toString();
 	}
 
 	//	/**
@@ -464,6 +414,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the name (e.g. org/openntf/myJavaClass)
 	 */
 
+	@Override
 	public String getOnDiskName() {
 		String odpExt = getMapping().getOnDiskFileExtension();
 
@@ -518,6 +469,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * 
 	 * @return the full path (e.g. Code/Java/org/openntf/myJavaClass.java)
 	 */
+	@Override
 	public String getOnDiskPath() {
 		String path = getOnDiskFolder();
 		if (path == null)
@@ -530,54 +482,41 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return path;
 	}
 
-	/**
-	 * Returns the transformer that should be used to clean up the dxl-output
-	 * 
-	 * @return the transformer
-	 */
-	protected Transformer getOdpTransformer() {
-		return OnDiskProject.ExportTransformer;
-	}
+	//	/**
+	//	 * Returns the transformer that should be used to clean up the dxl-output
+	//	 * 
+	//	 * @return the transformer
+	//	 */
+	//	protected Transformer getOdpTransformer() {
+	//		return OnDiskDesignSync
+	//	}
 
-	/**
-	 * Returns the transformer that should be used to clean up the MetaData-Output
-	 * 
-	 * @return the transformer for ".metadata" file
-	 */
-	protected Transformer getOdpMetaTransformer() {
-		return ODP_META_TRANSFORMER;
-	}
+	//	/**
+	//	 * Returns the transformer that should be used to clean up the MetaData-Output
+	//	 * 
+	//	 * @return the transformer for ".metadata" file
+	//	 */
+	//	protected Transformer getOdpMetaTransformer() {
+	//		return ODP_META_TRANSFORMER;
+	//	}
 
 	@Override
-	public boolean writeOnDiskFile(final File file, final boolean useTransformer) throws IOException {
-		if (useTransformer) {
-			getDxl().writeXml(getOdpTransformer(), file);
+	public void writeOnDiskFile(final File file, final OnDiskConverter converter) throws IOException {
+		if (converter.isRawExportEnabled()) {
+			DxlExporter exporter = getAncestorSession().createDxlExporter();
+			exporter.setOutputDOCTYPE(false);
+			exporter.setForceNoteFormat(true);
+			exporter.setRichTextOption(RichTextOption.RAW);
+			converter.writeTextFile(doExport(exporter), file);
 		} else {
-			getDxl().writeXml(null, file);
+			converter.writeDesignXML(getDxl(), file);
 		}
-		updateLastModified(file);
-		return true;
 	}
 
 	@Override
-	public boolean readOnDiskFile(final File file) throws IOException {
-		loadDxl(file);
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param odpFile
-	 */
-	protected void updateLastModified(final File odpFile) {
-		try {
-			if (!odpFile.setLastModified(getLastModified().getTime())) {
-				Thread.sleep(100);
-				updateLastModified(odpFile);
-			}
-		} catch (InterruptedException e) {
-			DominoUtils.handleException(e);
-		}
+	public void readOnDiskFile(final File file, final OnDiskConverter converter) throws IOException {
+		dxl_ = converter.readDesignXML(file);
+		checkDxlFormat();
 	}
 
 	/**
@@ -587,9 +526,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 *            The file that should be written.
 	 * 
 	 */
-	public final void writeOnDiskMeta(final File metaFile) throws IOException {
-		getDxl().writeXml(getOdpMetaTransformer(), metaFile);
-		updateLastModified(metaFile);
+	public final void writeOnDiskMeta(final File metaFile, final OnDiskConverter converter) throws IOException {
+		converter.writeMetaXML(getDxl(), metaFile);
 	}
 
 	/**
@@ -598,9 +536,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @param metaFile
 	 *            The file that should be read.
 	 */
-	public final void readOnDiskMeta(final File metaFile) {
+	public final void readOnDiskMeta(final File metaFile, final OnDiskConverter converter) throws IOException {
 		if (metaFile.exists()) {
-			loadDxl(metaFile);
+			dxl_ = converter.readMetaXML(metaFile);
+			checkDxlFormat();
 		} else {
 			loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
 		}
@@ -617,22 +556,21 @@ public abstract class AbstractDesignBase implements DesignBase {
 		database_ = document.getAncestorDatabase();
 		universalId_ = document.getUniversalID(); // we must save the UNID. because NoteID may change on various instances
 		document_ = document;
-		lastModified_ = document.getLastModifiedDate();
 		dxl_ = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.design.DesignBase#getDxlString()
-	 */
-	@Override
-	public final String getDxlString(final Transformer filter) {
-		try {
-			return getDxl().readXml(filter);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
+	//	/* (non-Javadoc)
+	//	 * @see org.openntf.domino.design.DesignBase#getDxlString()
+	//	 */
+	//	@Override
+	//	public final String getDxlString(final Transformer filter) {
+	//		try {
+	//			return getDxl().readXml(filter);
+	//		} catch (IOException e) {
+	//			DominoUtils.handleException(e);
+	//			return null;
+	//		}
+	//	}
 
 	/* (non-Javadoc)
 	 * 
@@ -676,7 +614,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return universalId_;
 	}
 
-	public void setUniversalId(final String unid) {
+	@Override
+	public void setUniversalID(final String unid) {
 		universalId_ = unid;
 
 		XMLNode root = getDxl().getFirstChild();
@@ -777,19 +716,33 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
-	protected final void loadDxl(final File file) {
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			loadDxl(fis);
-			fis.close();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
-	}
+	//	protected final void loadDxl(final File file, OnDiskConverter converter) {
+	//		dxl_ = new XMLDocument();
+	//		try {
+	//			converter.
+	//			dxl_.loadInputStream(is);
+	//			checkDxlFormat();
+	//		} catch (SAXException e) {
+	//			DominoUtils.handleException(e);
+	//		} catch (IOException e) {
+	//			DominoUtils.handleException(e);
+	//		} catch (ParserConfigurationException e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
+	//	protected final void loadDxl(final File file) {
+	//		try {
+	//			FileInputStream fis = new FileInputStream(file);
+	//			loadDxl(fis);
+	//			fis.close();
+	//		} catch (IOException e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean save() {
+	public boolean save(final OnDiskConverter odsConverter) {
 
 		DxlImporter importer = getAncestorSession().createDxlImporter();
 		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
@@ -799,7 +752,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 		Database db = getAncestorDatabase();
 		try {
-			importer.importDxl(getDxl().readXml(OnDiskProject.ImportTransformer), db);
+			importer.importDxl(odsConverter.getDxlString(getDxl()), db);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			if (importer != null) {
@@ -1032,14 +985,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 		out.defaultWriteObject();
 	}
 
-	public Date getLastModified() {
-		return lastModified_;
-	}
-
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return getClass().getSimpleName() + " (NoteId: " + getNoteID() + ")";
+		return getClass().getSimpleName() + " (UniversalID: " + universalId_ + ")";
 	}
 
 }

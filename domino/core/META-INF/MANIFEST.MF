@@ -46,6 +46,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.nsfdata.impldxl.item,
  org.openntf.domino.nsfdata.structs,
  org.openntf.domino.nsfdata.structs.cd,
+ org.openntf.domino.progress,
  org.openntf.domino.schema,
  org.openntf.domino.schema.exceptions,
  org.openntf.domino.schema.impl,
@@ -67,6 +68,6 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.icu.base;bundle-version="3.8.1",
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
  com.ibm.notes.java.api;bundle-version="9.0.1";resolution:=optional;visibility:=reexport,
- com.ibm.domino.napi;resolution:=optional
+ com.ibm.domino.napi;resolution:=optional;visibility:=reexport
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

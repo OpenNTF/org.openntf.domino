@@ -96,7 +96,7 @@ import com.ibm.domino.napi.c.BackendBridge;
  * The Class Document.
  */
 public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-org.openntf.domino.Document {
+		org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -3371,8 +3371,8 @@ org.openntf.domino.Document {
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3668,13 +3668,13 @@ org.openntf.domino.Document {
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -4373,35 +4373,38 @@ org.openntf.domino.Document {
 				exporter.setOutputDOCTYPE(false);
 
 				XMLDocument dxl = new XMLDocument();
-				dxl.loadString(exporter.exportDxl(this));
-				String cls = dxl.getDocumentElement().getAttribute("class");
+				String s = exporter.exportDxl(this);
+				if (s.contains("<note")) {
+					dxl.loadString(s);
+					String cls = dxl.getDocumentElement().getAttribute("class");
 
-				if ("document".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.DOCUMENT;
-				} else if ("helpaboutdocument".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.INFO;
-				} else if ("form".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.FORM;
-				} else if ("view".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.VIEW;
-				} else if ("icon".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.ICON;
-				} else if ("helpindex".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.HELP_INDEX;
-				} else if ("helpusingdocument".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.HELP;
-				} else if ("filter".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.FILTER;
-				} else if ("sharedfield".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.FIELD;
-				} else if ("replicationformula".equalsIgnoreCase(cls)) {
-					noteAttrs_.noteClass = NoteClass.REPLFORMULA;
-				} else {
-					noteAttrs_.noteClass = null;
+					if ("document".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.DOCUMENT;
+					} else if ("helpaboutdocument".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.INFO;
+					} else if ("form".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.FORM;
+					} else if ("view".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.VIEW;
+					} else if ("icon".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.ICON;
+					} else if ("helpindex".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.HELP_INDEX;
+					} else if ("helpusingdocument".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.HELP;
+					} else if ("filter".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.FILTER;
+					} else if ("sharedfield".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.FIELD;
+					} else if ("replicationformula".equalsIgnoreCase(cls)) {
+						noteAttrs_.noteClass = NoteClass.REPLFORMULA;
+					} else {
+						noteAttrs_.noteClass = null;
+					}
+
+					noteAttrs_.isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
+					noteAttrs_.isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
 				}
-
-				noteAttrs_.isDefault = "true".equals(dxl.getDocumentElement().getAttribute("default"));
-				noteAttrs_.isPrivate = "true".equals(dxl.getDocumentElement().getAttribute("private"));
 			} catch (Exception e) {
 				// Export may fail, if we got an ACL or DESIGN Note
 				//e.printStackTrace();

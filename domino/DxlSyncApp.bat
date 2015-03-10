@@ -14,5 +14,5 @@ externals\javolution\target\javolution-6.1.0.qualifier.jar;^
 %SERVER_DIR%\osgi\rcp\eclipse\plugins\org.eclipse.osgi.services_3.1.200.v20071203.jar;^
 %SERVER_DIR%\osgi\shared\eclipse\plugins\com.ibm.domino.napi_9.0.1.20140801-1000\lwpd.domino.napi.jar;^
 %SERVER_DIR%\osgi\rcp\eclipse\plugins\com.ibm.icu_3.8.1.v20120530.jar -Xmx64M -Xms16M  ^
-org.openntf.domino.design.impl.DxlSyncApp -db entwicklung\40fof\mis.nsf -dir D:\daten\temp\runner -export -view de.foconis.lib.view.all
+org.openntf.domino.design.impl.DxlSyncApp -db test/5035/mis.nsf -dir D:\daten\temp\mis_odp2 -export -git -view de.foconis.lib.view.all
 

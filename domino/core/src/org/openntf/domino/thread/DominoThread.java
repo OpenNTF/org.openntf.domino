@@ -212,4 +212,27 @@ public class DominoThread extends NotesThread {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * Method to run a standalone app in mainThread
+	 * 
+	 * @param app
+	 *            the app to run
+	 * @param sf
+	 *            the sessionFactory
+	 */
+	public static void runApp(final Runnable app, final ISessionFactory sf) {
+		Factory.startup();
+		lotus.domino.NotesThread.sinitThread();
+		Factory.initThread(Factory.STRICT_THREAD_CONFIG);
+		Factory.setSessionFactory(sf, SessionType.CURRENT);
+
+		try {
+			app.run();
+		} finally {
+			Factory.termThread();
+			lotus.domino.NotesThread.stermThread();
+			Factory.shutdown();
+		}
+	}
 }

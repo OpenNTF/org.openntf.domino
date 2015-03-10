@@ -178,8 +178,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return getName() + " (Aliases: " + getAliases() + ", NoteId: " + getNoteID() + ")";
+		return getClass().getSimpleName() + " '" + getName() + "' (Aliases: " + getAliases() + ", UniversalID: " + getUniversalID() + ")";
 	}
 
 }

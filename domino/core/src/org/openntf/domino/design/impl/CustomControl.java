@@ -17,12 +17,10 @@
 package org.openntf.domino.design.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.design.OnDiskConverter;
 
 /**
  * @author jgallagher
@@ -40,11 +38,8 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	}
 
 	@Override
-	public void writeOnDiskConfig(final File configFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(configFile);
-		fo.write(getConfigData());
-		fo.close();
-		updateLastModified(configFile);
+	public void writeOnDiskConfig(final File configFile, final OnDiskConverter odsConverter) throws IOException {
+		odsConverter.writeXspConfigFile(configFile, getConfigData());
 	}
 
 	protected byte[] getConfigData() {
@@ -52,20 +47,22 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	}
 
 	@Override
-	public void readOnDiskConfig(final File configFile) {
-		try {
-			FileInputStream fis = new FileInputStream(configFile);
-			byte[] data = new byte[(int) configFile.length()];
-			fis.read(data);
-			fis.close();
-			setConfigData(data);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
+	public void readOnDiskConfig(final File configFile, final OnDiskConverter odsConverter) throws IOException {
+		setConfigData(odsConverter.readXspConfigFile(configFile));
 	}
 
 	protected void setConfigData(final byte[] data) {
 		setFileDataRaw(DEFAULT_CONFIGDATA_FIELD, data);
+	}
+
+	@Override
+	public void writeOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+		odsConverter.writeXspFile(file, getFileData());
+	}
+
+	@Override
+	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+		setFileData(odsConverter.readXspFile(file));
 	}
 
 }

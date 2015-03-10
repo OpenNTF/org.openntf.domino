@@ -643,33 +643,6 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		if (!create)
 			return null;
 		return create(type);
-
-		//		for (ODPMapping mapping : ODPMapping.values()) {
-		//			Class<? extends AbstractDesignBase> cls = mapping.getInstanceClass();
-		//			if (type.isAssignableFrom(cls)) {
-		//				try {
-		//					Constructor<? extends AbstractDesignBase> cTor = cls.getConstructor(Database.class);
-		//					AbstractDesignBase ret = cTor.newInstance(getAncestorDatabase());
-		//					if (ret instanceof DesignBaseNamed) {
-		//						((DesignBaseNamed) ret).setName(name);
-		//					}
-		//					return (T) ret;
-		//				} catch (SecurityException e) {
-		//					e.printStackTrace();
-		//				} catch (NoSuchMethodException e) {
-		//					e.printStackTrace();
-		//				} catch (IllegalArgumentException e) {
-		//					e.printStackTrace();
-		//				} catch (InstantiationException e) {
-		//					e.printStackTrace();
-		//				} catch (IllegalAccessException e) {
-		//					e.printStackTrace();
-		//				} catch (InvocationTargetException e) {
-		//					e.printStackTrace();
-		//				}
-		//			}
-		//		}
-		//		throw new IllegalArgumentException("Cannot Create a DesignElement of type " + type.getName() + " with name " + name);
 	}
 
 	@Override

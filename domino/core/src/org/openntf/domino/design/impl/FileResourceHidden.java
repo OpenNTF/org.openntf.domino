@@ -30,7 +30,7 @@ public final class FileResourceHidden extends AbstractDesignFileResource impleme
 	}
 
 	@Override
-	protected boolean mustEncode(final String resName) {
+	protected boolean encodeResourceNames() {
 		return false;
 	}
 

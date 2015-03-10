@@ -16,7 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
+
+import org.openntf.domino.design.OnDiskConverter;
 
 /**
  * @author jgallagher
@@ -33,4 +37,13 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 		return true;
 	}
 
+	@Override
+	public void writeOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+		odsConverter.writeXspFile(file, getFileData());
+	}
+
+	@Override
+	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+		setFileData(odsConverter.readXspFile(file));
+	}
 }

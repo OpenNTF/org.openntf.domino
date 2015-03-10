@@ -19,6 +19,8 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 
+import org.openntf.domino.design.OnDiskConverter;
+
 /**
  * 
  * @author Alexander Wagner, FOCONIS AG
@@ -26,7 +28,8 @@ import java.io.IOException;
  */
 public interface HasMetadata {
 
-	void writeOnDiskMeta(File file) throws IOException;
+	void writeOnDiskMeta(File file, OnDiskConverter odsConverter) throws IOException;
 
-	void readOnDiskMeta(File file);
+	void readOnDiskMeta(File file, OnDiskConverter odsConverter) throws IOException;
+
 }

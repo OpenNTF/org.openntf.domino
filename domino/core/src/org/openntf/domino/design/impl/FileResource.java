@@ -31,18 +31,6 @@ public final class FileResource extends AbstractDesignFileResource implements or
 		return false;
 	}
 
-	//	protected FileResource(final Database database, final String dxlResource) {
-	//		super(database);
-	//
-	//		try {
-	//			InputStream is = DesignView.class.getResourceAsStream(dxlResource);
-	//			loadDxl(is);
-	//			is.close();
-	//		} catch (IOException e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//	}
-
 	@Override
 	public Collection<String> getItemNames() {
 		// TODO Auto-generated method stub

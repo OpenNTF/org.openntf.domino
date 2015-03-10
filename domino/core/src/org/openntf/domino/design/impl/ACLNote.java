@@ -18,8 +18,6 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import javax.xml.transform.Transformer;
-
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.NoteCollection;
@@ -64,8 +62,4 @@ public final class ACLNote extends AbstractDesignBase implements org.openntf.dom
 		return exporter.exportDxl(nnc);
 	}
 
-	@Override
-	protected Transformer getOdpTransformer() {
-		return null;
-	}
 }

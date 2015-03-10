@@ -18,12 +18,10 @@ package org.openntf.domino.design.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
-import java.util.Scanner;
 
+import org.openntf.domino.design.OnDiskConverter;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -53,7 +51,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	}
 
 	@Override
-	public boolean writeOnDiskFile(final File odpFile, final boolean useTransformer) throws IOException {
+	public void writeOnDiskFile(final File odpFile, final OnDiskConverter odsConverter) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
 		String content;
 		if (enforceRawFormat()) {
@@ -66,52 +64,35 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 				content = "";
 			}
 		}
-		PrintWriter pw = new PrintWriter(odpFile, "UTF-8");
-		pw.write(content);
-		pw.close();
-		updateLastModified(odpFile);
-		return true;
+		odsConverter.writeTextFile(content, odpFile);
+
 	}
 
 	@Override
-	public boolean readOnDiskFile(final File file) {
+	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
 		if (getDxlFormat(true) != DxlFormat.DXL) {
 			throw new UnsupportedOperationException("cannot import raw CSJS-Library");
 		}
-		try {
-			List<XMLNode> fileDataNodes = getDxl().selectNodes("//code");
-			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
-				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
-			}
 
-			StringBuilder fileContents = new StringBuilder();
-			Scanner scanner = new Scanner(file);
-
-			try {
-				while (scanner.hasNextLine()) {
-					fileContents.append(scanner.nextLine());
-					fileContents.append('\n');
-				}
-			} finally {
-				scanner.close();
-			}
-
-			XMLNode documentNode = getDxl().selectSingleNode("//scriptlibrary");
-			XMLNode fileDataNode = documentNode.addChildElement("code");
-			fileDataNode.setAttribute("event", "library");
-			fileDataNode.setAttribute("for", "web");
-			fileDataNode = fileDataNode.addChildElement("javascript");
-
-			if (fileContents.toString().trim().length() == 0) {
-				//cannot import empty code/javascript - node
-				fileDataNode.setText("var i;");
-			} else {
-				fileDataNode.setText(fileContents.toString());
-			}
-
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
+		List<XMLNode> fileDataNodes = getDxl().selectNodes("//code");
+		for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
+			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
-		return true;
+
+		String fileContent = odsConverter.readTextFile(file);
+
+		XMLNode documentNode = getDxl().selectSingleNode("//scriptlibrary");
+		XMLNode fileDataNode = documentNode.addChildElement("code");
+		fileDataNode.setAttribute("event", "library");
+		fileDataNode.setAttribute("for", "web");
+		fileDataNode = fileDataNode.addChildElement("javascript");
+
+		if (fileContent.trim().length() == 0) {
+			//cannot import empty code/javascript - node
+			fileDataNode.setText("// empty javascript");
+		} else {
+			fileDataNode.setText(fileContent);
+		}
+
 	}
 }

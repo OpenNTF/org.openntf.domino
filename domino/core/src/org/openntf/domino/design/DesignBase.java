@@ -23,15 +23,13 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import javax.xml.transform.Transformer;
-
 import org.openntf.domino.Database;
 
 /**
  * @author jgallagher
  * 
  */
-public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, SyncObject, Serializable {
+public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, Serializable {
 
 	enum ItemFlag {
 		_SIGN, _SUMMARY
@@ -45,11 +43,6 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	public static final Set<ItemFlag> FLAG_SIGN = EnumSet.of(ItemFlag._SIGN);
 	public static final Set<ItemFlag> FLAG_SUMMARY = EnumSet.of(ItemFlag._SUMMARY);
 	public static final Set<ItemFlag> FLAG_SIGN_SUMMARY = EnumSet.of(ItemFlag._SIGN, ItemFlag._SUMMARY);
-
-	/**
-	 * @return the DXL of the design element, as a String
-	 */
-	public String getDxlString(Transformer filter);
 
 	/**
 	 * @return whether hidden from web
@@ -97,7 +90,7 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * Save any changes to the design element (may change the Note ID)
 	 */
-	public boolean save();
+	public boolean save(OnDiskConverter odsConverter);
 
 	//	/**
 	//	 * Every element should have an (abstract) name
@@ -114,13 +107,49 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//
 	//	public String getOnDiskPath();
 
-	public boolean readOnDiskFile(File file) throws IOException;
+	/**
+	 * Gets the note id.
+	 * 
+	 * @return the note id
+	 */
+	@Override
+	public String getNoteID();
 
-	public boolean writeOnDiskFile(File file, boolean useTransformer) throws IOException;
+	/**
+	 * Gets the universal id.
+	 * 
+	 * @return the universal id
+	 */
+	@Override
+	public String getUniversalID();
+
+	/**
+	 * Sets the universal id.
+	 * 
+	 * @return the universal id
+	 */
+	public void setUniversalID(String unid);
+
+	/**
+	 * Gets the document.
+	 * 
+	 * @return the document
+	 */
+	@Override
+	public org.openntf.domino.Document getDocument();
+
+	public void readOnDiskFile(File file, OnDiskConverter odsConverter) throws IOException;
+
+	public void writeOnDiskFile(File file, final OnDiskConverter odsConverter) throws IOException;
 
 	public Collection<String> getItemNames();
 
 	public boolean isPrivate();
 
 	boolean isDefault();
+
+	public String getOnDiskName();
+
+	public String getOnDiskPath();
+
 }
