@@ -359,7 +359,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			if (result == null) {
 				Database newDb = dir.createDatabase(key);
 				newDb.setCategories("graph2");
-				newDb.setFolderReferencesEnabled(false);
+				//				newDb.setFolderReferencesEnabled(false);
 				newDb.setTitle("Auto-generated graph2 element store");
 				for (org.openntf.domino.View v : newDb.getViews()) {
 					v.setName("NONE");

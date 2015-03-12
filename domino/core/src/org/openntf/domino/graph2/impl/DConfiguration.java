@@ -80,7 +80,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			addProperties(type);
 			for (Class<?> subtype : type.getClasses()) {
 				Annotation annChk = subtype.getAnnotation(TypeValue.class);
-				if (annChk != null) {
+				if (annChk != null && subtype.isInterface()) {
 					add(subtype);
 				}
 			}
