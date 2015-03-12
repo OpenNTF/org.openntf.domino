@@ -5,16 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openntf.domino.annotations.Incomplete;
-
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
 /*
- * Start of interface definition to register relationship between a Frame type and an NSF
+ * Interface definition to register relationship between a Frame type and an NSF
  */
-@Incomplete
 public interface DElementStore extends Externalizable {
 
 	public void addType(Class<?> type);
@@ -30,6 +27,12 @@ public interface DElementStore extends Externalizable {
 	public DConfiguration getConfiguration();
 
 	public void setConfiguration(DConfiguration config);
+
+	public DIdentityFactory getIdentityFactory();
+
+	public Object getIdentity(Class<?> type, Object context, Object... args);
+
+	public void setIdentityFactory(DIdentityFactory identFactory);
 
 	public Long getStoreKey();
 

@@ -230,6 +230,13 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return this.frame(vertex, kind);
 	}
 
+	public <F> F getVertex(final Class<F> kind, final Object context, final Object... args) {
+		DGraph base = (DGraph) this.getBaseGraph();
+		org.openntf.domino.graph2.DElementStore store = base.findElementStore(kind);
+		Object id = store.getIdentity(kind, context, args);
+		return getVertex(id, kind);
+	}
+
 	@Override
 	public <F> F getVertex(final Object id, final Class<F> kind) {
 		DGraph base = (DGraph) this.getBaseGraph();

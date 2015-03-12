@@ -516,20 +516,8 @@ public class Graph2Demo implements Runnable {
 			config.addElementStore(usersStore);
 			config.setDefaultElementStore(edgeStore.getStoreKey());
 
-			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = config.getModule();
-			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
+			DFramedGraphFactory factory = new DFramedGraphFactory(config);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
-
-			//			((org.openntf.domino.Database) crewStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			//			((org.openntf.domino.Database) movieStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			//			((org.openntf.domino.Database) characterStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			//			((org.openntf.domino.Database) edgeStore.getStoreDelegate()).getAllDocuments().removeAll(true);
-			//			((org.openntf.domino.Database) usersStore.getProxyStoreDelegate()).getAllDocuments().removeAll(true);
-
-			//			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(Long.toHexString(usersStore.getStoreKey()), ntfUnid);
-			//			User ntfUser = framedGraph.getVertex(nc, User.class);
-			//			System.out.println("ntfUser " + ntfUser.asVertex().getId());
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");

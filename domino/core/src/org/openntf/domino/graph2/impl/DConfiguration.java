@@ -229,8 +229,9 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	@Override
-	public void setGraph(final DGraph graph) {
+	public DGraph setGraph(final DGraph graph) {
 		graph_ = graph;
+		return graph;
 	}
 
 	@Override
@@ -260,7 +261,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	@Override
-	public void addElementStore(final DElementStore store) {
+	public DElementStore addElementStore(final DElementStore store) {
 		store.setConfiguration(this);
 		Long key = store.getStoreKey();
 		DElementStore schk = getElementStores().get(key);
@@ -278,6 +279,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				getTypeMap().put(type, key);
 			}
 		}
+		return store;
 	}
 
 	private DTypedGraphModuleBuilder getTypedBuilder() {
