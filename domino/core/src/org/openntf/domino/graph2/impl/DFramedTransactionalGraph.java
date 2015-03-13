@@ -252,6 +252,9 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		}
 		Vertex vertex = store.getVertex(id);
+		if (null == vertex) {
+			return null;
+		}
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
 			initializer.initElement(kind, this, vertex);
 		}
