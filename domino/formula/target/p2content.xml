@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='org.openntf.formula' version='1.5.0.201411032143'>
+    <update id='org.openntf.formula' range='[0.0.0,1.5.0.201411032143)' severity='0'/>
+    <properties size='5'>
+      <property name='org.eclipse.equinox.p2.name' value='OpenNTF Formula Engine'/>
+      <property name='org.eclipse.equinox.p2.provider' value='foconis.de'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='org.openntf.formula'/>
+      <property name='maven-version' value='1.5.0-SNAPSHOT'/>
+    </properties>
+    <provides size='9'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.openntf.formula' version='1.5.0.201411032143'/>
+      <provided namespace='osgi.bundle' name='org.openntf.formula' version='1.5.0.201411032143'/>
+      <provided namespace='java.package' name='org.openntf.formula' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.formula.annotation' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.formula.ast' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.formula.function' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.formula.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.openntf.formula.parse' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <requires size='1'>
+      <required namespace='osgi.bundle' name='com.ibm.icu.base' range='3.8.1'/>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='org.openntf.formula' version='1.5.0.201411032143'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: org.openntf.formula;singleton:=true&#xA;Bundle-Version: 1.5.0.201411032143&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

@@ -17,12 +17,18 @@ import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
 import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
 import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
 import com.tinkerpop.frames.modules.Module;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
 public class DFramedGraphFactory {
 	protected Module[] modules;
+	protected DConfiguration configuration_;
 
 	public DFramedGraphFactory(final Module... modules) {
 		this.modules = modules;
+	}
+
+	public DFramedGraphFactory(final DConfiguration configuration) {
+		configuration_ = configuration;
 	}
 
 	/**
@@ -50,11 +56,23 @@ public class DFramedGraphFactory {
 	protected <T extends Graph> FramedGraphConfiguration getConfiguration(final Class<T> requiredType, final T baseGraph) {
 		Graph configuredGraph = baseGraph;
 		DConfiguration config = getBaseConfig();
-		for (Module module : modules) {
+		if (modules == null) {
+			Module module = configuration_.getModule();
 			configuredGraph = module.configure(configuredGraph, config);
-			if (!(requiredType.isInstance(configuredGraph))) {
-				throw new UnsupportedOperationException("Module '" + module.getClass() + "' returned a '" + baseGraph.getClass().getName()
-						+ "' but factory requires '" + requiredType.getName() + "'");
+			configuredGraph = new JavaHandlerModule().configure(configuredGraph, config);
+		} else {
+			boolean hasJHM = false;
+			for (Module module : modules) {
+				if (module instanceof JavaHandlerModule)
+					hasJHM = true;
+				configuredGraph = module.configure(configuredGraph, config);
+				if (!(requiredType.isInstance(configuredGraph))) {
+					throw new UnsupportedOperationException("Module '" + module.getClass() + "' returned a '"
+							+ baseGraph.getClass().getName() + "' but factory requires '" + requiredType.getName() + "'");
+				}
+			}
+			if (!hasJHM) {
+				configuredGraph = new JavaHandlerModule().configure(configuredGraph, config);
 			}
 		}
 		config.setConfiguredGraph(configuredGraph);

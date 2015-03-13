@@ -17,6 +17,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.graph2.DIdentityFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -37,6 +38,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	private Object proxyDelegate_;
 	private Long proxyDelegateKey_;
 	private Object provisionalProxyDelegateKey_;
+	private DIdentityFactory identityFactory_;
 	private transient Map<Object, NoteCoordinate> keyCache_;
 	private transient Map<Object, Element> elementCache_;
 	private transient org.openntf.domino.graph2.DConfiguration configuration_;
@@ -103,12 +105,20 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (!types.contains(type)) {
 			types.add(type);
 		}
+		for (Class<?> subtype : type.getClasses()) {
+			if (subtype.isInterface()) {
+				addType(subtype);
+			}
+		}
 	}
 
 	@Override
 	public void removeType(final Class<?> type) {
 		List<Class<?>> types = getTypes();
 		types.remove(type);
+		for (Class<?> subtype : type.getClasses()) {
+			removeType(subtype);
+		}
 	}
 
 	@Override
@@ -477,7 +487,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (result == null) {
 			System.out
-			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		}
 		if (result != null) {
 			if (type.equals(Element.class)) {
@@ -519,6 +529,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	protected Map<String, Object> addElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
 		Map<String, Object> result = null;
+		//		System.out.println("Adding a " + type.getName() + " to Element Store " + System.identityHashCode(this));
 		Object del = getStoreDelegate();
 		if (del instanceof Database) {
 			Database db = (Database) del;
@@ -528,7 +539,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				throw new IllegalArgumentException("Cannot add a delegate with a key of type " + delegateKey.getClass().getName());
 			}
 		} else {
-			//TODO NTF alternative strategies...
+			if (del == null) {
+				throw new IllegalStateException("Store delegate is null!");
+			} else {
+				throw new IllegalStateException("Store delegate is not a Database. It is a " + del.getClass().getName());
+			}
 		}
 		if (result != null) {
 			Object typeChk = result.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
@@ -696,6 +711,25 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			throw new IllegalStateException("Non-Domino implementations not yet available");
 		}
 		return result;
+	}
+
+	@Override
+	public DIdentityFactory getIdentityFactory() {
+		return identityFactory_;
+	}
+
+	@Override
+	public void setIdentityFactory(final DIdentityFactory identFactory) {
+		identityFactory_ = identFactory;
+	}
+
+	@Override
+	public Object getIdentity(final Class<?> type, final Object context, final Object... args) {
+		DIdentityFactory factory = getIdentityFactory();
+		if (factory != null) {
+			return factory.getId(this, type, context, args);
+		}
+		return null;
 	}
 
 }
