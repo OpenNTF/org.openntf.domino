@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.design.impl.DesignMapping;
 
 /**
  * @author jgallagher
@@ -36,7 +37,12 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	}
 
 	enum DxlFormat {
-		NONE, RAWNOTE, DXL
+		/** No DXL present (access must be done at doc level */
+		NONE,
+		/** DXL is a raw note */
+		RAWNOTE,
+		/** DXL is in DXL-Format */
+		DXL
 	}
 
 	public static final Set<ItemFlag> FLAG_NONE = EnumSet.noneOf(ItemFlag.class);
@@ -90,22 +96,31 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * Save any changes to the design element (may change the Note ID)
 	 */
-	public boolean save(OnDiskConverter odsConverter);
+	public boolean save(DxlConverter dxlConverter);
 
-	//	/**
-	//	 * Every element should have an (abstract) name
-	//	 * 
-	//	 * @return
-	//	 */
-	//	public String getName();
+	/**
+	 * Exports the design to file by using the dxlConverter
+	 * 
+	 * @param dxlConverter
+	 *            the DxlConverter that converts the file data in a "friendly" format. (e.g. gitFriendly)
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             if an IO-Error occurs
+	 */
+	public void exportDesign(DxlConverter dxlConverter, File file) throws IOException;
 
-	//	public String getOnDiskFolder();
-	//
-	//	public String getOnDiskName();
-	//
-	//	public String getOnDiskExtension();
-	//
-	//	public String getOnDiskPath();
+	/**
+	 * Imports the design from file by using the dxlConverter
+	 * 
+	 * @param dxlConverter
+	 *            the DxlConverter that converts the file data back.
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             if an IO-Error occurs
+	 */
+	public void importDesign(DxlConverter dxlConverter, File file) throws IOException;
 
 	/**
 	 * Gets the note id.
@@ -138,18 +153,12 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	@Override
 	public org.openntf.domino.Document getDocument();
 
-	public void readOnDiskFile(File file, OnDiskConverter odsConverter) throws IOException;
-
-	public void writeOnDiskFile(File file, final OnDiskConverter odsConverter) throws IOException;
-
 	public Collection<String> getItemNames();
 
 	public boolean isPrivate();
 
 	boolean isDefault();
 
-	public String getOnDiskName();
-
-	public String getOnDiskPath();
+	public DesignMapping getMapping();
 
 }

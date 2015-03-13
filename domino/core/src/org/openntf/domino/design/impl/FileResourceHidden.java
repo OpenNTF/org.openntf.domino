@@ -29,15 +29,4 @@ public final class FileResourceHidden extends AbstractDesignFileResource impleme
 		return true;
 	}
 
-	@Override
-	protected boolean encodeResourceNames() {
-		return false;
-	}
-
-	@Override
-	public void setDeployable(final boolean deployable) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

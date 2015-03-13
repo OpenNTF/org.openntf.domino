@@ -58,7 +58,8 @@ public interface AnyFileResource extends DesignBaseNamed, org.openntf.domino.typ
 	public boolean isReadOnly();
 
 	/**
-	 * @return whether the file resource is marked as "deployable", whatever that means
+	 * @return whether the file resource is marked as "deployable", whatever that means <br/>
+	 *         RPr: This means, if it is a WebResource. So a setter makes no sense
 	 */
 	public boolean isDeployable();
 

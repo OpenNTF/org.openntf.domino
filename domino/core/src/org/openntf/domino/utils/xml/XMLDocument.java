@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -26,6 +27,28 @@ import org.xml.sax.SAXException;
  */
 public class XMLDocument extends XMLNode {
 	private static final long serialVersionUID = -8106159267601656260L;
+
+	private static ThreadLocal<DocumentBuilder> docBuilder = new ThreadLocal<DocumentBuilder>() {
+		@Override
+		protected DocumentBuilder initialValue() {
+			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+			fac.setValidating(false);
+			try {
+				return fac.newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+		};
+	};
+
+	private static ThreadLocal<Transformer> docTransformer = new ThreadLocal<Transformer>() {
+		@Override
+		protected Transformer initialValue() {
+			return createTransformer(null);
+		};
+	};
 
 	public XMLDocument() {
 	}
@@ -57,11 +80,12 @@ public class XMLDocument extends XMLNode {
 		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
 	}
 
-	private DocumentBuilder getBuilder() throws ParserConfigurationException {
-		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-		fac.setValidating(false);
-		// fac.setNamespaceAware(true);
-		return fac.newDocumentBuilder();
+	public static DocumentBuilder getBuilder() throws ParserConfigurationException {
+		return docBuilder.get();
+	}
+
+	public static Transformer getTransformer() {
+		return docTransformer.get();
 	}
 
 	public static String escapeXPathValue(final String input) {
@@ -72,9 +96,8 @@ public class XMLDocument extends XMLNode {
 		try {
 			StreamResult result = new StreamResult(new StringWriter());
 			DOMSource source = new DOMSource(this.node_);
-			synchronized (DEFAULT_TRANSFORMER) { // Transformers are NOT thread safe!
-				DEFAULT_TRANSFORMER.transform(source, result);
-			}
+			getTransformer().transform(source, result);
+
 			return result.getWriter().toString();
 		} catch (Exception e) {
 			e.printStackTrace();

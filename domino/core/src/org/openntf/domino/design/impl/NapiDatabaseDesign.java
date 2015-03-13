@@ -152,7 +152,6 @@ public class NapiDatabaseDesign {
 	}
 
 	public <T extends DesignBase> DesignCollection<T> getDesignElements(final Class<T> type, String name) {
-		// TODO Auto-generated method stub
 		NoteCollection coll = database_.createNoteCollection(false);
 
 		if (type == DesignBase.class)
@@ -210,7 +209,6 @@ public class NapiDatabaseDesign {
 	}
 
 	public <T extends DesignBase> DesignCollection<T> getDesignElements() {
-		// TODO Auto-generated method stub
 		NoteCollection coll = database_.createNoteCollection(false);
 		//Do not add the Design index Note itself
 		//coll.add(database_.getDocumentByID(Integer.toHexString(0xFFFF0000 | NoteClass.DESIGN.nativeValue)));

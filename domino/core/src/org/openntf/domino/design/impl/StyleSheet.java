@@ -16,7 +16,10 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
+
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
@@ -32,46 +35,27 @@ public final class StyleSheet extends AbstractDesignFileResource implements org.
 		return false;
 	}
 
-	//
-	//	@Override
-	//	public String getContent() {
-	//		try {
-	//			return new String(getFileData(), "UTF-8");
-	//		} catch (UnsupportedEncodingException e) {
-	//			DominoUtils.handleException(e);
-	//			return null;
-	//		}
-	//	}
-	//
-	//	@Override
-	//	public void setContent(final String content) {
-	//		try {
-	//			if (content == null) {
-	//				setFileData("".getBytes("UTF-8"));
-	//			} else {
-	//				setFileData(content.getBytes("UTF-8"));
-	//			}
-	//		} catch (UnsupportedEncodingException e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//	}
-
 	@Override
 	public String getContent() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return new String(getFileData(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	@Override
 	public void setContent(final String content) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setDeployable(final boolean deployable) {
-		// TODO Auto-generated method stub
-
+		try {
+			if (content == null) {
+				setFileData("".getBytes("UTF-8"));
+			} else {
+				setFileData(content.getBytes("UTF-8"));
+			}
+		} catch (UnsupportedEncodingException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }

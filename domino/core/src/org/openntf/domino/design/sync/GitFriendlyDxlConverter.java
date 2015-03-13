@@ -1,4 +1,4 @@
-package org.openntf.domino.design.impl;
+package org.openntf.domino.design.sync;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,15 +12,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 
-public class GitFriendlyConverter extends DefaultConverter {
+public class GitFriendlyDxlConverter extends DefaultDxlConverter {
 
-	public GitFriendlyConverter(final boolean rawExportEnabled) {
+	public GitFriendlyDxlConverter(final boolean rawExportEnabled) {
 		super(rawExportEnabled);
 	}
 
-	private Transformer importTransformer = XMLDocument.createTransformer(GitFriendlyConverter.class
+	private Transformer importTransformer = XMLDocument.createTransformer(GitFriendlyDxlConverter.class
 			.getResourceAsStream("importFilter.xslt"));
-	private Transformer exportTransformer = XMLDocument.createTransformer(GitFriendlyConverter.class
+	private Transformer exportTransformer = XMLDocument.createTransformer(GitFriendlyDxlConverter.class
 			.getResourceAsStream("exportFilter.xslt"));
 
 	@Override
@@ -35,7 +35,7 @@ public class GitFriendlyConverter extends DefaultConverter {
 	}
 
 	@Override
-	public String getDxlString(final XMLDocument dxl) throws IOException {
+	public String getDxlImportString(final XMLDocument dxl) throws IOException {
 		StreamResult result = new StreamResult(new StringWriter());
 		DOMSource source = new DOMSource(dxl.getNode());
 		try {

@@ -26,6 +26,13 @@
 	
 	<profiles>
 		<profile>
+			<id>core</id>
+			<modules>
+				<module>core</module>
+			</modules>
+		</profile>
+
+		<profile>
 			<id>fast</id>
 			<modules>
 				<module>formula</module>

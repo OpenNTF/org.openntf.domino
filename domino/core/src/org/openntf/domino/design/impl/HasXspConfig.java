@@ -19,16 +19,16 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 
 /**
  * 
  * @author Alexander Wagner, FOCONIS AG
  * 
  */
-public interface HasConfig {
+public interface HasXspConfig {
 
-	void writeOnDiskConfig(File file, OnDiskConverter odsConverter) throws IOException;
+	void exportXspConfig(DxlConverter converter, File file) throws IOException;
 
-	void readOnDiskConfig(File configFile, OnDiskConverter odsConverter) throws IOException;
+	void importXspConfig(DxlConverter converter, File file) throws IOException;
 }

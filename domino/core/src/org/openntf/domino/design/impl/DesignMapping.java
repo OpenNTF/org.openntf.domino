@@ -66,7 +66,7 @@ public enum DesignMapping {
 
 	// This is a table that specifies all properties of the different designelements.
 	// ENUM Name			Interface class											Implementing class				On disk Path				On disk Extension	Note Class		....
-
+	//																																			"*" means: Do not encode resource name
 	DesignView(				org.openntf.domino.design.DesignView.class,				DesignView.class,				"Views", 					".view", 			NoteClass.VIEW, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
 
 	Folder(					org.openntf.domino.design.Folder.class,					Folder.class,					"Folders", 					".folder",			NoteClass.VIEW, 	DFLAGPAT_FOLDER_ALL_VERSIONS),
@@ -75,8 +75,8 @@ public enum DesignMapping {
 	CompositeComponent(		org.openntf.domino.design.CompositeComponent.class,		CompositeComponent.class,		"CompositeApplications/Components", 	null,	NoteClass.FORM, 	DFLAGPAT_WIDGET),
 	JarResource(			org.openntf.domino.design.JarResource.class,			JarResource.class,				"Code/Jars", 				null,				NoteClass.FORM,		DFLAGPAT_JAVAJAR),
 	FileResource(			org.openntf.domino.design.FileResource.class,			FileResource.class,				"Resources/Files",			null,				NoteClass.FORM, 	DFLAGPAT_FILE_DL),
-	FileResourceHidden(		org.openntf.domino.design.FileResourceHidden.class,		FileResourceHidden.class,		"",	/* = in root folder */	null,				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_NO_WEBCONTENTFILE),
-	FileResourceWebContent(	org.openntf.domino.design.FileResourceWebContent.class,	FileResourceWebContent.class,	"WebContent", 				null,				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_WEBCONTENTFILE),
+	FileResourceHidden(		org.openntf.domino.design.FileResourceHidden.class,		FileResourceHidden.class,		"",	/* = in root folder */	"*",				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_NO_WEBCONTENTFILE),
+	FileResourceWebContent(	org.openntf.domino.design.FileResourceWebContent.class,	FileResourceWebContent.class,	"WebContent", 				"*",				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_WEBCONTENTFILE),
 
 	Navigator(				org.openntf.domino.design.Navigator.class,				Navigator.class,				"SharedElements/Navigators",".navigator",		NoteClass.VIEW, 	DFLAGPAT_NAVIGATORSWEB),
 	ImageResource(			org.openntf.domino.design.ImageResource.class,			ImageResource.class,			"Resources/Images", 		null,				NoteClass.FORM, 	DFLAGPAT_IMAGE_RESOURCES_DESIGN),

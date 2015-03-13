@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -51,8 +51,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile, final OnDiskConverter odsConverter) throws IOException {
-		// TODO Check for $Scriptlib_error => throw exception if item exists
+	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
 		String content;
 		if (enforceRawFormat()) {
 			content = ODSUtils.fromLMBCS(getFileData());
@@ -64,12 +63,12 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 				content = "";
 			}
 		}
-		odsConverter.writeTextFile(content, odpFile);
+		converter.writeTextFile(content, file);
 
 	}
 
 	@Override
-	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
 		if (getDxlFormat(true) != DxlFormat.DXL) {
 			throw new UnsupportedOperationException("cannot import raw CSJS-Library");
 		}
@@ -79,7 +78,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
 
-		String fileContent = odsConverter.readTextFile(file);
+		String fileContent = converter.readTextFile(file);
 
 		XMLNode documentNode = getDxl().selectSingleNode("//scriptlibrary");
 		XMLNode fileDataNode = documentNode.addChildElement("code");

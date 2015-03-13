@@ -1,4 +1,4 @@
-package org.openntf.domino.design.impl;
+package org.openntf.domino.design.sync;
 
 public enum OnDiskSyncAction {
 	/** always export */

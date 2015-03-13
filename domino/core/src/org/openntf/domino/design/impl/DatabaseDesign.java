@@ -90,33 +90,6 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	}
 
-	//
-	//	/* (non-Javadoc)
-	//	 * @see org.openntf.domino.design.DatabaseDesign#createFolder()
-	//	 */
-	//	@Override
-	//	public org.openntf.domino.design.Folder createFolder() {
-	//		return create(org.openntf.domino.design.Folder.class);
-	//	}
-	//
-	//	// TODO Decide whether this should check for an existing view first. Current behavior is
-	//	// acting like it's creating a whole-cloth new view but then replacing any existing with
-	//	// the same name on save
-	//	@Override
-	//	public org.openntf.domino.design.DesignView createView() {
-	//		return create(org.openntf.domino.design.DesignView.class);
-	//	}
-	//
-	//	@Override
-	//	public FileResource createFileResource() {
-	//		return new org.openntf.domino.design.impl.FileResource(database_);
-	//	}
-	//
-	//	@Override
-	//	public StyleSheet createStyleSheet() {
-	//		return new StyleSheet(database_);
-	//	}
-	//
 	@Override
 	public AboutDocument getAboutDocument(final boolean create) {
 		Document doc = database_.getDocumentByID(NoteClass.INFO.defaultID());

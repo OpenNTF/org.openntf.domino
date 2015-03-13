@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.RunnableScheduledFuture;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -106,7 +107,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	private String executorName_;
 
 	protected Calendar getNow() {
-		now_.clear();
+		now_.setTimeInMillis(System.currentTimeMillis());
 		return now_;
 	}
 
@@ -465,6 +466,17 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	protected abstract <V> IWrappedCallable<V> wrap(Callable<V> inner);
 
 	protected abstract IWrappedRunnable wrap(Runnable inner);
+
+	@Override
+	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
+		// CHECKME RPr: is this correct!?
+		return super.newTaskFor(wrap(callable));
+	}
+
+	@Override
+	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T type) {
+		return super.newTaskFor(wrap(runnable), type);
+	};
 
 	protected abstract IWrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
 

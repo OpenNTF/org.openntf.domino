@@ -28,28 +28,53 @@ language governing permissions and limitations under the License
 
 	<!-- Strip whitespace so that when we remove elements it does not leave	ugly blank gaps -->
 	<xsl:strip-space elements="*" />
-
+	
+	<!-- We Don't want the NoteInfo element. We don't care who updated or signed the element -->
+	<xsl:template match="updatedby|wassignedby|revisions" />
+	<xsl:template match="noteinfo/*" />
+	<!-- We just keep noteinfo/@unid -->
+	<xsl:template match="noteinfo/@noteid" />
+	<xsl:template match="noteinfo/@sequence" />
+	<xsl:template match="//document/@replicaid" />
+	<xsl:template match="//document/@version" />
+	<xsl:template match="//document/@maintenanceversion" />
+	
 	<!-- Start: Removal templates Each of the following templates are designed 
 		to match an element or attribute that we do not want in the result tree. -->
 	<!-- Filter for Documents. delete FOCONIS history stuff -->
-	<xsl:template match="//n:document/n:item[starts-with(@n:name,'$FocHistory')]" />
+	<xsl:template match="//document/item[starts-with(@name,'$FocHistory')]" />
 
 	<!-- Filter for Documents. We just copy the noteinfo/@unid and all items in alphabetical order -->
-	<xsl:template match="//n:document">
+	<!-- <xsl:template match="//document">
+		<xsl:element name="document">
 		<xsl:copy>
-			<xsl:attribute name="form">
+ 			<xsl:attribute name="form">
        			<xsl:value-of select="@form" />
       		</xsl:attribute>
 			<xsl:element name="noteinfo">
 				<xsl:attribute name="unid">
-          			<xsl:value-of select="n:noteinfo/@unid" />
+          			<xsl:value-of select="noteinfo/@unid" />
         		</xsl:attribute>
 			</xsl:element>
-			<xsl:apply-templates select="n:item">
+			<xsl:apply-templates select="item">
 				<xsl:sort select="name()" />
 				<xsl:sort select="@*" />
 			</xsl:apply-templates>
+			</xsl:copy>
+		</xsl:element>
+	</xsl:template>  -->
+	<xsl:template match="document">
+  		<xsl:copy>
+  			<xsl:apply-templates select="*[not(self::item)]"/>
+			<xsl:apply-templates select="item">
+				<xsl:sort select="@name" />
+			</xsl:apply-templates>
 		</xsl:copy>
 	</xsl:template>
-	
+
+	<xsl:template match="node() | @*" name="identity">
+		<xsl:copy>
+			<xsl:apply-templates select="node() | @*" />
+		</xsl:copy>
+	</xsl:template>	
 </xsl:stylesheet>

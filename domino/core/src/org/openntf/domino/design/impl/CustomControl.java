@@ -20,13 +20,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 
 /**
  * @author jgallagher
  * 
  */
-public final class CustomControl extends AbstractXspResource implements org.openntf.domino.design.CustomControl, HasMetadata, HasConfig {
+public final class CustomControl extends AbstractXspResource implements org.openntf.domino.design.CustomControl, HasMetadata, HasXspConfig {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());
@@ -38,8 +38,8 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	}
 
 	@Override
-	public void writeOnDiskConfig(final File configFile, final OnDiskConverter odsConverter) throws IOException {
-		odsConverter.writeXspConfigFile(configFile, getConfigData());
+	public void exportXspConfig(final DxlConverter converter, final File configFile) throws IOException {
+		converter.writeXspConfigFile(configFile, getConfigData());
 	}
 
 	protected byte[] getConfigData() {
@@ -47,8 +47,8 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	}
 
 	@Override
-	public void readOnDiskConfig(final File configFile, final OnDiskConverter odsConverter) throws IOException {
-		setConfigData(odsConverter.readXspConfigFile(configFile));
+	public void importXspConfig(final DxlConverter converter, final File configFile) throws IOException {
+		setConfigData(converter.readXspConfigFile(configFile));
 	}
 
 	protected void setConfigData(final byte[] data) {
@@ -56,13 +56,13 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	}
 
 	@Override
-	public void writeOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
-		odsConverter.writeXspFile(file, getFileData());
+	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
+		converter.writeXspFile(file, getFileData());
 	}
 
 	@Override
-	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
-		setFileData(odsConverter.readXspFile(file));
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+		setFileData(converter.readXspFile(file));
 	}
 
 }

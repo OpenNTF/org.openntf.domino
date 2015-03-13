@@ -1,11 +1,10 @@
-package org.openntf.domino.design.impl;
+package org.openntf.domino.design.sync;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
-import org.openntf.domino.design.OnDiskConverter;
 import org.openntf.domino.progress.CLIProgressObserver;
 import org.openntf.domino.progress.ProgressObserver;
 import org.openntf.domino.session.NativeSessionFactory;
@@ -78,29 +77,28 @@ public class DxlSyncApp implements Runnable {
 	public void run() {
 		Session session = Factory.getSession(SessionType.CURRENT);
 		Database db = session.getDatabase(dbPath);
-		OnDiskDesignSync designSync = null;
-		OnDiskDocSync docSync = null;
+		SyncDesignTask designSync = null;
+		SyncDocumentsTask docSync = null;
 		int work = 0;
 		if (!noDesign) {
 			work++;
 			if (!odpDir.exists())
 				odpDir.mkdirs();
-			designSync = new OnDiskDesignSync(odpDir, db, this.direction);
-			OnDiskConverter odsConverter;
+			designSync = new SyncDesignTask(odpDir, db, this.direction);
+
 			if (gitFriendly) {
-				odsConverter = new GitFriendlyConverter(raw);
+				designSync.setDxlConverter(new GitFriendlyDxlConverter(raw));
 			} else {
-				odsConverter = new DefaultConverter(raw);
+				designSync.setDxlConverter(new DefaultDxlConverter(raw));
 			}
-			designSync.setOdsConverter(odsConverter);
 		}
 
 		if (!StringUtil.isEmpty(viewName)) {
 			work++;
-			File docDir = new File(odpDir, OnDiskDesignSync.DOC_DIR);
+			File docDir = new File(odpDir, SyncTask.DOC_DIR);
 			if (!docDir.exists())
 				docDir.mkdirs();
-			docSync = new OnDiskDocSync(docDir, db, viewName, viewCols, direction);
+			docSync = new SyncDocumentsTask(docDir, db, viewName, viewCols, direction);
 		}
 		ProgressObserver progress = new CLIProgressObserver(work, System.out);
 		if (designSync != null) {

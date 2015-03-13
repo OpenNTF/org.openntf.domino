@@ -37,30 +37,4 @@ public class OtherDesignElement extends AbstractDesignBase {
 		return true;
 	}
 
-	//	@Override
-	//	public boolean save(final OnDiskConverter importTransformer) {
-	//		//String unid = getDxl().selectSingleNode("//noteinfo").getAttribute("unid");
-	//		//
-	//		//		Document doc = getAncestorDatabase().getDocumentByUNID(unid);
-	//		//		if (doc == null) {
-	//		//			doc = getAncestorDatabase().createDocument();
-	//		//			doc.setUniversalID(unid);
-	//		//			doc.save();
-	//		//		}
-	//		System.out.println("Cannot import " + this.getClass().getName() + ":" + getName());
-	//		return false;
-	//		//		return super.save();
-	//	}
-	//
-	//	@Override
-	//	public boolean writeOnDiskFile(final File file, final OnDiskConverter transformer) throws IOException {
-	//		System.out.println(this.getClass().getName() + ":" + getName() + " will not be exported.");
-	//		return false;
-	//	}
-	//
-	//	@Override
-	//	public boolean readOnDiskFile(final File file, final OnDiskConverter transformer) throws IOException {
-	//		System.out.println(this.getClass().getName() + ":" + file.getName() + " will not be imported.");
-	//		return false;
-	//	}
 }

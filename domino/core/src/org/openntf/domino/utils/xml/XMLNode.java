@@ -34,7 +34,8 @@ import org.w3c.dom.NodeList;
 public class XMLNode implements Map<String, Object>, Serializable {
 	private static final long serialVersionUID = 2304991412510751453L;
 	private static TransformerFactory tFactory = TransformerFactory.newInstance();
-	public static Transformer DEFAULT_TRANSFORMER = createTransformer(null);
+	//public static Transformer DEFAULT_TRANSFORMER = createTransformer(null);
+
 	protected org.w3c.dom.Node node_ = null;
 	private transient XPath xPath_ = null;
 	private Map<String, Object> getResults_ = new HashMap<String, Object>();

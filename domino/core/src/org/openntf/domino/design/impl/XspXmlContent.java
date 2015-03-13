@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -134,8 +134,7 @@ public class XspXmlContent {
 		return xml_;
 	}
 
-	public boolean save(final OnDiskConverter odsConverter) {
-		// TODO Auto-generated method stub
+	public boolean save(final DxlConverter converter) {
 		if (xml_ != null) {
 			try {
 				container_.setFileData(xml_.readXml().getBytes("UTF-8"));
@@ -146,6 +145,6 @@ public class XspXmlContent {
 			}
 			xml_ = null; // CHECKME: good idea to set to null?
 		}
-		return container_.save(odsConverter);
+		return container_.save(converter);
 	}
 }

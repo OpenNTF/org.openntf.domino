@@ -20,15 +20,15 @@ import org.openntf.domino.Database;
 import org.openntf.domino.design.DesignBase;
 
 /**
+ * Returns an empty designCollection (for design protected DBs)
  * 
- * @author jgallagher
+ * @author Roland Praml
  * 
  */
 public class ProtectedDatabaseDesign extends DatabaseDesign {
 
 	public ProtectedDatabaseDesign(final Database database) {
 		super(database);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

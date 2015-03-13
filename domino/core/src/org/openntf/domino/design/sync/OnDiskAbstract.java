@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  */
 
-package org.openntf.domino.design.impl;
+package org.openntf.domino.design.sync;
 
 import java.io.File;
 import java.io.Serializable;
@@ -25,39 +25,26 @@ import java.net.URI;
  * @author Alexander Wagner, FOCONIS AG
  * 
  */
-public class OnDiskDocument implements Serializable {
+public abstract class OnDiskAbstract<DB> implements Serializable {
 
 	private static final long serialVersionUID = -3298261314433290242L;
 
-	//private static final String NOTEINFO_UNID = "noteinfo unid=\"";
-
-	private String path_;
 	private long dbTimeStamp_;
 	private long diskTimeStamp_;
 
 	private transient boolean processed;
 	private transient File file_;
-
+	private transient String path_;
 	private String md5_;
 
-	public OnDiskDocument(final File parent, final File file) {
-		file_ = file;
+	private boolean renamed;
+
+	public OnDiskAbstract(final File parent, final File file) {
+		setFile(parent, file);
 		setProcessed(false);
-
-		// example:
-		// parent 	= C:\documents\odp\
-		// file 	= C:\documents\odp\Code\Scriptlibraries\lib.lss
-		// odpFolder= C:\documents\odp\Code\Scriptlibraries
-		// relUri 	= lib.lss
-
-		URI relUri = parent.toURI().relativize(file.toURI());
-		path_ = relUri.getPath();
-
 	}
 
-	public String getPath() {
-		return path_;
-	}
+	public abstract String getKey();
 
 	public File getFile() {
 		return file_;
@@ -66,6 +53,10 @@ public class OnDiskDocument implements Serializable {
 	public long getDbTimeStamp() {
 		return dbTimeStamp_;
 	}
+
+	public abstract void setDbTimeStamp(DB dbElem);
+
+	public abstract long getDbTimeStampDelta(DB dbElem);
 
 	public void setDbTimeStamp(final long timeStamp) {
 		this.dbTimeStamp_ = timeStamp;
@@ -87,9 +78,14 @@ public class OnDiskDocument implements Serializable {
 		this.processed = processed;
 	}
 
-	public void setFile(final File file) {
+	public void setFile(final File parent, final File file) {
 		this.file_ = file;
-
+		URI relUri = parent.toURI().relativize(file.toURI());
+		String path = relUri.getPath();
+		if (path_ != null) {
+			renamed = !path_.equals(path);
+		}
+		path_ = path;
 	}
 
 	public void setMD5(final String md5) {
@@ -100,27 +96,17 @@ public class OnDiskDocument implements Serializable {
 		return md5_;
 	}
 
-	@Override
-	public String toString() {
-		return "OnDiskDocument: " + path_;
+	public String getPath() {
+		return path_;
 	}
 
-	//	public String getUniversalID() throws FileNotFoundException {
-	//		Scanner scanner = new Scanner(file_);
-	//		try {
-	//
-	//			for (int i = 0; i < 10 && scanner.hasNextLine(); i++) {
-	//				String tmp = scanner.nextLine();
-	//				if (tmp.contains(NOTEINFO_UNID)) {
-	//					tmp = tmp.substring(tmp.indexOf(NOTEINFO_UNID) + NOTEINFO_UNID.length());
-	//					return tmp.substring(0, tmp.indexOf("\""));
-	//				}
-	//			}
-	//		} finally {
-	//			scanner.close();
-	//		}
-	//		return "";
-	//
-	//	}
+	@Override
+	public String toString() {
+		return "OnDiskFile [Key=" + getKey() + "]";
+	}
+
+	public boolean isRenamed() {
+		return renamed;
+	}
 
 }

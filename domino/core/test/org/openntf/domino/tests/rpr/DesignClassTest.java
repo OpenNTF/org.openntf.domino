@@ -79,7 +79,7 @@ import org.openntf.domino.design.XPageFile;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.design.impl.DatabaseClassLoader;
-import org.openntf.domino.design.impl.ODPMapping;
+import org.openntf.domino.design.impl.DesignMapping;
 import org.openntf.domino.design.impl.OtherDesignElement;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.junit.DominoJUnitRunner;
@@ -91,66 +91,66 @@ public class DesignClassTest {
 
 	@SuppressWarnings("unchecked")
 	public static Class<? extends DesignBase> clazzes[] = new Class[] { ACLNote.class,//
-			AboutDocument.class,//
-			// AgentData.class,// AgentData not part of the DesignIndex
-			AnyFileResource.class,//
-			AnyFolderOrView.class,//
-			AnyFormOrSubform.class,//
-			CompositeApp.class,//
-			CompositeComponent.class,//
-			CompositeWiring.class,//
-			CustomControl.class,//
-			CustomControlFile.class,//
-			DB2View.class,//
-			DataConnectionResource.class,//
-			DatabaseScript.class,//
-			DbImage.class,//
-			DesignAgent.class,//
-			DesignAgentA.class,//
-			DesignAgentF.class,//
-			DesignAgentIJ.class,//
-			DesignAgentJ.class,//
-			DesignAgentLS.class,//
-			DesignApplet.class,//
-			DesignBase.class,//
-			//DesignBaseNamed.class,// not yet implemented
-			DesignForm.class,//
-			DesignOutline.class,//
-			DesignPage.class,//
-			DesignView.class,//
-			FileResource.class,//
-			FileResourceHidden.class,//
-			FileResourceWebContent.class,//
-			Folder.class,//
-			Frameset.class,//
-			IconNote.class,//
-			ImageResource.class,//
-			JarResource.class,//
-			Navigator.class,//
-			ReplicationFormula.class,//
-			SavedQuery.class,//
-			ScriptLibrary.class,//
-			ScriptLibraryCSJS.class,//
-			ScriptLibraryJava.class,//
-			ScriptLibraryLS.class,//
-			ScriptLibrarySSJS.class,//
-			SharedActions.class,//
-			SharedColumn.class,//
-			SharedField.class,//
-			StyleSheet.class,//
-			Subform.class,//
-			Theme.class,//
-			UsingDocument.class,//
-			WebServiceConsumer.class,//
-			WebServiceConsumerJava.class,//
-			WebServiceConsumerLS.class,//
-			WebServiceProvider.class,//
-			WebServiceProviderJava.class,//
-			WebServiceProviderLS.class,//
-			XPage.class,//
-			XPageFile.class,//
-			XspJavaResource.class,//
-			XspResource.class };
+		AboutDocument.class,//
+		// AgentData.class,// AgentData not part of the DesignIndex
+		AnyFileResource.class,//
+		AnyFolderOrView.class,//
+		AnyFormOrSubform.class,//
+		CompositeApp.class,//
+		CompositeComponent.class,//
+		CompositeWiring.class,//
+		CustomControl.class,//
+		CustomControlFile.class,//
+		DB2View.class,//
+		DataConnectionResource.class,//
+		DatabaseScript.class,//
+		DbImage.class,//
+		DesignAgent.class,//
+		DesignAgentA.class,//
+		DesignAgentF.class,//
+		DesignAgentIJ.class,//
+		DesignAgentJ.class,//
+		DesignAgentLS.class,//
+		DesignApplet.class,//
+		DesignBase.class,//
+		//DesignBaseNamed.class,// not yet implemented
+		DesignForm.class,//
+		DesignOutline.class,//
+		DesignPage.class,//
+		DesignView.class,//
+		FileResource.class,//
+		FileResourceHidden.class,//
+		FileResourceWebContent.class,//
+		Folder.class,//
+		Frameset.class,//
+		IconNote.class,//
+		ImageResource.class,//
+		JarResource.class,//
+		Navigator.class,//
+		ReplicationFormula.class,//
+		SavedQuery.class,//
+		ScriptLibrary.class,//
+		ScriptLibraryCSJS.class,//
+		ScriptLibraryJava.class,//
+		ScriptLibraryLS.class,//
+		ScriptLibrarySSJS.class,//
+		SharedActions.class,//
+		SharedColumn.class,//
+		SharedField.class,//
+		StyleSheet.class,//
+		Subform.class,//
+		Theme.class,//
+		UsingDocument.class,//
+		WebServiceConsumer.class,//
+		WebServiceConsumerJava.class,//
+		WebServiceConsumerLS.class,//
+		WebServiceProvider.class,//
+		WebServiceProviderJava.class,//
+		WebServiceProviderLS.class,//
+		XPage.class,//
+		XPageFile.class,//
+		XspJavaResource.class,//
+		XspResource.class };
 
 	//@Test
 	public void testDBClassLoader() throws ClassNotFoundException {
@@ -199,31 +199,31 @@ public class DesignClassTest {
 		}
 		int i = 0;
 		int j = 0;
-		for (ODPMapping mapping : ODPMapping.values()) {
-			Class<? extends DesignBase> cls = mapping.getInstanceClass();
-			if (cls == OtherDesignElement.class) {
-			} else {
-				DesignCollection<? extends DesignBase> ret = design.getDesignElements(cls);
-				j = 0;
-				for (DesignBase b : ret) {
-					i++;
-					j++;
-				}
-				int cnt;
-				if (!counter.containsKey(cls)) {
-					cnt = 0;
-				} else {
-					cnt = counter.get(cls).get();
-				}
-				if (j == cnt) {
-					System.out.println(j + "\t " + cnt + "\t" + cls.getName());
-				} else {
-					System.err.println(j + "\t " + cnt + "\t" + cls.getName());
-				}
-				//if (j == 0)
-				//	System.err.println("No design element of " + cls.getName() + " found");
-			}
-		}
+		//		for (ODPMapping mapping : ODPMapping.values()) {
+		//			Class<? extends DesignBase> cls = mapping.getInstanceClass();
+		//			if (cls == OtherDesignElement.class) {
+		//			} else {
+		//				DesignCollection<? extends DesignBase> ret = design.getDesignElements(cls);
+		//				j = 0;
+		//				for (DesignBase b : ret) {
+		//					i++;
+		//					j++;
+		//				}
+		//				int cnt;
+		//				if (!counter.containsKey(cls)) {
+		//					cnt = 0;
+		//				} else {
+		//					cnt = counter.get(cls).get();
+		//				}
+		//				if (j == cnt) {
+		//					System.out.println(j + "\t " + cnt + "\t" + cls.getName());
+		//				} else {
+		//					System.err.println(j + "\t " + cnt + "\t" + cls.getName());
+		//				}
+		//				//if (j == 0)
+		//				//	System.err.println("No design element of " + cls.getName() + " found");
+		//			}
+		//		}
 		System.out.println("Total design elements " + i);
 	}
 
@@ -379,7 +379,7 @@ public class DesignClassTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testGetters() {
 
 		Session sess = Factory.getSession(SessionType.CURRENT);
@@ -430,5 +430,12 @@ public class DesignClassTest {
 			}
 		}
 
+	}
+
+	@Test
+	public void testMapping() {
+		File odpRoot = new File("D:\\daten\\odp");
+		File odpChild = new File("D:\\daten\\odp\\Xpages/a.Xsp");
+		System.out.println(DesignMapping.valueOf(odpRoot, odpChild));
 	}
 }

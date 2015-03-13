@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
@@ -216,18 +216,16 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	/**
 	 * The ODS file that is written here is the file content
 	 */
-
 	@Override
-	public void writeOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
-		odsConverter.writeBinaryFile(file, getFileData());
+	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
+		converter.writeBinaryFile(file, getFileData());
 	}
 
 	@Override
-	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
-		setFileData(odsConverter.readBinaryFile(file));
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+		setFileData(converter.readBinaryFile(file));
 	}
 
-	// TODO: map this to DXL
 	public boolean isReadOnly() {
 		return hasFlag(DESIGN_FLAG_READONLY);
 	}
@@ -241,27 +239,7 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	}
 
 	public void setDeployable(final boolean deployable) {
-		// TODO Auto-generated method stub
+		setFlagExt(DESIGN_FLAGEXT_FILE_DEPLOYABLE, deployable);
 	}
 
-	//	public <T extends XspXmlContent> T getAsXml(final Class<T> schema) {
-	//		try {
-	//			Constructor<T> ctor = schema.getConstructor(FileResource.class);
-	//			return ctor.newInstance(this);
-	//		} catch (SecurityException e) {
-	//			e.printStackTrace();
-	//		} catch (NoSuchMethodException e) {
-	//			e.printStackTrace();
-	//		} catch (IllegalArgumentException e) {
-	//			e.printStackTrace();
-	//		} catch (InstantiationException e) {
-	//			e.printStackTrace();
-	//		} catch (IllegalAccessException e) {
-	//			e.printStackTrace();
-	//		} catch (InvocationTargetException e) {
-	//			e.printStackTrace();
-	//		}
-	//
-	//		return null;
-	//	}
 }

@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 
 /**
  * @author jgallagher
@@ -38,12 +38,12 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 	}
 
 	@Override
-	public void writeOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
-		odsConverter.writeXspFile(file, getFileData());
+	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
+		converter.writeXspFile(file, getFileData());
 	}
 
 	@Override
-	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
-		setFileData(odsConverter.readXspFile(file));
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+		setFileData(converter.readXspFile(file));
 	}
 }

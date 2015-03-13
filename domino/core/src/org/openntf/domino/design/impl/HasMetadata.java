@@ -19,7 +19,7 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 
 /**
  * 
@@ -28,8 +28,8 @@ import org.openntf.domino.design.OnDiskConverter;
  */
 public interface HasMetadata {
 
-	void writeOnDiskMeta(File file, OnDiskConverter odsConverter) throws IOException;
+	void exportMeta(DxlConverter converter, File file) throws IOException;
 
-	void readOnDiskMeta(File file, OnDiskConverter odsConverter) throws IOException;
+	void importMeta(DxlConverter converter, File file) throws IOException;
 
 }

@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import java.util.Collection;
 
 /**
  * 
@@ -29,18 +28,6 @@ public final class FileResource extends AbstractDesignFileResource implements or
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
-	}
-
-	@Override
-	public Collection<String> getItemNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setDeployable(final boolean deployable) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

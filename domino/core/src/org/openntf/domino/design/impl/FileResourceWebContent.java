@@ -29,8 +29,4 @@ public class FileResourceWebContent extends AbstractDesignFileResource implement
 		return true;
 	}
 
-	@Override
-	protected boolean encodeResourceNames() {
-		return false;
-	}
 }

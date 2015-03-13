@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -30,13 +30,13 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile, final OnDiskConverter odsConverter) throws IOException {
+	public void exportDesign(final DxlConverter converter, final File odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
 		StringBuilder sb = new StringBuilder();
 		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
 			sb.append(rawitemdata.getText());
 		}
-		odsConverter.writeTextFile(sb.toString(), odpFile);
+		converter.writeTextFile(sb.toString(), odpFile);
 	}
 
 	protected void createScriptLibItem(final String text) {
@@ -50,14 +50,14 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public void readOnDiskFile(final File file, final OnDiskConverter odsConverter) throws IOException {
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
 
 		List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$ScriptLib']");
 		for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
 
-		String content = odsConverter.readTextFile(file);
+		String content = converter.readTextFile(file);
 		while (content.length() > 30000) {
 			createScriptLibItem(content.substring(0, 30000));
 			content = content.substring(30000);

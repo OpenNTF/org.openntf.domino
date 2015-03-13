@@ -31,7 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class DxlImporter.
  */
 public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
-		org.openntf.domino.DxlImporter {
+org.openntf.domino.DxlImporter {
 
 	/**
 	 * Instantiates a new DxlImporter.
@@ -336,7 +336,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 							+ s.substring(col, Math.min(col + 50, s.length())) + "\n" + log;
 				}
 			} catch (NumberFormatException nfe) {
-
+				log = "DXL Fragment: " + dxl.substring(0, Math.min(dxl.length(), 100));
 			}
 			DominoUtils.handleException(new IllegalArgumentException(log, e));
 		}

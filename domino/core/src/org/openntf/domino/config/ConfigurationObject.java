@@ -84,7 +84,7 @@ public abstract class ConfigurationObject {
 			if (executor != null) {
 				Future<Void> f = executor.submit(new CacheSyncer());
 				try {
-					f.get(2, TimeUnit.SECONDS);
+					f.get(10, TimeUnit.SECONDS);
 				} catch (Exception e) {
 					//nextDocAccess = Long.MAX_VALUE; // do not read the doc again before Sun Aug 17 17:12:55 EST 292278994
 					e.printStackTrace();

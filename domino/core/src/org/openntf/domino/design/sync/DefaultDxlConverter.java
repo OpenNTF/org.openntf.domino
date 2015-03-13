@@ -1,4 +1,4 @@
-package org.openntf.domino.design.impl;
+package org.openntf.domino.design.sync;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,36 +14,46 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.openntf.domino.design.OnDiskConverter;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.xml.sax.SAXException;
 
-public class DefaultConverter implements OnDiskConverter {
+/**
+ * The Default DXL-Transformer. Writes DXL (nearly) the same way as IBM Domino Designer On Disk Project
+ * 
+ * @author Roland Praml, FOCONIS AG
+ *
+ */
+public class DefaultDxlConverter implements DxlConverter {
 
 	protected Transformer defaultTransformer = XMLDocument.createTransformer(null);
-	private Transformer metaTransformer = XMLDocument.createTransformer(GitFriendlyConverter.class.getResourceAsStream("metatFilter.xslt"));
+	protected Transformer metaTransformer = XMLDocument
+			.createTransformer(DefaultDxlConverter.class.getResourceAsStream("metatFilter.xslt"));
 	private boolean rawExportEnabled_;
 
-	public DefaultConverter(final boolean rawExportEnabled) {
+	/**
+	 * Create a new DxlTransformer
+	 * 
+	 * @param rawExportEnabled
+	 *            true if Notes shout be exported in raw format.
+	 */
+	public DefaultDxlConverter(final boolean rawExportEnabled) {
 		super();
 		rawExportEnabled_ = rawExportEnabled;
 	}
 
-	//	public Transformer getImportTransformer() {
-	//		if (importTransformer_ == null) {
-	//			importTransformer_ = createTransformer(OnDiskDesignSync.class.getResourceAsStream("importFilter.xslt"));
-	//		}
-	//		return importTransformer_;
-	//	}
-	//
-	//	public Transformer getExportTransformer() {
-	//		if (exportTransformer_ == null) {
-	//			exportTransformer_ = createTransformer(OnDiskDesignSync.class.getResourceAsStream("exportFilter.xslt"));
-	//		}
-	//		return exportTransformer_;
-	//	}
-
+	/**
+	 * Writes the DXL to outputFile
+	 * 
+	 * @param dxl
+	 *            the DXL-DOM
+	 * @param transformer
+	 *            the transformer that should be used
+	 * @param outputFile
+	 *            the outputfile
+	 * @throws IOException
+	 */
 	protected void writeXml(final XMLDocument dxl, final Transformer transformer, final File outputFile) throws IOException {
 		try {
 			// StreamResult result = new StreamResult(out); - This constructor has problems with german umlauts
@@ -56,6 +66,14 @@ public class DefaultConverter implements OnDiskConverter {
 		}
 	}
 
+	/**
+	 * Reads the dxl from the file
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the DXL
+	 * @throws IOException
+	 */
 	protected XMLDocument readXML(final File file) throws IOException {
 		// TODO Auto-generated method stub
 		FileInputStream fis = new FileInputStream(file);
@@ -98,7 +116,7 @@ public class DefaultConverter implements OnDiskConverter {
 	}
 
 	@Override
-	public String getDxlString(final XMLDocument dxl) throws IOException {
+	public String getDxlImportString(final XMLDocument dxl) throws IOException {
 		StreamResult result = new StreamResult(new StringWriter());
 		DOMSource source = new DOMSource(dxl.getNode());
 		try {
