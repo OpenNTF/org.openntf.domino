@@ -3,11 +3,15 @@ package org.openntf.conference.graph.examples;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.openntf.conference.graph.Attendee;
 import org.openntf.conference.graph.ConferenceGraph;
 import org.openntf.conference.graph.Event;
 import org.openntf.conference.graph.Presentation;
 import org.openntf.conference.graph.TimeSlot;
+import org.openntf.domino.Session;
 import org.openntf.domino.junit.TestRunnerUtil;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.collect.Ordering;
 
@@ -26,6 +30,10 @@ public class SessionsByTimeslot implements Runnable {
 		try {
 			timelog("Beginning Sessions By TimeSlot...");
 			ConferenceGraph graph = new ConferenceGraph();
+
+			Session session = Factory.getSession(SessionType.CURRENT);
+			String myName = session.getEffectiveUserName();
+			Attendee att = graph.getAttendee(myName, false);
 
 			Ordering<TimeSlot> byStart = new Ordering<TimeSlot>() {
 
