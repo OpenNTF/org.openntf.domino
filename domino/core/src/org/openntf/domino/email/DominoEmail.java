@@ -763,6 +763,6 @@ public class DominoEmail implements IEmail {
 		for (String s : vals) {
 			retVal_ += s + separator;
 		}
-		return retVal_;
+		return retVal_.substring(0, retVal_.length() - 1);
 	}
 }
