@@ -322,7 +322,7 @@ public class SyncDocumentsTask extends SyncTask<DocumentWrapper, OnDiskDocument>
 				}
 			}
 		} finally {
-			progressStop("Export done"); // Export
+			progressStop("Export done");
 		}
 
 	}

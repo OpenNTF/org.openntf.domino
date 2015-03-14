@@ -235,8 +235,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 					dbElem = createDbElement(diskElem);
 					sync(dbElem, diskElem, state);
 				} catch (Exception e) {
-					System.err.println("[ERROR] dbElem: " + dbElem + ", diskElem " + diskElem + ", state: " + state);
-					e.printStackTrace();
+					log(Level.SEVERE, "dbElem: " + dbElem + ", diskElem " + diskElem + ", state: " + state, e);
 					stat.errors++;
 				}
 			}
@@ -252,7 +251,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	@Override
 	public OnDiskStatistics call() {
 		log(Level.INFO, "Start: " + getClass().getSimpleName() + ". " + getDb() + " <=> " + diskDir_ + ", Direction:" + direction);
-		progressStart(2, "DesignSync");
+		progressStart(2, getClass().getSimpleName() + " start");
 		try {
 			setup();
 			processDbToDisk(); // progress#1
@@ -264,7 +263,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 			DominoUtils.handleException(e);
 		} finally {
 			log(stat.errors == 0 ? Level.INFO : Level.SEVERE, "Stop: " + getClass().getSimpleName() + ". " + stat);
-			progressStop("DesignSync done");
+			progressStop(getClass().getSimpleName() + " done");
 		}
 		return stat; // return statistics
 	}
@@ -279,9 +278,10 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	 */
 	protected void sync(final DB dbElem, final DISK diskElem, final OnDiskSyncAction state) throws IOException {
 
-		//String key = dbElem == null ? "" : (dbElem.getClass().getName() + ":" + dbElem.getOnDiskName()).toLowerCase();
 		if (diskElem.isProcessed()) {
-			System.err.println("NameCollision: " + state.toString() + " " + diskElem.getPath());
+			// This happens mostly if you use the same name for different platforms or languages
+			// (currently not supported!)
+			log(Level.SEVERE, "Duplicate design element: " + diskElem.getPath());
 			stat.errors++;
 		}
 		progressStep(state.toString() + " " + diskElem.getPath());
@@ -291,7 +291,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 
 		case DELETE_DISK:
 			file = diskElem.getFile();
-			log(Level.FINE, "Delete:\t" + file);
+			log(Level.FINE, "DELETE_DISK:\t" + file);
 			dirMap.remove(diskElem.getKey());
 			if (file != null) {
 				if (dbElem instanceof HasMetadata) {
@@ -309,19 +309,19 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 			return; // element removed from map!;
 
 		case DELETE_NSF:
-			log(Level.FINE, "Delete:\t" + dbElem);
+			log(Level.FINE, "DELETE_NSF:\t" + dbElem);
 			removeDbElement(dbElem);
 			stat.deleteNSF++;
 			return; // element removed from map!;
 
 		case FORCE_EXPROT:
-			log(Level.FINE, dbElem + "\t=> " + diskElem);
+			log(Level.FINE, "FORCE_EXPORT\t" + dbElem + "\t" + diskElem);
 			doExport(dbElem, diskElem);
 			diskElem.setMD5(DominoUtils.checksum(diskElem.getFile(), "MD5"));
 			stat.exported++;
 			break;
 		case FORCE_IMPORT:
-			log(Level.FINE, dbElem + "\t<= " + diskElem);
+			log(Level.FINE, "FORCE_IMPORT\t" + dbElem + "\t" + diskElem);
 			doImport(dbElem, diskElem);
 			diskElem.setMD5(DominoUtils.checksum(diskElem.getFile(), "MD5"));
 			stat.imported++;
@@ -339,7 +339,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 
 			if (Math.abs(diskElem.getDbTimeStampDelta(dbElem)) > FFS_OFFSET) {
 				// doc modified
-				log(Level.FINE, dbElem + "\t=> " + diskElem);
+				log(Level.FINE, "EXPORT\t" + dbElem + "\t" + diskElem);
 				doExport(dbElem, diskElem);
 				diskElem.setMD5(DominoUtils.checksum(diskElem.getFile(), "MD5"));
 				stat.exported++;
@@ -347,16 +347,16 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 				// file modified
 				String md5 = DominoUtils.checksum(diskElem.getFile(), "MD5");
 				if (md5.equals(diskElem.getMD5())) {
-					log(Level.FINER, dbElem + "\t== " + diskElem);
+					log(Level.FINER, "CLEAN\t" + dbElem + "\t" + diskElem);
 					stat.inSync++;
 				} else {
-					log(Level.FINE, dbElem + "\t<= " + diskElem);
+					log(Level.FINE, "IMPORT\t" + dbElem + "\t" + diskElem);
 					doImport(dbElem, diskElem);
 					diskElem.setMD5(md5);
 					stat.exported++;
 				}
 			} else {
-				log(Level.FINER, dbElem + "\t== " + diskElem);
+				log(Level.FINER, "CLEAN\t" + dbElem + "\t" + diskElem);
 				stat.inSync++;
 			}
 
@@ -432,7 +432,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	}
 
 	protected void log(final Level level, final String message, final Throwable t) {
-		if (logLevel.intValue() < level.intValue())
+		if (logLevel.intValue() > level.intValue())
 			return;
 		Date now = new Date();
 		String dateString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(now);
@@ -440,5 +440,10 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 		if (t != null) {
 			t.printStackTrace(logStream);
 		}
+	}
+
+	public void setupLog(final Level logLevel, final PrintStream out) {
+		this.logLevel = logLevel;
+		this.logStream = out;
 	}
 }

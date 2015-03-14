@@ -15,7 +15,7 @@ public class CLIProgressObserver extends ProgressObserver {
 
 	@Override
 	protected void stop(final String info) {
-		out_.println("\n");
+		out_.println("\r[ DONE ] " + info);
 
 	}
 

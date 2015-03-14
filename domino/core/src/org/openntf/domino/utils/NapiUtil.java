@@ -80,7 +80,6 @@ public enum NapiUtil {
 			NotesSession sess = napiSession_.get();
 			napiSession_.set(null);
 			if (sess != null) {
-				System.out.println("Recycling NAPI Session");
 				try {
 					sess.recycle();
 				} catch (NotesAPIException e) {

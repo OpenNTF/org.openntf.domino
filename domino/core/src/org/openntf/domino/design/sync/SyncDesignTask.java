@@ -172,7 +172,6 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 		AbstractDesignBase dbElem;
 		try {
 			dbElem = (AbstractDesignBase) source.getImplementingClass().newInstance();
-			//						//System.out.println("unprocessed: " + dbElem.getClass().getName() + "\t" + diskElem.getFile());
 			dbElem.init(getDb());
 			if (dbElem instanceof DesignBaseNamed) {
 				((DesignBaseNamed) dbElem).setName(source.getName());
@@ -205,14 +204,14 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 
 			File xmlFile = new File(diskDir_, dbElem.getMapping().getOnDiskFolder());
 			xmlFile = new File(xmlFile, OnDiskDesign.getOnDiskName(dbElem));
-			progressStart(1, "Exporting element");
+			progressStart(1, "Export single element");
 			try {
 				sync(key, dbElem, xmlFile);
 			} catch (IOException e) {
 				log(Level.SEVERE, "NoteID: " + noteId_, e);
 				stat.errors++;
 			} finally {
-				progressStop("Exporting done");
+				progressStop("Export single element done");
 			}
 			return stat;
 		}
