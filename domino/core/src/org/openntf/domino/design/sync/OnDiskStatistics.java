@@ -10,8 +10,8 @@ public class OnDiskStatistics {
 
 	@Override
 	public String toString() {
-		return "OnDiskStatistics [inSync=" + inSync + ", exported=" + exported + ", imported=" + imported + ", deleteNSF=" + deleteNSF
-				+ ", deleteDisk=" + deleteDisk + ", errors=" + errors + "]";
+		return "Statistics: inSync=" + inSync + ", exported=" + exported + ", imported=" + imported + ", deleteNSF=" + deleteNSF
+				+ ", deleteDisk=" + deleteDisk + ", errors=" + errors + ".";
 	}
 
 }

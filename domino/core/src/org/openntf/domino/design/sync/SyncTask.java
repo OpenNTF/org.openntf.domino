@@ -1,17 +1,18 @@
 /*
- * Copyright 2013
+ * © Copyright FOCONIS AG, 2015
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at:
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software 
  * distributed under the License is distributed on an "AS IS" BASIS, 
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
+ * 
  */
 
 package org.openntf.domino.design.sync;
@@ -29,13 +30,17 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Session;
 import org.openntf.domino.design.impl.HasMetadata;
 import org.openntf.domino.design.impl.HasXspConfig;
 import org.openntf.domino.progress.ProgressObservable;
@@ -67,16 +72,18 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 
 	private String apiPath;
 	protected File diskDir_;
-	protected Database db;
+	private Database db_;
 	protected OnDiskSyncDirection direction;
 	protected OnDiskStatistics stat = new OnDiskStatistics();
-	protected PrintStream log = System.out;
+
+	private PrintStream logStream = System.out;
+	private Level logLevel = Level.SEVERE;
 
 	Map<String, DISK> dirMap;
 
 	public SyncTask(final File diskDir, final Database db, final OnDiskSyncDirection direction) {
 		diskDir_ = diskDir;
-		this.db = db;
+		this.db_ = db;
 		this.direction = direction;
 	}
 
@@ -84,6 +91,15 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 		diskDir_ = diskDir;
 		this.apiPath = apiPath;
 		this.direction = direction;
+	}
+
+	protected Database getDb() {
+		if (db_ == null) {
+			Session sess = Factory.getSession(SessionType.CURRENT);
+			log(Level.FINER, "Opening DB " + apiPath + " with Session " + sess);
+			db_ = sess.getDatabase(apiPath);
+		}
+		return db_;
 	}
 
 	/**
@@ -94,11 +110,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	 */
 	@SuppressWarnings("unchecked")
 	protected void setup() throws IOException, ClassNotFoundException {
-		if (db == null) {
-			System.out.println("DB: " + db + " API" + apiPath + " Session " + Factory.getSession(SessionType.CURRENT));
-			db = Factory.getSession(SessionType.CURRENT).getDatabase(apiPath);
-		}
-		File timeStampsDesign = new File(diskDir_, TIMESTAMPS_FILE_PREFIX + getClass().getSimpleName() + "_" + db.getReplicaID());
+		File timeStampsDesign = new File(diskDir_, TIMESTAMPS_FILE_PREFIX + getClass().getSimpleName() + "_" + getDb().getReplicaID());
 
 		if (timeStampsDesign.exists()) {
 			//deserialize timeStamp of design file map
@@ -121,7 +133,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	 */
 	protected void tearDown() throws IOException {
 		//serialize TimeStamp Map of design files
-		File timeStampsDesign = new File(diskDir_, TIMESTAMPS_FILE_PREFIX + getClass().getSimpleName() + "_" + db.getReplicaID());
+		File timeStampsDesign = new File(diskDir_, TIMESTAMPS_FILE_PREFIX + getClass().getSimpleName() + "_" + getDb().getReplicaID());
 		OutputStream fos = new FileOutputStream(timeStampsDesign);
 		OutputStream bos = new BufferedOutputStream(fos);
 		ObjectOutput oos = new ObjectOutputStream(bos);
@@ -181,7 +193,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract DB doImport(final DB dbElem, final DISK diskElem) throws IOException;
+	public abstract void doImport(final DB dbElem, final DISK diskElem) throws IOException;
 
 	public abstract void doExport(final DB dbElem, final DISK diskElem) throws IOException;
 
@@ -239,12 +251,9 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	 */
 	@Override
 	public OnDiskStatistics call() {
-
+		log(Level.INFO, "Start: " + getClass().getSimpleName() + ". " + getDb() + " <=> " + diskDir_ + ", Direction:" + direction);
 		progressStart(2, "DesignSync");
 		try {
-			if (log != null) {
-				log.println("Start Design Sync. DB:" + this.db + ", disk: " + this.diskDir_ + ", direction " + this.direction);
-			}
 			setup();
 			processDbToDisk(); // progress#1
 			processDiskToDb(); // progress#2
@@ -254,6 +263,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 		} catch (ClassNotFoundException e) {
 			DominoUtils.handleException(e);
 		} finally {
+			log(stat.errors == 0 ? Level.INFO : Level.SEVERE, "Stop: " + getClass().getSimpleName() + ". " + stat);
 			progressStop("DesignSync done");
 		}
 		return stat; // return statistics
@@ -267,7 +277,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	 * @throws IOException
 	 *             if I/O-Error occur.
 	 */
-	protected void sync(DB dbElem, final DISK diskElem, final OnDiskSyncAction state) throws IOException {
+	protected void sync(final DB dbElem, final DISK diskElem, final OnDiskSyncAction state) throws IOException {
 
 		//String key = dbElem == null ? "" : (dbElem.getClass().getName() + ":" + dbElem.getOnDiskName()).toLowerCase();
 		if (diskElem.isProcessed()) {
@@ -281,6 +291,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 
 		case DELETE_DISK:
 			file = diskElem.getFile();
+			log(Level.FINE, "Delete:\t" + file);
 			dirMap.remove(diskElem.getKey());
 			if (file != null) {
 				if (dbElem instanceof HasMetadata) {
@@ -298,17 +309,20 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 			return; // element removed from map!;
 
 		case DELETE_NSF:
+			log(Level.FINE, "Delete:\t" + dbElem);
 			removeDbElement(dbElem);
 			stat.deleteNSF++;
 			return; // element removed from map!;
 
 		case FORCE_EXPROT:
+			log(Level.FINE, dbElem + "\t=> " + diskElem);
 			doExport(dbElem, diskElem);
 			diskElem.setMD5(DominoUtils.checksum(diskElem.getFile(), "MD5"));
 			stat.exported++;
 			break;
 		case FORCE_IMPORT:
-			dbElem = doImport(dbElem, diskElem);
+			log(Level.FINE, dbElem + "\t<= " + diskElem);
+			doImport(dbElem, diskElem);
 			diskElem.setMD5(DominoUtils.checksum(diskElem.getFile(), "MD5"));
 			stat.imported++;
 			break;
@@ -317,7 +331,6 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 
 			file = diskElem.getFile();
 			file.getParentFile().mkdirs(); // ensure the path exists
-			//if (dbElem != null) { // we may run in a NPE if we cannot see the designelement -> this shout be caught and logged
 
 			if (diskElem.isRenamed()) {
 				System.out.println(diskElem + " was renamed");
@@ -326,6 +339,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 
 			if (Math.abs(diskElem.getDbTimeStampDelta(dbElem)) > FFS_OFFSET) {
 				// doc modified
+				log(Level.FINE, dbElem + "\t=> " + diskElem);
 				doExport(dbElem, diskElem);
 				diskElem.setMD5(DominoUtils.checksum(diskElem.getFile(), "MD5"));
 				stat.exported++;
@@ -333,17 +347,18 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 				// file modified
 				String md5 = DominoUtils.checksum(diskElem.getFile(), "MD5");
 				if (md5.equals(diskElem.getMD5())) {
-					System.out.println("Only Date modified!");
+					log(Level.FINER, dbElem + "\t== " + diskElem);
 					stat.inSync++;
 				} else {
+					log(Level.FINE, dbElem + "\t<= " + diskElem);
 					doImport(dbElem, diskElem);
 					diskElem.setMD5(md5);
 					stat.exported++;
 				}
 			} else {
+				log(Level.FINER, dbElem + "\t== " + diskElem);
 				stat.inSync++;
 			}
-			//}
 
 			break;
 		default:
@@ -410,5 +425,20 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 		}
 
 		sync(dbElem, diskElem, state);
+	}
+
+	protected void log(final Level level, final String message) {
+		log(level, message, null);
+	}
+
+	protected void log(final Level level, final String message, final Throwable t) {
+		if (logLevel.intValue() < level.intValue())
+			return;
+		Date now = new Date();
+		String dateString = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(now);
+		logStream.println(dateString + "\t" + level + "\t" + message);
+		if (t != null) {
+			t.printStackTrace(logStream);
+		}
 	}
 }

@@ -102,7 +102,7 @@ public abstract class OnDiskAbstract<DB> implements Serializable {
 
 	@Override
 	public String toString() {
-		return "OnDiskFile [Key=" + getKey() + "]";
+		return getPath();
 	}
 
 	public boolean isRenamed() {

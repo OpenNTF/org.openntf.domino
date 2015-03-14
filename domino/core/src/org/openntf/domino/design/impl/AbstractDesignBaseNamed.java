@@ -178,7 +178,12 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " '" + getName() + "' (Aliases: " + getAliases() + ", UniversalID: " + getUniversalID() + ")";
+		List<String> alia = getAliases();
+		if (alia.isEmpty()) {
+			return getClass().getSimpleName() + " '" + getName() + "'";
+		} else {
+			return getClass().getSimpleName() + " '" + getName() + "' " + alia;
+		}
 	}
 
 }

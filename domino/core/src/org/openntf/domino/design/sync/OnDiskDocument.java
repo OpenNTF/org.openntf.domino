@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
@@ -28,7 +27,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author Alexander Wagner, FOCONIS AG
  * 
  */
-public class OnDiskDocument extends OnDiskAbstract<Document> {
+public class OnDiskDocument extends OnDiskAbstract<DocumentWrapper> {
 
 	private static final long serialVersionUID = -3298261314433290242L;
 
@@ -84,13 +83,13 @@ public class OnDiskDocument extends OnDiskAbstract<Document> {
 	}
 
 	@Override
-	public void setDbTimeStamp(final Document dbElem) {
+	public void setDbTimeStamp(final DocumentWrapper dbElem) {
 		setDbTimeStamp(dbElem.getLastModifiedDate().getTime());
 
 	}
 
 	@Override
-	public long getDbTimeStampDelta(final Document dbElem) {
+	public long getDbTimeStampDelta(final DocumentWrapper dbElem) {
 		return dbElem.getLastModifiedDate().getTime() - getDbTimeStamp();
 	}
 

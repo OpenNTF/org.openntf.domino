@@ -65,7 +65,7 @@ language governing permissions and limitations under the License
 	</xsl:template>  -->
 	<xsl:template match="document">
   		<xsl:copy>
-  			<xsl:apply-templates select="*[not(self::item)]"/>
+  			<xsl:apply-templates select="*[not(self::item)] | @*"/>
 			<xsl:apply-templates select="item">
 				<xsl:sort select="@name" />
 			</xsl:apply-templates>
