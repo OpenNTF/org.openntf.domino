@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import org.openntf.conference.graph.Attendee;
 import org.openntf.conference.graph.ConferenceGraph;
 import org.openntf.conference.graph.Presentation;
+import org.openntf.conference.graph.Sponsor;
+import org.openntf.conference.graph.Sponsor.Level;
 import org.openntf.conference.graph.Track;
 import org.openntf.domino.graph2.DEdge;
 import org.openntf.domino.graph2.builtin.DVertexFrameComparator;
@@ -15,6 +17,7 @@ import org.openntf.domino.junit.TestRunnerUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class SessionsByTrack implements Runnable {
@@ -37,6 +40,13 @@ public class SessionsByTrack implements Runnable {
 		marktime = System.nanoTime();
 		try {
 			timelog("Beginning Sessions By Track...");
+			FramedGraph graph2 = new ConferenceGraph().getFramedGraph();
+			Iterable<Sponsor> sponsors = graph2.getVertices("Level", Level.BRONZE, Sponsor.class);
+
+			for (Sponsor s : sponsors) {
+				System.out.println("Sponsor " + s.getName() + " - " + s.getUrl());
+			}
+
 			ConferenceGraph graph = new ConferenceGraph();
 			for (Entry<String, String> track : trackLkup.entrySet()) {
 				System.out.println("Outputting sessions ordered by ID for " + track.getKey());
