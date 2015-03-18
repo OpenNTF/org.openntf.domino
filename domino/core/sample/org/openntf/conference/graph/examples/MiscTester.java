@@ -59,10 +59,14 @@ public class MiscTester implements Runnable {
 			comm.setBody("This is a test comment");
 			paul.addComment(comm);
 			pres.addComment(comm);
-			//paul.addLikes(comm);
-			//paul.addLikes(pres);
-			Rates rate = paul.addRates(pres);
-			rate.setRating(5);
+			paul.addLikes(comm);
+			paul.addLikes(pres);
+			// Uncomment this and you get a duplicate
+			//			Rates rate1 = paul.addRates(pres);
+			//			rate1.setRating(5);
+			// This doesn't give a duplicate
+			Rates rate3 = pres.addRates(paul);
+			rate3.setRating(5);
 			Rates rate2 = dv.addRates(pres);
 			rate2.setRating(2);
 
