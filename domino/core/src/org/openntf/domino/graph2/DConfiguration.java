@@ -15,7 +15,7 @@ public interface DConfiguration extends Externalizable {
 
 	public Map<Long, DElementStore> getElementStores();
 
-	public void addElementStore(DElementStore store);
+	public DElementStore addElementStore(DElementStore store);
 
 	public DGraph getGraph();
 
@@ -25,7 +25,7 @@ public interface DConfiguration extends Externalizable {
 
 	public TypeManager getTypeManager();
 
-	public void setGraph(DGraph graph);
+	public DGraph setGraph(DGraph graph);
 
 	public DElementStore getDefaultElementStore();
 

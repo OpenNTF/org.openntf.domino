@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-		com.tinkerpop.blueprints.TransactionalGraph {
+com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -26,6 +26,8 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 				result = key + "=" + value;
 			} else if (value instanceof DateTime) {
 				result = key + "=[" + ((DateTime) value).getLocalTime() + "]";
+			} else if (value instanceof Enum<?>) {
+				result = key + "=\"" + ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name() + "\"";
 			} else {
 				result = key + "=\"" + String.valueOf(value) + "\"";
 			}

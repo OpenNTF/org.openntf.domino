@@ -37,21 +37,19 @@ public interface Rateable extends DVertexFrame {
 	public Rater addRatesRater(Rater rater);
 
 	public abstract static class RateableImpl implements Rateable, JavaHandlerContext<Vertex> {
-		private transient double avgRating_ = Double.NaN;
+		private transient double avgRating_;
 
 		@Override
 		public double getAverageRating() {
-			if (avgRating_ == Double.NaN) {
-				Iterable<Rates> rates = getRates();
-				if (rates != null) {
-					long count = 0l;
-					long total = 0l;
-					for (Rates rate : rates) {
-						count++;
-						total += rate.getRating();
-					}
-					avgRating_ = total / count;
+			Iterable<Rates> rates = getRates();
+			if (rates != null) {
+				long count = 0l;
+				long total = 0l;
+				for (Rates rate : rates) {
+					count++;
+					total += rate.getRating();
 				}
+				avgRating_ = total / count;
 			}
 			return avgRating_;
 		}

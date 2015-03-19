@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.impl.DbCache;
@@ -348,7 +349,24 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		Session session = Factory.getSession(SessionType.CURRENT);
 		if (provisionalKey instanceof CharSequence) {
 			String key = provisionalKey.toString();
-			result = session.getDatabase(key);
+			String server = "";
+			if (key.contains("!!")) {
+				server = "";	//TODO NTF parse key string to find server name in form of 'Server!!path.nsf'
+				key = key;	//TODO NTF parse again
+			}
+			DbDirectory dir = session.getDbDirectory(server);
+			result = dir.openDatabase(key);
+			if (result == null) {
+				Database newDb = dir.createDatabase(key);
+				newDb.setCategories("graph2");
+				//				newDb.setFolderReferencesEnabled(false);
+				newDb.setTitle("Auto-generated graph2 element store");
+				for (org.openntf.domino.View v : newDb.getViews()) {
+					v.setName("NONE");
+					v.setSelectionFormula("SELECT @False");
+				}
+				result = newDb;
+			}
 			store.setStoreKey(((Database) result).getReplicaID());
 		} else {
 			//TODO NTF Unimplemented
@@ -373,7 +391,24 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		Session session = Factory.getSession(SessionType.CURRENT);
 		if (provisionalKey instanceof CharSequence) {
 			String key = provisionalKey.toString();
-			result = session.getDatabase(key);
+			String server = "";
+			if (key.contains("!!")) {
+				server = "";	//TODO NTF parse key string to find server name in form of 'Server!!path.nsf'
+				key = key;	//TODO NTF parse again
+			}
+			DbDirectory dir = session.getDbDirectory(server);
+			result = dir.openDatabase(key);
+			if (result == null) {
+				Database newDb = dir.createDatabase(key);
+				newDb.setCategories("graph2");
+				newDb.setFolderReferencesEnabled(false);
+				newDb.setTitle("Auto-generated graph2 element store");
+				for (org.openntf.domino.View v : newDb.getViews()) {
+					v.setName("NONE");
+					v.setSelectionFormula("SELECT @False");
+				}
+				result = newDb;
+			}
 			store.setProxyStoreKey(((Database) result).getReplicaID());
 		} else {
 			//TODO NTF Unimplemented

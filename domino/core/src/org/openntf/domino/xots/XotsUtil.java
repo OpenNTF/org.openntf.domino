@@ -2,6 +2,8 @@ package org.openntf.domino.xots;
 
 import java.util.Arrays;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.logging.BaseOpenLogItem;
 import org.openntf.domino.xots.Tasklet.Interface;
 
 public enum XotsUtil {
@@ -15,7 +17,7 @@ public enum XotsUtil {
 	 * @throws IllegalAccessException
 	 */
 	public static ScheduleData getSchedule(final String replicaId, final Class<?> clazz) throws IllegalAccessException,
-			InstantiationException {
+	InstantiationException {
 		Tasklet annot = clazz.getAnnotation(Tasklet.class);
 		String[] effectiveSchedDefs = null;
 
@@ -65,5 +67,11 @@ public enum XotsUtil {
 
 		}
 		return effectiveSchedDefs;
+	}
+
+	public static void handleException(final Throwable t, final Database currDb) {
+		BaseOpenLogItem ol = new BaseOpenLogItem();
+		ol.setCurrentDatabase(currDb);
+		ol.logError(t);
 	}
 }

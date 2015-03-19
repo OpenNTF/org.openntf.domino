@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.session.ISessionFactory;
-import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
@@ -46,10 +45,11 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 			// RPr: I'm not sure if this should be allowed anyway...
 			throw new IllegalArgumentException("Cannot wrap the NotesThread " + task.getClass().getName() + " into a DominoRunner");
 		}
-		if (task instanceof DominoFutureTask) {
-			// RPr: don't know if this is possible
-			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
-		}
+		// TODO RPr: Review/fix this 
+		//				if (task instanceof DominoFutureTask) {
+		//					// RPr: don't know if this is possible
+		//					throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");
+		//				}
 		if (task instanceof AbstractWrappedTask) {
 			// RPr: don't know if this is possible
 			throw new IllegalArgumentException("Cannot wrap the WrappedCallable " + task.getClass().getName() + " into a DominoRunner");

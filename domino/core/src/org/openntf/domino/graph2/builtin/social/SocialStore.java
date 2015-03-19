@@ -12,6 +12,7 @@ public class SocialStore extends DElementStore {
 		this.addType(Commentable.class);
 		this.addType(Likes.class);
 		this.addType(Likeable.class);
+		this.addType(Mentions.class);
 		this.addType(Rates.class);
 		this.addType(Rateable.class);
 		this.addType(Share.class);

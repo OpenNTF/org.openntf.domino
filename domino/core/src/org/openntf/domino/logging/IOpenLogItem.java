@@ -91,12 +91,38 @@ public interface IOpenLogItem {
 	public Vector<String> getClientVersion();
 
 	/**
-	 * Gets the current database.
+	 * Gets the "current" database.
 	 * 
-	 * @return current Database object
+	 * @return current Database object the error is being logged for
 	 * @since org.openntf.domino 4.0.0
 	 */
 	public Database getCurrentDatabase();
+
+	/**
+	 * Sets the current database object to the current database.
+	 * 
+	 * @return current Database object
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public void setCurrentDatabase();
+
+	/**
+	 * Sets the current database object to a specific database, useful when running outside XPages containers, e.g. Xots.
+	 * 
+	 * @param db
+	 *            Database specific database to set as running from
+	 * @return current Database object
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public void setCurrentDatabase(Database db);
+
+	/**
+	 * Gets the "current" database path.
+	 * 
+	 * @return String database path error is being logged for
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public String getCurrentDatabasePath();
 
 	/**
 	 * Retrieves the Document the error occurred on, if one exists.

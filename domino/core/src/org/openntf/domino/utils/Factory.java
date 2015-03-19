@@ -167,6 +167,10 @@ public enum Factory {
 
 		;
 
+		public Session get() {
+			return Factory.getSession(this);
+		}
+
 		static int SIZE = 8;
 		int index;
 		String alias;
