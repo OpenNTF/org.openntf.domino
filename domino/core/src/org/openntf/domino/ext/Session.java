@@ -207,6 +207,16 @@ public interface Session {
 	public DateTime createDateTime(Calendar date);
 
 	/**
+	 * Creates a Name object using a standard lotus.domino.Session, in case the fix is not enabled
+	 * 
+	 * @param name
+	 *            String for which to convert into a Notes Name
+	 * @return The newly create {@link Name} object.
+	 * @since 5.0.0
+	 */
+	public Name createNameNonODA(String name);
+
+	/**
 	 * Tells whether the current session object represents an anonymous user.
 	 * 
 	 * @return boolean, whether the session is an anonymous user

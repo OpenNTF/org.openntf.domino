@@ -809,7 +809,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			}
 			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES))
 				return (T) new org.openntf.domino.impl.NameODA((Session) parent, name, lang);
-			return (T) new org.openntf.domino.impl.Name((Session) parent, name, lang);
+			return (T) ((Session) parent).createNameNonODA(name);
 		}
 
 		if (schema == Document.SCHEMA) {

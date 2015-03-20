@@ -82,7 +82,7 @@ import com.ibm.icu.util.Calendar;
  */
 
 public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
-org.openntf.domino.Session {
+		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -413,6 +413,22 @@ org.openntf.domino.Session {
 	@Override
 	public org.openntf.domino.Name createName(final String name) {
 		return getFactory().create(Name.SCHEMA, this, name);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Session#createName(java.lang.String)
+	 */
+	@Override
+	public org.openntf.domino.Name createNameNonODA(final String name) {
+		try {
+			return fromLotus(getDelegate().createName(name), Name.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e, this);
+			return null;
+
+		}
 	}
 
 	/*
