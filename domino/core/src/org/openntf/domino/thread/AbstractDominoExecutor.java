@@ -467,17 +467,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	protected abstract IWrappedRunnable wrap(Runnable inner);
 
-	@Override
-	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
-		// CHECKME RPr: is this correct!?
-		return super.newTaskFor(wrap(callable));
-	}
-
-	@Override
-	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T type) {
-		return super.newTaskFor(wrap(runnable), type);
-	};
-
 	protected abstract IWrappedCallable<?> wrap(final String moduleName, final String className, final Object... ctorArgs);
 
 	@Override

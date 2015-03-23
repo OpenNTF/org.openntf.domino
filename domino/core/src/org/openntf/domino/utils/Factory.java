@@ -360,7 +360,7 @@ public enum Factory {
 
 	//private static boolean session_init = false;
 	//private static boolean jar_init = false;
-	private static boolean started = false;
+	//private static boolean started = false;
 
 	/**
 	 * load the configuration
@@ -1133,7 +1133,7 @@ public enum Factory {
 	 * 
 	 */
 	public static void initThread(final ThreadConfig tc) { // RPr: Method was deliberately renamed
-		if (!started) {
+		if (startups == 0) {
 			throw new IllegalStateException("Factory is not yet started");
 		}
 		if (log_.isLoggable(Level.FINER)) {
@@ -1237,10 +1237,15 @@ public enum Factory {
 		return iniFile;
 	}
 
+	private static int startups = 0;
+
 	public static void startup() {
 
 		synchronized (Factory.class) {
-
+			if (startups > 0) {
+				startups++;
+				return;
+			}
 			NotesThread.sinitThread();
 			try {
 				lotus.domino.Session sess = lotus.domino.NotesFactory.createSession();
@@ -1265,7 +1270,7 @@ public enum Factory {
 		if (session instanceof org.openntf.domino.Session) {
 			throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
 		}
-		if (started) {
+		if (startups != 0) {
 			Factory.println("OpenNTF Domino API is already started. Cannot start it again");
 		}
 		try {
@@ -1327,8 +1332,7 @@ public enum Factory {
 		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(defaultApiPath);
 		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
 
-		started = true;
-
+		startups = 1;
 		Factory.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
 
 		// Start up logging
@@ -1354,6 +1358,10 @@ public enum Factory {
 	}
 
 	public static synchronized void shutdown() {
+		if (startups > 1)
+			return;
+		if (startups != 1)
+			throw new IllegalStateException("Factory.shutdown() was called more than Factory.startup()");
 		Factory.println("Shutting down the OpenNTF Domino API... ");
 		Runnable[] copy = shutdownHooks.toArray(new Runnable[shutdownHooks.size()]);
 		for (Runnable term : copy) {
@@ -1364,11 +1372,11 @@ public enum Factory {
 			}
 		}
 		Factory.println("OpenNTF Domino API shut down");
-		started = false;
+		startups--;
 	}
 
 	public static boolean isStarted() {
-		return started;
+		return startups > 0;
 	}
 
 	public static boolean isInitialized() {

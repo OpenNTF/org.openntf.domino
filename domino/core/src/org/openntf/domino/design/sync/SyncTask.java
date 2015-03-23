@@ -79,7 +79,7 @@ public abstract class SyncTask<DB, DISK extends OnDiskAbstract<DB>> extends Prog
 	private PrintStream logStream = System.out;
 	private Level logLevel = Level.SEVERE;
 
-	Map<String, DISK> dirMap;
+	Map<String, DISK> dirMap = new HashMap<String, DISK>();
 
 	public SyncTask(final File diskDir, final Database db, final OnDiskSyncDirection direction) {
 		diskDir_ = diskDir;

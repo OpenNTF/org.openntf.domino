@@ -229,15 +229,14 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 		progressStart(elems.getCount(), "Exporting elements");
 		try {
 			for (DesignBase dbElem : elems) {
-				OnDiskSyncAction state = null;
 				try {
 					String key = OnDiskDesign.getKey(dbElem);
 
 					File xmlFile = new File(diskDir_, dbElem.getMapping().getOnDiskFolder());
 					xmlFile = new File(xmlFile, OnDiskDesign.getOnDiskName(dbElem));
 					sync(key, dbElem, xmlFile);
-				} catch (Exception e) {
-					log(Level.SEVERE, "dbElem: " + dbElem + ", state: " + state, e);
+				} catch (Throwable t) {
+					log(Level.SEVERE, "dbElem: " + dbElem, t);
 					stat.errors++;
 				}
 			}
