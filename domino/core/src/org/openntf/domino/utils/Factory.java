@@ -68,8 +68,6 @@ import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
-import com.ibm.commons.util.StringUtil;
-
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
  */
@@ -1833,7 +1831,7 @@ public enum Factory {
 		BufferedReader reader = new BufferedReader(new StringReader(lines));
 		String line;
 		try {
-			if (StringUtil.isEmpty(prefix)) {
+			if (Strings.isBlankString(prefix)) {
 				prefix = "[ODA] ";
 			} else {
 				prefix = "[ODA::" + prefix + "] ";
