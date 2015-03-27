@@ -86,8 +86,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
-
-					result = doc.getItemValue(propertyName, type);
+					if (doc.hasItem(propertyName)) {
+						result = doc.getItemValue(propertyName, type);
+					}
 					if (result == null) {
 						try {
 							Object raw = doc.get(propertyName);

@@ -2,6 +2,8 @@ package org.openntf.domino.graph2.annotations;
 
 import java.lang.reflect.Method;
 
+import org.openntf.domino.utils.Factory.SessionType;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.ClassUtilities;
@@ -41,7 +43,7 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 			return type.cast(raw);
 		if (lotus.domino.Base.class.isAssignableFrom(type)) {
 			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type,
-					org.openntf.domino.utils.Factory.getSession((lotus.domino.Base) raw));
+					org.openntf.domino.utils.Factory.getSession(SessionType.NATIVE));
 		} else {
 			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type, null);
 		}

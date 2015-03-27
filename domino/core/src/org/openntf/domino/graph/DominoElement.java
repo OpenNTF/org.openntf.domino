@@ -324,6 +324,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			} catch (Exception e) {
 				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 						+ " so we cannot return a value", e);
+				e.printStackTrace();
 			}
 		} else if (result == Null.INSTANCE) {
 

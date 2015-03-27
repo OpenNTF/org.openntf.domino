@@ -497,7 +497,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			//			putCache(result);
 			return null;
 		} else {
-			result = (Edge) getCache(id);
+			Element cached = getCache(id);
+			if (cached instanceof Edge) {
+				result = (Edge) cached;
+			}
 			if (result == null) {
 				// System.out.println("Cache miss on edge with id " + id);
 				Document d = getDocument(id, false);

@@ -13,7 +13,6 @@ import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
-import com.tinkerpop.frames.structures.FramedEdgeIterable;
 
 @SuppressWarnings("deprecation")
 public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique> {
@@ -94,8 +93,8 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 		if (ClassUtilities.isGetMethod(method)) {
 			Class<?> returnType = method.getReturnType();
 			if (Iterable.class.isAssignableFrom(returnType)) {
-				return new FramedEdgeIterable(framedGraph, vertex.getEdges(incidence.direction(), incidence.label()),
-						incidence.direction(), ClassUtilities.getGenericClass(method));
+				return new FramedEdgeList(framedGraph, vertex.getEdges(incidence.direction(), incidence.label()),
+						ClassUtilities.getGenericClass(method));
 			} else if (Edge.class.isAssignableFrom(returnType)) {
 				return vertex.getEdges(incidence.direction(), incidence.label()).iterator().next();
 			} else {

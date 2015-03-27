@@ -15,4 +15,8 @@ public class DataNotCompatibleException extends RuntimeException {
 	public DataNotCompatibleException(final String message) {
 		super(message);
 	}
+
+	public DataNotCompatibleException(final String message, final Throwable t) {
+		super(message, t);
+	}
 }
