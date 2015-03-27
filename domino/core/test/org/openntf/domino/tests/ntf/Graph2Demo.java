@@ -11,7 +11,10 @@ import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.User;
+import org.openntf.domino.graph2.builtin.social.Comment;
+import org.openntf.domino.graph2.builtin.social.Commentable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
+import org.openntf.domino.graph2.builtin.social.SocialStore;
 import org.openntf.domino.graph2.impl.DConfiguration;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DFramedGraphFactory;
@@ -43,6 +46,7 @@ public class Graph2Demo implements Runnable {
 	public static String characterId = "graph2/characters.nsf";
 	public static String edgeId = "graph2/edges.nsf";
 	public static String usersId = "graph2/users.nsf";
+	public static String socialId = "graph2/social.nsf";
 	public static String nabId = "names.nsf";
 	public static String ntfUnid = "2F25B5EDE23C245785257A600059FD2E"; //NTF this is my own person document. You may need to change it.
 
@@ -54,7 +58,7 @@ public class Graph2Demo implements Runnable {
 	private static final String KILLS = "Kills";
 
 	@TypeValue("movie")
-	public interface Movie extends Rateable {
+	public interface Movie extends Rateable, Commentable {
 		@TypedProperty("title")
 		public String getTitle();
 
@@ -507,6 +511,9 @@ public class Graph2Demo implements Runnable {
 			usersStore.setProxyStoreKey(usersId);
 			usersStore.addType(User.class);
 
+			SocialStore socialStore = new SocialStore();
+			socialStore.setStoreKey(socialId);
+
 			DConfiguration config = new DConfiguration();
 			graph = new DGraph(config);
 			config.addElementStore(crewStore);
@@ -514,6 +521,7 @@ public class Graph2Demo implements Runnable {
 			config.addElementStore(characterStore);
 			config.addElementStore(edgeStore);
 			config.addElementStore(usersStore);
+			config.addElementStore(socialStore);
 			config.setDefaultElementStore(edgeStore.getStoreKey());
 
 			DFramedGraphFactory factory = new DFramedGraphFactory(config);
@@ -521,19 +529,12 @@ public class Graph2Demo implements Runnable {
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
-			System.out.println("newhopeMovie " + newhopeMovie.asVertex().getId());
-			//			Rates ntfRatesNH = ntfUser.addRates(newhopeMovie);
-			//			ntfRatesNH.setRating(4);
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			//			Rates ntfRatesESB = ntfUser.addRates(empireMovie);
-			//			ntfRatesESB.setRating(5);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
-			//			Rates ntfRatesRoJ = ntfUser.addRates(jediMovie);
-			//			ntfRatesRoJ.setRating(5);
 
 			Movie phantomMovie = framedGraph.addVertex("The Phantom Menace", Movie.class);
 			phantomMovie.setTitle("The Phantom Menace");
@@ -543,6 +544,11 @@ public class Graph2Demo implements Runnable {
 
 			Movie revengeMovie = framedGraph.addVertex("Revenge of the Sith", Movie.class);
 			revengeMovie.setTitle("Revenge of the Sith");
+			User nathan = framedGraph.addVertex("Nathan Freeman", User.class);
+			Comment comment = framedGraph.addVertex(null, Comment.class);
+			comment.setBody("Really the worst of the bunch");
+			comment.addCommenter(nathan);
+			revengeMovie.addComment(comment);
 
 			Crew lucasCrew = framedGraph.addVertex("George Lucas", Crew.class);
 			lucasCrew.setFullName("George Lucas");
@@ -916,5 +922,4 @@ public class Graph2Demo implements Runnable {
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 	}
-
 }

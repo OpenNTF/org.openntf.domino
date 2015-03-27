@@ -7,7 +7,7 @@ import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("Mentions")
+@TypeValue(Mentions.LABEL)
 public interface Mentions extends DEdgeFrame {
 	public static final String LABEL = "mentions";
 

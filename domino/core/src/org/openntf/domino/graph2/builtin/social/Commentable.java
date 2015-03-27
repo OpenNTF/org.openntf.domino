@@ -5,7 +5,9 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Commentable")
 public interface Commentable extends DVertexFrame {
 	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public Iterable<CommentsAbout> getCommentsAbout();

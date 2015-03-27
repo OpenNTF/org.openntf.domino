@@ -4,6 +4,9 @@ import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+@TypeValue("Rater")
 public interface Rater extends DVertexFrame {
 	@IncidenceUnique(label = Rates.LABEL)
 	public Iterable<Rates> getRates();
