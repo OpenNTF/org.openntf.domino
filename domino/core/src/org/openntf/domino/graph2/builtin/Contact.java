@@ -1,4 +1,4 @@
-package org.openntf.domino.graph2.builtin.social;
+package org.openntf.domino.graph2.builtin;
 
 import org.openntf.domino.graph2.annotations.TypedProperty;
 
@@ -19,6 +19,6 @@ public interface Contact extends VertexFrame {
 
 	public void setLastName(String lastName);
 
-	@TypedProperty(derived=true, "firstName + \" \" + lastName")
+	@TypedProperty(derived = true, value = "firstName + \" \" + lastName")
 	public String getFullName();
 }
