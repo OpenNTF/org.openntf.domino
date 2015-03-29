@@ -321,18 +321,18 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Map<String, Object> getDelegate() {
+		if (delegate_ == null) {
+			delegate_ = getParent().findDelegate(delegateKey_);
+		}
 		if (delegate_ instanceof Document) {
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
-				((Document) delegate_).getCreatedDate();
+				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
 				System.out.println("TEMP DEBUG: Bad document handle existed of type " + t.getClass().getName() + " " + t.getMessage()
 						+ ". Re-getting from key...");
 				delegate_ = getParent().findDelegate(delegateKey_);
 			}
-		}
-		if (delegate_ == null) {
-			delegate_ = getParent().findDelegate(delegateKey_);
 		}
 		return delegate_;
 	}
