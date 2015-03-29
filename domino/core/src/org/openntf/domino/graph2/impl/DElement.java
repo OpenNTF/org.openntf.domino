@@ -321,6 +321,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Map<String, Object> getDelegate() {
+		if (delegate_ instanceof Document) {
+			if (((Document) delegate_).isDead()) {
+				delegate_ = getParent().findDelegate(delegateKey_);
+			}
+		}
 		if (delegate_ == null) {
 			delegate_ = getParent().findDelegate(delegateKey_);
 		}

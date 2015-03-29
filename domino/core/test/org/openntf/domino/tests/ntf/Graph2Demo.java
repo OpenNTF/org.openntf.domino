@@ -13,6 +13,7 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.User;
 import org.openntf.domino.graph2.builtin.social.Comment;
 import org.openntf.domino.graph2.builtin.social.Commentable;
+import org.openntf.domino.graph2.builtin.social.Likeable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 import org.openntf.domino.graph2.builtin.social.SocialStore;
 import org.openntf.domino.graph2.impl.DConfiguration;
@@ -58,7 +59,7 @@ public class Graph2Demo implements Runnable {
 	private static final String KILLS = "Kills";
 
 	@TypeValue("movie")
-	public interface Movie extends Rateable, Commentable {
+	public interface Movie extends Rateable, Commentable, Likeable {
 		@TypedProperty("title")
 		public String getTitle();
 
@@ -526,12 +527,14 @@ public class Graph2Demo implements Runnable {
 
 			DFramedGraphFactory factory = new DFramedGraphFactory(config);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
+			User nathan = framedGraph.addVertex("Nathan Freeman", User.class);
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
+			empireMovie.addLikedByUser(nathan);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
@@ -544,7 +547,6 @@ public class Graph2Demo implements Runnable {
 
 			Movie revengeMovie = framedGraph.addVertex("Revenge of the Sith", Movie.class);
 			revengeMovie.setTitle("Revenge of the Sith");
-			User nathan = framedGraph.addVertex("Nathan Freeman", User.class);
 			Comment comment = framedGraph.addVertex(null, Comment.class);
 			comment.setBody("Really the worst of the bunch");
 			comment.addCommenter(nathan);
