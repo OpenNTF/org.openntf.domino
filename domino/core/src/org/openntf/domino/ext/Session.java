@@ -443,4 +443,6 @@ public interface Session {
 	 * Recycling a session is allowed (needed to be compatible with @deprecated = error)
 	 */
 	public void recycle();
+
+	public void clearIdentity();
 }

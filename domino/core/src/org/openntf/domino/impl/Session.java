@@ -1606,12 +1606,14 @@ org.openntf.domino.Session {
 			throw new UnableToAcquireSessionException("The created Session does not have a valid delegate");
 		}
 		try {
-			if (!username_.equals(d.getEffectiveUserName())) {
+
+			if (!identCleared_ && !username_.equals(d.getEffectiveUserName())) {
 				throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:" + d.getEffectiveUserName()
 						+ ", expected:" + username_);
 			}
 		} catch (NotesException e) {
 		}
+		identCleared_ = false;
 		setDelegate(d, true);
 		/* No special logging, since by now Session is a BaseThreadSafe */
 	}
@@ -1706,6 +1708,12 @@ org.openntf.domino.Session {
 		System.out.println(sb.toString());
 		System.out.println(sb.toString());
 		System.out.println(sb.toString());
+	}
+
+	private boolean identCleared_ = false;
+
+	public void clearIdentity() {
+		identCleared_ = true;
 	}
 
 	/* (non-Javadoc)
