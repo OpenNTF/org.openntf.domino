@@ -322,7 +322,10 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public Map<String, Object> getDelegate() {
 		if (delegate_ instanceof Document) {
-			if (((Document) delegate_).isDead()) {
+			try {
+				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
+				((Document) delegate_).isResponse();
+			} catch (IllegalStateException ise) {
 				delegate_ = getParent().findDelegate(delegateKey_);
 			}
 		}
