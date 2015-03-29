@@ -18,3 +18,4 @@ Export-Package: rx,
  rx.subscriptions
 Bundle-Vendor: Netflix
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
