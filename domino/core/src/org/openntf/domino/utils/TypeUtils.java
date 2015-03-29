@@ -149,10 +149,11 @@ public enum TypeUtils {
 			result = collectionToClass(v, type, session);
 		} catch (DataNotCompatibleException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
-			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid);
+			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid, e);
 		} catch (UnimplementedException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
-			throw new UnimplementedException(e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid);
+			throw new UnimplementedException(
+					e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid, e);
 		}
 
 		return result;
@@ -264,7 +265,7 @@ public enum TypeUtils {
 						result = toBigStrings(o);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(o);
-					} else if (Enum.class.isAssignableFrom(type)) {
+					} else if (CType == java.lang.Enum.class || CType.isEnum()) {
 						result = toEnums(o);
 					} else if (Class.class.isAssignableFrom(CType)) {
 						result = toClasses(o);
@@ -438,7 +439,7 @@ public enum TypeUtils {
 						result = toBigStrings(v);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(v);
-					} else if (Enum.class.isAssignableFrom(type)) {
+					} else if (CType == java.lang.Enum.class || CType.isEnum()) {
 						result = toEnums(v);
 					} else if (Class.class.isAssignableFrom(CType)) {
 						result = toClasses(v);

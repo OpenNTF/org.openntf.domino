@@ -213,14 +213,19 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	public <F> F addVertex(final Object id, final Class<F> kind) {
 		DGraph base = (DGraph) this.getBaseGraph();
 		org.openntf.domino.graph2.DElementStore store = null;
-		if (id instanceof NoteCoordinate) {
-			store = base.findElementStore(id);
-		} else {
-			String typeid = getTypedId(id);
-			if (typeid == null) {
-				store = base.findElementStore(kind);
+		if (kind != null) {
+			store = base.findElementStore(kind);
+		}
+		if (store == null) {
+			if (id instanceof NoteCoordinate) {
+				store = base.findElementStore(id);
 			} else {
-				store = base.findElementStore(typeid);
+				String typeid = getTypedId(id);
+				if (typeid == null) {
+					store = base.getDefaultElementStore();
+				} else {
+					store = base.findElementStore(typeid);
+				}
 			}
 		}
 		Vertex vertex = store.addVertex(id);

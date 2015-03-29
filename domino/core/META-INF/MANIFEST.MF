@@ -6,7 +6,6 @@ Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-Vendor: OpenNTF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.5.0.qualifier
 Implementation-Vendor: OpenNTF

@@ -212,6 +212,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	private Long defaultElementStoreKey_ = null;
+	private DElementStore defaultElementStore_;
 	private Map<Long, DElementStore> elementStoreMap_;
 	private Map<Class<?>, Long> typeMap_;
 	private transient DGraph graph_;
@@ -248,8 +249,16 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	@Override
+	public void setDefaultElementStore(final DElementStore store) {
+		defaultElementStore_ = store;
+	}
+
+	@Override
 	public DElementStore getDefaultElementStore() {
-		return getElementStores().get(defaultElementStoreKey_);
+		if (defaultElementStore_ == null) {
+			defaultElementStore_ = getElementStores().get(defaultElementStoreKey_);
+		}
+		return defaultElementStore_;
 	}
 
 	@Override

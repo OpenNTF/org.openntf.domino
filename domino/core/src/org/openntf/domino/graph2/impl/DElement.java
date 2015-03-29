@@ -86,8 +86,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
-
-					result = doc.getItemValue(propertyName, type);
+					if (doc.hasItem(propertyName)) {
+						result = doc.getItemValue(propertyName, type);
+					}
 					if (result == null) {
 						try {
 							Object raw = doc.get(propertyName);
@@ -320,6 +321,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Map<String, Object> getDelegate() {
+		if (delegate_ instanceof Document) {
+			if (((Document) delegate_).isDead()) {
+				delegate_ = getParent().findDelegate(delegateKey_);
+			}
+		}
 		if (delegate_ == null) {
 			delegate_ = getParent().findDelegate(delegateKey_);
 		}

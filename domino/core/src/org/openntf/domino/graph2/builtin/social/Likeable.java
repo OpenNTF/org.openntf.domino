@@ -6,7 +6,9 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.User;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@TypeValue("Likable")
 public interface Likeable extends DVertexFrame {
 
 	@IncidenceUnique(label = Likes.LABEL, direction = Direction.IN)

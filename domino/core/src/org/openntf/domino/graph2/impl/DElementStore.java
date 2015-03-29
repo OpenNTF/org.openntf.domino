@@ -374,7 +374,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			result = (Edge) chk;
 		} else {
 			Object localkey = localizeKey(id);
-			Map<String, Object> delegate = findElementDelegate(localkey, Edge.class);
+
+			Map<String, Object> delegate = null;
+			try {
+				delegate = findElementDelegate(localkey, Edge.class);
+			} catch (IllegalStateException ise) {
+
+			}
 			if (delegate != null) {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
@@ -444,7 +450,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Map<String, Object> findElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
+	public Map<String, Object> findElementDelegate(final Object delegateKey, final Class<? extends Element> type)
+			throws IllegalStateException, IllegalArgumentException {
 		Map<String, Object> result = null;
 		Object del = getStoreDelegate();
 		if (del instanceof Database) {
@@ -485,10 +492,10 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				}
 			}
 		}
-		if (result == null) {
-			System.out
-					.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
-		}
+		//		if (result == null) {
+		//			System.out
+		//			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
+		//		}
 		if (result != null) {
 			if (type.equals(Element.class)) {
 				return result;
@@ -514,6 +521,10 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 							+ " results in a delegate with a graph type of " + strChk);
 				}
 			}
+		} else {
+			//			return null;
+			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey) + " in store at "
+					+ ((Database) getStoreDelegate()).getApiPath() + " results in a null delegate and therefore cannot be persisted.");
 		}
 		return result;
 	}

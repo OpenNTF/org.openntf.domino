@@ -30,4 +30,8 @@ public class UnimplementedException extends RuntimeException {
 		super(message);
 	}
 
+	public UnimplementedException(final String message, final Throwable paramThrowable) {
+		super(message, paramThrowable);
+	}
+
 }
