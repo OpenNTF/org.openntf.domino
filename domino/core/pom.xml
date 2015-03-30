@@ -11,9 +11,6 @@
 	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
 	<packaging>eclipse-plugin</packaging>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

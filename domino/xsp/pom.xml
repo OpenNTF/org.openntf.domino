@@ -10,9 +10,6 @@
 	<name>OpenNTF Domino API XPages plugin</name>
 	<packaging>eclipse-plugin</packaging>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

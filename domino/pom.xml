@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openntf.domino</groupId>
@@ -31,35 +32,29 @@
 		<module>junit4xpages</module>
 		<module>tests</module>
 		<module>org.openntf.domino.feature.group</module>
- 		<module>org.openntf.domino.updatesite</module>
-    	<module>oda-dist</module>
-  </modules>
+		<module>org.openntf.domino.updatesite</module>
+		<module>oda-dist</module>
+	</modules>
 
 	<build>
 		<plugins>
-		<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.6</version>
-          <configuration>
-  <!--            <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>false</downloadJavadocs>
-            <additionalBuildcommands>
-              <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
-              <buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand>
-              <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand>
-            </additionalBuildcommands>
-            <additionalProjectnatures>
-              <projectnature>org.eclipse.pde.PluginNature</projectnature>
-              <projectnature>org.eclipse.jdt.core.javanature</projectnature>
-            </additionalProjectnatures> -->
-            <classpathContainers>
-              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
-              <classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
-            </classpathContainers>
-          </configuration>
-        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<!-- <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate> 
+						<downloadSources>true</downloadSources> <downloadJavadocs>false</downloadJavadocs> 
+						<additionalBuildcommands> <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand> 
+						<buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand> <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand> 
+						</additionalBuildcommands> <additionalProjectnatures> <projectnature>org.eclipse.pde.PluginNature</projectnature> 
+						<projectnature>org.eclipse.jdt.core.javanature</projectnature> </additionalProjectnatures> -->
+					<classpathContainers>
+						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
+						<classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
+					</classpathContainers>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -171,7 +166,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<licenses>
 		<license>
 			<name>Apache License, V2.0</name>
@@ -180,7 +175,7 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
-	
+
 	<!-- List all developers here -->
 	<developers>
 		<developer>
@@ -223,13 +218,13 @@
 			</properties>
 		</developer>
 	</developers>
-	
-    <distributionManagement>
-      <site>
-        <id>www.openntf.org</id>
-        <url>file://c:\fullsite/</url>
-      </site>
-    </distributionManagement>
-	
+
+	<distributionManagement>
+		<site>
+			<id>www.openntf.org</id>
+			<url>file://c:\fullsite/</url>
+		</site>
+	</distributionManagement>
+
 
 </project>
