@@ -326,7 +326,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (delegate_ instanceof Document) {
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
-				((Document) delegate_).isResponse();
+				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
 				delegate_ = getParent().findDelegate(delegateKey_);
 			}
