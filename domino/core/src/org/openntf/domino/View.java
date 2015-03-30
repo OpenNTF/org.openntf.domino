@@ -29,7 +29,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface View.
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
-		DatabaseDescendant, Externalizable {
+DatabaseDescendant, Externalizable {
 
 	public static class Schema extends FactorySchema<View, lotus.domino.View, Database> {
 		@Override
@@ -426,6 +426,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getAllDocumentsByKey(Object)} instead.
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
@@ -436,6 +439,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
+	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getAllDocumentsByKey(Object, boolean)} instead.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -472,6 +478,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getAllEntriesByKey(java.util.Vector)
 	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getAllEntriesByKey(Object)} instead.
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
@@ -482,6 +491,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
+	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getAllEntriesByKey(Object, boolean)} instead.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -592,7 +604,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object)
-	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.lang.Object)
+	 */
+	/**
+	 * @deprecated Use {@link #getFirstDocumentByKey(Object)} instead.
 	 */
 	@Override
 	@Deprecated
@@ -602,7 +616,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object, boolean)
-	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.lang.Object, boolean)
+	 */
+	/**
+	 * @deprecated Use {@link #getFirstDocumentByKey(Object, boolean)} instead.
 	 */
 	@Override
 	@Deprecated
@@ -612,7 +628,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector)
-	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.util.Vector)
+	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getFirstDocumentByKey(Object)} instead.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -624,7 +642,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector, boolean)
-	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.util.Vector, boolean)
+	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getFirstDocumentByKey(Object, boolean)} instead.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -636,7 +656,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object)
-	 * @deprecated Do not use getEntryByKey, instead use {@link org.openntf.domino.View#getFirstEntryByKey(java.lang.Object)}
+	 */
+	/**
+	 * @deprecated Use {@link #getFirstEntryByKey(Object)} instead.
 	 */
 	@Override
 	@Deprecated
@@ -646,7 +668,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object, boolean)
-	 * @deprecated Do not use getEntryByKey, instead use {@link org.openntf.domino.View#getFirstEntryByKey(java.lang.Object, boolean)}
+	 */
+	/**
+	 * @deprecated Use {@link #getFirstEntryByKey(Object, boolean)} instead.
 	 */
 	@Override
 	@Deprecated
@@ -656,7 +680,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector)
-	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.util.Vector)
+	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getFirstEntryByKey(Object)} instead.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -668,7 +694,9 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
-	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.util.Vector, boolean)
+	 */
+	/**
+	 * @deprecated Pass generic {@link java.util.Collection}s to {@link #getFirstEntryByKey(Object, boolean)} instead.
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

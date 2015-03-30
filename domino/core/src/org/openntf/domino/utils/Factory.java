@@ -65,7 +65,6 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
-import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -682,6 +681,9 @@ public enum Factory {
 	 * 
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, Base)
 	 */
+	/**
+	 * @deprecated Use {@link WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, Base)} instead.
+	 */
 	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
@@ -723,6 +725,7 @@ public enum Factory {
 	 * @param parent
 	 *            the parent
 	 * @return the wrapped object
+	 * @deprecated Use {@link WrapperFactory#fromLotus(Collection, FactorySchema, Base)} instead.
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	@Deprecated
@@ -747,6 +750,7 @@ public enum Factory {
 	 * @param parent
 	 *            the parent
 	 * @return the wrapped object
+	 * @deprecated Use {@link WrapperFactory#fromLotusAsVector(Collection, FactorySchema, Base)} instead.
 	 */
 	@Deprecated
 	@SuppressWarnings("rawtypes")
@@ -810,11 +814,12 @@ public enum Factory {
 	//	}
 
 	/**
-	 * Wrap column values.
+	 * Wrap column values, encapsulating {@link lotus.domino.DateTime}s, {@link lotus.domino.DateRange}s, and {@link lotus.domino.Name}s.
 	 * 
 	 * @param values
 	 *            the values
-	 * @return the java.util. vector
+	 * @return a {@link java.util.Vector} with the objects from the collection appropriately wrapped.
+	 * @deprecated Use {@link WrapperFactory#wrapColumnValues(Collection, Session)} instead.
 	 */
 	@Deprecated
 	public static java.util.Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
@@ -831,6 +836,7 @@ public enum Factory {
 	 * @param the
 	 *            object to unwrap
 	 * @return the unwrapped object
+	 * @deprecated Use {@link WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, Base)} instead.
 	 */
 	@Deprecated
 	public static <T extends lotus.domino.Base> T toLotus(final T base) {
@@ -850,6 +856,7 @@ public enum Factory {
 	 * Gets the session full access.
 	 * 
 	 * @return the session full access
+	 * @deprecated Use {@link #getSession(SessionType)} with {@link SessionType.FULL_ACCESS} instead.
 	 */
 	@Deprecated
 	public static org.openntf.domino.Session getSessionFullAccess() {
@@ -860,6 +867,7 @@ public enum Factory {
 	 * Gets the trusted session.
 	 * 
 	 * @return the trusted session
+	 * @deprecated Use {@link #getSession(SessionType)} with {@link SessionType.TRUSTED} instead.
 	 */
 	@Deprecated
 	public static org.openntf.domino.Session getTrustedSession() {
@@ -870,6 +878,7 @@ public enum Factory {
 	 * Gets the trusted session.
 	 * 
 	 * @return the trusted session
+	 * @deprecated Use {@link #getSession(SessionType)} with {@link SessionType.SIGNER} instead.
 	 */
 	@Deprecated
 	public static org.openntf.domino.Session getSessionAsSigner() {
@@ -1498,6 +1507,7 @@ public enum Factory {
 	 * @param base
 	 *            the base
 	 * @return the session
+	 * @deprecated Use {@link SessionDescendant#getAncestorSession()} on the object instead.
 	 */
 	@Deprecated
 	public static Session getSession(final lotus.domino.Base base) {
