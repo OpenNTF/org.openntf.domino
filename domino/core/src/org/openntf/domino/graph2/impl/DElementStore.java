@@ -521,10 +521,6 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 							+ " results in a delegate with a graph type of " + strChk);
 				}
 			}
-		} else {
-			//			return null;
-			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey) + " in store at "
-					+ ((Database) getStoreDelegate()).getApiPath() + " results in a null delegate and therefore cannot be persisted.");
 		}
 		return result;
 	}
