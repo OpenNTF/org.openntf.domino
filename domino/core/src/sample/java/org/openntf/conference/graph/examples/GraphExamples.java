@@ -3,6 +3,7 @@ package org.openntf.conference.graph.examples;
 import org.openntf.conference.graph.Attendee;
 import org.openntf.conference.graph.ConferenceGraph;
 import org.openntf.domino.Session;
+import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -22,7 +23,7 @@ public class GraphExamples {
 		return theConference_;
 	}
 
-	public FramedGraph getGraph() {
+	public FramedGraph<DGraph> getGraph() {
 		return getConference().getFramedGraph();
 	}
 

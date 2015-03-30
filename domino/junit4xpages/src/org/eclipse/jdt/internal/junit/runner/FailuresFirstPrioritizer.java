@@ -25,62 +25,62 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FailuresFirstPrioritizer implements ITestPrioritizer {
 	private HashSet fPriorities;
 
-	public FailuresFirstPrioritizer(String[] priorities) {
-		fPriorities= new HashSet(Arrays.asList(priorities));
+	public FailuresFirstPrioritizer(final String[] priorities) {
+		fPriorities = new HashSet(Arrays.asList(priorities));
 	}
 
-	public Test prioritize(Test suite) {
+	public Test prioritize(final Test suite) {
 		doPrioritize(suite, new ArrayList());
 		return suite;
 	}
 
-	private void doPrioritize(Test suite, List path) {
+	private void doPrioritize(final Test suite, final List path) {
 		if (suite instanceof TestCase) {
-			TestCase testCase= (TestCase) suite;
+			TestCase testCase = (TestCase) suite;
 			if (hasPriority(testCase))
 				reorder(testCase, path);
 		} else if (suite instanceof TestSuite) {
-			TestSuite aSuite= (TestSuite)suite;
+			TestSuite aSuite = (TestSuite) suite;
 			path.add(suite);
 			loopTests(path, aSuite);
-			path.remove(path.size()-1);
+			path.remove(path.size() - 1);
 		} else if (suite instanceof TestDecorator) {
-			TestDecorator aDecorator= (TestDecorator)suite;
+			TestDecorator aDecorator = (TestDecorator) suite;
 			path.add(aDecorator);
 			doPrioritize(aDecorator.getTest(), path);
-			path.remove(path.size()-1);
+			path.remove(path.size() - 1);
 		}
 	}
 
-	private void loopTests(List path, TestSuite aSuite) {
-		for (Enumeration e= aSuite.tests(); e.hasMoreElements();) {
-			doPrioritize((Test)e.nextElement(), path);
+	private void loopTests(final List path, final TestSuite aSuite) {
+		for (Enumeration e = aSuite.tests(); e.hasMoreElements();) {
+			doPrioritize((Test) e.nextElement(), path);
 		}
 	}
 
-
-	private void reorder(Test test, List path) {
-		doReorder(test, path, path.size()-1);
+	private void reorder(final Test test, final List path) {
+		doReorder(test, path, path.size() - 1);
 	}
 
-	private void doReorder(Test test, List path, int top) {
+	private void doReorder(final Test test, final List path, final int top) {
 		if (top < 0)
 			return;
-		Test topTest= (Test) path.get(top);
+		Test topTest = (Test) path.get(top);
 		// only reorder TestSuites
 		if (topTest instanceof TestSuite) {
-			TestSuite suite= (TestSuite) topTest;
+			TestSuite suite = (TestSuite) topTest;
 			moveTestToFront(suite, test);
 		}
-		doReorder(topTest, path, top-1);
+		doReorder(topTest, path, top - 1);
 	}
 
-	void moveTestToFront(TestSuite suite, Test test) {
-		Vector tests= (Vector)getField(suite, "fTests"); //$NON-NLS-1$
-		for(int i= 0; i < tests.size(); i++) {
+	void moveTestToFront(final TestSuite suite, final Test test) {
+		Vector tests = (Vector) getField(suite, "fTests"); //$NON-NLS-1$
+		for (int i = 0; i < tests.size(); i++) {
 			if (tests.get(i) == test) {
 				tests.remove(i);
 				tests.insertElementAt(test, 0);
@@ -88,26 +88,25 @@ public class FailuresFirstPrioritizer implements ITestPrioritizer {
 		}
 	}
 
-
-	private boolean hasPriority(TestCase testCase) {
+	private boolean hasPriority(final TestCase testCase) {
 		return fPriorities.contains(testCase.toString());
 	}
 
-	public static Object getField(Object object, String fieldName) {
-	    return getFieldInClass(object, fieldName, object.getClass());
+	public static Object getField(final Object object, final String fieldName) {
+		return getFieldInClass(object, fieldName, object.getClass());
 	}
 
-	private static Object getFieldInClass(Object object, String fieldName, Class clazz) {
-		Field field= null;
+	private static Object getFieldInClass(final Object object, final String fieldName, final Class clazz) {
+		Field field = null;
 		if (clazz == null)
 			return null;
 		try {
-			field= clazz.getDeclaredField(fieldName);
-	        field.setAccessible(true);
-	        return field.get(object);
-	    } catch (Exception e) {
-	        // fall through
-	    }
-	    return getFieldInClass(object, fieldName, clazz.getSuperclass());
+			field = clazz.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			return field.get(object);
+		} catch (Exception e) {
+			// fall through
+		}
+		return getFieldInClass(object, fieldName, clazz.getSuperclass());
 	}
 }

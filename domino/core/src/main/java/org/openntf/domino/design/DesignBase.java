@@ -107,9 +107,8 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//	public String getName();
 
 	/**
-	 * Retruns the On-Disk folder component
+	 * Returns the On-Disk folder component
 	 * 
-	 * @return
 	 */
 	//	public String getOnDiskFolder();
 	//

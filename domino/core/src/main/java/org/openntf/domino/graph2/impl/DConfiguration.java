@@ -108,7 +108,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					result.putAll(crystals);
 				}
 			}
-			return ((FastMap) result).unmodifiable();
+			return ((FastMap<String, Method>) result).unmodifiable();
 		}
 
 		public Map<String, Method> getPropertiesGetters(final Class<?> type) {
@@ -124,7 +124,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					result.putAll(crystals);
 				}
 			}
-			return ((FastMap) result).unmodifiable();
+			return ((FastMap<String, Method>) result).unmodifiable();
 		}
 
 		public Map<String, Method> getPropertiesSetters(final Class<?> type) {

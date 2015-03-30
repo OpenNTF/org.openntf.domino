@@ -70,9 +70,7 @@ public interface Base {
 	public boolean fireListener(IDominoEvent event);
 
 	/**
-	 * Returns true, if we have any listener
-	 * 
-	 * @return
+	 * @return whether we have any listeners
 	 */
 	boolean hasListeners();
 

@@ -101,6 +101,7 @@ public class DVertexFrameComparator implements Comparator<DVertexFrame>, Seriali
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private int compareObjects(final Object arg0, final Object arg1) {
 		int result = 0;
 		if (arg0 == null && arg1 == null) {
@@ -136,7 +137,7 @@ public class DVertexFrameComparator implements Comparator<DVertexFrame>, Seriali
 			result = d0.compareTo(d1);
 		} else if (arg0 != null && arg1 != null) {
 			if (arg0 instanceof Comparable && arg1 instanceof Comparable) {
-				result = ((Comparable) arg0).compareTo(arg1);
+				result = ((Comparable<Object>) arg0).compareTo(arg1);
 			}
 		}
 		return result;

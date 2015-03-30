@@ -22,7 +22,7 @@ public enum OpenNTFvLegacyBenchmark {
 	private static final String dbPath = "events4.nsf";
 
 	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
-			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
+		"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
 	public static class Doer implements Runnable {
 		int nameCount = 0;
@@ -408,6 +408,7 @@ public enum OpenNTFvLegacyBenchmark {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(final String[] args) {
 		TestRunnerUtil.runAsNotesThread(RawLegacyDoer.class, THREAD_COUNT);
 

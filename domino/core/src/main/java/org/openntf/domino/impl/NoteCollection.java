@@ -39,7 +39,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection, Database> implements
-		org.openntf.domino.NoteCollection {
+org.openntf.domino.NoteCollection {
 	//private static final Logger log_ = Logger.getLogger(NoteCollection.class.getName());
 
 	/**
@@ -1788,6 +1788,10 @@ public class NoteCollection extends BaseNonThreadSafe<org.openntf.domino.NoteCol
 				break;
 			case VIEWS:
 				setSelectViews(select);
+				break;
+			case ALL_BUT_NOT:
+				break;
+			default:
 				break;
 
 			}

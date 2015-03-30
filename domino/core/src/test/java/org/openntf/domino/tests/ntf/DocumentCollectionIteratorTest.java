@@ -7,6 +7,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class DocumentCollectionIteratorTest implements Runnable {
 	private static int THREAD_COUNT = 1;
 

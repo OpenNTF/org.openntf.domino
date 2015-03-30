@@ -43,6 +43,7 @@ import com.ibm.commons.util.StringUtil;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("unused")
 public class OsgiCommandProvider implements CommandProvider {
 	private static final String tab = "\t";
 	private static final String newline = "\r\n";

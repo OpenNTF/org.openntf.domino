@@ -18,6 +18,7 @@ import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.frames.FramedTransactionalGraph;
 
+@SuppressWarnings("unused")
 public class DataDumper implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";
@@ -67,6 +68,7 @@ public class DataDumper implements Runnable {
 
 	}
 
+	@SuppressWarnings({ "deprecation" })
 	public void loadData(final org.openntf.domino.Session s, final FramedTransactionalGraph<DGraph> framedGraph) {
 		HashMap<String, Location> locs = new HashMap<String, Location>();
 		HashMap<String, Track> tracks = new HashMap<String, Track>();
@@ -97,10 +99,10 @@ public class DataDumper implements Runnable {
 						track.setDescription(doc.getItemValueString("Categories"));
 					}
 
-					Date startDate = (Date) doc.getItemValue("StartDate", Date.class);
-					Date startDateTime = (Date) doc.getItemValue("StartDateTime", Date.class);
-					Date endDate = (Date) doc.getItemValue("EndDate", Date.class);
-					Date endDateTime = (Date) doc.getItemValue("EndDateTime", Date.class);
+					Date startDate = doc.getItemValue("StartDate", Date.class);
+					Date startDateTime = doc.getItemValue("StartDateTime", Date.class);
+					Date endDate = doc.getItemValue("EndDate", Date.class);
+					Date endDateTime = doc.getItemValue("EndDateTime", Date.class);
 
 					Calendar startCal = new GregorianCalendar(TimeZone.getTimeZone("EST"));
 					startCal.setTime(startDate);

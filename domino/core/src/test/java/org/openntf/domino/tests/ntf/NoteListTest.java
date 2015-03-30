@@ -16,6 +16,7 @@ import org.openntf.domino.big.impl.NoteSet;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+@SuppressWarnings({ "deprecation", "unused" })
 public class NoteListTest implements Runnable {
 	private static int THREAD_COUNT = 1;
 	private long marktime;
@@ -248,7 +249,7 @@ public class NoteListTest implements Runnable {
 
 	protected Session getSession() {
 		try {
-			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
+			Session session = Factory.getWrapperFactory().fromLotus(NotesFactory.createSession(), Session.SCHEMA, null);
 			return session;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);

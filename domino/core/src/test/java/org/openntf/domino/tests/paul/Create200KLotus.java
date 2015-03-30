@@ -12,6 +12,7 @@ import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class Create200KLotus {
 
 	public Create200KLotus() {

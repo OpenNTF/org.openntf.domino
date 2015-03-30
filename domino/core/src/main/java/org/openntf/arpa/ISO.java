@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
  * @author dolson
  * 
  */
+@SuppressWarnings("unused")
 public enum ISO {
 	;
 

@@ -9,7 +9,9 @@ import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class ItemFlagTest extends AbstractDominoRunnable {
+	private static final long serialVersionUID = 1L;
 	private static int THREAD_COUNT = 1;
 
 	public static void main(final String[] args) {

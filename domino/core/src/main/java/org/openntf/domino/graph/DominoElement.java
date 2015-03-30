@@ -289,6 +289,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getPropertyKeys().contains(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final String key) {
 		return (T) getProperty(key, java.lang.Object.class);

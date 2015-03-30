@@ -43,7 +43,6 @@ public class PeriodicScheduler implements Scheduler {
 	/**
 	 * Constructs a new periodic scheduler
 	 * 
-	 * @param defString
 	 */
 	public PeriodicScheduler(String defString) {
 		int sign;

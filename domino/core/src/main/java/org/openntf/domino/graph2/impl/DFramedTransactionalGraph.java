@@ -29,6 +29,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		super(baseGraph, config);
 	}
 
+	@SuppressWarnings("unchecked")
 	public EdgeFrame toEdgeFrame(final Map<String, Object> map) {
 		EdgeFrame result = null;
 		Object id = map.get("id");
@@ -64,6 +65,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public VertexFrame toVertexFrame(final Map<String, Object> map) {
 		VertexFrame result = null;
 		Object id = map.get("id");

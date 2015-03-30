@@ -68,7 +68,6 @@ public enum Configuration {
 	/**
 	 * Adds a configuration Object to the dirty-set so that it can be flushed the next few seconds
 	 * 
-	 * @param configurationObject
 	 */
 	public static void addDirty(final ConfigurationObject configurationObject) {
 		// TODO Auto-generated method stub
@@ -150,8 +149,9 @@ public enum Configuration {
 	/**
 	 * Utility method, to compute MD5 sum of a string.
 	 * 
-	 * @param md5
-	 * @return
+	 * @param input
+	 *            The string to hash
+	 * @return The MD5 sum of the string
 	 */
 	public static String MD5(final String input) {
 		String ret = md5Cache_.get(input);

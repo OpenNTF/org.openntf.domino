@@ -74,6 +74,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("null")
 	protected Object invokeTasklet(final NotesContext ctx, final NSFComponentModule module) throws Exception {
 
 		ClassLoader mcl = null;
@@ -95,6 +96,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 
 		if (sessionFactory != null) {
 			Factory.setSessionFactory(sessionFactory, SessionType.CURRENT);
+			@SuppressWarnings("unused")
 			org.openntf.domino.Session current = Factory.getSession(SessionType.CURRENT);
 
 		}

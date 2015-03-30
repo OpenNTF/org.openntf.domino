@@ -150,6 +150,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		return (T) result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final String key) {
 		if ("form".equalsIgnoreCase(key)) {
@@ -245,6 +246,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object removeProperty(final String key) {
 		getParent().startTransaction(this);

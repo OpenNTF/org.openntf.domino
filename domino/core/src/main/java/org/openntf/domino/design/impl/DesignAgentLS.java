@@ -17,7 +17,6 @@
 package org.openntf.domino.design.impl;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * 

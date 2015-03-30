@@ -29,6 +29,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
+import com.ibm.commons.util.StringUtil;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -40,7 +41,7 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unused" })
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static class GraphCacheLoader extends CacheLoader {
 		private transient Database rawDb_;
@@ -464,7 +465,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 				result = getRawDatabase().getDocumentWithKey(unid, createOnFail);
 				if (result != null) {
 					String localUnid = result.getUniversalID();
-					if (!unid.equalsIgnoreCase(localUnid)) {
+					if (!StringUtil.equalsIgnoreCase(unid, localUnid)) {
 						log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid + ", Result: " + localUnid);
 					}
 					//					synchronized (map) {
@@ -669,7 +670,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	// private boolean inTransaction_ = false;
-	@SuppressWarnings("unused")
 	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
 
 	};
@@ -743,7 +743,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (txn != null) {
 			if (getCache().size() > 0) {
 				// System.out.println("Reapplying cache to " + getCache().size() + " elements...");
-				@SuppressWarnings("unused")
 				int vCount = 0;
 				Set<Element> elems = getCacheValues();
 				for (Element elem : elems) {

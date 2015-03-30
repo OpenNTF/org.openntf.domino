@@ -939,6 +939,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 	public void recycle() throws NotesException {
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	public void recycle(final Vector arg0) throws NotesException {

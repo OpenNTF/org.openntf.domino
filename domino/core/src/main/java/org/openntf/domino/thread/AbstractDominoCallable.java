@@ -17,8 +17,8 @@ import org.openntf.domino.xots.Tasklet;
  * 
  * @author Nathan T. Freeman
  */
+@SuppressWarnings("unused")
 public abstract class AbstractDominoCallable<T> extends Observable implements Tasklet.Interface, Callable<T>, Serializable {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoCallable.class.getName());
 	private static final long serialVersionUID = 1L;
 

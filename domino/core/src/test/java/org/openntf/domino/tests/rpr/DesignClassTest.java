@@ -66,7 +66,7 @@ public class DesignClassTest {
 		DatabaseDesign design = db.getDesign();
 		System.out.println("Design: " + design.getClass().getName());
 		DesignCollection<DesignBase> allDesign = design.getDesignElements("@ALL");
-		Map<Class, AtomicInteger> counter = new HashMap<Class, AtomicInteger>();
+		Map<Class<?>, AtomicInteger> counter = new HashMap<Class<?>, AtomicInteger>();
 		for (DesignBase des : allDesign) {
 			if (!counter.containsKey(des.getClass())) {
 				counter.put(des.getClass(), new AtomicInteger());
@@ -81,7 +81,8 @@ public class DesignClassTest {
 			} else {
 				DesignCollection<? extends DesignBase> ret = design.getDesignElements(cls);
 				j = 0;
-				for (DesignBase b : ret) {
+				for (@SuppressWarnings("unused")
+				DesignBase b : ret) {
 					i++;
 					j++;
 				}

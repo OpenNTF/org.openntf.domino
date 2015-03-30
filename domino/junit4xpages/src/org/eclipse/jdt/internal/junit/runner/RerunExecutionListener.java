@@ -17,13 +17,14 @@ public class RerunExecutionListener extends FirstRunExecutionListener {
 	// Don't send ids here, since they don't match the ids of the original run:
 	// RemoteTestRunner#rerunTest(..) reloads Test, so ITestReferences are not equals(..).
 
-	public RerunExecutionListener(MessageSender sender, TestIdMap ids) {
+	public RerunExecutionListener(final MessageSender sender, final TestIdMap ids) {
 		super(sender, ids);
 	}
 
 	private String fStatus = RemoteTestRunner.RERAN_OK;
 
-	public void notifyTestFailed(TestReferenceFailure failure) {
+	@Override
+	public void notifyTestFailed(final TestReferenceFailure failure) {
 		sendFailure(failure, MessageIds.RTRACE_START, MessageIds.RTRACE_END);
 
 		String status = failure.getStatus();
@@ -35,11 +36,13 @@ public class RerunExecutionListener extends FirstRunExecutionListener {
 			throw new IllegalArgumentException(status);
 	}
 
-	public void notifyTestStarted(ITestIdentifier test) {
+	@Override
+	public void notifyTestStarted(final ITestIdentifier test) {
 		// do nothing
 	}
 
-	public void notifyTestEnded(ITestIdentifier test) {
+	@Override
+	public void notifyTestEnded(final ITestIdentifier test) {
 		// do nothing
 	}
 

@@ -30,6 +30,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
+@SuppressWarnings("unused")
 public class Graph2Demo implements Runnable {
 	private static int THREAD_COUNT = 1;
 	private long marktime;

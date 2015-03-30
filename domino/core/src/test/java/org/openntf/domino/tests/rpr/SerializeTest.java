@@ -28,6 +28,7 @@ import org.openntf.domino.utils.Factory.ThreadConfig;
 @RunWith(DominoJUnitRunner.class)
 public class SerializeTest {
 
+	@SuppressWarnings("unchecked")
 	protected <T> T test(final T obj, final boolean reboot) throws IOException, ClassNotFoundException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = new ObjectOutputStream(bos);

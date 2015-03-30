@@ -215,12 +215,12 @@ public class IndexDatabase implements IScannerStateManager {
 			//			System.out.println("ViewEntryCollection strategy returned " + vec.getCount() + " entries.");
 			return result;
 		}
-		String val = (String) startEntry.getColumnValue(IndexDatabase.TERM_KEY_NAME, String.class);
+		String val = startEntry.getColumnValue(IndexDatabase.TERM_KEY_NAME, String.class);
 		result.add(val);
 		ViewNavigator nav = getTermView().createViewNavFrom(startEntry, count);
 		for (int i = 1; i < count; i++) {
 			ViewEntry nextEntry = nav.getNextSibling();
-			val = (String) nextEntry.getColumnValue(IndexDatabase.TERM_KEY_NAME, String.class);
+			val = nextEntry.getColumnValue(IndexDatabase.TERM_KEY_NAME, String.class);
 			result.add(val);
 		}
 		return result;
@@ -322,7 +322,7 @@ public class IndexDatabase implements IScannerStateManager {
 		scanner.setCaseSensitive(getCaseSensitive());
 		dbDoc.replaceItemValue(IndexDatabase.DB_TITLE_NAME, db.getTitle());
 		if (dbDoc.hasItem(DB_LAST_INDEX_NAME)) {
-			scanner.setLastScanDate((Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
+			scanner.setLastScanDate(dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
 			//			scanner.setStopTokenList(getStopList());
 			//			scanner.setIgnoreDollar(true);
 			//			Object tokenLocationObject = dbDoc.getItemValue(DB_TOKEN_LOCATION_NAME, Map.class);
@@ -331,8 +331,7 @@ public class IndexDatabase implements IScannerStateManager {
 			//			}
 		}
 		if (dbDoc.hasItem(IndexDatabase.DB_DOC_LIST_NAME)) {
-			scanner.setCollection((org.openntf.domino.DocumentCollection) dbDoc.getItemValue(IndexDatabase.DB_DOC_LIST_NAME,
-					org.openntf.domino.DocumentCollection.class));
+			scanner.setCollection(dbDoc.getItemValue(IndexDatabase.DB_DOC_LIST_NAME, org.openntf.domino.DocumentCollection.class));
 		}
 		Date scanDate = new Date();
 		scanDatabase(db, scanner);
@@ -691,7 +690,6 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbids) {
@@ -703,7 +701,6 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbMap.keySet()) {
@@ -793,7 +790,7 @@ public class IndexDatabase implements IScannerStateManager {
 	@Override
 	public Date getLastIndexDate(final Object mapKey) {
 		Document dbDoc = getDbDocument((String) mapKey);
-		Date result = (Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
+		Date result = dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
 		if (result == null)
 			result = new Date(0);
 		return result;
@@ -845,7 +842,7 @@ public class IndexDatabase implements IScannerStateManager {
 				scanner = (DocumentScanner) o;
 			} else {
 				System.out
-						.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
+				.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
 			}
 			if (status != null) {
 				//				System.out.println("DEBUG: Received update with status " + status.name());

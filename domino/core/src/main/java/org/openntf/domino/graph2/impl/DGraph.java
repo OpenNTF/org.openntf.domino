@@ -352,7 +352,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			String server = "";
 			if (key.contains("!!")) {
 				server = "";	//TODO NTF parse key string to find server name in form of 'Server!!path.nsf'
-				key = key;	//TODO NTF parse again
+				//key = key;	//TODO NTF parse again
 			}
 			DbDirectory dir = session.getDbDirectory(server);
 			result = dir.openDatabase(key);
@@ -394,7 +394,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			String server = "";
 			if (key.contains("!!")) {
 				server = "";	//TODO NTF parse key string to find server name in form of 'Server!!path.nsf'
-				key = key;	//TODO NTF parse again
+				//key = key;	//TODO NTF parse again
 			}
 			DbDirectory dir = session.getDbDirectory(server);
 			result = dir.openDatabase(key);

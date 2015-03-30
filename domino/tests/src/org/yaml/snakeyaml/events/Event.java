@@ -18,60 +18,60 @@ package org.yaml.snakeyaml.events;
 import org.yaml.snakeyaml.error.Mark;
 
 /**
- * Basic unit of output from a {@link org.yaml.snakeyaml.parser.Parser} or input
- * of a {@link org.yaml.snakeyaml.emitter.Emitter}.
+ * Basic unit of output from a {@link org.yaml.snakeyaml.parser.Parser} or input of a {@link org.yaml.snakeyaml.emitter.Emitter}.
  */
 public abstract class Event {
-    public enum ID {
-        Alias, DocumentEnd, DocumentStart, MappingEnd, MappingStart, Scalar, SequenceEnd, SequenceStart, StreamEnd, StreamStart
-    }
+	public enum ID {
+		Alias, DocumentEnd, DocumentStart, MappingEnd, MappingStart, Scalar, SequenceEnd, SequenceStart, StreamEnd, StreamStart
+	}
 
-    private final Mark startMark;
-    private final Mark endMark;
+	private final Mark startMark;
+	private final Mark endMark;
 
-    public Event(Mark startMark, Mark endMark) {
-        this.startMark = startMark;
-        this.endMark = endMark;
-    }
+	public Event(final Mark startMark, final Mark endMark) {
+		this.startMark = startMark;
+		this.endMark = endMark;
+	}
 
-    public String toString() {
-        return "<" + this.getClass().getName() + "(" + getArguments() + ")>";
-    }
+	@Override
+	public String toString() {
+		return "<" + this.getClass().getName() + "(" + getArguments() + ")>";
+	}
 
-    public Mark getStartMark() {
-        return startMark;
-    }
+	public Mark getStartMark() {
+		return startMark;
+	}
 
-    public Mark getEndMark() {
-        return endMark;
-    }
+	public Mark getEndMark() {
+		return endMark;
+	}
 
-    /**
-     * @see "__repr__ for Event in PyYAML"
-     */
-    protected String getArguments() {
-        return "";
-    }
+	/**
+	 * @see "__repr__ for Event in PyYAML"
+	 */
+	protected String getArguments() {
+		return "";
+	}
 
-    public abstract boolean is(Event.ID id);
+	public abstract boolean is(Event.ID id);
 
-    /*
-     * for tests only
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Event) {
-            return toString().equals(obj.toString());
-        } else {
-            return false;
-        }
-    }
+	/*
+	 * for tests only
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj instanceof Event) {
+			return toString().equals(obj.toString());
+		} else {
+			return false;
+		}
+	}
 
-    /*
-     * for tests only
-     */
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
+	/*
+	 * for tests only
+	 */
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 }

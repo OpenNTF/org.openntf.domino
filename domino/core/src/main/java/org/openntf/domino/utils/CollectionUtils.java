@@ -444,8 +444,8 @@ public enum CollectionUtils {
 		return null;
 	}
 
-	public static Iterable chain(final Iterable... iterables) {
-		return new ChainedIterable(iterables);
+	public static <T> Iterable<T> chain(final Iterable<T>... iterables) {
+		return new ChainedIterable<T>(iterables);
 	}
 
 	//	/**

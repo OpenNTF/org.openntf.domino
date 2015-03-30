@@ -59,6 +59,7 @@ public class DProxyVertex extends DVertex {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getProperty(final String key) {
 		if (isGraphKey(key)) {

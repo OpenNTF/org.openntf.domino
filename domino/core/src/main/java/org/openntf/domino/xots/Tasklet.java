@@ -251,8 +251,6 @@ public @interface Tasklet {
 
 	/**
 	 * Should the scheduled tasklet run on all servers?
-	 * 
-	 * @return
 	 */
 	boolean onAllServers() default false;
 

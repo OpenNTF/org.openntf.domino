@@ -17,7 +17,6 @@ import org.openntf.domino.annotations.Incomplete;
  */
 @Incomplete
 public class DominoExecutor extends AbstractDominoExecutor {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
 
 	/**
@@ -33,6 +32,7 @@ public class DominoExecutor extends AbstractDominoExecutor {
 			setWrappedTask(runnable);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public V call() throws Exception {
 			return (V) callOrRun();

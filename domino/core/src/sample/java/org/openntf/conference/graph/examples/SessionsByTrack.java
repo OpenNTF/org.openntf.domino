@@ -11,7 +11,9 @@ import org.openntf.conference.graph.Sponsor;
 import org.openntf.conference.graph.Sponsor.Level;
 import org.openntf.conference.graph.Track;
 import org.openntf.domino.graph2.DEdge;
+import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrameComparator;
+import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
 
 import com.google.common.collect.Lists;
@@ -27,6 +29,7 @@ public class SessionsByTrack implements Runnable {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void run() {
 		HashMap<String, String> trackLkup = new HashMap<String, String>();
@@ -40,7 +43,7 @@ public class SessionsByTrack implements Runnable {
 		marktime = System.nanoTime();
 		try {
 			timelog("Beginning Sessions By Track...");
-			FramedGraph graph2 = new ConferenceGraph().getFramedGraph();
+			FramedGraph<DGraph> graph2 = new ConferenceGraph().getFramedGraph();
 			Iterable<Sponsor> sponsors = graph2.getVertices("Level", Level.BRONZE, Sponsor.class);
 
 			for (Sponsor s : sponsors) {
@@ -53,7 +56,7 @@ public class SessionsByTrack implements Runnable {
 
 				Track dev = graph.getFramedGraph().getVertex(track.getValue(), Track.class);
 				Iterable<Presentation> presentations = dev.getIncludesSessions();
-				Ordering ord = Ordering.from(new DVertexFrameComparator("SessionID"));
+				Ordering<DVertexFrame> ord = Ordering.from(new DVertexFrameComparator("SessionID"));
 				List<Presentation> presOrdered = ord.sortedCopy(presentations);
 				for (Presentation pres : presOrdered) {
 					Attendee att = pres.getPresentingAttendees().iterator().next();
@@ -67,7 +70,7 @@ public class SessionsByTrack implements Runnable {
 
 				Track dev = graph.getFramedGraph().getVertex(track.getValue(), Track.class);
 				Iterable<Presentation> presentations = dev.getIncludesSessions();
-				Ordering ord = Ordering.from(new DVertexFrameComparator("SessionTitle"));
+				Ordering<DVertexFrame> ord = Ordering.from(new DVertexFrameComparator("SessionTitle"));
 				List<Presentation> presOrdered = ord.sortedCopy(presentations);
 				for (Presentation pres : presOrdered) {
 
@@ -77,7 +80,7 @@ public class SessionsByTrack implements Runnable {
 
 			// Throws java.lang.ClassCastException: com.sun.proxy.$Proxy11 incompatible with com.tinkerpop.blueprints.Vertex
 			// Yet to track down why
-			List presentations = Lists.newArrayList(graph.getFramedGraph().getVertices(null, null, Presentation.class));
+			List<Presentation> presentations = Lists.newArrayList(graph.getFramedGraph().getVertices(null, null, Presentation.class));
 
 			//GremlinPipeline pipe = new GremlinPipeline(presentations).outE("PresentedBy").outV().dedup();
 			GremlinPipeline pipe = new GremlinPipeline(presentations).outE("PresentedBy");

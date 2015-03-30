@@ -46,7 +46,6 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * 
 	 * @author Roland Praml, FOCONIS AG
 	 * 
-	 * @param <V>
 	 */
 	public static class XotsWrappedCallable<V> extends XotsWrappedTask implements IWrappedCallable<V> {
 
@@ -93,7 +92,6 @@ public class XotsDominoExecutor extends DominoExecutor {
 	 * 
 	 * @author Roland Praml, FOCONIS AG
 	 * 
-	 * @param <V>
 	 */
 	protected static class XotsBundleTasklet extends XotsWrappedTask implements IWrappedCallable<Object> {
 

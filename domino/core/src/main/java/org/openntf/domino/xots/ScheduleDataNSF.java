@@ -13,9 +13,6 @@ public class ScheduleDataNSF extends ScheduleData {
 	 * 
 	 * @param dbPath
 	 *            the local DB-path
-	 * @param taskletName
-	 * @param schedules
-	 * @param onAllServers
 	 */
 	public ScheduleDataNSF(final String dbPath, final String taskletName, final String[] schedules, final boolean onAllServers) {
 		dbPath_ = dbPath;

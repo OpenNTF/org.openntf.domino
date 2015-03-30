@@ -11,10 +11,6 @@ public enum XotsUtil {
 	/**
 	 * Returns the schedule settings of the given class
 	 * 
-	 * @param clazz
-	 * @return
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
 	 */
 	public static ScheduleData getSchedule(final String replicaId, final Class<?> clazz) throws IllegalAccessException,
 	InstantiationException {
@@ -43,9 +39,6 @@ public enum XotsUtil {
 
 	/**
 	 * Returns the schedule settings of the given object
-	 * 
-	 * @param clazz
-	 * @return
 	 */
 	public static String[] getSchedule(final Object obj) {
 		Tasklet annot = obj.getClass().getAnnotation(Tasklet.class);

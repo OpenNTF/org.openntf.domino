@@ -11,6 +11,7 @@ import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class LargishSortedCollectionTest implements Runnable {
 	private static int THREAD_COUNT = 1;
 

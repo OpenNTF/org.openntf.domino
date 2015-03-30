@@ -239,6 +239,7 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 		add(filepath, nc.getNoteIDs());
 	}
 
+	@SuppressWarnings("deprecation")
 	public void add(final DocumentCollection dc) {
 		add(Factory.toNoteCollection(dc));
 	}

@@ -30,8 +30,9 @@ import org.eclipse.jdt.internal.junit.runner.JUnitMessages;
 import org.eclipse.jdt.internal.junit.runner.NullPrioritizer;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JUnit3TestLoader implements ITestLoader {
-	private static final String SUITE_METHODNAME= "suite"; //$NON-NLS-1$
+	private static final String SUITE_METHODNAME = "suite"; //$NON-NLS-1$
 	private static final String SET_UP_TEST_METHOD_NAME = "setUpTest"; //$NON-NLS-1$
 
 	// WANT: give test loaders a schema
@@ -44,38 +45,39 @@ public class JUnit3TestLoader implements ITestLoader {
 	 *      org.eclipse.jdt.internal.junit.runner.RunFailureListener,
 	 *      org.eclipse.jdt.internal.junit.runner.TestIdMap)
 	 */
-	public ITestReference[] loadTests(Class[] testClasses, String testName, String[] failureNames, RemoteTestRunner listener) {
+	public ITestReference[] loadTests(final Class[] testClasses, final String testName, final String[] failureNames,
+			final RemoteTestRunner listener) {
 		// instantiate all tests
-		ITestReference[] suites= new ITestReference[testClasses.length];
+		ITestReference[] suites = new ITestReference[testClasses.length];
 		ITestPrioritizer prioritizer;
 
 		if (failureNames != null)
-			prioritizer= new FailuresFirstPrioritizer(failureNames);
+			prioritizer = new FailuresFirstPrioritizer(failureNames);
 		else
-			prioritizer= new NullPrioritizer();
+			prioritizer = new NullPrioritizer();
 
-		for (int i= 0; i < suites.length; i++) {
-			Class testClassName= testClasses[i];
-			Test test= getTest(testClassName, testName, listener);
+		for (int i = 0; i < suites.length; i++) {
+			Class testClassName = testClasses[i];
+			Test test = getTest(testClassName, testName, listener);
 			prioritizer.prioritize(test);
-			suites[i]= new JUnit3TestReference(test);
+			suites[i] = new JUnit3TestReference(test);
 		}
 
 		return suites;
 	}
 
-	private Test createTest(String testName, Class testClass) {
-		Class[] classArgs= { String.class };
+	private Test createTest(final String testName, final Class testClass) {
+		Class[] classArgs = { String.class };
 		Test test;
-		Constructor constructor= null;
+		Constructor constructor = null;
 		try {
 			try {
-				constructor= testClass.getConstructor(classArgs);
-				test= (Test) constructor.newInstance(new Object[] { testName });
+				constructor = testClass.getConstructor(classArgs);
+				test = (Test) constructor.newInstance(new Object[] { testName });
 			} catch (NoSuchMethodException e) {
 				// try the no arg constructor supported in 3.8.1
-				constructor= testClass.getConstructor(new Class[0]);
-				test= (Test) constructor.newInstance(new Object[0]);
+				constructor = testClass.getConstructor(new Class[0]);
+				test = (Test) constructor.newInstance(new Object[0]);
 				if (test instanceof TestCase)
 					((TestCase) test).setName(testName);
 			}
@@ -90,13 +92,13 @@ public class JUnit3TestLoader implements ITestLoader {
 		return warning("Could not create test \'" + testName + "\' "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public Test getTest(Class testClass, String testName, RemoteTestRunner failureListener) {
+	public Test getTest(final Class testClass, final String testName, final RemoteTestRunner failureListener) {
 		if (testName != null) {
 			return setupTest(testClass, createTest(testName, testClass));
 		}
-		Method suiteMethod= null;
+		Method suiteMethod = null;
 		try {
-			suiteMethod= testClass.getMethod(JUnit3TestLoader.SUITE_METHODNAME, new Class[0]);
+			suiteMethod = testClass.getMethod(JUnit3TestLoader.SUITE_METHODNAME, new Class[0]);
 		} catch (Exception e) {
 			// try to extract a test suite automatically
 			return new TestSuite(testClass);
@@ -105,41 +107,40 @@ public class JUnit3TestLoader implements ITestLoader {
 			return warning(JUnitMessages.getString("RemoteTestRunner.error.suite.notstatic"));//$NON-NLS-1$
 		}
 		try {
-			Test test= (Test) suiteMethod.invoke(null, new Class[0]); // static
+			Test test = (Test) suiteMethod.invoke(null, (Object[]) (new Class[0])); // static
 			if (test != null) {
 				return test;
 			}
 			return warning(JUnitMessages.getString("RemoteTestRunner.error.suite.nullreturn")); //$NON-NLS-1$
 		} catch (InvocationTargetException e) {
-			String message= JUnitMessages.getFormattedString("RemoteTestRunner.error.invoke", e.getTargetException().toString()); //$NON-NLS-1$
+			String message = JUnitMessages.getFormattedString("RemoteTestRunner.error.invoke", e.getTargetException().toString()); //$NON-NLS-1$
 			failureListener.runFailed(message, e);
 			return new TestSuite(testClass);
 		} catch (IllegalAccessException e) {
-			String message= JUnitMessages.getFormattedString("RemoteTestRunner.error.invoke", e.toString()); //$NON-NLS-1$
+			String message = JUnitMessages.getFormattedString("RemoteTestRunner.error.invoke", e.toString()); //$NON-NLS-1$
 			failureListener.runFailed(message, e);
 			return new TestSuite(testClass);
 		}
 	}
 
 	/**
-	 * Prepare a single test to be run standalone. If the test case class
-	 * provides a static method Test setUpTest(Test test) then this method will
-	 * be invoked. Instead of calling the test method directly the "decorated"
-	 * test returned from setUpTest will be called. The purpose of this
-	 * mechanism is to enable tests which requires a set-up to be run
-	 * individually.
+	 * Prepare a single test to be run standalone. If the test case class provides a static method Test setUpTest(Test test) then this
+	 * method will be invoked. Instead of calling the test method directly the "decorated" test returned from setUpTest will be called. The
+	 * purpose of this mechanism is to enable tests which requires a set-up to be run individually.
 	 *
-	 * @param reloadedTestClass test class
-	 * @param reloadedTest test instance
+	 * @param reloadedTestClass
+	 *            test class
+	 * @param reloadedTest
+	 *            test instance
 	 * @return the reloaded test, or the test wrapped with setUpTest(..) if available
 	 */
-	private Test setupTest(Class reloadedTestClass, Test reloadedTest) {
+	private Test setupTest(final Class reloadedTestClass, final Test reloadedTest) {
 		if (reloadedTestClass == null)
 			return reloadedTest;
 
-		Method setup= null;
+		Method setup = null;
 		try {
-			setup= reloadedTestClass.getMethod(SET_UP_TEST_METHOD_NAME, new Class[] { Test.class });
+			setup = reloadedTestClass.getMethod(SET_UP_TEST_METHOD_NAME, new Class[] { Test.class });
 		} catch (SecurityException e1) {
 			return reloadedTest;
 		} catch (NoSuchMethodException e) {
@@ -152,7 +153,7 @@ public class JUnit3TestLoader implements ITestLoader {
 		if (!Modifier.isStatic(setup.getModifiers()))
 			return warning(JUnitMessages.getString("RemoteTestRunner.error.shouldbestatic")); //$NON-NLS-1$
 		try {
-			Test test= (Test) setup.invoke(null, new Object[] { reloadedTest });
+			Test test = (Test) setup.invoke(null, new Object[] { reloadedTest });
 			if (test == null)
 				return warning(JUnitMessages.getString("RemoteTestRunner.error.nullreturn")); //$NON-NLS-1$
 			return test;
@@ -166,11 +167,13 @@ public class JUnit3TestLoader implements ITestLoader {
 	}
 
 	/**
-	 * @param message warning message
+	 * @param message
+	 *            warning message
 	 * @return a test which will fail and log a warning message.
 	 */
 	private Test warning(final String message) {
 		return new TestCase("warning") { //$NON-NLS-1$
+			@Override
 			protected void runTest() {
 				fail(message);
 			}

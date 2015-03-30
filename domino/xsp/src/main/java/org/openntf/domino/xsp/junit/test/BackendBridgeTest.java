@@ -290,6 +290,7 @@ public class BackendBridgeTest {
 		System.out.println("    Done.");
 	}
 
+	@SuppressWarnings("unused")
 	@Test(expected = UnsatisfiedLinkError.class)
 	public void testCreateXPageSession() throws Throwable {
 		String userName = Factory.getLocalServerName();

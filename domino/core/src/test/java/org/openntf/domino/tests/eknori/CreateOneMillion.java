@@ -22,6 +22,7 @@ import org.openntf.domino.tests._Suite;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 @RunWith(DominoJUnitRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CreateOneMillion {

@@ -69,6 +69,7 @@ public class FormulaContextXsp extends FormulaContextNotes {
 	 * 
 	 * @return the current {@link Document}
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public Document getDocument() {
 		DominoDocument dominoDoc = getXspDocument();

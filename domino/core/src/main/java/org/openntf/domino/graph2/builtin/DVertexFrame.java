@@ -54,13 +54,14 @@ public interface DVertexFrame extends Editable {
 					+ (raw == null ? "null" : raw.getClass().getName()));
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Map<CharSequence, Object> asMap() {
 			Object raw = asVertex();
 			if (raw instanceof DVertex) {
 				Object delegate = ((DVertex) raw).getDelegate();
 				if (delegate instanceof Map) {
-					return (Map) delegate;
+					return (Map<CharSequence, Object>) delegate;
 				}
 				throw new RuntimeException("VertexFrame not backed by a Map. Instead it's a "
 						+ (delegate == null ? "null" : delegate.getClass().getName()));
@@ -69,7 +70,7 @@ public interface DVertexFrame extends Editable {
 					+ (raw == null ? "null" : raw.getClass().getName()));
 		}
 
-		@SuppressWarnings("rawtypes")
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public String[] getEditors() {
 			String[] result = null;

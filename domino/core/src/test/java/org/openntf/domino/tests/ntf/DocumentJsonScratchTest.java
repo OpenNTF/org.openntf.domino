@@ -12,6 +12,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class DocumentJsonScratchTest {
 	private static final Logger log_ = Logger.getLogger(DocumentJsonScratchTest.class.getName());
 

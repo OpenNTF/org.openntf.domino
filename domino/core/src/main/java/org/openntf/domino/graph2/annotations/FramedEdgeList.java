@@ -92,11 +92,10 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	protected List<Edge> list_;
 
-	@SuppressWarnings("unchecked")
 	public FramedEdgeList(final FramedGraph<? extends Graph> framedGraph, final Iterable<Edge> list, final Class<T> kind) {
 		super(framedGraph, list, kind);
 		if (list instanceof List) {
-			list_ = (List) list;
+			list_ = (List<Edge>) list;
 		} else {
 			list_ = new ArrayList<Edge>();
 			for (Edge e : list) {
@@ -270,13 +269,13 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public <T> T[] toArray(final T[] arg0) {
+	public <U> U[] toArray(final U[] arg0) {
 		int size = list_.size();
 		Class c = arg0.getClass().getComponentType();
-		T[] result = (T[]) Array.newInstance(c, size);
+		U[] result = (U[]) Array.newInstance(c, size);
 		for (int i = 0; i < size; i++) {
 			Edge e = list_.get(i);
-			result[i] = (T) framedGraph.frame(e, kind);
+			result[i] = (U) framedGraph.frame(e, kind);
 		}
 		return result;
 	}

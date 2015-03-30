@@ -1,6 +1,5 @@
 package org.openntf.domino.logging;
 
-import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
@@ -54,7 +53,7 @@ public class ConsoleFormatter extends Formatter {
 	 */
 	@Override
 	public String format(final LogRecord logRecord) {
-		Date recordDate = new Date(logRecord.getMillis());
+		//		Date recordDate = new Date(logRecord.getMillis());
 		StringBuffer sb = new StringBuffer();
 		try {
 			// TIME and LEVEL is already at the console

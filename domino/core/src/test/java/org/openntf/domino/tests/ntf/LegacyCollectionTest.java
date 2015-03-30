@@ -18,9 +18,9 @@ import lotus.domino.Session;
  * If we fail to recycle non-date objects and run multiple threads, we get Backend Out of Memory Handles messages
  * 
  */
+@SuppressWarnings("unused")
 public class LegacyCollectionTest implements Runnable {
 	private static Method getCppMethod;
-	@SuppressWarnings("unused")
 	private static int bitMode;
 	private static Field cpp_field;
 	private static Field wr_field;
@@ -122,7 +122,6 @@ public class LegacyCollectionTest implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static Map<Long, Byte> idMap = new ConcurrentHashMap<Long, Byte>();
 
 	public static void main(final String[] args) throws InterruptedException {

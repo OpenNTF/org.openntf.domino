@@ -91,6 +91,7 @@ public class EngageDataInitializer implements Runnable {
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "unused" })
 	public void loadData(final org.openntf.domino.Session s, final FramedTransactionalGraph<DGraph> framedGraph) {
 		HashMap<String, Location> locs = new HashMap<String, Location>();
 		HashMap<String, Track> tracks = new HashMap<String, Track>();
@@ -106,7 +107,7 @@ public class EngageDataInitializer implements Runnable {
 
 			JsonJavaFactory factory = JsonJavaFactory.instanceEx;
 
-			ArrayList<JsonJavaObject> jsonData = (ArrayList) JsonParser.fromJson(factory, urlData);
+			ArrayList<JsonJavaObject> jsonData = (ArrayList<JsonJavaObject>) JsonParser.fromJson(factory, urlData);
 			SimpleDateFormat sdf = new SimpleDateFormat();
 			for (JsonJavaObject obj : jsonData) {
 				String locKey = obj.getAsString("session_room");

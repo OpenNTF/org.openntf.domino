@@ -30,6 +30,7 @@ public abstract class ConfigurationObject {
 
 	protected abstract Document getDocument(boolean create);
 
+	@SuppressWarnings("unchecked")
 	protected <T> T get(final String key) {
 		initCache();
 		return (T) cache_.get(key);

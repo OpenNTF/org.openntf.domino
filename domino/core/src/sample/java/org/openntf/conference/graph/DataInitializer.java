@@ -28,7 +28,6 @@ import com.tinkerpop.frames.VertexFrame;
 public class DataInitializer implements Runnable {
 	private long marktime;
 	private static final String SRC_DATA_PATH = "OpenNTF Downloads/sphere2015.nsf";
-	private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public DataInitializer() {
 
@@ -113,6 +112,7 @@ public class DataInitializer implements Runnable {
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
 	}
 
+	@SuppressWarnings({ "unused", "deprecation" })
 	public void loadData(final org.openntf.domino.Session s, final FramedTransactionalGraph<DGraph> framedGraph) {
 		HashMap<String, Location> locs = new HashMap<String, Location>();
 		HashMap<String, Track> tracks = new HashMap<String, Track>();

@@ -17,7 +17,6 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  * @author Roland Praml, FOCONIS AG
  * 
- * @param <D>
  */
 public abstract class BaseImpl<D extends lotus.domino.Base> implements Base<D> {
 
@@ -52,7 +51,7 @@ public abstract class BaseImpl<D extends lotus.domino.Base> implements Base<D> {
 	@Override
 	public final List<IDominoListener> getListeners(final EnumEvent event) {
 		if (!hasListeners())
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 
 		if (listenerCache_ == null)
 			listenerCache_ = new FastMap<EnumEvent, List<IDominoListener>>();

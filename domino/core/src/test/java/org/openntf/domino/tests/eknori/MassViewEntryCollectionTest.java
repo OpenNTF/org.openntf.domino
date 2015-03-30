@@ -18,6 +18,7 @@ import org.openntf.domino.junit.DominoJUnitRunner;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 @RunWith(DominoJUnitRunner.class)
 public class MassViewEntryCollectionTest {
 

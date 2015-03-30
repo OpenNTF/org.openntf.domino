@@ -26,6 +26,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
 
+@SuppressWarnings("serial")
 @RunWith(DominoJUnitRunner.class)
 @Tasklet(session = Tasklet.Session.NATIVE)
 public class DeferredDocumentTest extends AbstractDominoRunnable {
@@ -47,7 +48,6 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 	/**
 	 * Test if deferred will not recycle each other.
 	 * 
-	 * @throws NotesException
 	 */
 	@Test
 	public void testIdentity() throws NotesException {
@@ -157,6 +157,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 				+ " total in db.) NC build took " + (collectionBuildNS / 1000000) + "ms, Document build took "
 				+ (documentBuildNS / 1000000) + "ms, Document page took " + (documentPageNS / 1000000) + "ms");
 
+		@SuppressWarnings("unused")
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName());
 	}

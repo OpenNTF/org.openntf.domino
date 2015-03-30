@@ -20,6 +20,7 @@ public class TaskletWorkerExecutor<T> extends XotsModuleTasklet implements Worke
 	//private static final int SHUTDOWN = 2;
 
 	private class Sync extends AbstractQueuedSynchronizer {
+		private static final long serialVersionUID = 1L;
 
 		public void add(final T t) {
 			q.add(t);
@@ -81,6 +82,7 @@ public class TaskletWorkerExecutor<T> extends XotsModuleTasklet implements Worke
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected Object invokeObject(final Object wrappedTask) throws Exception {
 		currentElement = q.poll(2000, TimeUnit.MILLISECONDS);

@@ -33,6 +33,7 @@ public class ConferenceGraph {
 		initialize();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void initialize() {
 		DElementStore attendeeStore = new DElementStore();
 		attendeeStore.setStoreKey(ATTENDEE_PATH);
@@ -130,6 +131,7 @@ public class ConferenceGraph {
 		return getFramedGraph().getVertex(key, Group.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends Event> T getEvent(final Object key) {
 		return (T) getFramedGraph().getVertex(key, Event.class);
 	}

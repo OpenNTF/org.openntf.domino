@@ -22,7 +22,7 @@ public class AgentBase extends lotus.domino.AgentBase {
 		// RPr: Startup and init is probably wrong here
 		// Factory.startup();
 		// Factory.initThread(Factory.STRICT_THREAD_CONFIG);
-		return Factory.fromLotus(super.getSession(), Session.SCHEMA, null);
+		return Factory.getWrapperFactory().fromLotus(super.getSession(), Session.SCHEMA, null);
 	}
 
 	/**
@@ -59,6 +59,6 @@ public class AgentBase extends lotus.domino.AgentBase {
 	 * @return the agent session
 	 */
 	public static Session getAgentSession() {
-		return Factory.fromLotus(lotus.domino.AgentBase.getAgentSession(), Session.SCHEMA, null);
+		return Factory.getWrapperFactory().fromLotus(lotus.domino.AgentBase.getAgentSession(), Session.SCHEMA, null);
 	}
 }

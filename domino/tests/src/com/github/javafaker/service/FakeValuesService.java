@@ -10,13 +10,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.yaml.snakeyaml.Yaml;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FakeValuesService {
 	private static final char[] METHOD_NAME_DELIMITERS = { '_' };
 	private static final Logger logger = Logger.getLogger(FakeValuesService.class.getName());
 	private final Map<String, Object> fakeValuesMap;
 	private final RandomService randomService;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public FakeValuesService(final Locale locale, final RandomService randomService) {
 		logger.info("Using locale " + locale);
 
@@ -41,9 +41,6 @@ public class FakeValuesService {
 
 	/**
 	 * Fetch a random value from an array item specified by the key
-	 * 
-	 * @param key
-	 * @return
 	 */
 	public Object fetch(final String key) {
 		List valuesArray = (List) fetchObject(key);
@@ -52,9 +49,6 @@ public class FakeValuesService {
 
 	/**
 	 * Same as {@link #fetch(String)} except this casts the result into a String.
-	 * 
-	 * @param key
-	 * @return
 	 */
 	public String fetchString(final String key) {
 		return (String) fetch(key);
@@ -65,9 +59,7 @@ public class FakeValuesService {
 	 * 
 	 * @param key
 	 *            key contains path to an object. Path segment is separated by dot. E.g. name.first_name
-	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Object fetchObject(final String key) {
 		String[] path = key.split("\\.");
 		Object currentValue = fakeValuesMap;
@@ -84,13 +76,7 @@ public class FakeValuesService {
 	 * {@link #fetch(String)} method to a methodName and invoke this method against the object passed in. Finally, concatenation occurs with
 	 * the return values of the methods using the joiner parameter as a separator.
 	 * 
-	 * 
-	 * @param formatKey
-	 * @param joiner
-	 * @param objectToInvokeMethodOn
-	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String composite(final String formatKey, final String joiner, final Object objectToInvokeMethodOn) {
 		List<String> format = (List<String>) fetch(formatKey);
 
@@ -117,8 +103,6 @@ public class FakeValuesService {
 	 * 
 	 * For example, the string "ABC##EFG" could be replaced with a string like "ABC99EFG".
 	 * 
-	 * @param numberString
-	 * @return
 	 */
 	public String numerify(final String numberString) {
 		StringBuffer sb = new StringBuffer();
@@ -136,8 +120,6 @@ public class FakeValuesService {
 	/**
 	 * Applies both a {@link #numerify(String)} and a {@link #letterify(String)} over the incoming string.
 	 * 
-	 * @param string
-	 * @return
 	 */
 	public String bothify(final String string) {
 		return letterify(numerify(string));
@@ -148,8 +130,6 @@ public class FakeValuesService {
 	 * 
 	 * For example, the string "12??34" could be replaced with a string like "12AB34".
 	 * 
-	 * @param letterString
-	 * @return
 	 */
 	public String letterify(final String letterString) {
 		StringBuffer sb = new StringBuffer();

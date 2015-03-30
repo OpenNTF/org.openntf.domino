@@ -27,6 +27,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 
+@SuppressWarnings("unused")
 public class Graph2Test implements Runnable {
 	private static int THREAD_COUNT = 1;
 	private long marktime;

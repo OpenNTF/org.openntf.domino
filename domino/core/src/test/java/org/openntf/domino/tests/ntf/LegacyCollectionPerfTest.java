@@ -20,9 +20,9 @@ import lotus.domino.Session;
  * If we fail to recycle non-date objects and run multiple threads, we get Backend Out of Memory Handles messages
  * 
  */
+@SuppressWarnings("unused")
 public class LegacyCollectionPerfTest implements Runnable {
 	private static Method getCppMethod;
-	@SuppressWarnings("unused")
 	private static int bitMode;
 	private static Field cpp_field;
 	private static Field wr_field;
@@ -124,7 +124,6 @@ public class LegacyCollectionPerfTest implements Runnable {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private static Map<Long, Byte> idMap = new ConcurrentHashMap<Long, Byte>();
 
 	public static void main(final String[] args) throws InterruptedException {
@@ -188,7 +187,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				nids = nc.getNoteIDs();
 				long ncBuildTime = System.nanoTime();
 				System.out
-						.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
+				.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
 				//				for (int j = 0; j < nids.length; j++) {
 				//					doc = db.getDocumentByID(Integer.toString(nids[j], 16));
 				//				}
@@ -207,7 +206,6 @@ public class LegacyCollectionPerfTest implements Runnable {
 				doc = mergeColl.getFirstDocument();
 				while (doc != null) {
 					nextDoc = mergeColl.getNextDocument(doc);
-					@SuppressWarnings("unused")
 					int n = Integer.valueOf(doc.getNoteID(), 16);
 					doc.recycle();
 					doc = nextDoc;
@@ -239,7 +237,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				nids = nc.getNoteIDs();
 				ncBuildTime = System.nanoTime();
 				System.out
-						.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
+				.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
 				//				for (int j = 0; j < nids.length; j++) {
 				//					doc = db.getDocumentByID(Integer.toString(nids[j], 16));
 				//				}
@@ -258,7 +256,6 @@ public class LegacyCollectionPerfTest implements Runnable {
 				doc = mergeColl.getFirstDocument();
 				while (doc != null) {
 					nextDoc = mergeColl.getNextDocument(doc);
-					@SuppressWarnings("unused")
 					int n = Integer.valueOf(doc.getNoteID(), 16);
 					doc.recycle();
 					doc = nextDoc;

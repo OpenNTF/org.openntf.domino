@@ -24,7 +24,6 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-@SuppressWarnings("deprecation")
 public enum OneMillionScratchTest {
 	INSTANCE;
 

@@ -135,7 +135,10 @@ public class XotsConfiguration extends ConfigurationObject {
 			currentConfig.replaceItemValue("ApiPaths", apiPath_); // APIPath is just for UI - internally we always use replica ID
 			currentConfig.replaceItemValue("Enabled", true);
 			if (isDatabase_) {
-				currentConfig.replaceItemValue("ReplicaId", db.getReplicaID());
+				if (db != null) {
+					// Java's wrong about this potentially being null
+					currentConfig.replaceItemValue("ReplicaId", db.getReplicaID());
+				}
 				currentConfig.replaceItemValue("Location", "NSF");
 			} else {
 				currentConfig.replaceItemValue("Bundle", bundle_);

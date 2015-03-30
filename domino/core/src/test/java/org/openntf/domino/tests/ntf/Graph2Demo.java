@@ -37,6 +37,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+@SuppressWarnings("unused")
 public class Graph2Demo implements Runnable {
 	private long marktime;
 

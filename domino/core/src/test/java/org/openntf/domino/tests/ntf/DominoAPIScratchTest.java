@@ -22,6 +22,7 @@ import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public enum DominoAPIScratchTest {
 	INSTANCE;
 
@@ -49,7 +50,7 @@ public enum DominoAPIScratchTest {
 			for (Form form : forms) {
 				// System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
 				Document d = form.getDocument();
-				Vector v = d.getItemValue("$UpdatedBy");
+				Vector<Object> v = d.getItemValue("$UpdatedBy");
 
 				Name n = db.getParent().createName((String) v.get(0));
 				String cn = n.getCommon();
@@ -75,7 +76,7 @@ public enum DominoAPIScratchTest {
 			DocumentCollection dc = db.getAllDocuments();
 			for (Document doc : dc) {
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						Name n = s.createName((String) o);
@@ -100,7 +101,7 @@ public enum DominoAPIScratchTest {
 			System.out.println("REPEATING ITERATION of Documents");
 			for (Document doc : dc) {
 				docCount++;
-				Vector v = doc.getItemValue("$UpdatedBy");
+				Vector<Object> v = doc.getItemValue("$UpdatedBy");
 				for (Object o : v) {
 					if (o instanceof String) {
 						Name n = s.createName((String) o);

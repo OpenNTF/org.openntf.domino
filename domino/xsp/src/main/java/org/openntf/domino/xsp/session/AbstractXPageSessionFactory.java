@@ -19,7 +19,7 @@ public abstract class AbstractXPageSessionFactory implements ISessionFactory {
 	protected String currentApiPath_;
 
 	protected Session wrapSession(final lotus.domino.Session raw, final boolean selfCreated) {
-		Session sess = Factory.fromLotus(raw, Session.SCHEMA, null);
+		Session sess = Factory.getWrapperFactory().fromLotus(raw, Session.SCHEMA, null);
 		sess.setNoRecycle(!selfCreated);
 
 		boolean allFix = true;

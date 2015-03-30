@@ -67,8 +67,8 @@ public class DEdgeFrameComparator implements Comparator<DEdgeFrame>, Serializabl
 				for (Method crystal : meths) {
 					if (crystal.getName().equalsIgnoreCase("get" + key)) {
 						try {
-							java.lang.Object v0 = crystal.invoke(arg0, null);
-							java.lang.Object v1 = crystal.invoke(arg1, null);
+							java.lang.Object v0 = crystal.invoke(arg0, (Object) null);
+							java.lang.Object v1 = crystal.invoke(arg1, (Object) null);
 							result = compareObjects(v0, v1);
 						} catch (IllegalAccessException e) {
 							// TODO: handle exception
@@ -97,6 +97,7 @@ public class DEdgeFrameComparator implements Comparator<DEdgeFrame>, Serializabl
 		return result;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private int compareObjects(final Object arg0, final Object arg1) {
 		int result = 0;
 		if (arg0 == null && arg1 == null) {

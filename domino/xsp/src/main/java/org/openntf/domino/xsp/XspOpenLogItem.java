@@ -89,7 +89,6 @@ import org.openntf.domino.logging.BaseOpenLogItem;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
-import org.openntf.domino.utils.XSPUtil;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.icu.util.Calendar;
@@ -361,7 +360,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			if (StringUtil.isEmpty(getLogEmail())) {
 				db = getLogDb();
 			} else {
-				db = XSPUtil.getCurrentSessionAsSigner().getDatabase(getThisServer(), "mail.box", false);
+				db = Factory.getSession(SessionType.SIGNER).getDatabase(getThisServer(), "mail.box", false);
 			}
 			if (db == null) {
 				System.out.println("Could not retrieve database at path " + getLogDbName());

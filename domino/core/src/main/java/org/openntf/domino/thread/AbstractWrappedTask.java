@@ -151,8 +151,6 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 
 	/**
 	 * adds an observer to the wrapped task
-	 * 
-	 * @param o
 	 */
 	@Override
 	public void addObserver(final Observer o) {

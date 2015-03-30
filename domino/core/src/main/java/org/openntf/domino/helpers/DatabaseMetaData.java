@@ -16,6 +16,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class DatabaseMetaData implements Serializable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseMetaData.class.getName());
 	private static final long serialVersionUID = 1L;
 	// These attributes will never change for a certain database object

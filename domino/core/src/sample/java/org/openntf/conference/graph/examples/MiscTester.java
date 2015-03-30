@@ -29,7 +29,7 @@ public class MiscTester implements Runnable {
 			Attendee dv = graph.getAttendee("DanieleVistalli");
 			System.out.println(paul.getEmail());
 			Iterable<Event> evts = paul.getAttendingEvents();
-			FastSet<Presentation> presentations = new FastSet();
+			FastSet<Presentation> presentations = new FastSet<Presentation>();
 			for (Event evt : evts) {
 				if (evt instanceof Presentation) {
 					presentations.add((Presentation) evt);
@@ -38,7 +38,7 @@ public class MiscTester implements Runnable {
 			System.out.println("Paul is attending " + presentations.size() + " Sessions");
 
 			evts = dv.getAttendingEvents();
-			presentations = new FastSet();
+			presentations = new FastSet<Presentation>();
 			for (Event evt : evts) {
 				if (evt instanceof Presentation) {
 					presentations.add((Presentation) evt);
@@ -47,7 +47,7 @@ public class MiscTester implements Runnable {
 			System.out.println("Paul is attending " + presentations.size() + " Sessions");
 
 			evts = paul.getPresentingEvents();
-			presentations = new FastSet();
+			presentations = new FastSet<Presentation>();
 			for (Event evt : evts) {
 				if (evt instanceof Presentation) {
 					presentations.add((Presentation) evt);

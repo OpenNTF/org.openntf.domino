@@ -80,7 +80,7 @@ import com.ibm.icu.util.GregorianCalendar;
  * The Class Database.
  */
 public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-org.openntf.domino.Database {
+		org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -432,12 +432,13 @@ org.openntf.domino.Database {
 	 * 
 	 * @see org.openntf.domino.Database#createDocument(java.lang.Object[])
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Document createDocument(final Object... keyValuePairs) {
 		Document doc = this.createDocument();
 		if (keyValuePairs.length == 1) {
 			if (keyValuePairs[0] instanceof Map) {
-				Map<String, Object> itemValues = (Map) keyValuePairs[0];
+				Map<String, Object> itemValues = (Map<String, Object>) keyValuePairs[0];
 				for (Map.Entry<String, Object> entry : itemValues.entrySet()) {
 					doc.replaceItemValue(entry.getKey(), entry.getValue());
 				}

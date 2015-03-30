@@ -13,6 +13,7 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class DominoAutoboxTest implements Runnable {
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new DominoAutoboxTest(), "Index Thread");
@@ -23,6 +24,7 @@ public class DominoAutoboxTest implements Runnable {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() {
 		Session session = Factory.getSession(SessionType.CURRENT);

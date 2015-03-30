@@ -44,7 +44,6 @@ public class DominoReferenceCache {
 
 	/** The delegate map contains the value wrapped in phantomReferences) **/
 	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
-	@SuppressWarnings("restriction")
 	private Map<lotus.domino.Base, DominoReference> map = new IdentityHashMap<lotus.domino.Base, DominoReference>(2048);
 
 	/** This is the queue with unreachable refs **/
@@ -106,7 +105,7 @@ public class DominoReferenceCache {
 	 *            key with which the specified value is to be associated.
 	 * @param value
 	 *            value to be associated with the specified key.
-	 * @return
+	 * @return The previous value associated with the delegate, if any
 	 */
 	public org.openntf.domino.Base<?> put(final lotus.domino.Base delegate, final org.openntf.domino.Base<?> value) {
 		// If the map already contains an equivalent key, the new key

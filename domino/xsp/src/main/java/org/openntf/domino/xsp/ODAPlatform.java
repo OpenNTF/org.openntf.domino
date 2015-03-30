@@ -66,6 +66,7 @@ public enum ODAPlatform {
 
 			for (Object tasklet : tasklets) {
 				if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
+					@SuppressWarnings("unused")
 					ClassLoader cl = tasklet.getClass().getClassLoader();
 
 					Factory.println("XOTS", "Registering tasklet " + tasklet);

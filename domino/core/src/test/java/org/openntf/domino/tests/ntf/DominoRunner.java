@@ -27,6 +27,7 @@ import lotus.domino.Session;
  * If we fail to recycle non-date objects and run multiple threads, we get Backend Out of Memory Handles messages
  * 
  */
+@SuppressWarnings("unused")
 public class DominoRunner implements Runnable {
 	private static Method getCppMethod;
 	private static Field cpp_field;

@@ -17,6 +17,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 public class DocumentScannerScratchTest {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DocumentScannerScratchTest.class.getName());
 
 	public DocumentScannerScratchTest() {

@@ -13,6 +13,7 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+@SuppressWarnings("unused")
 public class SortedCollectionTest implements Runnable {
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new SortedCollectionTest(), "My thread");

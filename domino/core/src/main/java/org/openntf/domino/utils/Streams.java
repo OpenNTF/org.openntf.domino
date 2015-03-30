@@ -40,7 +40,6 @@ public enum Streams {
 		private int buffered;
 		private int bufferPos;
 
-		@SuppressWarnings("resource")
 		public static InputStream get(final Stream source) {
 			return source != null ? new MIMEBufferedInputStream(source) : null;
 		}

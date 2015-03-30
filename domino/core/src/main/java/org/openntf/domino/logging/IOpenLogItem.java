@@ -101,7 +101,6 @@ public interface IOpenLogItem {
 	/**
 	 * Sets the current database object to the current database.
 	 * 
-	 * @return current Database object
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setCurrentDatabase();
@@ -111,7 +110,6 @@ public interface IOpenLogItem {
 	 * 
 	 * @param db
 	 *            Database specific database to set as running from
-	 * @return current Database object
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setCurrentDatabase(Database db);

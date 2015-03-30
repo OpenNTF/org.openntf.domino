@@ -64,7 +64,7 @@ import com.ibm.commons.util.NotImplementedException;
  * 
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		implements org.openntf.domino.Base<D> {
+implements org.openntf.domino.Base<D> {
 	public static final int SOLO_NOTES_NAMES = 1000;
 	public static final int NOTES_SESSION = 1;
 	public static final int NOTES_DATABASE = 2;
@@ -1244,6 +1244,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		listeners_ = oldWrapper.listeners_;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void linkToExisting(final Base<?, ?, ?> oldWrapper) {
 		// TODO Auto-generated method stub
 		// link the implWrapper into the circle

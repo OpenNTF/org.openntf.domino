@@ -70,7 +70,6 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		ERROR
 	}
 
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoExecutor.class.getName());
 
 	/** This list contains ALL tasks */
@@ -312,6 +311,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	}
 
+	@SuppressWarnings("unused")
 	private long overflowFree(long paramLong) {
 		Delayed localDelayed = (Delayed) super.getQueue().peek();
 		if (localDelayed != null) {

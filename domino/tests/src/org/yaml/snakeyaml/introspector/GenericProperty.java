@@ -22,61 +22,59 @@ import java.lang.reflect.Type;
 
 abstract public class GenericProperty extends Property {
 
-    private Type genType;
+	private Type genType;
 
-    public GenericProperty(String name, Class<?> aClass, Type aType) {
-        super(name, aClass);
-        genType = aType;
-        actualClassesChecked = aType == null;
-    }
+	public GenericProperty(final String name, final Class<?> aClass, final Type aType) {
+		super(name, aClass);
+		genType = aType;
+		actualClassesChecked = aType == null;
+	}
 
-    private boolean actualClassesChecked;
-    private Class<?>[] actualClasses;
+	private boolean actualClassesChecked;
+	private Class<?>[] actualClasses;
 
-    public Class<?>[] getActualTypeArguments() { // should we synchronize here ?
-        if (!actualClassesChecked) {
-            if (genType instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) genType;
-                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                if (actualTypeArguments.length > 0) {
-                    actualClasses = new Class<?>[actualTypeArguments.length];
-                    for (int i = 0; i < actualTypeArguments.length; i++) {
-                        if (actualTypeArguments[i] instanceof Class<?>) {
-                            actualClasses[i] = (Class<?>) actualTypeArguments[i];
-                        } else if (actualTypeArguments[i] instanceof ParameterizedType) {
-                            actualClasses[i] = (Class<?>) ((ParameterizedType) actualTypeArguments[i])
-                                    .getRawType();
-                        } else if (actualTypeArguments[i] instanceof GenericArrayType) {
-                            Type componentType = ((GenericArrayType) actualTypeArguments[i])
-                                    .getGenericComponentType();
-                            if (componentType instanceof Class<?>) {
-                                actualClasses[i] = Array.newInstance((Class<?>) componentType, 0)
-                                        .getClass();
-                            } else {
-                                actualClasses = null;
-                                break;
-                            }
-                        } else {
-                            actualClasses = null;
-                            break;
-                        }
-                    }
-                }
-            } else if (genType instanceof GenericArrayType) {
-                Type componentType = ((GenericArrayType) genType).getGenericComponentType();
-                if (componentType instanceof Class<?>) {
-                    actualClasses = new Class<?>[] { (Class<?>) componentType };
-                }
-            } else if (genType instanceof Class<?>) {// XXX this check is only
-                                                     // required for IcedTea6
-                Class<?> classType = (Class<?>) genType;
-                if (classType.isArray()) {
-                    actualClasses = new Class<?>[1];
-                    actualClasses[0] = getType().getComponentType();
-                }
-            }
-            actualClassesChecked = true;
-        }
-        return actualClasses;
-    }
+	@Override
+	public Class<?>[] getActualTypeArguments() { // should we synchronize here ?
+		if (!actualClassesChecked) {
+			if (genType instanceof ParameterizedType) {
+				ParameterizedType parameterizedType = (ParameterizedType) genType;
+				Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+				if (actualTypeArguments.length > 0) {
+					actualClasses = new Class<?>[actualTypeArguments.length];
+					for (int i = 0; i < actualTypeArguments.length; i++) {
+						if (actualTypeArguments[i] instanceof Class<?>) {
+							actualClasses[i] = (Class<?>) actualTypeArguments[i];
+						} else if (actualTypeArguments[i] instanceof ParameterizedType) {
+							actualClasses[i] = (Class<?>) ((ParameterizedType) actualTypeArguments[i]).getRawType();
+						} else if (actualTypeArguments[i] instanceof GenericArrayType) {
+							Type componentType = ((GenericArrayType) actualTypeArguments[i]).getGenericComponentType();
+							if (componentType instanceof Class<?>) {
+								actualClasses[i] = Array.newInstance((Class<?>) componentType, 0).getClass();
+							} else {
+								actualClasses = null;
+								break;
+							}
+						} else {
+							actualClasses = null;
+							break;
+						}
+					}
+				}
+			} else if (genType instanceof GenericArrayType) {
+				Type componentType = ((GenericArrayType) genType).getGenericComponentType();
+				if (componentType instanceof Class<?>) {
+					actualClasses = new Class<?>[] { (Class<?>) componentType };
+				}
+			} else if (genType instanceof Class<?>) {// XXX this check is only
+														// required for IcedTea6
+				Class<?> classType = (Class<?>) genType;
+				if (classType.isArray()) {
+					actualClasses = new Class<?>[1];
+					actualClasses[0] = getType().getComponentType();
+				}
+			}
+			actualClassesChecked = true;
+		}
+		return actualClasses;
+	}
 }
