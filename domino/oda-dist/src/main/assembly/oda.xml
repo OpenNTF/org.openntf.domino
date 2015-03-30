@@ -35,6 +35,7 @@
 				<attachmentClassifier>src</attachmentClassifier>
 				<outputDirectory>/source/</outputDirectory>
 				<unpack>false</unpack>
+				<outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping>
 			</binaries>
 		</moduleSet>
 	
