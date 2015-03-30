@@ -221,7 +221,6 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	private DTypeManager typeManager_;
 
 	public DConfiguration() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

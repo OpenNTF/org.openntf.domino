@@ -16,7 +16,6 @@ public class FileFormatter extends Formatter {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public FileFormatter() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

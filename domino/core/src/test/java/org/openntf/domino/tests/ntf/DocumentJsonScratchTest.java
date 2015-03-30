@@ -17,7 +17,6 @@ public class DocumentJsonScratchTest {
 	private static final Logger log_ = Logger.getLogger(DocumentJsonScratchTest.class.getName());
 
 	public DocumentJsonScratchTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	static class Doer implements Runnable {

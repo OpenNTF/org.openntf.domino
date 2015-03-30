@@ -15,7 +15,6 @@ public class ItemMembersException extends ItemException {
 	private static final long serialVersionUID = 1L;
 
 	public ItemMembersException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

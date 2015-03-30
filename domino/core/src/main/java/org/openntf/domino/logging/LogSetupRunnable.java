@@ -28,7 +28,6 @@ public class LogSetupRunnable implements Runnable {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public LogSetupRunnable() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

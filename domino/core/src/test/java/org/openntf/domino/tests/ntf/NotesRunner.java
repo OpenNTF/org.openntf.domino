@@ -190,7 +190,6 @@ public class NotesRunner implements Runnable {
 	}
 
 	public NotesRunner() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void run1(final Session session) throws NotesException {

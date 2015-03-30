@@ -14,7 +14,6 @@ public enum DominoGraphTest {
 	INSTANCE;
 
 	private DominoGraphTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private static final int THREAD_COUNT = 1;

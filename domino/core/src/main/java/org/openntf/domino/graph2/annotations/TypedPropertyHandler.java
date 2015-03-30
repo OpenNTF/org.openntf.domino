@@ -20,7 +20,6 @@ public class TypedPropertyHandler implements MethodHandler<TypedProperty> {
 	}
 
 	public TypedPropertyHandler() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

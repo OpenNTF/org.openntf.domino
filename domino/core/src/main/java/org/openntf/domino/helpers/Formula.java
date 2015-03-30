@@ -149,7 +149,6 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 */
 	public Formula() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Formula(final Session parent) {

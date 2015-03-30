@@ -145,7 +145,6 @@ public class LegacyCollectionTest implements Runnable {
 	}
 
 	public LegacyCollectionTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

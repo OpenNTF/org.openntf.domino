@@ -62,7 +62,6 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	public DElementStore() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -527,7 +526,6 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void removeElementDelegate(final Element element) {
-		// TODO Auto-generated method stub
 
 	}
 

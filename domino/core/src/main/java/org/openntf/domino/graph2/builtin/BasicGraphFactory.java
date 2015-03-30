@@ -7,7 +7,6 @@ import org.openntf.domino.graph2.impl.DGraph;
 public class BasicGraphFactory {
 
 	public BasicGraphFactory() {
-		// TODO Auto-generated constructor stub
 	}
 
 	protected static synchronized DGraph getGraph(final String apipath) {

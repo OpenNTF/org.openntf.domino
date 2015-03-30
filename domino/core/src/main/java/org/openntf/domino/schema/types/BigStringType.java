@@ -33,7 +33,6 @@ public class BigStringType extends AbstractDominoType {
 	 */
 	@Override
 	public boolean validateValue(final Object value) throws ItemException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

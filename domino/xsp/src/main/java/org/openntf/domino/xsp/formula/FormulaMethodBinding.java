@@ -54,7 +54,6 @@ public class FormulaMethodBinding extends MethodBindingEx {
 	 *            not yet used here
 	 */
 	public FormulaMethodBinding(final String str, final Class<?>[] paramClasses) {
-		// TODO Auto-generated constructor stub
 		this.formulaStr = (str != null ? str.intern() : null);
 	}
 

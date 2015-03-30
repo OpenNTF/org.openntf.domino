@@ -16,7 +16,6 @@ public enum DominoIteratorScratchTest {
 	INSTANCE;
 
 	private DominoIteratorScratchTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -132,9 +131,9 @@ public enum DominoIteratorScratchTest {
 			 */
 
 			System.out
-					.println("Thread " + Thread.currentThread().getName() + " processed " + (dbCount /* + templateCount */)
-							+ " databases, " + docCount + " documents, " + nameCount + " names, and " + dateCount
-							+ " datetimes without recycling.");
+			.println("Thread " + Thread.currentThread().getName() + " processed " + (dbCount /* + templateCount */)
+					+ " databases, " + docCount + " documents, " + nameCount + " names, and " + dateCount
+					+ " datetimes without recycling.");
 			long elapsed = System.nanoTime() - start;
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 

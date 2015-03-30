@@ -60,7 +60,6 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	 * Constructor
 	 */
 	public OpenntfNABNamePickerData() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

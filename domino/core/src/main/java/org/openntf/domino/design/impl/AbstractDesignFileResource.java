@@ -266,7 +266,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 
 	@Override
 	public void setDeployable(final boolean deployable) {
-		// TODO Auto-generated method stub
 	}
 
 	public <T extends XspXmlContent> T getAsXml(final Class<T> schema) {

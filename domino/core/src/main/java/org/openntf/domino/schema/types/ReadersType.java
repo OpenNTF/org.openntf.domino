@@ -13,10 +13,6 @@ public class ReadersType extends NameType {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ReadersType.class.getName());
 
-	/**
-	 * 
-	 */
 	public ReadersType() {
-		// TODO Auto-generated constructor stub
 	}
 }

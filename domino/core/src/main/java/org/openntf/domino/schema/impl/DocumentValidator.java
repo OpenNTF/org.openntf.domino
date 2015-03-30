@@ -20,6 +20,5 @@ public class DocumentValidator {
 	 * 
 	 */
 	public DocumentValidator() {
-		// TODO Auto-generated constructor stub
 	}
 }

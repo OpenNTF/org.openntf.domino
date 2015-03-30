@@ -40,7 +40,6 @@ public class DbHandleTest implements Runnable {
 			System.out.println("D2:" + d2.getFilePath());
 			d2.recycle();
 		} catch (NotesException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

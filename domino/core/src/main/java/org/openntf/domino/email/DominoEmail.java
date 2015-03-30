@@ -312,7 +312,7 @@ public class DominoEmail implements IEmail {
 	@Override
 	@Incomplete
 	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage) {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 
@@ -322,7 +322,7 @@ public class DominoEmail implements IEmail {
 	@Override
 	@Incomplete
 	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage, final String contentId) {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 

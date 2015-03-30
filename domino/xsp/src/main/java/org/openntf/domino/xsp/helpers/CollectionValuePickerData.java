@@ -49,7 +49,6 @@ public class CollectionValuePickerData extends MapValuePickerData {
 				try {
 					throw new UnsupportedDataTypeException("Value is not a Collection");
 				} catch (UnsupportedDataTypeException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

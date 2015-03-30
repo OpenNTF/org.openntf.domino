@@ -71,7 +71,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Features getFeatures() {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		return null;
 	}
 
@@ -157,26 +157,25 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public GraphQuery query() {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 
 	@Override
 	public void shutdown() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public Object getRawGraph() {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void stopTransaction(final Conclusion conclusion) {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 
 	}
 

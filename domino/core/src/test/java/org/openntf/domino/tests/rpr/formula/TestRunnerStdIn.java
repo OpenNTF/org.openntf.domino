@@ -50,7 +50,6 @@ public class TestRunnerStdIn implements Runnable {
 
 			System.out.println("Thank you.");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

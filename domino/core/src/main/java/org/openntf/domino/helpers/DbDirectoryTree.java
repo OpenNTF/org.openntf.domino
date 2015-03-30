@@ -159,7 +159,6 @@ public class DbDirectoryTree {
 
 			@Override
 			public Iterator<Database> iterator() {
-				// TODO Auto-generated method stub
 				return new Iterator<Database>() {
 
 					@Override

@@ -14,7 +14,6 @@ import org.openntf.domino.helpers.DocumentSyncHelper;
 public class WebinarSamples {
 
 	public WebinarSamples() {
-		// TODO Auto-generated constructor stub
 	}
 
 	// ******* BEGIN AUTO-LOGGING, GARBAGE COLLECTION AND ITERATOR SAMPLES

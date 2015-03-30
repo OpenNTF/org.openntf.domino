@@ -74,7 +74,6 @@ public class LogReader {
 	 * Constructor
 	 */
 	public LogReader() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

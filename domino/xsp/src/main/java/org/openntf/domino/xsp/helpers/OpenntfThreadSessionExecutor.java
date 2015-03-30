@@ -12,7 +12,6 @@ import com.ibm.domino.xsp.module.nsf.ThreadSessionExecutor;
 public class OpenntfThreadSessionExecutor<IStatus> extends ThreadSessionExecutor<IStatus> {
 
 	public OpenntfThreadSessionExecutor() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@SuppressWarnings("unchecked")

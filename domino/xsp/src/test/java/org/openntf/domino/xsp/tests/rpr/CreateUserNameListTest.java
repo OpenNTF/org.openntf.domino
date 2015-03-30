@@ -23,7 +23,6 @@ public class CreateUserNameListTest {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			while (i < 100000 && !Thread.currentThread().isInterrupted()) {
 				try {
 					long userHandle = NotesUtil.createUserNameList(i + s);
@@ -33,7 +32,6 @@ public class CreateUserNameListTest {
 					//Os.OSMemFree(userHandle);
 
 				} catch (NException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

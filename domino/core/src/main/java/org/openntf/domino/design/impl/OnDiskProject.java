@@ -9,12 +9,10 @@ public class OnDiskProject {
 	private File root_;
 
 	public OnDiskProject(final File root) {
-		// TODO Auto-generated constructor stub
 		root_ = root;
 	}
 
 	public void export(final org.openntf.domino.design.DesignBase elem_) throws IOException {
-		// TODO Auto-generated method stub
 		//elem.getDxlString(null)
 		AbstractDesignBase elem = (AbstractDesignBase) elem_;
 		String odp = elem.getOnDiskPath();

@@ -23,7 +23,6 @@ public class UniqueItemException extends ItemException {
 	 */
 	public UniqueItemException(final String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

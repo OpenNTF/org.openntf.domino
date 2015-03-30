@@ -358,7 +358,6 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public void fromMap(final Map<String, Object> map) {
-		// TODO Auto-generated method stub
 
 	}
 

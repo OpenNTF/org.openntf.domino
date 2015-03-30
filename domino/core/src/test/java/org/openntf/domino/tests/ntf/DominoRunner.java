@@ -139,7 +139,6 @@ public class DominoRunner implements Runnable {
 	}
 
 	public DominoRunner() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

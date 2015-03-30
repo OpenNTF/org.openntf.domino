@@ -16,7 +16,6 @@ public class NotesJUnitRunner extends AbstractJUnitRunner {
 
 	public NotesJUnitRunner(final Class<?> testClass) throws InitializationError {
 		super(testClass);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

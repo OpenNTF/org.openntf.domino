@@ -150,13 +150,13 @@ public class DXLNote implements NSFNote, Serializable {
 
 	@Override
 	public NSFMimeData getMimeData(final String itemName) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		return null;
 	}
 
 	@Override
 	public NSFRichTextData getRichText(final String itemName) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		return null;
 	}
 

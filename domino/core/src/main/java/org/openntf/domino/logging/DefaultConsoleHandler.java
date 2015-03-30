@@ -109,6 +109,5 @@ public class DefaultConsoleHandler extends Handler {
 
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
 	}
 }

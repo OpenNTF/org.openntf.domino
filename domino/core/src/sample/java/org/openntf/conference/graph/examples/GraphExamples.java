@@ -13,7 +13,6 @@ public class GraphExamples {
 	private ConferenceGraph theConference_;
 
 	public GraphExamples() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ConferenceGraph getConference() {

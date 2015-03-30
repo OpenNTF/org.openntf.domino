@@ -147,7 +147,6 @@ public class LegacyCollectionPerfTest implements Runnable {
 	}
 
 	public LegacyCollectionPerfTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -187,7 +186,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				nids = nc.getNoteIDs();
 				long ncBuildTime = System.nanoTime();
 				System.out
-				.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
+						.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
 				//				for (int j = 0; j < nids.length; j++) {
 				//					doc = db.getDocumentByID(Integer.toString(nids[j], 16));
 				//				}
@@ -237,7 +236,7 @@ public class LegacyCollectionPerfTest implements Runnable {
 				nids = nc.getNoteIDs();
 				ncBuildTime = System.nanoTime();
 				System.out
-				.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
+						.println("NOTECOLL: noteid array has " + nids.length + " entries in " + (ncBuildTime - ncStartTime) / 1000 + "us");
 				//				for (int j = 0; j < nids.length; j++) {
 				//					doc = db.getDocumentByID(Integer.toString(nids[j], 16));
 				//				}

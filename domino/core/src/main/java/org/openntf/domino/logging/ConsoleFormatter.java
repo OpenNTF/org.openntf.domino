@@ -22,7 +22,6 @@ public class ConsoleFormatter extends Formatter {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public ConsoleFormatter() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

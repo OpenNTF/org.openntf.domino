@@ -24,7 +24,6 @@ public class SimpleNamePickerData implements INamePickerData {
 	 * Constructor
 	 */
 	public SimpleNamePickerData() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -34,7 +33,6 @@ public class SimpleNamePickerData implements INamePickerData {
 	 */
 	@Override
 	public boolean hasCapability(final int capability) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -45,7 +43,6 @@ public class SimpleNamePickerData implements INamePickerData {
 	 */
 	@Override
 	public String[] getSourceLabels() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -56,7 +53,6 @@ public class SimpleNamePickerData implements INamePickerData {
 	 */
 	@Override
 	public IPickerResult readEntries(final IPickerOptions options) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -67,7 +63,6 @@ public class SimpleNamePickerData implements INamePickerData {
 	 */
 	@Override
 	public List<IPickerEntry> loadEntries(final Object[] ids, final String[] attributeNames) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

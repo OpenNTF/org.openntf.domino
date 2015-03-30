@@ -154,7 +154,6 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 		 */
 		@Override
 		public Document next() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 

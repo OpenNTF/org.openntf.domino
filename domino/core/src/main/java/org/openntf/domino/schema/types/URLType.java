@@ -52,7 +52,6 @@ public class URLType extends StringType {
 	 * 
 	 */
 	public URLType() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*

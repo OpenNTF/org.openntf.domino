@@ -23,7 +23,6 @@ public class GraphConnectEDDataModel {
 	}
 
 	public GraphConnectEDDataModel() {
-		// TODO Auto-generated constructor stub
 	}
 
 }

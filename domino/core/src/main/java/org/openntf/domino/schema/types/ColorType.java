@@ -16,7 +16,6 @@ public class ColorType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(ColorType.class.getName());
 
 	public ColorType() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -34,7 +33,6 @@ public class ColorType extends AbstractDominoType {
 	 */
 	@Override
 	public boolean validateValue(final Object value) throws ItemException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

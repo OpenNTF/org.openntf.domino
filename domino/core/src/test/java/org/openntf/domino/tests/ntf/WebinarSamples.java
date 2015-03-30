@@ -10,7 +10,6 @@ package org.openntf.domino.tests.ntf;
 public class WebinarSamples {
 
 	public WebinarSamples() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void processViewOld(final lotus.domino.View view) {

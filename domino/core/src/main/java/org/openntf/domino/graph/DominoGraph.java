@@ -620,7 +620,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@Override
 	public Iterable<Vertex> getVertices(final String key, final Object value) {
-		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
@@ -734,7 +733,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	@Override
 	@Deprecated
 	public void stopTransaction(final Conclusion conclusion) {
-		// TODO Auto-generated method stub
 
 	}
 

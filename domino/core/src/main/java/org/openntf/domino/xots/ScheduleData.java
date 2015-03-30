@@ -10,7 +10,6 @@ public abstract class ScheduleData {
 	//	private String[] schedules;
 	//
 	//	public ScheduleData(final String replicaID, final String className, final String apiPath, final String[] schedules) {
-	//		// TODO Auto-generated constructor stub
 	//		this.replicaID = replicaID;
 	//		this.className = className;
 	//		this.apiPath = apiPath;

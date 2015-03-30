@@ -20,13 +20,11 @@ public class DocumentEntrySet extends AbstractSet<Entry<String, Object>> {
 
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
 			return keys.hasNext();
 		}
 
 		@Override
 		public Entry<String, Object> next() {
-			// TODO Auto-generated method stub
 			final String key = keys.next();
 
 			return new Entry<String, Object>() {

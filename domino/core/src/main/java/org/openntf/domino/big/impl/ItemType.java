@@ -13,7 +13,6 @@ public class ItemType implements org.openntf.domino.big.ItemType {
 	private byte lotusFlags_;
 
 	public ItemType() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ItemType(final org.openntf.domino.Item prototype) {

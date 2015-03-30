@@ -99,7 +99,6 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 				try {
 					throw new UnsupportedDataTypeException("Value is not a map");
 				} catch (UnsupportedDataTypeException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

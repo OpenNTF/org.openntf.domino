@@ -39,7 +39,6 @@ public class PrintFunctionSet extends TestRunnerStdIn {
 				System.out.println(func);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

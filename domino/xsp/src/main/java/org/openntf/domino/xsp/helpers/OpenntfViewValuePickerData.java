@@ -38,7 +38,6 @@ public class OpenntfViewValuePickerData extends DominoViewValuePickerData {
 	 * Constructor
 	 */
 	public OpenntfViewValuePickerData() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

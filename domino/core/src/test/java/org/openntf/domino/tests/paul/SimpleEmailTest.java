@@ -24,7 +24,6 @@ public class SimpleEmailTest {
 	 * 
 	 */
 	public SimpleEmailTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public SimpleEmailTest(final Session s, final Database d) {

@@ -34,7 +34,6 @@ public class FileResourceWebContent extends AbstractDesignFileResource implement
 	}
 
 	public FileResourceWebContent(final Database database) {
-		// TODO Auto-generated constructor stub
 		super(database);
 	}
 

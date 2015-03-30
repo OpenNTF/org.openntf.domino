@@ -19,7 +19,6 @@ public class PhoneType extends AbstractDominoType {
 	 * 
 	 */
 	public PhoneType() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*

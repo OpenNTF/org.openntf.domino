@@ -33,7 +33,7 @@ public class DateTimeType extends AbstractDominoType {
 	 */
 	@Override
 	public boolean validateValue(final Object value) throws ItemException {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return false;
 	}
 }

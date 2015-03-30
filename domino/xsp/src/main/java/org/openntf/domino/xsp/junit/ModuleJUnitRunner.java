@@ -57,7 +57,6 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 		try {
 			module = ModuleLoader.loadModule(db, false);
 		} catch (ServletException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		assertNotNull("Module " + db + " does not exist or is locked by server process", module);
@@ -77,7 +76,6 @@ public class ModuleJUnitRunner extends DominoJUnitRunner {
 			System.err.println("Could not init context completely: " + nfe);
 			nfe.printStackTrace();
 		} catch (ServletException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

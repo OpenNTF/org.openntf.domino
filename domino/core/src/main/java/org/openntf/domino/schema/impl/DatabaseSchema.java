@@ -43,7 +43,6 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 	 * 
 	 */
 	public DatabaseSchema() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -177,7 +176,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 
 	@Override
 	public IItemDefinition createItemDefinition(final String itemKey, final Class<?> type) {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 

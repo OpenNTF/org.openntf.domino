@@ -19,7 +19,6 @@ public class StreetAddressType extends AbstractDominoType {
 	 * 
 	 */
 	public StreetAddressType() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -37,7 +36,6 @@ public class StreetAddressType extends AbstractDominoType {
 	 */
 	@Override
 	public boolean validateValue(final Object value) throws ItemException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

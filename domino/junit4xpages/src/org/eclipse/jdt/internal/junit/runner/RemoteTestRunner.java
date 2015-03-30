@@ -344,7 +344,6 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 					try {
 						urls[i] = new URL(paths[i]);
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

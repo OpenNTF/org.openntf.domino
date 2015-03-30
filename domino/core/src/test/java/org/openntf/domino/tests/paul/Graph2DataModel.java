@@ -281,7 +281,6 @@ public class Graph2DataModel {
 	}
 
 	public Graph2DataModel() {
-		// TODO Auto-generated constructor stub
 	}
 
 }

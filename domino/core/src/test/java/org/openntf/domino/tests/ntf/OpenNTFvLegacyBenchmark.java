@@ -14,7 +14,6 @@ public enum OpenNTFvLegacyBenchmark {
 	INSTANCE;
 
 	private OpenNTFvLegacyBenchmark() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private static final int THREAD_COUNT = 1;
@@ -270,7 +269,6 @@ public enum OpenNTFvLegacyBenchmark {
 
 		public RawLegacyDoer() {
 			super(true);
-			// TODO Auto-generated constructor stub
 		}
 
 	}
@@ -279,7 +277,6 @@ public enum OpenNTFvLegacyBenchmark {
 
 		public ODALegacyDoer() {
 			super(false);
-			// TODO Auto-generated constructor stub
 		}
 
 	}

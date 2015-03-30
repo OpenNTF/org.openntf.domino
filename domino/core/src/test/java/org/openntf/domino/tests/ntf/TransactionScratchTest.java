@@ -24,7 +24,6 @@ public enum TransactionScratchTest {
 	INSTANCE;
 
 	private TransactionScratchTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private static final int THREAD_COUNT = 1;

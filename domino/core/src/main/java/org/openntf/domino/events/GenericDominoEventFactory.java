@@ -49,7 +49,6 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 	 * Constructor
 	 */
 	public GenericDominoEventFactory() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*

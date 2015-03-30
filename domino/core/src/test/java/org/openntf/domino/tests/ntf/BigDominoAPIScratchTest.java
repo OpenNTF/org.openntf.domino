@@ -24,7 +24,6 @@ public enum BigDominoAPIScratchTest {
 	INSTANCE;
 
 	private BigDominoAPIScratchTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private static final int THREAD_COUNT = 10;

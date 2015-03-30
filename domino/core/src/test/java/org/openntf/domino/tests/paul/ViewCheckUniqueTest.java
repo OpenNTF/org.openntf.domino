@@ -27,7 +27,6 @@ public class ViewCheckUniqueTest {
 	 * 
 	 */
 	public ViewCheckUniqueTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ViewCheckUniqueTest(final Session s, final Database d) {

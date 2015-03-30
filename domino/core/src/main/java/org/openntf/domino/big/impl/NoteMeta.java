@@ -23,18 +23,15 @@ public class NoteMeta implements org.openntf.domino.big.NoteMeta {
 	private short formRef_;
 
 	public NoteMeta() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
-		// TODO Auto-generated method stub
 	}
 
 	@Override

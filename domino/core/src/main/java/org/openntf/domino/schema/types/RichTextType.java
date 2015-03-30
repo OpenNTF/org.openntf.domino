@@ -19,7 +19,6 @@ public class RichTextType extends AbstractDominoType {
 	 * 
 	 */
 	public RichTextType() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*

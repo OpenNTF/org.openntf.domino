@@ -21,7 +21,6 @@ public class DummyAsyncWriter implements TaskletWorker<String> {
 
 	@Override
 	public void tearDown() {
-		// TODO Auto-generated method stub
 		System.out.println("Stop DummyAsyncWriter");
 	}
 

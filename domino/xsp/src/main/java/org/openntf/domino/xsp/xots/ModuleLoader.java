@@ -75,7 +75,6 @@ public enum ModuleLoader {
 			} catch (com.ibm.xsp.acl.NoAccessSignal nas) {
 				// Thats ok. (refresh should be done anyway)
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			module = getNsfService().loadModule(modName);

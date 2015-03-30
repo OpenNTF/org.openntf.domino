@@ -7,7 +7,6 @@ public class ProtectedDatabaseDesign extends DatabaseDesign {
 
 	public ProtectedDatabaseDesign(final Database database) {
 		super(database);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

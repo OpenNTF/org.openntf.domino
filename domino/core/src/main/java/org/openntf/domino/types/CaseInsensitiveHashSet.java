@@ -11,7 +11,6 @@ public class CaseInsensitiveHashSet extends AbstractSet<String> {
 
 	@Override
 	public boolean add(final String e) {
-		// TODO Auto-generated method stub
 		if (delegate.containsKey(e.toLowerCase()))
 			return false;
 		delegate.put(e.toLowerCase(), e);

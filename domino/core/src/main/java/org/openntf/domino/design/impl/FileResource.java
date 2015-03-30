@@ -73,13 +73,13 @@ public final class FileResource extends AbstractDesignFileResource implements or
 
 	@Override
 	public Collection<String> getItemNames() {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		return null;
 	}
 
 	@Override
 	public void setDeployable(final boolean deployable) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 
 	}
 

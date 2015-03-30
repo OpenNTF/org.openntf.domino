@@ -28,7 +28,6 @@ public enum OneMillionScratchTest {
 	INSTANCE;
 
 	private OneMillionScratchTest() {
-		// TODO Auto-generated constructor stub
 	}
 
 	static class Doer implements Runnable {

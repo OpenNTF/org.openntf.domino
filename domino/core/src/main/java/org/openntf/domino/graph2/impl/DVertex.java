@@ -154,7 +154,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public String validateEdges() {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 

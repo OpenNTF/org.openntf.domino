@@ -72,7 +72,6 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

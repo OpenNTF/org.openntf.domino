@@ -123,7 +123,6 @@ public class DominoJUnitRunner extends AbstractJUnitRunner {
 
 	@Override
 	protected void afterTest(final FrameworkMethod method) {
-		// TODO Auto-generated method stub
 		WrapperFactory wf = Factory.getWrapperFactory();
 		wf.recycle(TestEnv.database);
 		wf.recycle(TestEnv.session);

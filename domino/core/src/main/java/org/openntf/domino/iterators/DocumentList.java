@@ -384,7 +384,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public org.openntf.domino.Document getDocument(final lotus.domino.Document doc) {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 
@@ -508,13 +508,13 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public String getQuery() {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 
 	@Override
 	public DateTime getUntilTime() {
-		// TODO Auto-generated method stub
+		// TODO Implement this or remove comment
 		return null;
 	}
 
@@ -660,7 +660,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void putAllInFolder(final String folderName) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		// NTF it's important to create a lotus collection of some kind for this operation
 		// rather than iterating. Each call to putInFolder is a transaction history for the folder itself,
 		// so it will be highly inefficient to create 1 transaction per document rather than the 
@@ -671,7 +671,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void putAllInFolder(final String folderName, final boolean createOnFail) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		//NTF See above
 		throw new UnimplementedException("Not yet implemented, sorry");
 
@@ -679,7 +679,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void removeAll(final boolean force) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		//NTF Also important to do this with a real DocumentCollection as this is one operation in the C API
 		throw new UnimplementedException("Not yet implemented, sorry");
 
@@ -687,7 +687,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void removeAllFromFolder(final String folderName) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		// NTF See putAllInFolder(String)
 		throw new UnimplementedException("Not yet implemented, sorry");
 
@@ -695,7 +695,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void stampAll(final String itemName, final Object value) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
@@ -758,20 +758,20 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void updateAll() {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public void stampAll(final Map<String, Object> map) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 
 	}
 
 	@Override
 	public View getParentView() {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
@@ -782,56 +782,56 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public DocumentCollection filter(final Object value) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public DocumentCollection filter(final Object value, final String[] itemnames) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public DocumentCollection filter(final Object value, final Collection<String> itemnames) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public DocumentCollection filter(final Map<String, Object> filterMap) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public boolean add(final org.openntf.domino.Document arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.Document> arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 
 	}
 
 	@Override
 	public boolean contains(final Object arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public boolean containsAll(final Collection<?> arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
@@ -860,19 +860,19 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public boolean remove(final Object arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public boolean removeAll(final Collection<?> arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
 	@Override
 	public boolean retainAll(final Collection<?> arg0) {
-		// TODO Auto-generated method stub
+		// TODO Implement this
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 

@@ -54,7 +54,6 @@ public enum Configuration {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			synchronized (dirtyObjects) {
 				for (ConfigurationObject obj : dirtyObjects) {
 					obj.syncCache();
@@ -70,7 +69,6 @@ public enum Configuration {
 	 * 
 	 */
 	public static void addDirty(final ConfigurationObject configurationObject) {
-		// TODO Auto-generated method stub
 		synchronized (dirtyObjects) {
 			dirtyObjects.add(configurationObject);
 		}
