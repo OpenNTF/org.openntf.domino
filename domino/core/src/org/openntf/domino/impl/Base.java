@@ -716,6 +716,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return value;
 		} else if (value instanceof String) {
 			return value;
+		} else if (value.getClass().isPrimitive()) {
+			//FIXME: NTF IS A COMPLETE HACK!!!! (but we just want to know if it'll fix PWithers' problem)
+
+			Class<?> cl = value.getClass();
+			if (cl == Boolean.TYPE) {
+				if ((Boolean) value) {
+					return "1";
+				} else {
+					return "0";
+				}
+			}
 		} else if (value instanceof Boolean) {
 			if ((Boolean) value) {
 				return "1";
