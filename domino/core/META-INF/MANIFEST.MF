@@ -10,6 +10,7 @@ Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.5.0.qualifier
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
  org.openntf.conference.graph,
