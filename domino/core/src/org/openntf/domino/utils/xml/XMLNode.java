@@ -271,6 +271,13 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.getResults_.get(path);
 	}
 
+	/**
+	 * Equivalent to {@link #getXml(Transformer)} passed null.
+	 */
+	public String getXml() throws IOException {
+		return getXml(null);
+	}
+
 	public String getXml(Transformer transformer) throws IOException {
 		try {
 			if (transformer == null)
