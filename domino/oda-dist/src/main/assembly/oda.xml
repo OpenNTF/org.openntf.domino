@@ -7,7 +7,36 @@
 		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
+	
+	<!-- Local files -->
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<includes>
+				<include>README*</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
+	
 	<moduleSets>
+	
+		<!-- The source for non-external projects -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino</include>
+				<include>org.openntf.domino:org.openntf.domino.xsp</include>
+				<include>org.openntf.domino:org.openntf.formula</include>
+				<include>org.openntf.domino:org.openntf.junit4xpages</include>
+			</includes>
+			
+			<binaries>
+				<attachmentClassifier>src</attachmentClassifier>
+				<outputDirectory>/source/</outputDirectory>
+				<unpack>false</unpack>
+			</binaries>
+		</moduleSet>
 	
 		<!-- The final update site -->
 		<moduleSet>

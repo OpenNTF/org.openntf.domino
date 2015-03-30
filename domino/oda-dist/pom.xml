@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>oda-dist</artifactId>
 	
-	<name>OpenNTF Domino API Distribution</name>
+	<name>OpenNTF Domino API Distributable</name>
 	
 	<packaging>pom</packaging>
 	
@@ -22,7 +22,7 @@
 				<version>2.5.3</version>
 				<configuration>
 					<descriptors>
-						<descriptor>src/assembly/oda.xml</descriptor>
+						<descriptor>src/main/assembly/oda.xml</descriptor>
 					</descriptors>
 					<finalName>OpenNTF-Domino-API-${project.version}</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
