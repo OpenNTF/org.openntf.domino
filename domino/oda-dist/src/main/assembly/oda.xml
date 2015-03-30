@@ -38,6 +38,49 @@
 				<outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping>
 			</binaries>
 		</moduleSet>
+		
+		<!-- Javadocs -->
+		<!-- TODO see if this can be done in one fell swoop -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino</include>
+				<include>org.openntf.domino:org.openntf.domino.xsp</include>
+				<include>org.openntf.domino:org.openntf.formula</include>
+			</includes>
+			
+			<binaries>
+				<attachmentClassifier>javadoc</attachmentClassifier>
+				<outputDirectory>/apidocs/${module.artifactId}</outputDirectory>
+				<unpack>true</unpack>
+			</binaries>
+		</moduleSet>
+<!-- 		<moduleSet> -->
+<!-- 			<useAllReactorProjects>true</useAllReactorProjects> -->
+<!-- 			<includes> -->
+<!-- 				<include>org.openntf.domino:org.openntf.domino.xsp</include> -->
+<!-- 			</includes> -->
+			
+<!-- 			<binaries> -->
+<!-- 				<attachmentClassifier>javadoc</attachmentClassifier> -->
+<!-- 				<outputDirectory>/apidocs/</outputDirectory> -->
+<!-- 				<unpack>true</unpack> -->
+<!-- 				<outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping> -->
+<!-- 			</binaries> -->
+<!-- 		</moduleSet> -->
+<!-- 		<moduleSet> -->
+<!-- 			<useAllReactorProjects>true</useAllReactorProjects> -->
+<!-- 			<includes> -->
+<!-- 				<include>org.openntf.domino:org.openntf.formula</include> -->
+<!-- 			</includes> -->
+			
+<!-- 			<binaries> -->
+<!-- 				<attachmentClassifier>javadoc</attachmentClassifier> -->
+<!-- 				<outputDirectory>/apidocs/</outputDirectory> -->
+<!-- 				<unpack>true</unpack> -->
+<!-- 				<outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping> -->
+<!-- 			</binaries> -->
+<!-- 		</moduleSet> -->
 	
 		<!-- The final update site -->
 		<moduleSet>
