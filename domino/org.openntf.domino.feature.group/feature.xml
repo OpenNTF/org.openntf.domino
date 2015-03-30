@@ -91,7 +91,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
    <plugin
          id="org.openntf.domino.source"
          download-size="0"
@@ -105,7 +104,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
    <plugin
          id="org.openntf.domino.xsp.source"
          download-size="0"
@@ -119,6 +117,13 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="org.openntf.formula.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+         
 
    <plugin
          id="rx"
