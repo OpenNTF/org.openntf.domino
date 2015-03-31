@@ -79,7 +79,7 @@ import org.openntf.domino.design.XPageFile;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.design.impl.DatabaseClassLoader;
-import org.openntf.domino.design.impl.DesignMapping;
+import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.design.impl.OtherDesignElement;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.junit.DominoJUnitRunner;
@@ -189,13 +189,8 @@ public class DesignClassTest {
 	protected void testDb(final Database db) {
 		DatabaseDesign design = db.getDesign();
 		System.out.println("Design: " + design.getClass().getName());
-<<<<<<< HEAD:domino/core/src/test/java/org/openntf/domino/tests/rpr/DesignClassTest.java
-		DesignCollection<DesignBase> allDesign = design.getDesignElements("@ALL");
-		Map<Class<?>, AtomicInteger> counter = new HashMap<Class<?>, AtomicInteger>();
-=======
 		DesignCollection<DesignBase> allDesign = design.searchDesignElements("@ALL");
 		Map<Class, AtomicInteger> counter = new HashMap<Class, AtomicInteger>();
->>>>>>> roland:domino/core/test/org/openntf/domino/tests/rpr/DesignClassTest.java
 		for (DesignBase des : allDesign) {
 			if (!counter.containsKey(des.getClass())) {
 				counter.put(des.getClass(), new AtomicInteger());
@@ -204,34 +199,6 @@ public class DesignClassTest {
 		}
 		int i = 0;
 		int j = 0;
-<<<<<<< HEAD:domino/core/src/test/java/org/openntf/domino/tests/rpr/DesignClassTest.java
-		for (ODPMapping mapping : ODPMapping.values()) {
-			Class<? extends DesignBase> cls = mapping.getInstanceClass();
-			if (cls == OtherDesignElement.class) {
-			} else {
-				DesignCollection<? extends DesignBase> ret = design.getDesignElements(cls);
-				j = 0;
-				for (@SuppressWarnings("unused")
-				DesignBase b : ret) {
-					i++;
-					j++;
-				}
-				int cnt;
-				if (!counter.containsKey(cls)) {
-					cnt = 0;
-				} else {
-					cnt = counter.get(cls).get();
-				}
-				if (j == cnt) {
-					System.out.println(j + "\t " + cnt + "\t" + cls.getName());
-				} else {
-					System.err.println(j + "\t " + cnt + "\t" + cls.getName());
-				}
-				//if (j == 0)
-				//	System.err.println("No design element of " + cls.getName() + " found");
-			}
-		}
-=======
 		//		for (ODPMapping mapping : ODPMapping.values()) {
 		//			Class<? extends DesignBase> cls = mapping.getInstanceClass();
 		//			if (cls == OtherDesignElement.class) {
@@ -257,7 +224,6 @@ public class DesignClassTest {
 		//				//	System.err.println("No design element of " + cls.getName() + " found");
 		//			}
 		//		}
->>>>>>> roland:domino/core/test/org/openntf/domino/tests/rpr/DesignClassTest.java
 		System.out.println("Total design elements " + i);
 	}
 
@@ -470,6 +436,6 @@ public class DesignClassTest {
 	public void testMapping() {
 		File odpRoot = new File("D:\\daten\\odp");
 		File odpChild = new File("D:\\daten\\odp\\Xpages/a.Xsp");
-		System.out.println(DesignMapping.valueOf(odpRoot, odpChild));
+		System.out.println(DesignFactory.valueOf(odpRoot, odpChild));
 	}
 }
