@@ -114,13 +114,6 @@ public interface WrapperFactory extends Base<lotus.domino.Base> {
 	void recycle(Vector vec);
 
 	/**
-	 * Disables autorecycle for that element. By default, AutoRecycle for Session and AgentContext is always disabled
-	 * 
-	 * @param result
-	 */
-	void setNoRecycle(final Base<?> base, boolean value);
-
-	/**
 	 * This method is called if a Notes-object was recovered
 	 * 
 	 * @param newLotus

@@ -16,23 +16,15 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 
 /**
  * A java file (for xpages)
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class XspJavaResource extends AbstractXspResource implements HasMetadata, org.openntf.domino.design.XspJavaResource {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected XspJavaResource(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

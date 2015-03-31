@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openntf.domino.design.DatabaseDesign;
+import org.openntf.domino.design.JarResource;
+import org.openntf.domino.design.ScriptLibraryJava;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -94,7 +96,7 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 
 		// If we're here, see if we should look through the Jars - load them all now
 		if (includeJars_ && !loadedJars_) {
-			for (org.openntf.domino.design.JarResource jar : design_.getJarResources()) {
+			for (JarResource jar : design_.getDesignElements(JarResource.class)) {
 				System.out.println(jar.getName());
 				unloadedClasses_.putAll(jar.getClassData());
 			}
@@ -108,7 +110,7 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 
 		// Now do the same for Java script libraries
 		if (includeLibraries_ && !loadedLibraries_) {
-			for (org.openntf.domino.design.ScriptLibraryJava lib : design_.getScriptLibrariesJava()) {
+			for (ScriptLibraryJava lib : design_.getDesignElements(ScriptLibraryJava.class)) {
 				System.out.println(lib.getName());
 				Map<String, byte[]> classData = lib.getClassData();
 				unloadedClasses_.putAll(classData);

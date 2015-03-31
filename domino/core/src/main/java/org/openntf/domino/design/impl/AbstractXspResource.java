@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -39,17 +37,6 @@ public abstract class AbstractXspResource extends AbstractDesignFileResource imp
 	private static final Logger log_ = Logger.getLogger(AbstractXspResource.class.getName());
 
 	private static final String CLASS_INDEX_ITEM = "$ClassIndexItem";
-
-	protected AbstractXspResource(final Document document) {
-		super(document);
-	}
-
-	/**
-	 * @param database
-	 */
-	protected AbstractXspResource(final Database database) {
-		super(database);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.JavaResource#getClassNames()

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sharedcolumn xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" noreplace="true" useapplet="false" treatashtml="false" designerversion="8.5.3" maintenanceversion="1.2">
+<column align="left" width="10" hidden="false" editable="false" hideinr5="false" itemname="$0" twisties="false" resizable="true" linenumber="1" sortnocase="true" tileviewer="top" categorized="false" showascolor="false" showasicons="false" showaslinks="false" readingorder="lefttoright" sortnoaccent="true" viewisnarrow="top" responsesonly="false" userdefinable="false" extwindowwidth="false" hidedetailrows="false" hidecolumntitle="false" justifysecondrow="false" deferindexcreation="false" separatemultiplevalues="false">
+<columnheader align="left" title="#" readingorder="lefttoright">
+<font size="9pt" style="bold"/>
+</columnheader>
+<code event="value">
+<formula>@DocNumber</formula>
+</code>
+</column>
+</sharedcolumn>

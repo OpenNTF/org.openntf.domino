@@ -16,22 +16,14 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class CompositeComponent extends AbstractDesignFileResource implements HasMetadata,
-		org.openntf.domino.design.CompositeComponent {
+org.openntf.domino.design.CompositeComponent {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected CompositeComponent(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

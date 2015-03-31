@@ -108,7 +108,9 @@ org.openntf.domino.NoteCollection {
 	@Override
 	public void add(final lotus.domino.Document additionSpecifier) {
 		try {
-			getDelegate().add(toLotus(additionSpecifier));
+			if (additionSpecifier != null) {
+				getDelegate().add(toLotus(additionSpecifier));
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

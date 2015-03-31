@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -39,7 +42,29 @@ import org.w3c.dom.NodeList;
 public class XMLNode implements Map<String, Object>, Serializable {
 	private static final long serialVersionUID = 2304991412510751453L;
 	private static TransformerFactory tFactory = TransformerFactory.newInstance();
-	public static Transformer DEFAULT_TRANSFORMER = createTransformer(null);
+
+	private static ThreadLocal<DocumentBuilder> docBuilder = new ThreadLocal<DocumentBuilder>() {
+		@Override
+		protected DocumentBuilder initialValue() {
+			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+			fac.setValidating(false);
+			try {
+				return fac.newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+		};
+	};
+
+	private static ThreadLocal<Transformer> docTransformer = new ThreadLocal<Transformer>() {
+		@Override
+		protected Transformer initialValue() {
+			return createTransformer(null);
+		};
+	};
+
 	protected org.w3c.dom.Node node_ = null;
 	private transient XPath xPath_ = null;
 	private Map<String, Object> getResults_ = new HashMap<String, Object>();
@@ -49,6 +74,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public XMLNode(final org.w3c.dom.Node node) {
 		node_ = node;
+	}
+
+	public static DocumentBuilder getBuilder() throws ParserConfigurationException {
+		return docBuilder.get();
+	}
+
+	public static Transformer getTransformer() {
+		return docTransformer.get();
 	}
 
 	public XMLNode selectSingleNode(final String xpathString) {
@@ -65,11 +98,11 @@ public class XMLNode implements Map<String, Object>, Serializable {
 				Source filter = new StreamSource(xsltStream);
 				transformer = tFactory.newTransformer(filter);
 			}
-			// We don't want the XML declaration in front
+			// RPr: commented out. Better set these properties in XSLT-Stylesheet 
 			//transformer.setOutputProperty("omit-xml-declaration", "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			//transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			//transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			//transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		} catch (TransformerConfigurationException e) {
 			e.printStackTrace();
@@ -110,7 +143,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public void removeAttribute(final String attribute) {
 		Node attr = this.node_.getAttributes().getNamedItem(attribute);
-		attr.getParentNode().removeChild(attr);
+		if (attr != null) {
+			attr.getParentNode().removeChild(attr);
+		}
 	}
 
 	public void setAttribute(final String attribute, final String value) {
@@ -273,28 +308,34 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	/**
 	 * Equivalent to {@link #getXml(Transformer)} passed null.
 	 */
-	public String getXml() throws IOException {
+	public String getXml() {
 		return getXml(null);
 	}
 
-	public String getXml(Transformer transformer) throws IOException {
+	public String getXml(Transformer transformer) {
 		try {
-			if (transformer == null)
-				transformer = DEFAULT_TRANSFORMER;
+
+			if (transformer == null) {
+				transformer = XMLDocument.getTransformer(); // use document's default transformer
+			}
 			StreamResult result = new StreamResult(new StringWriter());
 			DOMSource source = new DOMSource(this.node_);
 			transformer.transform(source, result);
+
 			return result.getWriter().toString();
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			// RPr: Return null, return "", return <?xml...>, throw exception... Don't know what's the best here?
+			return "<?xml version=\"1.0\" encoding=\"UTF-8\"><error>" + e.getMessage() + "</error>";
 		}
-		return null;
 	}
 
 	public void getXml(Transformer transformer, final File out) throws IOException {
 		try {
-			if (transformer == null)
-				transformer = DEFAULT_TRANSFORMER;
+			if (transformer == null) {
+				transformer = XMLDocument.getTransformer(); // use document's default transformer
+			}
 
 			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
 			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790

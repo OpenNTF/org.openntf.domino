@@ -18,8 +18,6 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.Document;
-
 /**
  * @author jgallagher
  * 
@@ -29,13 +27,9 @@ public final class DbImage extends AbstractDesignBase implements org.openntf.dom
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DbImage.class.getName());
 
-	public DbImage(final Document document) {
-		super(document);
-	}
-
 	@Override
 	protected boolean enforceRawFormat() {
-		return true;
+		return false;
 	}
 
 }

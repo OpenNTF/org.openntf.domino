@@ -21,18 +21,14 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.design.XspXmlContent;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
@@ -41,7 +37,12 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
-public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.AnyFileResource {
+/**
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
+public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignFileResource.class.getName());
@@ -50,27 +51,15 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
 	private static final char DESIGN_FLAG_READONLY = '&';
 
-	private static final String DEFAULT_FILEDATA_FIELD = "$FileData";
+	public static final String DEFAULT_FILEDATA_FIELD = "$FileData";
+	public static final String DEFAULT_CONFIGDATA_FIELD = "$ConfigData";
+	public static final String DEFAULT_FILESIZE_FIELD = "$FileSize";
+	public static final String DEFAULT_CONFIGSIZE_FIELD = "$ConfigSize";
+
 	private static final String MIMETYPE_FIELD = "$MimeType";
 
-	protected AbstractDesignFileResource(final Document document) {
-		super(document);
-	}
-
-	protected AbstractDesignFileResource(final Database database) {
-		super(database);
-		// TODO What is this?
-		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_fileresource.xml");
-			loadDxl(is);
-			is.close();
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	protected AbstractDesignFileResource(final Database database, final String dxlResource) {
-		super(database);
+	protected void init(final Database database, final String dxlResource) {
+		super.init(database);
 
 		try {
 			InputStream is = DesignView.class.getResourceAsStream(dxlResource);
@@ -86,7 +75,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 * 
 	 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
 	 */
-	@Override
 	public byte[] getFileData() {
 		switch (getDxlFormat(true)) {
 		case DXL:
@@ -143,7 +131,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		}
 	}
 
-	@Override
 	public void setFileData(final byte[] data) {
 		switch (getDxlFormat(true)) {
 		case DXL:
@@ -151,9 +138,21 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 			if (filedata == null) {
 				filedata = getDxl().selectSingleNode("/*").addChildElement("filedata");
 			}
-			filedata.setText(printBase64Binary(data));
+			if (data.length == 0) {
+				//cannot import empty filedata - node
+				filedata.setText(printBase64Binary(new byte[] { 32 }));
+			} else {
+				filedata.setText(printBase64Binary(data));
+			}
+			break;
 		default:
-			setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
+			if (data.length == 0) {
+				//cannot import empty filedata - node
+				setFileDataRaw(DEFAULT_FILEDATA_FIELD, new byte[] { 32 });
+			} else {
+				setFileDataRaw(DEFAULT_FILEDATA_FIELD, data);
+			}
+
 		}
 	}
 
@@ -169,46 +168,24 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		//			byte[] reconData = record.getBytes();
 		CDResourceFile record = new CDResourceFile("");
 		record.setFileData(fileData);
-		byte[] reconData = record.getData().array();
 
-		// Write out the first chunk
-		int firstChunk = reconData.length > 20544 ? 20544 : reconData.length;
-		String firstChunkData = printBase64Binary(Arrays.copyOfRange(reconData, 0, firstChunk));
-		XMLNode documentNode = getDxl().selectSingleNode("//note");
-		XMLNode fileDataNode = documentNode.addChildElement("item");
-		fileDataNode.setAttribute("name", itemName);
-		fileDataNode = fileDataNode.addChildElement("rawitemdata");
-		fileDataNode.setAttribute("type", "1");
-		fileDataNode.setText(firstChunkData);
-
-		// Write out any remaining chunks
-		int remaining = reconData.length - firstChunk;
-		int chunks = remaining / 20516;
-		if (remaining % 20516 > 0) {
-			chunks++;
-		}
-		int offset = firstChunk;
-		for (int i = 0; i < chunks; i++) {
-			int chunkSize = remaining > 20516 ? 20516 : remaining;
-			String chunkData = printBase64Binary(Arrays.copyOfRange(reconData, offset, offset + chunkSize));
-
-			fileDataNode = documentNode.addChildElement("item");
+		for (ByteBuffer chk : record.getChunks()) {
+			XMLNode documentNode = getDxl().selectSingleNode("//note");
+			XMLNode fileDataNode = documentNode.addChildElement("item");
 			fileDataNode.setAttribute("name", itemName);
 			fileDataNode = fileDataNode.addChildElement("rawitemdata");
 			fileDataNode.setAttribute("type", "1");
-			fileDataNode.setText(chunkData);
-
-			remaining -= 20516;
-			offset += chunkSize;
+			fileDataNode.setText(printBase64Binary(chk.array()));
 		}
 
 		// Also set the file size if we're setting the main field
 		if (DEFAULT_FILEDATA_FIELD.equals(itemName)) {
-			setItemValue("$FileSize", String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
+			setItemValue(DEFAULT_FILESIZE_FIELD, String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
+		} else if (DEFAULT_CONFIGDATA_FIELD.equals(itemName)) {
+			setItemValue(DEFAULT_CONFIGSIZE_FIELD, String.valueOf(fileData.length), FLAG_SIGN_SUMMARY);
 		}
 	}
 
-	@Override
 	public String getMimeType() {
 		switch (getDxlFormat(false)) {
 		case DXL:
@@ -218,7 +195,6 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		}
 	}
 
-	@Override
 	public void setMimeType(final String mimeType) {
 		switch (getDxlFormat(true)) {
 		case DXL:
@@ -232,60 +208,38 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	public void setName(final String title) {
 		super.setName(title);
 		// Also set the $FileNames field
-		setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
+		if (enforceRawFormat()) {
+			setItemValue("$FileNames", title, FLAG_SIGN_SUMMARY);
+		}
 	}
 
 	/**
 	 * The ODS file that is written here is the file content
 	 */
-
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
-		FileOutputStream fo = new FileOutputStream(odpFile);
-		fo.write(getFileData());
-		fo.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
-
+	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
+		converter.writeBinaryFile(file, getFileData());
 	}
 
-	// TODO: map this to DXL
 	@Override
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+		setFileData(converter.readBinaryFile(file));
+	}
+
 	public boolean isReadOnly() {
 		return hasFlag(DESIGN_FLAG_READONLY);
 	}
 
-	@Override
 	public void setReadOnly(final boolean readOnly) {
 		setFlag(DESIGN_FLAG_READONLY, readOnly);
 	}
 
-	@Override
 	public boolean isDeployable() {
 		return hasFlagExt(DESIGN_FLAGEXT_FILE_DEPLOYABLE);
 	}
 
-	@Override
 	public void setDeployable(final boolean deployable) {
+		setFlagExt(DESIGN_FLAGEXT_FILE_DEPLOYABLE, deployable);
 	}
 
-	public <T extends XspXmlContent> T getAsXml(final Class<T> schema) {
-		try {
-			Constructor<T> ctor = schema.getConstructor(FileResource.class);
-			return ctor.newInstance(this);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
 }

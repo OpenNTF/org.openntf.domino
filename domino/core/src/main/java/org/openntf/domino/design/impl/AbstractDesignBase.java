@@ -21,22 +21,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
+
+import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
+import org.openntf.domino.DxlExporter.RichTextOption;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DesignBase;
-import org.openntf.domino.design.DesignBaseNamed;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -56,8 +57,6 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
-	private static Transformer ODP_META_TRANSFORMER = createTransformer("dxl_metafilter.xslt");
-
 	private static final char DESIGN_FLAG_PRESERVE = 'P';
 	private static final char DESIGN_FLAG_PROPAGATE_NOCHANGE = 'r';
 	private static final char DESIGN_FLAG_NEEDSREFRESH = '$';
@@ -67,18 +66,18 @@ public abstract class AbstractDesignBase implements DesignBase {
 	protected static final String FLAGS_ITEM = "$Flags";
 	protected static final String FLAGS_EXT_ITEM = "$FlagsExt";
 	protected static final String TITLE_ITEM = "$TITLE";
+	protected static final String ASSIST_TYPE = "$AssistType";
 
-	private transient Database database_;
-	private transient Document document_;
 	private String universalId_;
 
 	private XMLDocument dxl_;
 
 	private DxlFormat dxlFormat_ = DxlFormat.NONE;
 
-	private transient ODPMapping odpMapping_;
-
-	private Date lastModified_;
+	// caches
+	private transient Database database_;
+	private transient Document document_;
+	private transient DesignFactory odpMapping_;
 
 	/**
 	 * Create a new DesignBase based on the given database. You may add content to this DesignBase and save it afterwards.
@@ -86,7 +85,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @param database
 	 *            the Database
 	 */
-	public AbstractDesignBase(final Database database) {
+	public void init(final Database database) {
 		database_ = database;
 		loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
 	}
@@ -96,29 +95,29 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * 
 	 * @param document
 	 */
-	protected AbstractDesignBase(final Document document) {
+	protected void init(final Document document) {
 		setDocument(document);
 	}
 
+	/**
+	 * Returns the {@link DxlFormat}
+	 * 
+	 * @param detect
+	 *            true: means that the note is really exported
+	 * @return {@link DxlFormat}
+	 */
 	protected DxlFormat getDxlFormat(final boolean detect) {
 		if (detect)
 			getDxl();
 		return dxlFormat_;
 	}
 
+	/**
+	 * To be implemented
+	 * 
+	 * @return true if this note should always be exported in RAW format
+	 */
 	protected abstract boolean enforceRawFormat();
-
-	//	/**
-	//	 * The preferd ODA Format (to fix bugs)
-	//	 * @return
-	//	 */
-	//	protected abstract DxlFormat preferedOdaFormat();
-	//	/**
-	//	 * Indicates, wether this Note should be exported in Raw-Format.
-	//	 */
-	//	protected boolean enforceRawFormat() {
-	//		return true;
-	//	}
 
 	/*
 	 * (non-Javadoc)
@@ -177,6 +176,39 @@ public abstract class AbstractDesignBase implements DesignBase {
 			return getDocumentElement().getAttribute("noreplace").equals("true");
 		default:
 			return hasFlag(DESIGN_FLAG_PRESERVE);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#isPreventChanges()
+	 */
+	@Override
+	public final boolean isPrivate() {
+		switch (getDxlFormat(true)) {
+		case DXL:
+		case RAWNOTE:
+			return "true".equals(getDocumentElement().getAttribute("private"));
+		default:
+			return document_.isPrivate();
+
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#isPreventChanges()
+	 */
+	@Override
+	public final boolean isDefault() {
+		switch (getDxlFormat(true)) {
+		case DXL:
+		case RAWNOTE:
+			return "true".equals(getDocumentElement().getAttribute("default"));
+		default:
+			return document_.isDefault();
 		}
 	}
 
@@ -291,12 +323,25 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	// -------------- Flags stuff
 
+	/**
+	 * Returns all flags of this DesignElement
+	 * 
+	 * @return
+	 */
 	protected String getFlags() {
 		if (getDxlFormat(true) != DxlFormat.RAWNOTE)
 			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE");
 		return getItemValueString(FLAGS_ITEM);
 	}
 
+	/**
+	 * Sets/clears a given flag character in this DesignElement
+	 * 
+	 * @param flag
+	 *            the flag char
+	 * @param enabled
+	 *            if the flag should be set or cleared
+	 */
 	protected void setFlag(final char flag, final boolean enabled) {
 		String flags = getFlags();
 		if (enabled) {
@@ -311,16 +356,35 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
+	/**
+	 * Checks if a given flag is present
+	 * 
+	 * @param flag
+	 *            the flag char
+	 * @return true if the flag is present
+	 */
 	protected boolean hasFlag(final char flag) {
 		return getFlags().indexOf(flag) >= 0;
 	}
 
-	// FlagsExt
+	/**
+	 * Returns all extended-flags of this DesignElement
+	 * 
+	 * @return
+	 */
 	protected String getFlagsExt() {
 		getDxlFormat(true); // as far as I know, this item is also 
 		return getItemValueString(FLAGS_EXT_ITEM);
 	}
 
+	/**
+	 * Sets/clears a given exteded-flag character in this DesignElement
+	 * 
+	 * @param flag
+	 *            the flag char
+	 * @param enabled
+	 *            if the flag should be set or cleared
+	 */
 	protected void setFlagExt(final char flag, final boolean enabled) {
 		String flags = getFlagsExt();
 		if (enabled) {
@@ -335,217 +399,102 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
+	/**
+	 * Checks if a given flag is present
+	 * 
+	 * @param flag
+	 *            the flag char
+	 * @return true if the flag is present
+	 */
 	protected boolean hasFlagExt(final char flag) {
 		return getFlagsExt().indexOf(flag) >= 0;
 	}
 
-	//	private static final String NO_ENCODING = "<?xml version='1.0'?>";
-	//	private static final String DEFAULT_ENCODING = "<?xml version='1.0'?>";
-
 	/**
-	 * Creates a transformer with the given file resource (in this package)
+	 * Returns the DesignMapping of this Design element
 	 * 
-	 * @param resource
 	 * @return
 	 */
-	protected static Transformer createTransformer(final String resource) {
-		return XMLNode.createTransformer(AbstractDesignBase.class.getResourceAsStream(resource));
-	}
-
-	/**
-	 * Returns, if the resourceName must be encoded
-	 * 
-	 * @param resName
-	 *            the resourceName
-	 * @return true if the resourceName contains invalid characters
-	 */
-	protected boolean mustEncode(final String resName) {
-		for (int i = 0; i < resName.length(); i++) {
-			char ch = resName.charAt(i);
-			switch (ch) {
-			case '/':
-			case '\\':
-			case ':':
-			case '*':
-			case '?':
-			case '<':
-			case '>':
-			case '|':
-			case '"':
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Encodes the resource name, so that it is ODP-compatible
-	 * 
-	 * @param resName
-	 *            the resource name
-	 * @return the encoded version (replaces / \ : * &gt; &lt; | " )
-	 */
-	protected String encodeResourceName(final String resName) {
-		if (resName == null)
-			return null;
-		if (!mustEncode(resName))
-			return resName;
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < resName.length(); i++) {
-			char ch = resName.charAt(i);
-			switch (ch) {
-			case '_':
-			case '/':
-			case '\\':
-			case ':':
-			case '*':
-			case '?':
-			case '<':
-			case '>':
-			case '|':
-			case '"':
-				sb.append('_');
-				sb.append(Integer.toHexString(ch));
-				break;
-			default:
-				sb.append(ch);
-			}
-		}
-		return sb.toString();
-	}
-
-	//	/**
-	//	 * Returns the folder of this designelemnt in the ODP
-	//	 * 
-	//	 * @return the folder (e.g. Code/Java)
-	//	 */
-	//	@Override
-	//	public abstract String getOnDiskFolder();
-
-	/**
-	 * Returns the name of this resource
-	 * 
-	 * @return the name (e.g. org/openntf/myJavaClass)
-	 */
-
-	protected String getOnDiskName() {
-		String odpName = getOdpMapping().getFileName();
-
-		String extension = "";
-		String ret;
-		if (odpName == null) { // no name specified
-			if (this instanceof DesignBaseNamed) {
-				ret = encodeResourceName(((DesignBaseNamed) this).getName());
-			} else {
-				ret = getUniversalID();
-			}
-		} else if (odpName.startsWith("*")) {
-			ret = ((DesignBaseNamed) this).getName();
-		} else if (!odpName.startsWith(".")) {
-			ret = odpName;
-		} else {
-			if (this instanceof DesignBaseNamed) {
-				ret = encodeResourceName(((DesignBaseNamed) this).getName());
-			} else {
-				ret = getUniversalID();
-			}
-			extension = odpName;
-		}
-		if (!ret.endsWith(extension))
-			ret = ret + extension;
-		return ret;
-	}
-
-	//	/**
-	//	 * Returns the extension of the ODP-file (e.g. ".java")
-	//	 * 
-	//	 * @return the extension
-	//	 */
-	//	protected String getOnDiskExtension() {
-	//		return "";
-	//	}
-
-	protected ODPMapping getOdpMapping() {
+	@Override
+	public DesignFactory getMapping() {
 		if (odpMapping_ == null) {
-			odpMapping_ = ODPMapping.valueOf(getClass());
+			odpMapping_ = DesignFactory.valueOf(getClass());
 		}
 		return odpMapping_;
 	}
 
-	/**
-	 * Returns the full path in an ODP of this resoruce
-	 * 
-	 * @return the full path (e.g. Code/Java/org/openntf/myJavaClass.java)
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#exportDesign(org.openntf.domino.design.DxlConverter, java.io.File)
 	 */
-	public String getOnDiskPath() {
-		String path = getOdpMapping().getFolder();
-		if (path == null)
-			return null;
-		if (path.length() > 0) {
-			path = path + "/" + getOnDiskName();
-		} else {
-			path = getOnDiskName();
-		}
-		return path;
-	}
-
-	/**
-	 * Returns the transformer that should be used to clean up the dxl-output
-	 * 
-	 * @return the transformer
-	 */
-	protected Transformer getOdpTransformer() {
-		return null;
-	}
-
-	/**
-	 * Returns the transformer that should be used to clean up the MetaData-Output
-	 * 
-	 * @return the transformer for ".metadata" file
-	 */
-	protected Transformer getOdpMetaTransformer() {
-		return ODP_META_TRANSFORMER;
-	}
-
-	// TODO
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
-		getDxl().getXml(getOdpTransformer(), odpFile);
-		odpFile.setLastModified(getDocLastModified().getTime());
+	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
+		if (converter.isRawExportEnabled()) {
+			DxlExporter exporter = getAncestorSession().createDxlExporter();
+			exporter.setOutputDOCTYPE(false);
+			exporter.setForceNoteFormat(true);
+			exporter.setRichTextOption(RichTextOption.RAW);
+			converter.writeTextFile(doExport(exporter), file);
+		} else {
+			converter.writeDesignXML(getDxl(), file);
+		}
 	}
 
-	// TODO
-	public final void writeOnDiskMeta(final File odpFile) throws IOException {
-		getDxl().getXml(getOdpMetaTransformer(), odpFile);
-		odpFile.setLastModified(getDocLastModified().getTime());
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#importDesign(org.openntf.domino.design.DxlConverter, java.io.File)
+	 */
+	@Override
+	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+		dxl_ = converter.readDesignXML(file);
+		checkDxlFormat();
 	}
 
-	//------------------------------ ondisk end --------------------------------
+	/**
+	 * Creates or updates a meta file.
+	 * 
+	 * @param metaFile
+	 *            The file that should be written.
+	 * 
+	 */
+	public final void exportMeta(final DxlConverter converter, final File metaFile) throws IOException {
+		converter.writeMetaXML(getDxl(), metaFile);
+	}
 
+	/**
+	 * Reads the content of a meta file into the dxl content of this Design Element.
+	 * 
+	 * @param metaFile
+	 *            The file that should be read.
+	 */
+	public final void importMeta(final DxlConverter converter, final File metaFile) throws IOException {
+		if (metaFile.exists()) {
+			dxl_ = converter.readMetaXML(metaFile);
+			checkDxlFormat();
+		} else {
+			loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#reattach(org.openntf.domino.Database)
+	 */
 	@Override
 	public final void reattach(final Database database) {
 		database_ = database;
 	}
 
+	/**
+	 * Set the document. (Must be done after import)
+	 * 
+	 * @param document
+	 */
 	protected final void setDocument(final Document document) {
 		database_ = document.getAncestorDatabase();
 		universalId_ = document.getUniversalID(); // we must save the UNID. because NoteID may change on various instances
 		document_ = document;
-		lastModified_ = document.getLastModifiedDate();
 		dxl_ = null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.design.DesignBase#getDxlString()
-	 */
-	@Override
-	public final String getDxlString(final Transformer filter) {
-		try {
-			return getDxl().getXml(filter);
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
 	}
 
 	/* (non-Javadoc)
@@ -592,18 +541,47 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	/*
 	 * (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#setUniversalID(java.lang.String)
+	 */
+	@Override
+	public void setUniversalID(final String unid) {
+		universalId_ = unid;
+
+		XMLNode root = getDxl().getFirstChild();
+		XMLNode node = root.selectSingleNode("//noteinfo");
+
+		if (node == null) {
+			XMLNode firstNode = root.getFirstChild();
+			node = root.insertChildElementBefore("noteinfo", firstNode);
+		}
+		node.setAttribute("unid", unid);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.types.Design#getUniversalID()
 	 */
 	@Override
 	public final String getNoteID() {
-		XMLNode node = getDxl().selectSingleNode("//noteinfo");
-		if (node != null) {
-			return node.getAttribute("noteid");
+		switch (getDxlFormat(false)) {
+		case DXL:
+		case RAWNOTE:
+			XMLNode node = getDxl().selectSingleNode("//noteinfo");
+			if (node != null) {
+				return node.getAttribute("noteid");
+			}
+			return "";
+		default:
+			return document_.getNoteID();
 		}
-		return "";
 	}
 
+	/**
+	 * Returns the XML-Document representation
+	 * 
+	 * @return
+	 */
 	protected final XMLDocument getDxl() {
 		if (dxl_ == null) {
 			DxlExporter exporter = getAncestorSession().createDxlExporter();
@@ -613,38 +591,40 @@ public abstract class AbstractDesignBase implements DesignBase {
 			// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
 			String xml = doExport(exporter);
 			loadDxl(xml);
-			if (dxl_ == null)
-				throw new IllegalStateException(getClass().getSimpleName() + ": Could not load DXL");
-			XMLNode docRoot = getDocumentElement();
-			if (docRoot.getNodeName() == "note") {
-				if (!enforceRawFormat()) {
-					throw new UnsupportedOperationException(getClass().getSimpleName()
-							+ ": got note in RAW format. this was not expected. NoteID " + (document_ == null ? "" : document_.getNoteID()));
-				}
-				dxlFormat_ = DxlFormat.RAWNOTE;
-			} else {
-				if (enforceRawFormat()) {
-					throw new UnsupportedOperationException(getClass().getSimpleName() + ": Raw format was enforced, but we got a "
-							+ docRoot.getNodeName());
-				}
-				dxlFormat_ = DxlFormat.DXL;
-			}
 		}
 		return dxl_;
 	}
 
+	/**
+	 * Exports this note. Required for special notes like ACLNote
+	 * 
+	 * @param exporter
+	 *            the exporter
+	 * @return the DXL-String
+	 */
 	protected String doExport(final DxlExporter exporter) {
 		return exporter.exportDxl(document_);
 	}
 
+	/**
+	 * Returns the DOM-DocumentElement
+	 * 
+	 * @return
+	 */
 	protected final XMLNode getDocumentElement() {
 		return getDxl().getDocumentElement();
 	}
 
+	/**
+	 * Load DXL from given string
+	 * 
+	 * @param xml
+	 */
 	protected void loadDxl(final String xml) {
 		dxl_ = new XMLDocument();
 		try {
 			dxl_.loadString(xml);
+			checkDxlFormat();
 		} catch (SAXException e) {
 			DominoUtils.handleException(e);
 		} catch (IOException e) {
@@ -654,10 +634,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
+	/**
+	 * Load DXL from given InputStream
+	 * 
+	 * @param is
+	 */
 	protected final void loadDxl(final InputStream is) {
 		dxl_ = new XMLDocument();
 		try {
 			dxl_.loadInputStream(is);
+			checkDxlFormat();
 		} catch (SAXException e) {
 			DominoUtils.handleException(e);
 		} catch (IOException e) {
@@ -667,15 +653,48 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
+	/**
+	 * Check if the DXL is valid. i.E. if the correct DXL format is there.
+	 */
+	protected void checkDxlFormat() {
+		if (dxl_ == null)
+			throw new IllegalStateException(getClass().getSimpleName() + ": Could not load DXL");
+		XMLNode docRoot = getDocumentElement();
+		if (docRoot.getNodeName() == "note") {
+			if (!enforceRawFormat()) {
+				System.err.println(getClass().getSimpleName() + ": got note in RAW format. this was not expected. NoteID "
+						+ (document_ == null ? "" : document_.getNoteID()));
+			}
+			dxlFormat_ = DxlFormat.RAWNOTE;
+		} else {
+			if (enforceRawFormat()) {
+				throw new UnsupportedOperationException(getClass().getSimpleName() + ": Raw format was enforced, but we got a "
+						+ docRoot.getNodeName());
+			}
+			dxlFormat_ = DxlFormat.DXL;
+		}
+	}
+
+	/**
+	 * Saves the
+	 */
+	@SuppressWarnings("deprecation")
 	@Override
-	public boolean save() {
+	public boolean save(final DxlConverter converter) {
 
 		DxlImporter importer = getAncestorSession().createDxlImporter();
 		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+		importer.setCompileLotusScript(false);
+		importer.setExitOnFirstFatalError(false);
 		importer.setReplicaRequiredForReplaceOrUpdate(false);
-		Database database = getAncestorDatabase();
+
+		Database db = getAncestorDatabase();
 		try {
-			importer.importDxl(getDxl().getXml(null), database);
+			if (converter == null) {
+				importer.importDxl(getDxl().getXml(), db);
+			} else {
+				importer.importDxl(converter.getDxlImportString(getDxl()), db);
+			}
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			if (importer != null) {
@@ -683,10 +702,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 			}
 			return false;
 		}
-
+		try {
+			if (document_ != null) {
+				//document has to be recycled manually here, in order to set a new Document afterwards.
+				document_.recycle();
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		// Reset the DXL so that it can pick up new noteinfo
-		setDocument(database.getDocumentByID(importer.getFirstImportedNoteID()));
-
+		setDocument(db.getDocumentByID(importer.getFirstImportedNoteID()));
 		return true;
 	}
 
@@ -902,8 +927,9 @@ public abstract class AbstractDesignBase implements DesignBase {
 		out.defaultWriteObject();
 	}
 
-	public Date getDocLastModified() {
-		return lastModified_;
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " (UniversalID: " + universalId_ + ")";
 	}
 
 }

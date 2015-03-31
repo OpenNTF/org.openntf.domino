@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databasescript xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" designerversion="8.5.3" maintenanceversion="1.2">
+<code event="options">
+<lotusscript>Option Declare
+</lotusscript>
+</code>
+<code event="declarations">
+<lotusscript/>
+</code>
+</databasescript>

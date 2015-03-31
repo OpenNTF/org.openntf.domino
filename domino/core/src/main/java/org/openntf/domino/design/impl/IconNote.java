@@ -30,13 +30,6 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IconNote.class.getName());
 
-	/**
-	 * @param document
-	 */
-	protected IconNote(final Document document) {
-		super(document);
-	}
-
 	@Override
 	protected boolean enforceRawFormat() {
 		// IconNote is exported in RAW-format. There is no DXL representation

@@ -16,21 +16,13 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class AgentData extends AbstractDesignBase implements org.openntf.domino.design.AgentData {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected AgentData(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {

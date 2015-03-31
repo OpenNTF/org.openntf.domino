@@ -17,7 +17,7 @@
 package org.openntf.domino.design;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public interface DesignPage extends DesignBaseNamed {

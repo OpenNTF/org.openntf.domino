@@ -16,28 +16,25 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
-
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
-// TODO Metadata
 public final class CompositeWiring extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeWiring {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected CompositeWiring(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
 		// CompositeWiring is exported in RAW-format. There is no DXL representation
 		return true;
-
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".wsdl");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

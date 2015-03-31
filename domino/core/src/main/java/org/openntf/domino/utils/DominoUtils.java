@@ -17,6 +17,7 @@ package org.openntf.domino.utils;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -197,6 +198,42 @@ public enum DominoUtils {
 			hashed = bi.toString(16);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
+		}
+		return hashed;
+	}
+
+	/**
+	 * Checksum.
+	 * 
+	 * @param bytes
+	 *            the bytes
+	 * @param alg
+	 *            the alg
+	 * @return the string
+	 */
+	public static String checksum(final File file, final String alg) {
+		String hashed = "";
+		byte[] dataBytes = new byte[4096];
+		try {
+			FileInputStream fis = new FileInputStream(file);
+
+			try {
+				MessageDigest algorithm = MessageDigest.getInstance(alg);
+				algorithm.reset();
+				int nread = 0;
+				while ((nread = fis.read(dataBytes)) != -1) {
+					algorithm.update(dataBytes, 0, nread);
+				}
+				byte[] messageDigest = algorithm.digest();
+				BigInteger bi = new BigInteger(1, messageDigest);
+
+				hashed = bi.toString(16);
+			} finally {
+				fis.close();
+			}
+		} catch (Throwable e) {
+			DominoUtils.handleException(e);
+			return hashed;
 		}
 		return hashed;
 	}
@@ -906,7 +943,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

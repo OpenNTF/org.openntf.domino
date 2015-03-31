@@ -23,9 +23,8 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
-import javax.xml.transform.Transformer;
-
 import org.openntf.domino.Database;
+import org.openntf.domino.design.impl.DesignFactory;
 
 /**
  * @author jgallagher
@@ -38,18 +37,18 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	}
 
 	enum DxlFormat {
-		NONE, RAWNOTE, DXL
+		/** No DXL present (access must be done at doc level */
+		NONE,
+		/** DXL is a raw note */
+		RAWNOTE,
+		/** DXL is in DXL-Format */
+		DXL
 	}
 
 	public static final Set<ItemFlag> FLAG_NONE = EnumSet.noneOf(ItemFlag.class);
 	public static final Set<ItemFlag> FLAG_SIGN = EnumSet.of(ItemFlag._SIGN);
 	public static final Set<ItemFlag> FLAG_SUMMARY = EnumSet.of(ItemFlag._SUMMARY);
 	public static final Set<ItemFlag> FLAG_SIGN_SUMMARY = EnumSet.of(ItemFlag._SIGN, ItemFlag._SUMMARY);
-
-	/**
-	 * @return the DXL of the design element, as a String
-	 */
-	public String getDxlString(Transformer filter);
 
 	/**
 	 * @return whether hidden from web
@@ -97,28 +96,69 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * Save any changes to the design element (may change the Note ID)
 	 */
-	public boolean save();
-
-	//	/**
-	//	 * Every element should have an (abstract) name
-	//	 * 
-	//	 * @return
-	//	 */
-	//	public String getName();
+	public boolean save(DxlConverter dxlConverter);
 
 	/**
-	 * Returns the On-Disk folder component
+	 * Exports the design to file by using the dxlConverter
 	 * 
+	 * @param dxlConverter
+	 *            the DxlConverter that converts the file data in a "friendly" format. (e.g. gitFriendly)
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             if an IO-Error occurs
 	 */
-	//	public String getOnDiskFolder();
-	//
-	//	public String getOnDiskName();
-	//
-	//	public String getOnDiskExtension();
-	//
-	//	public String getOnDiskPath();
+	public void exportDesign(DxlConverter dxlConverter, File file) throws IOException;
 
-	public void writeOnDiskFile(File odsFile) throws IOException;
+	/**
+	 * Imports the design from file by using the dxlConverter
+	 * 
+	 * @param dxlConverter
+	 *            the DxlConverter that converts the file data back.
+	 * @param file
+	 *            the file
+	 * @throws IOException
+	 *             if an IO-Error occurs
+	 */
+	public void importDesign(DxlConverter dxlConverter, File file) throws IOException;
+
+	/**
+	 * Gets the note id.
+	 * 
+	 * @return the note id
+	 */
+	@Override
+	public String getNoteID();
+
+	/**
+	 * Gets the universal id.
+	 * 
+	 * @return the universal id
+	 */
+	@Override
+	public String getUniversalID();
+
+	/**
+	 * Sets the universal id.
+	 * 
+	 * @return the universal id
+	 */
+	public void setUniversalID(String unid);
+
+	/**
+	 * Gets the document.
+	 * 
+	 * @return the document
+	 */
+	@Override
+	public org.openntf.domino.Document getDocument();
 
 	public Collection<String> getItemNames();
+
+	public boolean isPrivate();
+
+	boolean isDefault();
+
+	public DesignFactory getMapping();
+
 }

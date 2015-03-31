@@ -16,27 +16,26 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class Navigator extends AbstractDesignBaseNamed implements org.openntf.domino.design.Navigator {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param document
-	 */
-	protected Navigator(final Document document) {
-		super(document);
-	}
-
 	@Override
 	protected boolean enforceRawFormat() {
 		// Navigator is exported in RAW-format. There is no DXL representation
 		return true;
-
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".navigator");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

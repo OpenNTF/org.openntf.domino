@@ -16,22 +16,15 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 
 /**
+ * A Server Side JavaScript - Library.
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public final class ScriptLibrarySSJS extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.ScriptLibrarySSJS {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected ScriptLibrarySSJS(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
@@ -46,4 +39,12 @@ public final class ScriptLibrarySSJS extends AbstractDesignFileResource implemen
 		return getFileDataRaw("$ServerJavaScriptLibrary");
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".jss");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

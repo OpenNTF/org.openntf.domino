@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<note class="form" maintenanceversion="1.2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<item name="$DesignerVersion" sign="true">
+	<text>8.5.3</text>
+</item>
+<item name="$Flags">
+	<text>P}CD3456</text>
+</item>
+<item name="$Body" sign="true">
+	<richtext>
+		<pardef id="1" />
+		<par def="1" />
+	</richtext>
+</item>
+</note>

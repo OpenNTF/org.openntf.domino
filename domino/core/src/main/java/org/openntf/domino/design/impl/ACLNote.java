@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.ext.NoteClass;
 
 /**
  * The ACL Note of a database. Note: You cannot export the ACL-Note itself. It returns in an empty XML. So we have to export it as
@@ -34,13 +35,6 @@ public final class ACLNote extends AbstractDesignBase implements org.openntf.dom
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ACLNote.class.getName());
 
-	/**
-	 * @param document
-	 */
-	protected ACLNote(final Document document) {
-		super(document);
-	}
-
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
@@ -53,9 +47,19 @@ public final class ACLNote extends AbstractDesignBase implements org.openntf.dom
 	protected String doExport(final DxlExporter exporter) {
 		// The About-note contains two documents
 		NoteCollection nnc = getAncestorDatabase().createNoteCollection(false);
-		nnc.setSelectAcl(true);
-		nnc.setSelectIcon(true);
-		nnc.buildCollection();
+
+		Document doc = getAncestorDatabase().getDocumentByID(NoteClass.ICON.defaultID());
+		if (doc != null)
+			nnc.add(doc);
+
+		doc = getAncestorDatabase().getDocumentByID(NoteClass.ACL.defaultID());
+		if (doc != null)
+			nnc.add(doc);
+		//code above is faster!
+		//nnc.setSelectAcl(true);
+		//nnc.setSelectIcon(true);
+		//nnc.buildCollection();
 		return exporter.exportDxl(nnc);
 	}
+
 }

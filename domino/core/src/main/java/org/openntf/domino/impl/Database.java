@@ -64,6 +64,7 @@ import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.exceptions.UserAccessException;
+import org.openntf.domino.ext.NoteClass;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
 import org.openntf.domino.schema.IDatabaseSchema;
@@ -71,7 +72,11 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.NapiUtil;
 
+import com.ibm.designer.domino.napi.NotesDatabase;
+import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
 
@@ -97,6 +102,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 
 	/** The replid_. */
 	private String replid_;
+
+	private ThreadLocal<NotesDatabase> napiDatabase_ = Factory.isNapiPresent() ? new ThreadLocal<NotesDatabase>() : null;
 
 	//private String basedOnTemplate_;
 	//private String templateName_;
@@ -1018,7 +1025,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 
 	public boolean isDesignProtected() {
 		if (designProtected_ == null) {
-			Document iconNote = getDocumentByID(org.openntf.domino.design.impl.DatabaseDesign.ICON_NOTE);
+			Document iconNote = getDocumentByID(NoteClass.ICON.defaultID());
 			designProtected_ = Boolean.FALSE;
 			try {
 				if (iconNote != null) {
@@ -3040,6 +3047,9 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		shadowedMetaData_ = null; // clear metaData
+		if (Factory.isNapiPresent()) {
+			napiDatabase_.set(null);
+		}
 		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
@@ -3674,7 +3684,6 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		out.writeObject(autoMime_);
 
 		// out.writeObject(formatter_); not needed!
-		// out.writeBoolean(noRecycle); not needed - done by factory
 
 	}
 
@@ -3707,4 +3716,28 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		return parent.getFactory();
 	}
 
+	@Override
+	public int getNapiHandle() {
+		if (Factory.isNapiPresent()) {
+			// ! Do not cache handle, because Database is ThreadSafe (and handle will change)
+			return (int) BackendBridge.getDatabaseHandleRO(getDelegate());
+		}
+		return 0;
+	}
+
+	@Override
+	public NotesDatabase getNapiDatabase() {
+		NotesDatabase ret = napiDatabase_.get();
+		if (ret == null) {
+			try {
+				// NOTE: A call to NotesDatabase.recycle() will not recyle the underlying Handle
+				// as "ownsHandle" is false if Database is created with NotesSession.getDatabase(int handle)
+				ret = NapiUtil.getNapiSession().getDatabase(getNapiHandle());
+				napiDatabase_.set(ret);
+			} catch (Exception ne) {
+				DominoUtils.handleException(ne);
+			}
+		}
+		return ret;
+	}
 }

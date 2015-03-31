@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -54,23 +52,13 @@ public class XMLDocument extends XMLNode {
 		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
 	}
 
-	private DocumentBuilder getBuilder() throws ParserConfigurationException {
-		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-		fac.setValidating(false);
-		// fac.setNamespaceAware(true);
-		return fac.newDocumentBuilder();
-	}
-
 	public static String escapeXPathValue(final String input) {
 		return input.replace("'", "\\'");
 	}
 
 	@Override
 	public String toString() {
-		try {
-			return getXml(null);
-		} catch (IOException e) {
-			return e.getMessage();
-		}
+		return getXml();
+
 	}
 }

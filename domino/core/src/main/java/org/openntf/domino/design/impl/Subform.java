@@ -16,24 +16,16 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 import org.openntf.domino.design.FormField;
 import org.openntf.domino.design.FormFieldList;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class Subform extends AbstractDesignBaseNamed implements org.openntf.domino.design.Subform {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected Subform(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
@@ -79,4 +71,12 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		getFields().swap(a, b);
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".subform");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

@@ -2,32 +2,22 @@ package org.openntf.domino.design.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
- * A client side JavaScriptLibrary
+ * A Java - ScriptLibrary.
+ * 
+ * @author Roland Praml, FOCONIS AG
  */
 public final class ScriptLibraryJava extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryJava, HasMetadata {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected ScriptLibraryJava(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
@@ -35,25 +25,6 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 
 		//we use RAW format for script libraries, so that we are "on disk compatible"
 		return true;
-	}
-
-	protected ScriptLibraryJava(final Database database) {
-		super(database);
-
-		try {
-			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_javascriptlibrary.xml");
-			loadDxl(is);
-			is.close();
-
-			// Set some defaults
-			Session session = getAncestorSession();
-			String dataDirectory = session.getEnvironmentString("Directory", true);
-			XMLDocument dxl = getDxl();
-			dxl.selectSingleNode("/scriptlibrary/code/javaproject").setAttribute("codepath", dataDirectory);
-
-		} catch (IOException e) {
-			DominoUtils.handleException(e);
-		}
 	}
 
 	Map<String, byte[]> classData;
@@ -103,4 +74,12 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 		return classSource;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".javalib");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

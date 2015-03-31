@@ -35,6 +35,8 @@ import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
+import com.ibm.designer.domino.napi.NotesDatabase;
+
 /**
  * @author withersp
  * 
@@ -686,5 +688,19 @@ public interface Database extends Base {
 	 * @return a {@link Type} Object
 	 */
 	Type getTypeEx();
+
+	/**
+	 * Returns the NAPI / C handle to communicate directly with DLLs. With JNA we may access the Domino-API directly
+	 * 
+	 * @return the NAPI Handle
+	 */
+	public int getNapiHandle();
+
+	/**
+	 * Returns the NAPI database
+	 * 
+	 * @return the NAPI-NotesDatabase object
+	 */
+	public NotesDatabase getNapiDatabase();
 
 }

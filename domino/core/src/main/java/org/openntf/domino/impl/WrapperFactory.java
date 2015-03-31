@@ -281,13 +281,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			cache.processQueue(lotus, prevent_recycling); // recycle all elements but not the current ones
 
 			cache.put(lotus, result);
-			if (lotus instanceof lotus.domino.Session				//
-					|| lotus instanceof lotus.domino.AgentContext) {
-				// these are never recycled by default. If you create your own session, you have to recycle it after use
-				// or setNoRecycle to "false"
-				cache.setNoRecycle(lotus, true);
-				//				System.out.println("DEBUG: Wrapping a new Session with object id: " + System.identityHashCode(lotus));
-			}
+
 		}
 		return result;
 	}
@@ -318,12 +312,6 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 
 			}
 		}
-	}
-
-	@Override
-	public void setNoRecycle(final Base<?> base, final boolean value) {
-
-		referenceCache.get().setNoRecycle(toLotus(base), value);
 	}
 
 	/**

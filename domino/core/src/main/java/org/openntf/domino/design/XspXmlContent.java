@@ -113,11 +113,10 @@ public class XspXmlContent {
 		return xml_;
 	}
 
-	public boolean save() {
-		// TODO Auto-generated method stub
+	public boolean save(final DxlConverter dxlConverter) {
 		if (xml_ != null) {
 			try {
-				container_.setFileData(xml_.getXml(null).getBytes("UTF-8"));
+				container_.setFileData(xml_.getXml().getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				DominoUtils.handleException(e);
 			} catch (IOException e) {
@@ -125,6 +124,6 @@ public class XspXmlContent {
 			}
 			xml_ = null; // CHECKME: good idea to set to null?
 		}
-		return container_.save();
+		return container_.save(dxlConverter);
 	}
 }

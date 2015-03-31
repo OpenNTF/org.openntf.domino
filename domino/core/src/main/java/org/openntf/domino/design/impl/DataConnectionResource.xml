@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataconnection type="db2" class="rdbms" xmlns="http://www.lotus.com/dxl" default="false" private="false" version="9.0" nocompose="true" noreplace="false" spacetrim="none" useapplet="false" objecttype="table" connections="1" treatashtml="false" ondatamismatch="precisionloss" designerversion="8.5.3" onmissingrecord="error" conflictdetection="false" disablehttpcaching="false" maintenanceversion="1.2" fieldsgetdecserrors="false" blockkeyfieldupdates="true" updatechangedfieldsonly="false">
+</dataconnection>

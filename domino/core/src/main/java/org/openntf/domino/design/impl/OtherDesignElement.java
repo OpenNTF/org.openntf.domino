@@ -19,7 +19,7 @@ package org.openntf.domino.design.impl;
 import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
 public class OtherDesignElement extends AbstractDesignBase {
@@ -29,7 +29,7 @@ public class OtherDesignElement extends AbstractDesignBase {
 	 * @param document
 	 */
 	protected OtherDesignElement(final Document document) {
-		super(document);
+		init(document);
 	}
 
 	@Override

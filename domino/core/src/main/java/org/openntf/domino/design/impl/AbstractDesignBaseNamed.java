@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
 import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.formula.function.TextFunctions;
 
@@ -38,14 +36,6 @@ import com.ibm.commons.util.StringUtil;
 public abstract class AbstractDesignBaseNamed extends AbstractDesignBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
-
-	public AbstractDesignBaseNamed(final Database database) {
-		super(database);
-	}
-
-	public AbstractDesignBaseNamed(final Document document) {
-		super(document);
-	}
 
 	protected List<String> getTitlesRaw() {
 		String titles = getItemValueStrings(TITLE_ITEM, "|");
@@ -183,6 +173,16 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 			}
 			setItemValue(TITLE_ITEM, result, FLAG_SIGN_SUMMARY);
 			break;
+		}
+	}
+
+	@Override
+	public String toString() {
+		List<String> alia = getAliases();
+		if (alia.isEmpty()) {
+			return getClass().getSimpleName() + " '" + getName() + "'";
+		} else {
+			return getClass().getSimpleName() + " '" + getName() + "' " + alia;
 		}
 	}
 

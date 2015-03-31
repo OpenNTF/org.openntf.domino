@@ -1,717 +1,415 @@
-/*
- * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
- * permissions and limitations under the License.
- */
-
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Database;
+import static org.openntf.domino.design.impl.AbstractDesignBase.ASSIST_TYPE;
+import static org.openntf.domino.design.impl.AbstractDesignBase.FLAGS_EXT_ITEM;
+import static org.openntf.domino.design.impl.AbstractDesignBase.FLAGS_ITEM;
+import static org.openntf.domino.design.impl.AbstractDesignBase.TITLE_ITEM;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGEXTPAT_NO_WEBCONTENTFILE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGEXTPAT_NO_WEBSERVICELIB;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGEXTPAT_WEBCONTENTFILE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGEXTPAT_WEBSERVICELIB;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_AGENTSLIST;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_AGENTSLIST_IMPORTED_JAVA;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_AGENTSLIST_JAVA;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_APPLET_RESOURCE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_COMPAPP;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_COMPDEF;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_DATABASESCRIPT;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_DATA_CONNECTION_RESOURCE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_DB2ACCESSVIEW;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_FILE_DL;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_FILE_HIDDEN;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_FOLDER_ALL_VERSIONS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_FRAMESET;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_IMAGE_DBICON;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_IMAGE_RESOURCES_DESIGN;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_JAVAFILE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_JAVAJAR;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_JAVARESOURCE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_NAVIGATORSWEB;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_PAGESWEB;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_QUERY_V4_OBJECT;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SACTIONS_DESIGN;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SCRIPTLIB;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SCRIPTLIB_JAVA;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SCRIPTLIB_JS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SCRIPTLIB_LS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SCRIPTLIB_SERVER_JS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SHARED_COLS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SITEMAP;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_STYLEKIT;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_STYLE_SHEET_RESOURCE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_SUBFORM_ALL_VERSIONS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_VIEWFORMFOLDER;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_VIEWFORM_ALL_VERSIONS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_WEBSERVICE;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_WEBSERVICE_JAVA;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_WEBSERVICE_LS;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_WIDGET;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_XSPCC;
+import static org.openntf.domino.design.impl.DesignFlags.DFLAGPAT_XSPPAGE;
+import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_FORMULA;
+import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_FORMULAONLY;
+import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_JAVAAGENT;
+import static org.openntf.domino.design.impl.DesignFlags.SIG_ACTION_LOTUSSCRIPT;
+
+import java.io.File;
+import java.net.URI;
+
 import org.openntf.domino.Document;
-import org.openntf.domino.NoteCollection;
+import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.ext.NoteClass;
 
-import com.ibm.commons.util.StringUtil;
+//@formatter:off
+public enum DesignFactory {
 
-/**
- * @author jgallagher
- * 
- */
-enum DesignFactory {
-	INSTANCE;
 
-	//public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~";
+	// This is a table that specifies all properties of the different designelements.
+	// ENUM Name			Interface class											Implementing class				On disk Path				On disk Extension	Note Class		....
+	//																																			"*" means: Do not encode resource name
+	DesignView(				org.openntf.domino.design.DesignView.class,				DesignView.class,				"Views", 					".view", 			NoteClass.VIEW, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
 
-	public static final String DFLAGPAT_FOLDER_ALL_VERSIONS = "*F";
-	public static final String DFLAGPAT_STYLEKIT = "*g`";
-	public static final String DFLAGPAT_XSPPAGE = "*gK";
-	public static final String DFLAGPAT_XSPCC = "*g;";
-	public static final String DFLAGPAT_JAVAFILE = "*g[";
-	public static final String DFLAGPAT_JAVARESOURCE = "(+K;[-*g";
-	public static final String DFLAGPAT_WIDGET = "*g_";
-	public static final String DFLAGPAT_FILE_DL = "(+g-~K[],;`_*";
-	public static final String DFLAGPAT_FILE_HIDDEN = "(+-K[],;`*g~";
-	public static final String DFLAGPAT_JAVAJAR = "*g,";
-	//public static final String DFLAGPAT_FILE = "(+g-K;`"; //RPr: corrected. orignal IBM string: "+g-K;`"
-	public static final String DFLAGPAT_NAVIGATORSWEB = "+G";
-	public static final String DFLAGPAT_IMAGE_RESOURCES_DESIGN = "(+i-~*";
-	public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~";
-	public static final String DFLAGPAT_DATA_CONNECTION_RESOURCE = "+k";
-	public static final String DFLAGPAT_SITEMAP = "+m";
-	public static final String DFLAGPAT_QUERY_V4_OBJECT = "+O";
-	public static final String DFLAGPAT_SCRIPTLIB_LS = "(+s-jh.*";
-	public static final String DFLAGPAT_SCRIPTLIB_JAVA = "*sj";
-	public static final String DFLAGPAT_SCRIPTLIB_JS = "+h";
-	public static final String DFLAGPAT_SCRIPTLIB_SERVER_JS = "+.";
-	public static final String DFLAGPAT_DATABASESCRIPT = "+t";
-	public static final String DFLAGPAT_SUBFORM_ALL_VERSIONS = "+U";
-	public static final String DFLAGPAT_PAGE = "+W";
-	public static final String DFLAGPAT_AGENT_DATA = "+X";
-	public static final String DFLAGPAT_SACTIONS_DESIGN = "+y";
-	public static final String DFLAGPAT_DB2ACCESSVIEW = "+z";
-	public static final String DFLAGPAT_FRAMESETSWEB = "+#";
-	public static final String DFLAGPAT_APPLET_RESOURCE = "+@";
-	public static final String DFLAGPAT_STYLE_SHEET_RESOURCE = "+=";
-	public static final String DFLAGPAT_WEBSERVICE = "+{";
-	public static final String DFLAGPAT_WEBSERVICE_LS = "(+{-j*";
-	public static final String DFLAGPAT_WEBSERVICE_JAVA = "*{j";
-	public static final String DFLAGPAT_SHARED_COLS = "(+-*^";
-	public static final String DFLAGPAT_COMPAPP = "+|";
-	public static final String DFLAGPAT_COMPDEF = "+:";
-	public static final String DFLAGPAT_VIEWFORM_ALL_VERSIONS = "-FQMUGXWy#i@K;g~%z^}";
+	Folder(					org.openntf.domino.design.Folder.class,					Folder.class,					"Folders", 					".folder",			NoteClass.VIEW, 	DFLAGPAT_FOLDER_ALL_VERSIONS),
+	Theme(					org.openntf.domino.design.Theme.class,					Theme.class,					"Resources/Themes", 		null,				NoteClass.FORM, 	DFLAGPAT_STYLEKIT),
 
-	//	public static final String DFLAGPAT_AGENTSLIST = "-QXstmz{";
-	//	public static final String DFLAGPAT_VIEWFORM = "-FQMUGXWy#i@0nK;g~%z^";
-	//	public static final String DFLAGPAT_FORMSWEB = "-U#Wi@y";
-	//	public static final String DFLAGPAT_FIELD = "-FQMUGXWy#i@0nK;g~%z^";
+	CompositeComponent(		org.openntf.domino.design.CompositeComponent.class,		CompositeComponent.class,		"CompositeApplications/Components", 	null,	NoteClass.FORM, 	DFLAGPAT_WIDGET),
+	JarResource(			org.openntf.domino.design.JarResource.class,			JarResource.class,				"Code/Jars", 				null,				NoteClass.FORM,		DFLAGPAT_JAVAJAR),
+	FileResource(			org.openntf.domino.design.FileResource.class,			FileResource.class,				"Resources/Files",			null,				NoteClass.FORM, 	DFLAGPAT_FILE_DL),
+	FileResourceHidden(		org.openntf.domino.design.FileResourceHidden.class,		FileResourceHidden.class,		"",	/* = in root folder */	"*",				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_NO_WEBCONTENTFILE),
+	FileResourceWebContent(	org.openntf.domino.design.FileResourceWebContent.class,	FileResourceWebContent.class,	"WebContent", 				"*",				NoteClass.FORM, 	DFLAGPAT_FILE_HIDDEN, 		DFLAGEXTPAT_WEBCONTENTFILE),
+
+	Navigator(				org.openntf.domino.design.Navigator.class,				Navigator.class,				"SharedElements/Navigators",".navigator",		NoteClass.VIEW, 	DFLAGPAT_NAVIGATORSWEB),
+	ImageResource(			org.openntf.domino.design.ImageResource.class,			ImageResource.class,			"Resources/Images", 		null,				NoteClass.FORM, 	DFLAGPAT_IMAGE_RESOURCES_DESIGN),
+	DataConnectionResource(	org.openntf.domino.design.DataConnectionResource.class,	DataConnectionResource.class,	"Data/DataConnections", 	".dcr",				NoteClass.FILTER, 	DFLAGPAT_DATA_CONNECTION_RESOURCE),
+	Outline(				org.openntf.domino.design.DesignOutline.class,			DesignOutline.class,			"SharedElements/Outlines", 	".outline",			NoteClass.FILTER, 	DFLAGPAT_SITEMAP),
+	SavedQuery(				org.openntf.domino.design.SavedQuery.class,				SavedQuery.class,				"Other/SavedQueries", 		null,				NoteClass.FILTER, 	DFLAGPAT_QUERY_V4_OBJECT),
+
+	// Special case - WebServiceConsumers
+	WebServiceConsumerLS(	org.openntf.domino.design.WebServiceConsumerLS.class,	WebServiceConsumerLS.class,		"Code/WebServiceConsumer", 	".lswsc",			NoteClass.FILTER,  	DFLAGPAT_SCRIPTLIB_LS, 		DFLAGEXTPAT_WEBSERVICELIB),
+	WebServiceConsumerJava(	org.openntf.domino.design.WebServiceConsumerJava.class,	WebServiceConsumerJava.class,	"Code/WebServiceConsumer", 	".javalib",			NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JAVA, 	DFLAGEXTPAT_WEBSERVICELIB),
+	WebServiceConsumer(		org.openntf.domino.design.WebServiceConsumer.class,		null,							null,						null,				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB, 		DFLAGEXTPAT_WEBSERVICELIB),
+
+
+	//	// Special case - WebServiceProviders
+	WebServiceProviderLS(	org.openntf.domino.design.WebServiceProviderLS.class,	WebServiceProviderLS.class,		"Code/WebServices", 		".lws",				NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE_LS),
+	WebServiceProviderJava(	org.openntf.domino.design.WebServiceProviderJava.class,	WebServiceProviderJava.class,	"Code/WebServices", 		".jws",				NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE_JAVA),
+	WebServiceProvider(		org.openntf.domino.design.WebServiceProvider.class,		null,							null,						null,				NoteClass.FILTER, 	DFLAGPAT_WEBSERVICE),
+	//
+	//	// Special case - Script libraries
+	ScriptLibraryLS(		org.openntf.domino.design.ScriptLibraryLS.class,		ScriptLibraryLS.class,			"Code/ScriptLibraries", 	".lss",				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_LS, 		DFLAGEXTPAT_NO_WEBSERVICELIB),
+	ScriptLibraryJava(		org.openntf.domino.design.ScriptLibraryJava.class,		ScriptLibraryJava.class,		"Code/ScriptLibraries", 	".javalib",			NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JAVA, 	DFLAGEXTPAT_NO_WEBSERVICELIB),
+	ScriptLibraryCSJS(		org.openntf.domino.design.ScriptLibraryCSJS.class,		ScriptLibraryCSJS.class,		"Code/ScriptLibraries", 	".js",				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_JS),
+	ScriptLibrarySSJS(		org.openntf.domino.design.ScriptLibrarySSJS.class,		ScriptLibrarySSJS.class,		"Code/ScriptLibraries", 	".jss",				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB_SERVER_JS),
+	//	// all of the above
+	ScriptLibrary(			org.openntf.domino.design.ScriptLibrary.class,			null,							null,						null,				NoteClass.FILTER, 	DFLAGPAT_SCRIPTLIB,			DFLAGEXTPAT_NO_WEBSERVICELIB),
+	//
+	DatabaseScript(			org.openntf.domino.design.DatabaseScript.class,			DatabaseScript.class,			"Code", 					"dbscript.lsdb",	NoteClass.FILTER, 	DFLAGPAT_DATABASESCRIPT),
+	Subform(				org.openntf.domino.design.Subform.class,				Subform.class,					"SharedElements/Subforms", 	".subform",			NoteClass.FORM, 	DFLAGPAT_SUBFORM_ALL_VERSIONS),
+	DesignPage(				org.openntf.domino.design.DesignPage.class,				DesignPage.class,				"Pages", 					".page",			NoteClass.FORM, 	DFLAGPAT_PAGESWEB),
+	AgentData(				org.openntf.domino.design.AgentData.class,				AgentData.class,				"Other/AgentData", 			".agentdata",		NoteClass.FILTER, 	"+X"), // agentData is not part of DesignIndex - I don't think this is really needed!?
+	SharedActions(			org.openntf.domino.design.SharedActions.class,			SharedActionsNote.class,		"Code/actions", 			"Shared Actions", 	NoteClass.FORM, 	DFLAGPAT_SACTIONS_DESIGN),
+	DB2View(				org.openntf.domino.design.DB2View.class,				DB2View.class,					"Data/DB2AccessViews", 		".db2v",			NoteClass.FORM, 	DFLAGPAT_DB2ACCESSVIEW),
+	Frameset(				org.openntf.domino.design.Frameset.class,				Frameset.class,					"Framesets", 				".frameset",		NoteClass.FORM, 	DFLAGPAT_FRAMESET),
+	DesignApplet(			org.openntf.domino.design.DesignApplet.class,			DesignApplet.class,				"Resources/Applets", 		".applet",			NoteClass.FORM, 	DFLAGPAT_APPLET_RESOURCE),
+	StyleSheet(				org.openntf.domino.design.StyleSheet.class,				StyleSheet.class,				"Resources/StyleSheets", 	".css",				NoteClass.FORM, 	DFLAGPAT_STYLE_SHEET_RESOURCE),
+	SharedColumn(			org.openntf.domino.design.SharedColumn.class,			SharedColumn.class,				"SharedElements/Columns", 	".column", 			NoteClass.VIEW, 	DFLAGPAT_SHARED_COLS),
+	CompositeApp(			org.openntf.domino.design.CompositeApp.class,			CompositeApp.class,				"CompositeApplications/Applications", ".ca",	NoteClass.FORM, 	DFLAGPAT_COMPAPP),
+	CompositeWiring(		org.openntf.domino.design.CompositeWiring.class,		CompositeWiring.class,			"CompositeApplications/WiringProperties", ".wsdl",NoteClass.FORM, 	DFLAGPAT_COMPDEF),
+	DbImage(				org.openntf.domino.design.DbImage.class,				DbImage.class,					"AppProperties",			"$DBIcon",			NoteClass.FORM, 	DFLAGPAT_IMAGE_DBICON),
+	//
+	//	// very special case - Agents
+	DesignAgentA(			org.openntf.domino.design.DesignAgentA.class,			DesignAgentA.class,				"Code/Agents", 				".aa",				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				false, 	SIG_ACTION_FORMULA, SIG_ACTION_FORMULAONLY, SIG_ACTION_JAVAAGENT, SIG_ACTION_LOTUSSCRIPT),
+	DesignAgentF(			org.openntf.domino.design.DesignAgentF.class,			DesignAgentF.class,				"Code/Agents", 				".fa", 				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				true, 	SIG_ACTION_FORMULA, SIG_ACTION_FORMULAONLY ),
+	DesignAgentIJ(			org.openntf.domino.design.DesignAgentIJ.class,			DesignAgentIJ.class,			"Code/Agents", 				".ija",				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST_IMPORTED_JAVA, 	true, 	SIG_ACTION_JAVAAGENT ),
+	DesignAgentJ(			org.openntf.domino.design.DesignAgentJ.class,			DesignAgentJ.class,				"Code/Agents", 				".ja", 				NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST_JAVA, 			true,	SIG_ACTION_JAVAAGENT ),
+	DesignAgentLS(			org.openntf.domino.design.DesignAgentLS.class,			DesignAgentLS.class,			"Code/Agents", 				".lsa", 			NoteClass.FILTER, 	DFLAGPAT_AGENTSLIST, 				true, 	SIG_ACTION_LOTUSSCRIPT ),
+	//	// all of the above
+	DesignAgent(			org.openntf.domino.design.DesignAgent.class,			null,							null,						null,				NoteClass.FILTER,	DFLAGPAT_AGENTSLIST),
+
+	DesignForm(				org.openntf.domino.design.DesignForm.class,				DesignForm.class,				"Forms", 					".form",			NoteClass.FORM, 	DFLAGPAT_VIEWFORM_ALL_VERSIONS),
+	//
+	//	// Special case XPages
+	XPage(					org.openntf.domino.design.XPage.class,					XPage.class,					"XPages", 					".xsp",				NoteClass.FORM, 	DFLAGPAT_XSPPAGE, 	Boolean.TRUE),
+	XPageFile(				org.openntf.domino.design.XPageFile.class,				XPageFile.class,				"XPages", 					null,				NoteClass.FORM, 	DFLAGPAT_XSPPAGE, 	Boolean.FALSE),
+	CustomControl(			org.openntf.domino.design.CustomControl.class,			CustomControl.class,			"CustomControls", 			".xsp",				NoteClass.FORM, 	DFLAGPAT_XSPCC, 	Boolean.TRUE),
+	CustomControlFile(		org.openntf.domino.design.CustomControlFile.class,		CustomControlFile.class,		"CustomControls", 			null,				NoteClass.FORM, 	DFLAGPAT_XSPCC, 	Boolean.FALSE),
+	XspJavaResource(		org.openntf.domino.design.XspJavaResource.class,		XspJavaResource.class,			"Code/Java", 				"*",				NoteClass.FORM, 	DFLAGPAT_JAVAFILE),
+	XspResource(			org.openntf.domino.design.XspResource.class,			null,							null,						null,				NoteClass.FORM, 	DFLAGPAT_JAVARESOURCE),
+
+
+	AnyFileResource(		org.openntf.domino.design.AnyFileResource.class,		null,							null,						null,				NoteClass.FORM, 	"(+gi-K[];`_*"),
+	AnyFolderOrView(		org.openntf.domino.design.AnyFolderOrView.class,		null,							null,						null,				NoteClass.VIEW, 	DFLAGPAT_VIEWFORMFOLDER),
+	AnyFormOrSubform(		org.openntf.domino.design.AnyFormOrSubform.class,		null,							null,						null,				NoteClass.FORM, 	DFLAGPAT_VIEWFORMFOLDER),
+
+	SharedField(			org.openntf.domino.design.SharedField.class,			SharedField.class,				"SharedElements/Fields", 	".field",			NoteClass.FIELD),
+	ReplicationFormula(		org.openntf.domino.design.ReplicationFormula.class,		ReplicationFormula.class,		"Other/ReplicationFormulas",null,				NoteClass.REPLFORMULA),
+	IconNote(				org.openntf.domino.design.IconNote.class,				IconNote.class,					"Resources", 				"IconNote", 		NoteClass.ICON),
+	UsingDocument(			org.openntf.domino.design.UsingDocument.class,			UsingDocument.class,			"Resources", 				"UsingDocument", 	NoteClass.HELP),
+	AboutDocument(			org.openntf.domino.design.AboutDocument.class,			AboutDocument.class,			"Resources", 				"AboutDocument",	NoteClass.INFO),
+	ACLNote(				org.openntf.domino.design.ACLNote.class,				ACLNote.class,					"AppProperties",			"database.properties",NoteClass.ACL),
+	//@formatter:on
+	;
+
+	/** noteClass of the DesignNote */
+	private NoteClass noteClass_;
+
+	/** $Flags of the DesginNote (maybe null) */
+	private String flags_;
+	/** $FlagsExt of the DesginNote (maybe null) */
+	private String flagsExt_;
+
+	/** The folder where this element is stored */
+	private final String onDiskFolder_;
+
+	/** The file extension of this element. e.g. "*.lss". If null, all files in the folder are considered as type of this design element */
+	private final String onDiskFileExtension_;
+
+	// lowercase cache - only internally used!
+	private final String lcOnDiskFolder_;
+	private final String lcOnDiskFileExtension_;
+	/**
+	 * Tri-state-value for XPages:
+	 * <ul>
+	 * <li>True: $TITLE must end with ".xsp"</li>
+	 * <li>False: $TITLE must not end with ".xsp"</li>
+	 * <li>null: doesn't matter</li>
+	 * <ul>
+	 */
+	private Boolean filterXsp_;
+
+	/** Array for $AssistTypes (only relevant for Agents) */
+	private int[] assistFilter_;
+
+	/** include or exclude the assistTypes specified in assistFilter_ */
+	private boolean include_;
+
+	private Class<? extends DesignBase> interfaceClazz_;
+
+	private Class<? extends AbstractDesignBase> implClazz_;
 
 	/**
-	 * This method tests the Flags in an equal way as the "NotesUtlis.CmemflagTestMultiple" does
+	 * Create a new filter
 	 * 
+	 * @param noteClass
+	 *            the NoteClass
+	 */
+	private DesignFactory(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass) {
+		interfaceClazz_ = iClazz;
+		implClazz_ = clazz;
+		onDiskFolder_ = folder;
+		lcOnDiskFolder_ = folder == null ? null : folder.toLowerCase().concat("/");
+		onDiskFileExtension_ = ext;
+		lcOnDiskFileExtension_ = ext == null ? null : ext.toLowerCase();
+		noteClass_ = noteClass;
+	}
+
+	/**
+	 * Create a new filter
+	 * 
+	 * @param noteClass
+	 *            the NoteClass
 	 * @param flags
-	 *            the flags to test
-	 * @param pattern
-	 *            the flag pattern.
-	 *            <ul>
-	 *            <li>+ means at least one of the flags must appear</li>
-	 *            <li>- means, none of the flags must appear</li>
-	 *            <li>* means, all of the Flags must appear</li>
-	 *            <li>( means, a combination of +, - and *</li>
-	 *            <ul>
-	 *            e.g (+ab-cd*ef means, that (a or b) && not (c or d) && (e and f) must appear in <code>flags</code>
-	 * @return true, if the pattern matches
+	 *            pattern for $FLAGS
 	 */
-
-	public static boolean testFlag(final String flags, final String pattern) {
-		if (pattern.length() < 1)
-			return false;
-
-		int i = 0;
-		switch (pattern.charAt(i++)) {
-
-		case '+': // flags must contain ANY char of pattern
-			while (i < pattern.length()) {
-				if (flags.indexOf(pattern.charAt(i++)) >= 0)
-					return true;
-			}
-			return false;
-
-		case '-': // flags must NOT contain ANY char of pattern
-			while (i < pattern.length()) {
-				if (flags.indexOf(pattern.charAt(i++)) >= 0)
-					return false;
-			}
-			return true;
-
-		case '*': // flags must contain ALL char of pattern
-			while (i < pattern.length()) {
-				if (flags.indexOf(pattern.charAt(i++)) < 0)
-					return false;
-			}
-			return true;
-
-		case '(': // combined rule
-			boolean success = false;
-
-			// must follow with '+' "(+...."
-			if (pattern.charAt(i++) != '+')
-				return false;
-
-			if (i < pattern.length() && pattern.charAt(i) == '-') { // special case if no plus rule is there "(+-..."
-				success = true;
-			}
-			char ch = 0;
-			// verify + rule and scan to next -
-			while (i < pattern.length()) {
-				ch = pattern.charAt(i++);
-				if (ch == '-') {
-					if (!success)
-						return false;
-					break;
-				}
-				// in + mode, at least one the flags must appear
-				if (!success && flags.indexOf(ch) >= 0)
-					success = true;
-			}
-
-			// verify the negative list and scan to next '*'
-			if (!success || ch != '-')
-				return false;
-			while (i < pattern.length()) {
-				ch = pattern.charAt(i++);
-				if (ch == '*')
-					break;
-				if (flags.indexOf(ch) >= 0) {
-					// handle negative list
-					return false;
-				}
-			}
-
-			// verify the * rule. all chars must appear
-			while (i < pattern.length()) {
-				ch = pattern.charAt(i++);
-				if (flags.indexOf(ch) < 0)
-					return false;
-			}
-			return true;
-
-		}
-
-		return false;
+	private DesignFactory(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags) {
+		this(iClazz, clazz, folder, ext, noteClass);
+		flags_ = flags;
 	}
 
 	/**
-	 * Builds a formula that matches on <code>pattern</code>
+	 * Create a new filter (for Agents)
 	 * 
-	 * @param pattern
-	 *            The flag pattern to search for
-	 * @return A formula searching for the specified pattern
+	 * @param noteClass
+	 *            the NoteClass
+	 * @param flags
+	 *            pattern for $FLAGS
+	 * @param include
+	 *            include/exclude given AssistFlags
+	 * @param assistFilter
+	 *            the AssistFlags
 	 */
-	public static String buildFlagFormula(final String pattern) {
-		if (pattern.length() < 1)
-			return "@False";
-
-		StringBuilder sb = new StringBuilder();
-		int i = 0;
-		boolean first = true;
-		switch (pattern.charAt(i++)) {
-
-		case '+': // flags must contain ANY char of pattern
-			sb.append("@Contains($FLAGS;");
-			while (i < pattern.length()) {
-				if (!first)
-					sb.append(':');
-				sb.append('"');
-				sb.append(pattern.charAt(i++));
-				sb.append('"');
-				first = false;
-			}
-			sb.append(')');
-			return sb.toString();
-
-		case '-': // flags must NOT contain ANY char of pattern
-			sb.append("!@Contains($FLAGS;");
-			while (i < pattern.length()) {
-				if (!first)
-					sb.append(':');
-				sb.append('"');
-				sb.append(pattern.charAt(i++));
-				sb.append('"');
-				first = false;
-			}
-			sb.append(')');
-			return sb.toString();
-
-		case '*': // flags must contain ALL char of pattern
-			sb.append('(');
-			while (i < pattern.length()) {
-				if (!first)
-					sb.append('&');
-				sb.append("@Contains($FLAGS;\"");
-				sb.append(pattern.charAt(i++));
-				sb.append("\")");
-				first = false;
-			}
-			sb.append(')');
-			return sb.toString();
-
-		case '(': // combined rule
-
-			// must follow with '+' "(+...."
-			if (pattern.charAt(i++) != '+')
-				return "@False";
-
-			char ch = 0;
-			// verify + rule and scan to next -
-			sb.append("(@True");
-			while (i < pattern.length()) {
-				ch = pattern.charAt(i++);
-				if (ch == '-') {
-					if (!first)
-						sb.append(")");
-					break;
-				}
-				if (first) {
-					sb.append("& @Contains($FLAGS;");
-				} else {
-					sb.append(':');
-				}
-				sb.append('"');
-				sb.append(ch);
-				sb.append('"');
-				first = false;
-			}
-
-			// verify the negative list and scan to next '*'
-			if (ch != '-')
-				return "@False";
-
-			first = true;
-			while (i < pattern.length()) {
-				ch = pattern.charAt(i++);
-				if (ch == '*') {
-					if (!first)
-						sb.append(")");
-					break;
-				}
-				if (first) {
-					sb.append("& !@Contains($FLAGS;");
-				} else {
-					sb.append(':');
-				}
-				sb.append('"');
-				sb.append(ch);
-				sb.append('"');
-				first = false;
-			}
-
-			if (ch != '*')
-				return "@False";
-
-			while (i < pattern.length()) {
-				sb.append("& @Contains($FLAGS;\"");
-				sb.append(pattern.charAt(i++));
-				sb.append("\")");
-			}
-			sb.append(')');
-			return sb.toString();
-
-		}
-
-		return "@False";
+	private DesignFactory(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags, final boolean include, final int... assistFilter) {
+		this(iClazz, clazz, folder, ext, noteClass);
+		flags_ = flags;
+		assistFilter_ = assistFilter;
+		include_ = include;
 	}
 
-	private DesignFactory() {
+	/**
+	 * Create a new filter
+	 * 
+	 * @param noteClass
+	 *            the NoteClass
+	 * @param flags
+	 *            pattern for $FLAGS
+	 * @param flagsExt
+	 *            pattern for $FLAGSEXT
+	 */
+	private DesignFactory(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags, final String flagsExt) {
+		this(iClazz, clazz, folder, ext, noteClass);
+		flags_ = flags;
+		flagsExt_ = flagsExt;
 	}
 
-	public static org.openntf.domino.design.DesignBase fromDocument(final Document doc) {
+	/**
+	 * Create a new filter
+	 * 
+	 * @param noteClass
+	 *            the NoteClass
+	 * @param flags
+	 *            pattern for $FLAGS
+	 * @param filterXsp
+	 *            include/exclude xpages (.xsp)
+	 */
+	private DesignFactory(final Class<? extends DesignBase> iClazz, final Class<? extends AbstractDesignBase> clazz, final String folder,
+			final String ext, final NoteClass noteClass, final String flags, final Boolean filterXsp) {
+		this(iClazz, clazz, folder, ext, noteClass);
+		flags_ = flags;
+		filterXsp_ = filterXsp;
+	}
+
+	public NoteClass getNoteClass() {
+		return noteClass_;
+	}
+
+	public String getFlags() {
+		return flags_;
+	}
+
+	public String getFlagsExt() {
+		return flagsExt_;
+	}
+
+	public Boolean getFilterXsp() {
+		return filterXsp_;
+	}
+
+	public int[] getAssistFilter() {
+		return assistFilter_;
+	}
+
+	public boolean getInclude() {
+		return include_;
+	}
+
+	public static DesignFactory valueOf(final Document doc) {
+
 		if (doc.hasItem("IconBitmap") && doc.getNoteClass() == NoteClass.ICON)
-			return new IconNote(doc);
-		// RPr: Flags :) Dont ask! accept it! (Tested with a database that contains at least one element of each type)
-		String flags = doc.getItemValueString("$Flags");
+			return IconNote;
 
-		if (testFlag(flags, DFLAGPAT_FOLDER_ALL_VERSIONS)) {
-			return new Folder(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_STYLEKIT)) {
-			return new Theme(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_XSPPAGE)) {
-			return new XPage(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_XSPCC)) {
-			return new CustomControl(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_JAVAFILE)) {
-			return new XspJavaResource(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_WIDGET)) {
-			return new CompositeComponent(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_JAVAJAR)) {
-			return new JarResource(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_FILE_DL)) {
-			return new FileResource(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_FILE_HIDDEN)) {
-			String flagsExt = doc.getItemValueString("$FlagsExt");
-			if (testFlag(flagsExt, "+w")) {
-				return new FileResourceWebContent(doc);
-			} else {
-				return new FileResourceHidden(doc);
-			}
-		}
-		if (testFlag(flags, DFLAGPAT_NAVIGATORSWEB)) {
-			return new Navigator(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_IMAGE_RESOURCES_DESIGN)) {
-			return new ImageResource(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_IMAGE_DBICON)) {
-			return new DbImage(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_DATA_CONNECTION_RESOURCE)) {
-			return new DataConnectionResource(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SITEMAP)) {
-			return new DesignOutline(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_QUERY_V4_OBJECT)) {
-			return new SavedQuery(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_LS)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
-				return new WebServiceConsumerLS(doc);
-			return new ScriptLibraryLS(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JAVA)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
-				return new WebServiceConsumerJava(doc);
-			return new ScriptLibraryJava(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JS)) {
-			return new ScriptLibraryCSJS(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_SERVER_JS)) {
-			return new ScriptLibrarySSJS(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_DATABASESCRIPT)) {
-			return new DatabaseScript(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SUBFORM_ALL_VERSIONS)) {
-			return new Subform(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_PAGE)) {
-			return new DesignPage(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_AGENT_DATA)) {
-			return new AgentData(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SACTIONS_DESIGN)) {
-			return new SharedActionsNote(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_DB2ACCESSVIEW)) {
-			return new DB2View(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_FRAMESETSWEB)) {
-			return new Frameset(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_APPLET_RESOURCE)) {
-			return new DesignApplet(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_STYLE_SHEET_RESOURCE)) {
-			return new StyleSheet(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_WEBSERVICE_LS)) {
-			return new WebServiceProviderLS(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_WEBSERVICE_JAVA)) {
-			return new WebServiceProviderJava(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_SHARED_COLS)) {
-			return new SharedColumn(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_COMPAPP)) {
-			return new CompositeApp(doc);
-		}
-		if (testFlag(flags, DFLAGPAT_COMPDEF)) {
-			return new CompositeWiring(doc);
-		}
+		String flags = doc.getItemValueString(FLAGS_ITEM);
+		String flagsExt = doc.getItemValueString(FLAGS_EXT_ITEM);
+		String title = doc.getItemValueString(TITLE_ITEM);
+		Integer assistType = doc.getItemValue(ASSIST_TYPE, Integer.class);
+		DesignFactory candidate = null;
 
-		if (testFlag(flags, DFLAGPAT_VIEWFORM_ALL_VERSIONS)) {
-
-			if (doc.hasItem("$AssistType")) {
-				Integer assist = doc.getItemValue("$AssistType", Integer.class);
-				if (assist == 65413)
-					return new DesignAgentLS(doc);
-				if (assist == 65426)
-					return new DesignAgentF(doc);
-				if (assist == 65427) {
-					if (testFlag(flags, "+J"))
-						return new DesignAgentJ(doc);
-					return new DesignAgentIJ(doc);
+		for (DesignFactory mapping : DesignFactory.values()) {
+			if (mapping == IconNote) {
+				// nop - skip iconNote
+			} else if (mapping.getFlags() == null) {
+				// no flags, so noteClass must match 
+				if (mapping.getNoteClass() == doc.getNoteClass()) {
+					return mapping;
 				}
-				return new DesignAgentA(doc);
-			}
+			} else if (DesignFlags.testFlag(flags, mapping.getFlags())) {
+				// flags match
+				boolean match = true;
+				if (match && mapping.getFilterXsp() != null) {
+					match = (title.endsWith(".xsp") == mapping.getFilterXsp().booleanValue());
+				}
+				if (match && mapping.getFlagsExt() != null) {
+					match = DesignFlags.testFlag(flagsExt, mapping.getFlagsExt());
+				}
+				if (match && mapping.getAssistFilter() != null) {
+					match = !mapping.getInclude();
+					for (int assistFilter : mapping.getAssistFilter()) {
+						if (assistType != null && assistFilter == assistType) {
+							match = mapping.getInclude();
+							break;
+						}
+					}
+				}
+				if (match) {
+					// now, flags, flagsext & assistType matches
+					if (candidate == null) {
+						candidate = mapping;
+					} else {
+						// two or more candidates found:
+						if (candidate.getNoteClass() == doc.getNoteClass())
+							return candidate;
+						if (mapping.getNoteClass() == doc.getNoteClass())
+							return mapping;
+					}
+				}
 
-			if (doc.hasItem("$FormulaClass")) { //View
-				return new DesignView(doc);
 			}
-			if (doc.hasItem("$ACLDigest")) {
-				return new ACLNote(doc);
-			}
-
-			// For these elements, we have to distinguish by NoteClass (which is expensive)
-			switch (doc.getNoteClass()) {
-			case FORM:
-				return new DesignForm(doc);
-			case HELPABOUTDOCUMENT:
-				return new AboutDocument(doc);
-			case HELPUSINGDOCUMENT:
-				return new UsingDocument(doc);
-			case REPLICATIONFORMULA:
-				return new ReplicationFormula(doc);
-			case SHAREDFIELD:
-				return new SharedField(doc);
-			default:
-				break;
-			}
-
 		}
-		// e.g. the $BEProfileR7
-		return new OtherDesignElement(doc);
-
+		return candidate;
 	}
 
-	public static <T extends org.openntf.domino.design.DesignBase> DesignCollection<T> search(final Database db, final Class<T> type,
-			final String filter) {
-		NoteCollection coll = db.createNoteCollection(false);
-
-		String selectFormula = "@All";
-		if (!StringUtil.isEmpty(filter)) {
-			selectFormula = "(" + filter + ")";
+	public static DesignFactory valueOf(final Class<? extends DesignBase> type) {
+		for (DesignFactory mapping : DesignFactory.values()) {
+			if (mapping.interfaceClazz_.isAssignableFrom(type))
+				return mapping;
 		}
-
-		if (org.openntf.domino.design.IconNote.class.isAssignableFrom(type)) {
-			coll.setSelectIcon(true);
-
-		} else if (org.openntf.domino.design.DesignView.class.isAssignableFrom(type)) {
-			// Hmm. A view is also a folder.
-			coll.setSelectViews(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_VIEWFORM_ALL_VERSIONS);
-
-		} else if (org.openntf.domino.design.Folder.class.isAssignableFrom(type)) {
-			coll.setSelectFolders(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FOLDER_ALL_VERSIONS);
-
-		} else if (org.openntf.domino.design.Theme.class.isAssignableFrom(type)) {
-			// a Theme is considered as file resource
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_STYLEKIT);
-
-		} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE);
-
-		} else if (org.openntf.domino.design.CompositeComponent.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_WIDGET);
-
-		} else if (org.openntf.domino.design.JarResource.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAJAR);
-
-		} else if (org.openntf.domino.design.FileResource.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_DL);
-
-		} else if (org.openntf.domino.design.FileResourceHidden.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_HIDDEN) + " & !@Contains($FlagsExt;{w})";
-
-		} else if (org.openntf.domino.design.FileResourceWebContent.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_FILE_HIDDEN) + " & @Contains($FlagsExt;{w})";
-
-		} else if (org.openntf.domino.design.Navigator.class.isAssignableFrom(type)) {
-			coll.setSelectNavigators(true);
-
-		} else if (org.openntf.domino.design.ImageResource.class.isAssignableFrom(type)) {
-			coll.setSelectImageResources(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_IMAGE_RESOURCES_DESIGN);
-
-		} else if (org.openntf.domino.design.DataConnectionResource.class.isAssignableFrom(type)) {
-			coll.setSelectDataConnections(true);
-
-		} else if (org.openntf.domino.design.Outline.class.isAssignableFrom(type)) {
-			coll.setSelectOutlines(true);
-
-		} else if (org.openntf.domino.design.SavedQuery.class.isAssignableFrom(type)) {
-			coll.selectAllDesignElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_QUERY_V4_OBJECT);
-
-		} else if (org.openntf.domino.design.WebServiceConsumer.class.isAssignableFrom(type)) {
-			coll.setSelectScriptLibraries(true);
-
-			selectFormula += " & @Contains($FlagsExt;{W})";
-			if (org.openntf.domino.design.impl.WebServiceConsumerLS.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS);
-			} else if (org.openntf.domino.design.impl.WebServiceConsumerJava.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA);
-			}
-
-		} else if (org.openntf.domino.design.ScriptLibrary.class.isAssignableFrom(type)) {
-			if (org.openntf.domino.design.ScriptLibraryLS.class.isAssignableFrom(type)) {
-				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W})";
-
-			} else if (org.openntf.domino.design.ScriptLibraryJava.class.isAssignableFrom(type)) {
-				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W})";
-
-			} else if (org.openntf.domino.design.ScriptLibraryCSJS.class.isAssignableFrom(type)) {
-				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS);
-
-			} else if (org.openntf.domino.design.ScriptLibrarySSJS.class.isAssignableFrom(type)) {
-				coll.setSelectScriptLibraries(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS);
-			} else {
-				// ALL script libraries:
-				coll.setSelectScriptLibraries(true);
-				selectFormula += " & ((" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_LS) + " & !@Contains($FlagsExt;{W}))";
-				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JAVA) + " & !@Contains($FlagsExt;{W}))";
-				selectFormula += " | ( " + buildFlagFormula(DFLAGPAT_SCRIPTLIB_JS) + ")";
-				selectFormula += " | (" + buildFlagFormula(DFLAGPAT_SCRIPTLIB_SERVER_JS) + "))";
-			}
-
-		} else if (org.openntf.domino.design.DatabaseScript.class.isAssignableFrom(type)) {
-			coll.setSelectDatabaseScript(true);
-
-		} else if (org.openntf.domino.design.Subform.class.isAssignableFrom(type)) {
-			coll.setSelectSubforms(true);
-
-		} else if (org.openntf.domino.design.DesignPage.class.isAssignableFrom(type)) {
-			coll.setSelectPages(true);
-
-		} else if (org.openntf.domino.design.AgentData.class.isAssignableFrom(type)) {
-			coll.setSelectMiscCodeElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_AGENT_DATA);
-
-		} else if (org.openntf.domino.design.SharedActions.class.isAssignableFrom(type)) {
-			coll.setSelectActions(true);
-
-		} else if (org.openntf.domino.design.DB2View.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_DB2ACCESSVIEW);
-
-		} else if (org.openntf.domino.design.Frameset.class.isAssignableFrom(type)) {
-			coll.setSelectFramesets(true);
-
-		} else if (org.openntf.domino.design.DesignApplet.class.isAssignableFrom(type)) {
-			coll.setSelectJavaResources(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_APPLET_RESOURCE);
-
-		} else if (org.openntf.domino.design.StyleSheet.class.isAssignableFrom(type)) {
-			coll.setSelectStylesheetResources(true);
-			//selectFormula += " & " + buildFlagFormula(DFLAGPAT_STYLE_SHEET_RESOURCE);
-
-		} else if (org.openntf.domino.design.WebServiceProvider.class.isAssignableFrom(type)) {
-			coll.setSelectMiscCodeElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE);
-			if (org.openntf.domino.design.impl.WebServiceProviderLS.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE_LS);
-			} else if (org.openntf.domino.design.impl.WebServiceProviderJava.class.isAssignableFrom(type)) {
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_WEBSERVICE_JAVA);
-			}
-		} else if (org.openntf.domino.design.SharedColumn.class.isAssignableFrom(type)) {
-			coll.setSelectMiscIndexElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_SHARED_COLS);
-
-		} else if (org.openntf.domino.design.CompositeApp.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_COMPAPP);
-
-		} else if (org.openntf.domino.design.CompositeWiring.class.isAssignableFrom(type)) {
-			coll.setSelectMiscFormatElements(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_COMPDEF);
-
-		} else if (org.openntf.domino.design.DbImage.class.isAssignableFrom(type)) {
-			coll.setSelectImageResources(true);
-			selectFormula += " & " + buildFlagFormula(DFLAGPAT_IMAGE_DBICON);
-
-			// Agents
-		} else if (org.openntf.domino.design.DesignAgent.class.isAssignableFrom(type)) {
-			coll.setSelectAgents(true);
-			// argh... why is this soooo complex, IBM?
-			if (org.openntf.domino.design.impl.DesignAgentF.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65426";
-			} else if (org.openntf.domino.design.impl.DesignAgentLS.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65413";
-			} else if (org.openntf.domino.design.impl.DesignAgentA.class.isAssignableFrom(type)) {
-				selectFormula += " & !($AssistType = 65413:65426:65427)";
-			} else if (org.openntf.domino.design.impl.DesignAgentJ.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65427 & " + buildFlagFormula("+J");
-			} else if (org.openntf.domino.design.impl.DesignAgentIJ.class.isAssignableFrom(type)) {
-				selectFormula += " & $AssistType = 65427 & " + buildFlagFormula("-J");
-			}
-
-		} else if (org.openntf.domino.design.UsingDocument.class.isAssignableFrom(type)) {
-			coll.setSelectHelpUsing(true);
-
-		} else if (org.openntf.domino.design.AboutDocument.class.isAssignableFrom(type)) {
-			coll.setSelectHelpAbout(true);
-
-		} else if (org.openntf.domino.design.ACLNote.class.isAssignableFrom(type)) {
-			coll.setSelectAcl(true);
-
-		} else if (org.openntf.domino.design.SharedField.class.isAssignableFrom(type)) {
-			coll.setSelectSharedFields(true);
-
-		} else if (org.openntf.domino.design.ReplicationFormula.class.isAssignableFrom(type)) {
-			coll.setSelectReplicationFormulas(true);
-
-		} else if (org.openntf.domino.design.DesignForm.class.isAssignableFrom(type)) {
-			coll.setSelectForms(true);
-
-		} else if (org.openntf.domino.design.XspResource.class.isAssignableFrom(type)) {
-			if (org.openntf.domino.design.XPage.class.isAssignableFrom(type)) {
-				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPPAGE);
-
-			} else if (org.openntf.domino.design.CustomControl.class.isAssignableFrom(type)) {
-				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_XSPCC);
-
-			} else if (org.openntf.domino.design.XspJavaResource.class.isAssignableFrom(type)) {
-				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVAFILE);
-			} else {
-				coll.setSelectMiscFormatElements(true);
-				selectFormula += " & " + buildFlagFormula(DFLAGPAT_JAVARESOURCE);
-			}
-		} else {
-			throw new IllegalArgumentException("Class " + type.getName() + " is unsupported");
-		}
-
-		//		System.out.println(selectFormula);
-		//		System.out.println(type);
-		coll.setSelectionFormula(selectFormula);
-		coll.buildCollection();
-		return new DesignCollection<T>(coll, type);
-
+		throw new IllegalArgumentException("No Mapping available for " + type.getName());
 	}
-	/*
-		@SuppressWarnings("unchecked")
-		public static <T> T fromDocument(final Document doc, final Class<? extends org.openntf.domino.design.DesignBase> T) {
-			if (T == null) {
-				return (T) fromDocument(doc);
-			}
-			// TODO: Replace the code below by this
-			if (false) {
-				DesignBase ret = fromDocument(doc);
-				if (T.isAssignableFrom(ret.getClass())) {
-					return (T) ret;
-				}
-				throw new ClassCastException("something went wrong");
-			}
-			if (T == ACLNote.class) {
-				return (T) (new ACLNote(doc));
-			} else if (T == AboutDocument.class) {
-				return (T) (new AboutDocument(doc));
-			} else if (T == FileResource.class) {
-				return (T) (new FileResource(doc));
-			} else if (T == DesignForm.class) {
-				return (T) (new DesignForm(doc));
-			} else if (T == IconNote.class) {
-				return (T) (new IconNote(doc));
-			} else if (T == ReplicationFormula.class) {
-				return (T) (new ReplicationFormula(doc));
-			} else if (T == UsingDocument.class) {
-				return (T) (new UsingDocument(doc));
-			} else if (T == DesignView.class) {
-				return (T) (new DesignView(doc));
-				//		} else if (T == JavaResource.class) {
-				//			return (T) (new JavaResource(doc));
-			} else if (T == JarResource.class) {
-				return (T) (new JarResource(doc));
-			} else if (T == XPage.class) {
-				return (T) (new XPage(doc));
-			} else if (T == JavaScriptLibrary.class) {
-				return (T) (new JavaScriptLibrary(doc));
-			}
+
+	public static DesignBase fromDocument(final Document doc) {
+		if (doc == null)
 			return null;
+		DesignFactory mapping = valueOf(doc);
+		if (mapping == null) {
+			return new OtherDesignElement(doc);
+		} else {
+			try {
+				AbstractDesignBase ret = mapping.getImplClass().newInstance();
+				ret.init(doc);
+				return ret;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+
 		}
-	 */
+	}
+
+	public static DesignFactory valueOf(final File parent, final File file) {
+		URI relUri = parent.toURI().relativize(file.toURI());
+		if (relUri.isAbsolute()) {
+			throw new IllegalArgumentException(file + " is not relative to " + parent);
+		}
+		String lcPath = relUri.getPath().toLowerCase();
+		for (DesignFactory fact : DesignFactory.values()) {
+			if (fact.lcOnDiskFolder_ != null && fact != DesignFactory.FileResourceHidden) {
+				if (lcPath.startsWith(fact.lcOnDiskFolder_)) {
+					String ext = fact.lcOnDiskFileExtension_;
+					if (ext == null || lcPath.endsWith(ext) || ext.equals("*")) {
+						return fact;
+					}
+				}
+			}
+		}
+
+		return DesignFactory.FileResourceHidden;
+	}
+
+	public Class<? extends DesignBase> getInterfaceClass() {
+		return interfaceClazz_;
+	}
+
+	public Class<? extends AbstractDesignBase> getImplClass() {
+		return implClazz_;
+	}
+
+	public String getOnDiskFolder() {
+		return onDiskFolder_;
+	}
+
+	public String getOnDiskFileExtension() {
+		return onDiskFileExtension_;
+	}
 }

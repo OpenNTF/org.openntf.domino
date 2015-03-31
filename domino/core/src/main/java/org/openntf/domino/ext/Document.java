@@ -13,6 +13,8 @@ import org.openntf.domino.Item;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 
+import com.ibm.designer.domino.napi.NotesNote;
+
 /**
  * @author withersp
  * 
@@ -379,4 +381,19 @@ public interface Document {
 	 * </pre>
 	 */
 	public void makeResponse(final lotus.domino.Document doc, String itemName);
+
+	/**
+	 * Returns the NAPI / C handle to communicate directly with DLLs. With JNA we may access the Domino-API directly
+	 * 
+	 * @return the NAPI Handle
+	 */
+	public int getNapiHandle();
+
+	/**
+	 * Returns the NAPI note
+	 * 
+	 * @return the NAPI-NotesNote object
+	 */
+	public NotesNote getNapiNote();
+
 }

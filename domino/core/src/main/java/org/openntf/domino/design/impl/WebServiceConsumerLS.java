@@ -16,21 +16,13 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
 
 /**
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  * 
  */
-public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceConsumer {
+public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceConsumerLS {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected WebServiceConsumerLS(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
@@ -38,4 +30,12 @@ public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org
 		return true;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".lswsc");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

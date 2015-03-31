@@ -19,7 +19,6 @@ package org.openntf.domino.design.impl;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Document;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -30,13 +29,6 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignForm.class.getName());
-
-	/**
-	 * @param document
-	 */
-	protected DesignForm(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
@@ -104,4 +96,12 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 		getFields().swap(a, b);
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".form");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

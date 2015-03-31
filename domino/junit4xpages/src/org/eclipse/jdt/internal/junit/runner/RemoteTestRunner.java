@@ -224,6 +224,7 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 			}
 
 			if (osgiTest) {
+				System.setProperty("oda.tasklet.autostart", "false"); // Disable autostart for XOTS scan and others
 				runAsOsgi(args);
 			} else {
 				testRunServer.run();

@@ -106,7 +106,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	private String executorName_;
 
 	protected Calendar getNow() {
-		now_.clear();
+		now_.setTimeInMillis(System.currentTimeMillis());
 		return now_;
 	}
 
@@ -502,7 +502,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	//	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T type) {
 	//		return super.newTaskFor(wrap(runnable), type);
 	//	};
-
+	// TODO RPr: check if this works now!
 	@Override
 	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
 		return new DominoFutureTask<T>(wrap(callable), new PeriodicScheduler(0, 0, TimeUnit.MILLISECONDS));

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<imageresource down="1" name="$DBIcon" xmlns="http://www.lotus.com/dxl" across="1" default="false" private="false" refresh="false" version="9.0" noreplace="false" useapplet="false" treatashtml="false" publicaccess="false" colorizegrays="false" designerversion="8.5.3" browsercompatible="false" maintenanceversion="1.2">
+<jpeg>
+iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFgSURBVEhL1ZYNjoQgDIVxTubN1JvpyZwnj621
+QGF2yST7hSH9sdQWhjit6xpCWOI8li2u+cLvWv08x4+YYDoxQelj2zbMy7JQbbJN01VBk+M4uLQA
+FcakuHRVYFYXmqWggoC1zw5wFvZ9pwwBKmUfbEK7Anl9vK/sgTZSKNK7B38ibxHKzzsAi9+iGJQZ
++T8gzlGhHetCABDE2DxgdwIdJgKN8zxjlnZToNGJSugWoUb4KEMolBxJyg+w1KLuUySv8NFRaUZ9
+/RQ5xTp0tQiTlGao9Yf4UY8WOUfFoRlVuCpku6h2UoxCBV236a+xpwiXqwyNtnPk1Lx3AuMwqsF/
+WKspAU1oFQcxYTWvCEVv+Y8mzxUpesVovOUEA/k/CdB0GZpHAvGZhwy+15AS6N2XeLNddNW8UGVo
+7gryAAffq3m0iPk5NNrOofEtr+sbWMoeCi4ifP+mz3d+CQ8Ga4bwBlcjWbNstXbXAAAAAElFTkSu
+QmCC
+</jpeg>
+<item name="$FileSize" seal="false" sign="true" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<number>459</number>
+</item>
+<item name="$MimeType" seal="false" sign="true" names="false" sealed="false" authors="false" readers="false" placeholder="false">
+<text>image/png</text>
+</item>
+</imageresource>

@@ -16,25 +16,24 @@
 
 package org.openntf.domino.design.impl;
 
-import org.openntf.domino.Document;
-
 /**
  * 
- * @author Roland Praml
+ * @author Roland Praml, FOCONIS AG
  */
-public class DesignAgentIJ extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
+public class DesignAgentIJ extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgentIJ {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @param document
-	 */
-	protected DesignAgentIJ(final Document document) {
-		super(document);
-	}
 
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
 	}
 
+	@Override
+	public void setName(String title) {
+		int ind = title.lastIndexOf(".ija");
+		if (ind >= 0) {
+			title = title.substring(0, ind);
+		}
+		super.setName(title);
+	}
 }

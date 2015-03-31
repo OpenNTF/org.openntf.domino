@@ -23,8 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lotus.domino.Base;
-
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -88,13 +86,28 @@ public class DominoReferenceCache {
 		}
 	}
 
-	public void setNoRecycle(final lotus.domino.Base key, final boolean value) {
-		DominoReference ref = map.get(key);
+	/**
+	 * Set the noRecycle flag
+	 * 
+	 * @param lotus
+	 *            the lotus object which should/should not be recycled
+	 * @param noRecycle
+	 *            <code>TRUE</code> means, object will not be recycled, <code>FALSE</code> object will be recycled
+	 */
+	public void setNoRecycle(final lotus.domino.Base lotus, final boolean noRecycle) {
+		DominoReference ref = map.get(lotus);
 		if (ref == null) {
-			log_.log(Level.WARNING, "Attemped to set noRecycle on a DominoReference id " + key + " that's not in the local reference cache");
+			log_.log(Level.WARNING, "Attemped to set noRecycle on a DominoReference id " + lotus
+					+ " that's not in the local reference cache");
 		} else {
-			ref.setNoRecycle(value);
+			ref.setNoRecycle(noRecycle);
 		}
+	}
+
+	public DominoReference getReference(final lotus.domino.Base lotus) {
+		if (lotus instanceof org.openntf.domino.Base)
+			throw new IllegalArgumentException("Lotus must not be of type " + org.openntf.domino.Base.class.getName());
+		return map.get(lotus);
 	}
 
 	/**
@@ -127,6 +140,14 @@ public class DominoReferenceCache {
 			throw new IllegalArgumentException("key cannot be 0");
 		}
 		Factory.countLotus(delegate.getClass());
+
+		if (delegate instanceof lotus.domino.Session				//
+				|| delegate instanceof lotus.domino.AgentContext) {
+			// these are never recycled by default. If you create your own session, you have to recycle it after use
+			// or setNoRecycle to "false"
+			ref.setNoRecycle(true);
+		}
+
 		return getReferenceObject(map.put(delegate, ref));
 	}
 
@@ -153,7 +174,7 @@ public class DominoReferenceCache {
 		DominoReference ref = null;
 
 		while ((ref = (DominoReference) queue.poll()) != null) {
-			Base unrefLotus = ref.getDelegate();
+			lotus.domino.Base unrefLotus = ref.getDelegate();
 
 			map.remove(unrefLotus);
 			if (unrefLotus == null) {
@@ -161,7 +182,7 @@ public class DominoReferenceCache {
 			} else if (unrefLotus == current) {
 				ref.setNoRecycle(true);
 			} else if (prevent_recycling != null) {
-				for (Base curKey : prevent_recycling) {
+				for (lotus.domino.Base curKey : prevent_recycling) {
 					if (curKey == unrefLotus) {
 
 						// TODO: This case does not handle the counters correctly
