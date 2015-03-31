@@ -37,7 +37,7 @@
 				<executions>
 					<execution>
 						<id>generate-javadoc</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>

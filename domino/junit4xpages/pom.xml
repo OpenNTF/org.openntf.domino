@@ -26,7 +26,7 @@
 				<executions>
 					<execution>
 						<id>make-assembly</id>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
