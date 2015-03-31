@@ -19,21 +19,19 @@
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino</artifactId>
 			<version>${project.version}</version>
+			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.xsp</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.openntf.domino</groupId>
-			<artifactId>org.openntf.junit4xpages</artifactId>
-			<version>4.11.0.qualifier</version>
+			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.formula</artifactId>
 			<version>${project.version}</version>
+			<classifier>javadoc</classifier>
 		</dependency>
 	</dependencies>
 	
