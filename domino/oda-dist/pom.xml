@@ -14,6 +14,35 @@
 	
 	<packaging>pom</packaging>
 	
+	<dependencies>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.formula</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.xsp</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.junit4xpages</artifactId>
+			<version>4.11.0.qualifier</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.updatesite</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+			<type>eclipse-update-site</type>
+		</dependency>
+	</dependencies>
+	
 	<build>
 		<plugins>
 			<plugin>

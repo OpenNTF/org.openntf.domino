@@ -50,6 +50,7 @@
 			
 			<binaries>
 				<attachmentClassifier>javadoc</attachmentClassifier>
+				<includeDependencies>false</includeDependencies>
 				<outputDirectory>/apidocs/${module.artifactId}</outputDirectory>
 				<unpack>true</unpack>
 			</binaries>
