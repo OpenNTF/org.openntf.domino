@@ -17,7 +17,7 @@ import org.openntf.domino.tests.eknori.MassCopyDocumentsScratchTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ // The Test suite:
 CreateOneMillion.class, // this test takse a quite long time and is currently limited to 100000 docs.  
-		MassCopyDocumentsScratchTest.class, // copies doc by doc from OneMillion.nsf to target.nsf
+		MassCopyDocumentsScratchTest.class // copies doc by doc from OneMillion.nsf to target.nsf
 // MassCreateDocumentsScratchTest.class,// This test does nearly the same as CreateOneMillion
 })
 public class _Suite {
