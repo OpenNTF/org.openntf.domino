@@ -21,7 +21,7 @@ import org.eclipse.jdt.internal.junit.runner.ITestIdentifier;
 class JUnit3Identifier implements ITestIdentifier {
 	private final JUnit3TestReference ref;
 
-	JUnit3Identifier(JUnit3TestReference ref) {
+	JUnit3Identifier(final JUnit3TestReference ref) {
 		this.ref = ref;
 	}
 
@@ -29,11 +29,13 @@ class JUnit3Identifier implements ITestIdentifier {
 		return ref.getName();
 	}
 
-	public boolean equals(Object obj) {
+	@Override
+	public boolean equals(final Object obj) {
 		JUnit3Identifier id = (JUnit3Identifier) obj;
 		return ref.equals(id.ref);
 	}
 
+	@Override
 	public int hashCode() {
 		return ref.hashCode();
 	}

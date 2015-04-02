@@ -36,10 +36,6 @@ import com.ibm.domino.xsp.module.nsf.NotesContext;
  */
 public class TestRunner {
 
-	/**
-	 * @param result
-	 * @throws ClassNotFoundException
-	 */
 	@SuppressWarnings({ "nls", "unchecked", "rawtypes" })
 	public void run(final Map<String, String> result, final String javaFile) throws ClassNotFoundException {
 		OutputStream testDetail = new ByteArrayOutputStream();

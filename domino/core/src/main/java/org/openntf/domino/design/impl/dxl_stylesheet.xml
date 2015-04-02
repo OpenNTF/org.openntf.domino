@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+<!-- <!DOCTYPE note SYSTEM 'xmlschemas/domino_9_0_1.dtd'> -->
+<note class='form' xmlns='http://www.lotus.com/dxl'>
+	<item name='$TITLE'><text></text></item>
+	<item name='$MimeType'><text>text/css</text></item>
+	<item name='$DesignerVersion'><text>8.5.3</text></item>
+	<item name='$Flags'><text>34C=Q</text></item>
+	<item name='$FileSize' sign='true'><number>0</number></item>
+	<item name='$FileData' sign='true'>
+	<rawitemdata type='1'>
+YQAYAAAAAAAAAAAAAQAAAAAAAAAAAAAAYAASAAAAAAAAAAAAAAAAAAAA
+</rawitemdata></item>
+	<item name='$FileNames' sign='true'><text></text></item>
+	<item name='$MimeCharSet'><text>UTF-8</text></item>
+</note>

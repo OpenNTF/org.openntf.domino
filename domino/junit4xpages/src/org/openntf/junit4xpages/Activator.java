@@ -26,6 +26,7 @@ import org.osgi.framework.BundleContext;
  * 
  */
 public class Activator extends Plugin {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Activator.class.getName());
 	private static Activator instance;
 

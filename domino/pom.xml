@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -22,44 +23,63 @@
 			<url>${notes-platform}</url>
 		</repository>
 	</repositories>
-
-	<modules>
-		<module>externals</module>
-		<module>formula</module>
-		<module>core</module>
-		<module>xsp</module>
-		<module>junit4xpages</module>
-		<module>tests</module>
-		<module>org.openntf.domino.feature.group</module>
- 		<module>org.openntf.domino.updatesite</module>
-
-	</modules>
+	
+	
+	<profiles>
+		<profile>
+			<id>core</id>
+			<modules>
+				<module>core</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>fast</id>
+			<modules>
+				<module>formula</module>
+				<module>core</module>
+				<module>xsp</module>
+				<module>org.openntf.domino.feature.group</module>
+ 				<module>org.openntf.domino.updatesite</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>complete</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>externals</module>
+				<module>formula</module>
+				<module>core</module>
+				<module>xsp</module>
+				<module>junit4xpages</module>
+				<module>tests</module>
+				<module>org.openntf.domino.feature.group</module>
+ 				<module>org.openntf.domino.updatesite</module>
+				<module>oda-dist</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>
-		<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-eclipse-plugin</artifactId>
-          <version>2.6</version>
-          <configuration>
-  <!--            <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>false</downloadJavadocs>
-            <additionalBuildcommands>
-              <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
-              <buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand>
-              <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand>
-            </additionalBuildcommands>
-            <additionalProjectnatures>
-              <projectnature>org.eclipse.pde.PluginNature</projectnature>
-              <projectnature>org.eclipse.jdt.core.javanature</projectnature>
-            </additionalProjectnatures> -->
-            <classpathContainers>
-              <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
-              <classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
-            </classpathContainers>
-          </configuration>
-        </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<!-- <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate> 
+						<downloadSources>true</downloadSources> <downloadJavadocs>false</downloadJavadocs> 
+						<additionalBuildcommands> <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand> 
+						<buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand> <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand> 
+						</additionalBuildcommands> <additionalProjectnatures> <projectnature>org.eclipse.pde.PluginNature</projectnature> 
+						<projectnature>org.eclipse.jdt.core.javanature</projectnature> </additionalProjectnatures> -->
+					<classpathContainers>
+						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
+						<classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
+					</classpathContainers>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -94,6 +114,19 @@
 					<target>${compiler}</target>
 					<compilerArgument>-err:-forbidden,discouraged,deprecation</compilerArgument>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -146,19 +179,23 @@
 			<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>tycho-p2-repository-plugin</artifactId> 
 				<version>${tycho-version}</version> <configuration> <includeAllDependencies>true</includeAllDependencies> 
 				</configuration> </plugin> -->
-			<plugin>
-				<!-- javadoc configuration -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<failOnError>false</failOnError>
-					<excludePackageNames>com.sun.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
-				</configuration>
-			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<!-- javadoc configuration -->
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9</version>
+					<configuration>
+						<failOnError>false</failOnError>
+						<excludePackageNames>com.sun.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-	
+
 	<licenses>
 		<license>
 			<name>Apache License, V2.0</name>
@@ -167,7 +204,7 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
-	
+
 	<!-- List all developers here -->
 	<developers>
 		<developer>
@@ -210,13 +247,13 @@
 			</properties>
 		</developer>
 	</developers>
-	
-    <distributionManagement>
-      <site>
-        <id>www.openntf.org</id>
-        <url>file://c:\fullsite/</url>
-      </site>
-    </distributionManagement>
-	
+
+	<distributionManagement>
+		<site>
+			<id>www.openntf.org</id>
+			<url>file://c:\fullsite/</url>
+		</site>
+	</distributionManagement>
+
 
 </project>

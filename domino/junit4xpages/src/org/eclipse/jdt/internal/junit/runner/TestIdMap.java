@@ -15,21 +15,22 @@ package org.eclipse.jdt.internal.junit.runner;
 
 import java.util.HashMap;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestIdMap {
-	private HashMap fIdMap= new HashMap();
+	private HashMap fIdMap = new HashMap();
 
-	private int fNextId= 1;
+	private int fNextId = 1;
 
-	public String getTestId(ITestIdentifier identifier) {
-		Object id= fIdMap.get(identifier);
+	public String getTestId(final ITestIdentifier identifier) {
+		Object id = fIdMap.get(identifier);
 		if (id != null)
 			return (String) id;
-		String newId= Integer.toString(fNextId++);
+		String newId = Integer.toString(fNextId++);
 		fIdMap.put(identifier, newId);
 		return newId;
 	}
 
-	public String getTestId(ITestReference ref) {
+	public String getTestId(final ITestReference ref) {
 		return getTestId(ref.getIdentifier());
 	}
 }

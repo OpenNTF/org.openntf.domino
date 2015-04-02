@@ -16,6 +16,7 @@ package org.eclipse.jdt.internal.junit.runner;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestExecution {
 	private boolean fShouldStop = false;
 
@@ -25,13 +26,12 @@ public class TestExecution {
 
 	private ArrayList fStopListeners = new ArrayList();
 
-	public TestExecution(IListensToTestExecutions listener,
-			IClassifiesThrowables classifier) {
+	public TestExecution(final IListensToTestExecutions listener, final IClassifiesThrowables classifier) {
 		fClassifier = classifier;
 		fExecutionListener = listener;
 	}
 
-	public void run(ITestReference[] suites) {
+	public void run(final ITestReference[] suites) {
 		for (int i = 0; i < suites.length; i++) {
 			if (fShouldStop)
 				return;
@@ -59,7 +59,7 @@ public class TestExecution {
 		return fClassifier;
 	}
 
-	public void addStopListener(IStopListener listener) {
+	public void addStopListener(final IStopListener listener) {
 		fStopListeners.add(listener);
 	}
 }

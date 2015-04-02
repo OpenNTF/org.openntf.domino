@@ -6,13 +6,14 @@ Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-Vendor: OpenNTF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.5.0.qualifier
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
+ org.openntf.conference.graph,
  org.openntf.domino,
  org.openntf.domino.annotations,
  org.openntf.domino.big,
@@ -20,6 +21,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.config,
  org.openntf.domino.design,
  org.openntf.domino.design.impl,
+ org.openntf.domino.design.sync,
  org.openntf.domino.email,
  org.openntf.domino.events,
  org.openntf.domino.exceptions,
@@ -28,6 +30,10 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.graph,
  org.openntf.domino.graph2,
  org.openntf.domino.graph2.annotations,
+ org.openntf.domino.graph2.builtin,
+ org.openntf.domino.graph2.builtin.social,
+ org.openntf.domino.graph2.builtin.workflow,
+ org.openntf.domino.graph2.builtin.workflow.definition,
  org.openntf.domino.graph2.exception,
  org.openntf.domino.graph2.impl,
  org.openntf.domino.helpers,
@@ -41,6 +47,8 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.nsfdata.impldxl.item,
  org.openntf.domino.nsfdata.structs,
  org.openntf.domino.nsfdata.structs.cd,
+ org.openntf.domino.progress,
+ org.openntf.domino.nsfdata.structs.obj,
  org.openntf.domino.schema,
  org.openntf.domino.schema.exceptions,
  org.openntf.domino.schema.impl,
@@ -61,6 +69,8 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.commons.icu;bundle-version="9.0.1",
  com.ibm.icu.base;bundle-version="3.8.1",
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
- com.ibm.notes.java.api;bundle-version="9.0.1";resolution:=optional;visibility:=reexport
+ com.ibm.notes.java.api;bundle-version="9.0.1";resolution:=optional;visibility:=reexport,
+ com.ibm.domino.napi;resolution:=optional;visibility:=reexport
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
+Import-Package: lotus.domino

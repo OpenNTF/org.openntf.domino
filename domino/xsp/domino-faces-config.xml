@@ -8,7 +8,13 @@
 		<managed-bean-class>org.openntf.domino.xsp.readers.LogReader</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
-<!-- <lifecycle>
+	<lifecycle>
 		<phase-listener>org.openntf.domino.xsp.XspOpenLogPhaseListener</phase-listener>
-	</lifecycle> -->
+	</lifecycle>
+  <!-- Managed bean -->
+  <managed-bean>
+    <managed-bean-name>openLogBean</managed-bean-name>
+    <managed-bean-class>org.openntf.domino.xsp.XspOpenLogErrorHolder</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
 </faces-config>
