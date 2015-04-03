@@ -1,19 +1,39 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<!-- Refer to parent pom -->
 	<parent>
 		<groupId>org.openntf.domino</groupId>
-		<artifactId>domino</artifactId>
+		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>org.openntf.formula</artifactId>
+	
+	<artifactId>formula</artifactId>
 	<name>OpenNTF Formula Engine</name>
-	<description>Alternative Java-based engine for executing Notes/Domino @Formula</description>
-	<packaging>eclipse-plugin</packaging>
+	<description>Alternative Java-based engine for executing Notes/Domino @Formula</description>	
+
+	<dependencies>
+		<!-- Link against ICU in the notes-repository 
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>base</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>3.8</version>
+		</dependency>
+		
+	</dependencies>		
+	
 	<build>
+		<!-- TODO: move to maven compatible layout -->
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
 
+<!--
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -48,6 +68,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		-->
 	</build>
 	<organization>
 		<name>OpenNTF.org</name>

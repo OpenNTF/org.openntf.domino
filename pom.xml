@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openntf.domino</groupId>
+	<artifactId>buildscript</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	
+	<name>OpenNTF Domino Aggregator</name>
+
+	<properties>
+		<installedJavaApi>${user.home}/.m2/repository/com/ibm/notes/java.api</installedJavaApi>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>complete</id>
+			<activation>
+				<file>
+					<missing>${installedJavaApi}</missing>
+				</file>
+			</activation>
+			<modules>
+				<module>thirdparty</module>
+				<module>domino</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>domino</module>
+			</modules>
+		</profile>
+	</profiles>
+</project>

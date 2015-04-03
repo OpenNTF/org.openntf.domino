@@ -54,7 +54,6 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
@@ -65,6 +64,7 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -355,7 +355,6 @@ public enum Factory {
 	}
 
 	private static Map<String, String> ENVIRONMENT;
-
 
 	/**
 	 * load the configuration
@@ -1180,7 +1179,6 @@ public enum Factory {
 			}
 			//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 			DominoUtils.setBubbleExceptions(null);
-			DominoGraph.clearDocumentCache();
 			// The last step is to recycle ALL own sessions
 			for (Session sess : tv.ownSessions.values()) {
 				if (sess != null) {

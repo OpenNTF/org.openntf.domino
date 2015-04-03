@@ -3,13 +3,62 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openntf.domino</groupId>
-		<artifactId>domino</artifactId>
+		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>org.openntf.domino</artifactId>
+	<artifactId>core</artifactId>
 	<name>OpenNTF Domino API</name>
 	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
-	<packaging>eclipse-plugin</packaging>
+
+	<dependencies>
+		<!-- The notes-api is bundled by the ibm-build-management -->
+		<dependency>
+			<groupId>com.ibm.notes.java.api</groupId>
+			<artifactId>notes-api</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.domino</groupId>
+			<artifactId>napi</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+		<!-- Javolution: needed by the CD-stuff -->
+		<!-- add to plugin -->
+		<dependency>
+			<groupId>com.ibm.sbt</groupId>
+			<artifactId>com.ibm.commons</artifactId>
+			<!-- TOOD: Server/Designer has version 9.0.1 -->
+			<version>9.0.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.javolution</groupId>
+			<artifactId>javolution-core-java</artifactId>
+			<version>6.0.0</version>
+		</dependency> 
+		
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>formula</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- TODO: Remove these Deps if separated in a own project 
+		<dependency>
+			<groupId>com.tinkerpop.blueprints</groupId>
+			<artifactId>blueprints-core</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.tinkerpop</groupId>
+			<artifactId>frames</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+		-->
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -31,6 +80,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- TODO: include javadoc in root
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -44,6 +94,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 	<organization>
