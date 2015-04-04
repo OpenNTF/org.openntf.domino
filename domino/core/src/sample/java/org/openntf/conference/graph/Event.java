@@ -2,6 +2,7 @@ package org.openntf.conference.graph;
 
 import org.openntf.conference.graph.Attendee.Attending;
 import org.openntf.conference.graph.Attendee.PlansToAttend;
+import org.openntf.conference.graph.Conference.PartOf;
 import org.openntf.conference.graph.Invite.InvitationFor;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
@@ -99,13 +100,13 @@ public abstract interface Event extends Commentable, Likeable, Rateable {
 	public HappeningOn addTime(TimeSlot time);
 
 	@AdjacencyUnique(label = HappeningOn.LABEL)
-	public void removingTime(TimeSlot time);
+	public void removeTime(TimeSlot time);
 
 	@IncidenceUnique(label = HappeningOn.LABEL)
 	public Iterable<HappeningOn> getHappeningOns();
 
 	@IncidenceUnique(label = HappeningOn.LABEL)
-	public void removingHappeningOn(HappeningOn happeningOn);
+	public void removeHappeningOn(HappeningOn happeningOn);
 
 	@AdjacencyUnique(label = HappeningAt.LABEL)
 	public Iterable<Location> getLocations();
@@ -114,13 +115,28 @@ public abstract interface Event extends Commentable, Likeable, Rateable {
 	public HappeningAt addLocation(Location location);
 
 	@AdjacencyUnique(label = HappeningAt.LABEL)
-	public void removingLocation(Location location);
+	public void removeLocation(Location location);
 
 	@IncidenceUnique(label = HappeningAt.LABEL)
 	public Iterable<HappeningAt> getHappeningAts();
 
 	@IncidenceUnique(label = HappeningAt.LABEL)
-	public void removingHappeningAt(HappeningAt happeningAt);
+	public void removeHappeningAt(HappeningAt happeningAt);
+
+	@AdjacencyUnique(label = PartOf.LABEL)
+	public Iterable<Conference> getConferences();
+
+	@AdjacencyUnique(label = PartOf.LABEL)
+	public PartOf addConference(Conference conference);
+
+	@AdjacencyUnique(label = PartOf.LABEL)
+	public void removeConference(Conference conference);
+
+	@IncidenceUnique(label = PartOf.LABEL)
+	public Iterable<PartOf> getPartOfs();
+
+	@IncidenceUnique(label = PartOf.LABEL)
+	public void removePartOf(PartOf partOf);
 
 	@AdjacencyUnique(label = InvitationFor.LABEL)
 	public Iterable<Invite> getInvites();

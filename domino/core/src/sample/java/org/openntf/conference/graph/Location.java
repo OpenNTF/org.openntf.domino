@@ -80,12 +80,12 @@ public interface Location extends Commentable, Likeable, Rateable {
 	public HappeningAt addEvent(Event event);
 
 	@AdjacencyUnique(label = HappeningAt.LABEL, direction = Direction.IN)
-	public void removingEvent(Event event);
+	public void removeEvent(Event event);
 
 	@IncidenceUnique(label = HappeningAt.LABEL, direction = Direction.IN)
 	public Iterable<HappeningAt> getHappeningAts();
 
 	@IncidenceUnique(label = HappeningAt.LABEL, direction = Direction.IN)
-	public void removingHappeningAt(HappeningAt happeningAt);
+	public void removeHappeningAt(HappeningAt happeningAt);
 
 }
