@@ -13,9 +13,6 @@
 
 package org.eclipse.jdt.internal.junit.runner;
 
-
-
-
 public class TestReferenceFailure {
 
 	private final ITestIdentifier fTest;
@@ -26,19 +23,18 @@ public class TestReferenceFailure {
 
 	private FailedComparison fComparison;
 
-	public TestReferenceFailure(ITestIdentifier ref, String status, String trace) {
+	public TestReferenceFailure(final ITestIdentifier ref, final String status, final String trace) {
 		this(ref, status, trace, null);
 	}
 
-	public TestReferenceFailure(ITestIdentifier reference, String status,
-			String trace, FailedComparison comparison) {
+	public TestReferenceFailure(final ITestIdentifier reference, final String status, final String trace, final FailedComparison comparison) {
 		fTest = reference;
 		fStatus = status;
 		fTrace = trace;
 		fComparison = comparison;
 	}
 
-	public TestReferenceFailure(ITestReference reference, String status, String trace) {
+	public TestReferenceFailure(final ITestReference reference, final String status, final String trace) {
 		this(reference.getIdentifier(), status, trace);
 	}
 
@@ -54,11 +50,12 @@ public class TestReferenceFailure {
 		return fTest;
 	}
 
+	@Override
 	public String toString() {
 		return fStatus + " " + fTest.getName(); //$NON-NLS-1$
 	}
 
-	public void setComparison(FailedComparison comparison) {
+	public void setComparison(final FailedComparison comparison) {
 		fComparison = comparison;
 	}
 

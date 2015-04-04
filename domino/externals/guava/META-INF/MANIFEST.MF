@@ -23,3 +23,4 @@ Export-Package: com.google.common.annotations,
 Bundle-Vendor: Google
 Bundle-ClassPath: .
 Require-Bundle: jsr305;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

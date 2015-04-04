@@ -21,3 +21,4 @@ Export-Package: javassist,
  javassist.util,
  javassist.util.proxy
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

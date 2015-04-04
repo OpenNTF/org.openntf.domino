@@ -37,6 +37,7 @@ import org.osgi.framework.Bundle;
 /**
  * A TestRunner that reports results via a socket connection. See MessageIds for more information about the protocol.
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 	private static String BOOTSTRAP_CLASS_LOADER = "com.ibm.domino.http.bootstrap.BootstrapClassLoader";
 
@@ -343,7 +344,6 @@ public class RemoteTestRunner implements MessageSender, IVisitsTestTrees {
 					try {
 						urls[i] = new URL(paths[i]);
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

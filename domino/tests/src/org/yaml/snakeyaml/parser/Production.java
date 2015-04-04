@@ -18,11 +18,11 @@ package org.yaml.snakeyaml.parser;
 import org.yaml.snakeyaml.events.Event;
 
 /**
- * Helper for {@link ParserImpl}. A grammar rule to apply given the symbols on
- * top of its stack and the next input token
+ * Helper for {@link ParserImpl}. A grammar rule to apply given the symbols on top of its stack and the next input token
  * 
  * @see http://en.wikipedia.org/wiki/LL_parser
  */
+@SuppressWarnings("javadoc")
 interface Production {
-    public Event produce();
+	public Event produce();
 }

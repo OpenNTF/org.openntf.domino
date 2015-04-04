@@ -74,6 +74,7 @@ public enum CreateTestDatabaseODA {
 		Faker faker = new Faker();
 		static long startTime = System.currentTimeMillis();
 
+		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 			try {
@@ -122,7 +123,7 @@ public enum CreateTestDatabaseODA {
 							members.add(faker.options().option(group));
 						}
 						if (grpCnt > 0)
-							doc.replaceItemValue("Member", new Vector(members)).recycle();
+							doc.replaceItemValue("Member", new Vector<String>(members)).recycle();
 						doc.save();
 						doc.recycle();
 					} catch (Exception e) {

@@ -74,6 +74,7 @@ public enum CreateTestDatabaseLotus {
 		Faker faker = new Faker();
 		static long startTime = System.currentTimeMillis();
 
+		@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
 		@Override
 		public void run() {
 			try {

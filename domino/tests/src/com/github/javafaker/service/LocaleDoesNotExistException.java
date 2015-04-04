@@ -1,7 +1,9 @@
 package com.github.javafaker.service;
 
 public class LocaleDoesNotExistException extends RuntimeException {
-    public LocaleDoesNotExistException(String message) {
-        super(message);
-    }
+	private static final long serialVersionUID = 1L;
+
+	public LocaleDoesNotExistException(final String message) {
+		super(message);
+	}
 }
