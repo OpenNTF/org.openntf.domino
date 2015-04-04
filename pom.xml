@@ -14,7 +14,7 @@
 	<name>OpenNTF Domino Aggregator</name>
 
 	<properties>
-		<installedJavaApi>${user.home}/.m2/repository/com/ibm/notes/java.api</installedJavaApi>
+		<ibm-p2-repository>file:///${user.home}/.m2/OpenNTF/ibm-build-management-repository</ibm-p2-repository>
 	</properties>
 
 	<profiles>
@@ -27,7 +27,10 @@
 			</activation>
 			<modules>
 				<module>thirdparty</module>
-				<module>domino</module>
+				<!--
+					Unfortunaltely, we cannot build domino here, as the tycho resolver fails
+					<module>domino</module>
+				-->
 			</modules>
 		</profile>
 		<profile>

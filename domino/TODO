@@ -1,0 +1,15 @@
+Handle 
+DominoGraph.clearDocumentCache();
+in factory.termThread!
+
+
+
+
+
+Bundle version is now: Bundle-Version: 1.5.0.SNAPSHOT
+Instead of: Bundle-Version: 1.5.0.201504031811
+
+Source version is missing
+
+
+Fix DocumentScanner

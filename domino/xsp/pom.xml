@@ -69,12 +69,18 @@
 			<artifactId>org.eclipse.osgi</artifactId>
 			<version>[3.4.3,3.5.0)</version>
 		</dependency>
-
+		<!-- TODO / CHECKME: required for osgi-testrunner! -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+	
 		<!-- CHECMME: That version is from the maven repository -->
 		<dependency>
 			<groupId>com.ibm.icu</groupId>
-			<artifactId>icu4j</artifactId>
-			<version>3.8</version>
+			<artifactId>com.ibm.icu</artifactId>
+			<version>3.8.1</version>
 		</dependency>
 
 		<dependency>

@@ -5,7 +5,7 @@ package org.openntf.domino.xsp.helpers;
 
 import java.util.Map;
 
-import org.openntf.domino.helpers.DocumentScanner;
+// TODO import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSyncHelper;
 
 /**
@@ -282,13 +282,15 @@ public class WebinarSamples {
 
 	public Map<?, ?> scanDatabase(final org.openntf.domino.Database db) {
 		// DocumentScanner looks at values of all string-based items in a document
+		/*
 		DocumentScanner scanner = new DocumentScanner();
 		for (org.openntf.domino.Document doc : db.getAllDocuments()) {
 			scanner.processDocument(doc);
 		}
 		// The FieldTokenMap returns a Map with a key of the item name, and a sorted set of the unique strings in each of those items
 		// Sample uses: Predictive typeahead, custom indexing, external term matching
-		return scanner.getFieldTokenMap();
+		return scanner.getFieldTokenMap(); */
+		return null;
 	}
 
 	public void syncDatabases(final org.openntf.domino.Database sourceDb, final org.openntf.domino.Database targetDb) {

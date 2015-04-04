@@ -332,10 +332,31 @@
 							</configuration>
 						</execution>
 						
+						<execution>
+							<phase>compile</phase>
+							<goals><goal>install-file</goal></goals>
+							<id>com.ibm.icu.base</id>
+							<configuration>
+								<file>target/UpdateSite/plugins/com.ibm.icu.base_3.8.1.v20080530.jar</file>
+								<pomFile>poms/com.ibm.icu.base.pom</pomFile>
+							</configuration>
+						</execution>
 						
 
 <!--  UNCCHECKED -->
 
+						
+						<execution>
+							<phase>compile</phase>
+							<goals><goal>install-file</goal></goals>
+							<id>com.ibm.icu</id>
+							<configuration>
+								<groupId>com.ibm.icu</groupId>
+								<artifactId>com.ibm.icu</artifactId>
+								<version>3.8.1</version>
+								<file>target/UpdateSite/plugins/com.ibm.icu_3.8.1.v20120530.jar</file>
+							</configuration>
+						</execution>
 
 <!--
 Require-Bundle: org.eclipse.core.runtime,com.ibm.commons,com.ibm.jscri

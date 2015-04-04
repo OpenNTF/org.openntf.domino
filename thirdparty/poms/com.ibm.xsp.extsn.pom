@@ -44,7 +44,7 @@
 
 		<dependency>
 			<groupId>com.ibm.jscript</groupId>
-			<artifactId>jscript</artifactId>
+			<artifactId>com.ibm.jscript</artifactId>
 			<version>9.0.1</version>
 		</dependency>
 
