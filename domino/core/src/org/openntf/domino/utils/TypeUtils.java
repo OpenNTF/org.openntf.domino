@@ -26,6 +26,7 @@ import lotus.domino.Name;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
@@ -1267,6 +1268,24 @@ public enum TypeUtils {
 		return classes;
 	}
 
+	public static NoteCoordinate[] collectionToNoteCoordinates(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null || vector.isEmpty())
+			return new NoteCoordinate[0];
+
+		NoteCoordinate[] results = new NoteCoordinate[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			int pos = i++;
+			if (o instanceof NoteCoordinate) {
+				results[pos] = (NoteCoordinate) o;
+			} else {
+				String cn = String.valueOf(o);
+				results[pos] = toNoteCoordinate(cn);
+			}
+		}
+		return results;
+	}
+
 	public static Enum<?> toEnum(final Object value, final Class<?> enumClass) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
@@ -1292,6 +1311,32 @@ public enum TypeUtils {
 			throw new DataNotCompatibleException("Unable to discover an Enum by the name of " + ename + " in class " + enumClass);
 		}
 		return result;
+	}
+
+	public static NoteCoordinate toNoteCoordinate(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof CharSequence) {
+			return NoteCoordinate.Utils.getNoteCoordinate((CharSequence) value);
+		} else if (value instanceof NoteCoordinate) {
+			return (NoteCoordinate) value;
+		} else {
+			throw new IllegalArgumentException("Cannont convert a " + value.getClass().getName() + " to NoteCoordinate");
+		}
+	}
+
+	public static NoteCoordinate[] toNoteCoordinates(final Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToNoteCoordinates((Collection<Object>) value);
+		} else if (value.getClass().isArray()) {
+			return collectionToNoteCoordinates(Arrays.asList(value));
+		} else {
+			NoteCoordinate[] results = new NoteCoordinate[1];
+			results[0] = toNoteCoordinate(value);
+			return results;
+		}
 	}
 
 	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {

@@ -54,12 +54,12 @@ public interface TimeSlot extends DVertexFrame {
 	public HappeningOn addEvent(Event event);
 
 	@AdjacencyUnique(label = HappeningOn.LABEL, direction = Direction.IN)
-	public void removingEvent(Event event);
+	public void removeEvent(Event event);
 
 	@IncidenceUnique(label = HappeningOn.LABEL, direction = Direction.IN)
 	public Iterable<HappeningOn> getHappeningOns();
 
 	@IncidenceUnique(label = HappeningOn.LABEL, direction = Direction.IN)
-	public void removingHappeningOn(HappeningOn happeningOn);
+	public void removeHappeningOn(HappeningOn happeningOn);
 
 }

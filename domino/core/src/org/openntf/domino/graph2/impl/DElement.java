@@ -375,7 +375,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						if (v instanceof NoteList) {
 							byte[] bytes = ((NoteList) v).toByteArray();
 							((Document) delegate).writeBinary(s, bytes, 2048 * 24);
-							//FIX ME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
+							//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
 							//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
 							//									+ " to a Document in " + s);
 						} else {
