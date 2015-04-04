@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openntf.domino</groupId>
+		<artifactId>root</artifactId>
+		<version>1.5.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>updatesite</artifactId>
+	<name>OpenNTF Domino UpdateSite</name>
+
+
+	<!-- 
+		TODO RPr: This is my local server - so we must change this,
+		if patched reficio-plugin is officially available -->
+	<pluginRepositories>
+		   <pluginRepository>
+			   <id>reficio</id>
+			   <url>http://pram.homeip.net/maven/</url>
+		   </pluginRepository>
+	</pluginRepositories>
+	
+	
+	<build>
+		<plugins>
+			<plugin>
+			    <groupId>org.reficio</groupId>
+				<artifactId>p2-maven-plugin</artifactId>
+				<!--
+					Patched version from Dr. David H. Akehurst
+					https://github.com/dhakehurst/p2-maven-plugin
+				-->
+				<version>1.1.2-dhakehurst</version>
+
+				
+				
+				<executions>
+					<execution>
+						<id>generate-p2-site</id>
+						<phase>install</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<featureDefinitions>
+								<feature>
+								<id>test.feature</id>
+									<version>${project.version}</version>
+									<label>Test Feature 2</label>
+									<providerName>${project.groupId}</providerName>
+									<description>${project.description}</description>
+									<copyright>A copyright</copyright>
+									<license>A licence</license>
+									<artifacts>
+										<!-- specify your depencies here -->
+										<!-- groupId:artifactId:version -->
+										<artifact>
+											<id>org.openntf.domino:formula:1.5.0-SNAPSHOT</id>
+											<transitive>true</transitive>
+											<source>true</source>
+										</artifact>
+										<!--<artifact><id>commons-io:commons-io:2.1</id></artifact>
+										<artifact><id>commons-lang:commons-lang:2.4</id></artifact>
+										<artifact><id>commons-lang:commons-lang:2.5</id></artifact>
+										<artifact><id>commons-lang:commons-lang:2.6</id></artifact>
+										<artifact><id>org.apache.commons:commons-lang3:3.1</id></artifact>-->
+									</artifacts>
+							    </feature>
+							</featureDefinitions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

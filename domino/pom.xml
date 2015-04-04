@@ -26,7 +26,7 @@
 	<packaging>pom</packaging>
 
 	
-	<name>OpenNTF Domino API (root)</name>
+	<name>OpenNTF Domino API</name>
 <!--
 	<repositories>
 		<repository>
@@ -37,13 +37,6 @@
 		</repository>
 	</repositories>	
 -->
-	<!-- The repository for the p2-maven-plugin to build the updatesite -->
-	<pluginRepositories>
-		   <pluginRepository>
-			   <id>reficio</id>
-			   <url>http://repo.reficio.org/maven/</url>
-		   </pluginRepository>
-	</pluginRepositories>
 	
 	<dependencies>
 		<dependency>
@@ -64,6 +57,7 @@
 				<module>xsp</module>
 				<module>core</module>
 				<module>formula</module>
+				<module>updatesite</module>
 			<!--
 				<module>externals</module>
 				<module>formula</module>				
