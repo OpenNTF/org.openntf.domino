@@ -20,13 +20,13 @@
 		<dependency>
 			<groupId>com.tinkerpop.blueprints</groupId>
 			<artifactId>blueprints-core</artifactId>
-			<version>${tinkerpop-version}</version>
+			<version>${tinkerpop-blueprints-version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tinkerpop</groupId>
 			<artifactId>frames</artifactId>
-			<version>${tinkerpop-version}</version>
+			<version>${tinkerpop-frames-version}</version>
 		</dependency>
 
 		<dependency>

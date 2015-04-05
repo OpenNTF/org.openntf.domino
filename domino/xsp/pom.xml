@@ -96,12 +96,6 @@
 		</dependency>
 
  		<dependency>
-			<groupId>com.ibm.designer</groupId>
-			<artifactId>lib.jsf</artifactId>
-			<version>9.0.1</version>
-		</dependency>
-		
- 		<dependency>
 			<groupId>com.ibm.domino</groupId>
 			<artifactId>xsp.bridge.http</artifactId>
 			<version>9.0.1</version>
