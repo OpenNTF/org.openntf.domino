@@ -6,56 +6,35 @@
 		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>core</artifactId>
-	<name>OpenNTF Domino API core</name>
-	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
+	<artifactId>graph</artifactId>
+	<name>OpenNTF Domino Graph API</name>
 
 	<dependencies>
 		<!-- The notes-api is bundled by the ibm-build-management -->
 		<dependency>
-			<groupId>com.ibm.notes</groupId>
-			<artifactId>java.api</artifactId>
-			<version>9.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ibm.domino</groupId>
-			<artifactId>napi</artifactId>
-			<version>9.0.1</version>
-		</dependency>
-		
-		<!-- Javolution: needed by the CD-stuff -->
-		<!-- add to plugin -->
-		<dependency>
-			<groupId>com.ibm.commons</groupId>
-			<artifactId>com.ibm.commons</artifactId>
-			<version>9.0.1</version>
-		</dependency>
-		     
-		<dependency>
-			<groupId>org.javolution</groupId>
-			<artifactId>javolution-core-java</artifactId>
-			<version>${javolution-version}</version>
-		</dependency> 
-		
-		<dependency>
 			<groupId>org.openntf.domino</groupId>
-			<artifactId>openntf-formula</artifactId>
+			<artifactId>core</artifactId>
 			<version>1.5.0-SNAPSHOT</version>
 		</dependency>
 		
-		<!-- TODO: Remove these Deps if separated in a own project 
 		<dependency>
 			<groupId>com.tinkerpop.blueprints</groupId>
 			<artifactId>blueprints-core</artifactId>
-			<version>2.6.0</version>
+			<version>${tinkerpop-version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.tinkerpop</groupId>
 			<artifactId>frames</artifactId>
-			<version>2.6.0</version>
+			<version>${tinkerpop-version}</version>
 		</dependency>
-		-->
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava-version}</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

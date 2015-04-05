@@ -52,13 +52,34 @@
 									<copyright>A copyright</copyright>
 									<license>A licence</license>
 									<artifacts>
-										<!-- specify your depencies here -->
+										<!-- 
+											specify your dependencies here. Unfortunately, we cannot use transitive here, as it
+											will bundle the whole OSGi Framework 
+										-->
 										<!-- groupId:artifactId:version -->
 										<artifact>
 											<id>org.openntf.domino:formula:1.5.0-SNAPSHOT</id>
-											<transitive>true</transitive>
+											<transitive>false</transitive>
 											<source>true</source>
 										</artifact>
+										
+										<artifact>
+											<id>org.openntf.domino:core:1.5.0-SNAPSHOT</id>
+											<transitive>false</transitive>
+											<source>true</source>
+										</artifact>
+										
+										<artifact>
+											<id>org.openntf.domino:xsp:1.5.0-SNAPSHOT</id>
+											<transitive>false</transitive>
+											<source>true</source>
+										</artifact>
+										
+										<artifact>
+											<id>com.google.guava:guava:${guava-version}</id>
+											<source>true</source>
+										</artifact>
+																
 										<!--<artifact><id>commons-io:commons-io:2.1</id></artifact>
 										<artifact><id>commons-lang:commons-lang:2.4</id></artifact>
 										<artifact><id>commons-lang:commons-lang:2.5</id></artifact>

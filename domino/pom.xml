@@ -11,10 +11,24 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<tycho-version>0.21.0</tycho-version>
+		
 		<!-- We must use java 1.6 compiler level -->
 		<compiler>1.6</compiler>
+		
+		<!-- Third party dependencies -->
+		<guava-version>18.0</guava-version>
+		<tinkerpop-version>2.6.0</tinkerpop-version>
+		<javassist-version>3.18.2</javassist-version>
+		<javolution-version>6.1.0-SNAPSHOT</javolution-version>
 	</properties>
 	
+	<repositories>
+		<repository>
+			<!--  TODO: Graph API requires javolution 6.1.0. But this is not yet released!-->
+			<id>javolution</id>
+			<url>https://maven.java.net/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
 	<!-- 
 		the name of this project 
 		Children must refer exactly to this groupID:artifactId:version
@@ -56,9 +70,11 @@
 			<modules>
 				<module>xsp</module>
 				<module>core</module>
+				<module>graph</module>
 				<module>formula</module>
 				<module>updatesite</module>
 			<!--
+				<module>graph</module>
 				<module>externals</module>
 				<module>formula</module>				
 				
@@ -85,8 +101,6 @@
 				<module>formula</module>
 				<module>core</module>
 				<module>xsp</module>
-				<module>org.openntf.domino.feature.group</module>
-				<module>org.openntf.domino.updatesite</module>
 			</modules>
 		</profile>
 		
@@ -141,15 +155,6 @@
 						<excludePackageNames>com.sun.*:com.ibm.icu.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
 					</configuration>
 				</plugin>
-				<plugin>
-					<!-- The P2-maven plugin configuration (to generate updatesites) -->
-					<groupId>org.reficio</groupId>
-					<artifactId>p2-maven-plugin</artifactId>
-					<version>1.2.0-SNAPSHOT</version>
-					<configuration>
-						<providerSelection>1.5</providerSelection>
-					</configuration>
-				</plugin>				
 			</plugins>
 		</pluginManagement>
 	</build>

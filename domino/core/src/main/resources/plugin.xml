@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?eclipse version="3.4"?>
+<plugin>
+    <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.i18n.FormulaMessageProvider"
+            type="org.openntf.domino.i18n.MessageProvider">
+      </service>
+   </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.i18n.RawMessageProviderImpl"
+            type="org.openntf.domino.i18n.RawMessageProvider">
+      </service>
+
+   </extension>
+</plugin>
