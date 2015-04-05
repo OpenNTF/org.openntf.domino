@@ -1,16 +1,18 @@
 package com.tinkerpop.frames;
 
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.frames.annotations.AnnotationHandler;
-import com.tinkerpop.frames.modules.MethodHandler;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.TypeResolver;
-
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.frames.annotations.AnnotationHandler;
+import com.tinkerpop.frames.modules.DefaultClassLoaderResolver;
+import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
+import com.tinkerpop.frames.modules.MethodHandler;
+import com.tinkerpop.frames.modules.Module;
+import com.tinkerpop.frames.modules.TypeResolver;
 
 /**
  * A configuration for a {@link FramedGraph}. These are supplied to
@@ -28,8 +30,11 @@ public class FramedGraphConfiguration {
 	private Map<Class<? extends Annotation>, MethodHandler<?>> methodHandlers = new HashMap<Class<? extends Annotation>, MethodHandler<?>>();
 	private List<FrameInitializer> frameInitializers = new ArrayList<FrameInitializer>();
 	private List<TypeResolver> typeResolvers = new ArrayList<TypeResolver>();
+	private FrameClassLoaderResolver frameClassLoaderResolver = new DefaultClassLoaderResolver();
 	private Graph configuredGraph;
 
+	
+	
 	/**
 	 * @param annotationHandler
 	 *            The {@link AnnotationHandler} to add to the
@@ -38,10 +43,12 @@ public class FramedGraphConfiguration {
 	public void addAnnotationHandler(AnnotationHandler<?> annotationHandler) {
 		annotationHandlers.put(annotationHandler.getAnnotationType(), annotationHandler);
 	}
-
+	
+	
 	/**
 	 * @param methodHandler
-	 *            The {@link MethodHandler} to add to the {@link FramedGraph}.
+	 *            The {@link MethodHandler} to add to the
+	 *            {@link FramedGraph}.
 	 */
 	public void addMethodHandler(MethodHandler<?> methodHandler) {
 		methodHandlers.put(methodHandler.getAnnotationType(), methodHandler);
@@ -64,6 +71,10 @@ public class FramedGraphConfiguration {
 		typeResolvers.add(typeResolver);
 	}
 
+	public void setFrameClassLoaderResolver(FrameClassLoaderResolver frameClassLoaderResolver) {
+		this.frameClassLoaderResolver = frameClassLoaderResolver;    
+	}
+        
 	public List<FrameInitializer> getFrameInitializers() {
 		return frameInitializers;
 	}
@@ -74,6 +85,10 @@ public class FramedGraphConfiguration {
 
 	public List<TypeResolver> getTypeResolvers() {
 		return typeResolvers;
+	}
+
+	FrameClassLoaderResolver getFrameClassLoaderResolver() {
+		return frameClassLoaderResolver;
 	}
 
 	public void setConfiguredGraph(Graph configuredGraph) {
