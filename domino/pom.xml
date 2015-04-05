@@ -171,31 +171,34 @@
 					</execution>
 				</executions>
 			</plugin>
-			 -->
-			<!-- don't know if we really need this 
+			-->
+
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
+				<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.8</version>
+					<executions>
 					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>attached</goal>
-						</goals>
+					<id>add-license</id>
+					<phase>generate-resources</phase>
+					<goals>
+						<goal>add-resource</goal>
+					</goals>
+					<configuration>
+						<resources>          
+							<resource>
+								<directory>${basedir}</directory>
+								<targetPath></targetPath>
+								<includes>
+									<include>LICENSE</include>
+									<include>NOTICE</include>
+								</includes>
+							</resource>
+						</resources>
+					</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<attach>false</attach>
-					<descriptors>
-						<descriptor>src/assembly/distribution.xml</descriptor>
-					</descriptors>
-					<finalName>frames-${project.version}</finalName>
-					<outputDirectory>target</outputDirectory>
-					<workDirectory>target/assembly/work</workDirectory>
-					<tarLongFileMode>warn</tarLongFileMode>
-				</configuration>
-			</plugin> -->
-
+			</plugin>
 			<!-- the surefire plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
