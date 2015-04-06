@@ -20,6 +20,13 @@
 		   </pluginRepository>
 	</pluginRepositories>
 	
+	<dependencies>
+        <dependency>
+            <groupId>org.openntf.domino</groupId>
+            <artifactId>xsp</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>            
+	</dependencies>
 	
 	<build>
 		<plugins>
