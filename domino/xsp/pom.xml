@@ -7,13 +7,66 @@
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>xsp</artifactId>
+
+	<packaging>bundle</packaging>
+	<build>
+		<plugins>
+			<plugin>  
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<singleton>true</singleton>
+					<instructions>
+
+						<Export-Package>
+							org.openntf.*,
+							!*.test
+						</Export-Package>
+
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
+
+						<Import-Package>
+							!*
+						</Import-Package>
+
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-Activator>org.openntf.domino.xsp.Activator</Bundle-Activator>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						
+						<Require-Bundle>
+							org.openntf.domino.core;bundle-version="1.5.0";visibility:=reexport,
+							com.ibm.xsp.domino;bundle-version="9.0.1",
+							com.ibm.xsp.extlib;bundle-version="9.0.1",
+							com.ibm.xsp.extsn;bundle-version="9.0.1",
+							com.ibm.designer.runtime;bundle-version="9.0.1",
+							com.ibm.domino.xsp.bootstrap;bundle-version="9.0.1",
+							com.ibm.xsp.designer;bundle-version="9.0.1",
+							com.ibm.domino.napi;bundle-version="9.0.1",
+							org.eclipse.osgi;bundle-version="[3.4.3,3.5.0)",
+							com.ibm.icu;bundle-version="3.8.1",
+							org.eclipse.core.runtime;bundle-version="3.4.0",
+							com.ibm.designer.lib.jsf,
+							com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional,
+							com.ibm.domino.napi;bundle-version="[9.0.1,10.0.0)",
+							com.ibm.commons;bundle-version="[9.0.0,10.0.0)"
+						</Require-Bundle>
+
+					</instructions>
+				</configuration>
+			
+			</plugin>
+		</plugins>
+	</build>
+
 	<name>OpenNTF Domino API XPages plugin</name>
 	<dependencies>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.openntf</groupId>
 			<artifactId>formula</artifactId>
 			<version>1.5.0-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.openntf.domino</groupId>

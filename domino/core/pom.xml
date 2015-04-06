@@ -6,35 +6,50 @@
 		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<packaging>jar</packaging>
+	
 	<artifactId>core</artifactId>
 	<name>OpenNTF Domino API core</name>
 	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
 
+	<packaging>bundle</packaging>
 	<build>
-		<!--<plugins>
+		<plugins>
 			<plugin>  
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>2.5.3</version>
 				<extensions>true</extensions>
 				<configuration>
+					<singleton>true</singleton>
 					<instructions>
-						<Export-Package>
-							org.openntf.*,
+
+						<!--<Export-Package>
+							org.openntf.domino
 							!*.test
-						</Export-Package>
+						</Export-Package>-->
 
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
 
-						<Import-Package>!*</Import-Package>
-						<Require-Bundle>com.ibm.icu.base;bundle-version="[3.8.0,4.0.0)"</Require-Bundle>
+						<Import-Package>
+							lotus.domino
+						</Import-Package>
+
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+
+						<Require-Bundle>
+							com.ibm.domino.napi;bundle-version="[9.0.1,10.0.0)",
+							com.ibm.commons;bundle-version="[9.0.0,10.0.0)",
+							org.javolution.core-java;bundle-version="[6.1.0,7.0.0)",
+							org.openntf.formula;bundle-version="1.5.0"
+						</Require-Bundle>
+
 					</instructions>
 				</configuration>
 			
 			</plugin>
-		</plugins>-->
+		</plugins>
 	</build>
+
 	<dependencies>
 		<!-- The notes-api is bundled by the ibm-build-management -->
 		<dependency>
@@ -42,20 +57,22 @@
 			<artifactId>java.api</artifactId>
 			<version>9.0.1</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.ibm.domino</groupId>
 			<artifactId>napi</artifactId>
 			<version>9.0.1</version>
 		</dependency>
 		
-		<!-- Javolution: needed by the CD-stuff -->
+		
 		<!-- add to plugin -->
 		<dependency>
 			<groupId>com.ibm.commons</groupId>
 			<artifactId>com.ibm.commons</artifactId>
 			<version>9.0.1</version>
 		</dependency>
-		     
+		
+		<!-- Javolution: needed by the CD-stuff -->		
 		<dependency>
 			<groupId>org.javolution</groupId>
 			<artifactId>javolution-core-java</artifactId>

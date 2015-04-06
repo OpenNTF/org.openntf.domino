@@ -132,22 +132,14 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 										<artifact>
 											<id>org.openntf.domino:core:1.5.0-SNAPSHOT</id>
 											<transitive>false</transitive>
-											<source>true</source>
-											<singleton>true</singleton>
+											<source>false</source>
 										</artifact>
 										
 										<artifact>
 											<id>org.openntf.domino:xsp:1.5.0-SNAPSHOT</id>
 											<transitive>false</transitive>
-											<source>true</source>
-											<singleton>true</singleton>
-											<!-- Bundle instructions -->
-											<instructions>
-												<Bundle-Activator>org.openntf.domino.xsp.Activator</Bundle-Activator>
-												<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-												<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
-											</instructions>
-										</artifact>
+											<source>false</source>
+										</artifact>-->
 										
 										<!-- Externals -->
 										<artifact>
