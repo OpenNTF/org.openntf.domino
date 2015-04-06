@@ -10,7 +10,7 @@
 	<name>OpenNTF Domino API XPages plugin</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.openntf.domino</groupId>
+			<groupId>org.openntf</groupId>
 			<artifactId>formula</artifactId>
 			<version>1.5.0-SNAPSHOT</version>
 		</dependency>

@@ -6,6 +6,13 @@
 
 <modelVersion>4.0.0</modelVersion>
 
+	<!-- Refer to aggregator -->
+	<parent>
+		<groupId>org.openntf.domino</groupId>
+		<artifactId>aggregator</artifactId>
+		<version>1.5.0-SNAPSHOT</version>
+	</parent>
+	
 	<properties>
 		<!-- it's always a good idea to use UTF8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -68,7 +75,7 @@
 		<dependency>
 			<groupId>org.openntf</groupId>
 			<artifactId>thirdparty</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.5.0-SNAPSHOT</version>
 		</dependency>			
 		<dependency>
 			<groupId>junit</groupId>
@@ -85,12 +92,16 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>xsp</module>
-				<module>core</module>
-				<module>graph</module>
 				<module>formula</module>
+				<module>core</module>
+				<module>xsp</module>
+				<module>externals</module>
+				<module>graph</module>
+<!-- 				
+				
+				
+				  -->
 				<module>updatesite</module>
-				<module>externals/tinkerpop-frames</module>
 			<!--
 				<module>graph</module>
 				<module>externals</module>
@@ -178,6 +189,8 @@
 			</plugin>
 			-->
 
+
+			<!--  Build helper to include LICENSE + NOTICE in every project -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
@@ -204,6 +217,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			
 			<!-- the surefire plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -226,7 +240,7 @@
 				</executions>
 			</plugin>
 
-			<!-- javadoc configuration -->
+			<!-- javadoc configuration 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -244,6 +258,7 @@
 					<excludePackageNames>com.sun.*:com.ibm.icu.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
 				</configuration>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 
@@ -255,56 +270,5 @@
 			<comments>A business-friendly OSS license</comments>
 		</license>
 	</licenses>
-
-	<!-- List all developers here -->
-	<developers>
-		<developer>
-			<id>AWa</id>
-			<name>Alex Wagner</name>
-			<email>alexander.wagner@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>MSte</id>
-			<name>Manfred Steinsiek</name>
-			<email>manfred.steinsiek@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>RPr</id>
-			<name>Roland Praml</name>
-			<email>roland.praml@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-			<properties>
-				<picUrl><![CDATA[https://avatars2.githubusercontent.com/u/5530228?v=2&s=60]]></picUrl>
-			</properties>
-		</developer>
-	</developers>
-
-	<distributionManagement>
-		<site>
-			<id>www.openntf.org</id>
-			<url>file://c:\fullsite/</url>
-		</site>
-	</distributionManagement>
-
 
 </project>

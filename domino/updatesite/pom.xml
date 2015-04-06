@@ -123,21 +123,30 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 										-->
 										<!-- groupId:artifactId:version -->
 										<artifact>
-											<id>org.openntf.domino:formula:1.5.0-SNAPSHOT</id>
+											<id>org.openntf:formula:1.5.0-SNAPSHOT</id>
 											<transitive>false</transitive>
-											<source>true</source>
+											<!-- man... the reficio plugin is buggy. You cannot attach source to packaging:bundle -->
+											<source>false</source>
 										</artifact>
 										
 										<artifact>
 											<id>org.openntf.domino:core:1.5.0-SNAPSHOT</id>
 											<transitive>false</transitive>
 											<source>true</source>
+											<singleton>true</singleton>
 										</artifact>
 										
 										<artifact>
 											<id>org.openntf.domino:xsp:1.5.0-SNAPSHOT</id>
 											<transitive>false</transitive>
 											<source>true</source>
+											<singleton>true</singleton>
+											<!-- Bundle instructions -->
+											<instructions>
+												<Bundle-Activator>org.openntf.domino.xsp.Activator</Bundle-Activator>
+												<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+												<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+											</instructions>
 										</artifact>
 										
 										<!-- Externals -->
@@ -145,7 +154,7 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 											<id>com.google.guava:guava:${guava-version}</id>
 											<source>true</source>
 										</artifact>
-
+<!--
 										<artifact>
 											<id>com.tinkerpop.blueprints:blueprints-core:${tinkerpop-blueprints-version}</id>
 											<transitive>true</transitive>
@@ -163,7 +172,12 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 											<transitive>true</transitive>
 											<source>false</source>
 										</artifact>
-										
+										-->
+										<artifact>
+											<id>junit:junit:4.11</id>
+											<transitive>true</transitive>
+											<source>false</source>
+										</artifact>
 										<artifact>
 											<id>org.javolution:javolution-core-java:${javolution-version}</id>
 											<transitive>true</transitive>

@@ -8,13 +8,12 @@
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	
+	<groupId>org.openntf</groupId>
 	<artifactId>formula</artifactId>
 	<name>OpenNTF Formula Engine</name>
 	<description>Alternative Java-based engine for executing Notes/Domino @Formula</description>	
 	
-	<!-- required for proper MANIFEST -->
-	<packaging>bundle</packaging>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.ibm.icu</groupId>
@@ -23,14 +22,18 @@
 		</dependency>
 	</dependencies>
 	
+	<packaging>bundle</packaging>
 	<build>
 		<plugins>
 			<plugin>  
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
 				<extensions>true</extensions>
 				<configuration>
+					<singleton>true</singleton>
 					<instructions>
+
 						<Export-Package>
 							org.openntf.*,
 							!*.test
@@ -82,8 +85,5 @@
 		</plugins>
 		-->
 	</build>
-	<organization>
-		<name>OpenNTF.org</name>
-		<url>http://www.openntf.org</url>
-	</organization>
+
 </project>
