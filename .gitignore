@@ -1,19 +1,26 @@
 *.class
 *.iml
-*/target
-*/bin
+
+# do not recursive exclude folders (otherwise a package named "bin" may not get recognized)
 /target
-org.openntf.domino.plugin/lib/domino.jar
-org.openntf.domino.plugin/lib/tinkerpop.jar
-de.foconis.test/history.txt
+/bin
+
+# list all deleted folders here
+
+/org.openntf.domino.plugin
+/de.foconis.test
 /org.openntf.formula/lib
 /com.ibm.icu
 /de.foconis.test
 /org.openntf.domino.designer.sdk
 /org.openntf.domino.plugin
 /org.openntf.domino.xsp.update
-domino/org.openntf.domino.updatesite/features/
-domino/org.openntf.domino.updatesite/plugins/
-domino/org.openntf.domino.updatesite/artifacts.jar
-domino/org.openntf.domino.updatesite/content.jar
-domino/externals/asm/.project
+/domino/org.openntf.domino.updatesite
+/domino/externals/asm
+/domino/externals/guava
+/domino/externals/javassist
+/domino/externals/javolution
+/domino/externals/jsr305
+/domino/externals/rxjava
+/domino/externals/tinkerpop
+/domino/junit4xpages

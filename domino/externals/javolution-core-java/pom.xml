@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- ======================================================= -->
+	<!-- Artifact Coordinates -->
+	<!-- ======================================================= -->
+	<parent>
+		<groupId>org.openntf.domino</groupId>
+		<artifactId>externals</artifactId>
+        <version>1.5.0-SNAPSHOT</version> <!--  Stable (Maven Central) -->
+	</parent>
+	<groupId>org.javolution</groupId>
+	<artifactId>javolution-core-java</artifactId>
+    <version>6.1.0-ODA-SNAPSHOT</version>
+	<packaging>bundle</packaging>
+	<name>Javolution Core (Java)</name>
+
+	<!-- ======================================================= -->
+	<!-- OSGi Dependencies -->
+	<!-- ======================================================= -->
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>[3.4.3,3.5.0)</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>services</artifactId>
+			<version>[3.1.0,3.2.0)</version>
+		</dependency>
+		<!-- OSGI Core Library 
+		<dependency> 
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		-->
+		<!-- OSGI Compendium (log service)
+		<dependency> 
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+			<version>4.3.1</version>
+		</dependency>
+		 -->
+		<!-- OpenCL Binding disabled in ODA-Build
+		<dependency> 
+			<groupId>com.nativelibs4java</groupId>
+			<artifactId>javacl</artifactId>
+			<version>1.0.0-RC3</version>
+		</dependency>
+		-->
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<!-- ======================================================= -->
+			<!-- OSGi Packaging -->
+			<!-- ======================================================= -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<!--<version>2.3.7</version>-->
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>!javolution.*.internal.*,javolution.*,org.osgi.service.log</Export-Package>
+						<Private-Package>javolution.*.internal.*,javax.realtime.*</Private-Package>
+						
+						<Bundle-Activator>javolution.osgi.internal.JavolutionActivator</Bundle-Activator>
+						<Import-Package>!*</Import-Package>
+						<!--
+						<Export-Service>javolution.xml.stream.XMLInputFactory,
+							javolution.xml.stream.XMLOutputFactory</Export-Service>
+							-->
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.8</version>
+					<executions>
+					<execution>
+					<id>add-license</id>
+					<phase>generate-resources</phase>
+					<goals>
+						<goal>add-resource</goal>
+					</goals>
+					<configuration>
+						<resources>          
+							<resource>
+								<directory>${basedir}</directory>
+								<targetPath></targetPath>
+								<includes>
+									<include>LICENSE</include>
+									<include>NOTICE</include>
+								</includes>
+							</resource>
+						</resources>
+					</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- ======================================================= -->
+			<!-- Source code packaging (for IDE) -->
+			<!-- ======================================================= -->
+			<!-- source-code disabled in ODA-Build (configured above) 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+			<!-- ======================================================= -->
+			<!-- Custom Javadoc plugin (for reports) -->
+			<!-- ======================================================= -->
+			<!-- Javadoc disabled in ODA-Build 
+			<plugin>
+				<groupId>org.javolution</groupId>
+				<artifactId>colapi</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>colorize</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+			<!-- ======================================================= -->
+			<!-- Javadoc packaging (for IDE) -->
+			<!-- ======================================================= -->
+			<!-- Javadoc disabled in ODA-Build 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<sourcepath>${project.build.directory}/colorized</sourcepath>
+					<outputDirectory>${project.build.directory}/apidocs</outputDirectory>
+					<excludePackageNames>javax.*,*.internal</excludePackageNames>
+					<overview>${project.build.directory}/colorized/javolution/doc-files/overview.html</overview>
+					<docfilessubdirs>true</docfilessubdirs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+		</plugins>
+	</build>
+</project>

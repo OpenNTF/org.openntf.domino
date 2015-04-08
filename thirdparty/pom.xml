@@ -188,6 +188,19 @@
 							</configuration>
 						</execution>
 						
+						<execution>
+							<phase>compile</phase>
+							<goals><goal>install-file</goal></goals>
+							<id>org.eclipse.osgi.services</id>
+							<configuration>
+								<groupId>org.eclipse.osgi</groupId>
+								<artifactId>services</artifactId>
+								<version>3.1.200-v20071203</version>
+								<file>target/UpdateSite/plugins/org.eclipse.osgi.services_3.1.200.v20071203.jar</file>
+								<!-- no dependencies -->
+							</configuration>
+						</execution>
+						
 						<!-- runtime -->
 						<execution>
 							<phase>compile</phase>

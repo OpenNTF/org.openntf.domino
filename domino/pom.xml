@@ -29,20 +29,16 @@
 		<!-- latest stable
 			<tinkerpop-frames-version>2.6.0</tinkerpop-frames-version>
 		-->
-		<tinkerpop-frames-version>2.6.0-SNAPSHOT</tinkerpop-frames-version>
+		<tinkerpop-frames-version>2.6.0-ODA-SNAPSHOT</tinkerpop-frames-version>
 		<!--latest stable
 			<javolution-version>6.0.0</javolution-version> 
 		 -->
-		 <javolution-version>6.1.0-SNAPSHOT</javolution-version>
+		 <!-- Note: This version is self-built -->
+		 <javolution-version>6.1.0-ODA-SNAPSHOT</javolution-version>
 	</properties>
 	
 	<repositories>
 
-		<repository>
-			<!--  TODO: Graph API requires javolution 6.1.0. But this is not yet released!-->
-			<id>javolution</id>
-			<url>https://maven.java.net/content/repositories/snapshots/</url>
-		</repository>
 				
 	</repositories>
 	

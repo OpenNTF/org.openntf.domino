@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!--  externals is independet, so it has no parent
+	<!--  externals is independet, so it has no parent 
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>root</artifactId>
@@ -14,14 +14,52 @@
 	<artifactId>externals</artifactId>
 	<packaging>pom</packaging>
 
+	<properties>
+		<!-- it's always a good idea to use UTF8 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<compiler>1.6</compiler>
+	</properties>
+	
 	<name>External libraries</name>
 	<url>http://www.openntf.org</url>
 
 	<modules>
 		<module>tinkerpop-frames</module>
+		<module>javolution-core-java</module>
 	</modules>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- 3.1 is the newest, but has bugs. we use the same as tinkerpop-frames -->
+				<version>2.3.2</version>
+				<configuration>
+					<source>${compiler}</source>
+					<target>${compiler}</target>
+					
+					<showWarnings>false</showWarnings>
+					<showDeprecation>false</showDeprecation>
+					<compilerArgs>
+						<!-- 
+							
+							good reference for XLint is: http://www.javaworld.com/article/2073587/javac-s&#x2D;&#x2D;xlint-options.html 
+							
+							Normally, a BootstrapClassPath to a 1.6/rt.jar should be set. But I did not figure out how!
+							 <arg>-Xlint:all,-options</arg>
+						-->
+						
+						<!-- <arg>-verbose</arg> -->
+						<!-- RPr: We may have fun if we really enable this :) -->
+						<!-- <arg>-Werror</arg> -->
 
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<reporting>
 		<plugins>
 			<plugin>

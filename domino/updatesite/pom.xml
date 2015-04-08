@@ -21,11 +21,33 @@
 	</pluginRepositories>
 	
 	<dependencies>
+		<!-- You must enter dependencies here, otherwise, updatesite will not bundle the correct artifact -->
+        <dependency>
+            <groupId>org.openntf</groupId>
+            <artifactId>formula</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openntf.domino</groupId>
+            <artifactId>core</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.openntf.domino</groupId>
             <artifactId>xsp</artifactId>
             <version>1.5.0-SNAPSHOT</version>
-        </dependency>            
+        </dependency>
+        <dependency>
+            <groupId>org.javolution</groupId>
+            <artifactId>javolution-core-java</artifactId>
+            <version>${javolution-version}</version>
+        </dependency>
+		<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava-version} </version>
+        </dependency>		
+		
 	</dependencies>
 	
 	<build>
@@ -169,11 +191,20 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 											<id>junit:junit:4.11</id>
 											<transitive>true</transitive>
 											<source>false</source>
+											<excludes>
+												<exclude>org.osgi.*</exclude>
+											</excludes>
 										</artifact>
+										
+										<!-- dependent of junit:junit:4.11 -->
+										<artifact>
+											<id>org.hamcrest:hamcrest-core:1.3</id>
+										</artifact>	
+										
 										<artifact>
 											<id>org.javolution:javolution-core-java:${javolution-version}</id>
-											<transitive>true</transitive>
-											<source>false</source>
+											<transitive>false</transitive>
+											<source>true</source>
 										</artifact>
 										<!--<artifact><id>commons-io:commons-io:2.1</id></artifact>
 										<artifact><id>commons-lang:commons-lang:2.4</id></artifact>
