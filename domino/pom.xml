@@ -35,6 +35,7 @@
 		 -->
 		 <!-- Note: This version is self-built -->
 		 <javolution-version>6.1.0-ODA-SNAPSHOT</javolution-version>
+		 <skip-tests>false</skip-tests>
 	</properties>
 	
 	<repositories>
@@ -118,15 +119,23 @@
 			<id>core</id>
 			<modules>
 				<module>core</module>
+				<module>updatesite</module>
 			</modules>
+			<properties>
+				 <skip-tests>true</skip-tests>
+			</properties>
 		</profile>
 		<profile>
-			<id>fast</id>
+			<id>xsp</id>
 			<modules>
-				<module>formula</module>
+				<!--  recompile core also -->
 				<module>core</module>
 				<module>xsp</module>
+				<module>updatesite</module>
 			</modules>
+			<properties>
+				 <skip-tests>true</skip-tests>
+			</properties>
 		</profile>
 		
 	</profiles>
@@ -186,7 +195,7 @@
 			-->
 
 
-			<!--  Build helper to include LICENSE + NOTICE in every project -->
+			<!--  Build helper to include LICENSE + NOTICE in every project  -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
@@ -219,6 +228,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
+				<configuration>
+					<skip>${skip-tests}</skip>
+				</configuration>
 			</plugin>
 			
 			<!-- generate source packages -->

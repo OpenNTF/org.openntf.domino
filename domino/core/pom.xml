@@ -23,26 +23,36 @@
 					<singleton>true</singleton>
 					<instructions>
 
-						<!--<Export-Package>
-							org.openntf.domino
-							!*.test
-						</Export-Package>-->
+						<!-- TODO 1: We must specify exportPackage, otherwise .impl. is not exported -->
+						<!-- TODO 2: move domino.impl to own package and remove exportPackage -->
+						<Export-Package>
+							!*.test,
+							org.openntf.domino.*,
+							org.openntf.arpa,
+							org.openntf.calendars
+						</Export-Package>
 
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
-
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+  
+  						<!-- BND generated import-packages does not work in DominoServer -->
+  						<!-- 
+  							so we import just lotus.domino	(do not know why, it was several times added to original MANIFEST.MF 
+   						
+  						
 						<Import-Package>
 							lotus.domino
 						</Import-Package>
-
-						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-
+ 						
+ 
 						<Require-Bundle>
-							com.ibm.domino.napi;bundle-version="[9.0.1,10.0.0)",
+							com.ibm.notes.java.api;bundle-version="[8.5.3,10.0.0)",
+							com.ibm.domino.napi;bundle-version="[9.0.1,10.0.0)";visibility=reexport,
 							com.ibm.commons;bundle-version="[9.0.0,10.0.0)",
 							org.javolution.core-java;bundle-version="[6.1.0,7.0.0)",
-							org.openntf.formula;bundle-version="1.5.0"
+							org.openntf.formula;bundle-version="1.5.0";visibility=reexport
 						</Require-Bundle>
-
+-->
 					</instructions>
 				</configuration>
 			

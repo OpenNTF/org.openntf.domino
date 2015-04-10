@@ -96,7 +96,7 @@
         </dependency>
     </dependencies>
     <build>
-        <directory>${basedir}/target</directory>
+        <!-- <directory>${basedir}/target</directory> -->
         <finalName>${project.artifactId}-${project.version}
         </finalName>
         <resources>

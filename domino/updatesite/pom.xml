@@ -37,6 +37,13 @@
             <artifactId>xsp</artifactId>
             <version>1.5.0-SNAPSHOT</version>
         </dependency>
+		
+		<dependency>
+            <groupId>org.openntf.domino</groupId>
+            <artifactId>java.sharedapi</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
+		
         <dependency>
             <groupId>org.javolution</groupId>
             <artifactId>javolution-core-java</artifactId>
@@ -161,14 +168,20 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 											<id>org.openntf.domino:xsp:1.5.0-SNAPSHOT</id>
 											<transitive>false</transitive>
 											<source>false</source>
-										</artifact>-->
-										
+										</artifact>
 										<!-- Externals -->
 										<artifact>
 											<id>com.google.guava:guava:${guava-version}</id>
 											<source>true</source>
 										</artifact>
-<!--
+
+										<artifact>
+											<id>org.openntf.domino:java.sharedapi:1.5.0-SNAPSHOT</id>
+											<transitive>false</transitive>
+											<source>false</source>
+										</artifact>
+
+										<!--
 										<artifact>
 											<id>com.tinkerpop.blueprints:blueprints-core:${tinkerpop-blueprints-version}</id>
 											<transitive>true</transitive>

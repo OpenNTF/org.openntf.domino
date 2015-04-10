@@ -1,4 +1,5 @@
 *.log
-target/
 frames.iml
 .idea/
+/target/
+/target-ide/

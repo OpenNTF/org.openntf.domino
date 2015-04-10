@@ -2,33 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<!--  externals is independet, so it has no parent 
+	<!--  externals is independet, so it has no parent  -->
+	<!-- Don't know if this is really a good decision! -->
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	 -->
+	
 	<groupId>org.openntf.domino</groupId>
 	<version>1.5.0-SNAPSHOT</version>
 	<artifactId>externals</artifactId>
 	<packaging>pom</packaging>
 
-	<properties>
-		<!-- it's always a good idea to use UTF8 -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<compiler>1.6</compiler>
-	</properties>
-	
 	<name>External libraries</name>
 	<url>http://www.openntf.org</url>
 
 	<modules>
 		<module>tinkerpop-frames</module>
 		<module>javolution-core-java</module>
+		<module>notes-api-fragment</module>
 	</modules>
-
+	
 	<build>
 		<plugins>
 			<plugin>
