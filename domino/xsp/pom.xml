@@ -36,12 +36,12 @@
 						
 						<!-- Unfortunately, we cannot rely on the BND-ImportPackage mechanism, because reexport is
 							not possible, and otherwise, the packages are not available in NSF-Java-Code -->
-<!--						
 						<Require-Bundle>
 							org.openntf.domino.core;bundle-version="1.5.0";visibility:=reexport,
 							org.openntf.formula;bundle-version="1.5.0";visibility:=reexport,
 							org.openntf.domino.graph;bundle-version="1.5.0";visibility:=reexport
 						</Require-Bundle>
+<!--						
 							com.ibm.xsp.domino;bundle-version="9.0.1",
 							com.ibm.xsp.extlib;bundle-version="9.0.1",
 							com.ibm.xsp.extsn;bundle-version="9.0.1",

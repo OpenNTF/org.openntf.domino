@@ -141,7 +141,8 @@
 						<!-- TODO: This link is only a test and will be removed soon! -->
 						<link>http://pram.homeip.net/maven/inofficial-lotus-javadoc/</link>
 					</links>
-					<!--<failOnError>false</failOnError>
+					<failOnError>false</failOnError>
+					<!--
 					<excludePackageNames>com.sun.*:com.ibm.icu.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
 					-->
 				</configuration>
