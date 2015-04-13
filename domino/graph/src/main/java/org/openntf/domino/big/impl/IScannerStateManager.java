@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
 
-import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.graph2.helpers.DocumentScanner;
 
 public interface IScannerStateManager extends Observer {
 	public enum ScanStatus {

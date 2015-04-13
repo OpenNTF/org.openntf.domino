@@ -1,4 +1,4 @@
-package org.openntf.domino.helpers;
+package org.openntf.domino.graph2.helpers;
 
 import java.util.Date;
 import java.util.HashMap;

@@ -27,7 +27,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
-import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.graph2.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
 
