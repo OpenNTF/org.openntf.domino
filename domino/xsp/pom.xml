@@ -21,22 +21,26 @@
 					<instructions>
 
 						<Export-Package>
-							org.openntf.domino.xsp.*,
 							!*.test
 						</Export-Package>
 
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
-<!--
+
 						<Import-Package>
-							!*
-					</Import-Package>
--->
+							com.ibm.domino.xsp.bridge.http.engine;resolution:=optional, *
+						</Import-Package>
+
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
 						<Bundle-Activator>org.openntf.domino.xsp.Activator</Bundle-Activator>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
-<!--						
+						
+						<!-- Unfortunately, we cannot rely on the BND-ImportPackage mechanism, because reexport is
+							not possible, and otherwise, the packages are not available in NSF-Java-Code -->
 						<Require-Bundle>
 							org.openntf.domino.core;bundle-version="1.5.0";visibility:=reexport,
+							org.openntf.formula;bundle-version="1.5.0";visibility:=reexport
+						</Require-Bundle>
+<!--						
 							com.ibm.xsp.domino;bundle-version="9.0.1",
 							com.ibm.xsp.extlib;bundle-version="9.0.1",
 							com.ibm.xsp.extsn;bundle-version="9.0.1",
@@ -51,7 +55,6 @@
 							com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional,
 							com.ibm.domino.napi;bundle-version="[9.0.1,10.0.0)",
 							com.ibm.commons;bundle-version="[9.0.0,10.0.0)"
-						</Require-Bundle>
 -->
 					</instructions>
 				</configuration>
