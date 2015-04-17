@@ -10,6 +10,7 @@ Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.5.0.qualifier
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
  org.openntf.conference.graph,
@@ -66,7 +67,7 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.commons.icu;bundle-version="9.0.1",
  com.ibm.icu.base;bundle-version="3.8.1",
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
- com.ibm.notes.java.api;bundle-version="9.0.1";resolution:=optional
+ com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Import-Package: lotus.domino

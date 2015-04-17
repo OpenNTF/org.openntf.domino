@@ -18,34 +18,33 @@ package org.yaml.snakeyaml.reader;
 import org.yaml.snakeyaml.error.YAMLException;
 
 public class ReaderException extends YAMLException {
-    private static final long serialVersionUID = 8710781187529689083L;
-    private final String name;
-    private final char character;
-    private final int position;
+	private static final long serialVersionUID = 8710781187529689083L;
+	private final String name;
+	private final char character;
+	private final int position;
 
-    public ReaderException(String name, int position, char character, String message) {
-        super(message);
-        this.name = name;
-        this.character = character;
-        this.position = position;
-    }
+	public ReaderException(final String name, final int position, final char character, final String message) {
+		super(message);
+		this.name = name;
+		this.character = character;
+		this.position = position;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public char getCharacter() {
-        return character;
-    }
+	public char getCharacter() {
+		return character;
+	}
 
-    public int getPosition() {
-        return position;
-    }
+	public int getPosition() {
+		return position;
+	}
 
-    @Override
-    public String toString() {
-        return "unacceptable character '" + character + "' (0x"
-                + Integer.toHexString((int) character).toUpperCase() + ") " + getMessage()
-                + "\nin \"" + name + "\", position " + position;
-    }
+	@Override
+	public String toString() {
+		return "unacceptable character '" + character + "' (0x" + Integer.toHexString(character).toUpperCase() + ") " + getMessage()
+				+ "\nin \"" + name + "\", position " + position;
+	}
 }

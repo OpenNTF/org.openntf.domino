@@ -54,8 +54,6 @@ public class Faker {
 	 * 
 	 * For example, the string "ABC##EFG" could be replaced with a string like "ABC99EFG".
 	 * 
-	 * @param numberString
-	 * @return
 	 */
 	public String numerify(final String numberString) {
 		return fakeValuesService.numerify(numberString);
@@ -66,8 +64,6 @@ public class Faker {
 	 * 
 	 * For example, the string "12??34" could be replaced with a string like "12AB34".
 	 * 
-	 * @param letterString
-	 * @return
 	 */
 	public String letterify(final String letterString) {
 		return fakeValuesService.letterify(letterString);
@@ -76,8 +72,6 @@ public class Faker {
 	/**
 	 * Applies both a {@link #numerify(String)} and a {@link #letterify(String)} over the incoming string.
 	 * 
-	 * @param string
-	 * @return
 	 */
 	public String bothify(final String string) {
 		return fakeValuesService.bothify(string);

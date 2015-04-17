@@ -16,29 +16,30 @@
 package org.yaml.snakeyaml.introspector;
 
 /**
- * A property that does not map to a real property; this is used when {@link
- * PropertyUtils.setSkipMissingProperties(boolean)} is set to true.
+ * A property that does not map to a real property; this is used when {@link PropertyUtils.setSkipMissingProperties(boolean)} is set to
+ * true.
  */
+@SuppressWarnings({ "javadoc" })
 public class MissingProperty extends Property {
 
-    public MissingProperty(String name) {
-        super(name, Object.class);
-    }
+	public MissingProperty(final String name) {
+		super(name, Object.class);
+	}
 
-    @Override
-    public Class<?>[] getActualTypeArguments() {
-        return new Class[0];
-    }
+	@Override
+	public Class<?>[] getActualTypeArguments() {
+		return new Class[0];
+	}
 
-    /**
-     * Setter does nothing.
-     */
-    @Override
-    public void set(Object object, Object value) throws Exception {
-    }
+	/**
+	 * Setter does nothing.
+	 */
+	@Override
+	public void set(final Object object, final Object value) throws Exception {
+	}
 
-    @Override
-    public Object get(Object object) {
-        return object;
-    }
+	@Override
+	public Object get(final Object object) {
+		return object;
+	}
 }

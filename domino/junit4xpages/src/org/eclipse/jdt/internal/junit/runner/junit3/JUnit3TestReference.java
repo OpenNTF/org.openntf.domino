@@ -38,14 +38,15 @@ import org.eclipse.jdt.internal.junit.runner.MessageIds;
 import org.eclipse.jdt.internal.junit.runner.TestExecution;
 import org.eclipse.jdt.internal.junit.runner.TestReferenceFailure;
 
+@SuppressWarnings({ "rawtypes" })
 public class JUnit3TestReference implements ITestReference {
 
 	private final Test fTest;
 
-	public static Object getField(Object object, String fieldName) {
-		Class clazz= object.getClass();
+	public static Object getField(final Object object, final String fieldName) {
+		Class clazz = object.getClass();
 		try {
-			Field field= clazz.getDeclaredField(fieldName);
+			Field field = clazz.getDeclaredField(fieldName);
 			field.setAccessible(true);
 			return field.get(object);
 		} catch (Exception e) {
@@ -54,10 +55,10 @@ public class JUnit3TestReference implements ITestReference {
 		return null;
 	}
 
-	public JUnit3TestReference(Test test) {
+	public JUnit3TestReference(final Test test) {
 		if (test == null)
 			throw new NullPointerException();
-		this.fTest= test;
+		this.fTest = test;
 	}
 
 	/*
@@ -69,14 +70,16 @@ public class JUnit3TestReference implements ITestReference {
 		return fTest.countTestCases();
 	}
 
-	public boolean equals(Object obj) {
-		if (! (obj instanceof JUnit3TestReference))
+	@Override
+	public boolean equals(final Object obj) {
+		if (!(obj instanceof JUnit3TestReference))
 			return false;
 
-		JUnit3TestReference ref= (JUnit3TestReference) obj;
+		JUnit3TestReference ref = (JUnit3TestReference) obj;
 		return ref.fTest.equals(fTest);
 	}
 
+	@Override
 	public int hashCode() {
 		return fTest.hashCode();
 	}
@@ -88,26 +91,25 @@ public class JUnit3TestReference implements ITestReference {
 	 */
 	public String getName() {
 		if (isJUnit4TestCaseAdapter(fTest)) {
-			Method method= (Method) callJUnit4GetterMethod(fTest, "getTestMethod"); //$NON-NLS-1$
-			return MessageFormat.format(
-					MessageIds.TEST_IDENTIFIER_MESSAGE_FORMAT, new String[] { method.getName(), method.getDeclaringClass().getName() });
+			Method method = (Method) callJUnit4GetterMethod(fTest, "getTestMethod"); //$NON-NLS-1$
+			return MessageFormat.format(MessageIds.TEST_IDENTIFIER_MESSAGE_FORMAT, method.getName(), method.getDeclaringClass().getName());
 		}
 		if (fTest instanceof TestCase) {
-			TestCase testCase= (TestCase) fTest;
-			return MessageFormat.format(MessageIds.TEST_IDENTIFIER_MESSAGE_FORMAT, new String[] { testCase.getName(), fTest.getClass().getName() });
+			TestCase testCase = (TestCase) fTest;
+			return MessageFormat.format(MessageIds.TEST_IDENTIFIER_MESSAGE_FORMAT, testCase.getName(), fTest.getClass().getName());
 		}
 		if (fTest instanceof TestSuite) {
-			TestSuite suite= (TestSuite) fTest;
+			TestSuite suite = (TestSuite) fTest;
 			if (suite.getName() != null)
 				return suite.getName();
 			return suite.getClass().getName();
 		}
 		if (fTest instanceof TestDecorator) {
-			TestDecorator decorator= (TestDecorator) fTest;
+			TestDecorator decorator = (TestDecorator) fTest;
 			return decorator.getClass().getName();
 		}
 		if (isJUnit4TestSuiteAdapter(fTest)) {
-			Class testClass= (Class) callJUnit4GetterMethod(fTest, "getTestClass"); //$NON-NLS-1$
+			Class testClass = (Class) callJUnit4GetterMethod(fTest, "getTestClass"); //$NON-NLS-1$
 			return testClass.getName();
 		}
 		return fTest.toString();
@@ -117,34 +119,34 @@ public class JUnit3TestReference implements ITestReference {
 		return fTest;
 	}
 
-	public void run(TestExecution execution) {
-		final TestResult testResult= new TestResult();
+	public void run(final TestExecution execution) {
+		final TestResult testResult = new TestResult();
 		testResult.addListener(new JUnit3Listener(execution));
 		execution.addStopListener(new IStopListener() {
 			public void stop() {
 				testResult.stop();
 			}
 		});
-		TestResult tr= testResult;
+		TestResult tr = testResult;
 
 		fTest.run(tr);
 	}
 
-	public void sendTree(IVisitsTestTrees notified) {
+	public void sendTree(final IVisitsTestTrees notified) {
 		if (fTest instanceof TestDecorator) {
-			TestDecorator decorator= (TestDecorator) fTest;
+			TestDecorator decorator = (TestDecorator) fTest;
 			notified.visitTreeEntry(getIdentifier(), true, 1);
 			sendTreeOfChild(decorator.getTest(), notified);
 		} else if (fTest instanceof TestSuite) {
-			TestSuite suite= (TestSuite) fTest;
+			TestSuite suite = (TestSuite) fTest;
 			notified.visitTreeEntry(getIdentifier(), true, suite.testCount());
-			for (int i= 0; i < suite.testCount(); i++) {
+			for (int i = 0; i < suite.testCount(); i++) {
 				sendTreeOfChild(suite.testAt(i), notified);
 			}
 		} else if (isJUnit4TestSuiteAdapter(fTest)) {
 			notified.visitTreeEntry(getIdentifier(), true, fTest.countTestCases());
-			List tests= (List) callJUnit4GetterMethod(fTest, "getTests"); //$NON-NLS-1$
-			for (Iterator iter= tests.iterator(); iter.hasNext();) {
+			List tests = (List) callJUnit4GetterMethod(fTest, "getTests"); //$NON-NLS-1$
+			for (Iterator iter = tests.iterator(); iter.hasNext();) {
 				sendTreeOfChild((Test) iter.next(), notified);
 			}
 		} else {
@@ -152,48 +154,49 @@ public class JUnit3TestReference implements ITestReference {
 		}
 	}
 
-	void sendFailure(Throwable throwable, IClassifiesThrowables classifier, String status, IListensToTestExecutions notified) {
+	void sendFailure(final Throwable throwable, final IClassifiesThrowables classifier, final String status,
+			final IListensToTestExecutions notified) {
 		TestReferenceFailure failure;
 		try {
-			failure= new TestReferenceFailure(getIdentifier(), status, classifier.getTrace(throwable));
+			failure = new TestReferenceFailure(getIdentifier(), status, classifier.getTrace(throwable));
 			if (classifier.isComparisonFailure(throwable)) {
 				// transmit the expected and the actual string
-				Object expected= JUnit3TestReference.getField(throwable, "fExpected"); //$NON-NLS-1$
-				Object actual= JUnit3TestReference.getField(throwable, "fActual"); //$NON-NLS-1$
+				Object expected = JUnit3TestReference.getField(throwable, "fExpected"); //$NON-NLS-1$
+				Object actual = JUnit3TestReference.getField(throwable, "fActual"); //$NON-NLS-1$
 				if (expected != null && actual != null) {
 					failure.setComparison(new FailedComparison((String) expected, (String) actual));
 				}
 			}
 		} catch (RuntimeException e) {
-			StringWriter stringWriter= new StringWriter();
+			StringWriter stringWriter = new StringWriter();
 			e.printStackTrace(new PrintWriter(stringWriter));
-			failure= new TestReferenceFailure(getIdentifier(), MessageIds.TEST_FAILED, stringWriter.getBuffer().toString(), null);
+			failure = new TestReferenceFailure(getIdentifier(), MessageIds.TEST_FAILED, stringWriter.getBuffer().toString(), null);
 		}
 		notified.notifyTestFailed(failure);
 	}
 
-	private Object callJUnit4GetterMethod(Test test, String methodName) {
+	private Object callJUnit4GetterMethod(final Test test, final String methodName) {
 		Object result;
 		try {
-			Method method= test.getClass().getMethod(methodName, new Class[0]);
-			result= method.invoke(test, new Object[0]);
+			Method method = test.getClass().getMethod(methodName, new Class[0]);
+			result = method.invoke(test, new Object[0]);
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
-			result= null;
+			result = null;
 		}
 		return result;
 	}
 
-	private boolean isJUnit4TestCaseAdapter(Test test) {
+	private boolean isJUnit4TestCaseAdapter(final Test test) {
 		return test.getClass().getName().equals("junit.framework.JUnit4TestCaseAdapter"); //$NON-NLS-1$
 	}
 
-	private boolean isJUnit4TestSuiteAdapter(Test test) {
-		String name= test.getClass().getName();
+	private boolean isJUnit4TestSuiteAdapter(final Test test) {
+		String name = test.getClass().getName();
 		return name.endsWith("JUnit4TestAdapter") && name.startsWith("junit.framework"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private void sendTreeOfChild(Test test, IVisitsTestTrees notified) {
+	private void sendTreeOfChild(final Test test, final IVisitsTestTrees notified) {
 		new JUnit3TestReference(test).sendTree(notified);
 	}
 

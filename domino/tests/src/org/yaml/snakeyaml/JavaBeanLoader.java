@@ -26,84 +26,78 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 /**
- * Convenience utility to parse JavaBeans. When the YAML document contains a
- * global tag with the class definition like '!!com.package.MyBean' it is
- * ignored in favour of the runtime class <code>T</code>.
+ * Convenience utility to parse JavaBeans. When the YAML document contains a global tag with the class definition like
+ * '!!com.package.MyBean' it is ignored in favour of the runtime class <code>T</code>.
  * 
  * @deprecated use Yaml.loadAs() methods instead
- * @see <a
- *      href="http://www.artima.com/weblogs/viewpost.jsp?thread=208860">Reflecting
- *      generics</a>
+ * @see <a href="http://www.artima.com/weblogs/viewpost.jsp?thread=208860">Reflecting generics</a>
  */
+@Deprecated
 public class JavaBeanLoader<T> {
-    private Yaml loader;
+	private Yaml loader;
 
-    public JavaBeanLoader(TypeDescription typeDescription) {
-        this(typeDescription, BeanAccess.DEFAULT);
-    }
+	public JavaBeanLoader(final TypeDescription typeDescription) {
+		this(typeDescription, BeanAccess.DEFAULT);
+	}
 
-    public JavaBeanLoader(TypeDescription typeDescription, BeanAccess beanAccess) {
-        this(new LoaderOptions(typeDescription), beanAccess);
-    }
+	public JavaBeanLoader(final TypeDescription typeDescription, final BeanAccess beanAccess) {
+		this(new LoaderOptions(typeDescription), beanAccess);
+	}
 
-    public JavaBeanLoader(LoaderOptions options, BeanAccess beanAccess) {
-        if (options == null) {
-            throw new NullPointerException("LoaderOptions must be provided.");
-        }
-        if (options.getRootTypeDescription() == null) {
-            throw new NullPointerException("TypeDescription must be provided.");
-        }
-        Constructor constructor = new Constructor(options.getRootTypeDescription());
-        loader = new Yaml(constructor, options, new Representer(), new DumperOptions(),
-                new Resolver());
-        loader.setBeanAccess(beanAccess);
-    }
+	public JavaBeanLoader(final LoaderOptions options, final BeanAccess beanAccess) {
+		if (options == null) {
+			throw new NullPointerException("LoaderOptions must be provided.");
+		}
+		if (options.getRootTypeDescription() == null) {
+			throw new NullPointerException("TypeDescription must be provided.");
+		}
+		Constructor constructor = new Constructor(options.getRootTypeDescription());
+		loader = new Yaml(constructor, options, new Representer(), new DumperOptions(), new Resolver());
+		loader.setBeanAccess(beanAccess);
+	}
 
-    public <S extends T> JavaBeanLoader(Class<S> clazz, BeanAccess beanAccess) {
-        this(new TypeDescription(clazz), beanAccess);
-    }
+	public <S extends T> JavaBeanLoader(final Class<S> clazz, final BeanAccess beanAccess) {
+		this(new TypeDescription(clazz), beanAccess);
+	}
 
-    public <S extends T> JavaBeanLoader(Class<S> clazz) {
-        this(clazz, BeanAccess.DEFAULT);
-    }
+	public <S extends T> JavaBeanLoader(final Class<S> clazz) {
+		this(clazz, BeanAccess.DEFAULT);
+	}
 
-    /**
-     * Parse the first YAML document in a stream and produce the corresponding
-     * JavaBean.
-     * 
-     * @param yaml
-     *            YAML document
-     * @return parsed JavaBean
-     */
-    @SuppressWarnings("unchecked")
-    public T load(String yaml) {
-        return (T) loader.load(new StringReader(yaml));
-    }
+	/**
+	 * Parse the first YAML document in a stream and produce the corresponding JavaBean.
+	 * 
+	 * @param yaml
+	 *            YAML document
+	 * @return parsed JavaBean
+	 */
+	@SuppressWarnings("unchecked")
+	public T load(final String yaml) {
+		return (T) loader.load(new StringReader(yaml));
+	}
 
-    /**
-     * Parse the first YAML document in a stream and produce the corresponding
-     * JavaBean.
-     * 
-     * @param io
-     *            data to load from (BOM is respected and removed)
-     * @return parsed JavaBean
-     */
-    @SuppressWarnings("unchecked")
-    public T load(InputStream io) {
-        return (T) loader.load(new UnicodeReader(io));
-    }
+	/**
+	 * Parse the first YAML document in a stream and produce the corresponding JavaBean.
+	 * 
+	 * @param io
+	 *            data to load from (BOM is respected and removed)
+	 * @return parsed JavaBean
+	 */
+	@SuppressWarnings("unchecked")
+	public T load(final InputStream io) {
+		return (T) loader.load(new UnicodeReader(io));
+	}
 
-    /**
-     * Parse the first YAML document in a stream and produce the corresponding
-     * Java object.
-     * 
-     * @param io
-     *            data to load from (BOM must not be present)
-     * @return parsed JavaBean
-     */
-    @SuppressWarnings("unchecked")
-    public T load(Reader io) {
-        return (T) loader.load(io);
-    }
+	/**
+	 * Parse the first YAML document in a stream and produce the corresponding Java object.
+	 * 
+	 * @param io
+	 *            data to load from (BOM must not be present)
+	 * @return parsed JavaBean
+	 */
+	@SuppressWarnings("unchecked")
+	public T load(final Reader io) {
+		return (T) loader.load(io);
+	}
 
 }

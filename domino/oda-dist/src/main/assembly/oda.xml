@@ -1,0 +1,86 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+	<id>oda</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	
+	<!-- Local files -->
+	<fileSets>
+		<fileSet>
+			<directory>src/main/resources</directory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
+	
+	<moduleSets>
+	
+		<!-- The source for non-external projects -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino</include>
+				<include>org.openntf.domino:org.openntf.domino.xsp</include>
+				<include>org.openntf.domino:org.openntf.formula</include>
+				<include>org.openntf.domino:org.openntf.junit4xpages</include>
+			</includes>
+			
+			<binaries>
+				<attachmentClassifier>src</attachmentClassifier>
+				<outputDirectory>/source/</outputDirectory>
+				<unpack>false</unpack>
+				<outputFileNameMapping>${module.artifactId}.${module.extension}</outputFileNameMapping>
+			</binaries>
+		</moduleSet>
+		
+		<!-- Javadocs -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino</include>
+				<include>org.openntf.domino:org.openntf.domino.xsp</include>
+				<include>org.openntf.domino:org.openntf.formula</include>
+			</includes>
+			
+			<binaries>
+				<attachmentClassifier>javadoc</attachmentClassifier>
+				<includeDependencies>false</includeDependencies>
+				<outputDirectory>/apidocs/${module.artifactId}</outputDirectory>
+				<unpack>true</unpack>
+			</binaries>
+		</moduleSet>
+	
+		<!-- The final update site -->
+		<moduleSet>
+			<useAllReactorProjects>true</useAllReactorProjects>
+			<includes>
+				<include>org.openntf.domino:org.openntf.domino.updatesite</include>
+			</includes>
+			
+			<binaries>
+				<attachmentClassifier>assembly</attachmentClassifier>
+				<outputDirectory>/</outputDirectory>
+				<unpack>false</unpack>
+				<includeDependencies>false</includeDependencies>
+				<outputFileNameMapping>UpdateSite.zip</outputFileNameMapping>
+			</binaries>
+			
+			<sources>
+				<outputDirectory>/</outputDirectory>
+				<includeModuleDirectory>false</includeModuleDirectory>
+				<includes>
+					<include>LICENSE</include>
+					<include>NOTICE</include>
+				</includes>
+			</sources>
+		</moduleSet>
+		
+		
+	</moduleSets>
+</assembly>

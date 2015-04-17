@@ -24,51 +24,50 @@ import org.yaml.snakeyaml.error.Mark;
  * </p>
  */
 public class ScalarNode extends Node {
-    private Character style;
-    private String value;
+	private Character style;
+	private String value;
 
-    public ScalarNode(Tag tag, String value, Mark startMark, Mark endMark, Character style) {
-        this(tag, true, value, startMark, endMark, style);
-    }
+	public ScalarNode(final Tag tag, final String value, final Mark startMark, final Mark endMark, final Character style) {
+		this(tag, true, value, startMark, endMark, style);
+	}
 
-    public ScalarNode(Tag tag, boolean resolved, String value, Mark startMark, Mark endMark,
-            Character style) {
-        super(tag, startMark, endMark);
-        if (value == null) {
-            throw new NullPointerException("value in a Node is required.");
-        }
-        this.value = value;
-        this.style = style;
-        this.resolved = resolved;
-    }
+	public ScalarNode(final Tag tag, final boolean resolved, final String value, final Mark startMark, final Mark endMark,
+			final Character style) {
+		super(tag, startMark, endMark);
+		if (value == null) {
+			throw new NullPointerException("value in a Node is required.");
+		}
+		this.value = value;
+		this.style = style;
+		this.resolved = resolved;
+	}
 
-    /**
-     * Get scalar style of this node.
-     * 
-     * @see org.yaml.snakeyaml.events.ScalarEvent
-     * @see <a href="http://yaml.org/spec/1.1/#id903915">Chapter 9. Scalar
-     *      Styles</a>
-     */
-    public Character getStyle() {
-        return style;
-    }
+	/**
+	 * Get scalar style of this node.
+	 * 
+	 * @see org.yaml.snakeyaml.events.ScalarEvent
+	 * @see <a href="http://yaml.org/spec/1.1/#id903915">Chapter 9. Scalar Styles</a>
+	 */
+	public Character getStyle() {
+		return style;
+	}
 
-    @Override
-    public NodeId getNodeId() {
-        return NodeId.scalar;
-    }
+	@Override
+	public NodeId getNodeId() {
+		return NodeId.scalar;
+	}
 
-    /**
-     * Value of this scalar.
-     * 
-     * @return Scalar's value.
-     */
-    public String getValue() {
-        return value;
-    }
+	/**
+	 * Value of this scalar.
+	 * 
+	 * @return Scalar's value.
+	 */
+	public String getValue() {
+		return value;
+	}
 
-    public String toString() {
-        return "<" + this.getClass().getName() + " (tag=" + getTag() + ", value=" + getValue()
-                + ")>";
-    }
+	@Override
+	public String toString() {
+		return "<" + this.getClass().getName() + " (tag=" + getTag() + ", value=" + getValue() + ")>";
+	}
 }

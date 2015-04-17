@@ -21,7 +21,7 @@ public class Lorem {
 		this.randomService = randomService;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public String[] words(final int num) {
 		List<String> words = (List<String>) fakeValuesService.fetchObject("lorem.words");
 		String[] returnArr = new String[num];

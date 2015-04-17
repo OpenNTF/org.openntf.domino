@@ -16,24 +16,22 @@ import org.eclipse.jdt.internal.junit.runner.ITestLoader;
 import org.eclipse.jdt.internal.junit.runner.ITestReference;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
 
+@SuppressWarnings({ "rawtypes" })
 public class JUnit4TestLoader implements ITestLoader {
-	
-	public ITestReference[] loadTests(
-			@SuppressWarnings("unchecked") Class[] testClasses, // https://bugs.eclipse.org/bugs/show_bug.cgi?id=164472
-			String testName,
-			String[] failureNames,
-			RemoteTestRunner listener) {
-		
-		ITestReference[] refs= new ITestReference[testClasses.length];
-		for (int i= 0; i < testClasses.length; i++) {
-			Class<?> clazz= testClasses[i];
-			ITestReference ref= createTest(clazz, testName);
-			refs[i]= ref;
+
+	public ITestReference[] loadTests(final Class[] testClasses, // https://bugs.eclipse.org/bugs/show_bug.cgi?id=164472
+			final String testName, final String[] failureNames, final RemoteTestRunner listener) {
+
+		ITestReference[] refs = new ITestReference[testClasses.length];
+		for (int i = 0; i < testClasses.length; i++) {
+			Class<?> clazz = testClasses[i];
+			ITestReference ref = createTest(clazz, testName);
+			refs[i] = ref;
 		}
 		return refs;
 	}
 
-	private ITestReference createTest(Class<?> clazz, String testName) {
+	private ITestReference createTest(final Class<?> clazz, final String testName) {
 		if (clazz == null)
 			return null;
 		if (testName == null)

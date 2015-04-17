@@ -19,64 +19,66 @@ import org.yaml.snakeyaml.error.Mark;
 import org.yaml.snakeyaml.error.YAMLException;
 
 public abstract class Token {
-    public enum ID {
-        Alias, Anchor, BlockEnd, BlockEntry, BlockMappingStart, BlockSequenceStart, Directive, DocumentEnd, DocumentStart, FlowEntry, FlowMappingEnd, FlowMappingStart, FlowSequenceEnd, FlowSequenceStart, Key, Scalar, StreamEnd, StreamStart, Tag, Value
-    }
+	public enum ID {
+		Alias, Anchor, BlockEnd, BlockEntry, BlockMappingStart, BlockSequenceStart, Directive, DocumentEnd, DocumentStart, FlowEntry,
+		FlowMappingEnd, FlowMappingStart, FlowSequenceEnd, FlowSequenceStart, Key, Scalar, StreamEnd, StreamStart, Tag, Value
+	}
 
-    private final Mark startMark;
-    private final Mark endMark;
+	private final Mark startMark;
+	private final Mark endMark;
 
-    public Token(Mark startMark, Mark endMark) {
-        if (startMark == null || endMark == null) {
-            throw new YAMLException("Token requires marks.");
-        }
-        this.startMark = startMark;
-        this.endMark = endMark;
-    }
+	public Token(final Mark startMark, final Mark endMark) {
+		if (startMark == null || endMark == null) {
+			throw new YAMLException("Token requires marks.");
+		}
+		this.startMark = startMark;
+		this.endMark = endMark;
+	}
 
-    public String toString() {
-        return "<" + this.getClass().getName() + "(" + getArguments() + ")>";
-    }
+	@Override
+	public String toString() {
+		return "<" + this.getClass().getName() + "(" + getArguments() + ")>";
+	}
 
-    public Mark getStartMark() {
-        return startMark;
-    }
+	public Mark getStartMark() {
+		return startMark;
+	}
 
-    public Mark getEndMark() {
-        return endMark;
-    }
+	public Mark getEndMark() {
+		return endMark;
+	}
 
-    /**
-     * @see "__repr__ for Token in PyYAML"
-     */
-    protected String getArguments() {
-        return "";
-    }
+	/**
+	 * @see "__repr__ for Token in PyYAML"
+	 */
+	protected String getArguments() {
+		return "";
+	}
 
-    /**
-     * For error reporting.
-     * 
-     * @see "class variable 'id' in PyYAML"
-     */
-    public abstract Token.ID getTokenId();
+	/**
+	 * For error reporting.
+	 * 
+	 * @see "class variable 'id' in PyYAML"
+	 */
+	public abstract Token.ID getTokenId();
 
-    /*
-     * for tests only
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Token) {
-            return toString().equals(obj.toString());
-        } else {
-            return false;
-        }
-    }
+	/*
+	 * for tests only
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj instanceof Token) {
+			return toString().equals(obj.toString());
+		} else {
+			return false;
+		}
+	}
 
-    /*
-     * for tests only
-     */
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
+	/*
+	 * for tests only
+	 */
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 }
