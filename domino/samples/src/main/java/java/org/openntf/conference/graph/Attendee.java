@@ -16,6 +16,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Attendee")
 public interface Attendee extends Socializer {
+	public static enum Status {
+		REGISTERED, CANCELLED, PAID, CHECKEDIN, DEPARTED
+	}
+
 	@TypeValue(PlansToAttend.LABEL)
 	public static interface PlansToAttend extends DEdgeFrame {
 		public static final String LABEL = "PlansToAttend";
