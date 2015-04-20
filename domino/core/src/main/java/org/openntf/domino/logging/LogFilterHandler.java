@@ -367,17 +367,18 @@ public class LogFilterHandler extends Handler {
 		}
 
 		/* We have to ask Session - that's not cheap */
+		String errPar = null;
 		try {
 			Session sess = Factory.getSession_unchecked(SessionType.CURRENT);
 			if (sess == null) // then we can't evaluate the condition
 				return false;
-			if (fce._condContUserName && !publishDocMap.containsKey(LogConfig.cUserName))
+			if (fce._condContUserName && !publishDocMap.containsKey(errPar = LogConfig.cUserName))
 				publishDocMap.put(LogConfig.cUserName, sess.getEffectiveUserName());
-			if (fce._condContDBPath && !publishDocMap.containsKey(LogConfig.cDBPath))
+			if (fce._condContDBPath && !publishDocMap.containsKey(errPar = LogConfig.cDBPath))
 				publishDocMap.put(LogConfig.cDBPath, sess.getCurrentDatabase().getApiPath());
 		} catch (Exception e) {
-			System.err.println("LogFilterHandler: Exception " + e.getClass().getName() + " in Session.getXX:");
-			e.printStackTrace();
+			System.err.println("[WARNING] LogFilterHandler: Exception " + e.getClass().getName() + " in Session.get(" + errPar + ")");
+			//			e.printStackTrace();
 			return false;
 		}
 		return true;

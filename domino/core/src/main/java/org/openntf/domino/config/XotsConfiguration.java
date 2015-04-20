@@ -2,6 +2,7 @@ package org.openntf.domino.config;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -36,8 +37,10 @@ public class XotsConfiguration extends ConfigurationObject {
 	protected Object[] schema() {
 		// @formatter:off
 		return new Object[] {
+				"Schedules",        String[].class,
 				"SchedulesDefault", String[].class,
 				"OnAllServers", 	Boolean.class,
+				"RunOnServer",      String[].class,
 				"TaskletName", 		String.class,
 				"ApiPaths", 		String[].class,
 				"Enabled", 			Boolean.class,
@@ -47,6 +50,10 @@ public class XotsConfiguration extends ConfigurationObject {
 				"ApplicationName",	String.class
 		};
 		// @formatter:on
+	}
+
+	public String[] getSchedules() {
+		return get("Schedules");
 	}
 
 	public String[] getSchedulesDefault() {
@@ -176,47 +183,61 @@ public class XotsConfiguration extends ConfigurationObject {
 		return currentConfig;
 	}
 
+	/**
+	 * Queuing and synchronization is indispensable to avoid that LogEntries overtake each other (in case of a very soon finishing task) and
+	 * thus wrong data are written to the XotsLog-document.
+	 */
+	protected LinkedBlockingQueue<_LogEntry> _logQueue = new LinkedBlockingQueue<_LogEntry>();
+
+	protected class _LogEntry {
+		String[] _keys;
+		Object[] _values;
+
+		_LogEntry(final Object... kvPairs) {
+			int numPairs = kvPairs.length >>> 1;
+			_keys = new String[numPairs];
+			_values = new Object[numPairs];
+			for (int i = 0; i < numPairs; i++) {
+				_keys[i] = (String) kvPairs[2 * i];
+				_values[i] = kvPairs[2 * i + 1];
+			}
+		}
+	}
+
 	@Tasklet(session = Tasklet.Session.NATIVE, threadConfig = Tasklet.ThreadConfig.STRICT)
 	protected class _Logger implements Runnable {
 
-		private String[] keys;
-		private Object[] values;
-
-		public _Logger(final String[] keys, final Object[] values) {
-			super();
-			this.keys = keys;
-			this.values = values;
-		}
-
 		protected Document getLogDocument() {
 			Document taskletDoc = getDocument(true);
-			if (taskletDoc != null) {
-				for (Document resp : taskletDoc.getResponses()) {
-					if (resp.getItemValueString("Server").equals(Factory.getLocalServerName())) {
-						return resp;
-					}
-				}
-				Document srvDoc = new ServerConfiguration(Factory.getLocalServerName()).getDocument(true);
-				Document resp = taskletDoc.getAncestorDatabase().createDocument();
-				resp.makeResponse(srvDoc, "$REFServer");
-				resp.makeResponse(taskletDoc);
-				resp.replaceItemValue("Server", Factory.getLocalServerName()).setNames(true);
-				resp.replaceItemValue("Form", "XotsLog");
-				resp.replaceItemValue("Tasklet", taskletName_);
-				resp.replaceItemValue("ApiPath", apiPath_);
-				resp.save();
-				return resp;
-			}
-			return null;
+			if (taskletDoc == null)
+				return null;
+			for (Document resp : taskletDoc.getResponses())
+				if (resp.getItemValueString("Server").equals(Factory.getLocalServerName()))
+					return resp;
+			Document srvDoc = new ServerConfiguration(Factory.getLocalServerName()).getDocument(true);
+			Document resp = taskletDoc.getAncestorDatabase().createDocument();
+			resp.makeResponse(srvDoc, "$REFServer");
+			resp.makeResponse(taskletDoc);
+			resp.replaceItemValue("Server", Factory.getLocalServerName()).setNames(true);
+			resp.replaceItemValue("Form", "XotsLog");
+			resp.replaceItemValue("Tasklet", taskletName_);
+			resp.replaceItemValue("ApiPath", apiPath_);
+			resp.save();
+			return resp;
 		}
 
 		@Override
 		public void run() {
-			Document doc = getLogDocument();
-			if (doc != null) {
-				for (int i = 0; i < keys.length; i++) {
-					System.out.println("Writing " + keys[i] + "=" + values[i]);
-					doc.put(keys[i], values[i]);
+			synchronized (_logQueue) {
+				Document doc = getLogDocument();
+				if (doc == null)
+					return;
+				_LogEntry next;
+				while ((next = _logQueue.poll()) != null) {
+					for (int i = 0; i < next._keys.length; i++) {
+						System.out.println("Writing " + next._keys[i] + "=" + next._values[i]);
+						doc.put(next._keys[i], next._values[i]);
+					}
 				}
 				doc.save();
 			}
@@ -224,61 +245,40 @@ public class XotsConfiguration extends ConfigurationObject {
 	}
 
 	public void logStart() {
-		// TODO Auto-generated method stub
 		System.out.println("### LOGSTART");
-		DominoExecutor executor = Configuration.getExecutor();
-		if (executor != null) {
-			String[] keys = new String[3];
-			Object[] values = new Object[3];
-
-			keys[0] = "Start";
-			values[0] = new Date();
-
-			keys[1] = "Stop";
-			values[1] = null;
-
-			keys[2] = "State";
-			values[2] = "RUNNING";
-			executor.submit(new _Logger(keys, values));
-		}
+		logCommon("Start", new Date(), //
+				"Stop", null, //
+				"State", "RUNNING");
 	}
 
 	public void logError(final Exception e) {
 		System.out.println("### LOGERR " + e);
-		DominoExecutor executor = Configuration.getExecutor();
-		if (executor != null) {
-			String[] keys = new String[4];
-			Object[] values = new Object[4];
-
-			keys[0] = "Stop";
-			values[0] = new Date();
-
-			keys[1] = "State";
-			values[1] = "ERROR";
-
-			keys[2] = "ErrorDate";
-			values[2] = new Date();
-
-			keys[3] = "ErrorMessage";
-			values[3] = e.getMessage();
-			executor.submit(new _Logger(keys, values));
-		}
+		logCommon("Stop", new Date(), //
+				"State", "ERROR", //
+				"ErrorDate", new Date(), //
+				"ErrorMessage", "[" + e.getClass().getName() + "]: " + e.getMessage());
 	}
 
 	public void logSuccess() {
 		System.out.println("### LOGSUCCESS");
-		DominoExecutor executor = Configuration.getExecutor();
-		if (executor != null) {
-			String[] keys = new String[2];
-			Object[] values = new Object[2];
-			keys[0] = "Stop";
-			values[0] = new Date();
-
-			keys[1] = "State";
-			values[1] = "IDLE";
-
-			executor.submit(new _Logger(keys, values));
-		}
+		logCommon("Stop", new Date(), //
+				"State", "IDLE");
 	}
 
+	private void logCommon(final Object... kvPairs) {
+		DominoExecutor executor = Configuration.getExecutor();
+		if (executor == null)
+			return;
+		synchronized (_logQueue) {
+			for (int i = 0; i < 100; i++) {
+				try {
+					_logQueue.put(new _LogEntry(kvPairs));
+					break;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		executor.submit(new _Logger());
+	}
 }

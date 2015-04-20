@@ -26,7 +26,7 @@ public enum Configuration {
 
 	private static DominoExecutor executor_;
 	private static Database odaDb_;
-	private static boolean inititalized;
+	private static boolean initialized_ = false;
 	public static String ODA_NSF = "oda.nsf"; // will be overriden by Notes.ini "ODA_NSF" entry
 
 	protected static Set<ConfigurationObject> dirtyObjects = new FastSet<ConfigurationObject>();
@@ -82,7 +82,7 @@ public enum Configuration {
 		if (executor_ == null) {
 			if (Factory.isStarted()) {
 				executor_ = new DominoExecutor(2, "Config");
-				executor_.scheduleAtFixedRate(new ObjectFlusher(), 5, 5, TimeUnit.SECONDS);
+				executor_.scheduleAtFixedRate(new ObjectFlusher(), 5, 15, TimeUnit.SECONDS);
 				Factory.addShutdownHook(SHUTDOWN_HOOK);
 			}
 		}
@@ -95,19 +95,22 @@ public enum Configuration {
 	 * @return the ODA.NSF Database
 	 */
 	protected static Database getOdaDb() {
-		if (inititalized)
+		if (initialized_)
 			return odaDb_;
 		return initOdaDb();
 	}
 
 	/**
-	 * Initialitzes the ODA.NSF. Tries to read "ODA_NSF" value from notes.ini.
+	 * Initializes the ODA.NSF. Tries to read "ODA_NSF" value from notes.ini.
 	 * 
 	 * @return
 	 */
-	private synchronized static Database initOdaDb() {
-		if (!inititalized) {
-			inititalized = true;
+	private static Database initOdaDb() {
+		if (initialized_)
+			return odaDb_;
+		synchronized (ODA_NSF) {
+			if (initialized_)
+				return odaDb_;
 			try {
 				// ODA-DB is thread safe, so we may cache it :)
 				Session sess = Factory.getSession(SessionType.CURRENT);
@@ -130,6 +133,7 @@ public enum Configuration {
 			} catch (Exception e) {
 				Factory.println("ERROR", "cannot open " + ODA_NSF + ": " + e.toString() + " - using default values.");
 			}
+			initialized_ = true;
 		}
 		return odaDb_;
 	}

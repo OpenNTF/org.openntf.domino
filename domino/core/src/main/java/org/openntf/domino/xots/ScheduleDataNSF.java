@@ -27,4 +27,16 @@ public class ScheduleDataNSF extends ScheduleData {
 		}
 		return config_;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(super.toString()).append(" (");
+		sb.append("Tasklet=").append(taskletName_);
+		sb.append(" / DB=").append(dbPath_).append(" / Schedule=");
+		String[] sched = config_.getSchedules();
+		for (int i = 0; i < sched.length; i++)
+			sb.append(i == 0 ? '[' : ',').append(sched[i]);
+		sb.append(']').append(')');
+		return sb.toString();
+	}
 }
