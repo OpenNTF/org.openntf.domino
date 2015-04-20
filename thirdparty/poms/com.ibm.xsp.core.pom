@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ibm.xsp</groupId>
+	<artifactId>core</artifactId>
+	<version>9.0.1</version>
+	<name>XSP-Core (repackaged by OpenNTF)</name>
+	
+	<licenses>
+		<license>
+			<name>Licensed Materials - Property of IBM</name>
+		</license>
+	</licenses>  
+	
+	<dependencies>
+		<!--
+			- org.eclipse.core.runtime
+			- com.ibm.commons (9.0.1)
+			- com.ibm.commons.xml (9.0.1)
+			- com.ibm.pvc.servlet;visibility:=reexport (2.5.0)
+			- com.ibm.designer.lib.jsf;visibility:=reexport, (9.0.1)
+			- com.ibm.designer.lib.acf (9.0.1)
+		-->
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+			<version>[3.2.0,4.0.0)</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm.commons</groupId>
+			<artifactId>com.ibm.commons</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm.commons</groupId>
+			<artifactId>xml</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.pvc</groupId>
+			<artifactId>servlet</artifactId>
+			<version>2.5.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.designer</groupId>
+			<artifactId>lib.jsf</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.designer</groupId>
+			<artifactId>lib.acf</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openntf.domino</groupId>
+	<artifactId>aggregator</artifactId>
+	<version>1.5.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	
+	<name>OpenNTF Domino Aggregator</name>
+
+	<properties>
+		<installedJavaApi>${user.home}/.m2/repository/com/ibm/notes/java.api</installedJavaApi>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>complete</id>
+			<activation>
+				<file>
+					<missing>${installedJavaApi}</missing>
+				</file>
+			</activation>
+			<modules>
+				<module>thirdparty</module>
+				<module>domino</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>domino</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>IDE</id>
+			<activation>
+				<property>
+					<name>m2e.version</name>
+				</property>
+			</activation>
+			<modules>
+				<module>domino</module>
+			</modules>			
+			<build>
+				<!-- Put the IDE's build output in a folder other than target, so that IDE builds don't interact with Maven builds -->
+				<directory>target-ide</directory>
+			</build>
+		</profile>
+	</profiles>
+	
+	<!-- preconfiguring all plugins that are used in this build -->
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>2.5.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.10.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<!-- List all developers here -->
+	<developers>
+		<developer>
+			<id>AWa</id>
+			<name>Alex Wagner</name>
+			<email>alexander.wagner@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>MSte</id>
+			<name>Manfred Steinsiek</name>
+			<email>manfred.steinsiek@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>RPr</id>
+			<name>Roland Praml</name>
+			<email>roland.praml@foconis.de</email>
+			<organization>FOCONIS AG</organization>
+			<organizationUrl>http://www.foconis.de</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+			<properties>
+				<picUrl><![CDATA[https://avatars2.githubusercontent.com/u/5530228?v=2&s=60]]></picUrl>
+			</properties>
+		</developer>
+	</developers>
+	
+	<reporting>
+		<plugins>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<configuration>
+					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<links>
+						<link>http://icu-project.org/apiref/icu4j/</link>
+						<!-- TODO: This link is only a test and will be removed soon! -->
+						<link>http://pram.homeip.net/maven/inofficial-lotus-javadoc/</link>
+					</links>
+					<failOnError>false</failOnError>
+					<!--
+					<excludePackageNames>com.sun.*:com.ibm.icu.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
+					-->
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	
+	
+	<distributionManagement>
+		<site>
+			<id>www.openntf.org</id>
+			<url>file://c:\fullsite/</url>
+		</site>
+	</distributionManagement>
+	
+	<organization>
+		<name>OpenNTF.org</name>
+		<url>http://www.openntf.org</url>
+	</organization>
+</project>

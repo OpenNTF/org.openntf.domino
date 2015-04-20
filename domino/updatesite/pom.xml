@@ -1,0 +1,243 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openntf.domino</groupId>
+		<artifactId>root</artifactId>
+		<version>1.5.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>updatesite</artifactId>
+	<name>OpenNTF Domino UpdateSite</name>
+
+
+	<!-- 
+		TODO RPr: This is my local server - so we must change this,
+		if patched reficio-plugin is officially available -->
+	<pluginRepositories>
+		   <pluginRepository>
+			   <id>reficio</id>
+			   <url>http://pram.homeip.net/maven/</url>
+		   </pluginRepository>
+	</pluginRepositories>
+	
+	<dependencies>
+		<!-- You must enter dependencies here, otherwise, updatesite will not bundle the correct artifact -->
+        <dependency>
+            <groupId>org.openntf</groupId>
+            <artifactId>formula</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openntf.domino</groupId>
+            <artifactId>core</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openntf.domino</groupId>
+            <artifactId>xsp</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
+		
+		<dependency>
+            <groupId>org.openntf.domino</groupId>
+            <artifactId>java.sharedapi</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
+        </dependency>
+		
+        <dependency>
+            <groupId>org.javolution</groupId>
+            <artifactId>javolution-core-java</artifactId>
+            <version>${javolution-version}</version>
+        </dependency>
+		<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava-version} </version>
+        </dependency>		
+		
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+			    <groupId>org.reficio</groupId>
+				<artifactId>p2-maven-plugin</artifactId>
+				<!--
+					Patched version from Dr. David H. Akehurst
+					https://github.com/dhakehurst/p2-maven-plugin
+					<version>1.1.2-dhakehurst</version>
+				-->
+				<version>1.2.0-FOC-SNAPSHOT</version>
+				
+				
+				<executions>
+					<execution>
+						<id>generate-p2-site</id>
+						<phase>install</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<featureDefinitions>
+								<feature>
+								<id>org.openntf.domino.feature.group</id>
+									<version>${project.version}</version>
+									<label>OpenNTF Domino API</label>
+									<providerName>OpenNTF</providerName>
+									<description>Open replacement for lotus.domino package in IBM Domino</description>
+									<generateSourceFeature>true</generateSourceFeature>
+									<copyright>OpenNTF Domino API
+&copy; Copyright 2012-2015
+  Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Ren&eacute; Winkelmeyer, Declan Lynch, Paul Withers, Devin Olson, Mark Leusink, Keith Smillie, Foconis AG</copyright>
+									<license>This project is an OpenNTF project, and is available under the Apache Licence V2.0. All other aspects of the project, including contributions, defect reports, discussions, feature requests and reviews are subject to the OpenNTF Terms of Use - available at [http://openntf.org/Internal/home.nsf/dx/Terms_of_Use](http://openntf.org/Internal/home.nsf/dx/Terms_of_Use).
+Includes content licensed under Apache License 2.0
+  Copyright Michael Zischeck from http://in-mood.blogspot.com/
+  
+Includes content from OpenLog under Apache License 2.0
+  http://www.openntf.org/internal/home.nsf/project.xsp?action=openDocument&amp;name=OpenLog
+  Copyright Julian Robichaux  
+
+Includes the Tinkerpop Open Source Graph Framework under Apache License 2.0
+  Copyright (c) 2009-2014, TinkerPop
+  Details: https://github.com/tinkerpop/tinkerpop3/blob/master/LICENSE.txt
+
+Includes ICU4J, the International Components for Unicode
+  Copyright (c) 1995-2014 International Business Machines Corporation and others
+  Full details can be found here: http://source.icu-project.org/repos/icu/icu/trunk/license.html
+
+Includes IBM Commons API from the IBM Social Business Toolkit SDK under Apache License 2.0
+  (c) Copyright IBM Corp. 2010, 2014
+  Full details can be found here: https://github.com/OpenNTF/SocialSDK/blob/master/license/LICENSE
+
+Includes code from Java Specification Request (JSR) 305 under BSD 3-Clause License
+  Copyright (c) Bill Pugh and David Hovemeyer 2007, 2010 
+  Published under the BSD 3-Clause license: http://opensource.org/licenses/BSD-3-Clause
+  Full details can be found here: https://code.google.com/p/jsr-305/
+
+Includes the Google Guava Libraries under Apache License 2.0
+  Copyright 2014 Google Inc
+  https://code.google.com/p/guava-libraries/source/browse/COPYING
+  Details: https://code.google.com/p/guava-libraries/
+  
+Includes the Reactive Java libraries under Apache License 2.0
+  Copyright 2014 Netflix, Inc.
+  Details: https://github.com/ReactiveX/RxJava/blob/1.x/CONTRIBUTING.md
+  
+Includes the ASM Java bytecode analysis framework under BSD 3-Clause License
+  Copyright (c) 2000-2011 INRIA, France Telecom
+  Published under the BSD 3-Clause license: http://opensource.org/licenses/BSD-3-Clause
+  Details: http://asm.ow2.org/license.html
+  
+Includes Javolution - Java(tm) Solution for Real-Time and Embedded Systems under BSD 2-Clause License
+  Copyright (c) 2012, Javolution (http://javolution.org/)
+  Details: http://javolution.org/LICENSE.txt
+  
+Includes URL Regex pattern under MIT license
+	Copyright (c) 2010-2013 Diego Perini (http://www.iport.it)
+	Details: https://gist.github.com/dperini/729294
+
+Includes Diff Match Patch Java code from Google Inc under Apache License 2.0
+  Copyright: 2006 Google Inc
+  Details: https://code.google.com/p/google-diff-match-patch/source/browse/trunk/COPYING
+
+Includes google-code-prettify from Google Inc under Apache License 2.0
+  Copyright: 2011 Mike Samuel et al
+  Details: https://code.google.com/p/google-code-prettify/source/browse/trunk/COPYING</license>
+
+
+
+									<artifacts>
+										<!-- 
+											specify your dependencies here. Unfortunately, we cannot use transitive here, as it
+											will bundle the whole OSGi Framework 
+										-->
+										<!-- groupId:artifactId:version -->
+								<!-- 		<artifact>
+											<id>org.openntf:formula:1.5.0-SNAPSHOT</id>
+											<transitive>false</transitive>
+											<source>true</source>
+										</artifact>
+										
+										<artifact>
+											<id>org.openntf.domino:core:1.5.0-SNAPSHOT</id>
+											<transitive>false</transitive>
+											<source>false</source>
+										</artifact>
+										-->
+										<artifact>
+											<id>org.openntf.domino:xsp:1.5.0-SNAPSHOT</id>
+											<transitive>true</transitive>
+											<source>true</source>
+											<excludes>
+												<exclude>org.openntf:thirdparty</exclude>
+												<exclude>org.eclipse.*</exclude>
+												<exclude>com.ibm.*</exclude>
+											</excludes>
+										</artifact>
+										<!-- Externals -->
+										<!-- 										<artifact>
+											<id>com.google.guava:guava:${guava-version}</id>
+											<source>true</source>
+										</artifact>
+
+										<artifact>
+											<id>org.openntf.domino:java.sharedapi:1.5.0-SNAPSHOT</id>
+											<transitive>false</transitive>
+											<source>false</source>
+										</artifact>
+										 -->
+
+										<!--
+										<artifact>
+											<id>com.tinkerpop.blueprints:blueprints-core:${tinkerpop-blueprints-version}</id>
+											<transitive>true</transitive>
+											<source>false</source>
+										</artifact>
+										
+										<artifact>
+											<id>com.tinkerpop:frames:${tinkerpop-frames-version}</id>
+											<transitive>true</transitive>
+											<source>false</source>
+										</artifact>
+										
+										<artifact>
+											<id>org.javassist:javassist:${javassist-version}</id>
+											<transitive>true</transitive>
+											<source>false</source>
+										</artifact>
+										<artifact>
+											<id>junit:junit:4.11</id>
+											<transitive>true</transitive>
+											<source>false</source>
+											<excludes>
+												<exclude>org.osgi.*</exclude>
+											</excludes>
+										</artifact>
+										-->
+										
+										<!-- dependent of junit:junit:4.11 -->
+<!-- 										<artifact>
+											<id>org.hamcrest:hamcrest-core:1.3</id>
+										</artifact>	
+										<artifact>
+											<id>org.javolution:javolution-core-java:${javolution-version}</id>
+											<transitive>false</transitive>
+											<source>true</source>
+										</artifact>
+	 -->									
+										<!--<artifact><id>commons-io:commons-io:2.1</id></artifact>
+										<artifact><id>commons-lang:commons-lang:2.4</id></artifact>
+										<artifact><id>commons-lang:commons-lang:2.5</id></artifact>
+										<artifact><id>commons-lang:commons-lang:2.6</id></artifact>
+										<artifact><id>org.apache.commons:commons-lang3:3.1</id></artifact>-->
+									</artifacts>
+							    </feature>
+							</featureDefinitions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

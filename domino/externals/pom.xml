@@ -2,24 +2,85 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<!--  externals is independet, so it has no parent  -->
+	<!-- Don't know if this is really a good decision! -->
 	<parent>
 		<groupId>org.openntf.domino</groupId>
-		<artifactId>domino</artifactId>
+		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
+	
+	<groupId>org.openntf.domino</groupId>
+	<version>1.5.0-SNAPSHOT</version>
 	<artifactId>externals</artifactId>
 	<packaging>pom</packaging>
 
-	<name>externals</name>
+	<name>External libraries</name>
 	<url>http://www.openntf.org</url>
 
 	<modules>
-		<module>jsr305</module>
-		<module>javassist</module>
-		<module>guava</module>
-		<module>rxjava</module>
-		<module>javolution</module>
-		<module>tinkerpop</module>
+		<module>tinkerpop-frames</module>
+		<module>javolution-core-java</module>
+		<module>notes-api-fragment</module>
 	</modules>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- 3.1 is the newest, but has bugs. we use the same as tinkerpop-frames -->
+				<version>2.3.2</version>
+				<configuration>
+					<source>${compiler}</source>
+					<target>${compiler}</target>
+					
+					<showWarnings>false</showWarnings>
+					<showDeprecation>false</showDeprecation>
+					<compilerArgs>
+						<!-- 
+							
+							good reference for XLint is: http://www.javaworld.com/article/2073587/javac-s&#x2D;&#x2D;xlint-options.html 
+							
+							Normally, a BootstrapClassPath to a 1.6/rt.jar should be set. But I did not figure out how!
+							 <arg>-Xlint:all,-options</arg>
+						-->
+						
+						<!-- <arg>-verbose</arg> -->
+						<!-- RPr: We may have fun if we really enable this :) -->
+						<!-- <arg>-Werror</arg> -->
 
+					</compilerArgs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+	
 </project>

@@ -10,12 +10,10 @@ import javolution.util.FastSet;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoExecutor;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
-
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
 
 /**
  * This is the interface to the ODA-Database
@@ -156,9 +154,10 @@ public enum Configuration {
 	 * @return The MD5 sum of the string
 	 */
 	public static String MD5(final String input) {
+		// TODO: Move md5 cache to DominoUtils!
 		String ret = md5Cache_.get(input);
 		if (ret == null) {
-			ret = Hashing.md5().newHasher().putString(input, Charsets.UTF_8).hash().toString();
+			ret = DominoUtils.md5(input);
 			md5Cache_.put(input, ret);
 		}
 		return ret;

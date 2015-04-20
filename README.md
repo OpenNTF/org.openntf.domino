@@ -17,6 +17,18 @@ Project goals:
 10. Provide coherent content assist via Javadoc annotations and retention of parameter names in byte code
 
 
+How to Build
+============
+You need a working maven and JDK 7 (JDK 8 won't work yet)
+
+Build the project
+
+ mvn clean install
+
+Build javadoc
+
+ mvn site-deploy
+
 OPENNTF
 =======
 This project is an OpenNTF project, and is available under the Apache Licence V2.0. All other aspects of the project, including contributions, defect reports, discussions, feature requests and reviews are subject to the OpenNTF Terms of Use - available at [http://openntf.org/Internal/home.nsf/dx/Terms_of_Use](http://openntf.org/Internal/home.nsf/dx/Terms_of_Use).

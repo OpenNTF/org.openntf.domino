@@ -3,76 +3,174 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openntf.domino</groupId>
-		<artifactId>domino</artifactId>
+		<artifactId>root</artifactId>
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>org.openntf.domino.xsp</artifactId>
-	<name>OpenNTF Domino API XPages plugin</name>
-	<packaging>eclipse-plugin</packaging>
+	<artifactId>xsp</artifactId>
+
+	<packaging>bundle</packaging>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
+			<plugin>  
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
 				<version>2.5.3</version>
+				<extensions>true</extensions>
 				<configuration>
-					<descriptors>
-						<descriptor>assembly/src.xml</descriptor>
-					</descriptors>
+					<singleton>true</singleton>
+					<instructions>
+
+						<Export-Package>
+							!*.test
+						</Export-Package>
+
+						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
+
+						<Import-Package>
+							com.ibm.domino.xsp.bridge.http.engine;resolution:=optional, *
+						</Import-Package>
+
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-Activator>org.openntf.domino.xsp.Activator</Bundle-Activator>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						
+						<!-- Unfortunately, we cannot rely on the BND-ImportPackage mechanism, because reexport is
+							not possible, and otherwise, the packages are not available in NSF-Java-Code -->
+						<Require-Bundle>
+							org.openntf.domino.core;bundle-version="1.5.0";visibility:=reexport,
+							org.openntf.formula;bundle-version="1.5.0";visibility:=reexport,
+							org.openntf.domino.graph;bundle-version="1.5.0";visibility:=reexport
+						</Require-Bundle>
+<!--						
+							com.ibm.xsp.domino;bundle-version="9.0.1",
+							com.ibm.xsp.extlib;bundle-version="9.0.1",
+							com.ibm.xsp.extsn;bundle-version="9.0.1",
+							com.ibm.designer.runtime;bundle-version="9.0.1",
+							com.ibm.domino.xsp.bootstrap;bundle-version="9.0.1",
+							com.ibm.xsp.designer;bundle-version="9.0.1",
+							com.ibm.domino.napi;bundle-version="9.0.1",
+							org.eclipse.osgi;bundle-version="[3.4.3,3.5.0)",
+							com.ibm.icu;bundle-version="3.8.1",
+							org.eclipse.core.runtime;bundle-version="3.4.0",
+							com.ibm.designer.lib.jsf,
+							com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional,
+							com.ibm.domino.napi;bundle-version="[9.0.1,10.0.0)",
+							com.ibm.commons;bundle-version="[9.0.0,10.0.0)"
+-->
+					</instructions>
 				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>generate-javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
+			
 			</plugin>
 		</plugins>
 	</build>
+
+	<name>OpenNTF Domino API XPages plugin</name>
+	<dependencies>
+		
+
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>core</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>graph</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>java.sharedapi</artifactId>
+			<version>1.5.0-SNAPSHOT</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>com.ibm.xsp</groupId>
+			<artifactId>domino</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+ 		<dependency>
+			<groupId>com.ibm.xsp</groupId>
+			<artifactId>extlib</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.xsp</groupId>
+			<artifactId>extsn</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm.designer</groupId>
+			<artifactId>runtime</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.domino</groupId>
+			<artifactId>xsp.bootstrap</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.xsp</groupId>
+			<artifactId>designer</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.domino</groupId>
+			<artifactId>napi</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.osgi</groupId>
+			<artifactId>org.eclipse.osgi</artifactId>
+			<version>[3.4.3,3.5.0)</version>
+		</dependency>
+		<!-- TODO / CHECKME: required for osgi-testrunner! -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>com.ibm.icu</artifactId>
+			<version>3.8.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+ 		<dependency>
+			<groupId>com.ibm.designer</groupId>
+			<artifactId>lib.jsf</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+ 		<dependency>
+			<groupId>com.ibm.domino</groupId>
+			<artifactId>xsp.bridge.http</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+	</dependencies>
 	<organization>
 		<name>OpenNTF</name>
 		<url>http://www.openntf.org</url>
 	</organization>
 
-	<!-- <dependencies> <dependency> <groupId>org.openntf.domino</groupId> <artifactId>core</artifactId> 
-		<version>latest</version> </dependency> <dependency> <groupId>org.openntf.domino</groupId> 
-		<artifactId>formula</artifactId> <version>latest</version> </dependency> 
-		<dependency> <groupId>ibm.domino</groupId> <artifactId>jsf-api</artifactId> 
-		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
-		<artifactId>extlib</artifactId> <version>9.0.1</version> </dependency> <dependency> 
-		<groupId>ibm.domino</groupId> <artifactId>bootstrap</artifactId> <version>9.0.1</version> 
-		</dependency> <dependency> <groupId>ibm.domino</groupId> <artifactId>napi</artifactId> 
-		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
-		<artifactId>adapter</artifactId> <version>9.0.1</version> </dependency> <dependency> 
-		<groupId>ibm.domino</groupId> <artifactId>xspDomino</artifactId> <version>9.0.1</version> 
-		</dependency> <dependency> <groupId>ibm.domino</groupId> <artifactId>xspExtension</artifactId> 
-		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
-		<artifactId>xspCore</artifactId> <version>9.0.1</version> </dependency> <dependency> 
-		<groupId>ibm.domino</groupId> <artifactId>jscript</artifactId> <version>9.0.1</version> 
-		</dependency> <dependency> <groupId>ibm.domino</groupId> <artifactId>extlibControls</artifactId> 
-		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
-		<artifactId>extlibDomino</artifactId> <version>9.0.1</version> </dependency> 
-		<dependency> <groupId>ibm.domino</groupId> <artifactId>xspDesigner</artifactId> 
-		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
-		<artifactId>designerRuntime</artifactId> <version>9.0.1</version> </dependency> 
-		<dependency> <groupId>ibm.domino</groupId> <artifactId>eclipseRuntime</artifactId> 
-		<version>9.0.1</version> </dependency> <dependency> <groupId>ibm.domino</groupId> 
-		<artifactId>servlet</artifactId> <version>9.0.1</version> </dependency> </dependencies> -->
 
 </project>

@@ -5,7 +5,8 @@ package org.openntf.domino.xsp.helpers;
 
 import java.util.Map;
 
-import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.graph2.helpers.DocumentScanner;
+// TODO import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSyncHelper;
 
 /**
@@ -282,6 +283,7 @@ public class WebinarSamples {
 
 	public Map<?, ?> scanDatabase(final org.openntf.domino.Database db) {
 		// DocumentScanner looks at values of all string-based items in a document
+
 		DocumentScanner scanner = new DocumentScanner();
 		for (org.openntf.domino.Document doc : db.getAllDocuments()) {
 			scanner.processDocument(doc);

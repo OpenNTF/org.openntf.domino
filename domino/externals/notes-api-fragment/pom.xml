@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.openntf.domino</groupId>
+        <artifactId>externals</artifactId>
+        <version>1.5.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>java.sharedapi</artifactId>
+
+    <name>Shared-API-Fix for Notes.jar</name>
+    
+
+	<packaging>bundle</packaging>
+	<build>
+		<plugins>
+			<plugin>  
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Fragment-Host>system.bundle; extension:=framework</Fragment-Host>
+						<Export-Package>
+							<!-- list all packages in the notes.jar (original list taken from com.ibm.notes.java.api) -->
+							Acme,
+							Acme.JPM.Encoders,
+							<!-- Don't know where these packages are.	They are not in the "notes.jar" -->
+							<!--
+							com.ibm.notes.java.api.data,
+							com.ibm.notes.java.api.util,
+							-->
+							
+							com.ibm.sslight,
+							com.ibm.sslight.tools,
+							lotus.domino,
+							lotus.domino.corba,
+							lotus.domino.corba.NameAndObjectUPackage,
+							lotus.domino.cso,
+							lotus.domino.local,
+							lotus.domino.util,
+							<!-- These packages are also not available in notes.jar, so ignore them -->
+							<!--
+							lotus.domino.ws;x-friends:="com.ibm.designer.domino.ide.resources",
+							lotus.domino.ws.jcall;x-friends:="com.ibm.designer.domino.ide.resources",
+							-->
+							
+							lotus.notes,
+							lotus.notes.addins,
+							lotus.notes.addins.changeman,
+							lotus.notes.addins.changeman.control,
+							lotus.notes.addins.changeman.functions,
+							lotus.notes.addins.changeman.monitor,
+							lotus.notes.addins.changeman.roboadmin,
+							lotus.notes.addins.changeman.workflow,
+							lotus.notes.addins.daytime,
+							lotus.notes.addins.dsfclassifier,
+							lotus.notes.addins.dsflearning,
+							lotus.notes.addins.guru,
+							lotus.notes.addins.ispy,
+							lotus.notes.addins.ispy.net,
+							lotus.notes.addins.ispy.net.dns,
+							lotus.notes.addins.ispy.net.portcheck,
+							lotus.notes.addins.ispy.util,
+							lotus.notes.addins.rmeval,
+							lotus.notes.addins.util,
+							lotus.notes.apps.reports,
+							lotus.notes.apps.wmsgtrc,
+							lotus.notes.internal,
+							
+							lotus.priv.CORBA.iiop,
+							lotus.priv.CORBA.iiop.ssl,
+							lotus.priv.CORBA.iiop.sslight,
+							lotus.priv.CORBA.java.Exception,
+							lotus.priv.CORBA.portable
+						</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>    
+</project>

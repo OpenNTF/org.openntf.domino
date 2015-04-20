@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ibm.xsp</groupId>
+	<artifactId>extsn</artifactId>
+	<version>9.0.1</version>
+	<name>XSP-Core (repackaged by OpenNTF)</name>
+	
+	<licenses>
+		<license>
+			<name>Licensed Materials - Property of IBM</name>
+		</license>
+	</licenses>  
+	
+	<dependencies>
+		<!--
+			org.eclipse.core.runtime
+			com.ibm.commons;visibility:=reexport
+			com.ibm.commons.xml;visibility:=reexport
+			com.ibm.jscript;visibility:=reexport
+			com.ibm.xsp.core;visibility:=reexport
+			com.ibm.icu
+		-->
+		<dependency>
+			<groupId>org.eclipse.core</groupId>
+			<artifactId>runtime</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm.commons</groupId>
+			<artifactId>com.ibm.commons</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm.commons</groupId>
+			<artifactId>xml</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.jscript</groupId>
+			<artifactId>com.ibm.jscript</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ibm.xsp</groupId>
+			<artifactId>core</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>3.8</version>
+		</dependency>
+
+	</dependencies>
+</project>

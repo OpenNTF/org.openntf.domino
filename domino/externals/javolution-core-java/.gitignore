@@ -1,0 +1,5 @@
+*.log
+*.lst
+/target/
+/target-ide/
+

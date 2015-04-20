@@ -4,3 +4,4 @@ core*
 javacore*
 /IBM_TECHNICAL_SUPPORT
 /target/
+/target-ide/
