@@ -68,14 +68,26 @@ public enum ModuleLoader {
 			final PreloadSession session = new PreloadSession();
 			final PreloadRequest request = new PreloadRequest("", "", path);
 			final PreloadResponse response = new PreloadResponse();
-			try {
-				getNsfService().doService("", path, session, request, response);
-			} catch (PageNotFoundException pnfe) {
-				// Thats ok (unless someone really creates a resource with name dummyrequest/to/trigger/refresh)
-			} catch (com.ibm.xsp.acl.NoAccessSignal nas) {
-				// Thats ok. (refresh should be done anyway)
-			} catch (IOException e) {
-				e.printStackTrace();
+			// Sometimes the first call to doService ends in a NoClassDefFoundError, whilst a second one
+			// works (i.e. gives a PageNotFoundException). Hence:
+			for (int i = 1; i <= 2; i++) {
+				try {
+					getNsfService().doService("", path, session, request, response);
+				} catch (PageNotFoundException pnfe) {
+					break;
+					// Thats ok (unless someone really creates a resource with name dummyrequest/to/trigger/refresh)
+				} catch (com.ibm.xsp.acl.NoAccessSignal nas) {
+					break;
+					// Thats ok. (refresh should be done anyway)
+				} catch (IOException e) {
+					e.printStackTrace();
+					break;
+				} catch (Error re) {
+					if (i == 2) {
+						re.printStackTrace();
+						throw re;
+					}
+				}
 			}
 			module = getNsfService().loadModule(modName);
 		}

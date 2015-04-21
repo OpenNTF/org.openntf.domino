@@ -34,6 +34,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.RunListener;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.xots.Xots;
+import org.openntf.domino.xsp.xots.XotsNsfScanner;
 import org.osgi.framework.Bundle;
 
 import com.ibm.commons.util.StringUtil;
@@ -86,6 +87,8 @@ public class OsgiCommandProvider implements CommandProvider {
 		addHeader("XOTS commands", sb);
 		addCommand("xots tasks", "(filter)", "Show currently running tasks", sb);
 		addCommand("xots schedule", "(filter)", "Show all scheduled tasks", sb);
+		addCommand("xots run <module> <class>", "Run a tasklet manually", sb);
+		addCommand("xots run NsfScanner", "Run the NSF scanner tasklet manually", sb);
 		addCommand("junit <package> <testclass>", "Run the JUnit runnable", sb);
 		addCommand("oda stop", "Stop the ODA-API", sb);
 		addCommand("oda start", "Start the ODA-API", sb);
@@ -214,8 +217,14 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	private void xotsRun(final CommandInterpreter ci) {
+
 		String moduleName = ci.nextArgument();
 		String className = ci.nextArgument();
+
+		if (moduleName.equalsIgnoreCase("NsfScanner") && className == null) {
+			Xots.getService().submit(new XotsNsfScanner());
+			return;
+		}
 
 		List<String> args = new ArrayList<String>();
 

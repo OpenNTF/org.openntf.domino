@@ -10,4 +10,6 @@ public interface IWrappedTask {
 
 	String getDescription();
 
+	public Object getWrappedTask();	// Callable<V> or Runnable
+
 }

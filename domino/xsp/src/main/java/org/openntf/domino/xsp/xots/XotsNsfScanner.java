@@ -3,6 +3,7 @@ package org.openntf.domino.xsp.xots;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -15,7 +16,9 @@ import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.AbstractDominoCallable;
+import org.openntf.domino.thread.AbstractDominoExecutor;
 import org.openntf.domino.thread.AbstractDominoRunnable;
+import org.openntf.domino.thread.IWrappedTask;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.ScheduleData;
@@ -23,6 +26,8 @@ import org.openntf.domino.xots.Tasklet;
 import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xots.XotsUtil;
 
+import com.ibm.designer.domino.napi.NotesAPIException;
+import com.ibm.designer.domino.napi.NotesSession;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem;
@@ -51,6 +56,17 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 
 	private final String serverName_;
 
+	private static Map<String, Long> _lastScanMap = new HashMap<String, Long>();
+
+	private static long getLastScan(final String dbApiPath) {
+		Long l = _lastScanMap.get(dbApiPath);
+		return (l == null) ? 0 : l.longValue();
+	}
+
+	private static void setLastScan(final String dbApiPath) {
+		_lastScanMap.put(dbApiPath, System.currentTimeMillis());
+	}
+
 	public XotsNsfScanner() {
 		serverName_ = "";
 	}
@@ -65,13 +81,13 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 
 	@Override
 	public void run() {
-		//		Factory.println(this, "Scan started");
-		//		List<ScheduleData> ret = scan();
-		//		Factory.println(this, "-------------------------------------------------");
-		//		Factory.println(this, "Scan stopped. Found tasklets: ");
-		//		for (ScheduleData sd : ret) {
-		//			Factory.println(this, sd);
-		//		}
+		Factory.println(this, "Scan started");
+		List<ScheduleData> ret = scan();
+		Factory.println(this, "-------------------------------------------------");
+		Factory.println(this, "Scan stopped. Found tasklets (" + ret.size() + "): ");
+		for (ScheduleData sd : ret) {
+			Factory.println(this, sd);
+		}
 	}
 
 	/**
@@ -81,28 +97,37 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 		Session session = Factory.getSession(SessionType.CURRENT); // Returns a XotsSessionType.NATIVE
 		DbDirectory dir = session.getDbDirectory(getServerName());
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
-		List<Future<List<ScheduleData>>> futures = new ArrayList<Future<List<ScheduleData>>>();
-		for (Database db : dir) {
-			try {
-				Future<List<ScheduleData>> future = scanDatabase(db);
-				if (future != null) {
-					futures.add(future);
+		synchronized (_lastScanMap) {
+			List<Future<List<ScheduleData>>> futures = new ArrayList<Future<List<ScheduleData>>>();
+			for (Database db : dir) {
+				try {
+					Future<List<ScheduleData>> future = scanDatabase(db);
+					if (future != null) {
+						futures.add(future);
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
 				}
-			} catch (Throwable t) {
-				t.printStackTrace();
 			}
-		}
-		List<ScheduleData> ret = new ArrayList<ScheduleData>();
-		for (Future<List<ScheduleData>> future : futures) {
-			try {
-				ret.addAll(future.get());
-			} catch (Exception e) {
-				// exceptions should already been logged
+			List<ScheduleData> ret = new ArrayList<ScheduleData>();
+			for (Future<List<ScheduleData>> future : futures) {
+				try {
+					List<ScheduleData> fRet = future.get();
+					if (fRet != null) {
+						AbstractDominoExecutor.DominoFutureTask<?> adft = (AbstractDominoExecutor.DominoFutureTask<?>) future;
+						IWrappedTask iwt = adft.getWrappedTask();
+						XotsClassScanner xcs = (XotsClassScanner) iwt.getWrappedTask();
+						setLastScan(xcs.apiPath);
+						ret.addAll(fRet);
+					}
+				} catch (Exception e) {
+					// exceptions should already been logged
+				}
 			}
+			setChanged();
+			notifyObservers(null);
+			return ret;
 		}
-		setChanged();
-		notifyObservers(null);
-		return ret;
 	}
 
 	//	/**
@@ -141,7 +166,6 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 
 		@Override
 		public String getDescription() {
-			// TODO Auto-generated method stub
 			return super.getDescription() + ":" + apiPath;
 		}
 
@@ -164,7 +188,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 				for (NSFResource resource : resources.values()) {
 					if (resource instanceof NSFXspClassResource) {
 						String path = resource.getNSFPath();
-
+						// System.out.println("*** " + dbPath + "  PATH=" + path);
 						// Check all classes, but not xsp.*
 						if (path.startsWith("WEB-INF/classes/") && path.endsWith(".class") && !path.startsWith("WEB-INF/classes/xsp/")) {
 							String className = path.substring(16, path.length() - 6).replace('/', '.');
@@ -196,7 +220,6 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			}
 			return ret;
 		}
-
 	}
 
 	/**
@@ -209,16 +232,28 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	 */
 	protected Future<List<ScheduleData>> scanDatabase(final Database db) {
 		//NTF Keeping JG's implementation since he made an enhancement to the IconNote class for it! :)
-		log_.finest("Scanning database " + db.getApiPath() + " for Xots Tasklets");
-
+		String dbApiPath = db.getApiPath();
+		log_.finest("Scanning database " + dbApiPath + " for Xots Tasklets");
+		long lastScan = getLastScan(dbApiPath);
+		if (lastScan > 0) {
+			long lastDesignChange = Long.MAX_VALUE;
+			try {
+				lastDesignChange = NotesSession.getLastNonDataModificationDateByPath(dbApiPath) * 1000;
+			} catch (NotesAPIException e) {
+				System.out.println("[WARNING] Exception in NotesSession.getLastNonDataModificationDateByPath: ");
+				e.printStackTrace();
+			}
+			if (lastDesignChange < lastScan)
+				return null;
+		}
 		try {
 			Database template = db.getXPageSharedDesignTemplate();
 			DatabaseDesign design = template == null ? db.getDesign() : template.getDesign();
 			if (design.isAPIEnabled()) {
-				log_.info("ODA enabled database: " + db.getApiPath());
-				return Xots.getService().submit(new XotsClassScanner(db.getApiPath()));
-
+				log_.info("ODA enabled database: " + dbApiPath);
+				return Xots.getService().submit(new XotsClassScanner(dbApiPath));
 			}
+			setLastScan(dbApiPath);
 
 			//			
 			//			

@@ -27,7 +27,9 @@
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
 
 						<Import-Package>
-							com.ibm.domino.xsp.bridge.http.engine;resolution:=optional, *
+							com.ibm.domino.xsp.bridge.http.engine;resolution:=optional,
+							!com.ibm.xsp.extlib.*, <!--  extlib cannot be used in combination with BND -->
+							*
 						</Import-Package>
 
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
@@ -37,13 +39,13 @@
 						<!-- Unfortunately, we cannot rely on the BND-ImportPackage mechanism, because reexport is
 							not possible, and otherwise, the packages are not available in NSF-Java-Code -->
 						<Require-Bundle>
+							com.ibm.xsp.extlib;bundle-version="9.0.1",
 							org.openntf.domino.core;bundle-version="1.5.0";visibility:=reexport,
 							org.openntf.formula;bundle-version="1.5.0";visibility:=reexport,
 							org.openntf.domino.graph;bundle-version="1.5.0";visibility:=reexport
 						</Require-Bundle>
 <!--						
 							com.ibm.xsp.domino;bundle-version="9.0.1",
-							com.ibm.xsp.extlib;bundle-version="9.0.1",
 							com.ibm.xsp.extsn;bundle-version="9.0.1",
 							com.ibm.designer.runtime;bundle-version="9.0.1",
 							com.ibm.domino.xsp.bootstrap;bundle-version="9.0.1",

@@ -143,10 +143,9 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 
 	/**
 	 * Returns the wrapped task
-	 * 
-	 * @return
 	 */
-	protected synchronized Object getWrappedTask() {
+	@Override
+	public synchronized Object getWrappedTask() {
 		return wrappedTask;
 	}
 
