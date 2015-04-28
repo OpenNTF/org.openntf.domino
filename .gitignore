@@ -15,6 +15,7 @@
 /org.openntf.domino.designer.sdk
 /org.openntf.domino.plugin
 /org.openntf.domino.xsp.update
+/domino/org.openntf.domino.feature.group
 /domino/org.openntf.domino.updatesite
 /domino/externals/asm
 /domino/externals/guava
