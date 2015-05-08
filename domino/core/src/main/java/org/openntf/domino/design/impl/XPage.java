@@ -18,6 +18,8 @@ package org.openntf.domino.design.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.design.DxlConverter;
@@ -39,11 +41,22 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 
 	@Override
 	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		converter.writeXspFile(file, getFileData());
+		converter.writeXspFile(getFileData(), file);
+	}
+
+	@Override
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		converter.writeXspFile(getFileData(), os);
 	}
 
 	@Override
 	public void importDesign(final DxlConverter converter, final File file) throws IOException {
 		setFileData(converter.readXspFile(file));
 	}
+
+	@Override
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		setFileData(converter.readXspFile(is));
+	}
+
 }

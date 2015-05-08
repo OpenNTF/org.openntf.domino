@@ -74,6 +74,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		database_ = database;
 	}
 
+	@Override
+	public void flush() {
+		napiDesign_ = null;
+		props = null;
+	}
+
 	public <T extends org.openntf.domino.design.DesignBase> T create(final Class<T> type) {
 		DesignFactory mapping = DesignFactory.valueOf(type);
 		if (mapping == null || mapping.getImplClass() == null) {

@@ -21,14 +21,18 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.design.DxlConverter;
+import org.openntf.domino.design.sync.DefaultDxlConverter;
 import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.nsfdata.structs.obj.CDObject;
 import org.openntf.domino.nsfdata.structs.obj.CDResourceEvent;
@@ -218,12 +222,34 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 	 */
 	@Override
 	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		converter.writeBinaryFile(file, getFileData());
+		FileOutputStream fo = new FileOutputStream(file);
+		try {
+			fo.write(getFileData());
+		} finally {
+			fo.close();
+		}
+	}
+
+	@Override
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		os.write(getFileData());
 	}
 
 	@Override
 	public void importDesign(final DxlConverter converter, final File file) throws IOException {
-		setFileData(converter.readBinaryFile(file));
+		FileInputStream fis = new FileInputStream(file);
+		try {
+			byte[] data = new byte[(int) file.length()];
+			fis.read(data);
+			setFileData(data);
+		} finally {
+			fis.close();
+		}
+	}
+
+	@Override
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		setFileData(DefaultDxlConverter.toBytes(is));
 	}
 
 	public boolean isReadOnly() {

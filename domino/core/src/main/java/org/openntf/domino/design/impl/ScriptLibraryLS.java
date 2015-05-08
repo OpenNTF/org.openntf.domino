@@ -2,7 +2,11 @@ package org.openntf.domino.design.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Scanner;
 
 import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -32,11 +36,27 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	@Override
 	public void exportDesign(final DxlConverter converter, final File odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
-		StringBuilder sb = new StringBuilder();
-		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
-			sb.append(rawitemdata.getText());
+		PrintWriter pw = new PrintWriter(odpFile);
+		try {
+			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
+				pw.write(rawitemdata.getText());
+			}
+		} finally {
+			pw.close();
 		}
-		converter.writeTextFile(sb.toString(), odpFile);
+	}
+
+	@Override
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		// TODO Check for $Scriptlib_error => throw exception if item exists
+		PrintWriter pw = new PrintWriter(os);
+		try {
+			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
+				pw.write(rawitemdata.getText());
+			}
+		} finally {
+			pw.close();
+		}
 	}
 
 	protected void createScriptLibItem(final String text) {
@@ -51,13 +71,32 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 
 	@Override
 	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+		importDesign(converter, new Scanner(file));
+	}
+
+	@Override
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		importDesign(converter, new Scanner(is));
+	}
+
+	public void importDesign(final DxlConverter converter, final Scanner scanner) throws IOException {
 
 		List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$ScriptLib']");
 		for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
+		StringBuilder fileContents = new StringBuilder();
 
-		String content = converter.readTextFile(file);
+		try {
+			while (scanner.hasNextLine()) {
+				fileContents.append(scanner.nextLine());
+				fileContents.append('\n');
+			}
+		} finally {
+			scanner.close();
+		}
+
+		String content = fileContents.toString();
 		while (content.length() > 30000) {
 			createScriptLibItem(content.substring(0, 30000));
 			content = content.substring(30000);

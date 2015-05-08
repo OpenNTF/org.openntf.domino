@@ -56,7 +56,7 @@ public final class ScriptLibraryJava extends AbstractDesignFileResource implemen
 				objInputStream.close();
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			}
 
 		}

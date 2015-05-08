@@ -1,12 +1,31 @@
+/*
+ * Copyright 2015 - FOCONIS AG
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express o 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.design;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.openntf.domino.utils.xml.XMLDocument;
 
 /**
- * DXL-Converter specifies several rules, how to write certain DXL files
+ * DXL-Converter specifies several rules, how to write certain DXL files. It can control how the resulting XML looks like (filter certain
+ * Attributes, reindent the XML)
  * 
  * @author Roland Praml, FOCONIS AG
  *
@@ -25,6 +44,17 @@ public interface DxlConverter {
 	void writeDesignXML(XMLDocument dxl, File file) throws IOException;
 
 	/**
+	 * Writes the dxl as "Design" file (e.g. *.form, *.view)
+	 * 
+	 * @param dxl
+	 *            the DXL-Document
+	 * @param outputStream
+	 *            the OutputStream
+	 * @throws IOException
+	 */
+	void writeDesignXML(XMLDocument dxl, OutputStream outputStream) throws IOException;
+
+	/**
 	 * Reads a DesignFile
 	 * 
 	 * @param file
@@ -33,6 +63,16 @@ public interface DxlConverter {
 	 * @throws IOException
 	 */
 	XMLDocument readDesignXML(File file) throws IOException;
+
+	/**
+	 * Reads a DesignFile
+	 * 
+	 * @param inputStream
+	 *            the source
+	 * @return the DXL-Document
+	 * @throws IOException
+	 */
+	XMLDocument readDesignXML(InputStream inputStream) throws IOException;
 
 	/**
 	 * Writes the dxl as "meta" file (e.g. *.metadata)
@@ -46,6 +86,17 @@ public interface DxlConverter {
 	void writeMetaXML(XMLDocument dxl, File metaFile) throws IOException;
 
 	/**
+	 * Writes the dxl as "meta" file (e.g. *.metadata)
+	 * 
+	 * @param dxl
+	 *            the DXL-Document
+	 * @param os
+	 *            the OutputStream
+	 * @throws IOException
+	 */
+	void writeMetaXML(XMLDocument dxl, OutputStream os) throws IOException;
+
+	/**
 	 * Reads a MetaDataFile
 	 * 
 	 * @param file
@@ -54,6 +105,16 @@ public interface DxlConverter {
 	 * @throws IOException
 	 */
 	XMLDocument readMetaXML(File file) throws IOException;
+
+	/**
+	 * Reads a MetaDataFile
+	 * 
+	 * @param is
+	 *            the source
+	 * @return the DXL-Document
+	 * @throws IOException
+	 */
+	XMLDocument readMetaXML(InputStream is) throws IOException;
 
 	/**
 	 * Returns the DXL-String required for importing the dxl back in DB
@@ -65,26 +126,26 @@ public interface DxlConverter {
 	String getDxlImportString(XMLDocument dxl) throws IOException;
 
 	/**
-	 * Writes a binary file - TODO remove
+	 * Writes an XPages-XML file (ending: *.xsp)
 	 * 
-	 * @param file
 	 * @param fileData
+	 *            the fileData
+	 * @param file
+	 *            the XSP-File
 	 * @throws IOException
 	 */
-	void writeBinaryFile(File file, byte[] fileData) throws IOException; // TODO Remove this
-
-	byte[] readBinaryFile(File file) throws IOException; // TODO Remove this
+	void writeXspFile(byte[] fileData, File file) throws IOException;
 
 	/**
 	 * Writes an XPages-XML file (ending: *.xsp)
 	 * 
-	 * @param file
-	 *            the XSP-File
 	 * @param fileData
 	 *            the fileData
+	 * @param outputStream
+	 *            the OutputStream
 	 * @throws IOException
 	 */
-	void writeXspFile(File file, byte[] fileData) throws IOException;
+	void writeXspFile(byte[] fileData, OutputStream outputStream) throws IOException;
 
 	/**
 	 * Reads an XPages-XML file
@@ -97,15 +158,36 @@ public interface DxlConverter {
 	byte[] readXspFile(File file) throws IOException;
 
 	/**
-	 * Writes an XSP-Config-file (ending *.xsp-config)
+	 * Reads an XPages-XML file
 	 * 
 	 * @param file
-	 *            the XSP-Config file
-	 * @param fileData
-	 *            the filedata
+	 *            the XSP-File
+	 * @return byte Array with fileData
 	 * @throws IOException
 	 */
-	void writeXspConfigFile(File file, byte[] fileData) throws IOException;
+	byte[] readXspFile(InputStream inputStream) throws IOException;
+
+	/**
+	 * Writes an XSP-Config-file (ending *.xsp-config)
+	 * 
+	 * @param fileData
+	 *            the filedata
+	 * @param file
+	 *            the XSP-Config file
+	 * @throws IOException
+	 */
+	void writeXspConfigFile(byte[] fileData, File file) throws IOException;
+
+	/**
+	 * Writes an XSP-Config-file (ending *.xsp-config)
+	 * 
+	 * @param fileData
+	 *            the filedata
+	 * @param file
+	 *            the XSP-Config stream
+	 * @throws IOException
+	 */
+	void writeXspConfigFile(byte[] configData, OutputStream os) throws IOException;
 
 	/**
 	 * Reads an XSP-Config-file
@@ -117,24 +199,13 @@ public interface DxlConverter {
 	byte[] readXspConfigFile(File file) throws IOException;
 
 	/**
-	 * Writes a TextFile
+	 * Reads an XSP-Config-file
 	 * 
 	 * @param content
-	 *            the content
-	 * @param file
-	 *            the output file
+	 * @param is
 	 * @throws IOException
 	 */
-	void writeTextFile(String content, File file) throws IOException;
-
-	/**
-	 * Reads a TextFile
-	 * 
-	 * @param file
-	 * @return the content
-	 * @throws IOException
-	 */
-	String readTextFile(File file) throws IOException;
+	byte[] readXspConfigFile(InputStream is) throws IOException;
 
 	/**
 	 * Is Raw export enabled (required for 100% DXL compatibility)
@@ -144,9 +215,10 @@ public interface DxlConverter {
 	boolean isRawExportEnabled();
 
 	/**
-	 * Is MetaData export enabled (required to preserver some less important properties)
+	 * Is MetaData export enabled (required to preserve some less important properties)
 	 * 
 	 * @return boolean
 	 */
 	boolean isMetadataEnabled();
+
 }

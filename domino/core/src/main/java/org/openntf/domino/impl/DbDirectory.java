@@ -35,9 +35,10 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.design.VFSNode;
+import org.openntf.domino.design.impl.VFSRootDirectoryNode;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
-import org.openntf.domino.helpers.DbDirectoryTree;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -52,7 +53,6 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	/* the MetaData contains s small subset of information of a (closed) Database */
 	private transient SortedSet<DatabaseMetaData> dbMetaDataSet_;
 	private transient Iterator<DatabaseMetaData> dbIter; // required for getFirst/getNextDatabase
-	private transient DbDirectoryTree dbDirectoryTree_;
 
 	private org.openntf.domino.DbDirectory.Type type_;
 	private String name_;
@@ -712,16 +712,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	}
 
 	@Override
-	public DbDirectoryTree getTree(final Type type) {
-		setDirectoryType(type);
-		return getTree();
-	}
-
-	@Override
-	public DbDirectoryTree getTree() {
-		if (dbDirectoryTree_ == null)
-			dbDirectoryTree_ = new DbDirectoryTree(getMetaDataSet(), getAncestorSession());
-		return dbDirectoryTree_;
+	public VFSNode getVFS() {
+		return new VFSRootDirectoryNode(getMetaDataSet());
 	}
 
 	@Override

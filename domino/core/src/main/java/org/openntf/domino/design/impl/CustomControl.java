@@ -18,6 +18,8 @@ package org.openntf.domino.design.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.design.DxlConverter;
@@ -39,7 +41,12 @@ public final class CustomControl extends AbstractXspResource implements org.open
 
 	@Override
 	public void exportXspConfig(final DxlConverter converter, final File configFile) throws IOException {
-		converter.writeXspConfigFile(configFile, getConfigData());
+		converter.writeXspConfigFile(getConfigData(), configFile);
+	}
+
+	@Override
+	public void exportXspConfig(final DxlConverter converter, final OutputStream os) throws IOException {
+		converter.writeXspConfigFile(getConfigData(), os);
 	}
 
 	protected byte[] getConfigData() {
@@ -51,13 +58,18 @@ public final class CustomControl extends AbstractXspResource implements org.open
 		setConfigData(converter.readXspConfigFile(configFile));
 	}
 
+	@Override
+	public void importXspConfig(final DxlConverter converter, final InputStream is) throws IOException {
+		setConfigData(converter.readXspConfigFile(is));
+	}
+
 	protected void setConfigData(final byte[] data) {
 		setFileDataRaw(DEFAULT_CONFIGDATA_FIELD, data);
 	}
 
 	@Override
 	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		converter.writeXspFile(file, getFileData());
+		converter.writeXspFile(getFileData(), file);
 	}
 
 	@Override
@@ -65,4 +77,13 @@ public final class CustomControl extends AbstractXspResource implements org.open
 		setFileData(converter.readXspFile(file));
 	}
 
+	@Override
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		converter.writeXspFile(getFileData(), os);
+	}
+
+	@Override
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		setFileData(converter.readXspFile(is));
+	}
 }

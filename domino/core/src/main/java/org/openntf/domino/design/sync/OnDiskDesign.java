@@ -102,6 +102,14 @@ public class OnDiskDesign extends OnDiskAbstract<DesignBase> {
 		return ret;
 	}
 
+	public static String getOnDiskPath(final DesignBase design) {
+		String folder = design.getMapping().getOnDiskFolder();
+		if (folder.length() == 0) {
+			return OnDiskDesign.getOnDiskName(design);
+		}
+		return folder + "/" + OnDiskDesign.getOnDiskName(design);
+	}
+
 	public static String getKey(final DesignBase design) {
 		return (design.getClass().getName() + ":" + getOnDiskName(design)).toLowerCase();
 	}

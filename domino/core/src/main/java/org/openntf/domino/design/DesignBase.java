@@ -18,6 +18,8 @@ package org.openntf.domino.design;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -111,6 +113,18 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	public void exportDesign(DxlConverter dxlConverter, File file) throws IOException;
 
 	/**
+	 * Exports the design to file by using the dxlConverter
+	 * 
+	 * @param dxlConverter
+	 *            the DxlConverter that converts the file data in a "friendly" format. (e.g. gitFriendly)
+	 * @param outputStream
+	 *            the OutputStream
+	 * @throws IOException
+	 *             if an IO-Error occurs
+	 */
+	public void exportDesign(DxlConverter dxlConverter, OutputStream outputStream) throws IOException;
+
+	/**
 	 * Imports the design from file by using the dxlConverter
 	 * 
 	 * @param dxlConverter
@@ -121,6 +135,18 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	 *             if an IO-Error occurs
 	 */
 	public void importDesign(DxlConverter dxlConverter, File file) throws IOException;
+
+	/**
+	 * Imports the design from file by using the dxlConverter
+	 * 
+	 * @param dxlConverter
+	 *            the DxlConverter that converts the file data back.
+	 * @param inputStream
+	 *            the inputStream
+	 * @throws IOException
+	 *             if an IO-Error occurs
+	 */
+	public void importDesign(DxlConverter dxlConverter, InputStream inputStream) throws IOException;
 
 	/**
 	 * Gets the note id.
@@ -141,7 +167,8 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * Sets the universal id.
 	 * 
-	 * @return the universal id
+	 * @param unid
+	 *            the universal id
 	 */
 	public void setUniversalID(String unid);
 
@@ -153,12 +180,38 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	@Override
 	public org.openntf.domino.Document getDocument();
 
+	/**
+	 * Returns the item names
+	 * 
+	 * @return the item names
+	 */
 	public Collection<String> getItemNames();
 
+	/**
+	 * <code>TRUE</code> if this is a private element. <b>ATTENTION:</b> If the designindex is read with NAPI, you cannot access private
+	 * elements.
+	 * 
+	 * @return true if the element is private
+	 */
 	public boolean isPrivate();
 
+	/**
+	 * <code>TRUE</code> if this is the default element
+	 * 
+	 * @return true if the element is a default element
+	 */
 	boolean isDefault();
 
+	/**
+	 * Returns the mapping of this DesignBase
+	 * 
+	 * @return the mapping
+	 */
 	public DesignFactory getMapping();
+
+	/**
+	 * Frees up memory
+	 */
+	void flush();
 
 }

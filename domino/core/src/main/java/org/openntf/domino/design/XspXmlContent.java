@@ -119,8 +119,6 @@ public class XspXmlContent {
 				container_.setFileData(xml_.getXml().getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
 				DominoUtils.handleException(e);
-			} catch (IOException e) {
-				DominoUtils.handleException(e);
 			}
 			xml_ = null; // CHECKME: good idea to set to null?
 		}

@@ -2,6 +2,7 @@ package org.openntf.domino.design.sync;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 
 import javax.xml.transform.Transformer;
@@ -26,11 +27,20 @@ public class GitFriendlyDxlConverter extends DefaultDxlConverter {
 	@Override
 	public void writeDesignXML(final XMLDocument dxl, final File file) throws IOException {
 		writeXml(dxl, exportTransformer, file);
+	}
 
+	@Override
+	public void writeDesignXML(final XMLDocument dxl, final OutputStream os) throws IOException {
+		writeXml(dxl, exportTransformer, os);
 	}
 
 	@Override
 	public void writeMetaXML(final XMLDocument dxl, final File metaFile) throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void writeMetaXML(final XMLDocument dxl, final OutputStream metaFile) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 

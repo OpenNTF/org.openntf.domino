@@ -18,6 +18,8 @@ package org.openntf.domino.design.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.openntf.domino.design.DxlConverter;
 
@@ -32,4 +34,7 @@ public interface HasMetadata {
 
 	void importMeta(DxlConverter converter, File file) throws IOException;
 
+	void exportMeta(DxlConverter converter, OutputStream os) throws IOException;
+
+	void importMeta(DxlConverter converter, InputStream is) throws IOException;
 }

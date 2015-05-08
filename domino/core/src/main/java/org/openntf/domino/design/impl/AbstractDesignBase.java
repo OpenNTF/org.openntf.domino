@@ -19,6 +19,8 @@ package org.openntf.domino.design.impl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -87,6 +89,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public void init(final Database database) {
 		database_ = database;
+	}
+
+	/**
+	 * Load an empty teemplate
+	 */
+	protected void loadTemplate() {
 		loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
 	}
 
@@ -191,7 +199,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		case RAWNOTE:
 			return "true".equals(getDocumentElement().getAttribute("private"));
 		default:
-			return document_.isPrivate();
+			return getDocument().isPrivate();
 
 		}
 	}
@@ -208,7 +216,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		case RAWNOTE:
 			return "true".equals(getDocumentElement().getAttribute("default"));
 		default:
-			return document_.isDefault();
+			return getDocument().isDefault();
 		}
 	}
 
@@ -434,9 +442,32 @@ public abstract class AbstractDesignBase implements DesignBase {
 			exporter.setOutputDOCTYPE(false);
 			exporter.setForceNoteFormat(true);
 			exporter.setRichTextOption(RichTextOption.RAW);
-			converter.writeTextFile(doExport(exporter), file);
+			PrintWriter pw = new PrintWriter(file);
+			try {
+				pw.write(doExport(exporter));
+			} finally {
+				pw.close();
+			}
 		} else {
 			converter.writeDesignXML(getDxl(), file);
+		}
+	}
+
+	@Override
+	public void exportDesign(final DxlConverter converter, final OutputStream outputStream) throws IOException {
+		if (converter.isRawExportEnabled()) {
+			DxlExporter exporter = getAncestorSession().createDxlExporter();
+			exporter.setOutputDOCTYPE(false);
+			exporter.setForceNoteFormat(true);
+			exporter.setRichTextOption(RichTextOption.RAW);
+			PrintWriter pw = new PrintWriter(outputStream);
+			try {
+				pw.write(doExport(exporter));
+			} finally {
+				pw.close();
+			}
+		} else {
+			converter.writeDesignXML(getDxl(), outputStream);
 		}
 	}
 
@@ -450,6 +481,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 		checkDxlFormat();
 	}
 
+	@Override
+	public void importDesign(final DxlConverter converter, final InputStream inputStream) throws IOException {
+		dxl_ = converter.readDesignXML(inputStream);
+		checkDxlFormat();
+	}
+
 	/**
 	 * Creates or updates a meta file.
 	 * 
@@ -459,6 +496,17 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final void exportMeta(final DxlConverter converter, final File metaFile) throws IOException {
 		converter.writeMetaXML(getDxl(), metaFile);
+	}
+
+	/**
+	 * Creates or updates a meta file.
+	 * 
+	 * @param metaFile
+	 *            The file that should be written.
+	 * 
+	 */
+	public final void exportMeta(final DxlConverter converter, final OutputStream os) throws IOException {
+		converter.writeMetaXML(getDxl(), os);
 	}
 
 	/**
@@ -476,6 +524,21 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 	}
 
+	/**
+	 * Reads the content of a meta file into the dxl content of this Design Element.
+	 * 
+	 * @param metaFile
+	 *            The file that should be read.
+	 */
+	public final void importMeta(final DxlConverter converter, final InputStream is) throws IOException {
+		if (is != null) {
+			dxl_ = converter.readMetaXML(is);
+			checkDxlFormat();
+		} else {
+			loadDxl(getClass().getResourceAsStream(getClass().getSimpleName() + ".xml"));
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.openntf.domino.design.DesignBase#reattach(org.openntf.domino.Database)
@@ -483,6 +546,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public final void reattach(final Database database) {
 		database_ = database;
+		document_ = null;
 	}
 
 	/**
@@ -494,7 +558,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 		database_ = document.getAncestorDatabase();
 		universalId_ = document.getUniversalID(); // we must save the UNID. because NoteID may change on various instances
 		document_ = document;
-		dxl_ = null;
+		flush();
+	}
+
+	/**
+	 * Frees up memory
+	 */
+	@Override
+	public void flush() {
+		dxl_ = null; // Free memory
+		dxlFormat_ = DxlFormat.NONE;
 	}
 
 	/* (non-Javadoc)
@@ -523,8 +596,17 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public final Document getDocument() {
+		if (document_ != null && !document_.isDead()) {
+			if (document_.getUniversalID().equals(universalId_)) {
+				return document_;
+			}
+		}
+		if (database_ == null) {
+			return null;
+		}
 		if (!StringUtil.isEmpty(universalId_)) {
-			return database_.getDocumentByUNID(universalId_);
+			document_ = database_.getDocumentByUNID(universalId_);
+			return document_;
 		}
 		return null;
 	}
@@ -573,7 +655,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 			}
 			return "";
 		default:
-			return document_.getNoteID();
+			return getDocument().getNoteID();
 		}
 	}
 
@@ -584,13 +666,17 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	protected final XMLDocument getDxl() {
 		if (dxl_ == null) {
-			DxlExporter exporter = getAncestorSession().createDxlExporter();
-			exporter.setOutputDOCTYPE(false);
-			exporter.setForceNoteFormat(enforceRawFormat());
+			if (getDocument() == null) { // a new DesignNote
+				loadTemplate();
+			} else {
+				DxlExporter exporter = getAncestorSession().createDxlExporter();
+				exporter.setOutputDOCTYPE(false);
+				exporter.setForceNoteFormat(enforceRawFormat());
 
-			// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
-			String xml = doExport(exporter);
-			loadDxl(xml);
+				// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
+				String xml = doExport(exporter);
+				loadDxl(xml);
+			}
 		}
 		return dxl_;
 	}
@@ -603,7 +689,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 * @return the DXL-String
 	 */
 	protected String doExport(final DxlExporter exporter) {
-		return exporter.exportDxl(document_);
+		return exporter.exportDxl(getDocument());
 	}
 
 	/**
@@ -785,7 +871,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final String getItemValueString(final String itemName) {
 		if (dxlFormat_ == DxlFormat.NONE)
-			return document_.getItemValueString(itemName);
+			return getDocument().getItemValueString(itemName);
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {
 			node = node.selectSingleNode(".//number | .//text");
@@ -808,7 +894,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		StringBuffer sb = new StringBuffer();
 
 		if (dxlFormat_ == DxlFormat.NONE) {
-			for (Object value : document_.getItemValue(itemName)) {
+			for (Object value : getDocument().getItemValue(itemName)) {
 				if (sb.length() > 0)
 					sb.append(delimiter);
 				sb.append(value);
@@ -855,7 +941,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final List<Object> getItemValue(final String itemName) {
 		if (dxlFormat_ == DxlFormat.NONE)
-			return document_.getItemValue(itemName);
+			return getDocument().getItemValue(itemName);
 		List<Object> result = new ArrayList<Object>();
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {
@@ -880,7 +966,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	public final List<String> getItemValueStrings(final String itemName) {
 		if (dxlFormat_ == DxlFormat.NONE)
-			return document_.getItemValues(itemName, String.class);
+			return getDocument().getItemValues(itemName, String.class);
 		List<String> result = new ArrayList<String>();
 		XMLNode node = getDxlNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 		if (node != null) {
