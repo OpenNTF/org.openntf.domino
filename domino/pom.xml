@@ -35,7 +35,8 @@
 		 -->
 		 <!-- Note: This version is self-built -->
 		 <javolution-version>6.1.0-ODA-SNAPSHOT</javolution-version>
-		 <skip-tests>false</skip-tests>
+		 <skip.tests>false</skip.tests>
+		 <domino.installdir></domino.installdir>
 	</properties>
 	
 	<repositories>
@@ -118,7 +119,7 @@
 				<module>updatesite</module>
 			</modules>
 			<properties>
-				 <skip-tests>true</skip-tests>
+				 <skip.tests>true</skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -130,7 +131,7 @@
 				<module>updatesite</module>
 			</modules>
 			<properties>
-				 <skip-tests>true</skip-tests>
+				 <skip.tests>true</skip.tests>
 			</properties>
 		</profile>
 		
@@ -225,7 +226,16 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
 				<configuration>
-					<skip>${skip-tests}</skip>
+					<skip>${skip.tests}</skip>
+					<argLine>-Xms512m -Xmx512m</argLine>
+					<!--
+					-Dnotes.binary=${domino_install} -Djava.library.path=${domino_install} -Djava.ext.dirs=${domino_
+					install}\jvm\lib\ext\;${domino_install}\ndext; -Djava.compiler=jitc -Dnotes.init.jvm1 -Xbootclasspath/a:${domino_install}\jvm\lib\tools.jar -Xdisablejavadump -Xrs:all -Xnoagent -Xdebug
+					<systemPropertyVariables>
+						<java.library.path>BLABLABLA</java.library.path>
+					</systemPropertyVariables>
+					-->
+					<workingDirectory>${domino.installdir}</workingDirectory>
 				</configuration>
 			</plugin>
 			

@@ -75,8 +75,23 @@ public abstract class AbstractJUnitRunner extends BlockJUnit4ClassRunner {
 		try {
 			startUp();
 		} catch (UnsatisfiedLinkError e) {
-			System.err.println("Did not find notes-binaries in java.library.path = " + System.getProperty("java.library.path"));
-			System.err.println("Please add '-Djava.library.path=/your/domino/dir' as VM argument");
+			System.err.println();
+			System.err.println();
+			System.err.println("        #==========================================================================#");
+			System.err.println("        # Did not find notes-binaries. This means you cannot access Domino-Objects #");
+			System.err.println("        # Please read the instructions on                                          #");
+			System.err.println("        # https://github.com/OpenNTF/org.openntf.domino/wiki/Configuring-JUnit     #");
+			System.err.println("        #==========================================================================#");
+			System.err.println();
+			System.err.println("Search path for binaries: " + System.getProperty("java.library.path"));
+			System.err.println("Waiting 30 seconds, so you can read the message.");
+			try {
+				Thread.sleep(30000); // wait 30 seconds, so hopefully everyone should notice that message
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			//System.err.println("Please add '-Djava.library.path=/your/domino/dir' as VM argument");
 			Description desc = Description.createSuiteDescription(getClass());
 			notifier.fireTestFailure(new Failure(desc, e));
 			return;

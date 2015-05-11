@@ -13,28 +13,19 @@
 	
 	<name>OpenNTF Domino Aggregator</name>
 
-	<properties>
-		<installedJavaApi>${user.home}/.m2/repository/com/ibm/notes/java.api</installedJavaApi>
-	</properties>
-
 	<profiles>
-		<profile>
-			<id>complete</id>
-			<activation>
-				<file>
-					<missing>${installedJavaApi}</missing>
-				</file>
-			</activation>
-			<modules>
-				<module>thirdparty</module>
-				<module>domino</module>
-			</modules>
-		</profile>
 		<profile>
 			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<modules>
+			    <module>thirdparty</module>
+				<module>domino</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>fast</id>
 			<modules>
 				<module>domino</module>
 			</modules>
