@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javolution.util.function.Equality;
-
 import org.openntf.domino.Document;
 
 import com.google.common.hash.BloomFilter;
@@ -37,9 +35,9 @@ public class NoteListUnique extends NoteList {
 		super(cache);
 	}
 
-	public NoteListUnique(final DbCache cache, final Equality<NoteCoordinate> compare) {
-		super(cache, compare);
-	}
+	//	public NoteListUnique(final DbCache cache, final Equality<NoteCoordinate> compare) {
+	//		super(cache, compare);
+	//	}
 
 	protected BloomFilter<byte[]> getFilter() {
 		return getFilter(filterSize_);

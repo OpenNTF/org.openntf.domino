@@ -64,7 +64,7 @@ public class Xots {
 	/**
 	 * Start the XOTS with the given Executor
 	 */
-	public static synchronized void start(final AbstractDominoExecutor executor) {
+	public static synchronized void start(final AbstractDominoExecutor executor) throws IllegalStateException {
 		if (isStarted())
 			throw new IllegalStateException("XotsDaemon is already started");
 		Factory.println(Xots.class, "Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");

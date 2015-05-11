@@ -1,6 +1,7 @@
 package org.openntf.domino.graph2.annotations;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.openntf.domino.graph2.DVertex;
 
@@ -31,6 +32,44 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 			break;
 		case IN:
 			result = framedGraph.addEdge(null, newVertex, vertex, incidence.label());
+			break;
+		case BOTH:
+			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private int countEdges(final IncidenceUnique incidence, final Vertex vertex) {
+		int result = 0;
+		switch (incidence.direction()) {
+		case OUT:
+			if (vertex instanceof DVertex) {
+				result = ((DVertex) vertex).getOutEdgeCount(incidence.label());
+			} else {
+				Iterable<Edge> it = vertex.getEdges(Direction.OUT, incidence.label());
+				if (it instanceof Collection) {
+					result = ((Collection) it).size();
+				} else {
+					for (Edge e : it) {
+						result++;
+					}
+				}
+			}
+			break;
+		case IN:
+			if (vertex instanceof DVertex) {
+				result = ((DVertex) vertex).getInEdgeCount(incidence.label());
+			} else {
+				Iterable<Edge> it = vertex.getEdges(Direction.IN, incidence.label());
+				if (it instanceof Collection) {
+					result = ((Collection) it).size();
+				} else {
+					for (Edge e : it) {
+						result++;
+					}
+				}
+			}
 			break;
 		case BOTH:
 			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
@@ -109,6 +148,8 @@ public class IncidenceUniqueHandler implements AnnotationHandler<IncidenceUnique
 			if (resultEdge != null) {
 				return framedGraph.frame(resultEdge, method.getReturnType());
 			}
+		} else if (AnnotationUtilities.isCountMethod(method)) {
+			return countEdges(incidence, vertex);
 		} else if (ClassUtilities.isAddMethod(method)) {
 			Vertex newVertex;
 			Edge resultEdge = null;

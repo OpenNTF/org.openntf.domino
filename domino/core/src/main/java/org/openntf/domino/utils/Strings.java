@@ -309,6 +309,19 @@ public enum Strings {
 	}
 
 	/**
+	 * NTF: DO NOT REMOVE. WHILE THIS SEEMS REDUNDANT, SSJS/EL WILL NOT FIND A CHARSEQUENCE Determines whether a String consists only of
+	 * "White Spaces" (or is null or empty)
+	 * 
+	 * @param cs
+	 *            The String to test
+	 * 
+	 * @return true if it does
+	 */
+	public static boolean isBlankString(final String str) {
+		return isBlankString((CharSequence) str);
+	}
+
+	/**
 	 * Determines whether a CharSequence consists only of "White Spaces" (or is null or empty)
 	 * 
 	 * @param cs
@@ -1099,6 +1112,10 @@ public enum Strings {
 		}
 
 		return false;
+	}
+
+	public String asString(final Object object, final String ifNull) {
+		return object == null ? ifNull : TypeUtils.toString(object);
 	}
 
 }

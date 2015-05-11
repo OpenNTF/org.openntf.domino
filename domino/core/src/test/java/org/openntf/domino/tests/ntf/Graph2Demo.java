@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
-import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -30,11 +29,9 @@ import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @SuppressWarnings("unused")
@@ -350,6 +347,47 @@ public class Graph2Demo implements Runnable {
 		System.gc();
 	}
 
+	private FramedTransactionalGraph<DGraph> setupGraph() {
+		DElementStore crewStore = new DElementStore();
+		crewStore.setStoreKey(crewId);
+		crewStore.addType(Crew.class);
+		DElementStore movieStore = new DElementStore();
+		movieStore.setStoreKey(movieId);
+		movieStore.addType(Movie.class);
+		DElementStore characterStore = new DElementStore();
+		characterStore.setStoreKey(characterId);
+		characterStore.addType(Character.class);
+		DElementStore edgeStore = new DElementStore();
+		edgeStore.addType(DirectedBy.class);
+		edgeStore.addType(AppearsIn.class);
+		edgeStore.addType(Kills.class);
+		edgeStore.addType(Starring.class);
+		edgeStore.addType(Portrays.class);
+		edgeStore.addType(Spawns.class);
+		edgeStore.setStoreKey(edgeId);
+		DElementStore usersStore = new DElementStore();
+		usersStore.setStoreKey(nabId);
+		usersStore.setProxyStoreKey(usersId);
+		usersStore.addType(User.class);
+
+		SocialStore socialStore = new SocialStore();
+		socialStore.setStoreKey(socialId);
+
+		DConfiguration config = new DConfiguration();
+		graph = new DGraph(config);
+		config.addElementStore(crewStore);
+		config.addElementStore(movieStore);
+		config.addElementStore(characterStore);
+		config.addElementStore(edgeStore);
+		config.addElementStore(usersStore);
+		config.addElementStore(socialStore);
+		config.setDefaultElementStore(edgeStore.getStoreKey());
+
+		DFramedGraphFactory factory = new DFramedGraphFactory(config);
+		FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
+		return framedGraph;
+	}
+
 	public void readGraphBack() {
 		long testStartTime = System.nanoTime();
 		marktime = System.nanoTime();
@@ -360,38 +398,10 @@ public class Graph2Demo implements Runnable {
 
 			timelog("Beginning Star Wars re-read test...");
 
-			DElementStore crewStore = new DElementStore();
-			crewStore.setStoreKey(crewId);
-			crewStore.addType(Crew.class);
-			DElementStore movieStore = new DElementStore();
-			movieStore.setStoreKey(movieId);
-			movieStore.addType(Movie.class);
-			DElementStore characterStore = new DElementStore();
-			characterStore.setStoreKey(characterId);
-			characterStore.addType(Character.class);
-			DElementStore edgeStore = new DElementStore();
-			edgeStore.setStoreKey(edgeId);
-			DElementStore usersStore = new DElementStore();
-			usersStore.setStoreKey(nabId);
-			usersStore.setProxyStoreKey(usersId);
-			usersStore.addType(User.class);
-
-			DConfiguration config = new DConfiguration();
-			graph = new DGraph(config);
-			config.addElementStore(crewStore);
-			config.addElementStore(movieStore);
-			config.addElementStore(characterStore);
-			config.addElementStore(edgeStore);
-			config.addElementStore(usersStore);
-			config.setDefaultElementStore(edgeStore.getStoreKey());
-
-			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = config.getModule();
-			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
-			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
-
-			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(Long.toHexString(usersStore.getStoreKey()), ntfUnid);
-			User ntfUser = framedGraph.getVertex(nc, User.class);
+			FramedTransactionalGraph<DGraph> framedGraph = setupGraph();
+			//
+			//			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(Long.toHexString(usersStore.getStoreKey()), ntfUnid);
+			User ntfUser = framedGraph.getVertex("Nathan Freeman", User.class);
 
 			Movie newhopeMovie = framedGraph.getVertex("Star Wars", Movie.class);
 			Movie empireMovie = framedGraph.getVertex("The Empire Strikes Back", Movie.class);
@@ -497,37 +507,8 @@ public class Graph2Demo implements Runnable {
 		try {
 			timelog("Beginning Star Wars graph test...");
 
-			DElementStore crewStore = new DElementStore();
-			crewStore.setStoreKey(crewId);
-			crewStore.addType(Crew.class);
-			DElementStore movieStore = new DElementStore();
-			movieStore.setStoreKey(movieId);
-			movieStore.addType(Movie.class);
-			DElementStore characterStore = new DElementStore();
-			characterStore.setStoreKey(characterId);
-			characterStore.addType(Character.class);
-			DElementStore edgeStore = new DElementStore();
-			edgeStore.setStoreKey(edgeId);
-			DElementStore usersStore = new DElementStore();
-			usersStore.setStoreKey(nabId);
-			usersStore.setProxyStoreKey(usersId);
-			usersStore.addType(User.class);
+			FramedTransactionalGraph<DGraph> framedGraph = setupGraph();
 
-			SocialStore socialStore = new SocialStore();
-			socialStore.setStoreKey(socialId);
-
-			DConfiguration config = new DConfiguration();
-			graph = new DGraph(config);
-			config.addElementStore(crewStore);
-			config.addElementStore(movieStore);
-			config.addElementStore(characterStore);
-			config.addElementStore(edgeStore);
-			config.addElementStore(usersStore);
-			config.addElementStore(socialStore);
-			config.setDefaultElementStore(edgeStore.getStoreKey());
-
-			DFramedGraphFactory factory = new DFramedGraphFactory(config);
-			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 			User nathan = framedGraph.addVertex("Nathan Freeman", User.class);
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);

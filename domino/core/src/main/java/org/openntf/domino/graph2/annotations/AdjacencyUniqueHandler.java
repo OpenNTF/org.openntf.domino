@@ -1,6 +1,7 @@
 package org.openntf.domino.graph2.annotations;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.openntf.domino.graph2.DVertex;
 
@@ -75,6 +76,8 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 		} else if (ClassUtilities.isRemoveMethod(method)) {
 			removeEdges(adjacency.direction(), adjacency.label(), vertex, ((VertexFrame) arguments[0]).asVertex(), framedGraph);
 			return null;
+		} else if (AnnotationUtilities.isCountMethod(method)) {
+			return countEdges(adjacency, vertex);
 		} else if (ClassUtilities.isSetMethod(method)) {
 			removeEdges(adjacency.direction(), adjacency.label(), vertex, null, framedGraph);
 			if (ClassUtilities.acceptsIterable(method)) {
@@ -107,6 +110,44 @@ public class AdjacencyUniqueHandler implements AnnotationHandler<AdjacencyUnique
 			break;
 		default:
 			break;
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private int countEdges(final AdjacencyUnique adjacency, final Vertex vertex) {
+		int result = 0;
+		switch (adjacency.direction()) {
+		case OUT:
+			if (vertex instanceof DVertex) {
+				result = ((DVertex) vertex).getOutEdgeCount(adjacency.label());
+			} else {
+				Iterable<Edge> it = vertex.getEdges(Direction.OUT, adjacency.label());
+				if (it instanceof Collection) {
+					result = ((Collection) it).size();
+				} else {
+					for (Edge e : it) {
+						result++;
+					}
+				}
+			}
+			break;
+		case IN:
+			if (vertex instanceof DVertex) {
+				result = ((DVertex) vertex).getInEdgeCount(adjacency.label());
+			} else {
+				Iterable<Edge> it = vertex.getEdges(Direction.IN, adjacency.label());
+				if (it instanceof Collection) {
+					result = ((Collection) it).size();
+				} else {
+					for (Edge e : it) {
+						result++;
+					}
+				}
+			}
+			break;
+		case BOTH:
+			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
 		}
 		return result;
 	}

@@ -4,17 +4,18 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 import javolution.util.FastSortedTable;
-import javolution.util.FastTable;
 import javolution.util.function.Equality;
 
 public class NoteList implements List<NoteCoordinate>, Externalizable {
-	protected FastTable<NoteCoordinate> delegate_;
+	protected List<NoteCoordinate> delegate_;
 	protected DbCache localCache_ = null;
 
 	protected static class NoteComparator implements Equality<NoteCoordinate> {
@@ -50,22 +51,23 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	public NoteList() {
-		delegate_ = new FastTable<NoteCoordinate>();
+		delegate_ = new ArrayList<NoteCoordinate>();
 	}
 
 	public NoteList(final boolean concurrent) {
-		delegate_ = new FastTable<NoteCoordinate>().atomic();
+		delegate_ = Collections.synchronizedList(new ArrayList<NoteCoordinate>());
 	}
 
 	public NoteList(final DbCache cache) {
 		localCache_ = cache;
-		delegate_ = new FastTable<NoteCoordinate>();
+		delegate_ = new ArrayList<NoteCoordinate>();
 	}
 
-	public NoteList(final DbCache cache, final Equality<NoteCoordinate> compare) {
-		localCache_ = cache;	//NTF this doesn't do anything yet
-		delegate_ = new FastSortedTable<NoteCoordinate>(compare);
-	}
+	//FIXME NTF: find out what the correct sorted list implementation is
+	//	public NoteList(final DbCache cache, final Equality<NoteCoordinate> compare) {
+	//		localCache_ = cache;	//NTF this doesn't do anything yet
+	//		delegate_ = new ArrayList<NoteCoordinate>(compare);
+	//	}
 
 	public void sortBy(final String key) {
 		NoteComparator comp = new NoteComparator(key);
@@ -177,7 +179,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	@Override
 	public List<NoteCoordinate> subList(final int fromIndex, final int toIndex) {
 		//return delegate_.subList(fromIndex, toIndex);
-		return delegate_.subTable(fromIndex, toIndex);
+		return delegate_.subList(fromIndex, toIndex);
 	}
 
 	@Override

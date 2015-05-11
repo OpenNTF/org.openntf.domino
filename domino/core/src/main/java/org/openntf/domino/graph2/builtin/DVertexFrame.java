@@ -13,8 +13,10 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeField("form")
+@TypeValue("vertexFrame")
 @JavaHandlerClass(DVertexFrame.DVertexFrameImpl.class)
 public interface DVertexFrame extends Editable {
 	@TypedProperty(value = "@CreatedDate", derived = true)

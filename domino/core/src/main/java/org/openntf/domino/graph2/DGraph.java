@@ -82,6 +82,8 @@ com.tinkerpop.blueprints.TransactionalGraph {
 
 	public DElementStore findElementStore(Object delegateKey);
 
+	public Element getElement(Object id);
+
 	public DElementStore getDefaultElementStore();
 
 	public DEdgeList getEdgesFromIds(Vertex source, final Set<String> set);

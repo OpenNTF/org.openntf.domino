@@ -64,6 +64,8 @@ public interface DElementStore extends Externalizable {
 
 	public void removeElementDelegate(Element element);
 
+	public Element getElement(final Object id) throws IllegalStateException;
+
 	public Set<Vertex> getCachedVertices();
 
 	public Set<Edge> getCachedEdges();
@@ -79,5 +81,7 @@ public interface DElementStore extends Externalizable {
 	public Iterable<Vertex> getVertices(String key, Object value);
 
 	public Iterable<Edge> getEdges(String key, Object value);
+
+	public void uncache(Element element);
 
 }

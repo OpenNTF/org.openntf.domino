@@ -30,7 +30,12 @@ public enum ODAPlatform {
 	// TODO: create an OSGI-command
 	public static final boolean _debug = false;
 	public static final boolean debugAll = false;
+	public static boolean isStarted_ = false;
 	private static int xotsStopDelay;
+
+	public synchronized static boolean isStarted() {
+		return isStarted_;
+	}
 
 	/**
 	 * Start up the ODAPlatform.
@@ -47,40 +52,47 @@ public enum ODAPlatform {
 	 * <code>tell http osgi oda start</code><br>
 	 * on the server console.
 	 */
-	public static void start() {
-		// Here is all the init/term stuff done
-		ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
-		Factory.startup();
-		// Setup the named factories 4 XPages
-		Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
-		verifyIGetEntryByKey();
-		ServerConfiguration cfg = Configuration.getServerConfiguration();
-		int xotsTasks = cfg.getXotsTasks();
-		// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
-		xotsStopDelay = cfg.getXotsStopDelay();
-		if (xotsTasks > 0) {
-			DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
-			Xots.start(executor);
-
-			List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
-
-			for (Object tasklet : tasklets) {
-				if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
-					@SuppressWarnings("unused")
-					ClassLoader cl = tasklet.getClass().getClassLoader();
-
-					Factory.println("XOTS", "Registering tasklet " + tasklet);
-
-					if (tasklet instanceof Callable<?>) {
-						Xots.getService().submit((Callable<?>) tasklet);
-					} else {
-						Xots.getService().submit((Runnable) tasklet);
+	public synchronized static void start() {
+		if (!isStarted()) {
+			isStarted_ = true;
+			// Here is all the init/term stuff done
+			ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
+			Factory.startup();
+			// Setup the named factories 4 XPages
+			Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
+			verifyIGetEntryByKey();
+			ServerConfiguration cfg = Configuration.getServerConfiguration();
+			int xotsTasks = cfg.getXotsTasks();
+			// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
+			xotsStopDelay = cfg.getXotsStopDelay();
+			if (xotsTasks > 0) {
+				DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
+				try {
+					Xots.start(executor);
+				} catch (IllegalStateException e) {
+					if (isDebug()) {
+						throw e;
 					}
 				}
+				List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
+
+				for (Object tasklet : tasklets) {
+					if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
+						@SuppressWarnings("unused")
+						ClassLoader cl = tasklet.getClass().getClassLoader();
+
+						Factory.println("XOTS", "Registering tasklet " + tasklet);
+
+						if (tasklet instanceof Callable<?>) {
+							Xots.getService().submit((Callable<?>) tasklet);
+						} else {
+							Xots.getService().submit((Runnable) tasklet);
+						}
+					}
+				}
+
 			}
-
 		}
-
 	}
 
 	/**
@@ -90,12 +102,14 @@ public enum ODAPlatform {
 	 * <code>tell http osgi oda stop</code><br>
 	 * on the server console.
 	 */
-	public static void stop() {
-		if (Xots.isStarted()) {
-			Xots.stop(xotsStopDelay);
+	public synchronized static void stop() {
+		if (isStarted()) {
+			if (Xots.isStarted()) {
+				Xots.stop(xotsStopDelay);
+			}
+			Factory.shutdown();
+			isStarted_ = false;
 		}
-		Factory.shutdown();
-
 	}
 
 	/**

@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,6 +74,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	public Features getFeatures() {
 		// TODO Implement this
 		return null;
+	}
+
+	@Override
+	public Element getElement(final Object id) {
+		if (id instanceof NoteCoordinate) {
+
+		}
+		return findElementStore(id).getElement(id);
 	}
 
 	@Override
@@ -182,13 +191,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public void commit() {
 		GraphTransaction txn = localTxn.get();
-		for (Element elem : txn) {
+		Iterator<Element> it = txn.iterator();
+		while (it.hasNext()) {
+			Element elem = it.next();
 			if (elem instanceof DElement) {
 				DElement delem = (DElement) elem;
 				delem.applyChanges();
+				DElementStore store = findElementStore(elem.getId());
+				store.uncache(delem);
 			}
+			it.remove();
 		}
-
 	}
 
 	@Override

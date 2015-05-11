@@ -51,7 +51,9 @@ public interface Rateable extends DVertexFrame {
 					count++;
 					total += rate.getRating();
 				}
-				avgRating_ = total / count;
+				if (count > 0) {
+					avgRating_ = total / count;
+				}
 			}
 			return avgRating_;
 		}

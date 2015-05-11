@@ -65,6 +65,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
+	public void uncache(final Element elem) {
+		elementCache_.remove(elem);
+	}
+
+	@Override
 	public org.openntf.domino.graph2.DConfiguration getConfiguration() {
 		return configuration_;
 	}
@@ -363,6 +368,40 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		return null;
+	}
+
+	public Element getElement(final Object id) throws IllegalStateException {
+		Element result = null;
+		Element chk = getCachedElement(id, Element.class);
+		if (chk != null) {
+			result = chk;
+		} else {
+			Object localkey = localizeKey(id);
+
+			Map<String, Object> delegate = null;
+			try {
+				delegate = findElementDelegate(localkey, Element.class);
+			} catch (IllegalStateException ise) {
+
+			}
+			if (delegate != null) {
+				Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+				String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+				if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
+					DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
+					result = vertex;
+				} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+					DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
+					result = edge;
+				} else {
+					throw new IllegalStateException("Delegate for key " + id.toString() + " returned a " + delegate.getClass().getName()
+							+ " with a type identifier of " + strChk);
+				}
+				getElementCache().put(result.getId(), result);
+				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+			}
+		}
+		return result;
 	}
 
 	@Override

@@ -1,11 +1,13 @@
 package org.openntf.domino.graph2.impl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import javolution.util.FastMap;
-
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
@@ -14,6 +16,7 @@ import org.openntf.domino.utils.DominoUtils;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
@@ -21,7 +24,10 @@ import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedTransactionalGraph;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
+import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
 
@@ -119,24 +125,190 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return result;
 	}
 
+	public List<Map<String, Object>> toJsonableArray(final Iterable<EdgeFrame> edges) {
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		for (EdgeFrame edge : edges) {
+			result.add(toJsonableMap(edge));
+		}
+		return result;
+	}
+
+	public Map<String, Object> toJsonableMap(final VertexFrame frame, Iterable<String> properties) {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		result.put("@id", frame.asVertex().getId().toString());
+		result.put("@type", getTypeManager().resolve(frame).getName());
+		Class<?>[] interfaces = frame.getClass().getInterfaces();
+		boolean includeEdges = false;
+		if (interfaces.length > 0) {
+			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);
+			if (properties == null)
+				properties = crystals.keySet();
+			for (String property : properties) {
+				if (!property.equalsIgnoreCase("@edges")) {
+					Method crystal = crystals.get(property);
+					if (crystal != null) {
+						try {
+							Object raw = crystal.invoke(frame, (Object[]) null);
+							result.put(property, raw);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("No method found for key " + property);
+					}
+				} else {
+					includeEdges = true;
+				}
+			}
+			if (includeEdges) {
+				Map<String, Integer> edgeCounts = new LinkedHashMap<String, Integer>();
+				crystals = getTypeRegistry().getCounters(interfaces);
+				for (String key : crystals.keySet()) {
+					Method crystal = crystals.get(key);
+					if (crystal != null) {
+						try {
+							Object raw = crystal.invoke(frame, (Object[]) null);
+							if (raw instanceof Integer) {
+								edgeCounts.put(key, (Integer) raw);
+							} else {
+								System.out.println("Count method " + crystal.getName() + " on a frame of type "
+										+ frame.getClass().getName() + " returned a " + (raw == null ? "null" : raw.getClass().getName()));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("No method found for key " + key);
+					}
+				}
+
+				if (!edgeCounts.isEmpty()) {
+					result.put("@edges", edgeCounts);
+				}
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Object> toJsonableMap(final Object frame) {
+		if (frame == null)
+			return null;
+		if (frame instanceof VertexFrame) {
+			return toJsonableMap((VertexFrame) frame);
+		} else if (frame instanceof EdgeFrame) {
+			return toJsonableMap((EdgeFrame) frame);
+		} else {
+			throw new IllegalStateException("Object is neither a VertexFrame nor an EdgeFrame. It's a " + frame.getClass().getName());
+		}
+	}
+
 	public Map<String, Object> toJsonableMap(final VertexFrame frame) {
-		Map<String, Object> result = new FastMap<String, Object>();
-		result.put("id", frame.asVertex().getId());
-		result.put("type", getTypeManager().resolve(frame).getName());
+		return toJsonableMap(frame, null);
+	}
+
+	public Map<String, Object> toJsonableMap(final Class<? extends VertexFrame> vertexClass) {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		result.put("@name", vertexClass.getName());
+		result.put("@type", "Vertex");
+		TypeValue tv = vertexClass.getAnnotation(TypeValue.class);
+		if (tv != null) {
+			result.put("@typevalue", tv.value());
+		}
+		for (Method crystal : vertexClass.getMethods()) {
+			TypedProperty tp = crystal.getAnnotation(TypedProperty.class);
+			if (tp != null) {
+
+			}
+			Property p = crystal.getAnnotation(Property.class);
+			if (p != null) {
+
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Object> toJsonableMap(final EdgeFrame frame, Iterable<String> properties, final Iterable<String> inProps,
+			final Iterable<String> outProps) {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		DEdge dedge = (DEdge) frame.asEdge();
+		Class<?> type = getTypeManager().resolve(frame);
+
+		result.put("@id", dedge.getId().toString());
+		result.put("@type", getTypeManager().resolve(frame).getName());
+
+		if (inProps == null) {
+			Map<String, Object> in = new LinkedHashMap<String, Object>();
+			in.put("@id", dedge.getVertexId(Direction.IN).toString());
+			Class<?> inType = getTypeRegistry().getInType(type);
+			if (inType == null) {
+				in.put("@type", "Vertex");
+			} else {
+				in.put("@type", inType.getName());
+			}
+			result.put("@in", in);
+		} else {
+			Method inMethod = getTypeRegistry().getIn(type);
+			if (inMethod != null) {
+				try {
+					Object raw = inMethod.invoke(frame, (Object[]) null);
+					if (raw instanceof VertexFrame) {
+						VertexFrame inFrame = (VertexFrame) raw;
+						Map<String, Object> in = toJsonableMap(inFrame, inProps);
+						result.put("@in", in);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("No in method found in Edge " + frame.getClass().getName());
+			}
+		}
+
+		if (outProps == null) {
+			Map<String, Object> out = new LinkedHashMap<String, Object>();
+			out.put("@id", dedge.getVertexId(Direction.OUT).toString());
+			Class<?> outType = getTypeRegistry().getOutType(type);
+			if (outType == null) {
+				out.put("@type", "Vertex");
+			} else {
+				out.put("@type", outType.getName());
+			}
+			result.put("@out", out);
+		} else {
+			Method outMethod = getTypeRegistry().getOut(type);
+			if (outMethod != null) {
+				try {
+					Object raw = outMethod.invoke(frame, (Object[]) null);
+					if (raw instanceof VertexFrame) {
+						VertexFrame outFrame = (VertexFrame) raw;
+						Map<String, Object> out = toJsonableMap(outFrame, outProps);
+						result.put("@out", out);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("No out method found in Edge " + frame.getClass().getName());
+			}
+		}
+
+		result.put("Label", dedge.getLabel());
 		Class<?>[] interfaces = frame.getClass().getInterfaces();
 		if (interfaces.length > 0) {
 			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);
-			for (String key : crystals.keySet()) {
-				Method crystal = crystals.get(key);
+			if (properties == null)
+				properties = crystals.keySet();
+			for (String property : properties) {
+				Method crystal = crystals.get(property);
 				if (crystal != null) {
 					try {
 						Object raw = crystal.invoke(frame, (Object[]) null);
-						result.put(key, raw);
+						result.put(property, raw);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				} else {
-					System.out.println("No method found for key " + key);
+					System.out.println("No method found for key " + property);
 				}
 			}
 		}
@@ -144,29 +316,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	public Map<String, Object> toJsonableMap(final EdgeFrame frame) {
-		Map<String, Object> result = new FastMap<String, Object>();
-		DEdge dedge = (DEdge) frame.asEdge();
-		result.put("id", dedge.getId());
-		result.put("type", getTypeManager().resolve(frame).getName());
-		result.put("inVertex", dedge.getVertexId(Direction.IN));
-		result.put("outVertex", dedge.getVertexId(Direction.OUT));
-		result.put("label", dedge.getLabel());
-		Class<?>[] interfaces = frame.getClass().getInterfaces();
-		if (interfaces.length > 0) {
-			Map<String, Method> crystals = getTypeRegistry().getPropertiesGetters(interfaces);
-			for (String key : crystals.keySet()) {
-				Method crystal = crystals.get(key);
-				if (crystal != null) {
-					try {
-						Object raw = crystal.invoke(frame, (Object[]) null);
-						result.put(key, raw);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		return result;
+		return toJsonableMap(frame, null, null, null);
+	}
+
+	public Map<String, Object> toJsonableMap(final EdgeFrame frame, final Iterable<String> properties) {
+		return toJsonableMap(frame, properties, null, null);
 	}
 
 	protected DTypeRegistry getTypeRegistry() {
@@ -231,10 +385,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		}
 		Vertex vertex = store.addVertex(id);
-		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
-			initializer.initElement(kind, this, vertex);
-		}
-		return this.frame(vertex, kind);
+		return frame(vertex, kind);
 	}
 
 	public <F> F getVertex(final Class<F> kind, final Object context, final Object... args) {
@@ -242,6 +393,32 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		org.openntf.domino.graph2.DElementStore store = base.findElementStore(kind);
 		Object id = store.getIdentity(kind, context, args);
 		return getVertex(id, kind);
+	}
+
+	public <F> F getElement(final Object id, final Class<F> kind) {
+		DGraph base = (DGraph) this.getBaseGraph();
+		org.openntf.domino.graph2.DElementStore store = null;
+		if (id instanceof NoteCoordinate) {
+			store = base.findElementStore(id);
+		} else {
+			String typeid = getTypedId(id);
+			if (typeid == null) {
+				store = base.findElementStore(kind);
+			} else {
+				store = base.findElementStore(typeid);
+			}
+		}
+		Element elem = store.getElement(id);
+		if (null == elem) {
+			return null;
+		}
+		if (elem instanceof Edge) {
+			return frame((Edge) elem, kind);
+		} else if (elem instanceof Vertex) {
+			return frame((Vertex) elem, kind);
+		} else {
+			throw new IllegalStateException("Key " + id.toString() + " returned an element of type " + elem.getClass().getName());
+		}
 	}
 
 	@Override
@@ -262,10 +439,32 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (null == vertex) {
 			return null;
 		}
-		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
-			initializer.initElement(kind, this, vertex);
+
+		return frame(vertex, kind);
+	}
+
+	@Override
+	public <F> F getEdge(final Object id, final Class<F> kind) {
+		DGraph base = (DGraph) this.getBaseGraph();
+		org.openntf.domino.graph2.DElementStore store = null;
+		if (id instanceof NoteCoordinate) {
+			store = base.findElementStore(id);
+		} else {
+			String typeid = getTypedId(id);
+			if (typeid == null) {
+				store = base.findElementStore(kind);
+			} else {
+				store = base.findElementStore(typeid);
+			}
 		}
-		return this.frame(vertex, kind);
+		Edge edge = store.getEdge(id);
+		if (null == edge) {
+			return null;
+		}
+		//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+		//			initializer.initElement(kind, this, edge);
+		//		}
+		return frame(edge, kind);
 	}
 
 	@Override
@@ -301,10 +500,10 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		((DEdge) edge).setLabel(label);
 		((DEdge) edge).setInVertex(inVertex);
 		((DEdge) edge).setOutVertex(outVertex);
-		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
-			initializer.initElement(kind, this, edge);
-		}
-		return this.frame(edge, kind);
+		//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+		//			initializer.initElement(kind, this, edge);
+		//		}
+		return frame(edge, kind);
 	}
 
 	@Override
@@ -319,6 +518,90 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		} else {
 			return null;
 		}
+	}
+
+	//	public <F> F initializeAndFrame(final Edge edge, final Class<F> kind) {
+	//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+	//			initializer.initElement(kind, this, edge);
+	//		}
+	//		return frame(edge, kind);
+	//	}
+	//
+	//	@Deprecated
+	//	public <F> F initializeAndFrame(final Edge edge, final Direction direction, final Class<F> kind) {
+	//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+	//			initializer.initElement(kind, this, edge);
+	//		}
+	//		return frame(edge, direction, kind);
+	//	}
+	//
+	//	public <F> F initializeAndFrame(final Vertex vertex, final Class<F> kind) {
+	//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+	//			initializer.initElement(kind, this, vertex);
+	//		}
+	//		return frame(vertex, kind);
+	//	}
+
+	@Override
+	public <F> F frame(final Edge edge, final Class<F> kind) {
+		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
+		DConfiguration config = (DConfiguration) this.getConfig();
+		config.getTypeManager().initElement(klazz, this, edge);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			if (!(initializer instanceof JavaFrameInitializer)) {
+				initializer.initElement(klazz, this, edge);
+			}
+		}
+		@SuppressWarnings("deprecation")
+		F result = super.frame(edge, Direction.OUT, klazz);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			if (initializer instanceof JavaFrameInitializer) {
+				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	@Deprecated
+	public <F> F frame(final Edge edge, final Direction direction, final Class<F> kind) {
+		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
+		DConfiguration config = (DConfiguration) this.getConfig();
+		config.getTypeManager().initElement(klazz, this, edge);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			if (!(initializer instanceof JavaFrameInitializer)) {
+				initializer.initElement(klazz, this, edge);
+			}
+		}
+		F result = super.frame(edge, direction, klazz);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			if (initializer instanceof JavaFrameInitializer) {
+				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public <F> F frame(final Vertex vertex, final Class<F> kind) {
+		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
+		DConfiguration config = (DConfiguration) this.getConfig();
+		DTypeManager manager = config.getTypeManager();
+		if (manager == null)
+			System.out.println("TypeManager is null!??!??! How?");
+		manager.initElement(klazz, this, vertex);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			if (!(initializer instanceof JavaFrameInitializer)) {
+				initializer.initElement(klazz, this, vertex);
+			}
+		}
+		F result = super.frame(vertex, klazz);
+		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+			if (initializer instanceof JavaFrameInitializer) {
+				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
+			}
+		}
+		return result;
 	}
 
 }

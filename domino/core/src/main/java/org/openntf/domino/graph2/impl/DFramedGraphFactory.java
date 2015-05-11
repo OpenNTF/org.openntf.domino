@@ -29,6 +29,7 @@ public class DFramedGraphFactory {
 
 	public DFramedGraphFactory(final DConfiguration configuration) {
 		configuration_ = configuration;
+		initConfiguration(configuration_);
 	}
 
 	/**
@@ -55,7 +56,12 @@ public class DFramedGraphFactory {
 	 */
 	protected <T extends Graph> FramedGraphConfiguration getConfiguration(final Class<T> requiredType, final T baseGraph) {
 		Graph configuredGraph = baseGraph;
-		DConfiguration config = getBaseConfig();
+		DConfiguration config;
+		if (baseGraph instanceof DGraph) {
+			config = (DConfiguration) ((DGraph) baseGraph).getConfiguration();
+		} else {
+			config = getBaseConfig();
+		}
 		if (modules == null) {
 			Module module = configuration_.getModule();
 			configuredGraph = module.configure(configuredGraph, config);
@@ -80,7 +86,14 @@ public class DFramedGraphFactory {
 	}
 
 	private DConfiguration getBaseConfig() {
-		DConfiguration config = new DConfiguration();
+		if (configuration_ == null) {
+			DConfiguration configuration_ = new DConfiguration();
+			initConfiguration(configuration_);
+		}
+		return configuration_;
+	}
+
+	private void initConfiguration(final DConfiguration config) {
 		config.addAnnotationHandler(new PropertyAnnotationHandler());
 		config.addMethodHandler(new TypedPropertyHandler());
 		config.addAnnotationHandler(new AdjacencyAnnotationHandler());
@@ -91,7 +104,6 @@ public class DFramedGraphFactory {
 		config.addAnnotationHandler(new RangeAnnotationHandler());
 		config.addAnnotationHandler(new InVertexAnnotationHandler());
 		config.addAnnotationHandler(new OutVertexAnnotationHandler());
-		return config;
 	}
 
 }

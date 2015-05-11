@@ -12,18 +12,21 @@ import com.tinkerpop.frames.modules.TypeResolver;
 public class TypeManager implements TypeResolver, FrameInitializer {
 
 	private TypeRegistry typeRegistry;
-    public TypeManager(TypeRegistry typeRegistry) {
-    	this.typeRegistry = typeRegistry;
-    }
-    
-	@Override public Class<?>[] resolveTypes(Vertex v, Class<?> defaultType) {
-		return new Class<?>[] {resolve(v, defaultType), VertexFrame.class };
+
+	public TypeManager(TypeRegistry typeRegistry) {
+		this.typeRegistry = typeRegistry;
 	}
 
-	@Override public Class<?>[] resolveTypes(Edge e, Class<?> defaultType) {
-		return new Class<?>[] {resolve(e, defaultType), EdgeFrame.class };
+	@Override
+	public Class<?>[] resolveTypes(Vertex v, Class<?> defaultType) {
+		return new Class<?>[] { resolve(v, defaultType), VertexFrame.class };
 	}
-	
+
+	@Override
+	public Class<?>[] resolveTypes(Edge e, Class<?> defaultType) {
+		return new Class<?>[] { resolve(e, defaultType), EdgeFrame.class };
+	}
+
 	private Class<?> resolve(Element e, Class<?> defaultType) {
 		Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(defaultType);
 		if (typeHoldingTypeField != null) {
@@ -46,6 +49,5 @@ public class TypeManager implements TypeResolver, FrameInitializer {
 			}
 		}
 	}
-
 
 }

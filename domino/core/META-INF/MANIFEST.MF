@@ -14,6 +14,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
  org.openntf.conference.graph,
+ org.openntf.conference.graph.examples,
  org.openntf.domino,
  org.openntf.domino.annotations,
  org.openntf.domino.big,
