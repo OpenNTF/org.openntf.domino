@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class WebServiceConsumerLS extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceConsumerLS {
+public class WebServiceConsumerLS extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.WebServiceConsumerLS {
 	private static final long serialVersionUID = 1L;
 
 	@Override

@@ -16,12 +16,11 @@
 
 package org.openntf.domino.design.impl;
 
-
 /**
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class DatabaseScript extends AbstractDesignBase implements org.openntf.domino.design.DatabaseScript {
+public final class DatabaseScript extends AbstractDesignDxlBase implements org.openntf.domino.design.DatabaseScript {
 	private static final long serialVersionUID = 1L;
 
 	@Override

@@ -400,7 +400,7 @@ public enum DesignFactory {
 
 	public static DesignFactory valueOf(final VFSNode node) {
 
-		String lcPath = node.getPathInNSF().toLowerCase();
+		String lcPath = node.getRelativePath().toLowerCase();
 		for (DesignFactory fact : DesignFactory.values()) {
 			if (fact.lcOnDiskFolder_ != null && fact != DesignFactory.FileResourceHidden) {
 				if (lcPath.startsWith(fact.lcOnDiskFolder_)) {

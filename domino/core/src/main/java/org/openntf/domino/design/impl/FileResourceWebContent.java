@@ -20,13 +20,17 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class FileResourceWebContent extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceWebContent {
+public class FileResourceWebContent extends AbstractDesignNapiFileResource implements org.openntf.domino.design.FileResourceWebContent {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected boolean enforceRawFormat() {
-		// FileResourceWebContainer is exported in RAW-format. There is no DXL representation
-		return true;
+	protected String getDefaultFlags() {
+		return "~C4g";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "w";
 	}
 
 }

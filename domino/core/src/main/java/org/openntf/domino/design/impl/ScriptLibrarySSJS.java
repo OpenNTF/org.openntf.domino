@@ -16,14 +16,14 @@
 
 package org.openntf.domino.design.impl;
 
-
 /**
  * A Server Side JavaScript - Library.
  * 
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class ScriptLibrarySSJS extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.ScriptLibrarySSJS {
+public final class ScriptLibrarySSJS extends AbstractDesignDxlFileResource implements HasMetadata,
+		org.openntf.domino.design.ScriptLibrarySSJS {
 	private static final long serialVersionUID = 1L;
 
 	@Override

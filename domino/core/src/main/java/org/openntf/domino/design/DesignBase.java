@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -97,20 +96,10 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 
 	/**
 	 * Save any changes to the design element (may change the Note ID)
-	 */
-	public boolean save(DxlConverter dxlConverter);
-
-	/**
-	 * Exports the design to file by using the dxlConverter
 	 * 
-	 * @param dxlConverter
-	 *            the DxlConverter that converts the file data in a "friendly" format. (e.g. gitFriendly)
-	 * @param file
-	 *            the file
 	 * @throws IOException
-	 *             if an IO-Error occurs
 	 */
-	public void exportDesign(DxlConverter dxlConverter, File file) throws IOException;
+	public boolean save(DxlConverter dxlConverter) throws IOException;
 
 	/**
 	 * Exports the design to file by using the dxlConverter
@@ -125,16 +114,13 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	public void exportDesign(DxlConverter dxlConverter, OutputStream outputStream) throws IOException;
 
 	/**
-	 * Imports the design from file by using the dxlConverter
+	 * Returns the size of this element if it will be exported
 	 * 
-	 * @param dxlConverter
-	 *            the DxlConverter that converts the file data back.
-	 * @param file
-	 *            the file
-	 * @throws IOException
-	 *             if an IO-Error occurs
+	 * @param converter
+	 *            the converter to use
+	 * @return the size
 	 */
-	public void importDesign(DxlConverter dxlConverter, File file) throws IOException;
+	public int getExportSize(DxlConverter converter);
 
 	/**
 	 * Imports the design from file by using the dxlConverter

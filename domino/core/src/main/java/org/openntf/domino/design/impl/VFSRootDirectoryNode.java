@@ -16,8 +16,11 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.util.SortedSet;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.openntf.domino.DbDirectory;
+import org.openntf.domino.design.VFSRootNode;
 import org.openntf.domino.helpers.DatabaseMetaData;
 
 /**
@@ -26,9 +29,10 @@ import org.openntf.domino.helpers.DatabaseMetaData;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class VFSRootDirectoryNode extends VFSDirectoryNode {
+public class VFSRootDirectoryNode extends VFSDirectoryNode implements VFSRootNode {
 	private static final long serialVersionUID = 1L;
-	private SortedSet<DatabaseMetaData> metaDataSet;
+	private Set<DatabaseMetaData> metaDataSet;
+	private Set<String> virtualfolders = new HashSet<String>();
 
 	/**
 	 * Constructor, called from the DbDirectory
@@ -36,18 +40,30 @@ public class VFSRootDirectoryNode extends VFSDirectoryNode {
 	 * @param metaDataSet
 	 * @param session
 	 */
-	public VFSRootDirectoryNode(final SortedSet<DatabaseMetaData> metaDataSet) {
+	public VFSRootDirectoryNode(final DbDirectory directory) {
 		super(null, "");
-		this.metaDataSet = metaDataSet;
+		this.metaDataSet = ((org.openntf.domino.impl.DbDirectory) directory).getMetaDataSet();
+	}
+
+	@Override
+	public void refresh(final DbDirectory directory) {
+		directory.clear();
+		metaDataSet = ((org.openntf.domino.impl.DbDirectory) directory).getMetaDataSet();
 	}
 
 	@Override
 	protected void init() {
 		for (DatabaseMetaData metaData : metaDataSet) {
+
 			String fileName = metaData.getFilePath().replace('\\', '/');
 			String[] components = fileName.split("/");
 			add(components, metaData, 0);
 		}
+	}
+
+	@Override
+	public Set<String> getVirtualFolders() {
+		return virtualfolders;
 	}
 
 }

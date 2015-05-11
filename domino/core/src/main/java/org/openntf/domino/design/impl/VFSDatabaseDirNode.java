@@ -53,18 +53,13 @@ public class VFSDatabaseDirNode extends VFSAbstractNode<DesignBase> {
 	}
 
 	@Override
-	public boolean isNSF() {
+	public boolean isDatabase() {
 		return false;
 	}
 
 	@Override
 	public long lastModified() {
 		return 0;
-	}
-
-	@Override
-	protected void init() {
-		// already initialized on load
 	}
 
 	@Override

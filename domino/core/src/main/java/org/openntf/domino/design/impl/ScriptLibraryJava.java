@@ -16,7 +16,8 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  * @author Roland Praml, FOCONIS AG
  */
-public final class ScriptLibraryJava extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryJava, HasMetadata {
+public final class ScriptLibraryJava extends AbstractDesignDxlFileResource implements org.openntf.domino.design.ScriptLibraryJava,
+		HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	@Override

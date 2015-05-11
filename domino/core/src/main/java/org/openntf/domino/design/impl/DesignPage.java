@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class DesignPage extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignPage {
+public class DesignPage extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.DesignPage {
 	private static final long serialVersionUID = 1L;
 
 	@Override

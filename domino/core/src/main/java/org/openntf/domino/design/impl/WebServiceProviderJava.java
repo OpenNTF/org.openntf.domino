@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class WebServiceProviderJava extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceProviderJava {
+public class WebServiceProviderJava extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.WebServiceProviderJava {
 	private static final long serialVersionUID = 1L;
 
 	@Override

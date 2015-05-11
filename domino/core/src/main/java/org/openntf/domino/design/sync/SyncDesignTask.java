@@ -19,6 +19,8 @@ package org.openntf.domino.design.sync;
 //import static org.openntf.domino.design.impl.OnDiskSync.LOG_DIR;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -30,7 +32,7 @@ import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.domino.design.DesignCollection;
 import org.openntf.domino.design.DxlConverter;
-import org.openntf.domino.design.impl.AbstractDesignBase;
+import org.openntf.domino.design.impl.AbstractDesignDxlBase;
 import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.design.impl.HasMetadata;
 import org.openntf.domino.design.impl.HasXspConfig;
@@ -69,17 +71,31 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 		if (odsConverter.isMetadataEnabled() && dbElem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + METADATA_SUFFIX);
 			if (metaFile.exists()) {
-				((HasMetadata) dbElem).importMeta(odsConverter, metaFile);
+				FileInputStream is = new FileInputStream(metaFile);
+				try {
+					((HasMetadata) dbElem).importMeta(odsConverter, is);
+				} finally {
+					is.close();
+				}
 			}
 		}
 		if (dbElem instanceof HasXspConfig) {
 			File configFile = new File(file.getAbsolutePath() + CONFIG_SUFFIX);
 			if (configFile.exists()) {
-				((HasXspConfig) dbElem).importXspConfig(odsConverter, configFile);
+				FileInputStream is = new FileInputStream(configFile);
+				try {
+					((HasXspConfig) dbElem).importXspConfig(odsConverter, is);
+				} finally {
+					is.close();
+				}
 			}
 		}
-		dbElem.importDesign(odsConverter, file);
-
+		FileInputStream is = new FileInputStream(file);
+		try {
+			dbElem.importDesign(odsConverter, is);
+		} finally {
+			is.close();
+		}
 		//		// restore the name
 		//		if (dbElem instanceof DesignBaseNamed) {
 		//			((DesignBaseNamed) dbElem).setName(name); // TODO: decode!!!
@@ -102,7 +118,12 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 		if (dbElem instanceof HasMetadata) {
 			File metaFile = new File(file.getAbsolutePath() + METADATA_SUFFIX);
 			if (odsConverter.isMetadataEnabled()) {
-				((HasMetadata) dbElem).exportMeta(odsConverter, metaFile);
+				FileOutputStream os = new FileOutputStream(metaFile);
+				try {
+					((HasMetadata) dbElem).exportMeta(odsConverter, os);
+				} finally {
+					os.close();
+				}
 			} else {
 				metaFile.delete();
 			}
@@ -111,9 +132,19 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 		}
 		if (dbElem instanceof HasXspConfig) {
 			File configFile = new File(file.getAbsolutePath() + CONFIG_SUFFIX);
-			((HasXspConfig) dbElem).exportXspConfig(odsConverter, configFile);
+			FileOutputStream os = new FileOutputStream(configFile);
+			try {
+				((HasXspConfig) dbElem).exportXspConfig(odsConverter, os);
+			} finally {
+				os.close();
+			}
 		}
-		dbElem.exportDesign(odsConverter, file);
+		FileOutputStream os = new FileOutputStream(file);
+		try {
+			dbElem.exportDesign(odsConverter, os);
+		} finally {
+			os.close();
+		}
 	}
 
 	// Directory, which contains designElements
@@ -169,9 +200,9 @@ public class SyncDesignTask extends SyncTask<DesignBase, OnDiskDesign> implement
 	@Override
 	protected DesignBase createDbElement(final OnDiskDesign source) {
 		// TODO Auto-generated method stub
-		AbstractDesignBase dbElem;
+		AbstractDesignDxlBase dbElem;
 		try {
-			dbElem = (AbstractDesignBase) source.getImplementingClass().newInstance();
+			dbElem = (AbstractDesignDxlBase) source.getImplementingClass().newInstance();
 			dbElem.init(getDb());
 			if (dbElem instanceof DesignBaseNamed) {
 				((DesignBaseNamed) dbElem).setName(source.getName());

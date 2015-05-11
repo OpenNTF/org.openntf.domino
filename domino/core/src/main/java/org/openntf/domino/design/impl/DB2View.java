@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class DB2View extends AbstractDesignBaseNamed implements org.openntf.domino.design.DB2View {
+public final class DB2View extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.DB2View {
 	private static final long serialVersionUID = 1L;
 
 	@Override

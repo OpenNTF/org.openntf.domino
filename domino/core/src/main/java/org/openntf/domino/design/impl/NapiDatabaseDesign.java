@@ -115,7 +115,6 @@ public class NapiDatabaseDesign {
 										nEntry.noteId = entry.getNoteID();
 										nEntry.universalId = entry.getNoteUNID();
 										designList.add(nEntry);
-										//System.out.println(nEntry);
 									} finally {
 										entry.recycle();
 									}

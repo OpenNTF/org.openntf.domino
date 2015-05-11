@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,13 +27,12 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
  * 
  */
-public abstract class AbstractXspResource extends AbstractDesignFileResource implements XspResource {
+public abstract class AbstractXspResource extends AbstractDesignNapiFileResource implements XspResource {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractXspResource.class.getName());
@@ -43,7 +44,7 @@ public abstract class AbstractXspResource extends AbstractDesignFileResource imp
 	 */
 	@Override
 	public Collection<String> getClassNames() {
-		List<String> classIndex = getItemValueStrings(CLASS_INDEX_ITEM);
+		String[] classIndex = getDocument().getItemValue(CLASS_ITEM, String[].class);
 		List<String> names = new ArrayList<String>();
 		for (String path : classIndex) {
 			if (path.startsWith("WEB-INF/classes/")) {
@@ -66,8 +67,16 @@ public abstract class AbstractXspResource extends AbstractDesignFileResource imp
 
 		Map<String, byte[]> result = new HashMap<String, byte[]>();
 		for (int i = 0; i < names.size(); i++) {
-			byte[] classData = getFileDataRaw("$ClassData" + i);
-			if (classData.length > 0) {
+			byte[] classData = null;
+			try {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				nReadNestedFileContent(getDocument(), "$ClassData" + i, os);
+				classData = os.toByteArray();
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (classData != null && classData.length > 0) {
 				result.put(names.get(i), classData);
 			}
 		}
@@ -81,33 +90,34 @@ public abstract class AbstractXspResource extends AbstractDesignFileResource imp
 	 */
 	@Override
 	public void setClassData(final Map<String, byte[]> classData) {
-		// First step, clear out the existing data, index, and size fields
-		XMLNode indexNode = getDxl().selectSingleNode("//item[@name='" + CLASS_INDEX_ITEM + "']");
-		XMLNode itemParent = indexNode.getParentNode();
-		List<XMLNode> names = indexNode.selectNodes(".//text");
-		for (int i = 0; i < names.size(); i++) {
-			XMLNode dataNode = getDxl().selectSingleNode("//item[@name='$ClassData" + i + "']");
-			dataNode.getParentNode().removeChild(dataNode);
-			XMLNode sizeNode = getDxl().selectSingleNode("//item[@name='$ClassSize" + i + "']");
-			sizeNode.getParentNode().removeChild(sizeNode);
-
-			indexNode.removeChild(names.get(i));
-		}
-
-		int index = 0;
-		for (Map.Entry<String, byte[]> classEntry : classData.entrySet()) {
-			XMLNode sizeNode = itemParent.addChildElement("item");
-			sizeNode.setAttribute("name", "$ClassSize" + index);
-			XMLNode sizeText = sizeNode.addChildElement("number");
-			sizeText.setTextContent(String.valueOf(classEntry.getValue().length));
-
-			setFileDataRaw("$ClassData" + index, classEntry.getValue());
-
-			XMLNode name = indexNode.addChildElement("text");
-			name.setTextContent("WEB-INF/classes/" + DominoUtils.javaBinaryNameToFilePath(classEntry.getKey(), "/"));
-
-			index++;
-		}
+		throw new UnsupportedOperationException();
+		//		// First step, clear out the existing data, index, and size fields
+		//
+		//		Document doc = getDocument();
+		//
+		//		for (int i = 0; i < 99; i++) {
+		//			doc.removeItem("$ClassData" + i);
+		//			doc.removeItem("$ClassSize" + i);
+		//		}
+		//
+		//		int index = 0;
+		//		for (Map.Entry<String, byte[]> classEntry : classData.entrySet()) {
+		//			XMLNode sizeNode = itemParent.addChildElement("item");
+		//			sizeNode.setAttribute("name", "$ClassSize" + index);
+		//			XMLNode sizeText = sizeNode.addChildElement("number");
+		//			sizeText.setTextContent(String.valueOf(classEntry.getValue().length));
+		//
+		//			try {
+		//				setFileDataRaw("$ClassData" + index, new ByteArrayInputStream(classEntry.getValue()));
+		//			} catch (IOException e) {
+		//				DominoUtils.handleException(e);
+		//			}
+		//
+		//			XMLNode name = indexNode.addChildElement("text");
+		//			name.setTextContent("WEB-INF/classes/" + DominoUtils.javaBinaryNameToFilePath(classEntry.getKey(), "/"));
+		//
+		//			index++;
+		//		}
 	}
 
 }

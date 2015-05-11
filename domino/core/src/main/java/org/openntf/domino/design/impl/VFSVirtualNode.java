@@ -17,6 +17,8 @@
 package org.openntf.domino.design.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DxlConverter;
@@ -73,7 +75,7 @@ public class VFSVirtualNode extends VFSAbstractNode<Void> {
 	}
 
 	@Override
-	public boolean isNSF() {
+	public boolean isDatabase() {
 		return false;
 	}
 
@@ -83,11 +85,6 @@ public class VFSVirtualNode extends VFSAbstractNode<Void> {
 			return delegate.lastModified();
 		}
 		return 0;
-	}
-
-	@Override
-	protected void init() {
-
 	}
 
 	@Override
@@ -101,7 +98,7 @@ public class VFSVirtualNode extends VFSAbstractNode<Void> {
 	}
 
 	@Override
-	public void setContent(final DxlConverter converter, final byte[] newBB) throws IOException {
+	public void setContent(final DxlConverter converter, final InputStream is, final boolean sign) throws IOException {
 		// TODO Auto-generated method stub
 		if (isDir) {
 			throw new UnsupportedOperationException();
@@ -111,7 +108,7 @@ public class VFSVirtualNode extends VFSAbstractNode<Void> {
 			try {
 				DesignBase design = mapping.getImplClass().newInstance();
 				delegate = new VFSDatabaseDesignElementNode(getParent(), getName(), design);
-				delegate.setContent(converter, newBB);
+				delegate.setContent(converter, is, sign);
 
 			} catch (InstantiationException e) {
 				DominoUtils.handleException(e);
@@ -122,11 +119,12 @@ public class VFSVirtualNode extends VFSAbstractNode<Void> {
 	}
 
 	@Override
-	public byte[] getContent(final DxlConverter converter) throws IOException {
+	public void getContent(final DxlConverter converter, final OutputStream os) throws IOException {
 		if (delegate != null) {
-			return delegate.getContent(converter);
+			delegate.getContent(converter, os);
+		} else {
+			super.getContent(converter, os);
 		}
-		return super.getContent(converter);
 	}
 
 	@Override
@@ -139,6 +137,7 @@ public class VFSVirtualNode extends VFSAbstractNode<Void> {
 
 	@Override
 	public boolean mkdir() {
+		getVFSRootNode().getVirtualFolders().add(getPath());
 		isDir = true;
 		return true;
 	}

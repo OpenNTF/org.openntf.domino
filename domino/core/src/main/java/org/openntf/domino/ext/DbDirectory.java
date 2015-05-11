@@ -6,7 +6,7 @@ package org.openntf.domino.ext;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory.Type;
 import org.openntf.domino.annotations.Legacy;
-import org.openntf.domino.design.VFSNode;
+import org.openntf.domino.design.VFSRootNode;
 
 /**
  * @author withersp
@@ -69,6 +69,6 @@ public interface DbDirectory {
 	 * 
 	 * @return a DbDirectoryTree
 	 */
-	public VFSNode getVFS();
+	public VFSRootNode getVFS();
 
 }

@@ -27,6 +27,8 @@ import org.openntf.domino.helpers.DatabaseMetaData;
  */
 public class VFSDirectoryNode extends VFSAbstractNode<DatabaseMetaData> {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Create a new VFSDirectoryNode
 	 * 
@@ -73,18 +75,13 @@ public class VFSDirectoryNode extends VFSAbstractNode<DatabaseMetaData> {
 	 * Returns always <code>false</code>
 	 */
 	@Override
-	public boolean isNSF() {
+	public boolean isDatabase() {
 		return false;
 	}
 
 	@Override
 	public long lastModified() {
 		return -1;
-	}
-
-	@Override
-	protected void init() {
-		// already initialized on load
 	}
 
 	/**

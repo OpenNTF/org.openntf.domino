@@ -29,10 +29,10 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignComponentList.class.getName());
 
-	private final AbstractDesignBase parent_;
+	private final AbstractDesignDxlBase parent_;
 	private final String pattern_;
 
-	protected AbstractDesignComponentList(final AbstractDesignBase parent, final String pattern) {
+	protected AbstractDesignComponentList(final AbstractDesignDxlBase parent, final String pattern) {
 		parent_ = parent;
 		pattern_ = pattern;
 	}
@@ -59,7 +59,7 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 		return current;
 	}
 
-	protected AbstractDesignBase getParent() {
+	protected AbstractDesignDxlBase getParent() {
 		return parent_;
 	}
 

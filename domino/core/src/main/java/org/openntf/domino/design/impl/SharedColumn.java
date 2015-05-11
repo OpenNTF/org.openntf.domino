@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class SharedColumn extends AbstractDesignBaseNamed implements org.openntf.domino.design.SharedColumn {
+public class SharedColumn extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.SharedColumn {
 	private static final long serialVersionUID = 1L;
 
 	@Override

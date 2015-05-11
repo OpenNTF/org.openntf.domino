@@ -24,7 +24,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class Subform extends AbstractDesignBaseNamed implements org.openntf.domino.design.Subform {
+public class Subform extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.Subform {
 	private static final long serialVersionUID = 1L;
 
 	@Override

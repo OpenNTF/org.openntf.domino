@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @author jgallagher
  * 
  */
-public final class AboutDocument extends AbstractDesignBase implements org.openntf.domino.design.AboutDocument {
+public final class AboutDocument extends AbstractDesignDxlBase implements org.openntf.domino.design.AboutDocument {
 	private static final long serialVersionUID = 1L;
 
 	@Override

@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class DataConnectionResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.DataConnectionResource {
+public final class DataConnectionResource extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.DataConnectionResource {
 	private static final long serialVersionUID = 1L;
 
 	@Override

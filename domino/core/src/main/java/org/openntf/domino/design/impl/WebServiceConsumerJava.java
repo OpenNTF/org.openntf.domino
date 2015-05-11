@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class WebServiceConsumerJava extends AbstractDesignBaseNamed implements org.openntf.domino.design.WebServiceConsumerJava {
+public class WebServiceConsumerJava extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.WebServiceConsumerJava {
 	private static final long serialVersionUID = 1L;
 
 	@Override

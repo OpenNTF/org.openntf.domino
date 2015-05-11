@@ -163,6 +163,16 @@
 							</configuration>
 						</execution>
 						
+						<execution>
+							<phase>compile</phase>
+							<goals><goal>install-file</goal></goals>
+							<id>com.ibm.notes.java.api.websvc</id>
+							<configuration>
+								<file>target/innerJars/websvc.jar</file>
+								<pomFile>poms/com.ibm.notes.java.api.websvc.pom</pomFile>
+							</configuration>
+						</execution>
+						
 						<!-- com.ibm.domino.napi -->
 						<execution>
 							<phase>compile</phase>

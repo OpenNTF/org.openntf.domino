@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-
 /**
  * 
  * @author Alexander Wagner, FOCONIS AG
@@ -27,8 +26,13 @@ public class CustomControlFile extends AbstractXspResource implements org.opennt
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected boolean enforceRawFormat() {
-		return true;
+	protected String getDefaultFlags() {
+		return "gC~4;";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "";
 	}
 
 }

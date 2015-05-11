@@ -35,7 +35,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
-import org.openntf.domino.design.VFSNode;
+import org.openntf.domino.design.VFSRootNode;
 import org.openntf.domino.design.impl.VFSRootDirectoryNode;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.DatabaseMetaData;
@@ -413,7 +413,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 		return isHonorOpenDialog_;
 	}
 
-	private SortedSet<DatabaseMetaData> getMetaDataSet() {
+	public SortedSet<DatabaseMetaData> getMetaDataSet() {
 		//		if (!isInitialized_) {
 		//			initialize(getDelegate());
 		//		}
@@ -712,8 +712,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	}
 
 	@Override
-	public VFSNode getVFS() {
-		return new VFSRootDirectoryNode(getMetaDataSet());
+	public VFSRootNode getVFS() {
+		return new VFSRootDirectoryNode(this);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013
+-- * Copyright 2013
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -26,7 +26,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 @SuppressWarnings("serial")
-public abstract class AbstractFolder extends AbstractDesignBaseNamed implements AnyFolderOrView {
+public abstract class AbstractFolder extends AbstractDesignDxlBaseNamed implements AnyFolderOrView {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractFolder.class.getName());
 

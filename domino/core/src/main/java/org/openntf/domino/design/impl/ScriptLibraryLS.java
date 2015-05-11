@@ -1,6 +1,5 @@
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +16,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author Alexander Wagner, FOCONIS AG
  * 
  */
-public final class ScriptLibraryLS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryLS, HasMetadata {
+public final class ScriptLibraryLS extends AbstractDesignDxlFileResource implements org.openntf.domino.design.ScriptLibraryLS, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -31,19 +30,6 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		// '++LotusScript Development Environment:2:5:(Forward):0:1
 
 		return true; // so that's why we force RAW format
-	}
-
-	@Override
-	public void exportDesign(final DxlConverter converter, final File odpFile) throws IOException {
-		// TODO Check for $Scriptlib_error => throw exception if item exists
-		PrintWriter pw = new PrintWriter(odpFile);
-		try {
-			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
-				pw.write(rawitemdata.getText());
-			}
-		} finally {
-			pw.close();
-		}
 	}
 
 	@Override
@@ -67,11 +53,6 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 		fileDataNode.setAttribute("summary", "false");
 		fileDataNode = fileDataNode.addChildElement("text");
 		fileDataNode.setText(text);
-	}
-
-	@Override
-	public void importDesign(final DxlConverter converter, final File file) throws IOException {
-		importDesign(converter, new Scanner(file));
 	}
 
 	@Override

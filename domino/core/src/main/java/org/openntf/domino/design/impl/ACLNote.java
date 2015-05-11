@@ -30,7 +30,7 @@ import org.openntf.domino.ext.NoteClass;
  * @author jgallagher
  * 
  */
-public final class ACLNote extends AbstractDesignBase implements org.openntf.domino.design.ACLNote {
+public final class ACLNote extends AbstractDesignDxlBase implements org.openntf.domino.design.ACLNote {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ACLNote.class.getName());

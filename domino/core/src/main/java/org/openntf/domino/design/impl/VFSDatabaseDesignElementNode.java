@@ -1,8 +1,10 @@
 package org.openntf.domino.design.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -10,7 +12,9 @@ import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.design.VFSNode;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.xml.sax.SAXParseException;
 
 /**
  * This node represents a DesignElement node. You can read/write it's content
@@ -21,7 +25,7 @@ import org.openntf.domino.utils.Factory.SessionType;
  *
  */
 public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
-
+	public static final Logger log_ = Logger.getLogger(VFSDatabaseDesignElementNode.class.getName());
 	//private SoftReference<DesignBase> designElementRef;
 	DesignBase designElement = null;
 	private int contentLength = -1;
@@ -38,36 +42,10 @@ public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
 	}
 
 	protected Database getDatabase() {
-		VFSNode parent = this;
-		while (parent != null) {
-			parent = parent.getParent();
-			if (parent.isNSF()) {
-				return SessionType.CURRENT.get().getDatabase(parent.getPath());
-			}
-		}
-		return null;
-
+		return SessionType.CURRENT.get().getDatabase(getVFSDatabaseNode().getPath());
 	}
 
 	protected synchronized DesignBase getDesignElement() {
-		//		DesignBase designElement = designElementRef == null ? null : designElementRef.get();
-		//		Database db = getDatabase();
-		//		if (designElement == null) {
-		//			try {
-		//				designElement = designClass.newInstance();
-		//			} catch (InstantiationException e) {
-		//				DominoUtils.handleException(e);
-		//			} catch (IllegalAccessException e) {
-		//				DominoUtils.handleException(e);
-		//			}
-		//			designElementRef = new SoftReference<DesignBase>(designElement);
-		//			System.out.println("Restoring unid " + designUnid);
-		//			Document doc = db.getDocumentByUNID(designUnid);
-		//			if (doc != null) {
-		//				((AbstractDesignBase) designElement).init(doc);
-		//				return designElement;
-		//			}
-		//		}
 		designElement.reattach(getDatabase());
 		return designElement;
 	}
@@ -76,7 +54,9 @@ public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
 	public boolean delete() {
 		if (!exists())
 			return false;
-		System.out.println("DELETE: " + getPath());
+		if (log_.isLoggable(Level.INFO)) {
+			log_.info("VFS Delete: " + getPath());
+		}
 		return getDesignElement().getDocument().remove(true);
 
 	}
@@ -97,7 +77,7 @@ public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
 	}
 
 	@Override
-	public boolean isNSF() {
+	public boolean isDatabase() {
 		return false;
 	}
 
@@ -111,11 +91,6 @@ public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
 	}
 
 	@Override
-	protected void init() {
-
-	}
-
-	@Override
 	protected VFSNode newNode(final String dir) {
 		throw new UnsupportedOperationException();
 	}
@@ -126,15 +101,10 @@ public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
 	}
 
 	@Override
-	public byte[] getContent(final DxlConverter converter) throws IOException {
-
+	public void getContent(final DxlConverter converter, final OutputStream os) throws IOException {
 		DesignBase el = getDesignElement();
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		el.exportDesign(converter, bos);
-		byte[] bb = bos.toByteArray();
-		bos.close();
+		el.exportDesign(converter, os);
 		el.flush(); // discard internal caches
-		return bb;
 	}
 
 	@Override
@@ -145,39 +115,44 @@ public class VFSDatabaseDesignElementNode extends VFSAbstractNode<Void> {
 			contentLength = -1;
 		}
 		if (contentLength == -1) {
-			try {
-				contentLength = getContent(converter).length;
-			} catch (IOException e) {
-				e.printStackTrace();
-				contentLength = 0;
-			}
+			DesignBase el = getDesignElement();
+			contentLength = el.getExportSize(converter);
+			el.flush();
 		}
 
 		return contentLength;
 	}
 
 	@Override
-	public void setContent(final DxlConverter converter, final byte[] newBB) throws IOException {
+	public void setContent(final DxlConverter converter, final InputStream is, final boolean sign) throws IOException {
 		DesignBase designElement = getDesignElement();
-		if (newBB.length > 0) {
-			ByteArrayInputStream bis = new ByteArrayInputStream(newBB);
-			designElement.importDesign(converter, bis);
-			bis.close();
+		try {
+			designElement.importDesign(converter, is);
+		} catch (OpenNTFNotesException e) {
+			Throwable cause = e.getCause();
+			if (cause instanceof SAXParseException) {
+				SAXParseException spe = (SAXParseException) cause;
+				System.out.println(spe);
+			}
 		}
 
 		// Adjust name, as it might change due a raw import
 		if (designElement instanceof DesignBaseNamed) {
-			String fullName = getPathInNSF();
+			String fullName = getRelativePath();
 			fullName = fullName.substring(designElement.getMapping().getOnDiskFolder().length());
 			if (fullName.startsWith("/"))
 				fullName = fullName.substring(1);
 			((DesignBaseNamed) designElement).setName(fullName);
 		}
 		designElement.save(converter);
-		designElement.getDocument().sign();
 		designElement.flush();
-		contentLength = newBB.length;
-		refresh();
+		if (sign) {
+			Document doc = designElement.getDocument();
+			doc.sign();
+			doc.save();
+		}
+		contentLength = -1; // TODO set from stream!
+		getVFSDatabaseNode().refresh();
 	}
 
 }

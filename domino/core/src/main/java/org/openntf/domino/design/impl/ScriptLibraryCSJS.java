@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,7 +33,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryCSJS {
+public class ScriptLibraryCSJS extends AbstractDesignDxlFileResource implements org.openntf.domino.design.ScriptLibraryCSJS {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -52,28 +51,6 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 		if (enforceRawFormat())
 			return getFileDataRaw("$JavaScriptLibrary");
 		return getDxl().selectSingleNode("//code/javascript").getText().getBytes();
-	}
-
-	@Override
-	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		String content;
-		if (enforceRawFormat()) {
-			content = ODSUtils.fromLMBCS(getFileData());
-		} else {
-			XMLNode jsNode = getDxl().selectSingleNode("//code/javascript");
-			if (jsNode != null) {
-				content = jsNode.getText();
-			} else {
-				content = "";
-			}
-		}
-		PrintWriter pw = new PrintWriter(file);
-		try {
-			pw.write(content);
-		} finally {
-			pw.close();
-		}
-
 	}
 
 	@Override
@@ -96,11 +73,6 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 			pw.close();
 		}
 
-	}
-
-	@Override
-	public void importDesign(final DxlConverter converter, final File file) throws IOException {
-		importDesign(converter, new Scanner(file));
 	}
 
 	@Override

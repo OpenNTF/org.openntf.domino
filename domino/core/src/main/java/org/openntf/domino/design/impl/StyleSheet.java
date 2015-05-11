@@ -16,30 +16,32 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Document;
+import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
  * 
  */
-public final class StyleSheet extends AbstractDesignFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
+public final class StyleSheet extends AbstractDesignNapiFileResource implements org.openntf.domino.design.StyleSheet, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
 
 	@Override
-	protected boolean enforceRawFormat() {
-		return false;
-	}
-
-	@Override
 	public String getContent() {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try {
-			return new String(getFileData(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
+			getFileData(bos);
+			return new String(bos.toByteArray(), "UTF-8");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			DominoUtils.handleException(e);
 			return null;
 		}
@@ -47,15 +49,23 @@ public final class StyleSheet extends AbstractDesignFileResource implements org.
 
 	@Override
 	public void setContent(final String content) {
-		try {
-			if (content == null) {
-				setFileData("".getBytes("UTF-8"));
-			} else {
-				setFileData(content.getBytes("UTF-8"));
-			}
-		} catch (UnsupportedEncodingException e) {
-			DominoUtils.handleException(e);
-		}
+		fileData = content.getBytes(StandardCharsets.UTF_8);
+	}
+
+	@Override
+	protected String getDefaultFlags() {
+		return "=34QC";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "D";
+	}
+
+	@Override
+	protected void saveData(final DxlConverter converter, final Document doc) throws IOException {
+		setValue(doc, "$MimeCharSet", "UTF-8");
+		super.saveData(converter, doc);
 	}
 
 }

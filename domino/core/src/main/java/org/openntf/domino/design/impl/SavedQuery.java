@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class SavedQuery extends AbstractDesignBaseNamed implements org.openntf.domino.design.SavedQuery {
+public class SavedQuery extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.SavedQuery {
 	private static final long serialVersionUID = 1L;
 
 	@Override

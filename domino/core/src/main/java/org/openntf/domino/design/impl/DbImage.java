@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @author jgallagher
  * 
  */
-public final class DbImage extends AbstractDesignBase implements org.openntf.domino.design.DbImage {
+public final class DbImage extends AbstractDesignDxlBase implements org.openntf.domino.design.DbImage {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DbImage.class.getName());

@@ -68,7 +68,6 @@
 
 	<name>OpenNTF Domino API XPages plugin</name>
 	<dependencies>
-		
 
 		<dependency>
 			<groupId>org.openntf.domino</groupId>

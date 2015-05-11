@@ -8,10 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,7 +35,7 @@ import org.w3c.dom.NodeList;
  * @author jgallagher
  * 
  */
-public class XMLNode implements Map<String, Object>, Serializable {
+public class XMLNode implements Serializable {
 	private static final long serialVersionUID = 2304991412510751453L;
 	private static TransformerFactory tFactory = TransformerFactory.newInstance();
 
@@ -67,7 +63,8 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	protected org.w3c.dom.Node node_ = null;
 	private transient XPath xPath_ = null;
-	private Map<String, Object> getResults_ = new HashMap<String, Object>();
+
+	//private Map<String, Object> getResults_ = new HashMap<String, Object>();
 
 	protected XMLNode() {
 	}
@@ -279,31 +276,31 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node_;
 	}
 
-	@Override
-	public Object get(final Object arg0) {
-		String path = String.valueOf(arg0);
-
-		if (path.equals("nodeValue")) {
-			return this.getNode().getNodeValue();
-		} else if (path.equals("textContent")) {
-			return this.getNode().getTextContent();
-		}
-
-		if (!this.getResults_.containsKey(path)) {
-			try {
-				XMLNodeList nodes = this.selectNodes(path);
-				if (nodes.size() == 1) {
-					// this.getResults.put(path, nodes.get(0).getNode());
-					this.getResults_.put(path, nodes.get(0));
-				} else {
-					this.getResults_.put(path, nodes);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return this.getResults_.get(path);
-	}
+	//	@Override
+	//	public Object get(final Object arg0) {
+	//		String path = String.valueOf(arg0);
+	//
+	//		if (path.equals("nodeValue")) {
+	//			return this.getNode().getNodeValue();
+	//		} else if (path.equals("textContent")) {
+	//			return this.getNode().getTextContent();
+	//		}
+	//
+	//		if (!this.getResults_.containsKey(path)) {
+	//			try {
+	//				XMLNodeList nodes = this.selectNodes(path);
+	//				if (nodes.size() == 1) {
+	//					// this.getResults.put(path, nodes.get(0).getNode());
+	//					this.getResults_.put(path, nodes.get(0));
+	//				} else {
+	//					this.getResults_.put(path, nodes);
+	//				}
+	//			} catch (Exception e) {
+	//				e.printStackTrace();
+	//			}
+	//		}
+	//		return this.getResults_.get(path);
+	//	}
 
 	/**
 	 * Equivalent to {@link #getXml(Transformer)} passed null.
@@ -358,63 +355,63 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node_.getOwnerDocument();
 	}
 
-	@Override
-	public void clear() {
-	}
-
-	@Override
-	public boolean containsKey(final Object arg0) {
-		return false;
-	}
-
-	@Override
-	public boolean containsValue(final Object arg0) {
-		return false;
-	}
-
-	@Override
-	public Set<java.util.Map.Entry<String, Object>> entrySet() {
-		return null;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
-
-	@Override
-	public Set<String> keySet() {
-		return null;
-	}
-
-	@Override
-	public Object put(final String arg0, final Object arg1) {
-		if (arg0.equals("nodeValue")) {
-			this.getNode().setNodeValue(String.valueOf(arg1));
-			return arg1;
-		} else if (arg0.equals("textContent")) {
-			this.getNode().setNodeValue(String.valueOf(arg1));
-			return arg1;
-		}
-		return null;
-	}
-
-	@Override
-	public void putAll(final Map<? extends String, ? extends Object> arg0) {
-	}
-
-	@Override
-	public Object remove(final Object arg0) {
-		return null;
-	}
-
-	@Override
-	public int size() {
-		return 0;
-	}
-
-	@Override
-	public Collection<Object> values() {
-		return null;
-	}
+	//	@Override
+	//	public void clear() {
+	//	}
+	//
+	//	@Override
+	//	public boolean containsKey(final Object arg0) {
+	//		return false;
+	//	}
+	//
+	//	@Override
+	//	public boolean containsValue(final Object arg0) {
+	//		return false;
+	//	}
+	//
+	//	@Override
+	//	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+	//		return null;
+	//	}
+	//
+	//	@Override
+	//	public boolean isEmpty() {
+	//		return false;
+	//	}
+	//
+	//	@Override
+	//	public Set<String> keySet() {
+	//		return null;
+	//	}
+	//
+	//	@Override
+	//	public Object put(final String arg0, final Object arg1) {
+	//		if (arg0.equals("nodeValue")) {
+	//			this.getNode().setNodeValue(String.valueOf(arg1));
+	//			return arg1;
+	//		} else if (arg0.equals("textContent")) {
+	//			this.getNode().setNodeValue(String.valueOf(arg1));
+	//			return arg1;
+	//		}
+	//		return null;
+	//	}
+	//
+	//	@Override
+	//	public void putAll(final Map<? extends String, ? extends Object> arg0) {
+	//	}
+	//
+	//	@Override
+	//	public Object remove(final Object arg0) {
+	//		return null;
+	//	}
+	//
+	//	@Override
+	//	public int size() {
+	//		return 0;
+	//	}
+	//
+	//	@Override
+	//	public Collection<Object> values() {
+	//		return null;
+	//	}
 }

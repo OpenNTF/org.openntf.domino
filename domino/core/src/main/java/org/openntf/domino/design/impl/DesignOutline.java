@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class DesignOutline extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignOutline {
+public class DesignOutline extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.DesignOutline {
 	private static final long serialVersionUID = 1L;
 
 	@Override

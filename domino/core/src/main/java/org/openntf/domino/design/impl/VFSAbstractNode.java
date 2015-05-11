@@ -17,6 +17,8 @@
 package org.openntf.domino.design.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.design.VFSNode;
+import org.openntf.domino.design.VFSRootNode;
 
 /**
  * Abstract implementation of a VFS-Node
@@ -95,7 +98,7 @@ public abstract class VFSAbstractNode<T> implements VFSNode, Serializable {
 		return ret;
 	}
 
-	protected abstract void init();
+	//	protected abstract void init();
 
 	@Override
 	public String getPath() {
@@ -160,7 +163,7 @@ public abstract class VFSAbstractNode<T> implements VFSNode, Serializable {
 	protected abstract VFSNode newLeaf(String name, T t);
 
 	/**
-	 * Create a new virtual node (node tht does not yet exist, but describes the path to an object)
+	 * Create a new virtual node (node that does not yet exist, but describes the path to an object)
 	 * 
 	 * @param dir
 	 *            the dir
@@ -214,6 +217,10 @@ public abstract class VFSAbstractNode<T> implements VFSNode, Serializable {
 		initialized = false;
 	}
 
+	protected void init() {
+
+	}
+
 	/**
 	 * Returns the children. Initialization is done on demand
 	 * 
@@ -223,8 +230,8 @@ public abstract class VFSAbstractNode<T> implements VFSNode, Serializable {
 		if (!initialized) {
 			synchronized (this) {
 				if (!initialized) {
-					init();
 					initialized = true;
+					init();
 				}
 			}
 		}
@@ -245,7 +252,7 @@ public abstract class VFSAbstractNode<T> implements VFSNode, Serializable {
 	}
 
 	@Override
-	public byte[] getContent(final DxlConverter converter) throws IOException {
+	public void getContent(final DxlConverter converter, final OutputStream os) throws IOException {
 		throw new UnsupportedOperationException();
 	};
 
@@ -255,25 +262,35 @@ public abstract class VFSAbstractNode<T> implements VFSNode, Serializable {
 	}
 
 	@Override
-	public void setContent(final DxlConverter converter, final byte[] newBB) throws IOException {
+	public void setContent(final DxlConverter converter, final InputStream is, final boolean sign) throws IOException {
 		throw new UnsupportedOperationException();
-	};
-
-	@Override
-	public String getPathInNSF() {
-		if (getParent() == null) {
-			throw new IllegalStateException(this + " is not a valid NSF Resource");
-		}
-		if (getParent().isNSF()) {
-			return getName();
-		}
-		return getParent().getPathInNSF() + "/" + getName();
 	}
 
 	@Override
-	public void refresh() {
-		if (getParent() != null)
-			getParent().refresh();
+	public String getRelativePath() {
+		if (getParent() == null) {
+			throw new IllegalStateException(this + " is not a valid NSF Resource");
+		}
+		if (getParent().isDatabase()) {
+			return getName();
+		}
+		return getParent().getRelativePath() + "/" + getName();
+	}
+
+	protected VFSRootNode getVFSRootNode() {
+		VFSNode ret = this;
+		while (ret.getParent() != null) {
+			ret = ret.getParent();
+		}
+		return (VFSRootNode) ret;
+	}
+
+	protected VFSDatabaseNode getVFSDatabaseNode() {
+		VFSNode ret = this;
+		while (ret != null && !ret.isDatabase()) {
+			ret = ret.getParent();
+		}
+		return (VFSDatabaseNode) ret;
 	}
 
 	@Override

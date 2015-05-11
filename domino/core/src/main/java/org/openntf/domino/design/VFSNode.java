@@ -17,6 +17,8 @@
 package org.openntf.domino.design;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 
 /**
@@ -67,7 +69,7 @@ public interface VFSNode extends Comparable<VFSNode> {
 	 * 
 	 * @return the relative path
 	 */
-	public String getPathInNSF();
+	public String getRelativePath();
 
 	/**
 	 * Returns the parent node
@@ -95,7 +97,7 @@ public interface VFSNode extends Comparable<VFSNode> {
 	 * 
 	 * @return <code>true</code> if this is a database node
 	 */
-	public boolean isNSF();
+	public boolean isDatabase();
 
 	/**
 	 * Returns the LastModified timestamp of this resource
@@ -129,17 +131,19 @@ public interface VFSNode extends Comparable<VFSNode> {
 	 *            the DXL-Converter that should be used
 	 * @return the binary content
 	 */
-	public byte[] getContent(DxlConverter converter) throws IOException;
+	public void getContent(DxlConverter converter, OutputStream os) throws IOException;
 
 	/**
-	 * Set the binary content
+	 * Set the content
 	 * 
 	 * @param converter
 	 *            the DXL-Converter to use
-	 * @param buf
-	 *            the binary content
+	 * @param is
+	 *            the content
+	 * @param sign
+	 *            sign the file with current id
 	 */
-	public void setContent(DxlConverter converter, final byte[] buf) throws IOException;
+	public void setContent(DxlConverter converter, InputStream is, boolean sign) throws IOException;
 
 	/**
 	 * Returns the ContentLength of this entry
@@ -149,10 +153,5 @@ public interface VFSNode extends Comparable<VFSNode> {
 	 * @return the content length
 	 */
 	public long getContentLength(DxlConverter converter);
-
-	/**
-	 * Refresh this node to ensure that the content is actual
-	 */
-	public void refresh();
 
 }

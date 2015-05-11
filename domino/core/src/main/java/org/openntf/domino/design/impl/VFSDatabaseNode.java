@@ -17,7 +17,11 @@
 
 package org.openntf.domino.design.impl;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
@@ -36,7 +40,8 @@ import com.ibm.designer.domino.napi.NotesSession;
  * @author Roland Praml, FOCONIS AG
  *
  */
-public class VFSDatabaseNode extends VFSAbstractNode<DesignBase> implements VFSNode {
+public class VFSDatabaseNode extends VFSAbstractNode<DesignBase> implements org.openntf.domino.design.VFSDatabaseNode {
+	public static final Logger log_ = Logger.getLogger(VFSDatabaseNode.class.getName());
 	private static final long serialVersionUID = 1L;
 	private DatabaseMetaData metaData;
 
@@ -73,7 +78,7 @@ public class VFSDatabaseNode extends VFSAbstractNode<DesignBase> implements VFSN
 	}
 
 	@Override
-	public boolean isNSF() {
+	public boolean isDatabase() {
 		return true;
 	}
 
@@ -84,7 +89,7 @@ public class VFSDatabaseNode extends VFSAbstractNode<DesignBase> implements VFSN
 		long l = lastModified();
 		if (l != oldLastModified && oldLastModified != -1) {
 			refresh();
-			System.out.println("Design has changed");
+			log_.info("DesignChange detected");
 		}
 		oldLastModified = l;
 		return super.getChildren();
@@ -97,7 +102,12 @@ public class VFSDatabaseNode extends VFSAbstractNode<DesignBase> implements VFSN
 		} catch (Throwable t) {
 			// no napi
 		}
-		return metaData.getLastModifiedDate().getTime();
+		Date lm = metaData.getLastModifiedDate();
+		if (lm == null) {
+			return 0;
+		} else {
+			return lm.getTime();
+		}
 	}
 
 	private long lastModifiedNAPI() throws Exception {
@@ -111,6 +121,19 @@ public class VFSDatabaseNode extends VFSAbstractNode<DesignBase> implements VFSN
 			String fileName = OnDiskDesign.getOnDiskPath(el);
 			String[] components = fileName.split("/");
 			add(components, el, 0);
+		}
+		Set<String> folders = getVFSRootNode().getVirtualFolders();
+		Iterator<String> it = folders.iterator();
+		while (it.hasNext()) {
+			String folderPath = it.next();
+			if (folderPath.startsWith(getPath())) {
+				VFSNode folder = getVFSRootNode().cd(folderPath);
+				if (folder.exists()) {
+					it.remove();
+				} else {
+					folder.mkdir();
+				}
+			}
 		}
 	}
 

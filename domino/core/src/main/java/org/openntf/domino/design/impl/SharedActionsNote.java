@@ -22,7 +22,7 @@ import org.openntf.domino.design.SharedActions;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class SharedActionsNote extends AbstractDesignBase implements SharedActions {
+public class SharedActionsNote extends AbstractDesignDxlBase implements SharedActions {
 	private static final long serialVersionUID = 1L;
 
 	@Override

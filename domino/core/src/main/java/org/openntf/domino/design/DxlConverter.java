@@ -16,7 +16,6 @@
  */
 package org.openntf.domino.design;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,32 +36,11 @@ public interface DxlConverter {
 	 * 
 	 * @param dxl
 	 *            the DXL-Document
-	 * @param file
-	 *            the OutputFile
-	 * @throws IOException
-	 */
-	void writeDesignXML(XMLDocument dxl, File file) throws IOException;
-
-	/**
-	 * Writes the dxl as "Design" file (e.g. *.form, *.view)
-	 * 
-	 * @param dxl
-	 *            the DXL-Document
 	 * @param outputStream
 	 *            the OutputStream
 	 * @throws IOException
 	 */
 	void writeDesignXML(XMLDocument dxl, OutputStream outputStream) throws IOException;
-
-	/**
-	 * Reads a DesignFile
-	 * 
-	 * @param file
-	 *            the source
-	 * @return the DXL-Document
-	 * @throws IOException
-	 */
-	XMLDocument readDesignXML(File file) throws IOException;
 
 	/**
 	 * Reads a DesignFile
@@ -79,32 +57,11 @@ public interface DxlConverter {
 	 * 
 	 * @param dxl
 	 *            the DXL-Document
-	 * @param file
-	 *            the OutputFile
-	 * @throws IOException
-	 */
-	void writeMetaXML(XMLDocument dxl, File metaFile) throws IOException;
-
-	/**
-	 * Writes the dxl as "meta" file (e.g. *.metadata)
-	 * 
-	 * @param dxl
-	 *            the DXL-Document
 	 * @param os
 	 *            the OutputStream
 	 * @throws IOException
 	 */
 	void writeMetaXML(XMLDocument dxl, OutputStream os) throws IOException;
-
-	/**
-	 * Reads a MetaDataFile
-	 * 
-	 * @param file
-	 *            the source
-	 * @return the DXL-Document
-	 * @throws IOException
-	 */
-	XMLDocument readMetaXML(File file) throws IOException;
 
 	/**
 	 * Reads a MetaDataFile
@@ -128,55 +85,22 @@ public interface DxlConverter {
 	/**
 	 * Writes an XPages-XML file (ending: *.xsp)
 	 * 
-	 * @param fileData
-	 *            the fileData
-	 * @param file
-	 *            the XSP-File
-	 * @throws IOException
-	 */
-	void writeXspFile(byte[] fileData, File file) throws IOException;
-
-	/**
-	 * Writes an XPages-XML file (ending: *.xsp)
-	 * 
-	 * @param fileData
-	 *            the fileData
 	 * @param outputStream
 	 *            the OutputStream
+	 * @return OutputStream to write to
 	 * @throws IOException
 	 */
-	void writeXspFile(byte[] fileData, OutputStream outputStream) throws IOException;
+	OutputStream writeXspFile(OutputStream outputStream) throws IOException;
 
 	/**
-	 * Reads an XPages-XML file
+	 * Reads an XPages-XML file (may indent the result)
 	 * 
 	 * @param file
 	 *            the XSP-File
-	 * @return byte Array with fileData
+	 * @return InputStream with fileData
 	 * @throws IOException
 	 */
-	byte[] readXspFile(File file) throws IOException;
-
-	/**
-	 * Reads an XPages-XML file
-	 * 
-	 * @param file
-	 *            the XSP-File
-	 * @return byte Array with fileData
-	 * @throws IOException
-	 */
-	byte[] readXspFile(InputStream inputStream) throws IOException;
-
-	/**
-	 * Writes an XSP-Config-file (ending *.xsp-config)
-	 * 
-	 * @param fileData
-	 *            the filedata
-	 * @param file
-	 *            the XSP-Config file
-	 * @throws IOException
-	 */
-	void writeXspConfigFile(byte[] fileData, File file) throws IOException;
+	InputStream readXspFile(InputStream inputStream) throws IOException;
 
 	/**
 	 * Writes an XSP-Config-file (ending *.xsp-config)
@@ -187,16 +111,7 @@ public interface DxlConverter {
 	 *            the XSP-Config stream
 	 * @throws IOException
 	 */
-	void writeXspConfigFile(byte[] configData, OutputStream os) throws IOException;
-
-	/**
-	 * Reads an XSP-Config-file
-	 * 
-	 * @param content
-	 * @param file
-	 * @throws IOException
-	 */
-	byte[] readXspConfigFile(File file) throws IOException;
+	OutputStream writeXspConfigFile(OutputStream os) throws IOException;
 
 	/**
 	 * Reads an XSP-Config-file
@@ -205,7 +120,7 @@ public interface DxlConverter {
 	 * @param is
 	 * @throws IOException
 	 */
-	byte[] readXspConfigFile(InputStream is) throws IOException;
+	InputStream readXspConfigFile(InputStream is) throws IOException;
 
 	/**
 	 * Is Raw export enabled (required for 100% DXL compatibility)

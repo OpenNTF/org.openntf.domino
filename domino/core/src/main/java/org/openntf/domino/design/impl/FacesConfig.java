@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.openntf.domino.design.XspXmlContent;
 import org.openntf.domino.utils.xml.ModifiableStringNodeList;
 import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;

@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,10 +28,6 @@ import org.openntf.domino.design.DxlConverter;
  * 
  */
 public interface HasXspConfig {
-
-	void exportXspConfig(DxlConverter converter, File file) throws IOException;
-
-	void importXspConfig(DxlConverter converter, File file) throws IOException;
 
 	void exportXspConfig(DxlConverter converter, OutputStream os) throws IOException;
 
