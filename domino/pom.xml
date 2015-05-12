@@ -195,7 +195,7 @@
 							For linux, we must add "." to LD_LIBRARY_PATH
 							Windows does not pay attention to this entry 
 						-->
-						<LD_LIBRARY_PATH>${domino.installdir}${path.separator}{env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
+						<LD_LIBRARY_PATH>${domino.installdir}${path.separator}${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
 						
 						<PATH>${domino.installdir}${path.separator}${env.PATH}</PATH>
 					</environmentVariables>
