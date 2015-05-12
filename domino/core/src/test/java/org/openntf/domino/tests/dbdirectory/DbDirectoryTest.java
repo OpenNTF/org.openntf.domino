@@ -1,8 +1,6 @@
 package org.openntf.domino.tests.dbdirectory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -29,14 +27,14 @@ public class DbDirectoryTest {
 
 		DbDirectory dbDir = session.getDbDirectory("");
 
-		VFSNode dbTree = dbDir.getVFS().cd("Test/empty3.nsf/");
+		VFSNode dbTree = dbDir.getVFS();//.cd("Test/empty3.nsf/");
 		File out = new File("c:/dev/out");
 		dumpNode(dbTree, out, "");
 
-		VFSNode testFile = dbTree.cd("Resources/Files/HelloWorld.txt");
-		ByteArrayInputStream is = new ByteArrayInputStream("Hello World".getBytes());
-		testFile.setContent(converter, is, true);
-		is.close();
+		//		VFSNode testFile = dbTree.cd("Resources/Files/HelloWorld.txt");
+		//		ByteArrayInputStream is = new ByteArrayInputStream("Hello World".getBytes());
+		//		testFile.setContent(converter, is, true);
+		//		is.close();
 
 	}
 
@@ -56,12 +54,12 @@ public class DbDirectoryTest {
 				out.mkdirs();
 			}
 
-			out = new File(out, node.getName());
-			System.out.print(indent + "* " + node.getName());
-			FileOutputStream fos = new FileOutputStream(out);
-			node.getContent(converter, fos);
-			fos.close();
-			System.out.println(" Size: " + node.getContentLength(converter) + " == " + out.length());
+			//			out = new File(out, node.getName());
+			//			System.out.print(indent + "* " + node.getName());
+			//			//			FileOutputStream fos = new FileOutputStream(out);
+			//			//			node.getContent(converter, fos);
+			//			//			fos.close();
+			//			System.out.println(" Size: " + node.getContentLength(converter) + " == " + out.length());
 
 		}
 		for (VFSNode child : node.list()) {

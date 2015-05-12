@@ -10,6 +10,10 @@
 	<version>1.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<properties>
+		<!-- Specify a URL to download the Domino Binaires for the CI Domain -->
+		<domino.binary.url></domino.binary.url>
+	</properties>
 	
 	<name>OpenNTF Domino Aggregator</name>
 
@@ -24,6 +28,19 @@
 				<module>domino</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>ci</id>
+			<activation>
+				<property>
+					<name>domino.binary.url</name>
+				</property>
+			</activation>
+			<modules>
+				<module>ci-setup</module>
+			    <module>thirdparty</module>
+				<module>domino</module>
+			</modules>
+		</profile>		
 		<profile>
 			<id>fast</id>
 			<modules>

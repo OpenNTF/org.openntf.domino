@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.openntf</groupId>
+	<artifactId>ci-setup</artifactId>
+	<version>1.5.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Setup for Testdomain to run CI-Tests</name>
+
+	<properties>
+		<domino.binary.url></domino.binary.url>
+	</properties>
+	<build>
+	
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<packaging>jar</packaging> 
+						<!-- <localRepositoryPath>repository/</localRepositoryPath> -->
+					</configuration>
+				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. 
+					It has no influence on the Maven build itself.
+					RPr: They are excluded, because eclipse shows errors then.
+				-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-install-plugin</artifactId>
+										<versionRange>[2.4,)</versionRange>
+										<goals>
+											<goal>install-file</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute></execute>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
+										<versionRange>[1.6,)</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute></execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>prepare</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<property name="binURL" value="${domino.binary.url}" />
+								<property name="targetDir" value="${user.home}/.m2/openntf-domino-ci" />
+								<echo message="Setting up Test-Domain in: ${targetDir}" />
+								<echo message="Downloading Domino binaries from '${binURL}'" />
+								
+											   -------------------------------------------------------------------
+								<echo message="" />
+								<echo message="    #============================================================#" />
+								<echo message="    # Note that this will download the Domino-Binaries which are #" />
+								<echo message="    # licensed by IBM and not open source!                       #" />
+								<echo message="    # You are responsible to check if this is type of usage is   #" />
+								<echo message="    # covered by your IBM license.                               #" />
+								<echo message="    #============================================================#" />
+								<echo message="" />
+								<mkdir dir="download"/>			
+								<get
+									src="${binURL}"
+									dest="download/server-binaries.zip"
+									skipexisting="true"
+									verbose="true" />
+															
+								<unzip src="download/server-binaries.zip" dest="${targetDir}/bin" />
+								<unzip dest="${targetDir}/data">
+									<fileset dir="resources/nsfs/">
+										<include name="*.zip"/>
+									</fileset>
+								</unzip>
+								
+								<copy todir="${targetDir}/data">
+									<fileset dir="resources/id-files"/>
+								</copy>
+								
+								<copy file="resources/notes.ini" todir="${targetDir}/bin"/>
+								<replace file="${targetDir}/bin/notes.ini" token="$DATADIR$" value="${targetDir}/data"/>
+								<replace file="${targetDir}/bin/notes.ini" token="$PROGDIR$" value="${targetDir}/bin"/>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<executions>
+						<!-- install only nested jars, so skip default-install -->
+						<execution>
+							<id>default-install</id>
+							<phase>install</phase>
+		  					<configuration>
+								<skip>false</skip>
+							</configuration>
+						</execution>
+
+					</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<licenses>
+		<license>
+			<name>proprietary license</name>
+			<comments>Note that this submission is distributed under a proprietary license and is not open source. It has been posted to the OpenNTF, pursuant to the OpenNTF IP Policy, to assist OpenNTF users develop software</comments>
+		</license>
+	</licenses>
+
+</project>
