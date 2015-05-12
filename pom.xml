@@ -17,7 +17,10 @@
 	</properties>
 	
 	<name>OpenNTF Domino Aggregator</name>
-
+	<scm>
+		<developerConnection>scm:git:ssh://git@github.com:rPraml/org.openntf.domino.git</developerConnection>
+    </scm>
+	
 	<profiles>
 		<profile>
 			<id>default</id>

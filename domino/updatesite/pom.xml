@@ -67,7 +67,7 @@
 					https://github.com/dhakehurst/p2-maven-plugin
 					<version>1.1.2-dhakehurst</version>
 				-->
-				<version>1.2.0-FOC-SNAPSHOT</version>
+				<version>1.2.0-FOC</version>
 				
 				
 				<executions>
@@ -147,89 +147,20 @@ Includes google-code-prettify from Google Inc under Apache License 2.0
 
 
 									<artifacts>
-										<!-- 
-											specify your dependencies here. Unfortunately, we cannot use transitive here, as it
-											will bundle the whole OSGi Framework 
-										-->
-										<!-- groupId:artifactId:version -->
-								<!-- 		<artifact>
-											<id>org.openntf:formula:1.5.0-SNAPSHOT</id>
-											<transitive>false</transitive>
-											<source>true</source>
-										</artifact>
-										
+							
 										<artifact>
-											<id>org.openntf.domino:core:1.5.0-SNAPSHOT</id>
-											<transitive>false</transitive>
-											<source>false</source>
-										</artifact>
-										-->
-										<artifact>
-											<id>org.openntf.domino:xsp:1.5.0-SNAPSHOT</id>
+											<id>org.openntf.domino:xsp:${project.version}</id>
 											<transitive>true</transitive>
+											<!-- Transitive dependencies are resolved -->
 											<source>true</source>
 											<excludes>
+												<!-- but exclude these -->
 												<exclude>org.openntf:thirdparty</exclude>
 												<exclude>org.eclipse.*</exclude>
 												<exclude>com.ibm.*</exclude>
 											</excludes>
 										</artifact>
-										<!-- Externals -->
-										<!-- 										<artifact>
-											<id>com.google.guava:guava:${guava-version}</id>
-											<source>true</source>
-										</artifact>
-
-										<artifact>
-											<id>org.openntf.domino:java.sharedapi:1.5.0-SNAPSHOT</id>
-											<transitive>false</transitive>
-											<source>false</source>
-										</artifact>
-										 -->
-
-										<!--
-										<artifact>
-											<id>com.tinkerpop.blueprints:blueprints-core:${tinkerpop-blueprints-version}</id>
-											<transitive>true</transitive>
-											<source>false</source>
-										</artifact>
 										
-										<artifact>
-											<id>com.tinkerpop:frames:${tinkerpop-frames-version}</id>
-											<transitive>true</transitive>
-											<source>false</source>
-										</artifact>
-										
-										<artifact>
-											<id>org.javassist:javassist:${javassist-version}</id>
-											<transitive>true</transitive>
-											<source>false</source>
-										</artifact>
-										<artifact>
-											<id>junit:junit:4.11</id>
-											<transitive>true</transitive>
-											<source>false</source>
-											<excludes>
-												<exclude>org.osgi.*</exclude>
-											</excludes>
-										</artifact>
-										-->
-										
-										<!-- dependent of junit:junit:4.11 -->
-<!-- 										<artifact>
-											<id>org.hamcrest:hamcrest-core:1.3</id>
-										</artifact>	
-										<artifact>
-											<id>org.javolution:javolution-core-java:${javolution-version}</id>
-											<transitive>false</transitive>
-											<source>true</source>
-										</artifact>
-	 -->									
-										<!--<artifact><id>commons-io:commons-io:2.1</id></artifact>
-										<artifact><id>commons-lang:commons-lang:2.4</id></artifact>
-										<artifact><id>commons-lang:commons-lang:2.5</id></artifact>
-										<artifact><id>commons-lang:commons-lang:2.6</id></artifact>
-										<artifact><id>org.apache.commons:commons-lang3:3.1</id></artifact>-->
 									</artifacts>
 							    </feature>
 							</featureDefinitions>
