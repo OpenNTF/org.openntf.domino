@@ -13,6 +13,7 @@
 	<properties>
 		<!-- Specify a URL to download the Domino Binaires for the CI Domain -->
 		<domino.binary.url></domino.binary.url>
+		<domino.deploy.url></domino.deploy.url>
 	</properties>
 	
 	<name>OpenNTF Domino Aggregator</name>
@@ -160,9 +161,14 @@
 	
 	
 	<distributionManagement>
+		<repository>
+			<id>default</id>
+			<name>Default Deploy Repository</name>
+			<url>${domino.deploy.url}</url>
+		</repository>
 		<site>
-			<id>www.openntf.org</id>
-			<url>file://c:\fullsite/</url>
+			<id>default-site</id>
+			<url>${domino.site.url}</url>
 		</site>
 	</distributionManagement>
 	

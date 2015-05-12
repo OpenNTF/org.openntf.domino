@@ -1,19 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openntf</groupId>
 	<artifactId>thirdparty</artifactId>
 	<version>1.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>IBM Domino Update Site for Build Management</name>
+	<properties>
+		<mGoal>install</mGoal>
+		<mPhase>compile</mPhase>
+		<domino.buildmanagement.url>http://openntf.org//Projects/pmt.nsf/Releases/2545C0953624499386257D94003FC76B/$file/DominoBuildManagementUpdateSite.zip</domino.buildmanagement.url>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<mGoal>install</mGoal>
+				<mPhase>compile</mPhase>
+				<domino.buildmanagement.url>http://openntf.org//Projects/pmt.nsf/Releases/2545C0953624499386257D94003FC76B/$file/DominoBuildManagementUpdateSite.zip</domino.buildmanagement.url>
+			</properties>
+		</profile>
+      
+		<profile>
+			<id>deploy</id>
+			<activation>
+				<property>
+				<name>domino.deploy.url</name>
+				</property>
+			</activation>
+			<properties>
+				<mGoal>deploy</mGoal>
+				<mPhase>deploy</mPhase>
+				<domino.buildmanagement.url>http://openntf.org//Projects/pmt.nsf/Releases/2545C0953624499386257D94003FC76B/$file/DominoBuildManagementUpdateSite.zip</domino.buildmanagement.url>
+				<url>${domino.deploy.url}</url>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
-	
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -21,14 +53,13 @@
 					<artifactId>maven-install-plugin</artifactId>
 					<version>2.4</version>
 					<configuration>
-						<packaging>jar</packaging> 
+						<packaging>jar</packaging>
 						<!-- <localRepositoryPath>repository/</localRepositoryPath> -->
 					</configuration>
 				</plugin>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. 
-					It has no influence on the Maven build itself.
-					RPr: They are excluded, because eclipse shows errors then.
-				-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. RPr: They are excluded, 
+					because eclipse shows errors then. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -42,7 +73,7 @@
 										<artifactId>maven-install-plugin</artifactId>
 										<versionRange>[2.4,)</versionRange>
 										<goals>
-											<goal>install-file</goal>
+											<goal>${mGoal}-file</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -60,6 +91,25 @@
 									</pluginExecutionFilter>
 									<action>
 										<execute></execute>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-deploy-plugin
+										</artifactId>
+										<versionRange>
+											[2.7,)
+										</versionRange>
+										<goals>
+											<goal>deploy-file</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -80,8 +130,9 @@
 						<phase>generate-sources</phase>
 						<configuration>
 							<target>
-								<echo message="Downloading 'IBM Domino Update Site for Build Management' from www.openntf.org" />
-											   -------------------------------------------------------------------
+								<property name="dlURL" value="${domino.buildmanagement.url}" />
+								<echo message="Downloading 'IBM Domino Update Site for Build Management' from ${dlURL}" />
+								-------------------------------------------------------------------
 								<echo message="" />
 								<echo message="    #============================================================#" />
 								<echo message="    # Note that this submission is distributed under a           #" />
@@ -90,43 +141,43 @@
 								<echo message="    # IP Policy, to assist OpenNTF users develop software.       #" />
 								<echo message="    #============================================================#" />
 								<echo message="" />
-								<mkdir dir="download"/>
-								<!-- See details: 
-									http://openntf.org/main.nsf/project.xsp?r=project/IBM%20Domino%20Update%20Site%20for%20Build%20Management
-									
-									Original DL-URL (Version is from 2014/18/11, MD5: 8baf3908437dffc5661112148ff96cfc)
-										http://openntf.org//Projects/pmt.nsf/Releases/2545C0953624499386257D94003FC76B/$file/DominoBuildManagementUpdateSite.zip
-									RPr: OpenNTF is sometimes so slow - so I (temporary!?) mirrored the file here: 
-										https://www.dropbox.com/s/aqy3kua8lzin6iz/DominoBuildManagementUpdateSite.zip?dl=1
-									
-									File is put in "download" folder, so that it is not deleted on "mvn clean" 
-								-->								
+								<mkdir dir="download" />
+								<!-- See details: http://openntf.org/main.nsf/project.xsp?r=project/IBM%20Domino%20Update%20Site%20for%20Build%20Management 
+									Original DL-URL (Version is from 2014/18/11, MD5: 8baf3908437dffc5661112148ff96cfc) 
+									 
+									RPr: OpenNTF is sometimes so slow - so I (temporary!?) mirrored the file 
+									here: https://www.dropbox.com/s/aqy3kua8lzin6iz/DominoBuildManagementUpdateSite.zip?dl=1 
+									File is put in "download" folder, so that it is not deleted on "mvn clean" -->
 								<get
-									src="https://www.dropbox.com/s/aqy3kua8lzin6iz/DominoBuildManagementUpdateSite.zip?dl=1"
+									src="${dlURL}"
 									dest="download/DominoBuildManagementUpdateSite.zip"
-									skipexisting="true"
-									verbose="true" />
-								
+									skipexisting="true" verbose="true" />
+
 								<echo message="MD5 check..." />
-								<property name="md5Expected" value="8baf3908437dffc5661112148ff96cfc"/>
-								<checksum file="download/DominoBuildManagementUpdateSite.zip"  property="md5Zip" />
+								<property name="md5Expected" value="8baf3908437dffc5661112148ff96cfc" />
+								<checksum file="download/DominoBuildManagementUpdateSite.zip"
+									property="md5Zip" />
 								<echo message="MD5 OK... converting to m2 repository" />
-								<fail message="The MD5 of the ZIP-file does not match.${line.separator}got:      ${md5Zip}${line.separator}expected: ${md5Expected}${line.separator}To download again, you have to delete 'download/DominoBuildManagementUpdateSite.zip'">
-								 	<condition>
-										<not><equals arg1="${md5Zip}" arg2="${md5Expected}"/></not>
-            					   </condition>
+								<fail
+									message="The MD5 of the ZIP-file does not match.${line.separator}got:      ${md5Zip}${line.separator}expected: ${md5Expected}${line.separator}To download again, you have to delete 'download/DominoBuildManagementUpdateSite.zip'">
+									<condition>
+										<not>
+											<equals arg1="${md5Zip}" arg2="${md5Expected}" />
+										</not>
+									</condition>
 								</fail>
-								
+
 								<!-- Unzip nightmare -->
-								<unzip src="download/DominoBuildManagementUpdateSite.zip" dest="target/" />
+								<unzip src="download/DominoBuildManagementUpdateSite.zip"
+									dest="target/" />
 								<unzip src="target/UpdateSite.zip" dest="target/UpdateSite" />
 								<unzip dest="target/innerJars">
 									<fileset dir="target/UpdateSite/plugins/">
-										<include name="*.jar"/>
+										<include name="*.jar" />
 									</fileset>
 									<patternset>
-										<include name="*.jar"/>
-										<include name="lib/*.jar"/>
+										<include name="*.jar" />
+										<include name="lib/*.jar" />
 									</patternset>
 								</unzip>
 							</target>
@@ -137,606 +188,619 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			
+
+
+			<!-- Defaults -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<executions>
-						<!-- install only nested jars, so skip default-install -->
-						<execution>
-							<id>default-install</id>
-							<phase>install</phase>
-		  					<configuration>
-								<skip>false</skip>
-							</configuration>
-						</execution>
-						
-						<!-- com.ibm.notes.java.api.notes-api -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.notes.java.api.notes-api</id>
-							<configuration>
-								<file>target/innerJars/Notes.jar</file>
-								<pomFile>poms/com.ibm.notes.java.api.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.notes.java.api.websvc</id>
-							<configuration>
-								<file>target/innerJars/websvc.jar</file>
-								<pomFile>poms/com.ibm.notes.java.api.websvc.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<!-- com.ibm.domino.napi -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.domino.napi</id>
-							<configuration>
-								<file>target/innerJars/lwpd.domino.napi.jar</file>
-								<pomFile>poms/com.ibm.domino.napi.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- ========= ECLIPSE =======  -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>org.eclipse.osgi</id>
-							<configuration>
-								<groupId>org.eclipse.osgi</groupId>
-								<artifactId>org.eclipse.osgi</artifactId>
-								<version>3.4.3-R34x_v20081215</version>
-								<file>target/UpdateSite/plugins/org.eclipse.osgi_3.4.3.R34x_v20081215-1030-RCP20140609-1400.jar</file>
-								<!-- no dependencies -->
-							</configuration>
-						</execution>
-						
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>org.eclipse.osgi.services</id>
-							<configuration>
-								<groupId>org.eclipse.osgi</groupId>
-								<artifactId>services</artifactId>
-								<version>3.1.200-v20071203</version>
-								<file>target/UpdateSite/plugins/org.eclipse.osgi.services_3.1.200.v20071203.jar</file>
-								<!-- no dependencies -->
-							</configuration>
-						</execution>
-						
-						<!-- runtime -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>org.eclipse.core.runtime</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/org.eclipse.core.runtime_3.4.0.v20080512.jar</file>
-								<pomFile>poms/org.eclipse.core.runtime.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<!-- equinox.preferences -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>org.eclipse.equinox.preferences</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/org.eclipse.equinox.preferences_3.2.201.R34x_v20080709-RCP20140609-1400.jar</file>
-								<pomFile>poms/org.eclipse.equinox.preferences.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- equinox.preferences -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>org.eclipse.core.contenttype</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/org.eclipse.core.contenttype_3.3.0.v20080604-1400.jar</file>
-								<pomFile>poms/org.eclipse.core.contenttype.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<!-- ===== IBM-COMMONS ====== -->
-						
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.commons</id>
-							<configuration>
-								<file>target/innerJars/lwpd.commons.jar</file>
-								<pomFile>poms/com.ibm.commons.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- COMMONS.JDBC -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.commons.jdbc</id>
-							<configuration>
-								<file>target/innerJars/lwpd.commons.jdbc.jar</file>
-								<pomFile>poms/com.ibm.commons.jdbc.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<!-- COMMONS.ICU -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.commons.icu</id>
-							<configuration>
-								<file>target/innerJars/lwpd.commons.icu.jar</file>
-								<pomFile>poms/com.ibm.commons.icu.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<!-- COMMONS.XML -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.commons.xml</id>
-							<configuration>
-								<file>target/innerJars/lwpd.commons.xml.jar</file>
-								<pomFile>poms/com.ibm.commons.xml.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- COMMONS.VFS -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.commons.vfs</id>
-							<configuration>
-								<file>target/innerJars/lwpd.commons.vfs.jar</file>
-								<pomFile>poms/com.ibm.commons.vfs.pom</pomFile>
-							</configuration>
-						</execution>
-
-
-						<!-- ====== DESGINER ===== -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.lib.fastinfoset</id>
-							<configuration>
-								<groupId>com.ibm.designer</groupId>
-								<artifactId>lib.fastinfoset</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/lib/FastInfoset.jar</file>
-								<!-- no dependencies -->
-							</configuration>
-						</execution>
-						
-
-						<!-- com.ibm.designer.runtime.directory -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.runtime.directory</id>
-							<configuration>
-								<groupId>com.ibm.designer</groupId>
-								<artifactId>runtime.directory</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/lwpd.runtime.directory.jar</file>
-								<pomFile>poms/com.ibm.designer.runtime.directory.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						
-						<!-- com.ibm.designer.lib.jsf -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.lib.jsf</id>
-							<configuration>
-								<!-- TODO: There are 5 additional jars -->
-								<file>target/innerJars/lib/jsf-api.jar</file>
-								<pomFile>poms/com.ibm.designer.lib.jsf.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- com.ibm.xsp.domino -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.domino</id>
-							<configuration>
-								<file>target/innerJars/lwpd.xsp.domino.jar</file>
-								<pomFile>poms/com.ibm.xsp.domino.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<!-- com.ibm.designer.lib.javamail -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.lib.javamail</id>
-							<configuration>
-								<!-- TODO: Ther is one additional jar in original bundle -->
-								<file>target/innerJars/lib/mail.jar</file>
-								<pomFile>poms/com.ibm.designer.lib.javamail.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- com.ibm.xsp.extsn -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extsn</id>
-							<configuration>
-								<file>target/innerJars/lwpd.xsp.extsn.jar</file>
-								<pomFile>poms/com.ibm.xsp.extsn.pom</pomFile>
-							</configuration>
-						</execution>
-
-
-						<!-- ====== EXTENSION - LIBRARY ====== -->
-
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extlib</id>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>extlib</artifactId>
-								<version>9.0.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.xsp.extlib_9.0.1.v00_00_20140404-1000.jar</file>
-								<pomFile>poms/com.ibm.xsp.extlib.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.icu.base</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/com.ibm.icu.base_3.8.1.v20080530.jar</file>
-								<pomFile>poms/com.ibm.icu.base.pom</pomFile>
-							</configuration>
-						</execution>
-						
-
-<!--  UNCCHECKED -->
-
-						
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.icu</id>
-							<configuration>
-								<groupId>com.ibm.icu</groupId>
-								<artifactId>com.ibm.icu</artifactId>
-								<version>3.8.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.icu_3.8.1.v20120530.jar</file>
-							</configuration>
-						</execution>
-
-<!--
-Require-Bundle: org.eclipse.core.runtime,com.ibm.commons,com.ibm.jscri
- pt,com.ibm.commons.xml,com.ibm.designer.runtime,com.ibm.notes.java.ap
- i,com.ibm.xsp.core,com.ibm.xsp.extsn;bundle-version="8.5.3",com.ibm.x
- sp.designer;bundle-version="8.5.3",com.ibm.xsp.domino;bundle-version=
- "8.5.3"
- -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extlib.core</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.core_9.0.1.v00_00_20140404-1000.jar</file>
-								<pomFile>poms/com.ibm.xsp.extlib.core.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extlib.controls</id>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>extlib.controls</artifactId>
-								<version>9.0.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.controls_9.0.1.v00_00_20140404-1000.jar</file>
-							</configuration>
-						</execution>
-
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extlib.mobile</id>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>extlib.mobile</artifactId>
-								<version>9.0.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.mobile_9.0.1.v00_00_20140404-1000.jar</file>
-							</configuration>
-						</execution>
-
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extlib.oneui</id>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>extlib.oneui</artifactId>
-								<version>9.0.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.oneui_9.0.1.v00_00_20140404-1000.jar</file>
-							</configuration>
-						</execution>
-
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.extlib.domino</id>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>extlib.domino</artifactId>
-								<version>9.0.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.domino_9.0.1.v00_00_20140404-1000.jar</file>
-							</configuration>
-						</execution>
-
-
-						<!-- 
-							com.ibm.xsp.extsn  - depends on:
-							org.eclipse.core.runtime
-							com.ibm.commons;visibility:=reexport
-							com.ibm.commons.xml;visibility:=reexport
-							com.ibm.jscript;visibility:=reexport
-							com.ibm.xsp.core;visibility:=reexport
-							com.ibm.icu
-						-->
-
-						
-						
-						<!--
-						Require-Bundle: org.eclipse.core.runtime,com.ibm.commons,com.ibm.commo
-						 	ns.xml,com.ibm.commons.vfs,com.ibm.commons.jdbc,com.ibm.jscript,com.i
-						 	bm.designer.runtime.directory,com.ibm.notes.java.api,com.ibm.pvc.serv
-							let
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.runtime</id>
-							<configuration>
-								<groupId>com.ibm.designer</groupId>
-								<artifactId>runtime</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/lwpd.runtime.designer.jar</file>
-							</configuration>
-						</execution>
-
-						<!-- Require-Bundle: com.ibm.commons -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.runtime.acl</id>
-							<configuration>
-								<groupId>com.ibm.designer</groupId>
-								<artifactId>runtime.acl</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/lwpd.runtime.acl.jar</file>
-							</configuration>
-						</execution>
-
-				<!-- Require-Bundle: Require-Bundle: org.eclipse.core.runtime,com.ibm.notes.java.api,com.ib
- m.xsp.core,com.ibm.xsp.designer,com.ibm.xsp.extsn,com.ibm.xsp.domino,
- com.ibm.designer.runtime,com.ibm.domino.xsp.adapter;visibility:=reexp
- ort,com.ibm.designer.runtime.acl,com.ibm.designer.runtime.directory,c
- om.ibm.domino.commons -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.domino.services</id>
-							<configuration>
-								<groupId>com.ibm.domino</groupId>
-								<artifactId>services</artifactId>
-								<version>9.0.1</version>
-								<file>target/UpdateSite/plugins/com.ibm.domino.services_9.0.1.v00_00_20140404-1000.jar</file>
-							</configuration>
-						</execution>
-
-
-						<!--
-							Require-Bundle: com.ibm.commons,com.ibm.notes.java.api,com.ibm.pvc.ser
- 								vlet;resolution:=optional,org.eclipse.core.runtime;bundle-version="3.
- 								4.0";resolution:=optional,com.ibm.domino.napi
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.domino.xsp.bootstrap</id>
-							<configuration>
-								<groupId>com.ibm.domino</groupId>
-								<artifactId>xsp.bootstrap</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/xsp.domino.bridge.jar</file>
-							</configuration>
-						</execution>
-
-						<!--
-						Require-Bundle: com.ibm.commons,com.ibm.commons.vfs,com.ibm.commons.xm
-							l,com.ibm.xsp.extsn;visibility:=reexport,com.ibm.jscript,com.ibm.desi
-							gner.lib.jsf;visibility:=reexport,com.ibm.designer.runtime.directory,
-							com.ibm.designer.runtime,org.eclipse.core.runtime
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.designer</id>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>designer</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/lwpd.xsp.designer.jar</file>
-							</configuration>
-						</execution>
-						
-						<!--
-						Require-Bundle: com.ibm.domino.xsp.bootstrap,com.ibm.notes.java.api,co
- 							m.ibm.pvc.servlet,com.ibm.commons,org.apache.commons.codec;bundle-ver
- 							sion="1.3.0"
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.domino.xsp.bridge.http</id>
-							<configuration>
-								<groupId>com.ibm.domino</groupId>
-								<artifactId>xsp.bridge.http</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/xsp.domino.bridge.http.jar</file>
-							</configuration>
-						</execution>
-						
-
-
-
-						<!-- 
-							com.ibm.domino.xsp.adapter 
-							- No dependencies
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.domino.xsp.adapter</id>
-							<configuration>
-								<file>target/innerJars/lwpd.domino.adapter.jar</file>
-								<pomFile>poms/com.ibm.domino.xsp.adapter.pom</pomFile>
-							</configuration>
-						</execution>
-
-						<!-- com.ibm.pvc.servlet -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.pvc.servlet</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/com.ibm.pvc.servlet_2.5.0.20140627-1700.jar</file>
-								<pomFile>poms/com.ibm.pvc.servlet.pom</pomFile>
-							</configuration>
-						</execution>
-						
-						
-						<!-- 
-							com.ibm.designer.lib.acf
-							TODO: Contains nested jars - may be broken!
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.designer.lib.acf</id>
-							<configuration>
-								<file>target/UpdateSite/plugins/com.ibm.designer.lib.acf_9.0.1.20140404-1000.jar</file>
-								<pomFile>poms/com.ibm.designer.lib.acf.pom</pomFile>
-							</configuration>
-						</execution>						
-
-						<!-- 
-							com.ibm.xsp.core  - depends on:
-							- org.eclipse.core.runtime
-							- com.ibm.commons (9.0.1)
-							- com.ibm.commons.xml (9.0.1)
-							- com.ibm.pvc.servlet;visibility:=reexport (2.5.0)
-							- com.ibm.designer.lib.jsf;visibility:=reexport, (9.0.1)
-							- com.ibm.designer.lib.acf (9.0.1)
-						-->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.xsp.core</id>
-							<configuration>
-								<file>target/innerJars/lwpd.xsp.core.jar</file>
-								<pomFile>poms/com.ibm.xsp.core.pom</pomFile>
-							</configuration>
-						</execution>
-
-						
-						
-						
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.jscript.jscript</id>
-							<configuration>
-								<file>target/innerJars/lib/lwpd.commons.ibmjs.jar</file>
-								<pomFile>poms/com.ibm.jscript.jscript.pom</pomFile>
-							</configuration>
-						</execution>
-
-
-		<!-- com.ibm.xsp.domino 
-						<execution>
-							<phase>compile</phase>
-							<id>com.ibm.xsp.domino</id>
-							<goals>
-								<goal>install-file</goal>
-							</goals>
-							<configuration>
-								<groupId>com.ibm.xsp</groupId>
-								<artifactId>domino</artifactId>
-								<version>9.0.1</version>
-								<packaging>jar</packaging>
-								<file>target/innerJars/lwpd.xsp.domino.jar</file>
-							</configuration>
-						</execution> -->
-						
-						<!-- com.ibm.jscript -->
-						<execution>
-							<phase>compile</phase>
-							<goals><goal>install-file</goal></goals>
-							<id>com.ibm.jscript</id>
-							<configuration>
-								<groupId>com.ibm.jscript</groupId>
-								<artifactId>jscript-lib</artifactId>
-								<version>9.0.1</version>
-								<file>target/innerJars/lib/lwpd.commons.ibmjs.jar</file>
-							</configuration>
-						</execution>
-						
-
-
-
-
-					</executions>
-			</plugin>
-			<!-- The maven compiler plugin. It uses javac - so you will need SDK!
-			mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> \
-		    -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=<packaging>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
+				<artifactId>maven-install-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>compile</phase>
-					
-						<goals>
-							<goal>to-maven</goal>
-						</goals>
+						<id>default-install</id>
+						<phase>install</phase>
 						<configuration>
-							<eclipseDir>${project.build.directory}/UpdateSite</eclipseDir>
-							<stripQualifier>true</stripQualifier>
+							<skip>false</skip>
 						</configuration>
 					</execution>
-				</executions>						
-				<configuration>
-				</configuration>
-			</plugin> 
---> 
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-${mGoal}-plugin</artifactId>
+				<executions>
+
+					<!-- com.ibm.notes.java.api.notes-api -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.notes.java.api.notes-api</id>
+						<configuration>
+							<file>target/innerJars/Notes.jar</file>
+							<pomFile>poms/com.ibm.notes.java.api.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.notes.java.api.websvc</id>
+						<configuration>
+							<file>target/innerJars/websvc.jar</file>
+							<pomFile>poms/com.ibm.notes.java.api.websvc.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.domino.napi -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.domino.napi</id>
+						<configuration>
+							<file>target/innerJars/lwpd.domino.napi.jar</file>
+							<pomFile>poms/com.ibm.domino.napi.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- ========= ECLIPSE ======= -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>org.eclipse.osgi</id>
+						<configuration>
+							<groupId>org.eclipse.osgi</groupId>
+							<artifactId>org.eclipse.osgi</artifactId>
+							<version>3.4.3-R34x_v20081215</version>
+							<file>target/UpdateSite/plugins/org.eclipse.osgi_3.4.3.R34x_v20081215-1030-RCP20140609-1400.jar</file>
+							<!-- no dependencies -->
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>org.eclipse.osgi.services</id>
+						<configuration>
+							<groupId>org.eclipse.osgi</groupId>
+							<artifactId>services</artifactId>
+							<version>3.1.200-v20071203</version>
+							<file>target/UpdateSite/plugins/org.eclipse.osgi.services_3.1.200.v20071203.jar</file>
+							<!-- no dependencies -->
+						</configuration>
+					</execution>
+
+					<!-- runtime -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>org.eclipse.core.runtime</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/org.eclipse.core.runtime_3.4.0.v20080512.jar</file>
+							<pomFile>poms/org.eclipse.core.runtime.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- equinox.preferences -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>org.eclipse.equinox.preferences</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/org.eclipse.equinox.preferences_3.2.201.R34x_v20080709-RCP20140609-1400.jar</file>
+							<pomFile>poms/org.eclipse.equinox.preferences.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- equinox.preferences -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>org.eclipse.core.contenttype</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/org.eclipse.core.contenttype_3.3.0.v20080604-1400.jar</file>
+							<pomFile>poms/org.eclipse.core.contenttype.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- ===== IBM-COMMONS ====== -->
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.commons</id>
+						<configuration>
+							<file>target/innerJars/lwpd.commons.jar</file>
+							<pomFile>poms/com.ibm.commons.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- COMMONS.JDBC -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.commons.jdbc</id>
+						<configuration>
+							<file>target/innerJars/lwpd.commons.jdbc.jar</file>
+							<pomFile>poms/com.ibm.commons.jdbc.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- COMMONS.ICU -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.commons.icu</id>
+						<configuration>
+							<file>target/innerJars/lwpd.commons.icu.jar</file>
+							<pomFile>poms/com.ibm.commons.icu.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- COMMONS.XML -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.commons.xml</id>
+						<configuration>
+							<file>target/innerJars/lwpd.commons.xml.jar</file>
+							<pomFile>poms/com.ibm.commons.xml.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- COMMONS.VFS -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.commons.vfs</id>
+						<configuration>
+							<file>target/innerJars/lwpd.commons.vfs.jar</file>
+							<pomFile>poms/com.ibm.commons.vfs.pom</pomFile>
+						</configuration>
+					</execution>
+
+
+					<!-- ====== DESGINER ===== -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.lib.fastinfoset</id>
+						<configuration>
+							<groupId>com.ibm.designer</groupId>
+							<artifactId>lib.fastinfoset</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/lib/FastInfoset.jar</file>
+							<!-- no dependencies -->
+						</configuration>
+					</execution>
+
+
+					<!-- com.ibm.designer.runtime.directory -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.runtime.directory</id>
+						<configuration>
+							<groupId>com.ibm.designer</groupId>
+							<artifactId>runtime.directory</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/lwpd.runtime.directory.jar</file>
+							<pomFile>poms/com.ibm.designer.runtime.directory.pom</pomFile>
+						</configuration>
+					</execution>
+
+
+					<!-- com.ibm.designer.lib.jsf -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.lib.jsf</id>
+						<configuration>
+							<!-- TODO: There are 5 additional jars -->
+							<file>target/innerJars/lib/jsf-api.jar</file>
+							<pomFile>poms/com.ibm.designer.lib.jsf.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.xsp.domino -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.domino</id>
+						<configuration>
+							<file>target/innerJars/lwpd.xsp.domino.jar</file>
+							<pomFile>poms/com.ibm.xsp.domino.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.designer.lib.javamail -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.lib.javamail</id>
+						<configuration>
+							<!-- TODO: Ther is one additional jar in original bundle -->
+							<file>target/innerJars/lib/mail.jar</file>
+							<pomFile>poms/com.ibm.designer.lib.javamail.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.xsp.extsn -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extsn</id>
+						<configuration>
+							<file>target/innerJars/lwpd.xsp.extsn.jar</file>
+							<pomFile>poms/com.ibm.xsp.extsn.pom</pomFile>
+						</configuration>
+					</execution>
+
+
+					<!-- ====== EXTENSION - LIBRARY ====== -->
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extlib</id>
+						<configuration>
+							<groupId>com.ibm.xsp</groupId>
+							<artifactId>extlib</artifactId>
+							<version>9.0.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.xsp.extlib_9.0.1.v00_00_20140404-1000.jar</file>
+							<pomFile>poms/com.ibm.xsp.extlib.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.icu.base</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/com.ibm.icu.base_3.8.1.v20080530.jar</file>
+							<pomFile>poms/com.ibm.icu.base.pom</pomFile>
+						</configuration>
+					</execution>
+
+
+					<!-- UNCCHECKED -->
+
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.icu</id>
+						<configuration>
+							<groupId>com.ibm.icu</groupId>
+							<artifactId>com.ibm.icu</artifactId>
+							<version>3.8.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.icu_3.8.1.v20120530.jar</file>
+						</configuration>
+					</execution>
+
+					<!-- Require-Bundle: org.eclipse.core.runtime,com.ibm.commons,com.ibm.jscri 
+						pt,com.ibm.commons.xml,com.ibm.designer.runtime,com.ibm.notes.java.ap i,com.ibm.xsp.core,com.ibm.xsp.extsn;bundle-version="8.5.3",com.ibm.x 
+						sp.designer;bundle-version="8.5.3",com.ibm.xsp.domino;bundle-version= "8.5.3" -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extlib.core</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.core_9.0.1.v00_00_20140404-1000.jar</file>
+							<pomFile>poms/com.ibm.xsp.extlib.core.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extlib.controls</id>
+						<configuration>
+							<groupId>com.ibm.xsp</groupId>
+							<artifactId>extlib.controls</artifactId>
+							<version>9.0.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.controls_9.0.1.v00_00_20140404-1000.jar</file>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extlib.mobile</id>
+						<configuration>
+							<groupId>com.ibm.xsp</groupId>
+							<artifactId>extlib.mobile</artifactId>
+							<version>9.0.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.mobile_9.0.1.v00_00_20140404-1000.jar</file>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extlib.oneui</id>
+						<configuration>
+							<groupId>com.ibm.xsp</groupId>
+							<artifactId>extlib.oneui</artifactId>
+							<version>9.0.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.oneui_9.0.1.v00_00_20140404-1000.jar</file>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.extlib.domino</id>
+						<configuration>
+							<groupId>com.ibm.xsp</groupId>
+							<artifactId>extlib.domino</artifactId>
+							<version>9.0.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.xsp.extlib.domino_9.0.1.v00_00_20140404-1000.jar</file>
+						</configuration>
+					</execution>
+
+
+					<!-- com.ibm.xsp.extsn - depends on: org.eclipse.core.runtime com.ibm.commons;visibility:=reexport 
+						com.ibm.commons.xml;visibility:=reexport com.ibm.jscript;visibility:=reexport 
+						com.ibm.xsp.core;visibility:=reexport com.ibm.icu -->
+
+
+
+					<!-- Require-Bundle: org.eclipse.core.runtime,com.ibm.commons,com.ibm.commo 
+						ns.xml,com.ibm.commons.vfs,com.ibm.commons.jdbc,com.ibm.jscript,com.i bm.designer.runtime.directory,com.ibm.notes.java.api,com.ibm.pvc.serv 
+						let -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.runtime</id>
+						<configuration>
+							<groupId>com.ibm.designer</groupId>
+							<artifactId>runtime</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/lwpd.runtime.designer.jar</file>
+						</configuration>
+					</execution>
+
+					<!-- Require-Bundle: com.ibm.commons -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.runtime.acl</id>
+						<configuration>
+							<groupId>com.ibm.designer</groupId>
+							<artifactId>runtime.acl</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/lwpd.runtime.acl.jar</file>
+						</configuration>
+					</execution>
+
+					<!-- Require-Bundle: Require-Bundle: org.eclipse.core.runtime,com.ibm.notes.java.api,com.ib 
+						m.xsp.core,com.ibm.xsp.designer,com.ibm.xsp.extsn,com.ibm.xsp.domino, com.ibm.designer.runtime,com.ibm.domino.xsp.adapter;visibility:=reexp 
+						ort,com.ibm.designer.runtime.acl,com.ibm.designer.runtime.directory,c om.ibm.domino.commons -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.domino.services</id>
+						<configuration>
+							<groupId>com.ibm.domino</groupId>
+							<artifactId>services</artifactId>
+							<version>9.0.1</version>
+							<file>target/UpdateSite/plugins/com.ibm.domino.services_9.0.1.v00_00_20140404-1000.jar</file>
+						</configuration>
+					</execution>
+
+
+					<!-- Require-Bundle: com.ibm.commons,com.ibm.notes.java.api,com.ibm.pvc.ser 
+						vlet;resolution:=optional,org.eclipse.core.runtime;bundle-version="3. 4.0";resolution:=optional,com.ibm.domino.napi -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.domino.xsp.bootstrap</id>
+						<configuration>
+							<groupId>com.ibm.domino</groupId>
+							<artifactId>xsp.bootstrap</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/xsp.domino.bridge.jar</file>
+						</configuration>
+					</execution>
+
+					<!-- Require-Bundle: com.ibm.commons,com.ibm.commons.vfs,com.ibm.commons.xm 
+						l,com.ibm.xsp.extsn;visibility:=reexport,com.ibm.jscript,com.ibm.desi gner.lib.jsf;visibility:=reexport,com.ibm.designer.runtime.directory, 
+						com.ibm.designer.runtime,org.eclipse.core.runtime -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.designer</id>
+						<configuration>
+							<groupId>com.ibm.xsp</groupId>
+							<artifactId>designer</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/lwpd.xsp.designer.jar</file>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.domino.xsp.bridge.http</id>
+						<configuration>
+							<groupId>com.ibm.domino</groupId>
+							<artifactId>xsp.bridge.http</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/xsp.domino.bridge.http.jar</file>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.domino.xsp.adapter - No dependencies -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.domino.xsp.adapter</id>
+						<configuration>
+							<file>target/innerJars/lwpd.domino.adapter.jar</file>
+							<pomFile>poms/com.ibm.domino.xsp.adapter.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.pvc.servlet -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.pvc.servlet</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/com.ibm.pvc.servlet_2.5.0.20140627-1700.jar</file>
+							<pomFile>poms/com.ibm.pvc.servlet.pom</pomFile>
+						</configuration>
+					</execution>
+
+
+					<!-- com.ibm.designer.lib.acf TODO: Contains nested jars - may be broken! -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.designer.lib.acf</id>
+						<configuration>
+							<file>target/UpdateSite/plugins/com.ibm.designer.lib.acf_9.0.1.20140404-1000.jar</file>
+							<pomFile>poms/com.ibm.designer.lib.acf.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.xsp.core</id>
+						<configuration>
+							<file>target/innerJars/lwpd.xsp.core.jar</file>
+							<pomFile>poms/com.ibm.xsp.core.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.jscript.jscript</id>
+						<configuration>
+							<file>target/innerJars/lib/lwpd.commons.ibmjs.jar</file>
+							<pomFile>poms/com.ibm.jscript.jscript.pom</pomFile>
+						</configuration>
+					</execution>
+
+					<!-- com.ibm.jscript -->
+					<execution>
+						<phase>${mPhase}</phase>
+						<goals>
+							<goal>${mGoal}-file</goal>
+						</goals>
+						<id>com.ibm.jscript</id>
+						<configuration>
+							<groupId>com.ibm.jscript</groupId>
+							<artifactId>jscript-lib</artifactId>
+							<version>9.0.1</version>
+							<file>target/innerJars/lib/lwpd.commons.ibmjs.jar</file>
+						</configuration>
+					</execution>
+
+
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
+	<distributionManagement>
+		<repository>
+			<id>default</id>
+			<name>Default Deploy Repository</name>
+			<url>${domino.deploy.url}</url>
+		</repository>
+	</distributionManagement>
 	<licenses>
 		<license>
 			<name>proprietary license</name>

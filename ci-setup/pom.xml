@@ -12,9 +12,7 @@
 	<packaging>jar</packaging>
 	<name>Setup for Testdomain to run CI-Tests</name>
 
-	<properties>
-		<domino.binary.url></domino.binary.url>
-	</properties>
+
 	<build>
 	
 		<pluginManagement>
@@ -80,7 +78,7 @@
 				<executions>
 					<execution>
 						<id>prepare</id>
-						<phase>generate-sources</phase>
+						<phase>compile</phase>
 						<configuration>
 							<target>
 								<property name="binURL" value="${domino.binary.url}" />
@@ -137,11 +135,23 @@
 							<id>default-install</id>
 							<phase>install</phase>
 		  					<configuration>
-								<skip>false</skip>
+								<skip>true</skip>
 							</configuration>
 						</execution>
-
 					</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
