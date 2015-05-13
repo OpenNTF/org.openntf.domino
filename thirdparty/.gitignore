@@ -1,4 +1,5 @@
 /download
 /target
 /.classpath
+/bin
 *.temp

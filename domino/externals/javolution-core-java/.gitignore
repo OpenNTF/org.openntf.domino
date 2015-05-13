@@ -2,4 +2,4 @@
 *.lst
 /target/
 /target-ide/
-
+/bin

@@ -1,0 +1,10 @@
+1) First do a prepare:
+
+mvn release:prepare -Ddomino.binary.url=https://www.dropbox.com/s/g9xxaccc75v9hw2/server-binaries.zip?dl=1
+
+2) Switch to master branch and merge the tagged Commit
+3) Switch back to developement branch
+
+4) perform release
+
+mvn release:perform -Ddomino.binary.url=https://www.dropbox.com/s/g9xxaccc75v9hw2/server-binaries.zip?dl=1
