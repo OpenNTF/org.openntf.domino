@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>externals</artifactId>
-        <version>1.5.1-SNAPSHOT</version> <!--  Stable (Maven Central) -->
+        <version>1.5.0</version> <!--  Stable (Maven Central) -->
 	</parent>
 	<groupId>org.javolution</groupId>
 	<artifactId>javolution-core-java</artifactId>
 
-    <version>6.1.0-ODA-151-SNAPSHOT</version>
+    <version>6.1.0-ODA-150</version>
 	<packaging>bundle</packaging>
 	<name>Javolution Core (Java)</name>
 

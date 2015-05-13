@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>root</artifactId>
-		<version>1.5.1-SNAPSHOT</version>
+		<version>1.5.0</version>
 	</parent>
 	
 	<artifactId>core</artifactId>
@@ -94,13 +94,13 @@
 		<dependency>
 			<groupId>org.javolution</groupId>
 			<artifactId>javolution-core-java</artifactId>
-			<version>6.1.0-ODA-151-SNAPSHOT</version>
+			<version>6.1.0-ODA-150</version>
 		</dependency> 
 		
 		<dependency>
 			<groupId>org.openntf</groupId>
 			<artifactId>formula</artifactId>
-			<version>1.5.1-SNAPSHOT</version>
+			<version>1.5.0</version>
 		</dependency>
 		
 		<!-- TODO: Remove these Deps if separated in a own project 

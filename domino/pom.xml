@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>aggregator</artifactId>
-		<version>1.5.1-SNAPSHOT</version>
+		<version>1.5.0</version>
 	</parent>
 
 	<properties>
@@ -38,7 +38,7 @@
 		Note: The maven-release-plugin can change this info in all dependent POMs -->
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>root</artifactId>
-	<version>1.5.1-SNAPSHOT</version>
+	<version>1.5.0</version>
 	<packaging>pom</packaging>
 
 
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.openntf</groupId>
 			<artifactId>thirdparty</artifactId>
-			<version>1.5.1-SNAPSHOT</version>
+			<version>1.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
