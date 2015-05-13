@@ -13,7 +13,8 @@
 	</parent>
 	<groupId>org.javolution</groupId>
 	<artifactId>javolution-core-java</artifactId>
-    <version>6.1.0-ODA-SNAPSHOT</version>
+	<!-- This is not a snapshot build, as the code in this module should not change! Increment ODA Version if there are changes-->
+    <version>6.1.0-ODA1</version>
 	<packaging>bundle</packaging>
 	<name>Javolution Core (Java)</name>
 

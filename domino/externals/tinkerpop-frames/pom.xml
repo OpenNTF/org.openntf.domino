@@ -9,7 +9,8 @@
     </parent>
     <groupId>com.tinkerpop</groupId>
     <artifactId>frames</artifactId>
-    <version>2.6.0-ODA-SNAPSHOT</version>
+	<!-- This is not a snapshot build, as the code in this module should not change! Increment ODA Version if there are changes-->
+    <version>2.6.0-ODA1</version>
     <packaging>jar</packaging>
     <url>http://frames.tinkerpop.com</url>
     <name>Frames: An Object to Graph Framework</name>

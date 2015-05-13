@@ -25,10 +25,10 @@
 		<javassist-version>3.18.2-GA</javassist-version>
 		<tinkerpop-blueprints-version>2.6.0</tinkerpop-blueprints-version>
 		<!-- latest stable <tinkerpop-frames-version>2.6.0</tinkerpop-frames-version> -->
-		<tinkerpop-frames-version>2.6.0-ODA-SNAPSHOT</tinkerpop-frames-version>
+		<tinkerpop-frames-version>2.6.0-ODA1</tinkerpop-frames-version>
 		<!--latest stable <javolution-version>6.0.0</javolution-version> -->
 		<!-- Note: This version is self-built -->
-		<javolution-version>6.1.0-ODA-SNAPSHOT</javolution-version>
+		<javolution-version>6.1.0-ODA1</javolution-version>
 		<skip.tests>false</skip.tests>
 		<domino.installdir>${user.home}/.m2/openntf-domino-ci/bin</domino.installdir>
 	</properties>
