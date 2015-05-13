@@ -42,12 +42,13 @@
             <url>http://www.opensource.org/licenses/BSD-3-Clause</url>
         </license>
     </licenses>
+	<!-- Deactivated in ODA
     <scm>
         <connection>scm:git:git@github.com:tinkerpop/frames.git</connection>
         <developerConnection>scm:git:git@github.com:tinkerpop/frames.git</developerConnection>
         <url>git@github.com:tinkerpop/frames.git</url>
     </scm>
-
+	-->
     <properties>
         <tinkerpop.version>2.6.0</tinkerpop.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

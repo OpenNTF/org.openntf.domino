@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>com.ibm.xsp</groupId>
-	<artifactId>extlib.oneui</artifactId>
+	<artifactId>extlib.domino</artifactId>
 	<version>9.0.1</version>
 
 </project>

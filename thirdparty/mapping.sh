@@ -17,11 +17,11 @@ template() {
 }
 
 add() {
-	template compile install $1 $2 >> install.txt
-	template deploy deploy $1 $2 >> deploy.txt
+	template compile install $1 $2 >> install.temp
+	template deploy deploy $1 $2 >> deploy.temp
 }
-echo. > install.txt
-echo. > deploy.txt
+echo. > install.temp
+echo. > deploy.temp
  
 
 add com.ibm.notes.java.api 				target/innerJars/Notes.jar
@@ -55,7 +55,7 @@ add com.ibm.designer.runtime			target/innerJars/lwpd.runtime.designer.jar
 add com.ibm.designer.runtime.acl		target/innerJars/lwpd.runtime.acl.jar
 add com.ibm.domino.services				target/UpdateSite/plugins/com.ibm.domino.services_9.0.1.v00_00_20140404-1000.jar
 add com.ibm.domino.xsp.bootstrap		target/innerJars/xsp.domino.bridge.jar
-add com.ibm.domino.xsp.designer			target/innerJars/lwpd.xsp.designer.jar
+add com.ibm.xsp.designer				target/innerJars/lwpd.xsp.designer.jar
 add com.ibm.domino.xsp.bridge.http		target/innerJars/xsp.domino.bridge.http.jar
 add com.ibm.domino.xsp.adapter			target/innerJars/lwpd.domino.adapter.jar
 add com.ibm.pvc.servlet					target/UpdateSite/plugins/com.ibm.pvc.servlet_2.5.0.20140627-1700.jar
@@ -67,14 +67,14 @@ add com.ibm.jscript.jscript-lib			target/innerJars/lib/lwpd.commons.ibmjs.jar
 
 awk '
     BEGIN       {p=1}
-    /START:INSTALL\.TXT/   {print;system("cat install.txt");p=0}
-    /END:INSTALL\.TXT/     {p=1}
+    /START:INSTALL/   {print;system("cat install.temp");p=0}
+    /END:INSTALL/     {p=1}
     p' pom.xml > pom.xml.temp
 
 awk '
     BEGIN       {p=1}
-    /START:DEPLOY\.TXT/   {print;system("cat deploy.txt");p=0}
-    /END:DEPLOY\.TXT/     {p=1}
+    /START:DEPLOY/   {print;system("cat deploy.temp");p=0}
+    /END:DEPLOY/     {p=1}
     p' pom.xml.temp > pom.xml
     
 
