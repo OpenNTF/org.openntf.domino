@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +10,7 @@
 	<name>Setup Server Binaries to run CI-Tests</name>
 
 	<properties>
-		<domino.binary.url/>
+		<domino.binary.url />
 	</properties>
 
 	<build>
@@ -33,7 +30,7 @@
 								<property name="targetDir" value="${user.home}/.m2/openntf-domino-ci" />
 								<fail message="Computer says no. Please read https://github.com/OpenNTF/org.openntf.domino/wiki/Configuring-JUnit!">
 									<condition>
-										<equals arg1="${binURL}" arg2=""/>
+										<equals arg1="${binURL}" arg2="" />
 									</condition>
 								</fail>
 								<echo message="Setting up Server Binaries in: ${targetDir}" />
@@ -41,19 +38,15 @@
 								
 											   -------------------------------------------------------------------
 								<echo message="" />
-								<echo message="    #============================================================#" />
-								<echo message="    # Note that this will download the Domino-Binaries which are #" />
-								<echo message="    # licensed by IBM and not open source!                       #" />
-								<echo message="    # You are responsible to check if this is type of usage is   #" />
-								<echo message="    # covered by your IBM license.                               #" />
-								<echo message="    #============================================================#" />
+								<echo message=" #============================================================#" />
+								<echo message=" # Note that this will download the Domino-Binaries which are #" />
+								<echo message=" # licensed by IBM and not open source! #" />
+								<echo message=" # You are responsible to check if this is type of usage is #" />
+								<echo message=" # covered by your IBM license. #" />
+								<echo message=" #============================================================#" />
 								<echo message="" />
-								<mkdir dir="download"/>			
-								<get
-									src="${binURL}"
-									dest="download/server-binaries.zip"
-									skipexisting="true"
-									verbose="true" />
+								<mkdir dir="download" />			
+								<get src="${binURL}" dest="download/server-binaries.zip" skipexisting="true" verbose="true" />
 															
 								<unzip src="download/server-binaries.zip" dest="${targetDir}/bin" />
 							</target>

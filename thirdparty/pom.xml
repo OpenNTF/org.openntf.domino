@@ -47,7 +47,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute></execute>
+										<execute />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -60,7 +60,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute></execute>
+										<execute />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -73,7 +73,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -98,12 +98,12 @@
 								<echo message="Downloading 'IBM Domino Update Site for Build Management' from ${dlURL}" />
 								-------------------------------------------------------------------
 								<echo message="" />
-								<echo message="    #============================================================#" />
-								<echo message="    # Note that this submission is distributed under a           #" />
-								<echo message="    # proprietary license and is not open source.                #" />
-								<echo message="    # It has been posted to the OpenNTF, pursuant to the OpenNTF #" />
-								<echo message="    # IP Policy, to assist OpenNTF users develop software.       #" />
-								<echo message="    #============================================================#" />
+								<echo message=" #============================================================#" />
+								<echo message=" # Note that this submission is distributed under a #" />
+								<echo message=" # proprietary license and is not open source. #" />
+								<echo message=" # It has been posted to the OpenNTF, pursuant to the OpenNTF #" />
+								<echo message=" # IP Policy, to assist OpenNTF users develop software. #" />
+								<echo message=" #============================================================#" />
 								<echo message="" />
 								<mkdir dir="download" />
 								<!-- See details: http://openntf.org/main.nsf/project.xsp?r=project/IBM%20Domino%20Update%20Site%20for%20Build%20Management Original DL-URL (Version is from 
@@ -115,8 +115,7 @@
 								<property name="md5Expected" value="8baf3908437dffc5661112148ff96cfc" />
 								<checksum file="download/DominoBuildManagementUpdateSite.zip" property="md5Zip" />
 								<echo message="MD5 OK... converting to m2 repository" />
-								<fail
-									message="The MD5 of the ZIP-file does not match.${line.separator}got:      ${md5Zip}${line.separator}expected: ${md5Expected}${line.separator}To download again, you have to delete 'download/DominoBuildManagementUpdateSite.zip'">
+								<fail message="The MD5 of the ZIP-file does not match.${line.separator}got: ${md5Zip}${line.separator}expected: ${md5Expected}${line.separator}To download again, you have to delete 'download/DominoBuildManagementUpdateSite.zip'">
 									<condition>
 										<not>
 											<equals arg1="${md5Zip}" arg2="${md5Expected}" />

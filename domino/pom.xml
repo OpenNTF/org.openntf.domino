@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -24,11 +23,6 @@
 		<guava-version>18.0</guava-version>
 		<javassist-version>3.18.2-GA</javassist-version>
 		<tinkerpop-blueprints-version>2.6.0</tinkerpop-blueprints-version>
-		<!-- latest stable <tinkerpop-frames-version>2.6.0</tinkerpop-frames-version> -->
-		<tinkerpop-frames-version>2.6.0-ODA1</tinkerpop-frames-version>
-		<!--latest stable <javolution-version>6.0.0</javolution-version> -->
-		<!-- Note: This version is self-built -->
-		<javolution-version>6.1.0-ODA1</javolution-version>
 		<skip.tests>false</skip.tests>
 		<domino.installdir>${user.home}/.m2/openntf-domino-ci/bin</domino.installdir>
 	</properties>
@@ -165,7 +159,7 @@
 							<resources>
 								<resource>
 									<directory>${basedir}</directory>
-									<targetPath></targetPath>
+									<targetPath />
 									<includes>
 										<include>LICENSE</include>
 										<include>NOTICE</include>

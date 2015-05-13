@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openntf.domino</groupId>
@@ -12,14 +9,17 @@
 
 	<properties>
 		<!-- Specify a URL to download the Domino Binaires for the CI Domain -->
-		<domino.binary.url></domino.binary.url>
-		<domino.deploy.url></domino.deploy.url>
+		<domino.binary.url />
+		<domino.deploy.url />
 	</properties>
 	
 	<name>OpenNTF Domino Aggregator</name>
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com:rPraml/org.openntf.domino.git</developerConnection>
-    </scm>
+	    <connection>scm:git:git@github.com:rPraml/org.openntf.domino.git</connection>
+        <developerConnection>scm:git:git@github.com:rPraml/org.openntf.domino.git</developerConnection>
+        <url>git@github.com:rPraml/org.openntf.domino.git</url>
+      <tag>HEAD</tag>
+  </scm>
 	
 	<profiles>
 		<profile>
@@ -93,6 +93,7 @@
 					<version>2.5.2</version>
 					<configuration>
 						<tagNameFormat>v@{project.version}</tagNameFormat>
+						<pushChanges>false</pushChanges>
 					</configuration>
 				 </plugin>		
 			</plugins>

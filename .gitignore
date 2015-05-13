@@ -1,6 +1,6 @@
 *.class
 *.iml
-
+*.releaseBackup
 # do not recursive exclude folders (otherwise a package named "bin" may not get recognized)
 /target
 /bin
