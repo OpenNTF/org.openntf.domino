@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>aggregator</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.0</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -18,7 +18,7 @@
 	    <connection>scm:git:git@github.com:rPraml/org.openntf.domino.git</connection>
         <developerConnection>scm:git:git@github.com:rPraml/org.openntf.domino.git</developerConnection>
         <url>git@github.com:rPraml/org.openntf.domino.git</url>
-      <tag>HEAD</tag>
+      <tag>v1.5.0</tag>
   </scm>
 	
 	<profiles>
