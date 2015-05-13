@@ -7,16 +7,14 @@
 <modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openntf</groupId>
-	<artifactId>ci-setup</artifactId>
+	<artifactId>ci-env</artifactId>
 	<version>1.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Setup Server Binaries to run CI-Tests</name>
+	<name>Setup Testdomain to run CI-Tests</name>
 
-	<properties>
-		<domino.binary.url/>
-	</properties>
 
 	<build>
+	
 	
 		<plugins>
 			<plugin>
@@ -31,31 +29,21 @@
 							<target>
 								<property name="binURL" value="${domino.binary.url}" />
 								<property name="targetDir" value="${user.home}/.m2/openntf-domino-ci" />
-								<fail message="Computer says no. Please read https://github.com/OpenNTF/org.openntf.domino/wiki/Configuring-JUnit!">
-									<condition>
-										<equals arg1="${binURL}" arg2=""/>
-									</condition>
-								</fail>
-								<echo message="Setting up Server Binaries in: ${targetDir}" />
-								<echo message="Downloading Domino binaries from '${binURL}'" />
+								<echo message="Setting up Test-Domain in: ${targetDir}" />
 								
-											   -------------------------------------------------------------------
-								<echo message="" />
-								<echo message="    #============================================================#" />
-								<echo message="    # Note that this will download the Domino-Binaries which are #" />
-								<echo message="    # licensed by IBM and not open source!                       #" />
-								<echo message="    # You are responsible to check if this is type of usage is   #" />
-								<echo message="    # covered by your IBM license.                               #" />
-								<echo message="    #============================================================#" />
-								<echo message="" />
-								<mkdir dir="download"/>			
-								<get
-									src="${binURL}"
-									dest="download/server-binaries.zip"
-									skipexisting="true"
-									verbose="true" />
-															
-								<unzip src="download/server-binaries.zip" dest="${targetDir}/bin" />
+								<unzip dest="${targetDir}/data">
+									<fileset dir="resources/nsfs/">
+										<include name="*.zip"/>
+									</fileset>
+								</unzip>
+								
+								<copy todir="${targetDir}/data">
+									<fileset dir="resources/id-files"/>
+								</copy>
+								
+								<copy file="resources/notes.ini" todir="${targetDir}/bin"/>
+								<replace file="${targetDir}/bin/notes.ini" token="$DATADIR$" value="${targetDir}/data"/>
+								<replace file="${targetDir}/bin/notes.ini" token="$PROGDIR$" value="${targetDir}/bin"/>
 							</target>
 						</configuration>
 						<goals>
@@ -99,7 +87,7 @@
 	<licenses>
 		<license>
 			<name>proprietary license</name>
-			<comments>Note that this submission is distributed under a proprietary license and is not open source.</comments>
+			<comments>Note that this submission is distributed under a proprietary license and is not open source. It has been posted to the OpenNTF, pursuant to the OpenNTF IP Policy, to assist OpenNTF users develop software</comments>
 		</license>
 	</licenses>
 

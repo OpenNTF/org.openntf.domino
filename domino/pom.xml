@@ -74,6 +74,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>ci-env</module>
 				<module>formula</module>
 				<module>core</module>
 				<module>xsp</module>
