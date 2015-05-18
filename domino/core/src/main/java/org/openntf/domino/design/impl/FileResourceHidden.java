@@ -20,13 +20,18 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class FileResourceHidden extends AbstractDesignFileResource implements org.openntf.domino.design.FileResourceHidden {
+public final class FileResourceHidden extends AbstractDesignNapiFileResource implements org.openntf.domino.design.FileResourceHidden {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected boolean enforceRawFormat() {
-		// FileResourceHidden is exported in RAW-format. There is no DXL representation
-		return true;
+	protected String getDefaultFlags() {
+		return "~C4gP";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		// TODO Auto-generated method stub
+		return "";
 	}
 
 }

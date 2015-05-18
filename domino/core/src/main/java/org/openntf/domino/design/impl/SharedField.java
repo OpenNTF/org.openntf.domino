@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class SharedField extends AbstractDesignBaseNamed implements org.openntf.domino.design.SharedField {
+public class SharedField extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.SharedField {
 	private static final long serialVersionUID = 1L;
 
 	@Override

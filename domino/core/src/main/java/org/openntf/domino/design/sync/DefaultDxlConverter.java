@@ -2,11 +2,10 @@ package org.openntf.domino.design.sync;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
@@ -51,14 +50,13 @@ public class DefaultDxlConverter implements DxlConverter {
 	 * @param transformer
 	 *            the transformer that should be used
 	 * @param outputFile
-	 *            the outputfile
+	 *            the outputStream
 	 * @throws IOException
 	 */
-	protected void writeXml(final XMLDocument dxl, final Transformer transformer, final File outputFile) throws IOException {
+
+	protected void writeXml(final XMLDocument dxl, final Transformer transformer, final OutputStream outputStream) throws IOException {
 		try {
-			// StreamResult result = new StreamResult(out); - This constructor has problems with german umlauts
-			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
-			StreamResult result = new StreamResult(outputFile.toURI().toString());
+			StreamResult result = new StreamResult(outputStream);
 			DOMSource source = new DOMSource(dxl.getNode());
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
@@ -93,26 +91,85 @@ public class DefaultDxlConverter implements DxlConverter {
 		}
 	}
 
+	/**
+	 * Reads the dxl from the file
+	 * 
+	 * @param file
+	 *            the file
+	 * @return the DXL
+	 * @throws IOException
+	 */
+	protected XMLDocument readXML(final InputStream is) throws IOException {
+		// TODO Auto-generated method stub
+		try {
+			XMLDocument ret = new XMLDocument();
+			try {
+				ret.loadInputStream(is);
+				return ret;
+			} catch (SAXException e) {
+				DominoUtils.handleException(e);
+			} catch (ParserConfigurationException e) {
+				DominoUtils.handleException(e);
+			}
+			return null;
+		} finally {
+			is.close();
+		}
+	}
+
 	@Override
-	public void writeDesignXML(final XMLDocument dxl, final File file) throws IOException {
-		writeXml(dxl, defaultTransformer, file);
+	public void writeDesignXML(final XMLDocument dxl, final OutputStream outputStream) throws IOException {
+		writeXml(dxl, defaultTransformer, outputStream);
 
 	}
 
 	@Override
-	public XMLDocument readDesignXML(final File file) throws IOException {
-		return readXML(file);
+	public XMLDocument readDesignXML(final InputStream inputStream) throws IOException {
+		return readXML(inputStream);
 	}
 
 	@Override
-	public void writeMetaXML(final XMLDocument dxl, final File metaFile) throws IOException {
-		writeXml(dxl, metaTransformer, metaFile);
+	public void writeMetaXML(final XMLDocument dxl, final OutputStream os) throws IOException {
+		writeXml(dxl, metaTransformer, os);
+	}
+
+	@Override
+	public XMLDocument readMetaXML(final InputStream is) throws IOException {
+		return readXML(is);
+	}
+
+	//	protected void writeBinaryFile(final byte[] fileData, final File file) throws IOException {
+	//		FileOutputStream fo = new FileOutputStream(file);
+	//		try {
+	//			fo.write(fileData);
+	//		} finally {
+	//			fo.close();
+	//		}
+	//	}
+
+	//	protected InputStream readBinaryFile(final File file) throws IOException {
+	//		return new FileInputStream(file);
+	//	}
+
+	@Override
+	public OutputStream writeXspFile(final OutputStream outputStream) throws IOException {
+		return outputStream;
 
 	}
 
 	@Override
-	public XMLDocument readMetaXML(final File metaFile) throws IOException {
-		return readXML(metaFile);
+	public InputStream readXspFile(final InputStream inputStream) throws IOException {
+		return inputStream; // Default = pass-thru
+	}
+
+	@Override
+	public OutputStream writeXspConfigFile(final OutputStream os) throws IOException {
+		return os;
+	}
+
+	@Override
+	public InputStream readXspConfigFile(final InputStream is) throws IOException {
+		return is; // passthru
 	}
 
 	@Override
@@ -128,77 +185,6 @@ public class DefaultDxlConverter implements DxlConverter {
 	}
 
 	@Override
-	public void writeBinaryFile(final File file, final byte[] fileData) throws IOException {
-		FileOutputStream fo = new FileOutputStream(file);
-		try {
-			fo.write(fileData);
-		} finally {
-			fo.close();
-		}
-	}
-
-	@Override
-	public byte[] readBinaryFile(final File file) throws IOException {
-		FileInputStream fis = new FileInputStream(file);
-		try {
-			byte[] data = new byte[(int) file.length()];
-			fis.read(data);
-			return data;
-		} finally {
-			fis.close();
-		}
-	}
-
-	@Override
-	public void writeXspFile(final File file, final byte[] fileData) throws IOException {
-		writeBinaryFile(file, fileData);
-
-	}
-
-	@Override
-	public byte[] readXspFile(final File file) throws IOException {
-		return readBinaryFile(file);
-	}
-
-	@Override
-	public void writeXspConfigFile(final File file, final byte[] fileData) throws IOException {
-		writeBinaryFile(file, fileData);
-
-	}
-
-	@Override
-	public byte[] readXspConfigFile(final File file) throws IOException {
-		return readBinaryFile(file);
-	}
-
-	@Override
-	public void writeTextFile(final String content, final File odpFile) throws IOException {
-		PrintWriter pw = new PrintWriter(odpFile, "UTF-8");
-		try {
-			pw.write(content);
-		} finally {
-			pw.close();
-		}
-
-	}
-
-	@Override
-	public String readTextFile(final File file) throws IOException {
-		StringBuilder fileContents = new StringBuilder();
-		Scanner scanner = new Scanner(file);
-
-		try {
-			while (scanner.hasNextLine()) {
-				fileContents.append(scanner.nextLine());
-				fileContents.append('\n');
-			}
-		} finally {
-			scanner.close();
-		}
-		return fileContents.toString();
-	}
-
-	@Override
 	public boolean isMetadataEnabled() {
 		return true;
 	}
@@ -207,5 +193,4 @@ public class DefaultDxlConverter implements DxlConverter {
 	public boolean isRawExportEnabled() {
 		return rawExportEnabled_;
 	}
-
 }

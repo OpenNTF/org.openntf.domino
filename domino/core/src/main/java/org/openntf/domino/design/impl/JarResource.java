@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,20 +26,16 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.utils.DominoUtils;
 
+import com.ibm.commons.util.io.ByteStreamCache;
+
 /**
  * @author jgallagher
  * 
  */
-public final class JarResource extends AbstractDesignFileResource implements org.openntf.domino.design.JarResource, HasMetadata {
+public final class JarResource extends AbstractDesignNapiFileResource implements org.openntf.domino.design.JarResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JarResource.class.getName());
-
-	@Override
-	protected boolean enforceRawFormat() {
-		// JarResource is exported in RAW-format. There is no DXL representation
-		return true;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -49,23 +44,24 @@ public final class JarResource extends AbstractDesignFileResource implements org
 	 */
 	@Override
 	public Map<String, byte[]> getClassData() {
-		byte[] jarData = getFileData();
 
 		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(jarData);
-			JarInputStream jis = new JarInputStream(bis);
+			ByteStreamCache bsc = new ByteStreamCache();
+			getFileData(bsc.getOutputStream());
+			JarInputStream jis = new JarInputStream(bsc.getInputStream());
 			JarEntry entry = jis.getNextJarEntry();
+
 			Map<String, byte[]> classData = new HashMap<String, byte[]>();
 			while (entry != null) {
 				String name = entry.getName();
 				if (name.endsWith(".class")) {
+					// FIXME: This will break resource loading!
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
 					while (jis.available() > 0) {
 						bos.write(jis.read());
 					}
 					classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray());
 				}
-
 				entry = jis.getNextJarEntry();
 			}
 			jis.close();
@@ -75,6 +71,16 @@ public final class JarResource extends AbstractDesignFileResource implements org
 			DominoUtils.handleException(ioe);
 			return null;
 		}
+	}
+
+	@Override
+	protected String getDefaultFlags() {
+		return "34567Cg~";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "";
 	}
 
 }

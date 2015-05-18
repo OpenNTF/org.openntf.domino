@@ -27,7 +27,7 @@ public class DesignColumnList extends AbstractDesignComponentList<org.openntf.do
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignColumnList.class.getName());
 
-	protected DesignColumnList(final AbstractDesignBase parent, final String pattern) {
+	protected DesignColumnList(final AbstractDesignDxlBase parent, final String pattern) {
 		super(parent, pattern);
 	}
 

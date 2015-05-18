@@ -58,6 +58,7 @@ import java.net.URI;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.design.DesignBase;
+import org.openntf.domino.design.VFSNode;
 import org.openntf.domino.ext.NoteClass;
 
 //@formatter:off
@@ -383,6 +384,23 @@ public enum DesignFactory {
 			throw new IllegalArgumentException(file + " is not relative to " + parent);
 		}
 		String lcPath = relUri.getPath().toLowerCase();
+		for (DesignFactory fact : DesignFactory.values()) {
+			if (fact.lcOnDiskFolder_ != null && fact != DesignFactory.FileResourceHidden) {
+				if (lcPath.startsWith(fact.lcOnDiskFolder_)) {
+					String ext = fact.lcOnDiskFileExtension_;
+					if (ext == null || lcPath.endsWith(ext) || ext.equals("*")) {
+						return fact;
+					}
+				}
+			}
+		}
+
+		return DesignFactory.FileResourceHidden;
+	}
+
+	public static DesignFactory valueOf(final VFSNode node) {
+
+		String lcPath = node.getRelativePath().toLowerCase();
 		for (DesignFactory fact : DesignFactory.values()) {
 			if (fact.lcOnDiskFolder_ != null && fact != DesignFactory.FileResourceHidden) {
 				if (lcPath.startsWith(fact.lcOnDiskFolder_)) {

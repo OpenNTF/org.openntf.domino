@@ -21,7 +21,7 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class AgentData extends AbstractDesignBase implements org.openntf.domino.design.AgentData {
+public class AgentData extends AbstractDesignDxlBase implements org.openntf.domino.design.AgentData {
 	private static final long serialVersionUID = 1L;
 
 	@Override

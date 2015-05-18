@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>root</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>1.5.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>graph</artifactId>
 	<name>OpenNTF Domino Graph API</name>
@@ -14,7 +13,7 @@
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>core</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>1.5.1-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
@@ -26,7 +25,8 @@
 		<dependency>
 			<groupId>com.tinkerpop</groupId>
 			<artifactId>frames</artifactId>
-			<version>${tinkerpop-frames-version}</version>
+			<!-- self built! -->
+			<version>2.6.0-ODA-151-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

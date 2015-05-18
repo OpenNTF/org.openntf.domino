@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * @author jgallagher
  * 
  */
-public class ReplicationFormula extends AbstractDesignBaseNamed implements org.openntf.domino.design.ReplicationFormula {
+public class ReplicationFormula extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.ReplicationFormula {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ReplicationFormula.class.getName());

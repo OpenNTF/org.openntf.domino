@@ -20,9 +20,9 @@ import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,19 +42,19 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed {
+public abstract class AbstractDesignDxlFileResource extends AbstractDesignDxlBaseNamed {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(AbstractDesignFileResource.class.getName());
+	private static final Logger log_ = Logger.getLogger(AbstractDesignDxlFileResource.class.getName());
 
 	/* for web apps, this file is ready for primetime */
-	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
-	private static final char DESIGN_FLAG_READONLY = '&';
-
-	public static final String DEFAULT_FILEDATA_FIELD = "$FileData";
-	public static final String DEFAULT_CONFIGDATA_FIELD = "$ConfigData";
-	public static final String DEFAULT_FILESIZE_FIELD = "$FileSize";
-	public static final String DEFAULT_CONFIGSIZE_FIELD = "$ConfigSize";
+	//	private static final char DESIGN_FLAGEXT_FILE_DEPLOYABLE = 'D';
+	//	private static final char DESIGN_FLAG_READONLY = '&';
+	//
+	//	public static final String DEFAULT_FILEDATA_FIELD = "$FileData";
+	//	public static final String DEFAULT_CONFIGDATA_FIELD = "$ConfigData";
+	//	public static final String DEFAULT_FILESIZE_FIELD = "$FileSize";
+	//	public static final String DEFAULT_CONFIGSIZE_FIELD = "$ConfigSize";
 
 	private static final String MIMETYPE_FIELD = "$MimeType";
 
@@ -213,17 +213,14 @@ public abstract class AbstractDesignFileResource extends AbstractDesignBaseNamed
 		}
 	}
 
-	/**
-	 * The ODS file that is written here is the file content
-	 */
 	@Override
-	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		converter.writeBinaryFile(file, getFileData());
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		os.write(getFileData());
 	}
 
 	@Override
-	public void importDesign(final DxlConverter converter, final File file) throws IOException {
-		setFileData(converter.readBinaryFile(file));
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		setFileData(toBytes(is));
 	}
 
 	public boolean isReadOnly() {

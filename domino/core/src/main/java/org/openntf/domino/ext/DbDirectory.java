@@ -6,7 +6,7 @@ package org.openntf.domino.ext;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory.Type;
 import org.openntf.domino.annotations.Legacy;
-import org.openntf.domino.helpers.DbDirectoryTree;
+import org.openntf.domino.design.VFSRootNode;
 
 /**
  * @author withersp
@@ -65,19 +65,10 @@ public interface DbDirectory {
 	public void setDirectoryType(final Type type);
 
 	/**
-	 * Returns a tree datastructure, so that you easily can navigate through several directories
+	 * Returns a virtual Filesystem Node. If you want only files for a certain type, use {@link #setDirectoryType(Type)} before.
 	 * 
 	 * @return a DbDirectoryTree
 	 */
-	public DbDirectoryTree getTree();
-
-	/**
-	 * Returns a tree datastructure for a certain type, so that you easily can navigate through several directories
-	 * 
-	 * @param type
-	 *            the type
-	 * @return a DbDirectoryTree
-	 */
-	public DbDirectoryTree getTree(final Type type);
+	public VFSRootNode getVFS();
 
 }

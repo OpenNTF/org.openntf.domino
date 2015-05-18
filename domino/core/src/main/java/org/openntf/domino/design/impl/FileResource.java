@@ -17,16 +17,20 @@
 package org.openntf.domino.design.impl;
 
 /**
- * 
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class FileResource extends AbstractDesignFileResource implements org.openntf.domino.design.FileResource, HasMetadata {
+public final class FileResource extends AbstractDesignNapiFileResource implements org.openntf.domino.design.FileResource, HasMetadata {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected boolean enforceRawFormat() {
-		return false;
+	protected String getDefaultFlags() {
+		return "g345QC&";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "D";
 	}
 
 }

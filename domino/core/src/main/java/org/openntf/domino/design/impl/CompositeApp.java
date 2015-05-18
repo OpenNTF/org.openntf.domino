@@ -16,19 +16,14 @@
 
 package org.openntf.domino.design.impl;
 
-
 /**
+ * Represents a .ca file
+ * 
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class CompositeApp extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeApp {
+public final class CompositeApp extends AbstractDesignNapiFileResource implements HasMetadata, org.openntf.domino.design.CompositeApp {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	protected boolean enforceRawFormat() {
-		// CompositeApp is exported in RAW-format. There is no DXL representation
-		return true;
-	}
 
 	@Override
 	public void setName(String title) {
@@ -38,4 +33,15 @@ public final class CompositeApp extends AbstractDesignFileResource implements Ha
 		}
 		super.setName(title);
 	}
+
+	@Override
+	protected String getDefaultFlags() {
+		return "34567C|Q";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "1";
+	}
+
 }

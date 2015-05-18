@@ -1,79 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Refer to aggregator -->
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>aggregator</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>1.5.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<properties>
 		<!-- it's always a good idea to use UTF8 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<tycho-version>0.21.0</tycho-version>
-		
+
 		<!-- We must use java 1.6 compiler level -->
 		<compiler>1.6</compiler>
-		
+
 		<!-- Third party dependencies -->
 		<guava-version>18.0</guava-version>
 		<javassist-version>3.18.2-GA</javassist-version>
 		<tinkerpop-blueprints-version>2.6.0</tinkerpop-blueprints-version>
-		<!-- latest stable
-			<tinkerpop-frames-version>2.6.0</tinkerpop-frames-version>
-		-->
-		<tinkerpop-frames-version>2.6.0-ODA-SNAPSHOT</tinkerpop-frames-version>
-		<!--latest stable
-			<javolution-version>6.0.0</javolution-version> 
-		 -->
-		 <!-- Note: This version is self-built -->
-		 <javolution-version>6.1.0-ODA-SNAPSHOT</javolution-version>
-		 <skip-tests>false</skip-tests>
+		<skip.tests>false</skip.tests>
+		<domino.installdir>${user.home}/.m2/openntf-domino-ci/bin</domino.installdir>
 	</properties>
-	
+
 	<repositories>
 
-				
+
 	</repositories>
-	
-	
-	
-	<!-- 
-		the name of this project 
-		Children must refer exactly to this groupID:artifactId:version
-		Note: The maven-release-plugin can change this info in all dependent POMs
-	-->
+
+
+
+	<!-- the name of this project Children must refer exactly to this groupID:artifactId:version 
+		Note: The maven-release-plugin can change this info in all dependent POMs -->
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>root</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	
+
 	<name>OpenNTF Domino API</name>
-<!--
-	<repositories>
-		<repository>
-			<id>ibm-repository</id>
-			<name>IBM-Build-Management</name>
-			<url>file:///${basedir}/ibm-build-management/repository</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>	
--->
-	
+	<!-- <repositories> <repository> <id>ibm-repository</id> <name>IBM-Build-Management</name> 
+		<url>file:///${basedir}/ibm-build-management/repository</url> <layout>default</layout> 
+		</repository> </repositories> -->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.openntf</groupId>
 			<artifactId>thirdparty</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
-		</dependency>			
+			<version>1.5.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -81,7 +60,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>default</id>
@@ -89,28 +68,21 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>ci-env</module>
 				<module>formula</module>
 				<module>core</module>
 				<module>xsp</module>
 				<module>externals</module>
 				<module>graph</module>
 				<module>updatesite</module>
-			<!--
-				<module>graph</module>
-				<module>externals</module>
-				<module>formula</module>				
-				
-				
-				<module>junit4xpages</module>
-				<module>tests</module>
-				<module>org.openntf.domino.feature.group</module>
-				<module>org.openntf.domino.updatesite</module>
-				<module>oda-dist</module>
-				-->
+				<!-- <module>graph</module> <module>externals</module> <module>formula</module> 
+					<module>junit4xpages</module> <module>tests</module> <module>org.openntf.domino.feature.group</module> 
+					<module>org.openntf.domino.updatesite</module> <module>oda-dist</module> -->
 			</modules>
 		</profile>
-		
-		<!-- Here we can add different build profiles. A "mvn install -Pcore" will install the core only -->
+
+		<!-- Here we can add different build profiles. A "mvn install -Pcore" will 
+			install the core only -->
 		<profile>
 			<id>core</id>
 			<modules>
@@ -118,27 +90,27 @@
 				<module>updatesite</module>
 			</modules>
 			<properties>
-				 <skip-tests>true</skip-tests>
+				<skip.tests>true</skip.tests>
 			</properties>
 		</profile>
 		<profile>
 			<id>xsp</id>
 			<modules>
-				<!--  recompile core also -->
+				<!-- recompile core also -->
 				<module>core</module>
 				<module>xsp</module>
 				<module>updatesite</module>
 			</modules>
 			<properties>
-				 <skip-tests>true</skip-tests>
+				<skip.tests>true</skip.tests>
 			</properties>
 		</profile>
-		
+
 	</profiles>
 
 	<build>
 		<plugins>
-			<!-- The maven compiler plugin. It uses javac - so you will need SDK! --> 
+			<!-- The maven compiler plugin. It uses javac - so you will need SDK! -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -147,18 +119,14 @@
 				<configuration>
 					<source>${compiler}</source>
 					<target>${compiler}</target>
-					
+
 					<showWarnings>false</showWarnings>
 					<showDeprecation>false</showDeprecation>
 					<compilerArgs>
-						<!-- 
-							
-							good reference for XLint is: http://www.javaworld.com/article/2073587/javac-s&#x2D;&#x2D;xlint-options.html 
-							
-							Normally, a BootstrapClassPath to a 1.6/rt.jar should be set. But I did not figure out how!
-							 <arg>-Xlint:all,-options</arg>
-						-->
-						
+						<!-- good reference for XLint is: http://www.javaworld.com/article/2073587/javac-s&#x2D;&#x2D;xlint-options.html 
+							Normally, a BootstrapClassPath to a 1.6/rt.jar should be set. But I did not 
+							figure out how! <arg>-Xlint:all,-options</arg> -->
+
 						<!-- <arg>-verbose</arg> -->
 						<!-- RPr: We may have fun if we really enable this :) -->
 						<!-- <arg>-Werror</arg> -->
@@ -167,68 +135,67 @@
 				</configuration>
 			</plugin>
 
-			<!-- the enforcer plugin controls certain environment rules, don't know if we need this
+			<!-- the enforcer plugin controls certain environment rules, don't know 
+				if we need this <plugin> <artifactId>maven-enforcer-plugin</artifactId> <version>1.3.1</version> 
+				<executions> <execution> <id>enforce-all</id> <goals> <goal>enforce</goal> 
+				</goals> <configuration> <rules> <DependencyConvergence /> <requireJavaVersion> 
+				<version>[1.6,1.8)</version> </requireJavaVersion> </rules> </configuration> 
+				</execution> </executions> </plugin> -->
+
+
+			<!-- Build helper to include LICENSE + NOTICE in every project -->
 			<plugin>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.3.1</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
 				<executions>
 					<execution>
-						<id>enforce-all</id>
+						<id>add-license</id>
+						<phase>generate-resources</phase>
 						<goals>
-							<goal>enforce</goal>
+							<goal>add-resource</goal>
 						</goals>
 						<configuration>
-							<rules>
-								<DependencyConvergence />
-								<requireJavaVersion>
-									<version>[1.6,1.8)</version>
-								</requireJavaVersion>
-							</rules>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<targetPath />
+									<includes>
+										<include>LICENSE</include>
+										<include>NOTICE</include>
+									</includes>
+								</resource>
+							</resources>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			-->
 
-
-			<!--  Build helper to include LICENSE + NOTICE in every project  -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.8</version>
-					<executions>
-					<execution>
-					<id>add-license</id>
-					<phase>generate-resources</phase>
-					<goals>
-						<goal>add-resource</goal>
-					</goals>
-					<configuration>
-						<resources>          
-							<resource>
-								<directory>${basedir}</directory>
-								<targetPath></targetPath>
-								<includes>
-									<include>LICENSE</include>
-									<include>NOTICE</include>
-								</includes>
-							</resource>
-						</resources>
-					</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			
 			<!-- the surefire plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.18.1</version>
 				<configuration>
-					<skip>${skip-tests}</skip>
+					<skip>${skip.tests}</skip>
+					<argLine>-Xms512m -Xmx512m</argLine>
+					<!-- -Dnotes.binary=${domino_install} -Djava.library.path=${domino_install} 
+						-Djava.ext.dirs=${domino_ install}\jvm\lib\ext\;${domino_install}\ndext; 
+						-Djava.compiler=jitc -Dnotes.init.jvm1 -Xbootclasspath/a:${domino_install}\jvm\lib\tools.jar 
+						-Xdisablejavadump -Xrs:all -Xnoagent -Xdebug <systemPropertyVariables> <java.library.path>BLABLABLA</java.library.path> 
+						</systemPropertyVariables> -->
+
+					<environmentVariables>
+						<!--
+							For linux, we must add "." to LD_LIBRARY_PATH
+							Windows does not pay attention to this entry 
+						-->
+						<LD_LIBRARY_PATH>.</LD_LIBRARY_PATH>
+					</environmentVariables>
+					<workingDirectory>${domino.installdir}</workingDirectory>
 				</configuration>
 			</plugin>
-			
+
 			<!-- generate source packages -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -244,25 +211,11 @@
 				</executions>
 			</plugin>
 
-			<!-- javadoc configuration 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<failOnError>false</failOnError>
-					<excludePackageNames>com.sun.*:com.ibm.icu.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
-				</configuration>
-			</plugin>
-			-->
+			<!-- javadoc configuration <plugin> <groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-javadoc-plugin</artifactId> <version>2.9</version> <executions> 
+				<execution> <id>attach-javadocs</id> <goals> <goal>jar</goal> </goals> </execution> 
+				</executions> <configuration> <failOnError>false</failOnError> <excludePackageNames>com.sun.*:com.ibm.icu.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames> 
+				</configuration> </plugin> -->
 		</plugins>
 	</build>
 

@@ -1304,9 +1304,6 @@ public enum Factory {
 			e.printStackTrace();
 		}
 
-		// There is NO(!) Default SessionFactory for the current session. you have to set it!
-		defaultSessionFactories[SessionType.CURRENT.index] = null;
-
 		// For CURRENT_FULL_ACCESS, we return a named session with full access = true
 		defaultSessionFactories[SessionType.CURRENT_FULL_ACCESS.index] = new ISessionFactory() {
 			private static final long serialVersionUID = 1L;
@@ -1324,15 +1321,23 @@ public enum Factory {
 		String defaultApiPath = null; // maybe we set this to ODA.nsf
 
 		// In XPages environment, these factories will be replaced 
-		defaultNamedSessionFactory = new NamedSessionFactory(defaultApiPath);
-		defaultNamedSessionFullAccessFactory = new SessionFullAccessFactory(defaultApiPath);
-		defaultSessionFactories[SessionType.SIGNER.index] = new NativeSessionFactory(defaultApiPath);
+		setNamedFactories4XPages(new NamedSessionFactory(defaultApiPath), new SessionFullAccessFactory(defaultApiPath));
+
+		// 2015-05-05/RPr: Decided to set the CURRENT Session to the "NativeSessionFactory".
+		// So that code can run outside XPages Environment. If we run inside an XPage Request, the SessionType.CURRENT
+		// is routed to "currentSession" XSP Property.
+		// If we run in FOCONIS Servlet container, it is routed to an apropriate Factory
+		setDefaultSessionFactory(new NativeSessionFactory(defaultApiPath), SessionType.CURRENT);
+
+		setDefaultSessionFactory(new NativeSessionFactory(defaultApiPath), SessionType.SIGNER);
+		setDefaultSessionFactory(new SessionFullAccessFactory(defaultApiPath), SessionType.SIGNER_FULL_ACCESS);
+
 		defaultSessionFactories[SessionType.SIGNER_FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
 
 		// This will ALWAYS return the native/trusted/full access session (not overridden in XPages)
-		defaultSessionFactories[SessionType.NATIVE.index] = new NativeSessionFactory(defaultApiPath);
-		defaultSessionFactories[SessionType.TRUSTED.index] = new TrustedSessionFactory(defaultApiPath);
-		defaultSessionFactories[SessionType.FULL_ACCESS.index] = new SessionFullAccessFactory(defaultApiPath);
+		setDefaultSessionFactory(new NativeSessionFactory(defaultApiPath), SessionType.NATIVE);
+		setDefaultSessionFactory(new TrustedSessionFactory(defaultApiPath), SessionType.TRUSTED);
+		setDefaultSessionFactory(new SessionFullAccessFactory(defaultApiPath), SessionType.FULL_ACCESS);
 
 		startups = 1;
 		Factory.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
@@ -1351,6 +1356,11 @@ public enum Factory {
 		} catch (PrivilegedActionException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void setDefaultSessionFactory(final ISessionFactory sessionFactory, final SessionType mode) {
+		defaultSessionFactories[mode.index] = sessionFactory;
+
 	}
 
 	public static void setNamedFactories4XPages(final INamedSessionFactory normal, final INamedSessionFactory fullaccess) {

@@ -2,6 +2,8 @@ package org.openntf.domino.design.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.NoteCollection;
@@ -25,7 +27,7 @@ import com.ibm.domino.napi.c.BackendBridge;
  *
  */
 public class NapiDatabaseDesign {
-
+	private static final Logger log_ = Logger.getLogger(NapiDatabaseDesign.class.getName());
 	/** The NapiDesignList for the given database */
 	private List<NapiEntry> designList;
 	private Database database_;
@@ -113,7 +115,6 @@ public class NapiDatabaseDesign {
 										nEntry.noteId = entry.getNoteID();
 										nEntry.universalId = entry.getNoteUNID();
 										designList.add(nEntry);
-										//System.out.println(nEntry);
 									} finally {
 										entry.recycle();
 									}
@@ -133,20 +134,9 @@ public class NapiDatabaseDesign {
 			} catch (NotesAPIException e) {
 				if (e.getNativeErrorCode() != 578) { // 578 = nsferr.h/ERR_SPECIAL_ID  "Special database object cannot be located"
 					designList = null;
-					e.printStackTrace();
+					log_.log(Level.WARNING, "Cannot find design index in " + database_, e);
 				}
 			}
-
-			/*
-			Task t = new Task(database_);
-			try {
-				designList = Xots.getService().submit(t).get();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-			 */
 		}
 		return designList;
 	}

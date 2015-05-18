@@ -16,8 +16,9 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.design.DxlConverter;
@@ -32,18 +33,23 @@ public class XPage extends AbstractXspResource implements org.openntf.domino.des
 	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
 
 	@Override
-	protected boolean enforceRawFormat() {
-		// XPage is exported in RAW-format. There is no DXL representation
-		return true;
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		getFileData(converter.writeXspFile(os));
 	}
 
 	@Override
-	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		converter.writeXspFile(file, getFileData());
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		setFileData(toBytes(converter.readXspFile(is)));
 	}
 
 	@Override
-	public void importDesign(final DxlConverter converter, final File file) throws IOException {
-		setFileData(converter.readXspFile(file));
+	protected String getDefaultFlags() {
+		return "gC~4K";
 	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "";
+	}
+
 }

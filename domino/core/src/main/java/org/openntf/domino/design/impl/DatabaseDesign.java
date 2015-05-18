@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -41,6 +40,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.commons.util.io.ByteStreamCache;
 
 /**
  * @author jgallagher
@@ -72,6 +72,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	public DatabaseDesign(final Database database) {
 		database_ = database;
+	}
+
+	@Override
+	public void flush() {
+		napiDesign_ = null;
+		props = null;
 	}
 
 	public <T extends org.openntf.domino.design.DesignBase> T create(final Class<T> type) {
@@ -408,7 +414,9 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			FileResourceWebContent res = getDesignElement(FileResourceWebContent.class, "WEB-INF/xsp.properties");
 			if (res != null) {
 				try {
-					props.load(new ByteArrayInputStream(res.getFileData()));
+					ByteStreamCache bsc = new ByteStreamCache();
+					res.getFileData(bsc.getOutputStream());
+					props.load(bsc.getInputStream());
 				} catch (IOException e) {
 					DominoUtils.handleException(e);
 				}
@@ -500,7 +508,6 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 			sb.append(')');
 		}
-		//System.out.println("SelectFormula: " + sb.toString());
 
 		nnc.setSelectionFormula(sb.toString());
 

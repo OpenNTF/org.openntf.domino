@@ -25,7 +25,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
-public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignForm {
+public class DesignForm extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.DesignForm {
 	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignForm.class.getName());

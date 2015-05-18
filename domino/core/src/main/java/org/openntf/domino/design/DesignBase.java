@@ -16,8 +16,9 @@
 
 package org.openntf.domino.design;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -95,32 +96,43 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 
 	/**
 	 * Save any changes to the design element (may change the Note ID)
+	 * 
+	 * @throws IOException
 	 */
-	public boolean save(DxlConverter dxlConverter);
+	public boolean save(DxlConverter dxlConverter) throws IOException;
 
 	/**
 	 * Exports the design to file by using the dxlConverter
 	 * 
 	 * @param dxlConverter
 	 *            the DxlConverter that converts the file data in a "friendly" format. (e.g. gitFriendly)
-	 * @param file
-	 *            the file
+	 * @param outputStream
+	 *            the OutputStream
 	 * @throws IOException
 	 *             if an IO-Error occurs
 	 */
-	public void exportDesign(DxlConverter dxlConverter, File file) throws IOException;
+	public void exportDesign(DxlConverter dxlConverter, OutputStream outputStream) throws IOException;
+
+	/**
+	 * Returns the size of this element if it will be exported
+	 * 
+	 * @param converter
+	 *            the converter to use
+	 * @return the size
+	 */
+	public int getExportSize(DxlConverter converter);
 
 	/**
 	 * Imports the design from file by using the dxlConverter
 	 * 
 	 * @param dxlConverter
 	 *            the DxlConverter that converts the file data back.
-	 * @param file
-	 *            the file
+	 * @param inputStream
+	 *            the inputStream
 	 * @throws IOException
 	 *             if an IO-Error occurs
 	 */
-	public void importDesign(DxlConverter dxlConverter, File file) throws IOException;
+	public void importDesign(DxlConverter dxlConverter, InputStream inputStream) throws IOException;
 
 	/**
 	 * Gets the note id.
@@ -141,7 +153,8 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * Sets the universal id.
 	 * 
-	 * @return the universal id
+	 * @param unid
+	 *            the universal id
 	 */
 	public void setUniversalID(String unid);
 
@@ -153,12 +166,38 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	@Override
 	public org.openntf.domino.Document getDocument();
 
+	/**
+	 * Returns the item names
+	 * 
+	 * @return the item names
+	 */
 	public Collection<String> getItemNames();
 
+	/**
+	 * <code>TRUE</code> if this is a private element. <b>ATTENTION:</b> If the designindex is read with NAPI, you cannot access private
+	 * elements.
+	 * 
+	 * @return true if the element is private
+	 */
 	public boolean isPrivate();
 
+	/**
+	 * <code>TRUE</code> if this is the default element
+	 * 
+	 * @return true if the element is a default element
+	 */
 	boolean isDefault();
 
+	/**
+	 * Returns the mapping of this DesignBase
+	 * 
+	 * @return the mapping
+	 */
 	public DesignFactory getMapping();
+
+	/**
+	 * Frees up memory
+	 */
+	void flush();
 
 }

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.openntf</groupId>
+	<artifactId>ci-setup</artifactId>
+	<version>1.5.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Setup Server Binaries to run CI-Tests</name>
+
+	<properties>
+		<domino.binary.url />
+	</properties>
+
+	<build>
+	
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>prepare</id>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<property name="binURL" value="${domino.binary.url}" />
+								<property name="targetDir" value="${user.home}/.m2/openntf-domino-ci" />
+								<fail message="Computer says no. Please read https://github.com/OpenNTF/org.openntf.domino/wiki/Configuring-JUnit!">
+									<condition>
+										<equals arg1="${binURL}" arg2="" />
+									</condition>
+								</fail>
+								<echo message="Setting up Server Binaries in: ${targetDir}" />
+								<echo message="Downloading Domino binaries from '${binURL}'" />
+								
+											   -------------------------------------------------------------------
+								<echo message="" />
+								<echo message=" #============================================================#" />
+								<echo message=" # Note that this will download the Domino-Binaries which are #" />
+								<echo message=" # licensed by IBM and not open source! #" />
+								<echo message=" # You are responsible to check if this is type of usage is #" />
+								<echo message=" # covered by your IBM license. #" />
+								<echo message=" #============================================================#" />
+								<echo message="" />
+								<mkdir dir="download" />			
+								<get src="${binURL}" dest="download/server-binaries.zip" skipexisting="true" verbose="true" />
+															
+								<unzip src="download/server-binaries.zip" dest="${targetDir}/bin" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<executions>
+						<!-- install only nested jars, so skip default-install -->
+						<execution>
+							<id>default-install</id>
+							<phase>install</phase>
+		  					<configuration>
+								<skip>true</skip>
+							</configuration>
+						</execution>
+					</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<licenses>
+		<license>
+			<name>proprietary license</name>
+			<comments>Note that this submission is distributed under a proprietary license and is not open source.</comments>
+		</license>
+	</licenses>
+
+</project>

@@ -20,7 +20,7 @@ package org.openntf.domino.design.impl;
  * 
  * @author Roland Praml, FOCONIS AG
  */
-public class DesignAgentA extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgentA {
+public class DesignAgentA extends AbstractDesignDxlBaseNamed implements org.openntf.domino.design.DesignAgentA {
 	private static final long serialVersionUID = 1L;
 
 	@Override

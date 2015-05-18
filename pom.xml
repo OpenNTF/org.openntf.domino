@@ -1,40 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project 
-	xmlns="http://maven.apache.org/POM/4.0.0" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>aggregator</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<properties>
+		<!-- Specify a URL to download the Domino Binaires for the CI Domain -->
+		<domino.binary.url />
+		<domino.deploy.url />
+	</properties>
 	
 	<name>OpenNTF Domino Aggregator</name>
-
-	<properties>
-		<installedJavaApi>${user.home}/.m2/repository/com/ibm/notes/java.api</installedJavaApi>
-	</properties>
-
+	<scm>
+	    <connection>scm:git:git@github.com:rPraml/org.openntf.domino.git</connection>
+        <developerConnection>scm:git:git@github.com:rPraml/org.openntf.domino.git</developerConnection>
+        <url>git@github.com:rPraml/org.openntf.domino.git</url>
+      <tag>HEAD</tag>
+  </scm>
+	
 	<profiles>
-		<profile>
-			<id>complete</id>
-			<activation>
-				<file>
-					<missing>${installedJavaApi}</missing>
-				</file>
-			</activation>
-			<modules>
-				<module>thirdparty</module>
-				<module>domino</module>
-			</modules>
-		</profile>
 		<profile>
 			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<modules>
+			    <module>thirdparty</module>
+				<module>domino</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>ci</id>
+			<activation>
+				<property>
+					<name>domino.binary.url</name>
+				</property>
+			</activation>
+			<modules>
+				<module>ci-setup</module>
+			    <module>thirdparty</module>
+				<module>domino</module>
+			</modules>
+		</profile>		
+		<profile>
+			<id>fast</id>
 			<modules>
 				<module>domino</module>
 			</modules>
@@ -75,8 +87,18 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.10.2</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.2</version>
+					<configuration>
+						<tagNameFormat>v@{project.version}</tagNameFormat>
+						<pushChanges>false</pushChanges>
+					</configuration>
+				 </plugin>		
 			</plugins>
 		</pluginManagement>
+		
 	</build>
 	<!-- List all developers here -->
 	<developers>
@@ -152,9 +174,14 @@
 	
 	
 	<distributionManagement>
+		<repository>
+			<id>default</id>
+			<name>Default Deploy Repository</name>
+			<url>${domino.deploy.url}</url>
+		</repository>
 		<site>
-			<id>www.openntf.org</id>
-			<url>file://c:\fullsite/</url>
+			<id>default-site</id>
+			<url>${domino.site.url}</url>
 		</site>
 	</distributionManagement>
 	

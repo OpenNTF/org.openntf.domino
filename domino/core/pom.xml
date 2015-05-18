@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>root</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>1.5.1-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>core</artifactId>
@@ -34,15 +33,16 @@
 
 						<Bundle-SymbolicName>${project.groupId}.${project.artifactId};singleton:=true</Bundle-SymbolicName>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Import-Package>
+							org.junit.*;resolution:=optional,
+							*
+						</Import-Package>
   
   						<!-- BND generated import-packages does not work in DominoServer -->
   						<!-- 
   							so we import just lotus.domino	(do not know why, it was several times added to original MANIFEST.MF 
    						
   						
-						<Import-Package>
-							lotus.domino
-						</Import-Package>
  						
  
 						<Require-Bundle>
@@ -61,6 +61,14 @@
 	</build>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- The notes-api is bundled by the ibm-build-management -->
 		<dependency>
 			<groupId>com.ibm.notes</groupId>
@@ -86,13 +94,13 @@
 		<dependency>
 			<groupId>org.javolution</groupId>
 			<artifactId>javolution-core-java</artifactId>
-			<version>${javolution-version}</version>
+			<version>6.1.0-ODA-151-SNAPSHOT</version>
 		</dependency> 
 		
 		<dependency>
 			<groupId>org.openntf</groupId>
 			<artifactId>formula</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>1.5.1-SNAPSHOT</version>
 		</dependency>
 		
 		<!-- TODO: Remove these Deps if separated in a own project 

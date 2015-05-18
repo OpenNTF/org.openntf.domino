@@ -16,9 +16,12 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Scanner;
 
 import org.openntf.domino.design.DxlConverter;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
@@ -30,7 +33,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org.openntf.domino.design.ScriptLibraryCSJS {
+public class ScriptLibraryCSJS extends AbstractDesignDxlFileResource implements org.openntf.domino.design.ScriptLibraryCSJS {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -51,7 +54,7 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	}
 
 	@Override
-	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
 		String content;
 		if (enforceRawFormat()) {
 			content = ODSUtils.fromLMBCS(getFileData());
@@ -63,12 +66,21 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 				content = "";
 			}
 		}
-		converter.writeTextFile(content, file);
+		PrintWriter pw = new PrintWriter(os);
+		try {
+			pw.write(content);
+		} finally {
+			pw.close();
+		}
 
 	}
 
 	@Override
-	public void importDesign(final DxlConverter converter, final File file) throws IOException {
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		importDesign(converter, new Scanner(is));
+	}
+
+	public void importDesign(final DxlConverter converter, final Scanner scanner) throws IOException {
 		if (getDxlFormat(true) != DxlFormat.DXL) {
 			throw new UnsupportedOperationException("cannot import raw CSJS-Library");
 		}
@@ -78,7 +90,18 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 			fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 		}
 
-		String fileContent = converter.readTextFile(file);
+		StringBuilder fileContents = new StringBuilder();
+
+		try {
+			while (scanner.hasNextLine()) {
+				fileContents.append(scanner.nextLine());
+				fileContents.append('\n');
+			}
+		} finally {
+			scanner.close();
+		}
+
+		String fileContent = fileContents.toString();
 
 		XMLNode documentNode = getDxl().selectSingleNode("//scriptlibrary");
 		XMLNode fileDataNode = documentNode.addChildElement("code");

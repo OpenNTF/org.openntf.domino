@@ -16,8 +16,9 @@
 
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.design.DxlConverter;
@@ -32,37 +33,45 @@ public final class CustomControl extends AbstractXspResource implements org.open
 	private static final Logger log_ = Logger.getLogger(CustomControl.class.getName());
 
 	@Override
-	protected boolean enforceRawFormat() {
-		// CustomControl is exported in RAW-format. There is no DXL representation
-		return true;
+	public void exportXspConfig(final DxlConverter converter, final OutputStream os) throws IOException {
+		getConfigData(converter.writeXspConfigFile(os));
+	}
+
+	protected void getConfigData(final OutputStream os) throws IOException {
+		throw new UnsupportedOperationException(); // TODO
+		//getFileDataRaw(DEFAULT_CONFIGDATA_FIELD, os);
 	}
 
 	@Override
-	public void exportXspConfig(final DxlConverter converter, final File configFile) throws IOException {
-		converter.writeXspConfigFile(configFile, getConfigData());
+	public void importXspConfig(final DxlConverter converter, final InputStream is) throws IOException {
+		setConfigData(converter.readXspConfigFile(is));
 	}
 
-	protected byte[] getConfigData() {
-		return getFileDataRaw(DEFAULT_CONFIGDATA_FIELD);
-	}
-
-	@Override
-	public void importXspConfig(final DxlConverter converter, final File configFile) throws IOException {
-		setConfigData(converter.readXspConfigFile(configFile));
-	}
-
-	protected void setConfigData(final byte[] data) {
-		setFileDataRaw(DEFAULT_CONFIGDATA_FIELD, data);
+	protected void setConfigData(final InputStream is) throws IOException {
+		throw new UnsupportedOperationException(); // TODO
+		//setFileDataRaw(DEFAULT_CONFIGDATA_FIELD, is);
 	}
 
 	@Override
-	public void exportDesign(final DxlConverter converter, final File file) throws IOException {
-		converter.writeXspFile(file, getFileData());
+	public void exportDesign(final DxlConverter converter, final OutputStream os) throws IOException {
+		getFileData(converter.writeXspFile(os));
 	}
 
 	@Override
-	public void importDesign(final DxlConverter converter, final File file) throws IOException {
-		setFileData(converter.readXspFile(file));
+	public void importDesign(final DxlConverter converter, final InputStream is) throws IOException {
+		setFileData(toBytes(converter.readXspFile(is)));
+	}
+
+	@Override
+	protected String getDefaultFlags() {
+		// TODO Auto-generated method stub
+		return "gC~4;";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		// TODO Auto-generated method stub
+		return "";
 	}
 
 }

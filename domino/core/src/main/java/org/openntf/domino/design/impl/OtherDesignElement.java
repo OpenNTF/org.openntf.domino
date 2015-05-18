@@ -22,7 +22,7 @@ import org.openntf.domino.Document;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public class OtherDesignElement extends AbstractDesignBase {
+public class OtherDesignElement extends AbstractDesignDxlBase {
 	private static final long serialVersionUID = 1L;
 
 	/**

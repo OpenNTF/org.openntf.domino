@@ -16,7 +16,6 @@
 
 package org.openntf.domino.design.impl;
 
-
 /**
  * A java file (for xpages)
  * 
@@ -27,9 +26,13 @@ public class XspJavaResource extends AbstractXspResource implements HasMetadata,
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected boolean enforceRawFormat() {
-		// JavaFile is exported in RAW-format. There is no DXL representation
-		return true;
+	protected String getDefaultFlags() {
+		return "34567Cg~[";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "";
 	}
 
 }

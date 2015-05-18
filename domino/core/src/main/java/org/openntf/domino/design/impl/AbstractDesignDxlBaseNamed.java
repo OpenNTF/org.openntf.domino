@@ -33,9 +33,9 @@ import com.ibm.commons.util.StringUtil;
  * 
  */
 @SuppressWarnings("serial")
-public abstract class AbstractDesignBaseNamed extends AbstractDesignBase implements DesignBaseNamed {
+public abstract class AbstractDesignDxlBaseNamed extends AbstractDesignDxlBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
+	private static final Logger log_ = Logger.getLogger(AbstractDesignDxlBaseNamed.class.getName());
 
 	protected List<String> getTitlesRaw() {
 		String titles = getItemValueStrings(TITLE_ITEM, "|");

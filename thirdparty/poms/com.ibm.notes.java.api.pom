@@ -15,4 +15,13 @@
 			<name>Licensed Materials - Property of IBM</name>
 		</license>
 	</licenses>  
+
+	<dependencies>
+		<dependency>
+			<groupId>com.ibm.notes</groupId>
+			<artifactId>java.api.websvc</artifactId>
+			<version>9.0.1</version>
+		</dependency>
+	</dependencies>
+		
 </project>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.openntf</groupId>
+	<artifactId>ci-env</artifactId>
+	<version>1.5.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>Setup Testdomain to run CI-Tests</name>
+
+
+	<build>
+	
+	
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>prepare</id>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<property name="binURL" value="${domino.binary.url}" />
+								<property name="targetDir" value="${user.home}/.m2/openntf-domino-ci" />
+								<echo message="Setting up Test-Domain in: ${targetDir}" />
+								
+								<unzip dest="${targetDir}/data">
+									<fileset dir="resources/nsfs/">
+										<include name="*.zip" />
+									</fileset>
+								</unzip>
+								
+								<copy todir="${targetDir}/data">
+									<fileset dir="resources/id-files" />
+								</copy>
+								
+								<copy file="resources/notes.ini" todir="${targetDir}/bin" />
+								<replace file="${targetDir}/bin/notes.ini" token="$DATADIR$" value="${targetDir}/data" />
+								<replace file="${targetDir}/bin/notes.ini" token="$PROGDIR$" value="${targetDir}/bin" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<executions>
+						<!-- install only nested jars, so skip default-install -->
+						<execution>
+							<id>default-install</id>
+							<phase>install</phase>
+		  					<configuration>
+								<skip>true</skip>
+							</configuration>
+						</execution>
+					</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<licenses>
+		<license>
+			<name>proprietary license</name>
+			<comments>Note that this submission is distributed under a proprietary license and is not open source. It has been posted to the OpenNTF, pursuant to the OpenNTF IP Policy, to assist OpenNTF users develop software</comments>
+		</license>
+	</licenses>
+
+</project>

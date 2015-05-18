@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -87,8 +89,15 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 				String.format("$FileNames='WEB-INF/classes/%s' ", binaryName)).iterator();
 		if (webContentFiles.hasNext()) {
 			FileResourceWebContent res = webContentFiles.next();
-			byte[] classData = res.getFileData();
-			return defineClass(name, classData, 0, classData.length);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			try {
+				res.getFileData(bos);
+				byte[] classData = bos.toByteArray();
+				return defineClass(name, classData, 0, classData.length);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
+			return null;
 		}
 
 		// TODO consider changing the below routines to only loop through resources until found,

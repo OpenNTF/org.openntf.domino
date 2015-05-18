@@ -20,14 +20,8 @@ package org.openntf.domino.design.impl;
  * @author Roland Praml, FOCONIS AG
  * 
  */
-public final class CompositeWiring extends AbstractDesignFileResource implements HasMetadata, org.openntf.domino.design.CompositeWiring {
+public final class CompositeWiring extends AbstractDesignNapiFileResource implements HasMetadata, org.openntf.domino.design.CompositeWiring {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	protected boolean enforceRawFormat() {
-		// CompositeWiring is exported in RAW-format. There is no DXL representation
-		return true;
-	}
 
 	@Override
 	public void setName(String title) {
@@ -36,5 +30,15 @@ public final class CompositeWiring extends AbstractDesignFileResource implements
 			title = title.substring(0, ind);
 		}
 		super.setName(title);
+	}
+
+	@Override
+	protected String getDefaultFlags() {
+		return "34567C:Q";
+	}
+
+	@Override
+	protected String getDefaultFlagsExt() {
+		return "";
 	}
 }
