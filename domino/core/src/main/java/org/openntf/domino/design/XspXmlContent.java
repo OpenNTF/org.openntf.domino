@@ -19,7 +19,6 @@ package org.openntf.domino.design;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.util.AbstractList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -142,7 +141,7 @@ public class XspXmlContent {
 
 	public boolean save(final DxlConverter converter) throws IOException {
 		if (xml_ != null) {
-			container_.setFileData(xml_.getXml().getBytes(StandardCharsets.UTF_8));
+			container_.setFileData(xml_.getXml().getBytes("UTF-8"));
 			xml_ = null; // CHECKME: good idea to set to null?
 		}
 		return container_.save(converter);
