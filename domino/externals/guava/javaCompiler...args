@@ -1,0 +1,4 @@
+#ADAPTER#ACCESS#jsr305/target/classes[+javax/annotation/*;+javax/annotation/concurrent/*;+javax/annotation/meta/*;?**/*]
+#ADAPTER#ACCESS#jsr305_1.0.0.201506112346/target/classes[+javax/annotation/*;+javax/annotation/concurrent/*;+javax/annotation/meta/*;?**/*]
+#ADAPTER#ACCESS#jsr305/@dot[+javax/annotation/*;+javax/annotation/concurrent/*;+javax/annotation/meta/*;?**/*]
+#ADAPTER#ACCESS#jsr305_1.0.0.201506112346/@dot[+javax/annotation/*;+javax/annotation/concurrent/*;+javax/annotation/meta/*;?**/*]

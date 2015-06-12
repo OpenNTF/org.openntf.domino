@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
- <extension
+ <!-- <extension
 		id="odawinkservlet"
 		name="odawinkservlet"
 		point="org.eclipse.equinox.http.registry.servlets">
@@ -16,5 +16,15 @@
 			</init-param>
         	<init-param name="DisableHttpMethodCheck" value="true"/>			
 		</servlet>
-	</extension>
+	</extension> -->
+	<extension-point id="org.openntf.domino.rest.graph" name="org.openntf.domino.rest.graph" schema="schema/org.openntf.domino.rest.graph.exsd"/>
+   
+	<extension point="com.ibm.domino.das.service">
+        <serviceResources
+            class="org.openntf.domino.rest.service.ODAGraphService"
+            name="ODAGraph"
+            path="oda"
+            version="9.0.1">
+        </serviceResources>         
+   </extension>
 </plugin>

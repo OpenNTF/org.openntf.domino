@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.openntf.domino" default="build.jars" basedir=".">
+
+	<property name="p2.build.repo" value="file:${buildDirectory}/buildRepo"/>
+	<property name="basews" value="${ws}"/>
+	<property name="baseos" value="${os}"/>
+	<property name="basearch" value="${arch}"/>
+	<property name="basenl" value="${nl}"/>
+	<property name="bundleId" value="org.openntf.domino"/>
+	<property name="bundleVersion" value="1.5.0.201506112346"/>
+	<property name="p2.publishonerror" value="false"/>
+
+	<!-- Compiler settings. -->
+	<property name="javacFailOnError" value="false"/>
+	<property name="javacDebugInfo" value="on"/>
+	<property name="javacVerbose" value="false"/>
+	<property name="logExtension" value=".log"/>
+	<property name="compilerArg" value=""/>
+	<property name="compilation.prereq.log" value="${buildDirectory}/prereqErrors.log"/>
+	<property name="javacSource" value="1.3"/>
+	<property name="javacTarget" value="1.2"/>
+	<condition property="dir_bootclasspath" value="${java.home}/../Classes">
+		<and>
+			<os family="mac"/>
+			<available file="${java.home}/../Classes" type="dir"/>
+		</and>
+	</condition>
+	<property name="dir_bootclasspath" value="${java.home}/lib"/>
+	<path id="path_bootclasspath">
+		<fileset dir="${dir_bootclasspath}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	<property name="bootclasspath" refid="path_bootclasspath"/>
+	<condition property="bundleBootClasspath" value="${JavaSE-1.6}"	>
+		<isset property="JavaSE-1.6"/>
+	</condition>
+	<condition property="bundleJavacSource" value="1.6"	>
+		<isset property="JavaSE-1.6"/>
+	</condition>
+	<condition property="bundleJavacTarget" value="1.6"	>
+		<isset property="JavaSE-1.6"/>
+	</condition>
+	<property name="bundleJavacSource" value="${javacSource}"/>
+	<property name="bundleJavacTarget" value="${javacTarget}"/>
+	<property name="bundleBootClasspath" value="${bootclasspath}"/>
+
+	<target name="init" depends="properties">
+		<condition property="pluginTemp" value="${buildTempFolder}/plugins"		>
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="pluginTemp" value="${basedir}"/>
+		<condition property="build.result.folder" value="${pluginTemp}/org.openntf.domino_1.5.0.201506112346"		>
+			<isset property="buildTempFolder"/>
+		</condition>
+		<property name="build.result.folder" value="${basedir}"/>
+		<property name="temp.folder" value="${basedir}/temp.folder"/>
+		<property name="plugin.destination" value="${basedir}"/>
+		<condition property="p2.publish.parts" value="true"		>
+			<istrue value="${p2.gathering}"/>
+		</condition>
+		<property name="compilation.problem.marker" value="${build.result.folder}/compilation.problem"/>
+		<condition property="compilation.problem.marker.exists" value="true"		>
+			<and>
+			<available file="${compilation.problem.marker}"/>
+			<isfalse value="${p2.publishonerror}"/>
+			</and>
+		</condition>
+	</target>
+
+	<target name="properties" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+
+	</target>
+
+	<target name="build.update.jar" depends="init" description="Build the plug-in: org.openntf.domino for an update site.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<jar destfile="${plugin.destination}/org.openntf.domino_1.5.0.201506112346.jar" basedir="${temp.folder}/org.openntf.domino_1.5.0.201506112346" filesetmanifest="merge"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="@dot.nestedJars">
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.icu_3.8.1.v20120530"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.icu_3.8.1.v20120530.jar" dest="${buildDirectory}/nestedJars/com.ibm.icu_3.8.1.v20120530" overwrite="false">
+			<patternset includes="icu-jse4.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.icu_3.8.1.v20120530"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.icu_3.8.1.v20120530.jar" dest="${buildDirectory}/nestedJars/com.ibm.icu_3.8.1.v20120530" overwrite="false">
+			<patternset includes="icu-data.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/org.eclipse.equinox.registry_3.4.0.v20080516-0950"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.registry_3.4.0.v20080516-0950.jar" dest="${buildDirectory}/nestedJars/org.eclipse.equinox.registry_3.4.0.v20080516-0950" overwrite="false">
+			<patternset includes="runtime_registry_compatibility.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.eclipse.equinox.registry.nl_9.0.1.20130829-1400"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.equinox.registry.nl_9.0.1.20130829-1400.jar" dest="${buildDirectory}/nestedJars/com.ibm.eclipse.equinox.registry.nl_9.0.1.20130829-1400" overwrite="false">
+			<patternset includes="runtime_registry_compatibility.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.xsp.domino.server_9.0.1.20131004-1200"/>
+		<unzip src="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.xsp.domino.server_9.0.1.20131004-1200.jar" dest="${buildDirectory}/nestedJars/com.ibm.xsp.domino.server_9.0.1.20131004-1200" overwrite="false">
+			<patternset includes="lwpd.xsp.domino.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="webcontainer.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/jasper-el.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.jsplite.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.session.core.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.session.shell.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.session.store.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.webcontainer.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.webcontainerspi.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.utils.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/web.jsp.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/asm-3.1.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/asm-commons-3.1.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/xbean-finder-3.5.jar"/>
+		</unzip>
+		<mkdir dir="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404"/>
+		<unzip src="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar" dest="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404" overwrite="false">
+			<patternset includes="wwcc/ibmcfw.jar"/>
+		</unzip>
+	</target>
+	<target name="@dot" depends="init,@dot.nestedJars" unless="@dot" description="Create jar: org.openntf.domino @dot.">
+		<delete dir="${build.result.folder}/@dot"/>
+		<mkdir dir="${build.result.folder}/@dot"/>
+		<path id="@dot.classpath">
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.notes.java.api_8.5.3.20131004-1200.jar"/>
+			<pathelement path="../externals/guava/target/classes"/>
+			<pathelement path="${build.result.folder}/../com.google.guava_18.0.0.201506112346/target/classes"/>
+			<pathelement path="${build.result.folder}/../externals/guava/@dot"/>
+			<pathelement path="${build.result.folder}/../com.google.guava_18.0.0.201506112346/@dot"/>
+			<pathelement path="../externals/jsr305/target/classes"/>
+			<pathelement path="${build.result.folder}/../jsr305_1.0.0.201506112346/target/classes"/>
+			<pathelement path="${build.result.folder}/../externals/jsr305/@dot"/>
+			<pathelement path="${build.result.folder}/../jsr305_1.0.0.201506112346/@dot"/>
+			<pathelement path="../externals/tinkerpop/target/classes"/>
+			<pathelement path="${build.result.folder}/../com.tinkerpop_2.6.0.201506112346/target/classes"/>
+			<pathelement path="../externals/tinkerpop/lib/collections-generic-4.01.jar"/>
+			<pathelement path="${build.result.folder}/../com.tinkerpop_2.6.0.201506112346/lib/collections-generic-4.01.jar"/>
+			<pathelement path="${build.result.folder}/../externals/tinkerpop/@dot"/>
+			<pathelement path="${build.result.folder}/../com.tinkerpop_2.6.0.201506112346/@dot"/>
+			<pathelement path="../externals/javassist/target/classes"/>
+			<pathelement path="${build.result.folder}/../javassist_3.18.2.201506112346/target/classes"/>
+			<pathelement path="${build.result.folder}/../externals/javassist/@dot"/>
+			<pathelement path="${build.result.folder}/../javassist_3.18.2.201506112346/@dot"/>
+			<pathelement path="../externals/javolution/target/classes"/>
+			<pathelement path="${build.result.folder}/../javolution_6.1.0.201506112346/target/classes"/>
+			<pathelement path="${build.result.folder}/../externals/javolution/@dot"/>
+			<pathelement path="${build.result.folder}/../javolution_6.1.0.201506112346/@dot"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.osgi_3.4.3.R34x_v20081215-1030-RCP20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.cds_2.0.4.200802251155.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.osgi.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.rcp.core.logger.frameworkhook_9.0.1.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.rds_1.0.0.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.osgi.services_3.1.200.v20071203.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.servlet_2.5.0.20131002-1404.jar"/>
+			<pathelement path="../formula/target/classes"/>
+			<pathelement path="${build.result.folder}/../org.openntf.formula_1.5.0.201506112346/target/classes"/>
+			<pathelement path="${build.result.folder}/../formula/@dot"/>
+			<pathelement path="${build.result.folder}/../org.openntf.formula_1.5.0.201506112346/@dot"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.icu.base_3.8.1.v20080530.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.icu_3.8.1.v20120530/icu-jse4.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.icu_3.8.1.v20120530/icu-data.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.icu_3.8.1.v20120530.jar"/>
+			<pathelement path="../junit4xpages/target/classes"/>
+			<pathelement path="${build.result.folder}/../org.openntf.junit4xpages_4.11.0.201506112346/target/classes"/>
+			<pathelement path="${build.result.folder}/../junit4xpages/@dot"/>
+			<pathelement path="${build.result.folder}/../org.openntf.junit4xpages_4.11.0.201506112346/@dot"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.core.runtime_3.4.0.v20080512.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.core.runtime.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.common_3.4.0.v20080421-2006.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.equinox.common.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.core.jobs_3.4.1.R34x_v20081128.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.core.jobs.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610/runtime_registry_compatibility.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20080610"/>
+			<pathelement path="${buildDirectory}/nestedJars/org.eclipse.equinox.registry_3.4.0.v20080516-0950/runtime_registry_compatibility.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.registry_3.4.0.v20080516-0950.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.equinox.registry.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.eclipse.equinox.registry.nl_9.0.1.20130829-1400/runtime_registry_compatibility.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.preferences_3.2.201.R34x_v20080709-RCP20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.equinox.preferences.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.core.contenttype_3.3.0.v20080604-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.core.contenttype.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.app_1.1.0.v20080421-2006.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.equinox.app.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.xsp.domino_9.0.1.20131004-1200/lwpd.xsp.domino.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.xsp.domino.server_9.0.1.20131004-1200.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.xsp.domino.server_9.0.1.20131004-1200/lwpd.xsp.domino.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.xsp.core_9.0.1.20131004-1200/lwpd.xsp.core.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.commons_9.0.1.20131004-1200/lwpd.commons.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.commons.xml_9.0.1.20131004-1200/lwpd.commons.xml.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.fastinfoset_9.0.1.20131004-1200/lib/FastInfoset.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200/lib/jsf-api.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200/lib/jsf-impl.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200/lib/commons-beanutils.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200/lib/commons-collections.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200/lib/commons-digester.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.jsf_9.0.1.20131004-1200/lib/commons-logging.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.acf_9.0.1.20131004-1200/lib/acf-2.5.0.11.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.acf_9.0.1.20131004-1200/lib/html-parser-2.5.0.11.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.acf_9.0.1.20131004-1200"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.xsp.extsn_9.0.1.20131004-1200/lwpd.xsp.extsn.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.jscript_9.0.1.20131004-1200/lib/lwpd.commons.ibmjs.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.commons.vfs_9.0.1.20131004-1200/lwpd.commons.vfs.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.runtime.directory_9.0.1.20131004-1200/lwpd.runtime.directory.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.runtime_9.0.1.20131004-1200/lwpd.runtime.designer.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.commons.jdbc_9.0.1.20131004-1200/lwpd.commons.jdbc.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.domino.napi_9.0.1.20131004-1200/lwpd.domino.napi.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.javamail_9.0.1.20131004-1200/lib/mail.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.designer.lib.javamail_9.0.1.20131004-1200/lib/activation.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.domino.xsp.adapter_9.0.1.20131004-1200/lwpd.domino.adapter.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.domino.xsp.bootstrap_9.0.1.20131004-1200/xsp.domino.bridge.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.xsp.designer_9.0.1.20131004-1200/lwpd.xsp.designer.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.domino.xsp.bridge.http_9.0.1.20131004-1200/xsp.domino.bridge.http.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.apache.commons.codec_1.3.0.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.apache.commons.logging_1.1.2.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.domino.osgi.core_9.0.1.20131004-1200.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.http.servlet_1.0.100.v20080427-0830.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.domino.xsp.adapter.osgi_9.0.1.20140402-0834.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/webcontainer.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/jasper-el.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.jsplite.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.session.core.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.session.shell.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.session.store.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.webcontainer.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.webcontainerspi.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.utils.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/web.jsp.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/asm-3.1.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/asm-commons-3.1.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/xbean-finder-3.5.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer_9.0.1.20131002-1404/wwcc/ibmcfw.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/webcontainer.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/jasper-el.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.jsplite.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.session.core.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.session.shell.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.session.store.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.webcontainer.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.webcontainerspi.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.utils.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/web.jsp.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/asm-3.1.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/asm-commons-3.1.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/xbean-finder-3.5.jar"/>
+			<pathelement path="${buildDirectory}/nestedJars/com.ibm.pvc.webcontainer.nl_9.0.1.20131002-1404/wwcc/ibmcfw.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.webhttpservice_9.0.1.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.servlet.jsp_2.1.0.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.sharedbundle_9.0.1.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.pvc.sharedbundle.nl_9.0.1.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.http.registry_1.0.100.v20080427-0830.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.eclipse.equinox.http.registry.nl_9.0.1.20130829-1400.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.jsp.jasper_1.0.102.R34x_v20101104.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.apache.jasper_5.5.17.v200806031609.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.apache.commons.el_2.0.0.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/social/eclipse/plugins/com.ibm.fiesta.libs_9.0.1.20131022-1058/a.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/social/eclipse/plugins/com.ibm.fiesta.libs_9.0.1.20131022-1058/b.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.eclipse.equinox.jsp.jasper.registry_1.0.0.v20080427-0830.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/com.ibm.rcp.webcontainer.utils_9.0.1.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/rcp/eclipse/plugins/org.osgi.service.webapplication_1.0.0.20131002-1404.jar"/>
+			<pathelement path="../../../../../IBM/Domino/osgi/shared/eclipse/plugins/com.ibm.commons.icu_9.0.1.20131004-1200/lwpd.commons.icu.jar"/>
+		</path>
+		<!-- compile the source code -->
+		<javac destdir="${build.result.folder}/@dot" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bundleBootClasspath}" source="${bundleJavacSource}" target="${bundleJavacTarget}" encoding="UTF-8"		>
+			<compilerarg line="${compilerArg}" compiler="${build.compiler}"/>
+			<classpath refid="@dot.classpath" />
+			<src path="src/main/java"			/>
+			<src path="src/test/java"			/>
+			<src path="src/main/resources"			/>
+			<src path="src/sample/java"			/>
+			<compilerarg value="@${basedir}/javaCompiler...args" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"			/>
+			<compilerarg line="-log &apos;${build.result.folder}/@dot${logExtension}&apos;" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"			/>
+		</javac>
+		<antcall target="checkCompilationResults"/>
+		<!-- Copy necessary resources -->
+		<copy todir="${build.result.folder}/@dot" failonerror="true" overwrite="false">
+			<fileset dir="src/main/java">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+			<fileset dir="src/test/java">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+			<fileset dir="src/main/resources">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+			<fileset dir="src/sample/java">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.htm*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="src.zip" depends="init" unless="src.zip">
+		<mkdir dir="${build.result.folder}"/>
+		<antcall target="zip.src.zip"/>
+	</target>
+	<target name="zip.src.zip">
+		<zip destfile="${build.result.folder}/src.zip" filesonly="false" whenempty="skip" update="false">
+			<fileset dir="src/main/java">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="src/test/java">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="src/main/resources">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="src/sample/java">
+				<include name="**/*.java"/>
+			</fileset>
+		</zip>
+	</target>
+	<target name="copy.src.zip">
+		<copy todir="${source.destination.folder}/" failonerror="true" overwrite="true">
+			<fileset dir="src/main/java">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="src/test/java">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="src/main/resources">
+				<include name="**/*.java"/>
+			</fileset>
+			<fileset dir="src/sample/java">
+				<include name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build.jars" depends="init" description="Compile classes and build nested jars for the plug-in: org.openntf.domino.">
+		<delete file="${compilation.problem.marker}" quiet="true"/>
+		<available property="@dot" file="${build.result.folder}/@dot"/>
+		<antcall target="@dot"/>
+	</target>
+
+	<target name="checkCompilationResults" if="compilation.error.occured">
+		<echo file="${compilation.problem.marker}" message="org.openntf.domino_1.5.0.201506112346${line.separator}compilation.error.occured=${compilation.error.occured}"/>
+		<eclipse.logCompileError log="${compilation.prereq.log}" bundle="org.openntf.domino_1.5.0.201506112346">
+			<include name="C:/Data/git/org.openntf.domino/domino/externals/guava/compilation.problem"/>
+			<include name="${pluginTemp}/com.google.guava_18.0.0.201506112346/compilation.problem"/>
+			<include name="C:/Data/git/org.openntf.domino/domino/externals/tinkerpop/compilation.problem"/>
+			<include name="${pluginTemp}/com.tinkerpop_2.6.0.201506112346/compilation.problem"/>
+			<include name="C:/Data/git/org.openntf.domino/domino/junit4xpages/compilation.problem"/>
+			<include name="${pluginTemp}/org.openntf.junit4xpages_4.11.0.201506112346/compilation.problem"/>
+			<include name="C:/Data/git/org.openntf.domino/domino/externals/javassist/compilation.problem"/>
+			<include name="${pluginTemp}/javassist_3.18.2.201506112346/compilation.problem"/>
+			<include name="C:/Data/git/org.openntf.domino/domino/formula/compilation.problem"/>
+			<include name="${pluginTemp}/org.openntf.formula_1.5.0.201506112346/compilation.problem"/>
+			<include name="C:/Data/git/org.openntf.domino/domino/externals/javolution/compilation.problem"/>
+			<include name="${pluginTemp}/javolution_6.1.0.201506112346/compilation.problem"/>
+			<include name="C:/Data/git/org.openntf.domino/domino/externals/jsr305/compilation.problem"/>
+			<include name="${pluginTemp}/jsr305_1.0.0.201506112346/compilation.problem"/>
+		</eclipse.logCompileError>
+	</target>
+
+	<target name="build.sources" depends="init">
+		<available property="src.zip" file="${build.result.folder}/src.zip"/>
+		<antcall target="src.zip"/>
+	</target>
+
+	<target name="publish.bin.parts" depends="init" if="p2.publish.parts" unless="compilation.problem.marker.exists">
+		<mkdir dir="${build.result.folder}/org.openntf.domino_1.5.0.201506112346"/>
+		<copy todir="${build.result.folder}" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="META-INF/MANIFEST.MF"/>
+				<include name="plugin.xml"/>
+				<include name="fragment.xml"/>
+			</fileset>
+		</copy>
+		<eclipse.versionReplacer path="${build.result.folder}" version="1.5.0.201506112346"/>
+		<antcall target="apitools.generation">
+			<param name="projectLocation" value="${basedir}"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
+			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
+			<param name="target.folder" value="${build.result.folder}"/>
+		</antcall>
+		<eclipse.gatherBundle 
+		   metadataRepository="${p2.build.repo}"
+		   artifactRepository="${p2.build.repo}"
+		   buildResultFolder="${build.result.folder}"
+		   unpack="false"
+		   baseDirectory="${basedir}"
+		/>
+	</target>
+
+	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346"/>
+		<copy todir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346" failonerror="true" overwrite="false">
+			<fileset dir="${build.result.folder}/@dot">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<copy todir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346" failonerror="true" overwrite="true">
+			<fileset dir="${basedir}">
+				<include name="META-INF/"/>
+				<include name="NOTICE"/>
+				<include name="LICENSE"/>
+				<include name="resources/"/>
+				<include name="plugin.xml"/>
+			</fileset>
+		</copy>
+		<eclipse.versionReplacer path="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346" version="1.5.0.201506112346"/>
+		<antcall target="apitools.generation">
+			<param name="projectLocation" value="${basedir}"/>
+			<param name="binary.folders" value="${build.result.folder}/@dot"/>
+			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
+			<param name="target.folder" value="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346"/>
+		</antcall>
+	</target>
+
+	<target name="build.zips" depends="init">
+	</target>
+
+	<target name="gather.sources" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346"/>
+		<copy file="${build.result.folder}/src.zip" todir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346" failonerror="false" overwrite="false"/>
+		<antcall target="copy.src.includes">
+			<param name="source.destination.folder" value="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346"/>
+		</antcall>
+	</target>
+
+	<target name="gather.individual.sources" depends="init">
+		<antcall target="copy.src.zip">
+			<param name="source.destination.folder" value="${destination.temp.folder}"/>
+		</antcall>
+		<antcall target="copy.src.includes">
+			<param name="source.destination.folder" value="${destination.temp.folder}"/>
+		</antcall>
+	</target>
+
+	<target name="copy.src.includes" depends="init">
+	</target>
+
+	<target name="gather.logs" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346"/>
+		<copy todir="${destination.temp.folder}/org.openntf.domino_1.5.0.201506112346" failonerror="false" overwrite="false">
+			<fileset dir="${build.result.folder}">
+				<include name="@dot${logExtension}"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="clean" depends="init" description="Clean the plug-in: org.openntf.domino of all the zips, jars and logs created.">
+		<delete dir="${build.result.folder}/@dot"/>
+		<delete file="${build.result.folder}/src.zip"/>
+		<delete file="${plugin.destination}/org.openntf.domino_1.5.0.201506112346.jar"/>
+		<delete file="${plugin.destination}/org.openntf.domino_1.5.0.201506112346.zip"/>
+		<delete dir="${temp.folder}"/>
+		<delete file="${compilation.problem.marker}" quiet="true"/>
+	</target>
+
+	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
+		<eclipse.convertPath fileSystemPath="C:/Data/git/org.openntf.domino/domino/core" property="resourcePath"/>
+		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
+	</target>
+
+	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: org.openntf.domino.">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.jars"/>
+		<antcall target="build.sources"/>
+		<antcall target="gather.bin.parts">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<antcall target="gather.sources">
+			<param name="destination.temp.folder" value="${temp.folder}/"/>
+		</antcall>
+		<delete>
+			<fileset dir="${temp.folder}">
+				<include name="**/*.bin${logExtension}"/>
+			</fileset>
+		</delete>
+		<zip destfile="${plugin.destination}/org.openntf.domino_1.5.0.201506112346.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
+		<delete dir="${temp.folder}"/>
+	</target>
+
+	<target name="apitools.generation" if="generateAPIDescription">
+		<apitooling.apigeneration  projectName="${projectName}" project="${projectLocation}" binary="${binary.folders}" target="${target.folder}" extramanifests="${extraManifests}" allownonapiproject="${allowNonApiProject}"		/>
+	</target>
+
+</project>

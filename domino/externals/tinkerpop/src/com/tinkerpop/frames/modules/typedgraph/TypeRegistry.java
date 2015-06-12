@@ -18,8 +18,8 @@ import java.util.Map;
  * @see FramedGraph
  */
 public class TypeRegistry {
-	Map<Class<?>, Class<?>> typeFields = new HashMap<Class<?>, Class<?>>();
-	Map<TypeDiscriminator, Class<?>> typeDiscriminators = new HashMap<TypeDiscriminator, Class<?>>();
+	protected Map<Class<?>, Class<?>> typeFields = new HashMap<Class<?>, Class<?>>();
+	protected Map<TypeDiscriminator, Class<?>> typeDiscriminators = new HashMap<TypeDiscriminator, Class<?>>();
 
 	/**
 	 * @return The interface that has the {@link TypeField} annotation for this
@@ -48,11 +48,11 @@ public class TypeRegistry {
 		return result;
 	}
 
-	static final class TypeDiscriminator {
-		private Class<?> typeHoldingTypeField;
-		private String value;
+	protected static final class TypeDiscriminator {
+		public Class<?> typeHoldingTypeField;
+		public String value;
 
-		TypeDiscriminator(Class<?> typeHoldingTypeField, String value) {
+		public TypeDiscriminator(Class<?> typeHoldingTypeField, String value) {
 			Validate.assertNotNull(typeHoldingTypeField, value);
 			this.typeHoldingTypeField = typeHoldingTypeField;
 			this.value = value;
@@ -93,7 +93,7 @@ public class TypeRegistry {
 		return this;
 	}
 
-	private Class<?> findTypeHoldingTypeField(Class<?> type) {
+	protected Class<?> findTypeHoldingTypeField(Class<?> type) {
 		Class<?> typeHoldingTypeField = type.getAnnotation(TypeField.class) == null ? null : type;
 		for (Class<?> parentType : type.getInterfaces()) {
 			Class<?> parentTypeHoldingTypeField = findTypeHoldingTypeField(parentType);
@@ -106,7 +106,7 @@ public class TypeRegistry {
 		return typeHoldingTypeField;
 	}
 
-	private void registerTypeValue(Class<?> type, Class<?> typeHoldingTypeField) {
+	protected void registerTypeValue(Class<?> type, Class<?> typeHoldingTypeField) {
 		TypeValue typeValue = type.getAnnotation(TypeValue.class);
 		Validate.assertArgument(typeValue != null, "The type does not have a @TypeValue annotation: %s", type.getName());
 		typeDiscriminators.put(new TypeRegistry.TypeDiscriminator(typeHoldingTypeField, typeValue.value()), type);

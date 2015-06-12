@@ -20,6 +20,8 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -88,20 +90,51 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	public static class DTypeRegistry extends TypeRegistry {
-		private Map<Class<?>, Map<String, Method>> getterMap_ = new LinkedHashMap<Class<?>, Map<String, Method>>();
-		private Map<Class<?>, Map<String, Method>> counterMap_ = new LinkedHashMap<Class<?>, Map<String, Method>>();
-		private Map<Class<?>, Map<String, Method>> finderMap_ = new LinkedHashMap<Class<?>, Map<String, Method>>();
-		private Map<Class<?>, Map<String, Method>> adderMap_ = new LinkedHashMap<Class<?>, Map<String, Method>>();
-		private Map<Class<?>, Map<String, Method>> removerMap_ = new LinkedHashMap<Class<?>, Map<String, Method>>();
-		private Map<Class<?>, Map<String, Method>> setterMap_ = new LinkedHashMap<Class<?>, Map<String, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> getterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> counterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> finderMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> adderMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> removerMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> setterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Method> inMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<Class<?>, Method> outMap_ = new LinkedHashMap<Class<?>, Method>();
+		private Map<String, String> simpleNameMap_ = new HashMap<String, String>();
 
 		//		private Map<Class<?>, Class<?>> inTypeMap_ = new LinkedHashMap<Class<?>, Class<?>>();
 		//		private Map<Class<?>, Class<?>> outTypeMap_ = new LinkedHashMap<Class<?>, Class<?>>();
-		private Map<Class<?>, List<String>> incidenceMap_ = new LinkedHashMap<Class<?>, List<String>>();
+		private Map<Class<?>, List<CaseInsensitiveString>> incidenceMap_ = new LinkedHashMap<Class<?>, List<CaseInsensitiveString>>();
 
 		public DTypeRegistry() {
+		}
+
+		@Override
+		public Class<?> getType(final Class<?> typeHoldingTypeField, final String typeValue) {
+			if (!typeValue.contains(".")) {
+				//				System.out.println("TEMP DEBUG: Attemping to convert simple name: " + typeValue);
+				String fullName = simpleNameMap_.get(typeValue);
+				if (fullName != null) {
+					//					System.out.println("TEMP DEBUG: Simple name converted to " + fullName);
+					//					typeValue = fullName;
+				}
+			}
+			//			System.out.println("TEMP DEBUG: Attempting to resolve type using holdingField " + typeHoldingTypeField.getName());
+			//			boolean found = false;
+			//			for (TypeDiscriminator td : this.typeDiscriminators.keySet()) {
+			//				if (td.value.equals(typeValue)) {
+			//					found = true;
+			//					System.out.print("Found a TD with type value " + td.value + " who's holding field is "
+			//							+ td.typeHoldingTypeField.getName() + " (" + td.typeHoldingTypeField.hashCode() + ")");
+			//				}
+			//			}
+			//			if (!found) {
+			//				for (TypeDiscriminator td : this.typeDiscriminators.keySet()) {
+			//					System.out.print("Found a TD with type value " + td.value + " who's holding field is "
+			//							+ td.typeHoldingTypeField.getName() + " (" + td.typeHoldingTypeField.hashCode() + ")");
+			//				}
+			//			}
+			Class<?> result = super.getType(typeHoldingTypeField, typeValue);
+			//			System.out.println("TEMP DEBUG: " + typeValue + " resulted in " + (result == null ? "null" : result.getName()));
+			return result;
 		}
 
 		@Override
@@ -110,15 +143,17 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			if (result == null) {
 				Class<?> doublechk = findTypeHoldingTypeField(type);
 				if (doublechk != null) {
-					System.out.println("But we found it in " + doublechk.getName() + " in registry " + System.identityHashCode(this));
+					//					System.out.println("TEMP DEBUG: But we found it in " + doublechk.getName() + " in registry "
+					//							+ System.identityHashCode(this));
 				} else {
-					System.out.println("Double check failed too?");
+					//					System.out.println("TEMP DEBUG: Double check failed too?");
 				}
 			}
 			return result;
 		}
 
-		private Class<?> findTypeHoldingTypeField(final Class<?> type) {
+		@Override
+		protected Class<?> findTypeHoldingTypeField(final Class<?> type) {
 			Class<?> typeHoldingTypeField = type.getAnnotation(TypeField.class) == null ? null : type;
 			for (Class<?> parentType : type.getInterfaces()) {
 				Class<?> parentTypeHoldingTypeField = findTypeHoldingTypeField(parentType);
@@ -137,11 +172,16 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			//					+ System.identityHashCode(this));
 			Validate.assertArgument(type.isInterface(), "Not an interface: %s", type.getName());
 			super.add(type);
+			String simpleName = type.getSimpleName();
+			if (!simpleNameMap_.containsKey(simpleName)) {
+				simpleNameMap_.put(simpleName, type.getName());
+			}
 			addProperties(type);
 			for (Class<?> subtype : type.getClasses()) {
 				Annotation annChk = subtype.getAnnotation(TypeValue.class);
 				if (annChk != null && subtype.isInterface()) {
 					add(subtype);
+					//					System.out.println("TEMP DEBUG: TypeHoldingField from " + this.getTypeHoldingTypeField(subtype));
 				}
 			}
 			return this;
@@ -185,10 +225,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return outMap_.get(type);
 		}
 
-		public Map<String, Method> getPropertiesGetters(final Class<?>[] types) {
-			Map<String, Method> result = new LinkedHashMap<String, Method>();
+		public Map<CaseInsensitiveString, Method> getPropertiesGetters(final Class<?>[] types) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			for (Class<?> klazz : types) {
-				Map<String, Method> crystals = getPropertiesGetters(klazz);
+				Map<CaseInsensitiveString, Method> crystals = getPropertiesGetters(klazz);
 				if (crystals != null) {
 					result.putAll(crystals);
 				}
@@ -196,15 +236,15 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return Collections.unmodifiableMap(result);
 		}
 
-		public Map<String, Method> getPropertiesGetters(final Class<?> type) {
-			Map<String, Method> getters = getterMap_.get(type);
+		public Map<CaseInsensitiveString, Method> getPropertiesGetters(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> getters = getterMap_.get(type);
 			return getters;
 		}
 
-		public Map<String, Method> getCounters(final Class<?>[] types) {
-			Map<String, Method> result = new LinkedHashMap<String, Method>();
+		public Map<CaseInsensitiveString, Method> getCounters(final Class<?>[] types) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			for (Class<?> klazz : types) {
-				Map<String, Method> crystals = getCounters(klazz);
+				Map<CaseInsensitiveString, Method> crystals = getCounters(klazz);
 				if (crystals != null) {
 					result.putAll(crystals);
 				}
@@ -212,15 +252,15 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return Collections.unmodifiableMap(result);
 		}
 
-		public Map<String, Method> getCounters(final Class<?> type) {
-			Map<String, Method> counters = counterMap_.get(type);
+		public Map<CaseInsensitiveString, Method> getCounters(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> counters = counterMap_.get(type);
 			return counters;
 		}
 
-		public Map<String, Method> getPropertiesSetters(final Class<?>[] types) {
-			Map<String, Method> result = new LinkedHashMap<String, Method>();
+		public Map<CaseInsensitiveString, Method> getPropertiesSetters(final Class<?>[] types) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			for (Class<?> klazz : types) {
-				Map<String, Method> crystals = getPropertiesSetters(klazz);
+				Map<CaseInsensitiveString, Method> crystals = getPropertiesSetters(klazz);
 				if (crystals != null) {
 					result.putAll(crystals);
 				}
@@ -228,41 +268,43 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return Collections.unmodifiableMap(result);
 		}
 
-		public Map<String, Method> getPropertiesSetters(final Class<?> type) {
-			Map<String, Method> setters = setterMap_.get(type);
+		public Map<CaseInsensitiveString, Method> getPropertiesSetters(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> setters = setterMap_.get(type);
 			return setters;
 		}
 
 		public void addProperties(final Class<?> type) {
-			Map<String, Method> getters = new LinkedHashMap<String, Method>();
-			Map<String, Method> setters = new LinkedHashMap<String, Method>();
-			Map<String, Method> counters = new LinkedHashMap<String, Method>();
-			Map<String, Method> finders = new LinkedHashMap<String, Method>();
-			Map<String, Method> adders = new LinkedHashMap<String, Method>();
-			Map<String, Method> removers = new LinkedHashMap<String, Method>();
-			List<String> incidences = new ArrayList<String>();
+			Map<CaseInsensitiveString, Method> getters = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> setters = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> counters = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> finders = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> adders = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> removers = new LinkedHashMap<CaseInsensitiveString, Method>();
+			List<CaseInsensitiveString> incidences = new ArrayList<CaseInsensitiveString>();
 			Method in = null;
 			Method out = null;
 			Method[] methods = type.getMethods();
 			for (Method method : methods) {
 				if (EdgeFrame.class.isAssignableFrom(type)) {
 					Annotation inA = method.getAnnotation(InVertex.class);
-					if (inA != null)
+					if (inA != null) {
 						in = method;
+					}
 					Annotation outA = method.getAnnotation(OutVertex.class);
-					if (outA != null)
+					if (outA != null) {
 						out = method;
+					}
 				}
-				String key = null;
+				CaseInsensitiveString key = null;
 				boolean derived = false;
 				Annotation typed = method.getAnnotation(TypedProperty.class);
 				if (typed != null) {
-					key = ((TypedProperty) typed).value();
+					key = new CaseInsensitiveString(((TypedProperty) typed).value());
 					derived = ((TypedProperty) typed).derived();
 				} else {
 					Annotation property = method.getAnnotation(Property.class);
 					if (property != null) {
-						key = ((Property) property).value();
+						key = new CaseInsensitiveString(((Property) property).value());
 					}
 				}
 				if (key != null) {
@@ -275,14 +317,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				} else {
 					Annotation incidenceUnique = method.getAnnotation(IncidenceUnique.class);
 					if (incidenceUnique != null) {
-						key = ((IncidenceUnique) incidenceUnique).label();
+						key = new CaseInsensitiveString(((IncidenceUnique) incidenceUnique).label());
 						if (ClassUtilities.isGetMethod(method)) {
 							incidences.add(key);
 						}
 					}
 					Annotation incidence = method.getAnnotation(Incidence.class);
 					if (incidence != null) {
-						key = ((Incidence) incidence).label();
+						key = new CaseInsensitiveString(((Incidence) incidence).label());
 						if (ClassUtilities.isGetMethod(method)) {
 							incidences.add(key);
 						}
@@ -309,8 +351,13 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			finderMap_.put(type, finders);
 			adderMap_.put(type, adders);
 			removerMap_.put(type, removers);
-			inMap_.put(type, in);
-			outMap_.put(type, out);
+			if (in != null) {
+				inMap_.put(type, in);
+				//				System.out.println("TEMP DEBUG: registering InVertex method " + in.getName() + " for class " + type.getName());
+			}
+			if (out != null) {
+				outMap_.put(type, out);
+			}
 			incidenceMap_.put(type, incidences);
 		}
 	}
@@ -338,10 +385,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(defaultType);
 			if (typeHoldingTypeField != null) {
 				String value = e.getProperty(typeHoldingTypeField.getAnnotation(TypeField.class).value());
-				//				System.out.println("Found type value: " + (value == null ? "null" : value));
+				//				System.out.println("TEMP DEBUG: Found type value: " + (value == null ? "null" : value));
 				Class<?> type = value == null ? null : typeRegistry_.getType(typeHoldingTypeField, value);
 				if (type != null) {
-					//					System.out.println("Returning type: " + type.getName());
+					//					System.out.println("TEMP DEBUG: Returning type: " + type.getName());
 					return type;
 				}
 			}
@@ -350,6 +397,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		@Override
 		public void initElement(final Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
+
 			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(kind);
 			if (typeHoldingTypeField != null) {
 				TypeValue typeValue = kind.getAnnotation(TypeValue.class);
@@ -358,15 +406,27 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					Object current = element.getProperty(field);
 					boolean update = true;
 					if (current != null) {
-						if (current instanceof String) {
-							update = !((String) current).equals(typeValue.value());
-						}
+						String currentVal = TypeUtils.toString(current);
+						//						System.out.println("TEMP DEBUG: current value is " + currentVal + " in field " + field + " while typeValue is "
+						//								+ typeValue.value());
+						update = !(currentVal).equals(typeValue.value());
+					} else {
+						//						System.out.println("TEMP DEBUG: current value is null in field " + field);
 					}
 					if (update) {
-						element.setProperty(field, typeValue.value());
+						if (kind == DEdgeFrame.class || kind == DVertexFrame.class) {
+
+						} else {
+							element.setProperty(field, typeValue.value());
+						}
 					}
+				} else {
+					//					System.out.println("TEMP DEBUG: type value annotation is null");
 				}
+			} else {
+				//				System.out.println("TEMP DEBUG: TypeHoldingTypeField is null");
 			}
+
 		}
 
 		public Class<?> resolve(final VertexFrame vertex, final Class<?> defaultType) {

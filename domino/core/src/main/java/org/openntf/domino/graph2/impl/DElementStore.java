@@ -109,11 +109,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (!types.contains(type)) {
 			types.add(type);
 		}
-		for (Class<?> subtype : type.getClasses()) {
-			if (subtype.isInterface()) {
-				addType(subtype);
-			}
-		}
+		//		for (Class<?> subtype : type.getClasses()) {
+		//			if (subtype.isInterface()) {
+		//				addType(subtype);
+		//			}
+		//		}
 	}
 
 	@Override
@@ -370,6 +370,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return null;
 	}
 
+	@Override
 	public Element getElement(final Object id) throws IllegalStateException {
 		Element result = null;
 		Element chk = getCachedElement(id, Element.class);
@@ -625,35 +626,46 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Iterable<Vertex> getVertices() {
+	public DVertexIterable getVertices() {
 		return new DVertexIterable(this, getVertexIds());
 	}
 
 	@Override
-	public Iterable<Edge> getEdges() {
+	public DEdgeIterable getEdges() {
 		return new DEdgeIterable(this, getEdgeIds());
 	}
 
 	@Override
-	public Iterable<Vertex> getVertices(final String formulaFilter) {
+	public DElementIterable getElements(final String formulaFilter) {
+		return new DElementIterable(this, getElementIds(formulaFilter));
+	}
+
+	@Override
+	public DVertexIterable getVertices(final String formulaFilter) {
 		return new DVertexIterable(this, getVertexIds(formulaFilter));
 	}
 
 	@Override
-	public Iterable<Edge> getEdges(final String formulaFilter) {
+	public DEdgeIterable getEdges(final String formulaFilter) {
 		return new DEdgeIterable(this, getEdgeIds(formulaFilter));
 	}
 
 	@Override
-	public Iterable<Vertex> getVertices(final String key, final Object value) {
+	public DVertexIterable getVertices(final String key, final Object value) {
 		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getVertexFormula(key, value);
 		return getVertices(formulaFilter);
 	}
 
 	@Override
-	public Iterable<Edge> getEdges(final String key, final Object value) {
+	public DEdgeIterable getEdges(final String key, final Object value) {
 		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getEdgeFormula(key, value);
 		return getEdges(formulaFilter);
+	}
+
+	@Override
+	public DElementIterable getElements(final String key, final Object value) {
+		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getEdgeFormula(key, value);
+		return getElements(formulaFilter);
 	}
 
 	@Override
@@ -667,7 +679,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result.unmodifiable();
 	}
 
-	protected Iterable<NoteCoordinate> getVertexIds() {
+	protected List<NoteCoordinate> getVertexIds() {
 		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
 		Object raw = getStoreDelegate();
 		if (raw instanceof Database) {
@@ -686,7 +698,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
-	protected Iterable<NoteCoordinate> getVertexIds(final String formulaFilter) {
+	protected List<NoteCoordinate> getVertexIds(final String formulaFilter) {
 		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
 		Object raw = getStoreDelegate();
 		if (raw instanceof Database) {
@@ -716,7 +728,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result.unmodifiable();
 	}
 
-	protected Iterable<NoteCoordinate> getEdgeIds() {
+	protected List<NoteCoordinate> getEdgeIds() {
 		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
 		Object raw = getStoreDelegate();
 		if (raw instanceof Database) {
@@ -735,7 +747,46 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
-	protected Iterable<NoteCoordinate> getEdgeIds(final String formulaFilter) {
+	protected List<NoteCoordinate> getEdgeIds(final String formulaFilter) {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(formulaFilter);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
+	}
+
+	protected List<NoteCoordinate> getElementIds() {
+		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		Object raw = getStoreDelegate();
+		if (raw instanceof Database) {
+			Database db = (Database) raw;
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.setSelectDocuments(true);
+			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER + " | "
+					+ org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
+			nc.buildCollection();
+			for (String noteid : nc) {
+				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
+			}
+		} else {
+			//TODO NTF implement alternative
+			throw new IllegalStateException("Non-Domino implementations not yet available");
+		}
+		return result;
+	}
+
+	protected List<NoteCoordinate> getElementIds(final String formulaFilter) {
 		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
 		Object raw = getStoreDelegate();
 		if (raw instanceof Database) {

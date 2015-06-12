@@ -7,6 +7,8 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.ibm.icu.lang.UCharacter;
@@ -24,6 +26,16 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	protected String string;
 	protected int hash = 0;
 	protected String folded = null;
+
+	public static List<CaseInsensitiveString> toCaseInsensitive(final Iterable<String> strings) {
+		if (strings == null)
+			return null;
+		List<CaseInsensitiveString> result = new ArrayList<CaseInsensitiveString>();
+		for (String str : strings) {
+			result.add(new CaseInsensitiveString(str));
+		}
+		return result;
+	}
 
 	protected static String foldCase(final String foldee) {
 		return UCharacter.foldCase(foldee, true);

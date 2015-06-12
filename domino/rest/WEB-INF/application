@@ -16,4 +16,4 @@
 #                                                                     
 # ******************************************************************* 
 
-org.openntf.domino.xsp.servlet.ODARootResource
+org.openntf.domino.rest.servlet.ODARootResource

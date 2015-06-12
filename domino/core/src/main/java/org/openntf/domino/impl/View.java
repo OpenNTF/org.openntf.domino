@@ -50,6 +50,8 @@ import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1003,7 +1005,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, getAncestorSession(), recycleThis);
+			Object domKey = null;
+			if (key != null) {
+				domKey = toDominoFriendly(key, getAncestorSession(), recycleThis);
+			}
 			lotus.domino.ViewEntryCollection rawColl;
 			if (domKey instanceof java.util.Vector) {
 				rawColl = getDelegate().getAllEntriesByKey((Vector<?>) domKey, exact);
@@ -2462,7 +2467,12 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 */
 	@Override
 	public final Session getAncestorSession() {
-		return this.getAncestorDatabase().getAncestorSession();
+		Database db = this.getAncestorDatabase();
+		if (db == null) {
+			return Factory.getSession(SessionType.CURRENT);
+		} else {
+			return db.getAncestorSession();
+		}
 	}
 
 	/* (non-Javadoc)

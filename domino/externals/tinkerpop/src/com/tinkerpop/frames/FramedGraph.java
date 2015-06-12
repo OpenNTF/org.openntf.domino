@@ -25,7 +25,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * The primary class for interpreting/framing elements of a graph in terms of
@@ -81,6 +81,36 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 		registerAnnotationHandler(new OutVertexAnnotationHandler());
 	}
 
+	private int countParentInterfaces(Class<?> klazz) {
+		int result = 0;
+		Class<?>[] parents = klazz.getInterfaces();
+		if (parents.length > 0) {
+			result = result + parents.length;
+			for (Class<?> parent : parents) {
+				result = result + countParentInterfaces(parent);
+			}
+		}
+		return result;
+	}
+
+	private ClassLoader findProxyClassLoader(Collection<Class<?>> classes) {
+		ClassLoader result = null;
+		int deepest = 0;
+		for (Class<?> curClass : classes) {
+			int curDepth = countParentInterfaces(curClass);
+			// System.out.println("TEMP DEBUG: testing class depth from " +
+			// curClass.getName() + " " + (curDepth));
+			if (curDepth > deepest) {
+				deepest = curDepth;
+				result = curClass.getClassLoader();
+				// System.out.println("TEMP DEBUG: Setting new depth classloader: "
+				// + curDepth + " from "
+				// + curClass.getName());
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * A helper method for framing a vertex. Note that all framed vertices
 	 * implement {@link VertexFrame} to allow access to the underlying
@@ -101,14 +131,15 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 			return null;
 		}
 
-		Collection<Class<?>> resolvedTypes = new HashSet<Class<?>>();
+		Collection<Class<?>> resolvedTypes = new LinkedHashSet<Class<?>>();
 		resolvedTypes.add(VertexFrame.class);
 		resolvedTypes.add(kind);
 		for (TypeResolver typeResolver : config.getTypeResolvers()) {
 			resolvedTypes.addAll(Arrays.asList(typeResolver.resolveTypes(vertex, kind)));
 		}
-		return (F) Proxy.newProxyInstance(kind.getClassLoader(),
-				resolvedTypes.toArray(new Class[resolvedTypes.size()]), new FramedElement(this, vertex));
+		ClassLoader cl = findProxyClassLoader(resolvedTypes);
+		return (F) Proxy.newProxyInstance(cl, resolvedTypes.toArray(new Class[resolvedTypes.size()]),
+				new FramedElement(this, vertex));
 	}
 
 	/**
@@ -137,14 +168,16 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 			return null;
 		}
 
-		Collection<Class<?>> resolvedTypes = new HashSet<Class<?>>();
+		Collection<Class<?>> resolvedTypes = new LinkedHashSet<Class<?>>();
 		resolvedTypes.add(EdgeFrame.class);
 		resolvedTypes.add(kind);
 		for (TypeResolver typeResolver : config.getTypeResolvers()) {
-			resolvedTypes.addAll(Arrays.asList(typeResolver.resolveTypes(edge, kind)));
+			Class<?>[] types = typeResolver.resolveTypes(edge, kind);
+			resolvedTypes.addAll(Arrays.asList(types));
 		}
-		return (F) Proxy.newProxyInstance(kind.getClassLoader(),
-				resolvedTypes.toArray(new Class[resolvedTypes.size()]), new FramedElement(this, edge, direction));
+		ClassLoader cl = findProxyClassLoader(resolvedTypes);
+		return (F) Proxy.newProxyInstance(cl, resolvedTypes.toArray(new Class[resolvedTypes.size()]),
+				new FramedElement(this, edge, direction));
 	}
 
 	/**

@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-com.tinkerpop.blueprints.TransactionalGraph {
+		com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -55,6 +55,10 @@ com.tinkerpop.blueprints.TransactionalGraph {
 
 		public static String getFramedEdgeFormula(final Class<?> kind) {
 			return getFormulaForFrame(kind) + " & " + DEdge.FORMULA_FILTER;
+		}
+
+		public static String getFramedElementFormula(final Class<?> kind) {
+			return getFormulaForFrame(kind);
 		}
 
 		public static String getFramedVertexFormula(final String key, final Object value, final Class<?> kind) {

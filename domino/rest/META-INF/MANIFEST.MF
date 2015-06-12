@@ -9,11 +9,23 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.ibm.commons.util.io.json,
  javax.servlet;version="2.5.0",
  javax.servlet.http;version="2.5.0",
+ javax.ws.rs,
+ javax.ws.rs.core,
+ javax.ws.rs.ext,
+ org.eclipse.core.runtime;version="3.4.0",
  org.osgi.framework;version="1.3.0"
 Require-Bundle: com.ibm.domino.commons;bundle-version="9.0.1",
  com.ibm.domino.das;bundle-version="9.0.1",
  com.ibm.domino.services;bundle-version="9.0.1",
  com.ibm.wink;bundle-version="9.0.1",
- org.openntf.domino.xsp;bundle-version="1.5.0";resolution:=optional
-Export-Package: org.openntf.domino.rest.servlet
+ org.openntf.domino.xsp;bundle-version="1.5.0";resolution:=optional,
+ com.ibm.commons;bundle-version="9.0.1"
+Export-Package: org.openntf.domino.rest,
+ org.openntf.domino.rest.json,
+ org.openntf.domino.rest.resources,
+ org.openntf.domino.rest.resources.data,
+ org.openntf.domino.rest.resources.frames,
+ org.openntf.domino.rest.resources.graph,
+ org.openntf.domino.rest.service,
+ org.openntf.domino.rest.servlet
 Bundle-ActivationPolicy: lazy

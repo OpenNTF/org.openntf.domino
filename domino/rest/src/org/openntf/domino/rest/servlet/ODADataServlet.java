@@ -1,5 +1,7 @@
 package org.openntf.domino.rest.servlet;
 
+import com.ibm.domino.das.servlet.DasServlet;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -13,8 +15,6 @@ import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Factory.ThreadConfig;
 import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.session.DasCurrentSessionFactory;
-
-import com.ibm.domino.das.servlet.DasServlet;
 
 public class ODADataServlet extends DasServlet {
 	private static final long serialVersionUID = 1L;
@@ -43,11 +43,18 @@ public class ODADataServlet extends DasServlet {
 	}
 
 	@Override
-	public void doService(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+	public void doService(final HttpServletRequest request, final HttpServletResponse response)
+			throws ServletException, IOException {
 		Factory.initThread(getDataServiceConfig());
 		Factory.setSessionFactory(new DasCurrentSessionFactory(), SessionType.CURRENT);
 		super.doService(request, response);
 		Factory.termThread();
 	}
+
+	private static final String DATA_SERVICE_NAME = "Data";//$NON-NLS-1$
+	private static final String DATA_SERVICE_PATH = "data";//$NON-NLS-1$
+	private static final String DATA_SERVICE_VERSION = "9.0.1"; //$NON-NLS-1$
+	private static final int DATA_SERVICE_GKF = 426; // Defined by core SAAS
+														// code
 
 }
