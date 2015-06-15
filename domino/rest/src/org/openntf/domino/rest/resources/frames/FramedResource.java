@@ -42,15 +42,14 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace)
 			throws JsonException, IOException {
-		// Database database = ContextInfo.getUserDatabase();
+		@SuppressWarnings("rawtypes")
+		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
 		ResponseBuilder builder = Response.ok();
-
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, false, true);
-		@SuppressWarnings("rawtypes")
-		DFramedTransactionalGraph graph = this.getGraph(namespace);
+
 		List<CaseInsensitiveString> props = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
 		List<CaseInsensitiveString> inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
 		List<CaseInsensitiveString> outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
