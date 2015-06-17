@@ -139,6 +139,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		@Override
 		public Class<?> getTypeHoldingTypeField(final Class<?> type) {
+			if (type == null)
+				throw new IllegalArgumentException("Cannot pass a null type to getTypeHoldingTypeField");
 			Class<?> result = super.getTypeHoldingTypeField(type);
 			if (result == null) {
 				Class<?> doublechk = findTypeHoldingTypeField(type);
@@ -396,8 +398,17 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 
 		@Override
-		public void initElement(final Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
-
+		public void initElement(Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
+			if (kind == null) {
+				if (element instanceof Edge) {
+					kind = DEdgeFrame.class;
+				} else if (element instanceof Vertex) {
+					kind = DVertexFrame.class;
+				} else {
+					throw new IllegalArgumentException("element parameter is a "
+							+ (element == null ? "null" : element.getClass().getName()));
+				}
+			}
 			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(kind);
 			if (typeHoldingTypeField != null) {
 				TypeValue typeValue = kind.getAnnotation(TypeValue.class);

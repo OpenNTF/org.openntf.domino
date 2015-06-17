@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-		com.tinkerpop.blueprints.TransactionalGraph {
+com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -39,6 +39,10 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 			return "Form =\"" + classname + "\"";
 		}
 
+		public static String getFormulaForFrameName(final String classname) {
+			return "Form =\"" + classname + "\"";
+		}
+
 		public static String getVertexFormula(final String key, final Object value) {
 			String filterFormula = convertToFormula(key, value);
 			return DVertex.FORMULA_FILTER + (filterFormula.length() > 0 ? " & " + filterFormula : "");
@@ -59,6 +63,10 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 
 		public static String getFramedElementFormula(final Class<?> kind) {
 			return getFormulaForFrame(kind);
+		}
+
+		public static String getFramedElementFormula(final String classname) {
+			return getFormulaForFrameName(classname);
 		}
 
 		public static String getFramedVertexFormula(final String key, final Object value, final Class<?> kind) {

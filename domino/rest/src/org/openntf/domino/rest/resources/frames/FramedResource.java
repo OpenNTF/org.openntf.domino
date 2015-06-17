@@ -28,7 +28,6 @@ import org.openntf.domino.rest.service.ODAGraphService;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
-import org.openntf.domino.types.CaseInsensitiveString;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -50,9 +49,15 @@ public class FramedResource extends AbstractResource {
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, false, true);
 
-		List<CaseInsensitiveString> props = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
-		List<CaseInsensitiveString> inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
-		List<CaseInsensitiveString> outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
+		// List<CaseInsensitiveString> props =
+		// CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
+		// List<CaseInsensitiveString> inProps =
+		// CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
+		// List<CaseInsensitiveString> outProps =
+		// CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
+		// List<CaseInsensitiveString> labels =
+		// CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
+		// boolean includeEdges = pm.get(Parameters.EDGES) != null;
 
 		if (pm.get(Parameters.ID) != null) {
 			List<String> ids = pm.get(Parameters.ID);
@@ -63,14 +68,13 @@ public class FramedResource extends AbstractResource {
 				// System.out.println("TEMP DEBUG: Writing output for id " +
 				// id);
 				NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
-				Map<String, Object> jsonMap = graph.toJsonableMap(graph.getElement(nc, null), props, inProps, outProps);
+				Map<String, Object> jsonMap = getService().toJsonableMap(graph, graph.getElement(nc, null), pm);
 				writer.outObject(jsonMap);
 			} else {
 				List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
 				for (String id : ids) {
 					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
-					Map<String, Object> jsonMap = graph.toJsonableMap(graph.getElement(nc, null), props, inProps,
-							outProps);
+					Map<String, Object> jsonMap = getService().toJsonableMap(graph, graph.getElement(nc, null), pm);
 					maps.add(jsonMap);
 				}
 				writer.outArrayLiteral(maps);

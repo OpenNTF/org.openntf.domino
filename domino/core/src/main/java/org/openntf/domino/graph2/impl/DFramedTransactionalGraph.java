@@ -380,7 +380,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return toJsonableMap(frame, properties, null, null);
 	}
 
-	protected DTypeRegistry getTypeRegistry() {
+	public DTypeRegistry getTypeRegistry() {
 		Graph graph = this.getBaseGraph();
 		if (graph instanceof DGraph) {
 			DConfiguration config = (DConfiguration) ((DGraph) graph).getConfiguration();
@@ -389,7 +389,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return null;
 	}
 
-	protected DTypeManager getTypeManager() {
+	public DTypeManager getTypeManager() {
 		Graph graph = this.getBaseGraph();
 		if (graph instanceof DGraph) {
 			DConfiguration config = (DConfiguration) ((DGraph) graph).getConfiguration();
@@ -462,6 +462,27 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			return this.frameElements(elements, kind);
 		} else {
 			return null;
+		}
+	}
+
+	public <F> Iterable<F> getElements(final String classname) {
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		Class<?> chkClass = getTypeRegistry().getType(DVertexFrame.class, classname);
+		if (chkClass == null) {
+			chkClass = getTypeRegistry().getType(DEdgeFrame.class, classname);
+		}
+		if (chkClass != null) {
+			store = base.findElementStore(chkClass);
+			if (store != null) {
+				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(chkClass);
+				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
+				return this.frameElements(elements, null);
+			} else {
+				return null;
+			}
+		} else {
+			throw new IllegalArgumentException("Class " + classname + " not registered in graph");
 		}
 	}
 
