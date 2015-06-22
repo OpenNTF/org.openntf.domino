@@ -5,7 +5,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -96,13 +95,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> adderMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> removerMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> setterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> incidenceMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Method> inMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<Class<?>, Method> outMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<String, String> simpleNameMap_ = new HashMap<String, String>();
-
-		//		private Map<Class<?>, Class<?>> inTypeMap_ = new LinkedHashMap<Class<?>, Class<?>>();
-		//		private Map<Class<?>, Class<?>> outTypeMap_ = new LinkedHashMap<Class<?>, Class<?>>();
-		private Map<Class<?>, List<CaseInsensitiveString>> incidenceMap_ = new LinkedHashMap<Class<?>, List<CaseInsensitiveString>>();
 
 		public DTypeRegistry() {
 		}
@@ -259,6 +255,22 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return counters;
 		}
 
+		public Map<CaseInsensitiveString, Method> getIncidences(final Class<?>[] types) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
+			for (Class<?> klazz : types) {
+				Map<CaseInsensitiveString, Method> crystals = getIncidences(klazz);
+				if (crystals != null) {
+					result.putAll(crystals);
+				}
+			}
+			return Collections.unmodifiableMap(result);
+		}
+
+		public Map<CaseInsensitiveString, Method> getIncidences(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> incidences = incidenceMap_.get(type);
+			return incidences;
+		}
+
 		public Map<CaseInsensitiveString, Method> getPropertiesSetters(final Class<?>[] types) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			for (Class<?> klazz : types) {
@@ -282,7 +294,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			Map<CaseInsensitiveString, Method> finders = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> adders = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> removers = new LinkedHashMap<CaseInsensitiveString, Method>();
-			List<CaseInsensitiveString> incidences = new ArrayList<CaseInsensitiveString>();
+			Map<CaseInsensitiveString, Method> incidences = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Method in = null;
 			Method out = null;
 			Method[] methods = type.getMethods();
@@ -321,14 +333,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					if (incidenceUnique != null) {
 						key = new CaseInsensitiveString(((IncidenceUnique) incidenceUnique).label());
 						if (ClassUtilities.isGetMethod(method)) {
-							incidences.add(key);
+							incidences.put(key, method);
 						}
 					}
 					Annotation incidence = method.getAnnotation(Incidence.class);
 					if (incidence != null) {
 						key = new CaseInsensitiveString(((Incidence) incidence).label());
 						if (ClassUtilities.isGetMethod(method)) {
-							incidences.add(key);
+							incidences.put(key, method);
 						}
 					}
 				}

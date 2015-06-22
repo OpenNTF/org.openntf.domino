@@ -9,7 +9,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -95,6 +97,24 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			jsonEntity = sw.toString();
 		}
 
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		Response response = builder.build();
+		return response;
+	}
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response createFramedObject(@Context final UriInfo uriInfo,
+			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
+		@SuppressWarnings("rawtypes")
+		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		String jsonEntity = null;
+		ResponseBuilder builder = Response.ok();
+		ParamMap pm = Parameters.toParamMap(uriInfo);
+		StringWriter sw = new StringWriter();
+		JsonGraphWriter writer = new JsonGraphWriter(sw, false, true);
+
+		jsonEntity = sw.toString();
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
 		Response response = builder.build();
 		return response;

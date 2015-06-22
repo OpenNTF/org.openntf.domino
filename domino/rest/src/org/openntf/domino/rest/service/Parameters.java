@@ -7,7 +7,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 public enum Parameters {
-	ID, TYPE, EDGES, FILTER, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS;
+	ID, TYPE, EDGES, FILTER, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH;
 
 	public static ParamMap toParamMap(UriInfo uriInfo) {
 		ParamMap result = new ParamMap();

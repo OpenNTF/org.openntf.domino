@@ -60,6 +60,7 @@ import org.openntf.domino.xsp.session.DasCurrentSessionFactory;
 public class ODAGraphService extends RestService implements IRestServiceExt {
 	@SuppressWarnings("rawtypes")
 	private Map<String, FramedGraph> graphMap_;
+	private Map<String, IGraphFactory> factoryMap_;
 
 	public ODAGraphService() {
 		init();
@@ -108,8 +109,9 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 					Map<String, FramedGraph> registry = factory.getRegisteredGraphs();
 					for (String key : registry.keySet()) {
 						FramedGraph graph = registry.get(key);
-						System.out.println("Adding graph called " + key);
+						// System.out.println("Adding graph called " + key);
 						addGraph(key, graph);
+						addFactory(key, factory);
 					}
 				} catch (final CoreException e) {
 					e.printStackTrace();
@@ -157,6 +159,21 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 			graphMap_ = new HashMap<String, FramedGraph>();
 		}
 		return graphMap_;
+	}
+
+	protected Map<String, IGraphFactory> getFactoryMap() {
+		if (factoryMap_ == null) {
+			factoryMap_ = new HashMap<String, IGraphFactory>();
+		}
+		return factoryMap_;
+	}
+
+	public void addFactory(String name, IGraphFactory factory) {
+		getFactoryMap().put(name, factory);
+	}
+
+	public IGraphFactory getFactory(String name) {
+		return getFactoryMap().get(name);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -211,14 +228,18 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		t.printStackTrace();
 	}
 
-	public List<Map<String, Object>> toJsonableArray(DFramedTransactionalGraph graph, final Iterable<EdgeFrame> edges) {
+	protected List<Map<String, Object>> toJsonableArray(DFramedTransactionalGraph graph,
+			final Iterable<EdgeFrame> edges, List<CaseInsensitiveString> properties,
+			List<CaseInsensitiveString> inProps, List<CaseInsensitiveString> outProps) {
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		for (EdgeFrame edge : edges) {
-			result.add(toJsonableMap(graph, edge));
+			result.add(toJsonableMapEdge(graph, edge, properties, inProps, outProps, null, false));
 		}
 		return result;
 	}
 
+	// NTF - Why is this method protected, Nathan?
+	// Because it's a hideous mess, of course!
 	protected Map<String, Object> toJsonableMapVertex(DFramedTransactionalGraph graph, final VertexFrame frame,
 			List<CaseInsensitiveString> properties, List<CaseInsensitiveString> inProps,
 			List<CaseInsensitiveString> outProps, List<CaseInsensitiveString> labels, boolean includeEdges) {
@@ -228,8 +249,9 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		Class<?>[] interfaces = frame.getClass().getInterfaces();
 		if (interfaces.length > 0) {
 			Map<CaseInsensitiveString, Method> crystals = graph.getTypeRegistry().getPropertiesGetters(interfaces);
-			if (properties == null)
+			if (properties == null) {
 				properties = new ArrayList<CaseInsensitiveString>(crystals.keySet());
+			}
 			for (CaseInsensitiveString property : properties) {
 				Method crystal = crystals.get(property);
 				if (crystal != null) {
@@ -273,34 +295,79 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 					result.put("@edges", edgeCounts);
 				}
 			}
+			if (labels != null && labels.size() > 0) {
+				System.out.println("Found some labels");
+
+				crystals = graph.getTypeRegistry().getIncidences(interfaces);
+				for (CaseInsensitiveString label : labels) {
+					System.out.println("Processing label " + label);
+					Method crystal = crystals.get(label);
+					if (crystal != null) {
+						try {
+							Object raw = crystal.invoke(frame, (Object[]) null);
+							if (raw instanceof Iterable) {
+								List edges = toJsonableArray(graph, (Iterable) raw, null, inProps, outProps);
+								result.put(label.toString(), edges);
+							} else if (raw instanceof EdgeFrame) {
+								List edges = new ArrayList();
+								edges.add(toJsonableMapEdge(graph, (EdgeFrame) raw, null, inProps, outProps, null,
+										false));
+								result.put(label.toString(), edges);
+							} else {
+								System.out.println("Result of invokation for label " + label.toString() + " is a "
+										+ (raw == null ? "null" : raw.getClass().getName()));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						System.out.println("No method found for label " + label);
+					}
+				}
+
+			}
 		}
 		return result;
 
 	}
 
 	public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph, final VertexFrame frame, ParamMap pm) {
-		List<CaseInsensitiveString> properties = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
-		List<CaseInsensitiveString> inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
-		List<CaseInsensitiveString> outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
-		List<CaseInsensitiveString> labels = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
-		boolean includeEdges = pm.get(Parameters.EDGES) != null;
+		List<CaseInsensitiveString> properties = null;
+		List<CaseInsensitiveString> inProps = null;
+		List<CaseInsensitiveString> outProps = null;
+		List<CaseInsensitiveString> labels = null;
+		boolean includeEdges = false;
+		if (pm != null) {
+			properties = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
+			inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
+			outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
+			labels = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
+			includeEdges = pm.get(Parameters.EDGES) != null;
+		}
 		return toJsonableMapVertex(graph, frame, properties, inProps, outProps, labels, includeEdges);
 
 	}
 
 	public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph, final Object frame, ParamMap pm) {
-		List<CaseInsensitiveString> props = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
-		List<CaseInsensitiveString> inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
-		List<CaseInsensitiveString> outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
-		List<CaseInsensitiveString> labels = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
-		boolean includeEdges = pm.get(Parameters.EDGES) != null;
+		List<CaseInsensitiveString> properties = null;
+		List<CaseInsensitiveString> inProps = null;
+		List<CaseInsensitiveString> outProps = null;
+		List<CaseInsensitiveString> labels = null;
+		boolean includeEdges = false;
+		if (pm != null) {
+			properties = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
+			inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
+			outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
+			labels = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
+			includeEdges = pm.get(Parameters.EDGES) != null;
+		}
 
 		if (frame == null)
 			return null;
 		if (frame instanceof VertexFrame) {
-			return toJsonableMapVertex(graph, (VertexFrame) frame, props, inProps, outProps, labels, includeEdges);
+			return toJsonableMapVertex(graph, (VertexFrame) frame, properties, inProps, outProps, labels, includeEdges);
 		} else if (frame instanceof EdgeFrame) {
-			return toJsonableMapEdge(graph, (EdgeFrame) frame, props, inProps, outProps, labels, includeEdges);
+			return toJsonableMapEdge(graph, (EdgeFrame) frame, properties, inProps, outProps, labels, includeEdges);
 		} else {
 			throw new IllegalStateException("Object is neither a VertexFrame nor an EdgeFrame. It's a "
 					+ frame.getClass().getName());
@@ -308,7 +375,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph, final Object frame) {
-		return toJsonableMap(graph, frame, null);
+		return toJsonableMap(graph, frame, (ParamMap) null);
 	}
 
 	public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph, final VertexFrame frame) {
@@ -439,23 +506,113 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 
 	public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph, final EdgeFrame frame, ParamMap pm) {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
-		List<CaseInsensitiveString> properties = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
-		List<CaseInsensitiveString> inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
-		List<CaseInsensitiveString> outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
-		List<CaseInsensitiveString> labels = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
-		boolean includeEdges = pm.get(Parameters.EDGES) != null;
-
+		List<CaseInsensitiveString> properties = null;
+		List<CaseInsensitiveString> inProps = null;
+		List<CaseInsensitiveString> outProps = null;
+		List<CaseInsensitiveString> labels = null;
+		boolean includeEdges = false;
+		if (pm != null) {
+			properties = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.PROPS));
+			inProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.INPROPS));
+			outProps = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.OUTPROPS));
+			labels = CaseInsensitiveString.toCaseInsensitive(pm.get(Parameters.LABEL));
+			includeEdges = pm.get(Parameters.EDGES) != null;
+		}
 		return toJsonableMapEdge(graph, frame, properties, inProps, outProps, labels, includeEdges);
 	}
 
 	public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph, final EdgeFrame frame) {
-		return toJsonableMap(graph, frame);
+		return toJsonableMap(graph, frame, null);
 	}
 
-	// public Map<String, Object> toJsonableMap(DFramedTransactionalGraph graph,
-	// final EdgeFrame frame,
-	// final Iterable<CaseInsensitiveString> properties) {
-	// return toJsonableMap(graph, frame, properties, null, null);
-	// }
+	@SuppressWarnings("unchecked")
+	public EdgeFrame toEdgeFrame(DFramedTransactionalGraph graph, final Map<String, Object> map) {
+		EdgeFrame result = null;
+		Object id = map.get("id");
+		Object typeName = map.get("type");
+		Class<? extends EdgeFrame> type = null;
+		if (typeName != null) {
+			try {
+				type = (Class<? extends EdgeFrame>) Class.forName(String.valueOf(typeName));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if (id == null) {
+			// new vertex
+			if (type == null) {
+				// what are we going to create? How do we even know?
+			} else {
+				// result = addEdge(null, type);
+			}
+		} else {
+			if (type == null) {
+				try {
+					result = (EdgeFrame) graph.getEdge(id, null);
+				} catch (Throwable t) {
+					// TODO NTF
+					t.printStackTrace();
+				}
+			} else {
+				// result = addEdge(id, type);
+			}
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public VertexFrame toVertexFrame(DFramedTransactionalGraph graph, final Map<String, Object> map) {
+		VertexFrame result = null;
+		Object id = map.get("id");
+		Object typeName = map.get("type");
+		Class<? extends VertexFrame> type = null;
+		if (typeName != null) {
+			try {
+				type = (Class<? extends VertexFrame>) Class.forName(String.valueOf(typeName));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		if (id == null) {
+			// new vertex
+			if (type == null) {
+				// what are we going to create? How do we even know?
+			} else {
+				result = (VertexFrame) graph.addVertex(null, type);
+			}
+		} else {
+			if (type == null) {
+				try {
+					result = (VertexFrame) graph.getVertex(id, null);
+				} catch (Throwable t) {
+					// TODO NTF
+					t.printStackTrace();
+				}
+			} else {
+				result = (VertexFrame) graph.addVertex(id, type);
+			}
+		}
+		if (result != null) {
+			Class<?>[] interfaces = result.getClass().getInterfaces();
+			if (interfaces.length > 0) {
+				Map<CaseInsensitiveString, Method> crystals = graph.getTypeRegistry().getPropertiesSetters(interfaces);
+				for (CaseInsensitiveString key : crystals.keySet()) {
+					Method crystal = crystals.get(key);
+					if (crystal != null) {
+						try {
+							Object raw = map.get(key);
+							crystal.invoke(result, raw);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						// System.out.println("No method found for key " + key);
+					}
+				}
+			}
+		}
+		return result;
+	}
 
 }
