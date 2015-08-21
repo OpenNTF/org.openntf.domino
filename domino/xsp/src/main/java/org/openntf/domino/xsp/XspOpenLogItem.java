@@ -153,12 +153,14 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		}
 	}
 
+	@Override
 	public void reinitialiseSettings() {
 		logEmail_ = null;
 		logDbName_ = null;
 		displayError_ = null;
 		displayErrorGeneric_ = null;
 		olDebugLevel = getDefaultDebugLevel();
+		super.reinitialiseSettings();
 	}
 
 	/**
@@ -352,8 +354,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			RichTextItem rtitem;
 			Database docDb;
 
-			if (!StringUtil.equals(super.getCurrentDatabasePath(), Factory.getSession(SessionType.CURRENT).getCurrentDatabase()
-					.getFilePath())) {
+			if (!StringUtil.equals(super.getCurrentDatabasePath(),
+					Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
 				reinitialiseSettings();
 			}
 

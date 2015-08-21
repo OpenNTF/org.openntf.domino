@@ -148,7 +148,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	protected transient Date _eventTime;
 	protected transient Document _errDoc;
 	protected transient Boolean _suppressEventStack;
-	private String _currentDbPath;
+	private transient String _currentDbPath;
 	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;
 
@@ -279,6 +279,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		return _currentDatabase;
 	}
 
+	@Override
 	public void setCurrentDatabase() {
 		Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 		if (null == currDb) {
@@ -294,10 +295,12 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		}
 	}
 
+	@Override
 	public void setCurrentDatabase(final Database db) {
 		_currentDatabase = db;
 	}
 
+	@Override
 	public String getCurrentDatabasePath() {
 		Database db = getCurrentDatabase();
 		if (null == db) {
@@ -546,8 +549,8 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			_errDoc = doc;
 			try {
 				_errDocUnid = doc.getUniversalID();
-			} catch (Exception ee) { // Added PW
-				debugPrint(ee); // Added PW
+			} catch (Exception ee) {// Added PW
+				debugPrint(ee);// Added PW
 			}
 		}
 	}
@@ -674,10 +677,10 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			setSeverity(severityType == null ? Level.INFO : severityType);
 			setEventType(LogType.TYPE_EVENT);
 			setErrDoc(doc);
-			if (ee == null) { // Added PW - LogEvent will not pass a throwable
-				setBase(null); // Added PW  Changed NTF
-			} else { // Added PW
-				setBase(ee); // Added PW
+			if (ee == null) {// Added PW - LogEvent will not pass a throwable
+				setBase(null);// Added PW  Changed NTF
+			} else {// Added PW
+				setBase(ee);// Added PW
 			} // Added PW
 			_logSuccess = writeToLog();
 			return msg;
@@ -754,6 +757,10 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	@Override
 	public boolean writeToLog() {
+		if (!StringUtil.equals(getCurrentDatabasePath(), Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
+			reinitialiseSettings();
+		}
+
 		// exit early if there is no database
 		Database db = getLogDb();
 		if (db == null) {
@@ -868,5 +875,12 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		} catch (Exception e) {
 			// at this point, if we have an error just discard it
 		}
+	}
+
+	public void reinitialiseSettings() {
+		_currentDatabase = null;
+		_currentDbPath = null;
+		_accessLevel = null;
+		_eventTime = null;
 	}
 }
