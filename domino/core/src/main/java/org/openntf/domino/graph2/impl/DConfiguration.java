@@ -113,23 +113,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					//					typeValue = fullName;
 				}
 			}
-			//			System.out.println("TEMP DEBUG: Attempting to resolve type using holdingField " + typeHoldingTypeField.getName());
-			//			boolean found = false;
-			//			for (TypeDiscriminator td : this.typeDiscriminators.keySet()) {
-			//				if (td.value.equals(typeValue)) {
-			//					found = true;
-			//					System.out.print("Found a TD with type value " + td.value + " who's holding field is "
-			//							+ td.typeHoldingTypeField.getName() + " (" + td.typeHoldingTypeField.hashCode() + ")");
-			//				}
-			//			}
-			//			if (!found) {
-			//				for (TypeDiscriminator td : this.typeDiscriminators.keySet()) {
-			//					System.out.print("Found a TD with type value " + td.value + " who's holding field is "
-			//							+ td.typeHoldingTypeField.getName() + " (" + td.typeHoldingTypeField.hashCode() + ")");
-			//				}
-			//			}
 			Class<?> result = super.getType(typeHoldingTypeField, typeValue);
-			//			System.out.println("TEMP DEBUG: " + typeValue + " resulted in " + (result == null ? "null" : result.getName()));
 			return result;
 		}
 
@@ -148,6 +132,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				}
 			}
 			return result;
+		}
+
+		public Class<?> findClassByName(final String name) {
+			for (Class<?> klazz : typeDiscriminators.values()) {
+				if (klazz.getName().equals(name))
+					return klazz;
+			}
+			throw new IllegalArgumentException("No class of " + name + " found in TypeRegistry");
 		}
 
 		@Override
@@ -223,26 +215,15 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return outMap_.get(type);
 		}
 
-		public Map<CaseInsensitiveString, Method> getPropertiesGetters(final Class<?>[] types) {
-			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
-			for (Class<?> klazz : types) {
-				Map<CaseInsensitiveString, Method> crystals = getPropertiesGetters(klazz);
-				if (crystals != null) {
-					result.putAll(crystals);
-				}
-			}
-			return Collections.unmodifiableMap(result);
-		}
-
 		public Map<CaseInsensitiveString, Method> getPropertiesGetters(final Class<?> type) {
-			Map<CaseInsensitiveString, Method> getters = getterMap_.get(type);
-			return getters;
-		}
-
-		public Map<CaseInsensitiveString, Method> getCounters(final Class<?>[] types) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
-			for (Class<?> klazz : types) {
-				Map<CaseInsensitiveString, Method> crystals = getCounters(klazz);
+			Map<CaseInsensitiveString, Method> crystals = getterMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = getterMap_.get(inter);
 				if (crystals != null) {
 					result.putAll(crystals);
 				}
@@ -251,14 +232,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 
 		public Map<CaseInsensitiveString, Method> getCounters(final Class<?> type) {
-			Map<CaseInsensitiveString, Method> counters = counterMap_.get(type);
-			return counters;
-		}
-
-		public Map<CaseInsensitiveString, Method> getIncidences(final Class<?>[] types) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
-			for (Class<?> klazz : types) {
-				Map<CaseInsensitiveString, Method> crystals = getIncidences(klazz);
+			Map<CaseInsensitiveString, Method> crystals = counterMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = counterMap_.get(inter);
 				if (crystals != null) {
 					result.putAll(crystals);
 				}
@@ -267,14 +248,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 
 		public Map<CaseInsensitiveString, Method> getIncidences(final Class<?> type) {
-			Map<CaseInsensitiveString, Method> incidences = incidenceMap_.get(type);
-			return incidences;
-		}
-
-		public Map<CaseInsensitiveString, Method> getPropertiesSetters(final Class<?>[] types) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
-			for (Class<?> klazz : types) {
-				Map<CaseInsensitiveString, Method> crystals = getPropertiesSetters(klazz);
+			Map<CaseInsensitiveString, Method> crystals = incidenceMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = incidenceMap_.get(inter);
 				if (crystals != null) {
 					result.putAll(crystals);
 				}
@@ -283,8 +264,19 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 
 		public Map<CaseInsensitiveString, Method> getPropertiesSetters(final Class<?> type) {
-			Map<CaseInsensitiveString, Method> setters = setterMap_.get(type);
-			return setters;
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> crystals = setterMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = setterMap_.get(inter);
+				if (crystals != null) {
+					result.putAll(crystals);
+				}
+			}
+			return Collections.unmodifiableMap(result);
 		}
 
 		public void addProperties(final Class<?> type) {
@@ -334,6 +326,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						key = new CaseInsensitiveString(((IncidenceUnique) incidenceUnique).label());
 						if (ClassUtilities.isGetMethod(method)) {
 							incidences.put(key, method);
+							//							System.out
+							//									.println("Added incidence " + key + " for method " + method.getName() + " in class " + type.getName());
 						}
 					}
 					Annotation incidence = method.getAnnotation(Incidence.class);
@@ -341,6 +335,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						key = new CaseInsensitiveString(((Incidence) incidence).label());
 						if (ClassUtilities.isGetMethod(method)) {
 							incidences.put(key, method);
+							//							System.out
+							//							.println("Added incidence " + key + " for method " + method.getName() + " in class " + type.getName());
 						}
 					}
 				}
@@ -421,6 +417,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							+ (element == null ? "null" : element.getClass().getName()));
 				}
 			}
+			//			System.out.println("TEMP DEBUG: Initing an element with kind: " + kind.getName());
 			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(kind);
 			if (typeHoldingTypeField != null) {
 				TypeValue typeValue = kind.getAnnotation(TypeValue.class);
@@ -430,9 +427,21 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					boolean update = true;
 					if (current != null) {
 						String currentVal = TypeUtils.toString(current);
+						//						System.out.println("TEMP DEBUG: existing type value " + currentVal);
+
 						//						System.out.println("TEMP DEBUG: current value is " + currentVal + " in field " + field + " while typeValue is "
 						//								+ typeValue.value());
-						update = !(currentVal).equals(typeValue.value());
+						Class<?> classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+						//						System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName()));
+						if (classChk == null) {
+							update = true;
+						} else if (!kind.isAssignableFrom(classChk)) {
+							update = !(currentVal).equals(typeValue.value());
+						} else {
+							update = false;
+							//							System.out.println("TEMP DEBUG: existing type value " + classChk.getName() + " extends requested type value "
+							//									+ kind.getName());
+						}
 					} else {
 						//						System.out.println("TEMP DEBUG: current value is null in field " + field);
 					}

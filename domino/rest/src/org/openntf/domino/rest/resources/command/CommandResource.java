@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphWriter;
 import org.openntf.domino.rest.resources.AbstractResource;
 import org.openntf.domino.rest.service.IGraphFactory;
@@ -39,15 +40,26 @@ public class CommandResource extends AbstractResource {
 		ResponseBuilder builder = Response.ok();
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
-		JsonGraphWriter writer = new JsonGraphWriter(sw, false, true);
+		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
 		// writer.outObject(null);
 		List<String> commands = pm.get(Parameters.COMMAND);
 		if (commands != null && commands.size() > 0) {
 			IGraphFactory factory = this.getService().getFactory(namespace);
-			List<String> args = pm.get(Parameters.SWITCH);
-			for (String command : commands) {
-				Object curResult = factory.processCommand(namespace, command, (String[]) args.toArray());
-				writer.outObject(curResult);
+			if (factory != null) {
+				List<String> args = pm.get(Parameters.SWITCH);
+				for (String command : commands) {
+					// System.out.println("Command for namespace " + namespace +
+					// " handled by "
+					// + factory.getClass().getName());
+					Object curResult = factory.processCommand(namespace, command, (args == null ? null
+							: (String[]) args.toArray(new String[0])));
+					// System.out.println("Result: " +
+					// String.valueOf(curResult));
+					writer.outObject(curResult);
+				}
+			} else {
+				System.err.println("No Factory found for namespace: " + namespace);
 			}
 		}
 		jsonEntity = sw.toString();

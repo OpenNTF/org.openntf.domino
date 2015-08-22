@@ -6,19 +6,18 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 
-@SuppressWarnings("deprecation")
-public class AdjacencyUniqueHandler extends AbstractIncidenceHandler implements AnnotationHandler<AdjacencyUnique> {
-
+public class IncidenceHandler extends AbstractIncidenceHandler implements AnnotationHandler<Incidence> {
 	@Override
-	public Class<AdjacencyUnique> getAnnotationType() {
-		return AdjacencyUnique.class;
+	public Class<Incidence> getAnnotationType() {
+		return Incidence.class;
 	}
 
 	@Override
-	public Object processElement(final AdjacencyUnique annotation, final Method method, final Object[] arguments,
-			final FramedGraph framedGraph, final Element element, final Direction direction) {
+	public Object processElement(final Incidence annotation, final Method method, final Object[] arguments, final FramedGraph framedGraph,
+			final Element element, final Direction direction) {
 		if (element instanceof Vertex) {
 			return processVertexAdjacency(annotation, method, arguments, framedGraph, (Vertex) element);
 		} else {

@@ -15,10 +15,10 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	private static final Logger log_ = Logger.getLogger(DEdge.class.getName());
 	@SuppressWarnings("unused")
 	private transient Vertex in_;
-	private Object inKey_;
+	protected Object inKey_;
 	@SuppressWarnings("unused")
 	private transient Vertex out_;
-	private Object outKey_;
+	protected Object outKey_;
 	private String label_;
 
 	public DEdge(final DGraph parent) {
@@ -97,6 +97,11 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, inKey_.toString());
 	}
 
+	void setInId(final Object id) {
+		inKey_ = id;
+		setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, inKey_.toString());
+	}
+
 	void setLabel(final String label) {
 		label_ = label;
 		setProperty(org.openntf.domino.graph2.DEdge.LABEL_NAME, label);
@@ -107,6 +112,11 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		out_ = out;
 		outKey_ = out.getId();
 		setProperty(org.openntf.domino.graph2.DEdge.OUT_NAME, outKey_.toString());
+	}
+
+	void setOutId(final Object id) {
+		outKey_ = id;
+		setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, outKey_.toString());
 	}
 
 }

@@ -1,7 +1,10 @@
 package org.openntf.domino.graph2.impl;
 
+import org.openntf.domino.graph2.annotations.AdjacencyHandler;
 import org.openntf.domino.graph2.annotations.AdjacencyUniqueHandler;
+import org.openntf.domino.graph2.annotations.IncidenceHandler;
 import org.openntf.domino.graph2.annotations.IncidenceUniqueHandler;
+import org.openntf.domino.graph2.annotations.PropertyHandler;
 import org.openntf.domino.graph2.annotations.TypedPropertyHandler;
 
 import com.tinkerpop.blueprints.Graph;
@@ -9,12 +12,9 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedTransactionalGraph;
-import com.tinkerpop.frames.annotations.AdjacencyAnnotationHandler;
 import com.tinkerpop.frames.annotations.DomainAnnotationHandler;
 import com.tinkerpop.frames.annotations.InVertexAnnotationHandler;
-import com.tinkerpop.frames.annotations.IncidenceAnnotationHandler;
 import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
-import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
 import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
@@ -94,11 +94,11 @@ public class DFramedGraphFactory {
 	}
 
 	private void initConfiguration(final DConfiguration config) {
-		config.addAnnotationHandler(new PropertyAnnotationHandler());
+		config.addMethodHandler(new PropertyHandler());
 		config.addMethodHandler(new TypedPropertyHandler());
-		config.addAnnotationHandler(new AdjacencyAnnotationHandler());
+		config.addAnnotationHandler(new AdjacencyHandler());
 		config.addAnnotationHandler(new AdjacencyUniqueHandler());
-		config.addAnnotationHandler(new IncidenceAnnotationHandler());
+		config.addAnnotationHandler(new IncidenceHandler());
 		config.addAnnotationHandler(new IncidenceUniqueHandler());
 		config.addAnnotationHandler(new DomainAnnotationHandler());
 		config.addAnnotationHandler(new RangeAnnotationHandler());

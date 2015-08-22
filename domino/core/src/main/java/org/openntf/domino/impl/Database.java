@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
@@ -1959,6 +1960,26 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			return null;
 
 		}
+	}
+
+	private static final Pattern PIPE_SPLIT = Pattern.compile("\\|");
+
+	@Override
+	public View getView(final Document viewDocument) {
+		View result = null;
+		if (viewDocument.hasItem("$Index")) {
+			String unid = viewDocument.getUniversalID();
+			String rawtitles = viewDocument.getItemValue("$Title", String.class);
+			String[] titles = PIPE_SPLIT.split(rawtitles);
+			for (String title : titles) {
+				View chk = getView(title);
+				if (chk.getUniversalID().equalsIgnoreCase(unid)) {
+					result = chk;
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	/*

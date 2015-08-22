@@ -74,4 +74,8 @@ public interface ViewEntry {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public String getPosition();
+
+	public String getMetaversalID();
+
+	public Object getCategoryValue();
 }

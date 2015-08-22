@@ -146,4 +146,6 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 	public Document getDocument(final String serverName);
 
 	public Object get(final String key);
+
+	public boolean isView();
 }

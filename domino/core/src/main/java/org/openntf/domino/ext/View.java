@@ -111,7 +111,7 @@ public interface View {
 	'/R=' + the number of seconds between automatically refresh of view.
 	'/C' Don't show empty categories
 	'/L' Disable auto-update
-	*/
+	 */
 
 	/**
 	 * Interrogates the design note's $Index field for the /L flag. This disables auto-update so users will need to manually refresh the
@@ -262,5 +262,15 @@ public interface View {
 	@SuppressWarnings("rawtypes")
 	@Legacy(Legacy.GENERICS_WARNING)
 	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact);
+
+	public ViewEntry getEntryAtPosition(final String position, final char separator);
+
+	public ViewEntry getEntryAtPosition(final String position);
+
+	public boolean containsDocument(Document doc);
+
+	public boolean containsEntry(ViewEntry entry);
+
+	public String getMetaversalID();
 
 }

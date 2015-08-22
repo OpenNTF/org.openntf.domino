@@ -1,12 +1,17 @@
 package org.openntf.domino.graph2.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.graph2.annotations.FramedEdgeList;
+import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
+import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.tinkerpop.blueprints.Direction;
@@ -167,6 +172,31 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
+	public <F> Iterable<F> getFilteredElements(final String classname, final List<CaseInsensitiveString> keys,
+			final List<CaseInsensitiveString> values) {
+		System.out.println("Getting a filtered list of elements of type " + classname);
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		Class<?> chkClass = getTypeRegistry().getType(DVertexFrame.class, classname);
+		if (chkClass == null) {
+			chkClass = getTypeRegistry().getType(DEdgeFrame.class, classname);
+		}
+		if (chkClass != null) {
+			store = base.findElementStore(chkClass);
+			if (store != null) {
+				List<String> keystrs = CaseInsensitiveString.toStrings(keys);
+				List<Object> valobj = new ArrayList<Object>(values);
+				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(keystrs, valobj, chkClass);
+				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
+				return this.frameElements(elements, null);
+			} else {
+				return null;
+			}
+		} else {
+			throw new IllegalArgumentException("Class " + classname + " not registered in graph");
+		}
+	}
+
 	public <F> F getElement(final Object id, final Class<F> kind) {
 		DGraph base = (DGraph) this.getBaseGraph();
 		org.openntf.domino.graph2.DElementStore store = null;
@@ -313,6 +343,17 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	//	}
 
 	public <F> Iterable<F> frameElements(final Iterable<Element> elements, final Class<F> kind) {
+		Iterator<Element> it = elements.iterator();
+		if (it.hasNext()) {
+			Object chkElement = it.next();
+			if (chkElement instanceof Edge) {
+				return new FramedEdgeList(this, null, elements, kind);
+			}
+			if (chkElement instanceof Vertex) {
+				return new FramedVertexList(this, null, elements, kind);
+			}
+		}
+
 		return new FramedElementIterable(this, elements, kind);
 	}
 

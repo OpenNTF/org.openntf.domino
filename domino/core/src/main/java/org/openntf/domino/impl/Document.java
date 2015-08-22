@@ -1328,8 +1328,13 @@ org.openntf.domino.Document {
 						result.add(mimeValue);
 						return result;
 					} else {
-						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name
-								+ " but the value from the MIMEEntity is null so we likely need to look at the regular field.");
+						log_.log(
+								Level.WARNING,
+								"We found a MIMEEntity for item name "
+										+ name
+										+ " in document "
+										+ this.getMetaversalID()
+										+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 						Vector<Object> result = new Vector<Object>(1);

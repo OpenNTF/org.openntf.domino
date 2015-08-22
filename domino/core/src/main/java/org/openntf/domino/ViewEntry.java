@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
@@ -24,7 +25,7 @@ import org.openntf.domino.types.FactorySchema;
  * The Interface ViewEntry.
  */
 public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ext.ViewEntry, Base<lotus.domino.ViewEntry>,
-		DatabaseDescendant {
+DatabaseDescendant, Map<String, Object> {
 
 	public static class Schema extends FactorySchema<ViewEntry, lotus.domino.ViewEntry, View> {
 		@Override

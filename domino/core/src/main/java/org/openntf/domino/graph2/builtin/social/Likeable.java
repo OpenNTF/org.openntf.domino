@@ -3,7 +3,7 @@ package org.openntf.domino.graph2.builtin.social;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.User;
+import org.openntf.domino.graph2.builtin.Person;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -21,11 +21,11 @@ public interface Likeable extends DVertexFrame {
 	public Likes findLikedBy(Liker user);
 
 	@IncidenceUnique(label = Likes.LABEL, direction = Direction.IN)
-	public void removeLikedBy(User user);
+	public void removeLikedBy(Person user);
 
 	@AdjacencyUnique(label = Likes.LABEL, direction = Direction.IN)
-	public Iterable<User> getLikedByUsers();
+	public Iterable<Person> getLikedByUsers();
 
 	@AdjacencyUnique(label = Likes.LABEL, direction = Direction.IN)
-	public User addLikedByUser(User user);
+	public Person addLikedByUser(Person user);
 }

@@ -6,10 +6,10 @@ import org.openntf.domino.graph2.impl.DElementStore;
 
 import com.tinkerpop.blueprints.Element;
 
-public class UserStore extends DElementStore {
+public class PersonStore extends DElementStore {
 
-	public UserStore() {
-		this.addType(User.class);
+	public PersonStore() {
+		this.addType(Person.class);
 		this.setStoreKey("names.nsf");
 	}
 

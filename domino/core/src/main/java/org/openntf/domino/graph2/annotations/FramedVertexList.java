@@ -1,38 +1,35 @@
 package org.openntf.domino.graph2.annotations;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import org.openntf.domino.graph2.DGraphUtils;
-import org.openntf.domino.graph2.impl.DEdge;
-import org.openntf.domino.graph2.impl.DEdgeList;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DVertex;
+import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.structures.FramedEdgeIterable;
+import com.tinkerpop.frames.VertexFrame;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 
-public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> implements List<T> {
+public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;
 		//		    protected final Direction direction_;
-		protected final ListIterator<Edge> iterator_;
+		protected final ListIterator<Vertex> iterator_;
 		protected final FramedGraph<? extends Graph> framedGraph_;
 
-		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Edge> iterator, final Class<T> kind/*, Direction direction*/) {
+		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Vertex> iterator, final Class<T> kind/*, Direction direction*/) {
 			kind_ = kind;
 			//		    	direction_ = direction;
 			iterator_ = iterator;
@@ -44,9 +41,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 			if (arg0 == null)
 				return;
 			if (kind_.isAssignableFrom(arg0.getClass())) {
-				iterator_.add(((EdgeFrame) kind_.cast(arg0)).asEdge());
+				iterator_.add(((VertexFrame) kind_.cast(arg0)).asVertex());
 			} else if (arg0 instanceof Edge) {
-				iterator_.add((Edge) arg0);
+				iterator_.add((Vertex) arg0);
 			} else {
 				throw new IllegalArgumentException("Cannot add an object of type " + arg0.getClass().getName() + " to an iterator of "
 						+ kind_.getName());
@@ -90,10 +87,10 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 		@Override
 		public void set(final Object arg0) {
-			if (arg0 instanceof Edge) {
-				iterator_.set((Edge) arg0);
+			if (arg0 instanceof Vertex) {
+				iterator_.set((Vertex) arg0);
 			} else if (kind_.isAssignableFrom(arg0.getClass())) {
-				iterator_.set(((EdgeFrame) kind_.cast(arg0)).asEdge());
+				iterator_.set(((VertexFrame) kind_.cast(arg0)).asVertex());
 			} else {
 				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
 						+ kind_.getName());
@@ -102,59 +99,36 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	}
 
-	protected List<Edge> list_;
+	protected List<Vertex> list_;
 	protected Vertex sourceVertex_;
 
-	public FramedEdgeList(final FramedGraph<? extends Graph> framedGraph, final Vertex sourceVertex, final Iterable<Edge> list,
+	public FramedVertexList(final FramedGraph<? extends Graph> framedGraph, final Vertex sourceVertex, final Iterable<Vertex> list,
 			final Class<T> kind) {
 		super(framedGraph, list, kind);
 		sourceVertex_ = sourceVertex;
 		if (list instanceof List) {
-			list_ = (List<Edge>) list;
+			list_ = (List<Vertex>) list;
 		} else {
-			list_ = new ArrayList<Edge>();
-			for (Edge e : list) {
+			list_ = new ArrayList<Vertex>();
+			for (Vertex e : list) {
 				list_.add(e);
 			}
 		}
 	}
 
-	//TODO optimize by building a NoteCoordinateList of the target vertices
-	public FramedVertexList toVertexList() {
-		List<Vertex> vertList = new ArrayList<Vertex>();
-		for (Edge edge : list_) {
-			if (edge instanceof DEdge) {
-				Vertex other = ((DEdge) edge).getOtherVertex(sourceVertex_);
-				vertList.add(other);
-			}
-		}
-		FramedVertexList result = new FramedVertexList(this.framedGraph, sourceVertex_, vertList, null);
-		return result;
-	}
-
-	public FramedEdgeList applyFilter(final String key, final Object value) {
-		DEdgeList edgeList = new DEdgeList((DVertex) sourceVertex_);
+	public FramedVertexList<T> applyFilter(final String key, final Object value) {
+		DVertexList vertList = new DVertexList((DVertex) sourceVertex_);
 		if (this.size() > 0) {
-			for (EdgeFrame edge : this) {
+			for (VertexFrame vertex : this) {
 				try {
 					if ("@type".equals(key)) {
-						if (isType(edge, TypeUtils.toString(value))) {
-							edgeList.add(edge.asEdge());
+						if (DGraphUtils.isType(vertex, TypeUtils.toString(value))) {
+							vertList.add((DVertex) vertex.asVertex());
 						}
 					} else {
-						Object edgeVal = null;
-						Method crystal = getGetters(edge).get(new CaseInsensitiveString(key));
-						if (crystal != null) {
-							try {
-								edgeVal = crystal.invoke(edge, (Object[]) null);
-							} catch (Exception e) {
-								edgeVal = edge.asEdge().getProperty(key);
-							}
-						} else {
-							System.err.println("No method found for key " + key);
-						}
-						if (value.equals(TypeUtils.toString(edgeVal))) {
-							edgeList.add(edge.asEdge());
+						Object vertexVal = DGraphUtils.getFramedProperty(getGraph(), vertex, key);
+						if (value.equals(TypeUtils.toString(vertexVal))) {
+							vertList.add((DVertex) vertex.asVertex());
 						}
 					}
 				} catch (Throwable t) {
@@ -162,27 +136,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 				}
 			}
 		}
-		FramedEdgeList result = new FramedEdgeList(framedGraph, sourceVertex_, edgeList, this.kind);
+		FramedVertexList<T> result = new FramedVertexList(getGraph(), sourceVertex_, vertList, this.kind);
 		return result;
-	}
-
-	public boolean isType(final EdgeFrame frame, final String typename) {
-		Class<?>[] interfaces = frame.getClass().getInterfaces();
-		for (Class<?> inter : interfaces) {
-			if (inter.getName().equals(typename))
-				return true;
-		}
-		return false;
-	}
-
-	public Class<?> findInterface(final EdgeFrame frame) {
-		Class<?>[] interfaces = frame.getClass().getInterfaces();
-		return interfaces[interfaces.length - 1];
-	}
-
-	public Map<CaseInsensitiveString, Method> getGetters(final EdgeFrame frame) {
-		Class<?> type = getGraph().getTypeManager().resolve(frame.asEdge(), findInterface(frame));
-		return getGraph().getTypeRegistry().getPropertiesGetters(type);
 	}
 
 	protected DFramedTransactionalGraph getGraph() {
@@ -191,21 +146,21 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public boolean add(final T arg0) {
-		return list_.add(arg0.asEdge());
+		return list_.add(arg0.asVertex());
 	}
 
 	@Override
 	public void add(final int arg0, final T arg1) {
-		list_.add(arg0, arg1.asEdge());
+		list_.add(arg0, arg1.asVertex());
 	}
 
-	protected static Collection<Edge> convertToEdges(final Collection<?> arg0) {
-		List<Edge> result = new ArrayList<Edge>(arg0.size());
+	protected static List<Vertex> convertToVertexes(final Collection<?> arg0) {
+		List<Vertex> result = new ArrayList<Vertex>(arg0.size());
 		for (Object raw : arg0) {
-			if (raw instanceof Edge) {
-				result.add((Edge) raw);
-			} else if (raw instanceof EdgeFrame) {
-				result.add(((EdgeFrame) raw).asEdge());
+			if (raw instanceof Vertex) {
+				result.add((Vertex) raw);
+			} else if (raw instanceof VertexFrame) {
+				result.add(((VertexFrame) raw).asVertex());
 			} else {
 				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
 						+ " to an EdgeFrame iterator");
@@ -214,13 +169,13 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		return result;
 	}
 
-	protected static Collection<Edge> convertToEdges(final Object[] arg0) {
-		List<Edge> result = new ArrayList<Edge>(arg0.length);
+	protected static List<Vertex> convertToVertexes(final Object[] arg0) {
+		List<Vertex> result = new ArrayList<Vertex>(arg0.length);
 		for (Object raw : arg0) {
-			if (raw instanceof Edge) {
-				result.add((Edge) raw);
-			} else if (raw instanceof EdgeFrame) {
-				result.add(((EdgeFrame) raw).asEdge());
+			if (raw instanceof Vertex) {
+				result.add((Vertex) raw);
+			} else if (raw instanceof VertexFrame) {
+				result.add(((VertexFrame) raw).asVertex());
 			} else {
 				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
 						+ " to an EdgeFrame iterator");
@@ -231,12 +186,12 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public boolean addAll(final Collection<? extends T> arg0) {
-		return list_.addAll(convertToEdges(arg0));
+		return list_.addAll(convertToVertexes(arg0));
 	}
 
 	@Override
 	public boolean addAll(final int arg0, final Collection<? extends T> arg1) {
-		return list_.addAll(arg0, convertToEdges(arg1));
+		return list_.addAll(arg0, convertToVertexes(arg1));
 	}
 
 	@Override
@@ -246,10 +201,10 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public boolean contains(final Object arg0) {
-		if (arg0 instanceof Edge) {
+		if (arg0 instanceof Vertex) {
 			return list_.contains(arg0);
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
-			return list_.contains(((EdgeFrame) kind.cast(arg0)).asEdge());
+			return list_.contains(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
 			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
 					+ kind.getName());
@@ -258,7 +213,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public boolean containsAll(final Collection<?> arg0) {
-		return list_.containsAll(convertToEdges(arg0));
+		return list_.containsAll(convertToVertexes(arg0));
 	}
 
 	@Override
@@ -268,10 +223,10 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public int indexOf(final Object arg0) {
-		if (arg0 instanceof Edge) {
+		if (arg0 instanceof Vertex) {
 			return list_.indexOf(arg0);
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
-			return list_.indexOf(((EdgeFrame) kind.cast(arg0)).asEdge());
+			return list_.indexOf(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
 			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
 					+ kind.getName());
@@ -285,10 +240,10 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public int lastIndexOf(final Object arg0) {
-		if (arg0 instanceof Edge) {
+		if (arg0 instanceof Vertex) {
 			return list_.lastIndexOf(arg0);
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
-			return list_.lastIndexOf(((EdgeFrame) kind.cast(arg0)).asEdge());
+			return list_.lastIndexOf(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
 			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
 					+ kind.getName());
@@ -307,21 +262,24 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public Iterator<T> iterator() {
-		return new FramedListIterator<T>(framedGraph, list_.listIterator(), kind);
+		ListIterator<Vertex> iterator = list_.listIterator();
+		if (iterator == null)
+			System.err.println("ListIterator IS NULL from list of type " + list_.getClass().getName());
+		return new FramedListIterator<T>(framedGraph, iterator, kind);
 	}
 
 	@Override
 	public T remove(final int arg0) {
-		Edge e = list_.remove(arg0);
+		Vertex e = list_.remove(arg0);
 		return framedGraph.frame(e, kind);
 	}
 
 	@Override
 	public boolean remove(final Object arg0) {
-		if (arg0 instanceof Edge) {
+		if (arg0 instanceof Vertex) {
 			return list_.remove(arg0);
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
-			return list_.remove(((EdgeFrame) kind.cast(arg0)).asEdge());
+			return list_.remove(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
 			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
 					+ kind.getName());
@@ -330,17 +288,17 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public boolean removeAll(final Collection<?> arg0) {
-		return list_.removeAll(convertToEdges(arg0));
+		return list_.removeAll(convertToVertexes(arg0));
 	}
 
 	@Override
 	public boolean retainAll(final Collection<?> arg0) {
-		return list_.retainAll(convertToEdges(arg0));
+		return list_.retainAll(convertToVertexes(arg0));
 	}
 
 	@Override
 	public T set(final int arg0, final T arg1) {
-		Edge edge = arg1.asEdge();
+		Vertex edge = arg1.asVertex();
 		list_.set(arg0, edge);
 		return arg1;
 	}
@@ -355,8 +313,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		if (arg1 > list_.size()) {
 			arg1 = list_.size();
 		}
-		List<Edge> sublist = list_.subList(arg0, arg1);
-		return new FramedEdgeList<T>(framedGraph, sourceVertex_, sublist, kind);
+		List<Vertex> sublist = list_.subList(arg0, arg1);
+		return new FramedVertexList<T>(framedGraph, sourceVertex_, sublist, kind);
 	}
 
 	@Override
@@ -364,7 +322,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		int size = list_.size();
 		Object[] result = new Object[size];
 		for (int i = 0; i < size; i++) {
-			Edge e = list_.get(i);
+			Vertex e = list_.get(i);
 			result[i] = framedGraph.frame(e, kind);
 		}
 		return result;
@@ -377,17 +335,18 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		Class c = arg0.getClass().getComponentType();
 		U[] result = (U[]) Array.newInstance(c, size);
 		for (int i = 0; i < size; i++) {
-			Edge e = list_.get(i);
+			Vertex e = list_.get(i);
 			result[i] = (U) framedGraph.frame(e, kind);
 		}
 		return result;
 	}
 
-	private static final EdgeFrame[] EF = new EdgeFrame[1];
+	private static final VertexFrame[] VF = new VertexFrame[1];
 
-	public FramedEdgeList<T> sortBy(final List<CaseInsensitiveString> keys) {
-		EdgeFrame[] array = toArray(EF);
-		Arrays.sort(array, new DGraphUtils.EdgeFrameComparator(getGraph(), keys));
-		return new FramedEdgeList(framedGraph, sourceVertex_, convertToEdges(array), kind);
+	public FramedVertexList<T> sortBy(final List<CaseInsensitiveString> keys) {
+		//TODO: optimize! This should really be resorting the Vertex list but using the VertexFrame as the criteria
+		VertexFrame[] array = toArray(VF);
+		Arrays.sort(array, new DGraphUtils.VertexFrameComparator(getGraph(), keys));
+		return new FramedVertexList(framedGraph, sourceVertex_, convertToVertexes(array), kind);
 	}
 }

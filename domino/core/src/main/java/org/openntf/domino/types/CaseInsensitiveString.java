@@ -37,6 +37,24 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		return result;
 	}
 
+	public static List<String> toStrings(final Iterable<CaseInsensitiveString> cis) {
+		if (cis == null)
+			return null;
+		List<String> result = new ArrayList<String>();
+		for (CaseInsensitiveString str : cis) {
+			result.add(str.toString());
+		}
+		return result;
+	}
+
+	public static String toString(final Iterable<CaseInsensitiveString> cis) {
+		String result = "";
+		for (CaseInsensitiveString str : cis) {
+			result = result + (result.length() > 0 ? ", " : "") + str.toString();
+		}
+		return result;
+	}
+
 	protected static String foldCase(final String foldee) {
 		return UCharacter.foldCase(foldee, true);
 	}
@@ -181,6 +199,6 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 
 	@Override
 	public CharSequence subSequence(final int start, final int end) {
-		return string.subSequence(start, end);
+		return new CaseInsensitiveString(string.subSequence(start, end));
 	}
 }

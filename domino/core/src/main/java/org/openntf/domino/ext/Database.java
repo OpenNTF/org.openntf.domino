@@ -27,6 +27,7 @@ import org.openntf.domino.Database.Type;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
+import org.openntf.domino.View;
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
@@ -686,5 +687,7 @@ public interface Database extends Base {
 	 * @return a {@link Type} Object
 	 */
 	Type getTypeEx();
+
+	public View getView(final Document viewDocument);
 
 }
