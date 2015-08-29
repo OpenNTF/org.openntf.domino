@@ -8,7 +8,9 @@
 	</parent>
 	<artifactId>org.openntf.domino.xsp</artifactId>
 	<name>OpenNTF Domino API XPages plugin</name>
+	
 	<packaging>eclipse-plugin</packaging>
+	
 	<build>
 		<plugins>
 			<plugin>

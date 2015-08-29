@@ -29,6 +29,7 @@
 				<include>org.openntf.domino:org.openntf.domino.xsp</include>
 				<include>org.openntf.domino:org.openntf.formula</include>
 				<include>org.openntf.domino:org.openntf.junit4xpages</include>
+				<include>org.openntf.domino:org.openntf.rest</include>
 			</includes>
 			
 			<binaries>
@@ -46,6 +47,7 @@
 				<include>org.openntf.domino:org.openntf.domino</include>
 				<include>org.openntf.domino:org.openntf.domino.xsp</include>
 				<include>org.openntf.domino:org.openntf.formula</include>
+				<include>org.openntf.domino:org.openntf.domino.rest</include>
 			</includes>
 			
 			<binaries>
