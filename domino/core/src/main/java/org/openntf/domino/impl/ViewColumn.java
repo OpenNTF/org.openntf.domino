@@ -27,12 +27,14 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.DominoUtils;
 
+import com.ibm.commons.util.StringUtil;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class ViewColumn.
  */
-public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements
-		org.openntf.domino.ViewColumn {
+public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View>
+		implements org.openntf.domino.ViewColumn {
 
 	/**
 	 * Instantiates a new outline.
@@ -54,10 +56,10 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	@Override
 	public int getIndex() {
-		if (index_ == -1) {
+		if (index_ == -1 || parent.isCalendar()) {
 			Vector<org.openntf.domino.ViewColumn> columns = parent.getColumns();
 			for (int i = 0; i < columns.size(); i++) {
-				if (this.equals(columns.get(i))) {
+				if (StringUtil.equals(this.getItemName(), columns.get(i).getItemName())) {
 					index_ = i;
 					break;
 				}
