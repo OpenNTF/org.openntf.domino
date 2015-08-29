@@ -40,7 +40,7 @@ public class CommandResource extends AbstractResource {
 		ResponseBuilder builder = Response.ok();
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
-		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
 		// writer.outObject(null);
 		List<String> commands = pm.get(Parameters.COMMAND);

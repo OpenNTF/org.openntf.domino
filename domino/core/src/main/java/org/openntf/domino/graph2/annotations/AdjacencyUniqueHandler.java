@@ -16,6 +16,7 @@ public class AdjacencyUniqueHandler extends AbstractIncidenceHandler implements 
 		return AdjacencyUnique.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final AdjacencyUnique annotation, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {

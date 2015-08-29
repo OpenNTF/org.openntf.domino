@@ -23,7 +23,7 @@ import org.openntf.domino.rest.resources.frames.JsonFrameAdapter;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 
 public class JsonGraphWriter extends JsonWriter {
-	protected DFramedTransactionalGraph graph_;
+	protected DFramedTransactionalGraph<?> graph_;
 	protected ParamMap parameters_;
 
 	private static ThreadLocal<SimpleDateFormat> ISO8601_UTC = new ThreadLocal<SimpleDateFormat>() {
@@ -58,7 +58,7 @@ public class JsonGraphWriter extends JsonWriter {
 
 	private boolean forceLowerCaseKeys_ = false;
 
-	public JsonGraphWriter(Writer arg1, DFramedTransactionalGraph graph, ParamMap parameters, boolean arg2,
+	public JsonGraphWriter(Writer arg1, DFramedTransactionalGraph<?> graph, ParamMap parameters, boolean arg2,
 			boolean forceLowerCaseKeys) {
 		super(JsonGraphFactory.instance, arg1, arg2);
 		forceLowerCaseKeys_ = forceLowerCaseKeys;
@@ -115,11 +115,11 @@ public class JsonGraphWriter extends JsonWriter {
 			JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (VertexFrame) paramObject, parameters_);
 			super.outObject(adapter);
 		} else if (paramObject instanceof Class<?>) {
-			String className = ((Class) paramObject).getName();
+			String className = ((Class<?>) paramObject).getName();
 			super.outStringLiteral(className);
 		} else if (paramObject instanceof Enum) {
-			String className = ((Enum) paramObject).getClass().getName();
-			String enumName = ((Enum) paramObject).name();
+			String className = ((Enum<?>) paramObject).getClass().getName();
+			String enumName = ((Enum<?>) paramObject).name();
 			super.outStringLiteral(className + " " + enumName);
 		} else if (paramObject instanceof org.openntf.domino.impl.View.DominoColumnInfo) {
 			String itemName = ((org.openntf.domino.impl.View.DominoColumnInfo) paramObject).getItemName();

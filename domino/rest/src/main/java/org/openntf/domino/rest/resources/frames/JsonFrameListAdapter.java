@@ -48,26 +48,28 @@ public class JsonFrameListAdapter implements JsonArray {
 
 	}
 
-	protected DFramedTransactionalGraph graph_;
+	protected DFramedTransactionalGraph<?> graph_;
 	protected List<Object> list_;
 	protected ParamMap pm_;
 	protected boolean isVertex_;
 
-	public JsonFrameListAdapter(DFramedTransactionalGraph graph, FramedEdgeList edgeList, ParamMap pm) {
+	@SuppressWarnings("unchecked")
+	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedEdgeList<?> edgeList, ParamMap pm) {
 		graph_ = graph;
-		list_ = edgeList;
+		list_ = (List<Object>)edgeList;
 		pm_ = pm;
 		isVertex_ = false;
 	}
 
-	public JsonFrameListAdapter(DFramedTransactionalGraph graph, FramedVertexList vertexList, ParamMap pm) {
+	@SuppressWarnings("unchecked")
+	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedVertexList<?> vertexList, ParamMap pm) {
 		graph_ = graph;
-		list_ = vertexList;
+		list_ = (List<Object>)vertexList;
 		pm_ = pm;
 		isVertex_ = true;
 	}
 
-	protected DFramedTransactionalGraph getGraph() {
+	protected DFramedTransactionalGraph<?> getGraph() {
 		return graph_;
 	}
 

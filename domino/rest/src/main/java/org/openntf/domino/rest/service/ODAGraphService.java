@@ -50,8 +50,7 @@ import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.session.DasCurrentSessionFactory;
 
 public class ODAGraphService extends RestService implements IRestServiceExt {
-	@SuppressWarnings("rawtypes")
-	private Map<String, FramedGraph> graphMap_;
+	private Map<String, FramedGraph<?>> graphMap_;
 	private Map<String, IGraphFactory> factoryMap_;
 
 	public ODAGraphService() {
@@ -98,9 +97,9 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 
 					System.out.println("Found an extension point instance: " + object.getClass().getName());
 					IGraphFactory factory = (IGraphFactory) object;
-					Map<String, FramedGraph> registry = factory.getRegisteredGraphs();
+					Map<String, FramedGraph<?>> registry = factory.getRegisteredGraphs();
 					for (String key : registry.keySet()) {
-						FramedGraph graph = registry.get(key);
+						FramedGraph<?> graph = registry.get(key);
 						// System.out.println("Adding graph called " + key);
 						addGraph(key, graph);
 						addFactory(key, factory);
@@ -147,9 +146,9 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return result;
 	}
 
-	protected Map<String, FramedGraph> getGraphMap() {
+	protected Map<String, FramedGraph<?>> getGraphMap() {
 		if (graphMap_ == null) {
-			graphMap_ = new HashMap<String, FramedGraph>();
+			graphMap_ = new HashMap<String, FramedGraph<?>>();
 		}
 		return graphMap_;
 	}
@@ -174,11 +173,11 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return (DFramedTransactionalGraph) getGraphMap().get(name);
 	}
 
-	public void addGraph(String name, FramedGraph graph) {
+	public void addGraph(String name, FramedGraph<?> graph) {
 		getGraphMap().put(name, graph);
 	}
 
-	public FramedGraph removeGraph(String name) {
+	public FramedGraph<?> removeGraph(String name) {
 		return getGraphMap().remove(name);
 	}
 
@@ -554,7 +553,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	// }
 
 	@SuppressWarnings("unchecked")
-	public EdgeFrame toEdgeFrame(DFramedTransactionalGraph graph, final Map<String, Object> map) {
+	public EdgeFrame toEdgeFrame(DFramedTransactionalGraph<?> graph, final Map<String, Object> map) {
 		EdgeFrame result = null;
 		Object id = map.get("id");
 		Object typeName = map.get("type");
@@ -590,7 +589,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@SuppressWarnings("unchecked")
-	public VertexFrame toVertexFrame(DFramedTransactionalGraph graph, final Map<String, Object> map) {
+	public VertexFrame toVertexFrame(DFramedTransactionalGraph<?> graph, final Map<String, Object> map) {
 		VertexFrame result = null;
 		Object id = map.get("id");
 		Object typeName = map.get("type");

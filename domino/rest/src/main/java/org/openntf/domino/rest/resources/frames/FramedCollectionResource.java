@@ -70,7 +70,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			} else if (types.size() == 1) {
 				CaseInsensitiveString typename = types.get(0);
 
-				Iterable elements = null;
+				Iterable<?> elements = null;
 				if (filterkeys != null) {
 					elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
 				} else {
@@ -78,28 +78,28 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 
 				if (elements instanceof FramedEdgeList) {
-					FramedEdgeList result = (FramedEdgeList) elements;
+					FramedEdgeList<?> result = (FramedEdgeList<?>) elements;
 					if (pm.getOrderBys() != null) {
 						result = result.sortBy(pm.getOrderBys());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
-							result = (FramedEdgeList) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
+							result = (FramedEdgeList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
 						} else {
-							result = (FramedEdgeList) result.subList(pm.getStart(), result.size());
+							result = (FramedEdgeList<?>) result.subList(pm.getStart(), result.size());
 						}
 					}
 					writer.outArrayLiteral(result);
 				} else if (elements instanceof FramedVertexList) {
-					FramedVertexList result = (FramedVertexList) elements;
+					FramedVertexList<?> result = (FramedVertexList<?>) elements;
 					if (pm.getOrderBys() != null) {
 						result = result.sortBy(pm.getOrderBys());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
-							result = (FramedVertexList) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
+							result = (FramedVertexList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
 						} else {
-							result = (FramedVertexList) result.subList(pm.getStart(), result.size());
+							result = (FramedVertexList<?>) result.subList(pm.getStart(), result.size());
 						}
 					}
 					writer.outArrayLiteral(result);
@@ -113,7 +113,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			} else {
 				List<Object> maps = new ArrayList<Object>();
 				for (CaseInsensitiveString typename : types) {
-					Iterable elements = null;
+					Iterable<?> elements = null;
 					if (filterkeys != null) {
 						elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
 					} else {
@@ -185,6 +185,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						Vertex in = graph.getVertex(NoteCoordinate.Utils.getNoteCoordinate(inId));
 						Vertex out = graph.getVertex(NoteCoordinate.Utils.getNoteCoordinate(outId));
 						String label = jsonItems.getAsString("label");
+						@SuppressWarnings("unchecked")
 						EdgeFrame edge = (EdgeFrame) graph.addEdge(null, out, in, label, type);
 					}
 				} catch (IllegalArgumentException iae) {

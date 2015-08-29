@@ -27,21 +27,21 @@ import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
 
-	public class FramedElementIterable<T> implements Iterable<T> {
-		protected final Class<T> kind;
+	public class FramedElementIterable<K> implements Iterable<K> {
+		protected final Class<K> kind;
 		protected final Iterable<Element> iterable;
 		protected final DFramedTransactionalGraph<? extends Graph> framedGraph;
 
 		public FramedElementIterable(final DFramedTransactionalGraph<? extends Graph> framedGraph, final Iterable<Element> iterable,
-				final Class<T> kind) {
+				final Class<K> kind) {
 			this.framedGraph = framedGraph;
 			this.iterable = iterable;
 			this.kind = kind;
 		}
 
 		@Override
-		public Iterator<T> iterator() {
-			return new Iterator<T>() {
+		public Iterator<K> iterator() {
+			return new Iterator<K>() {
 				private Iterator<Element> iterator = iterable.iterator();
 
 				@Override
@@ -55,7 +55,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				}
 
 				@Override
-				public T next() {
+				public K next() {
 					return framedGraph.frame(this.iterator.next(), kind);
 				}
 			};
@@ -342,6 +342,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	//		return frame(vertex, kind);
 	//	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <F> Iterable<F> frameElements(final Iterable<Element> elements, final Class<F> kind) {
 		Iterator<Element> it = elements.iterator();
 		if (it.hasNext()) {
@@ -357,6 +358,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return new FramedElementIterable(this, elements, kind);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <F> F frame(final Element element, final Class<F> kind) {
 		Class<F> klazz = kind;
 		DConfiguration config = (DConfiguration) this.getConfig();
@@ -366,7 +368,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				initializer.initElement(klazz, this, element);
 			}
 		}
-		@SuppressWarnings("deprecation")
 		F result = null;
 		if (element instanceof Edge) {
 			klazz = (Class<F>) (klazz == null ? DEdgeFrame.class : kind);
@@ -387,6 +388,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	@Override
 	public <F> F frame(final Edge edge, final Class<F> kind) {
+		@SuppressWarnings("unchecked")
 		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
@@ -408,6 +410,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	@Override
 	@Deprecated
 	public <F> F frame(final Edge edge, final Direction direction, final Class<F> kind) {
+		@SuppressWarnings("unchecked")
 		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
@@ -427,6 +430,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	@Override
 	public <F> F frame(final Vertex vertex, final Class<F> kind) {
+		@SuppressWarnings("unchecked")
 		Class<F> klazz = (Class<F>) (kind == null ? DVertexFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		DTypeManager manager = config.getTypeManager();

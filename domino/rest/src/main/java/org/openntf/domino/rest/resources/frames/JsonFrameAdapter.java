@@ -339,7 +339,7 @@ public class JsonFrameAdapter implements JsonObject {
 								result = ((DEdgeList) result).toVertexList();
 
 							} else if (result instanceof FramedEdgeList) {
-								result = ((FramedEdgeList) result).toVertexList();
+								result = ((FramedEdgeList<?>) result).toVertexList();
 							} else {
 								// System.err.println("TEMP DEBUG: Expected a DEdgeList but got a "
 								// + result.getClass().getName());
@@ -367,7 +367,7 @@ public class JsonFrameAdapter implements JsonObject {
 								List<CaseInsensitiveString> filterKeys = getFilterKeys();
 								List<CaseInsensitiveString> filterValues = getFilterValues();
 								for (int i = 0; i < filterKeys.size(); i++) {
-									result = ((FramedEdgeList) result).applyFilter(filterKeys.get(i).toString(),
+									result = ((FramedEdgeList<?>) result).applyFilter(filterKeys.get(i).toString(),
 											filterValues.get(i).toString());
 								}
 							} else if (result instanceof FramedVertexList) {
@@ -378,34 +378,34 @@ public class JsonFrameAdapter implements JsonObject {
 									String curvalue = filterValues.get(i).toString();
 									// System.out.println("TEMP DEBUG: Applying a filter to a FramedVertexList - "
 									// + curkey + ":" + curvalue);
-									result = ((FramedVertexList) result).applyFilter(curkey, curvalue);
+									result = ((FramedVertexList<?>) result).applyFilter(curkey, curvalue);
 								}
 							}
 						}
 						if (getOrderBys() != null) {
 							if (result instanceof FramedEdgeList) {
 								// System.out.println("Ordering an edge list");
-								result = ((FramedEdgeList) result).sortBy(getOrderBys());
+								result = ((FramedEdgeList<?>) result).sortBy(getOrderBys());
 							} else if (result instanceof FramedVertexList) {
 								// System.out.println("Ordering a vertex list");
-								result = ((FramedVertexList) result).sortBy(getOrderBys());
+								result = ((FramedVertexList<?>) result).sortBy(getOrderBys());
 							}
 						}
 
 						if (getStart() > 0) {
 							if (getCount() > 0) {
 								if (result instanceof FramedEdgeList) {
-									result = ((FramedEdgeList) result).subList(getStart(), getStart() + getCount());
+									result = ((FramedEdgeList<?>) result).subList(getStart(), getStart() + getCount());
 								} else if (result instanceof FramedVertexList) {
-									result = ((FramedVertexList) result).subList(getStart(), getStart() + getCount());
+									result = ((FramedVertexList<?>) result).subList(getStart(), getStart() + getCount());
 								}
 							} else {
 								if (result instanceof FramedEdgeList) {
-									result = ((FramedEdgeList) result).subList(getStart(),
-											((FramedEdgeList) result).size());
+									result = ((FramedEdgeList<?>) result).subList(getStart(),
+											((FramedEdgeList<?>) result).size());
 								} else if (result instanceof FramedVertexList) {
-									result = ((FramedVertexList) result).subList(getStart(),
-											((FramedVertexList) result).size());
+									result = ((FramedVertexList<?>) result).subList(getStart(),
+											((FramedVertexList<?>) result).size());
 								}
 							}
 						}
@@ -415,7 +415,7 @@ public class JsonFrameAdapter implements JsonObject {
 								listMap.put(Parameters.EDGES, EMPTY_STRINGS);
 							}
 							listMap.put(Parameters.PROPS, CaseInsensitiveString.toStrings(this.getProperties()));
-							result = new JsonFrameListAdapter(getGraph(), (FramedVertexList) result, listMap);
+							result = new JsonFrameListAdapter(getGraph(), (FramedVertexList<?>) result, listMap);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();

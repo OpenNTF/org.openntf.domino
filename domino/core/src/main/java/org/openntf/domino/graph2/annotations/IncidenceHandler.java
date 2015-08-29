@@ -15,6 +15,7 @@ public class IncidenceHandler extends AbstractIncidenceHandler implements Annota
 		return Incidence.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final Incidence annotation, final Method method, final Object[] arguments, final FramedGraph framedGraph,
 			final Element element, final Direction direction) {

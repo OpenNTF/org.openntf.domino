@@ -16,8 +16,7 @@ public interface IGraphFactory {
 
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Map<String, FramedGraph> getRegisteredGraphs();
+	public Map<String, FramedGraph<?>> getRegisteredGraphs();
 
 	public Object processCommand(String namespace, String command, String... args);
 

@@ -16,6 +16,7 @@ public class AdjacencyHandler extends AbstractIncidenceHandler implements Annota
 		return Adjacency.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object processElement(final Adjacency annotation, final Method method, final Object[] arguments, final FramedGraph framedGraph,
 			final Element element, final Direction direction) {

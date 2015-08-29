@@ -132,7 +132,7 @@ public class FramedResource extends AbstractResource {
 	protected Response updateFrameByMetaid(String requestEntity, String namespace, String ifUnmodifiedSince,
 			ParamMap pm, boolean isPut) {
 		Response result = null;
-		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
 		try {
