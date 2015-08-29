@@ -33,8 +33,24 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-		org.openntf.domino.ViewNavigator {
+public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
+org.openntf.domino.ViewNavigator {
+
+	private boolean forceJavaDates_ = false;
+	private int cacheSize_ = -1;
+	private int maxLevel_ = -1;
+	private int maxEntries_ = -1;
+	private int entryOptions_ = -1;
+	private int readMode_ = -1;
+	private int[] collapsedNoteIds_ = null;
+	private int[] expandedNoteIds_ = null;
+	private String curPosition_ = null;
+	private String curNoteid_ = null;
+	private String startingPosition_ = null;
+	private String startingNoteid_ = null;
+	private String startingCategory_ = null;
+	private String unreadUsername_;
+	private Types navType_;
 
 	/**
 	 * Instantiates a new outline.
@@ -49,7 +65,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 *            the cpp-id
 	 */
 	protected ViewNavigator(final lotus.domino.ViewNavigator delegate, final View parent) {
-		super(delegate, parent, NOTES_OUTLINE);
+		super(delegate, parent, Base.NOTES_VIEWNAV);
 	}
 
 	/*
@@ -80,7 +96,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getChild() {
 		try {
-			return fromLotus(getDelegate().getChild(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getChild();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -95,7 +117,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getChild(final lotus.domino.ViewEntry entry) {
 		try {
-			return fromLotus(getDelegate().getChild(toLotus(entry)), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getChild(toLotus(entry));
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -120,7 +148,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getCurrent() {
 		try {
-			return fromLotus(getDelegate().getCurrent(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -145,7 +179,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getFirst() {
 		try {
-			return fromLotus(getDelegate().getFirst(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getFirst();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -160,7 +200,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getFirstDocument() {
 		try {
-			return fromLotus(getDelegate().getFirstDocument(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getFirstDocument();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -175,7 +221,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getLast() {
 		try {
-			return fromLotus(getDelegate().getLast(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getLast();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -190,7 +242,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getLastDocument() {
 		try {
-			return fromLotus(getDelegate().getLastDocument(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getLastDocument();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -215,7 +273,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNext() {
 		try {
-			return fromLotus(getDelegate().getNext(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNext();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -230,7 +294,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNext(final lotus.domino.ViewEntry entry) {
 		try {
-			return fromLotus(getDelegate().getNext(toLotus(entry)), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNext(entry);
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -245,7 +315,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNextCategory() {
 		try {
-			return fromLotus(getDelegate().getNextCategory(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNextCategory();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -260,7 +336,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNextDocument() {
 		try {
-			return fromLotus(getDelegate().getNextDocument(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNextDocument();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -275,7 +357,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNextSibling() {
 		try {
-			return fromLotus(getDelegate().getNextSibling(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNextSibling();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -290,7 +378,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNextSibling(final lotus.domino.ViewEntry entry) {
 		try {
-			return fromLotus(getDelegate().getNextSibling(toLotus(entry)), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNextSibling(toLotus(entry));
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -305,7 +399,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getNth(final int n) {
 		try {
-			return fromLotus(getDelegate().getNth(n), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getNth(n);
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -320,7 +420,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public final ViewEntry getParent() {
 		try {
-			return fromLotus(getDelegate().getParent(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getParent();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return null;
@@ -335,7 +441,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getParent(final lotus.domino.ViewEntry entry) {
 		try {
-			return fromLotus(getDelegate().getParent(toLotus(entry)), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getParent(toLotus(entry));
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -360,7 +472,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPos(final String pos, final char separator) {
 		try {
-			return fromLotus(getDelegate().getPos(pos, separator), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPos(pos, separator);
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -375,7 +493,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPrev() {
 		try {
-			return fromLotus(getDelegate().getPrev(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPrev();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -390,7 +514,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPrev(final lotus.domino.ViewEntry entry) {
 		try {
-			return fromLotus(getDelegate().getPrev(toLotus(entry)), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPrev(toLotus(entry));
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -405,7 +535,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPrevCategory() {
 		try {
-			return fromLotus(getDelegate().getPrevCategory(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPrevCategory();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -420,7 +556,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPrevDocument() {
 		try {
-			return fromLotus(getDelegate().getPrevDocument(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPrevDocument();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -435,7 +577,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPrevSibling() {
 		try {
-			return fromLotus(getDelegate().getPrevSibling(), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPrevSibling();
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -450,7 +598,13 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public ViewEntry getPrevSibling(final lotus.domino.ViewEntry entry) {
 		try {
-			return fromLotus(getDelegate().getPrevSibling(entry), ViewEntry.SCHEMA, getParentView());
+			lotus.domino.ViewEntry newEntry = getDelegate().getPrevSibling(toLotus(entry));
+			if (newEntry != null) {
+				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+				if (forceJavaDates_)
+					newEntry.setPreferJavaDates(true);
+			}
+			return fromLotus(newEntry, ViewEntry.SCHEMA, getParentView());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -465,7 +619,17 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoChild() {
 		try {
-			return getDelegate().gotoChild();
+			boolean result = getDelegate().gotoChild();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+				//TODO NTF - recycle? I think probably not, but need a testing plan
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -480,7 +644,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoChild(final lotus.domino.ViewEntry entry) {
 		try {
-			return getDelegate().gotoChild(toLotus(entry));
+			boolean result = getDelegate().gotoChild(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -495,7 +668,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoEntry(final Object entry) {
 		try {
-			return getDelegate().gotoEntry(toLotus(entry));
+			boolean result = getDelegate().gotoEntry(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -526,7 +708,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoFirst() {
 		try {
-			return getDelegate().gotoFirst();
+			boolean result = getDelegate().gotoFirst();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -541,7 +732,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoFirstDocument() {
 		try {
-			return getDelegate().gotoFirstDocument();
+			boolean result = getDelegate().gotoFirstDocument();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -556,7 +756,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoLast() {
 		try {
-			return getDelegate().gotoLast();
+			boolean result = getDelegate().gotoLast();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -571,7 +780,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoLastDocument() {
 		try {
-			return getDelegate().gotoLastDocument();
+			boolean result = getDelegate().gotoLastDocument();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -586,7 +804,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoNext() {
 		try {
-			return getDelegate().gotoNext();
+			boolean result = getDelegate().gotoNext();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -601,7 +828,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoNext(final lotus.domino.ViewEntry entry) {
 		try {
-			return getDelegate().gotoNext(toLotus(entry));
+			boolean result = getDelegate().gotoNext(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -616,7 +852,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoNextCategory() {
 		try {
-			return getDelegate().gotoNextCategory();
+			boolean result = getDelegate().gotoNextCategory();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -631,7 +876,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoNextDocument() {
 		try {
-			return getDelegate().gotoNextDocument();
+			boolean result = getDelegate().gotoNextDocument();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -646,7 +900,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoNextSibling() {
 		try {
-			return getDelegate().gotoNextSibling();
+			boolean result = getDelegate().gotoNextSibling();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -661,7 +924,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoNextSibling(final lotus.domino.ViewEntry entry) {
 		try {
-			return getDelegate().gotoNextSibling(toLotus(entry));
+			boolean result = getDelegate().gotoNextSibling(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -676,7 +948,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoParent() {
 		try {
-			return getDelegate().gotoParent();
+			boolean result = getDelegate().gotoParent();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -691,7 +972,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoParent(final lotus.domino.ViewEntry entry) {
 		try {
-			return getDelegate().gotoParent(toLotus(entry));
+			boolean result = getDelegate().gotoParent(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -706,7 +996,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPos(final String pos, final char separator) {
 		try {
-			return getDelegate().gotoPos(pos, separator);
+			boolean result = getDelegate().gotoPos(pos, separator);
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -721,7 +1020,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPrev() {
 		try {
-			return getDelegate().gotoPrev();
+			boolean result = getDelegate().gotoPrev();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -736,7 +1044,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPrev(final lotus.domino.ViewEntry entry) {
 		try {
-			return getDelegate().gotoPrev(toLotus(entry));
+			boolean result = getDelegate().gotoPrev(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -751,7 +1068,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPrevCategory() {
 		try {
-			return getDelegate().gotoPrevCategory();
+			boolean result = getDelegate().gotoPrevCategory();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -766,7 +1092,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPrevDocument() {
 		try {
-			return getDelegate().gotoPrevDocument();
+			boolean result = getDelegate().gotoPrevDocument();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -781,7 +1116,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPrevSibling() {
 		try {
-			return getDelegate().gotoPrevSibling();
+			boolean result = getDelegate().gotoPrevSibling();
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -796,7 +1140,16 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	public boolean gotoPrevSibling(final lotus.domino.ViewEntry entry) {
 		try {
-			return getDelegate().gotoPrevSibling(toLotus(entry));
+			boolean result = getDelegate().gotoPrevSibling(toLotus(entry));
+			if (result) {
+				lotus.domino.ViewEntry newEntry = getDelegate().getCurrent();
+				if (newEntry != null) {
+					curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
+					if (forceJavaDates_)
+						newEntry.setPreferJavaDates(true);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -859,6 +1212,83 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 		}
 	}
 
+	@Override
+	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		try {
+			lotus.domino.ViewNavigator newDelegate = null;
+			lotus.domino.ViewEntry entry = null;
+			lotus.domino.View rawView = toLotus(getParentView());
+			switch (this.navType_) {
+			case NONE:
+				if (this.cacheSize_ > -1) {
+					newDelegate = rawView.createViewNav(cacheSize_);
+				} else {
+					newDelegate = rawView.createViewNav();
+				}
+				break;
+			case FROM:
+				entry = toLotus(getParentView().getEntryAtPosition(startingPosition_, '.'));
+				if (this.cacheSize_ > -1) {
+					newDelegate = rawView.createViewNavFrom(toLotus(entry), cacheSize_);
+				} else {
+					newDelegate = rawView.createViewNavFrom(toLotus(entry));
+				}
+				break;
+			case CATEGORY:
+				if (this.cacheSize_ > -1) {
+					newDelegate = rawView.createViewNavFromCategory(startingCategory_, cacheSize_);
+				} else {
+					newDelegate = rawView.createViewNavFromCategory(startingCategory_);
+				}
+				break;
+			case CHILDREN:
+				entry = toLotus(getParentView().getEntryAtPosition(startingPosition_, '.'));
+				if (this.cacheSize_ > -1) {
+					newDelegate = rawView.createViewNavFromChildren(entry, cacheSize_);
+				} else {
+					newDelegate = rawView.createViewNavFromChildren(entry);
+				}
+				break;
+			case DESCENDANTS:
+				entry = toLotus(getParentView().getEntryAtPosition(startingPosition_, '.'));
+				if (this.cacheSize_ > -1) {
+					newDelegate = rawView.createViewNavFromDescendants(entry, cacheSize_);
+				} else {
+					newDelegate = rawView.createViewNavFromDescendants(entry);
+				}
+				break;
+			case UNREAD:
+				if (this.unreadUsername_ == null) {
+					newDelegate = rawView.createViewNavFromAllUnread();
+				} else {
+					newDelegate = rawView.createViewNavFromAllUnread(unreadUsername_);
+				}
+				break;
+			case MAXLEVEL:
+				if (this.cacheSize_ > -1) {
+					newDelegate = rawView.createViewNavMaxLevel(maxLevel_, cacheSize_);
+				} else {
+					newDelegate = rawView.createViewNavMaxLevel(maxLevel_);
+				}
+			}
+			if (entryOptions_ > -1)
+				newDelegate.setEntryOptions(entryOptions_);
+			if (maxLevel_ > -1)
+				newDelegate.setMaxLevel(maxLevel_);
+			if (readMode_ > -1)
+				newDelegate.setCacheGuidance(cacheSize_, readMode_);
+			if (collapsedNoteIds_ != null || expandedNoteIds_ != null) {
+				newDelegate.setAutoExpandGuidance(maxEntries_, collapsedNoteIds_, expandedNoteIds_);
+			}
+			if (newDelegate.gotoPos(curPosition_, DEFAULT_SEPARATOR)) {
+
+			}
+			setDelegate(newDelegate, true);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -868,6 +1298,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	public void setAutoExpandGuidance(final int maxEntries, final int[] collapsedNoteIds, final int[] expandedNoteIds) {
 		try {
 			getDelegate().setAutoExpandGuidance(maxEntries, collapsedNoteIds, expandedNoteIds);
+			this.maxEntries_ = maxEntries;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -883,6 +1314,11 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 			final lotus.domino.NoteCollection expandedNoteIds) {
 		try {
 			getDelegate().setAutoExpandGuidance(maxEntries, toLotus(collapsedNoteIds), toLotus(expandedNoteIds));
+			this.maxEntries_ = maxEntries;
+			if (collapsedNoteIds != null)
+				this.collapsedNoteIds_ = collapsedNoteIds.getNoteIDs();
+			if (expandedNoteIds != null)
+				this.expandedNoteIds_ = expandedNoteIds.getNoteIDs();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -892,12 +1328,15 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.ViewNavigator#setBufferMaxEntries(int)
+	 * @deprecated
+	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
 	 */
 	@Override
+	@Deprecated
 	public void setBufferMaxEntries(final int entryCount) {
 		try {
-			getParentView().setAutoUpdate(false);
-			getDelegate().setBufferMaxEntries(entryCount);
+			getDelegate().setCacheGuidance(entryCount);
+			this.maxEntries_ = entryCount;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -913,6 +1352,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 		try {
 			getParentView().setAutoUpdate(false);
 			getDelegate().setCacheGuidance(maxEntries);
+			this.maxEntries_ = maxEntries;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -928,6 +1368,8 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 		try {
 			getParentView().setAutoUpdate(false);
 			getDelegate().setCacheGuidance(maxEntries, readMode);
+			this.readMode_ = readMode;
+			this.maxEntries_ = maxEntries;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -937,11 +1379,15 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.ViewNavigator#setCacheSize(int)
+	 * @deprecated
+	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
 	 */
 	@Override
+	@Deprecated
 	public void setCacheSize(final int size) {
 		try {
-			getDelegate().setCacheSize(size);
+			getDelegate().setCacheGuidance(size);
+			this.cacheSize_ = size;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -956,6 +1402,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	public void setEntryOptions(final int options) {
 		try {
 			getDelegate().setEntryOptions(options);
+			this.entryOptions_ = options;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -970,6 +1417,7 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	public void setMaxLevel(final int maxLevel) {
 		try {
 			getDelegate().setMaxLevel(maxLevel);
+			this.maxLevel_ = maxLevel;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1022,6 +1470,23 @@ public class ViewNavigator extends BaseNonThreadSafe<org.openntf.domino.ViewNavi
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getAncestorSession().getFactory();
+	}
+
+	void registerStartPosition() {
+		startingPosition_ = getCurrent().getPosition();
+	}
+
+	void setType(final Types type) {
+		navType_ = type;
+		registerStartPosition();
+	}
+
+	void setStartCategory(final String category) {
+		startingCategory_ = category;
+	}
+
+	void setUnreadUser(final String username) {
+		unreadUsername_ = username;
 	}
 
 }

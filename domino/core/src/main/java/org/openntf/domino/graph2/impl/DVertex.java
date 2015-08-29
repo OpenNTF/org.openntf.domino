@@ -12,9 +12,11 @@ import javolution.util.FastMap;
 import javolution.util.FastSet;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.View;
 import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph.DominoVertex;
+import org.openntf.domino.graph2.DEdgeList;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -72,6 +74,9 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 				result.addAll(getInEdgeObjects(labels));
 				result.addAll(getOutEdgeObjects(labels));
 			}
+			//			if (result != null) {
+			//				System.out.println("Found " + result.size() + " edges going " + direction.name());
+			//			}
 			return result.unmodifiable();
 		}
 	}
@@ -284,15 +289,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		DEdgeList result = null;
 		result = outCache.get(label);
 		if (result == null) {
-			try {
-				result = getParent().getEdgesFromIds(this, getOutEdgesSet(label));
-				outCache.put(label, result);
-			} catch (IllegalStateException ise) {
-				System.out.println("ISE returned during getOutEdgeCache for label " + label + " from Vertex " + getId());
-			}
-		}
-		if (result == null) {
-			result = new DEdgeList(this);
+			result = getParent().getEdgesFromIds(this, getOutEdgesSet(label));
+			outCache.put(label, result);
 		}
 		return result.atomic();
 	}
@@ -467,7 +465,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		Map<String, DEdgeList> inCache = getInEdgeCache();
 		DEdgeList result = null;
 		if (labels == null || labels.length == 0) {
-			result = new DEdgeList(this).atomic();
+			result = new org.openntf.domino.graph2.impl.DEdgeList(this).atomic();
 			Set<String> labelSet = getInEdgeLabels();
 			for (String label : labelSet) {
 				result.addAll(getInEdgeObjects(label));
@@ -484,7 +482,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 				inCache.put(label, result);
 			}
 		} else {
-			result = new DEdgeList(this);
+			result = new org.openntf.domino.graph2.impl.DEdgeList(this);
 			for (String label : labels) {
 				result.addAll(getInEdgeObjects(label));
 			}
@@ -496,7 +494,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		FastMap<String, DEdgeList> outCache = getOutEdgeCache();
 		DEdgeList result = null;
 		if (labels == null || labels.length == 0) {
-			result = new DEdgeList(this);
+			result = new org.openntf.domino.graph2.impl.DEdgeList(this);
 			Set<String> labelSet = getOutEdgeLabels();
 			for (String label : labelSet) {
 				DEdgeList curEdges = getOutEdgeObjects(label);
@@ -509,20 +507,32 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			}
 			result = outCache.get(label);
 			if (result == null) {
+				if (label.equalsIgnoreCase("contents")) {
+					if (getDelegateType().equals(View.class)) {
+						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
+						result = edges.unmodifiable();
+					} else if (getClass().equals(DCategoryVertex.class)) {
+						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
+						result = edges.unmodifiable();
+					}
+				}
+			}
+			if (result == null) {
 				NoteList edgeIds = getOutEdgesSet(label);
 				DEdgeList edges = getParent().getEdgesFromIds(this, edgeIds);
 				if (edges != null) {
 					result = edges.atomic();
 				}
+			}
+			if (result != null) {
 				outCache.put(label, result);
 			}
 		} else {
-			result = new DEdgeList(this);
+			result = new org.openntf.domino.graph2.impl.DEdgeList(this);
 			for (String label : labels) {
 				result.addAll(getOutEdgeObjects(label));
 			}
 		}
 		return result == null ? null : result.unmodifiable();
 	}
-
 }

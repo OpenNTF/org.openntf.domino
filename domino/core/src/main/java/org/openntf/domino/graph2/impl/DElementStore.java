@@ -16,7 +16,9 @@ import javolution.util.FastTable;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.ViewEntry;
 import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.graph2.DIdentityFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -421,10 +423,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 			}
 			if (delegate != null) {
-				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
-				result = edge;
-				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				if (delegate instanceof Document) {
+					DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
+					result = edge;
+					getElementCache().put(result.getId(), result);
+					getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				} else if (delegate instanceof ViewEntry) {
+					ViewEntry entry = (ViewEntry) delegate;
+					DEntryEdge edge = new DEntryEdge(getConfiguration().getGraph(), entry, (ViewEntryCoordinate) id, this);
+					result = edge;
+					//TODO decide about caching
+				}
 			}
 		}
 		return result;
@@ -432,6 +441,10 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void removeEdge(final Edge edge) {
+		if (edge instanceof DEdge) {
+			org.openntf.domino.ViewEntry.class.equals(((DEdge) edge).getDelegateType());
+			throw new UnsupportedOperationException("ViewEntry edges cannot be removed.");
+		}
 		startTransaction(edge);
 		Vertex in = edge.getVertex(Direction.IN);
 		((DVertex) in).removeEdge(edge);
@@ -499,6 +512,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (delegateKey instanceof NoteCoordinate) {
 					String unid = ((NoteCoordinate) delegateKey).getUNID();
 					result = db.getDocumentWithKey(unid, false);
+				} else if (delegateKey instanceof ViewEntryCoordinate) {
+					result = ((ViewEntryCoordinate) delegateKey).getViewEntry();
 				} else {
 					result = db.getDocumentWithKey((Serializable) delegateKey, false);
 				}
@@ -537,6 +552,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		//		}
 		if (result != null) {
 			if (type.equals(Element.class)) {
+				return result;
+			}
+			if (result instanceof org.openntf.domino.ViewEntry) {
 				return result;
 			}
 

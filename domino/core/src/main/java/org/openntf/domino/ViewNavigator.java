@@ -24,6 +24,10 @@ import org.openntf.domino.types.FactorySchema;
 public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, org.openntf.domino.ext.ViewNavigator,
 		Iterable<ViewEntry>, DatabaseDescendant {
 
+	static enum Types {
+		NONE, FROM, CATEGORY, CHILDREN, DESCENDANTS, UNREAD, MAXLEVEL
+	}
+
 	public static class Schema extends FactorySchema<ViewNavigator, lotus.domino.ViewNavigator, View> {
 		@Override
 		public Class<ViewNavigator> typeClass() {
@@ -42,6 +46,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	};
 
 	public static final Schema SCHEMA = new Schema();
+	public static final char DEFAULT_SEPARATOR = '.';
 
 	/*
 	 * (non-Javadoc)
@@ -532,8 +537,11 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.ViewNavigator#setBufferMaxEntries(int)
+	 * @deprecated
+	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
 	 */
 	@Override
+	@Deprecated
 	public void setBufferMaxEntries(final int entryCount);
 
 	/*
@@ -556,8 +564,11 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.ViewNavigator#setCacheSize(int)
+	 * @deprecated
+	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
 	 */
 	@Override
+	@Deprecated
 	public void setCacheSize(final int size);
 
 	/*

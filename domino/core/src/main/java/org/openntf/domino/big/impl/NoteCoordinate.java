@@ -13,8 +13,10 @@ import java.util.Map;
 
 import javolution.util.FastMap;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.View;
 import org.openntf.domino.types.Null;
 
 import com.google.common.primitives.Longs;
@@ -43,6 +45,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	private long db;
 	private long x;
 	private long y;
+	transient Boolean isView_;
 	transient private Map<String, Object> propertyCache;
 
 	//TODO NTF we should probably have a factory that creates these instead of instantiating them directly
@@ -76,6 +79,11 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 
 	public NoteCoordinate(final Document doc) {
 		this(doc.getAncestorDatabase().getReplicaID(), doc.getUniversalID());
+	}
+
+	public NoteCoordinate(final View view) {
+		this(view.getAncestorDatabase().getReplicaID(), view.getUniversalID());
+		isView_ = true;
 	}
 
 	public NoteCoordinate(final NoteCollection notecoll, final String nid) {
@@ -119,6 +127,12 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		return getDbCache().getDocument(this, serverName);
 	}
 
+	public View getView() {
+		Database database = getDbCache().getDatabase(getDbid());
+		Document doc = getDocument();
+		return database.getView(doc);
+	}
+
 	private Map<String, Object> getPropertyCache() {
 		if (propertyCache == null) {
 			propertyCache = new FastMap<String, Object>();
@@ -143,6 +157,15 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		} else {
 			return result;
 		}
+	}
+
+	@Override
+	public boolean isView() {
+		if (isView_ == null) {
+			Document doc = getDocument();
+			isView_ = doc.hasItem("$Index");
+		}
+		return isView_;
 	}
 
 	@Override

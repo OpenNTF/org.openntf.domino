@@ -9,7 +9,7 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.User;
+import org.openntf.domino.graph2.builtin.Person;
 import org.openntf.domino.graph2.builtin.social.Comment;
 import org.openntf.domino.graph2.builtin.social.Commentable;
 import org.openntf.domino.graph2.builtin.social.Likeable;
@@ -148,7 +148,7 @@ public class Graph2Demo implements Runnable {
 		Character getParent();
 
 		@InVertex
-		Character getCreated();
+		Character getSpawn();
 	}
 
 	@TypeValue(KILLS)
@@ -368,7 +368,7 @@ public class Graph2Demo implements Runnable {
 		DElementStore usersStore = new DElementStore();
 		usersStore.setStoreKey(nabId);
 		usersStore.setProxyStoreKey(usersId);
-		usersStore.addType(User.class);
+		usersStore.addType(Person.class);
 
 		SocialStore socialStore = new SocialStore();
 		socialStore.setStoreKey(socialId);
@@ -401,7 +401,7 @@ public class Graph2Demo implements Runnable {
 			FramedTransactionalGraph<DGraph> framedGraph = setupGraph();
 			//
 			//			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(Long.toHexString(usersStore.getStoreKey()), ntfUnid);
-			User ntfUser = framedGraph.getVertex("Nathan Freeman", User.class);
+			Person ntfUser = framedGraph.getVertex("Nathan Freeman", Person.class);
 
 			Movie newhopeMovie = framedGraph.getVertex("Star Wars", Movie.class);
 			Movie empireMovie = framedGraph.getVertex("The Empire Strikes Back", Movie.class);
@@ -509,7 +509,7 @@ public class Graph2Demo implements Runnable {
 
 			FramedTransactionalGraph<DGraph> framedGraph = setupGraph();
 
-			User nathan = framedGraph.addVertex("Nathan Freeman", User.class);
+			Person nathan = framedGraph.addVertex("Nathan Freeman", Person.class);
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");

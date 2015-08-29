@@ -13,13 +13,18 @@ import java.util.logging.Logger;
 import javolution.util.FastMap;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.ViewEntry;
 import org.openntf.domino.big.impl.NoteCoordinate;
 //import javolution.util.FastMap;
 //import javolution.util.FastSet;
 //import javolution.util.function.Equalities;
 import org.openntf.domino.big.impl.NoteList;
+import org.openntf.domino.big.impl.ViewEntryCoordinate;
 import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable {
@@ -32,8 +37,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	protected transient org.openntf.domino.graph2.DGraph parent_;
-	private Object delegateKey_;
-	private transient Map<String, Object> delegate_;
+	protected Object delegateKey_;
+	protected transient Map<String, Object> delegate_;
 
 	public DElement(final org.openntf.domino.graph2.DGraph parent) {
 		parent_ = parent;
@@ -41,6 +46,10 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	protected org.openntf.domino.graph2.impl.DGraph getParent() {
 		return (org.openntf.domino.graph2.impl.DGraph) parent_;
+	}
+
+	protected org.openntf.domino.graph2.DElementStore getStore() {
+		return getParent().findElementStore(this);
 	}
 
 	private Set<String> changedProperties_;
@@ -94,11 +103,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 							Object raw = doc.get(propertyName);
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
 						} catch (Throwable t) {
-							log_.log(Level.WARNING, "Invalid property for document " + propertyName);
+							log_.log(Level.FINE, "Invalid property for document " + propertyName);
 						}
 					}
+				} else if (delegate instanceof SessionDescendant) {
+					Session s = ((SessionDescendant) delegate).getAncestorSession();
+					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
 				} else {
-					result = type.cast(delegate.get(propertyName));
+					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
@@ -123,10 +135,13 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					if (delegate instanceof Document) {
 						Document doc = (Document) delegate;
 						result = doc.getItemValue(propertyName, type);
+					} else if (delegate instanceof SessionDescendant) {
+						Session s = ((SessionDescendant) delegate).getAncestorSession();
+						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
 					} else {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
-							result = type.cast(delegate.get(propertyName));
+							result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
 						}
 					}
 					if (result == null) {
@@ -272,14 +287,41 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (delegateKey_ == null) {
 			Map<String, Object> delegate = getDelegate();
 			if (delegate instanceof Document) {
-				//				NoteCoordinate nc
 				delegateKey_ = new NoteCoordinate((Document) delegate);
-				//				String replid = ((Document) delegate).getAncestorDatabase().getReplicaID().toLowerCase();
-				//				String unid = ((Document) delegate).getUniversalID().toLowerCase();
-				//				delegateKey_ = replid + unid;
+			} else if (delegate instanceof View) {
+				delegateKey_ = new NoteCoordinate((View) delegate);
+			} else if (delegate instanceof ViewEntry) {
+				delegateKey_ = new ViewEntryCoordinate((ViewEntry) delegate);
 			}
 		}
 		return delegateKey_;
+	}
+
+	@Override
+	public Class<?> getDelegateType() {
+		if (delegate_ == null) {
+			if (delegateKey_ instanceof NoteCoordinate) {
+				if (((NoteCoordinate) delegateKey_).isView()) {
+					return org.openntf.domino.View.class;
+				} else {
+					return org.openntf.domino.Document.class;
+				}
+			} else if (delegateKey_ instanceof ViewEntryCoordinate) {
+				return org.openntf.domino.ViewEntry.class;
+			} else {
+				return null;
+			}
+		} else {
+			if (delegate_ instanceof ViewEntry) {
+				return org.openntf.domino.ViewEntry.class;
+			} else if (delegate_ instanceof View) {
+				return org.openntf.domino.View.class;
+			} else if (delegate_ instanceof Document) {
+				return org.openntf.domino.Document.class;
+			} else {
+				return delegate_.getClass();
+			}
+		}
 	}
 
 	@Override
@@ -327,6 +369,13 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((Document) delegate_).containsKey("Foo");
+			} catch (Throwable t) {
+				delegate_ = getParent().findDelegate(delegateKey_);
+			}
+		} else if (delegate_ instanceof View) {
+			try {
+				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
+				((View) delegate_).isDefaultView();
 			} catch (Throwable t) {
 				delegate_ = getParent().findDelegate(delegateKey_);
 			}

@@ -22,7 +22,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -45,7 +47,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class ViewEntry.
  */
 public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements
-		org.openntf.domino.ViewEntry {
+org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
@@ -567,6 +569,93 @@ public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, l
 			return ((lotus.domino.View) getParentViewMethod.invoke(base, (Object[]) null));
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
+	}
+
+	@Override
+	public boolean containsKey(final Object key) {
+		return getColumnValuesMap().containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(final Object value) {
+		return getColumnValuesMap().containsValue(value);
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		return getColumnValuesMap().entrySet();
+	}
+
+	@Override
+	public Object get(final Object key) {
+		return getColumnValuesMap().get(key);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return getColumnValuesMap().isEmpty();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return getColumnValuesMap().keySet();
+	}
+
+	@Override
+	public Object put(final String key, final Object value) {
+		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
+
+	}
+
+	@Override
+	public void putAll(final Map<? extends String, ? extends Object> m) {
+		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
+
+	}
+
+	@Override
+	public Object remove(final Object key) {
+		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
+
+	}
+
+	@Override
+	public int size() {
+		return getColumnValuesMap().size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		return getColumnValuesMap().values();
+	}
+
+	private transient String metaversalid_;
+
+	@Override
+	public String getMetaversalID() {
+		if (metaversalid_ != null) {
+			if (isDocument()) {
+				metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
+			} else {
+				metaversalid_ = getParentView().getMetaversalID() + getNoteID();
+			}
+		}
+		return metaversalid_;
+	}
+
+	public Object getCategoryValue() {
+		if (isCategory()) {
+			Vector<Object> values = getColumnValues();
+			ListIterator<Object> li = values.listIterator();
+			return li.previous();
+		} else {
 			return null;
 		}
 	}

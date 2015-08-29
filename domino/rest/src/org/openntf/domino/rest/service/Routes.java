@@ -6,6 +6,8 @@ public enum Routes {
 	public final static String ROOT = "oda";
 	public final static String NAMESPACE = "namespace";
 	public final static String NAMESPACE_PATH_PARAM = "{" + NAMESPACE + "}";
+	public final static String METAID = "metaid";
+	public final static String METAID_PATH_PARAM = "{" + METAID + "}";
 
 	public final static String GRAPH = "graph";
 	public final static String VERTEX = "vertex";
@@ -20,6 +22,7 @@ public enum Routes {
 	public final static String VIEWS = "views";
 
 	public final static String FRAMED = "frame";
+	public final static String FRAMES = "frames";
 	public final static String SCHEMA = "schema";
 	public final static String COMMAND = "command";
 

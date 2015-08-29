@@ -6,7 +6,7 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.User;
+import org.openntf.domino.graph2.builtin.Person;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 import org.openntf.domino.graph2.builtin.social.Rates;
 import org.openntf.domino.graph2.impl.DConfiguration;
@@ -142,7 +142,7 @@ public class Graph2Demo implements Runnable {
 		Character getParent();
 
 		@InVertex
-		Character getCreated();
+		Character getSpawn();
 	}
 
 	@TypeValue(kills)
@@ -338,7 +338,7 @@ public class Graph2Demo implements Runnable {
 			DElementStore usersStore = new DElementStore();
 			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
 			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
-			usersStore.addType(User.class);
+			usersStore.addType(Person.class);
 
 			DConfiguration config = new DConfiguration();
 			config.addElementStore(crewStore);
@@ -350,12 +350,12 @@ public class Graph2Demo implements Runnable {
 			graph = new DGraph(config);
 
 			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = new TypedGraphModuleBuilder().withClass(User.class).withClass(Movie.class).withClass(Character.class)
+			Module module = new TypedGraphModuleBuilder().withClass(Person.class).withClass(Movie.class).withClass(Character.class)
 					.withClass(Crew.class).build();
 			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
 
-			User ntfUser = framedGraph.getVertex(nabId + ntfUnid, User.class);
+			Person ntfUser = framedGraph.getVertex(nabId + ntfUnid, Person.class);
 
 			Movie newhopeMovie = framedGraph.getVertex("Star Wars", Movie.class);
 			Movie empireMovie = framedGraph.getVertex("The Empire Strikes Back", Movie.class);
@@ -444,7 +444,7 @@ public class Graph2Demo implements Runnable {
 			DElementStore usersStore = new DElementStore();
 			usersStore.setStoreKey(NoteCoordinate.Utils.getLongFromReplid(nabId));
 			usersStore.setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(usersId));
-			usersStore.addType(User.class);
+			usersStore.addType(Person.class);
 
 			DConfiguration config = new DConfiguration();
 			config.addElementStore(crewStore);
@@ -456,7 +456,7 @@ public class Graph2Demo implements Runnable {
 			graph = new DGraph(config);
 
 			JavaHandlerModule jhm = new JavaHandlerModule();
-			Module module = new TypedGraphModuleBuilder().withClass(User.class).withClass(Movie.class).withClass(Character.class)
+			Module module = new TypedGraphModuleBuilder().withClass(Person.class).withClass(Movie.class).withClass(Character.class)
 					.withClass(Crew.class).build();
 			DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
 			FramedTransactionalGraph<DGraph> framedGraph = factory.create(graph);
@@ -466,7 +466,7 @@ public class Graph2Demo implements Runnable {
 			((org.openntf.domino.Database) characterStore.getStoreDelegate()).getAllDocuments().removeAll(true);
 			((org.openntf.domino.Database) edgeStore.getStoreDelegate()).getAllDocuments().removeAll(true);
 
-			User ntfUser = framedGraph.getVertex(nabId + ntfUnid, User.class);
+			Person ntfUser = framedGraph.getVertex(nabId + ntfUnid, Person.class);
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");

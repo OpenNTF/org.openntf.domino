@@ -7,7 +7,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openntf.conference.graph.Event.Status;
 import org.openntf.conference.graph.Group.Type;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -45,26 +44,19 @@ public class DataInitializer implements Runnable {
 		Map<String, Object> jsonMap = null;
 		for (Vertex vertex : vertices) {
 			VertexFrame frame = framedGraph.frame(vertex, DVertexFrame.class);
-			if (frame instanceof Presentation) {
-				StringBuilder sb = new StringBuilder();
-				jsonMap = framedGraph.toJsonableMap(frame);
-				for (String key : jsonMap.keySet()) {
-					sb.append(key + ": \"" + String.valueOf(jsonMap.get(key)) + "\", ");
-				}
-				System.out.println("{" + sb.toString() + "}");
-			}
+
 		}
 		long testEndTime = System.nanoTime();
 		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000) + " ms");
-
-		VertexFrame frame = framedGraph.toVertexFrame(jsonMap);
-		System.out.println("Got a frame of " + frame.getClass().getName());
-		if (frame instanceof Presentation) {
-			((Presentation) frame).setStatus(Status.CANCELLED);
-			System.out.println("Result: " + ((Presentation) frame).getStatus());
-		} else {
-			System.out.println("Didn't get a Presentation. GOt a " + frame.getClass().getName());
-		}
+		//
+		//		VertexFrame frame = framedGraph.toVertexFrame(jsonMap);
+		//		System.out.println("Got a frame of " + frame.getClass().getName());
+		//		if (frame instanceof Presentation) {
+		//			((Presentation) frame).setStatus(Status.CANCELLED);
+		//			System.out.println("Result: " + ((Presentation) frame).getStatus());
+		//		} else {
+		//			System.out.println("Didn't get a Presentation. GOt a " + frame.getClass().getName());
+		//		}
 		framedGraph.commit();
 
 	}

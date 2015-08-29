@@ -25,6 +25,8 @@ public interface DElement extends com.tinkerpop.blueprints.Element {
 
 	public Map<String, Object> getDelegate();
 
+	public Class<?> getDelegateType();
+
 	public void setDelegate(Map<String, Object> delegate);
 
 	//	public Set<String> getPropertyKeys(boolean includeEdgeFields);

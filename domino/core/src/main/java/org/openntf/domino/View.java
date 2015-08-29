@@ -16,6 +16,7 @@
 package org.openntf.domino;
 
 import java.io.Externalizable;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
@@ -29,7 +30,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface View.
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
-DatabaseDescendant, Externalizable {
+		DatabaseDescendant, Externalizable, Map<String, Object> {
 
 	public static class Schema extends FactorySchema<View, lotus.domino.View, Database> {
 		@Override

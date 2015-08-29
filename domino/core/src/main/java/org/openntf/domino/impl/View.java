@@ -26,9 +26,11 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +70,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	private String universalId_;
 	private Vector<String> aliases_;
 	private String name_;
+	private ViewNavigator utilityNavigator_;
 
 	private static Method iGetEntryByKeyMethod;
 	static {
@@ -579,7 +582,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNav() {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNav(), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNav(), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.NONE);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -595,7 +601,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNav(final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNav(cacheSize), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNav(cacheSize), ViewNavigator.SCHEMA, this);
+			result.setCacheGuidance(cacheSize);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.NONE);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -611,9 +621,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFrom(final Object entry) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object lotusObj = toDominoFriendly(entry, getAncestorSession(), recycleThis);
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFrom(lotusObj), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -668,7 +680,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		try {
 			Object lotusObj = toLotus(entry);
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
+			result.setCacheSize(cacheSize);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -684,7 +700,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromAllUnread() {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.UNREAD);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -700,7 +719,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromAllUnread(final String userName) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromAllUnread(userName), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromAllUnread(userName), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.UNREAD);
+			((org.openntf.domino.impl.ViewNavigator) result).setUnreadUser(userName);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -716,7 +739,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromCategory(final String categoryName) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.CATEGORY);
+			((org.openntf.domino.impl.ViewNavigator) result).setStartCategory(categoryName);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -732,7 +759,12 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromCategory(final String categoryName, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromCategory(categoryName, cacheSize), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromCategory(categoryName, cacheSize), ViewNavigator.SCHEMA, this);
+			result.setCacheSize(cacheSize);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.CATEGORY);
+			((org.openntf.domino.impl.ViewNavigator) result).setStartCategory(categoryName);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -748,7 +780,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromChildren(final Object entry) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.CHILDREN);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -764,7 +799,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromChildren(final Object entry, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
+			result.setCacheSize(cacheSize);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.CHILDREN);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -780,7 +819,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromDescendants(final Object entry) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.DESCENDANTS);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -796,7 +838,12 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavFromDescendants(final Object entry, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry), cacheSize), ViewNavigator.SCHEMA,
+					this);
+			result.setCacheSize(cacheSize);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.DESCENDANTS);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -812,7 +859,11 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavMaxLevel(final int level) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavMaxLevel(level), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavMaxLevel(level), ViewNavigator.SCHEMA, this);
+			result.setMaxLevel(level);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.MAXLEVEL);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -828,7 +879,12 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public ViewNavigator createViewNavMaxLevel(final int level, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return fromLotus(getDelegate().createViewNavMaxLevel(level, cacheSize), ViewNavigator.SCHEMA, this);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavMaxLevel(level, cacheSize), ViewNavigator.SCHEMA, this);
+			result.setMaxLevel(level);
+			result.setCacheSize(cacheSize);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.MAXLEVEL);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2530,7 +2586,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 * 
 	 * @since org.openntf.domino 3.0.0
 	 */
-	protected static class DominoColumnInfo implements Serializable {
+	public static class DominoColumnInfo implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private final String itemName_;
 		private final int columnValuesIndex_;
@@ -2614,7 +2670,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			if (candidate != null) {
 				log_.log(Level.WARNING,
 						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
-						+ ", View2:" + ret.getAliases());
+								+ ", View2:" + ret.getAliases());
 				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
 				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
 				ret = candidate;
@@ -2627,7 +2683,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	@Override
 	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		try {
-
 			lotus.domino.View view = recreateView();
 			setDelegate(view, true);
 			/* No special logging, since by now View is a BaseThreadSafe */
@@ -2947,4 +3002,125 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public boolean containsKey(final Object arg0) {
+		return getColumnInfoMap().containsKey(arg0);
+	}
+
+	@Override
+	public boolean containsValue(final Object arg0) {
+		if (arg0 instanceof Document) {
+			return containsDocument((Document) arg0);
+		} else if (arg0 instanceof ViewEntry) {
+			return containsEntry((ViewEntry) arg0);
+		}
+		return getColumnInfoMap().containsValue(arg0);
+	}
+
+	@Override
+	public Set<Entry<String, Object>> entrySet() {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		for (String key : getColumnInfoMap().keySet()) {
+			result.put(key, getColumnInfoMap().get(key));
+		}
+		return result.entrySet();
+	}
+
+	@Override
+	public Object get(final Object key) {
+		return getColumnInfoMap().get(key);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return getColumnInfoMap().isEmpty();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return getColumnInfoMap().keySet();
+	}
+
+	@Override
+	public Object put(final String key, final Object value) {
+		throw new UnsupportedOperationException("View Map may not be modified");
+	}
+
+	@Override
+	public void putAll(final Map<? extends String, ? extends Object> m) {
+		throw new UnsupportedOperationException("View Map may not be modified");
+	}
+
+	@Override
+	public Object remove(final Object key) {
+		throw new UnsupportedOperationException("View Map may not be modified");
+	}
+
+	@Override
+	public int size() {
+		return getColumnInfoMap().size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		Collection<Object> result = new ArrayList<Object>();
+		result.addAll(getColumnInfoMap().values());
+		return result;
+	}
+
+	@Override
+	public ViewEntry getEntryAtPosition(final String position, final char separator) {
+		return getUtilityNavigator().getPos(position, separator);
+	}
+
+	@Override
+	public ViewEntry getEntryAtPosition(final String position) {
+		return getUtilityNavigator().getPos(position, ViewNavigator.DEFAULT_SEPARATOR);
+	}
+
+	@Override
+	public boolean containsDocument(final Document doc) {
+		boolean result = getUtilityNavigator().gotoEntry(doc);
+		getUtilityNavigator().gotoFirst();
+		return result;
+	}
+
+	@Override
+	public boolean containsEntry(final ViewEntry entry) {
+		boolean result = getUtilityNavigator().gotoEntry(entry);
+		getUtilityNavigator().gotoFirst();
+		return result;
+	}
+
+	private ViewNavigator getUtilityNavigator() {
+		if (utilityNavigator_ != null) {
+			try {
+				utilityNavigator_.getBufferMaxEntries();
+			} catch (Exception e) {
+				utilityNavigator_ = null;
+			}
+		}
+		if (utilityNavigator_ == null) {
+			try {
+				getDelegate().setAutoUpdate(false);
+				getDelegate().setEnableNoteIDsForCategories(true);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			utilityNavigator_ = this.createViewNav(128);
+			utilityNavigator_.setCacheGuidance(128, lotus.domino.ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE);
+			utilityNavigator_.setEntryOptions(lotus.domino.ViewNavigator.VN_ENTRYOPT_NOCOLUMNVALUES);
+		}
+		return utilityNavigator_;
+	}
+
+	private transient String metaversalid_;
+
+	@Override
+	public String getMetaversalID() {
+		if (metaversalid_ != null) {
+			metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
+		}
+		return metaversalid_;
+	}
 }

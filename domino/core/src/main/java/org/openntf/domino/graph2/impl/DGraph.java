@@ -14,6 +14,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.graph2.DConfiguration;
@@ -292,6 +293,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			}
 		} else if (delegateKey instanceof NoteCoordinate) {
 			result = getElementStores().get(((NoteCoordinate) delegateKey).getReplicaLong());
+		} else if (delegateKey instanceof ViewEntryCoordinate) {
+			result = getElementStores().get(((ViewEntryCoordinate) delegateKey).getReplicaLong());
 		}
 		if (result == null) {
 			result = getDefaultElementStore();
@@ -369,7 +372,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			DbDirectory dir = session.getDbDirectory(server);
 			result = dir.openDatabase(key);
 			if (result == null) {
-				Database newDb = dir.createDatabase(key);
+				Session localSession = Factory.getSession(SessionType.NATIVE);
+				DbDirectory localDir = localSession.getDbDirectory(server);
+				Database newDb = localDir.createDatabase(key);
 				newDb.setCategories("graph2");
 				//				newDb.setFolderReferencesEnabled(false);
 				newDb.setTitle("Auto-generated graph2 element store");
@@ -411,7 +416,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			DbDirectory dir = session.getDbDirectory(server);
 			result = dir.openDatabase(key);
 			if (result == null) {
-				Database newDb = dir.createDatabase(key);
+				Session localSession = Factory.getSession(SessionType.NATIVE);
+				DbDirectory localDir = localSession.getDbDirectory(server);
+				Database newDb = localDir.createDatabase(key);
 				newDb.setCategories("graph2");
 				newDb.setFolderReferencesEnabled(false);
 				newDb.setTitle("Auto-generated graph2 element store");
