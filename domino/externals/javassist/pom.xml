@@ -9,11 +9,8 @@
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>javassist</artifactId>
-	<name>javassist</name>
-	<packaging>eclipse-plugin</packaging>
 	<version>3.18.2-SNAPSHOT</version>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-	</build>
+	<name>javassist</name>
+	
+	<packaging>eclipse-plugin</packaging>
 </project>

@@ -9,11 +9,8 @@
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>rx</artifactId>
-	<name>rxjava</name>
 	<version>1.0.0-SNAPSHOT</version>
+	<name>rxjava</name>
+	
 	<packaging>eclipse-plugin</packaging>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-	</build>
 </project>

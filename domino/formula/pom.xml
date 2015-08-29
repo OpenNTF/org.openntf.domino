@@ -11,9 +11,6 @@
 	<description>Alternative Java-based engine for executing Notes/Domino @Formula</description>
 	<packaging>eclipse-plugin</packaging>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -21,7 +18,7 @@
 				<version>2.5.3</version>
 				<configuration>
 					<descriptors>
-						<descriptor>assembly/src.xml</descriptor>
+						<descriptor>src/main/assembly/src.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>

@@ -4,7 +4,6 @@ import javax.servlet.ServletException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openntf.domino.xsp.junit.Module;
 import org.openntf.domino.xsp.junit.ModuleJUnitRunner;
 
 @RunWith(ModuleJUnitRunner.class)

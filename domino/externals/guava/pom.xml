@@ -9,11 +9,8 @@
 		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>com.google.guava</artifactId>
-	<name>guava</name>
-	<packaging>eclipse-plugin</packaging>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-	</build>
 	<version>18.0.0-SNAPSHOT</version>
+	<name>guava</name>
+	
+	<packaging>eclipse-plugin</packaging>
 </project>

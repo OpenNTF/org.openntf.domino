@@ -14,6 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-version>0.22.0</tycho-version>
 		<compiler>1.6</compiler>
+		<manifest-location>META-INF</manifest-location>
 	</properties>
 
 	<repositories>
@@ -29,9 +30,10 @@
 		<module>formula</module>
 		<module>core</module>
 		<module>xsp</module>
+		<!-- <module>rest</module>-->
 		<module>junit4xpages</module>
-		<module>tests</module>
-		<module>org.openntf.domino.feature.group</module>
+		<!--<module>tests</module>-->
+		<module>org.openntf.domino.feature</module>
 		<module>org.openntf.domino.updatesite</module>
 		<module>oda-dist</module>
 	</modules>
@@ -65,6 +67,7 @@
 					<compilerArgument>-err:-forbidden,discouraged,deprecation</compilerArgument>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<!-- enable tycho build extension -->
 				<groupId>org.eclipse.tycho</groupId>
@@ -183,6 +186,15 @@
 						<additionalparam>
 							-sourceclasspath ${project.build.outputDirectory}
 						</additionalparam>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.6</version>
+					<configuration>
+						<archive>
+							<manifestFile>${manifest-location}/MANIFEST.MF</manifestFile>
+						</archive>
 					</configuration>
 				</plugin>
 			</plugins>

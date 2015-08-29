@@ -8,14 +8,12 @@
 	</parent>
 	<artifactId>org.openntf.domino.tests</artifactId>
 	<name>OpenNTF JUnit implementation</name>
+	<description>Implementation to run junit Tests in XPages</description>
+	
 	<packaging>eclipse-plugin</packaging>
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<testSourceDirectory>test</testSourceDirectory>
-	</build>
+	
 	<organization>
 		<name>OpenNTF</name>
 		<url>http://www.openntf.org</url>
 	</organization>
-	<description>Implementation to run junit Tests in XPages</description>
 </project>

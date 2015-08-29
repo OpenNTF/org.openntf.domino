@@ -17,7 +17,7 @@
 				<version>2.5.3</version>
 				<configuration>
 					<descriptors>
-						<descriptor>assembly/src.xml</descriptor>
+						<descriptor>src/main/assembly/src.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>

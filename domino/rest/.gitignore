@@ -1,5 +1,0 @@
-/bin/
-
-# REST isn't Maven-ized yet, so keep its .project in the repo
-!.project
-!.classpath
