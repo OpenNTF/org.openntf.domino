@@ -11,7 +11,7 @@
 	<artifactId>javassist</artifactId>
 	<name>javassist</name>
 	<packaging>eclipse-plugin</packaging>
-	<version>3.18.2.qualifier</version>
+	<version>3.18.2-SNAPSHOT</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
