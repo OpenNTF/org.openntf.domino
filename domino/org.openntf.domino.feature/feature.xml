@@ -56,9 +56,21 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="com.google.guava.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="com.tinkerpop"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="com.tinkerpop.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -70,9 +82,21 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="javassist.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="javolution"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="javolution.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -84,9 +108,21 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="jsr305.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openntf.domino"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.openntf.domino.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -98,9 +134,21 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="org.openntf.domino.xsp.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openntf.formula"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.openntf.formula.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -112,6 +160,12 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="rx.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openntf.junit4xpages"
@@ -119,9 +173,21 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+   <plugin
+         id="org.openntf.junit4xpages.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openntf.domino.rest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+   <plugin
+         id="org.openntf.domino.rest.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
