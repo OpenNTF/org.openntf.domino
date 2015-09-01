@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
 import org.openntf.domino.rest.json.JsonGraphWriter;
@@ -68,7 +69,14 @@ public class FramedResource extends AbstractResource {
 				writer.outNull();
 			} else if (ids.size() == 1) {
 				String id = ids.get(0);
-				NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+				NoteCoordinate nc = null;
+				if (id.startsWith("E")) {
+					nc = ViewEntryCoordinate.Utils.getViewEntryCoordinate(id);
+				} else if (id.startsWith("V")) {
+					nc = ViewEntryCoordinate.Utils.getViewEntryCoordinate(id);
+				} else {
+					nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+				}
 				if (nc == null) {
 					System.err.println("NoteCoordinate is null for id " + id);
 				}
@@ -76,6 +84,9 @@ public class FramedResource extends AbstractResource {
 					System.err.println("Graph is null for namespace " + namespace);
 				}
 				Object elem = graph.getElement(nc, null);
+				if (elem == null) {
+					throw new IllegalStateException("Graph element is null for id " + id);
+				}
 				writer.outObject(elem);
 			} else {
 				List<Object> maps = new ArrayList<Object>();

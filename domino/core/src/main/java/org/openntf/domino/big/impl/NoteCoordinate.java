@@ -14,10 +14,14 @@ import java.util.Map;
 import javolution.util.FastMap;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.primitives.Longs;
 
@@ -35,18 +39,13 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		}
 	};
 
-	private static DbCache dbcache_ = new DbCache();
-
-	public static void clearLocals() {
-		extreadbuffer_.remove();
-		dbcache_.remove();
-	}
-
-	private long db;
-	private long x;
-	private long y;
+	long db;
+	long x;
+	long y;
 	transient Boolean isView_;
 	transient private Map<String, Object> propertyCache;
+	transient private Database database_;
+	transient private Document document_;
 
 	//TODO NTF we should probably have a factory that creates these instead of instantiating them directly
 
@@ -90,14 +89,6 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		this(notecoll.getAncestorDatabase().getReplicaID(), notecoll.getUNID(nid));
 	}
 
-	public static DbCache getDbCache() {
-		return (DbCache) dbcache_.get();
-	}
-
-	public static void setDbCache(final DbCache cache) {
-		dbcache_.set(cache);
-	}
-
 	@Override
 	public String getReplicaId() {
 		return getReplidFromLong(db);
@@ -117,19 +108,26 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		return getUnidFromLongs(x, y);
 	}
 
+	protected Database getDatabase(final String server) {
+		String replid = getReplidFromLong(db);
+		Session session = Factory.getSession(SessionType.CURRENT);
+		DbDirectory dir = session.getDbDirectory(server);
+		return dir.openDatabaseByReplicaID(replid);
+	}
+
 	@Override
 	public Document getDocument() {
-		return getDbCache().getDocument(this);
+		return getDocument("");
 	}
 
 	@Override
 	public Document getDocument(final String serverName) {
-		return getDbCache().getDocument(this, serverName);
+		return getDatabase(serverName).getDocumentByUNID(getUNID(), true);
 	}
 
 	public View getView() {
-		Database database = getDbCache().getDatabase(getDbid());
-		Document doc = getDocument();
+		Database database = getDatabase("");
+		Document doc = getDocument("");
 		return database.getView(doc);
 	}
 
@@ -182,6 +180,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		arg0.write(toByteArray());
 	}
 
+	@Override
 	public byte[] toByteArray() {
 		byte[] result = new byte[24];
 		insertByteArray(db, result, 0);
@@ -190,6 +189,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 		return result;
 	}
 
+	@Override
 	public int insertToByteArray(final byte[] bytes, final int pos) {
 		insertByteArray(db, bytes, pos + 0);
 		insertByteArray(x, bytes, pos + 8);

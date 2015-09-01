@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,8 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.graph2.DIdentityFactory;
+import org.openntf.domino.graph2.builtin.CategoryVertex;
+import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -64,6 +67,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	public DElementStore() {
+		addType(ViewVertex.class);
+		addType(CategoryVertex.class);
 	}
 
 	@Override
@@ -388,17 +393,45 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 			}
 			if (delegate != null) {
-				Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-				String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
-				if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
-					DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
-					result = vertex;
-				} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
-					DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
-					result = edge;
-				} else {
-					throw new IllegalStateException("Delegate for key " + id.toString() + " returned a " + delegate.getClass().getName()
-							+ " with a type identifier of " + strChk);
+				if (delegate instanceof Document) {
+					if (((Document) delegate).hasItem("$Index")) {
+						DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
+						result = vertex;
+					} else {
+						Object typeChk = delegate.get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+						String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+						if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
+							DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
+							result = vertex;
+						} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+							DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
+							result = edge;
+						} else {
+							throw new IllegalStateException("Delegate for key " + id.toString() + " returned a "
+									+ delegate.getClass().getName() + " with a type identifier of " + strChk);
+						}
+					}
+				} else if (delegate instanceof ViewEntry) {
+					if (id instanceof ViewEntryCoordinate) {
+						ViewEntryCoordinate vec = (ViewEntryCoordinate) id;
+						String entryType = vec.getEntryType();
+						if (entryType.startsWith("E")) {
+							DEdge edge = new DEntryEdge(getConfiguration().getGraph(), (ViewEntry) delegate, (ViewEntryCoordinate) id, this);
+							result = edge;
+						} else if (entryType.startsWith("V")) {
+							ViewEntry entry = (ViewEntry) delegate;
+							if (entry.isCategory()) {
+								Map<String, Object> delegateMap = new LinkedHashMap<String, Object>();
+								delegateMap.put("value", entry.getCategoryValue());
+								delegateMap.put("position", entry.getPosition());
+								delegateMap.put("noteid", entry.getNoteID());
+								DCategoryVertex vertex = new DCategoryVertex(getConfiguration().getGraph(), delegateMap,
+										entry.getParentView());
+								vertex.delegateKey_ = vec;
+								result = vertex;
+							}
+						}
+					}
 				}
 				getElementCache().put(result.getId(), result);
 				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
@@ -509,12 +542,28 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (del instanceof Database) {
 			Database db = (Database) del;
 			if (delegateKey instanceof Serializable) {
-				if (delegateKey instanceof NoteCoordinate) {
+				if (delegateKey instanceof ViewEntryCoordinate) {
+					result = ((ViewEntryCoordinate) delegateKey).getViewEntry();
+				} else if (delegateKey instanceof NoteCoordinate) {
 					String unid = ((NoteCoordinate) delegateKey).getUNID();
 					result = db.getDocumentWithKey(unid, false);
-				} else if (delegateKey instanceof ViewEntryCoordinate) {
-					result = ((ViewEntryCoordinate) delegateKey).getViewEntry();
-				} else {
+				} else if (delegateKey instanceof CharSequence) {
+					String skey = ((CharSequence) delegateKey).toString();
+					if (skey.length() > 50) {
+						String prefix = skey.subSequence(0, 2).toString();
+						String mid = skey.subSequence(2, 50).toString();
+						if ((prefix.equals("EC") || prefix.equals("ED") || prefix.equals("ET") || prefix.equals("EU"))
+								&& DominoUtils.isMetaversalId(mid)) {
+							ViewEntryCoordinate vec = ViewEntryCoordinate.Utils.getViewEntryCoordinate(skey);
+							result = vec.getViewEntry();
+						} else if ((prefix.equals("VC") || prefix.equals("VD") || prefix.equals("VT") || prefix.equals("VU"))
+								&& DominoUtils.isMetaversalId(mid)) {
+							ViewEntryCoordinate vec = ViewEntryCoordinate.Utils.getViewEntryCoordinate(skey);
+							result = vec.getViewEntry();
+						}
+					}
+				}
+				if (result == null) {
 					result = db.getDocumentWithKey((Serializable) delegateKey, false);
 				}
 				if (result != null) {
@@ -555,6 +604,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				return result;
 			}
 			if (result instanceof org.openntf.domino.ViewEntry) {
+				return result;
+			}
+			if (delegateKey instanceof NoteCoordinate && ((NoteCoordinate) delegateKey).isView()) {
 				return result;
 			}
 

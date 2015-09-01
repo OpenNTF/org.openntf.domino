@@ -106,9 +106,9 @@ public class JsonGraphWriter extends JsonWriter {
 
 	@Override
 	public void outObject(Object paramObject) throws IOException, JsonException {
-		/*	if (paramObject == null) {
-				super.outStringLiteral("null");
-			} else*/if (paramObject instanceof EdgeFrame) {
+		if (paramObject == null) {
+			super.outNull();
+		} else if (paramObject instanceof EdgeFrame) {
 			JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (EdgeFrame) paramObject, parameters_);
 			super.outObject(adapter);
 		} else if (paramObject instanceof VertexFrame) {

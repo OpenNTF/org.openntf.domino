@@ -1628,8 +1628,12 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		try {
 
 			if (!identCleared_ && !username_.equals(d.getEffectiveUserName())) {
-				throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:" + d.getEffectiveUserName()
-						+ ", expected:" + username_);
+				if ("Anonymous".equalsIgnoreCase(username_)) {
+					username_ = d.getEffectiveUserName();
+				} else {
+					throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:"
+							+ d.getEffectiveUserName() + ", expected:" + username_);
+				}
 			}
 		} catch (NotesException e) {
 		}

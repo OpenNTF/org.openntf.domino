@@ -148,4 +148,8 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 	public Object get(final String key);
 
 	public boolean isView();
+
+	public int insertToByteArray(final byte[] bytes, final int pos);
+
+	public byte[] toByteArray();
 }

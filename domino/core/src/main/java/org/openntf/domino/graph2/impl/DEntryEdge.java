@@ -6,6 +6,7 @@ import java.util.Map;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.graph2.DGraph;
 
 import com.tinkerpop.blueprints.Direction;
@@ -25,8 +26,24 @@ public class DEntryEdge extends DEdge {
 	public Object getVertexId(final Direction direction) {
 		if (Direction.OUT.equals(direction)) {
 			if (outKey_ == null) {
-				String mid = ((org.openntf.domino.ViewEntry) getDelegate()).getMetaversalID();
-				setOutId(NoteCoordinate.Utils.getNoteCoordinate(mid));
+				ViewEntry entry = (org.openntf.domino.ViewEntry) getDelegate();
+				if (entry.isDocument()) {
+					String mid = entry.getDocument().getMetaversalID();
+					setOutId(NoteCoordinate.Utils.getNoteCoordinate(mid));
+				} else if (entry.isCategory()) {
+					String entryid = delegateKey_.toString();
+					String mid = "V" + entryid.substring(1);
+					setOutId(ViewEntryCoordinate.Utils.getViewEntryCoordinate(mid));
+				} else {
+					throw new UnimplementedException();
+				}
+			}
+		} else if (Direction.IN.equals(direction)) {
+			if (inKey_ == null) {
+				//NTF only occurs when EntryEdge is manifested by direct request from ID rather than iteration of EdgeEntryList
+				ViewEntryCoordinate vec = (ViewEntryCoordinate) delegateKey_;
+				String mid = vec.getViewDocument().getMetaversalID();
+				setInId(NoteCoordinate.Utils.getNoteCoordinate(mid));
 			}
 		}
 		return super.getVertexId(direction);
@@ -40,7 +57,7 @@ public class DEntryEdge extends DEdge {
 			delegateMap.put("value", entry.getCategoryValue());
 			delegateMap.put("position", entry.getPosition());
 			delegateMap.put("noteid", entry.getNoteID());
-			DCategoryVertex result = new DCategoryVertex(getParent(), delegateMap);
+			DCategoryVertex result = new DCategoryVertex(getParent(), delegateMap, entry.getParentView());
 			result.delegateKey_ = getVertexId(Direction.OUT);
 			result.setView(entry.getParentView());
 			return result;

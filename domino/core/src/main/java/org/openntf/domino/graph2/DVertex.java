@@ -5,6 +5,8 @@ package org.openntf.domino.graph2;
 
 import java.util.Set;
 
+import org.openntf.domino.View;
+
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -37,5 +39,7 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 	public Edge findOutEdge(final Vertex otherVertex, final String label);
 
 	public Edge findEdge(final Vertex otherVertex, final String label);
+
+	public View getView();
 
 }
