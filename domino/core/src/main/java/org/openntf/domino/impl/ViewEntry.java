@@ -650,10 +650,11 @@ org.openntf.domino.ViewEntry {
 		return metaversalid_;
 	}
 
+	@Override
 	public Object getCategoryValue() {
 		if (isCategory()) {
 			Vector<Object> values = getColumnValues();
-			ListIterator<Object> li = values.listIterator();
+			ListIterator<Object> li = values.listIterator(values.size());
 			return li.previous();
 		} else {
 			return null;

@@ -720,6 +720,19 @@ public enum DominoUtils {
 	}
 
 	/**
+	 * Checks if is metaversal id.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return true, if is 48-character hexadecimal sequence
+	 */
+	public static boolean isMetaversalId(final CharSequence value) {
+		if (value.length() != 48)
+			return false;
+		return DominoUtils.isHex(value);
+	}
+
+	/**
 	 * Md5.
 	 * 
 	 * @param object
@@ -906,7 +919,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

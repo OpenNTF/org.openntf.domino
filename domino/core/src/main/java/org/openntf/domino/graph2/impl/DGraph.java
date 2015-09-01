@@ -14,9 +14,8 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
-import org.openntf.domino.big.ViewEntryCoordinate;
-import org.openntf.domino.big.impl.DbCache;
-import org.openntf.domino.big.impl.NoteList;
+import org.openntf.domino.big.NoteList;
+//import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.graph2.DConfiguration;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.exception.ElementKeyException;
@@ -36,9 +35,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	private static final Logger log_ = Logger.getLogger(DGraph.class.getName());
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
 	private DConfiguration configuration_;
-	@SuppressWarnings("unused")
-	private DbCache dbCache_;
 
+	@SuppressWarnings("unused")
+	//	private DbCache dbCache_;
 	public static class GraphTransaction extends FastTable<Element> {
 		private static final long serialVersionUID = 1L;
 
@@ -267,15 +266,39 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	public DElementStore findElementStore(final Object delegateKey) {
 		DElementStore result = null;
 		if (delegateKey == null) {
+			//			System.out.println("delegateKey is null");
 			return getDefaultElementStore();
 		}
 		if (delegateKey instanceof CharSequence) {
 			CharSequence skey = (CharSequence) delegateKey;
+			//			System.out.println("delegateKey is CharSequence " + skey.length());
 			if (skey.length() == 16) {
 				if (DominoUtils.isReplicaId(skey)) {
 					Long rid = NoteCoordinate.Utils.getLongFromReplid(skey);
 					result = getElementStores().get(rid);
 				} else {
+					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
+				}
+			} else if (skey.length() == 32) {
+				result = getDefaultElementStore();
+			} else if (skey.length() > 50) {
+				String prefix = skey.subSequence(0, 2).toString();
+				if (prefix.equals("EC") || prefix.equals("ED") || prefix.equals("ET") || prefix.equals("EU")) {
+					CharSequence mid = skey.subSequence(2, 50);
+					if (DominoUtils.isMetaversalId(mid)) {
+						CharSequence ridStr = skey.subSequence(2, 18);
+						Long rid = NoteCoordinate.Utils.getLongFromReplid(ridStr);
+						result = getElementStores().get(rid);
+					}
+				} else if (prefix.equals("VC") || prefix.equals("VD") || prefix.equals("VT") || prefix.equals("VU")) {
+					CharSequence mid = skey.subSequence(2, 50);
+					if (DominoUtils.isMetaversalId(mid)) {
+						CharSequence ridStr = skey.subSequence(2, 18);
+						Long rid = NoteCoordinate.Utils.getLongFromReplid(ridStr);
+						result = getElementStores().get(rid);
+					}
+				}
+				if (result == null) {
 					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 				}
 			} else if (skey.length() > 16) {
@@ -286,15 +309,23 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				} else {
 					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 				}
-			} else if (skey.length() == 32) {
-				result = getDefaultElementStore();
+
 			} else {
 				throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 			}
 		} else if (delegateKey instanceof NoteCoordinate) {
-			result = getElementStores().get(((NoteCoordinate) delegateKey).getReplicaLong());
-		} else if (delegateKey instanceof ViewEntryCoordinate) {
-			result = getElementStores().get(((ViewEntryCoordinate) delegateKey).getReplicaLong());
+			//			System.out.println("delegateKey is a NoteCoordinate");
+			long key = ((NoteCoordinate) delegateKey).getReplicaLong();
+			result = getElementStores().get(key);
+			if (result == null) {
+				System.out.println("Unable to locate element store for replicaid " + ((NoteCoordinate) delegateKey).getReplicaId() + " ("
+						+ ((NoteCoordinate) delegateKey).getReplicaLong() + ") therefore returning the default for the graph");
+				for (DElementStore store : getElementStores().values()) {
+					System.out.println("key: " + store.getStoreKey());
+				}
+			}
+		} else {
+			//			System.out.println("delegateKey is a " + delegateKey.getClass().getName());
 		}
 		if (result == null) {
 			result = getDefaultElementStore();

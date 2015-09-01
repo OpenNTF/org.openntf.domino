@@ -10,7 +10,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-public class DbCache extends ThreadLocal<Object> {
+public class DbCache {
 	private final FastMap<Long, Database> dbMap_ = new FastMap<Long, Database>();	//note: not Thread-safe yet.
 	private String defaultServerName_ = "";
 

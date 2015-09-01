@@ -16,9 +16,12 @@ import java.util.logging.Logger;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.annotations.AnnotationUtilities;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
+import org.openntf.domino.graph2.annotations.Shardable;
 import org.openntf.domino.graph2.annotations.TypedProperty;
+import org.openntf.domino.graph2.builtin.CategoryVertex;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.TypeUtils;
 
@@ -27,6 +30,7 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.ClassUtilities;
 import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.InVertex;
@@ -380,21 +384,40 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			typeRegistry_ = typeRegistry;
 		}
 
+		private Class<?> getDefaultType(final Vertex v) {
+			if (v instanceof DVertex) {
+				if ("1".equals(((DVertex) v).getProperty("$FormulaClass", String.class)))
+					return ViewVertex.class;
+				if (v instanceof DCategoryVertex)
+					return CategoryVertex.class;
+			}
+			return DVertexFrame.class;
+		}
+
+		private Class<?> getDefaultType(final Edge e) {
+			if (e instanceof DEdge) {
+				if (((DEdge) e).getDelegateType() == org.openntf.domino.ViewEntry.class) {
+					return ViewVertex.Contains.class;
+				}
+			}
+			return DEdgeFrame.class;
+		}
+
 		@Override
 		public Class<?>[] resolveTypes(final Vertex v, final Class<?> defaultType) {
-			return new Class<?>[] { resolve(v, defaultType), DVertexFrame.class };
+			return new Class<?>[] { resolve(v, getDefaultType(v)) };
 		}
 
 		@Override
 		public Class<?>[] resolveTypes(final Edge e, final Class<?> defaultType) {
-			return new Class<?>[] { resolve(e, defaultType), DEdgeFrame.class };
+			return new Class<?>[] { resolve(e, getDefaultType(e)) };
 		}
 
 		public Class<?> resolve(final Element e, final Class<?> defaultType) {
 			//			System.out.println("Resolving element with default type " + defaultType.getName());
 			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(defaultType);
 			if (typeHoldingTypeField != null) {
-				String value = e.getProperty(typeHoldingTypeField.getAnnotation(TypeField.class).value());
+				String value = ((DElement) e).getProperty(typeHoldingTypeField.getAnnotation(TypeField.class).value(), String.class);
 				//				System.out.println("TEMP DEBUG: Found type value: " + (value == null ? "null" : value));
 				Class<?> type = value == null ? null : typeRegistry_.getType(typeHoldingTypeField, value);
 				if (type != null) {
@@ -409,9 +432,9 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		public void initElement(Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
 			if (kind == null) {
 				if (element instanceof Edge) {
-					kind = DEdgeFrame.class;
+					kind = getDefaultType((Edge) element);
 				} else if (element instanceof Vertex) {
-					kind = DVertexFrame.class;
+					kind = getDefaultType((Vertex) element);
 				} else {
 					throw new IllegalArgumentException("element parameter is a "
 							+ (element == null ? "null" : element.getClass().getName()));
@@ -446,7 +469,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						//						System.out.println("TEMP DEBUG: current value is null in field " + field);
 					}
 					if (update) {
-						if (kind == DEdgeFrame.class || kind == DVertexFrame.class) {
+						if (kind == DEdgeFrame.class || kind == DVertexFrame.class || kind == ViewVertex.class
+								|| kind == ViewVertex.Contains.class) {
 
 						} else {
 							element.setProperty(field, typeValue.value());
@@ -470,11 +494,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 
 		public Class<?> resolve(final VertexFrame vertex) {
-			return resolve(vertex.asVertex(), DVertexFrame.class);
+			return resolve(vertex.asVertex(), getDefaultType(vertex.asVertex()));
 		}
 
 		public Class<?> resolve(final EdgeFrame edge) {
-			return resolve(edge.asEdge(), DEdgeFrame.class);
+			return resolve(edge.asEdge(), getDefaultType(edge.asEdge()));
 		}
 
 	}
@@ -540,6 +564,13 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	@Override
+	public List<FrameInitializer> getFrameInitializers() {
+		List<FrameInitializer> result = super.getFrameInitializers();
+		//		System.out.println("FrameInitializers requested. Result has " + result.size() + " elements");
+		return result;
+	}
+
+	@Override
 	public DElementStore addElementStore(final DElementStore store) {
 		store.setConfiguration(this);
 		Long key = store.getStoreKey();
@@ -553,7 +584,12 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			Long chk = getTypeMap().get(type);
 			if (chk != null) {
 				if (!chk.equals(key)) {
-					throw new IllegalStateException("Element store has already been registered for type " + type.getName());
+					Shardable s = type.getAnnotation(Shardable.class);
+					if (s == null) {
+						throw new IllegalStateException("Element store has already been registered for type " + type.getName());
+					} else {
+						getTypeMap().put(type, key);
+					}
 				}
 			} else {
 				getTypeMap().put(type, key);

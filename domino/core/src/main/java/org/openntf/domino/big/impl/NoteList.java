@@ -1,6 +1,5 @@
 package org.openntf.domino.big.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -14,11 +13,11 @@ import java.util.ListIterator;
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
 
-public class NoteList implements List<NoteCoordinate>, Externalizable {
-	protected List<NoteCoordinate> delegate_;
+public class NoteList implements org.openntf.domino.big.NoteList {
+	protected List<org.openntf.domino.big.NoteCoordinate> delegate_;
 	protected DbCache localCache_ = null;
 
-	protected static class NoteComparator implements Equality<NoteCoordinate> {
+	protected static class NoteComparator implements Equality<org.openntf.domino.big.NoteCoordinate> {
 		private static final long serialVersionUID = 1L;
 		private String comparisonKey_;
 
@@ -26,21 +25,21 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 			comparisonKey_ = key;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
-		public int compare(final NoteCoordinate arg0, final NoteCoordinate arg1) {
+		@SuppressWarnings("unchecked")
+		public int compare(final org.openntf.domino.big.NoteCoordinate arg0, final org.openntf.domino.big.NoteCoordinate arg1) {
 			Object obj0 = arg0.get(comparisonKey_);
 			Object obj1 = arg1.get(comparisonKey_);
 			return ((Comparable<Object>) obj0).compareTo(obj1);
 		}
 
 		@Override
-		public int hashOf(final NoteCoordinate object) {
+		public int hashOf(final org.openntf.domino.big.NoteCoordinate object) {
 			return object.hashCode();
 		}
 
 		@Override
-		public boolean equal(final NoteCoordinate left, final NoteCoordinate right) {
+		public boolean equal(final org.openntf.domino.big.NoteCoordinate left, final org.openntf.domino.big.NoteCoordinate right) {
 			return left.equals(right);
 		}
 
@@ -51,16 +50,16 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	public NoteList() {
-		delegate_ = new ArrayList<NoteCoordinate>();
+		delegate_ = new ArrayList<org.openntf.domino.big.NoteCoordinate>();
 	}
 
 	public NoteList(final boolean concurrent) {
-		delegate_ = Collections.synchronizedList(new ArrayList<NoteCoordinate>());
+		delegate_ = Collections.synchronizedList(new ArrayList<org.openntf.domino.big.NoteCoordinate>());
 	}
 
 	public NoteList(final DbCache cache) {
 		localCache_ = cache;
-		delegate_ = new ArrayList<NoteCoordinate>();
+		delegate_ = new ArrayList<org.openntf.domino.big.NoteCoordinate>();
 	}
 
 	//FIXME NTF: find out what the correct sorted list implementation is
@@ -69,30 +68,31 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	//		delegate_ = new ArrayList<NoteCoordinate>(compare);
 	//	}
 
+	@Override
 	public void sortBy(final String key) {
 		NoteComparator comp = new NoteComparator(key);
-		FastSortedTable<NoteCoordinate> newDel = new FastSortedTable<NoteCoordinate>(comp);
+		FastSortedTable<org.openntf.domino.big.NoteCoordinate> newDel = new FastSortedTable<org.openntf.domino.big.NoteCoordinate>(comp);
 		newDel.addAll(delegate_);
 		delegate_ = newDel;
 	}
 
 	@Override
-	public boolean add(final NoteCoordinate e) {
+	public boolean add(final org.openntf.domino.big.NoteCoordinate e) {
 		return delegate_.add(e);
 	}
 
 	@Override
-	public void add(final int index, final NoteCoordinate element) {
+	public void add(final int index, final org.openntf.domino.big.NoteCoordinate element) {
 		delegate_.add(index, element);
 	}
 
 	@Override
-	public boolean addAll(final Collection<? extends NoteCoordinate> c) {
+	public boolean addAll(final Collection<? extends org.openntf.domino.big.NoteCoordinate> c) {
 		return delegate_.addAll(c);
 	}
 
 	@Override
-	public boolean addAll(final int index, final Collection<? extends NoteCoordinate> c) {
+	public boolean addAll(final int index, final Collection<? extends org.openntf.domino.big.NoteCoordinate> c) {
 		return delegate_.addAll(index, c);
 	}
 
@@ -112,7 +112,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	@Override
-	public NoteCoordinate get(final int index) {
+	public org.openntf.domino.big.NoteCoordinate get(final int index) {
 		return delegate_.get(index);
 	}
 
@@ -127,7 +127,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	@Override
-	public Iterator<NoteCoordinate> iterator() {
+	public Iterator<org.openntf.domino.big.NoteCoordinate> iterator() {
 		return delegate_.iterator();
 	}
 
@@ -137,17 +137,17 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	@Override
-	public ListIterator<NoteCoordinate> listIterator() {
+	public ListIterator<org.openntf.domino.big.NoteCoordinate> listIterator() {
 		return delegate_.listIterator();
 	}
 
 	@Override
-	public ListIterator<NoteCoordinate> listIterator(final int index) {
+	public ListIterator<org.openntf.domino.big.NoteCoordinate> listIterator(final int index) {
 		return delegate_.listIterator(index);
 	}
 
 	@Override
-	public NoteCoordinate remove(final int index) {
+	public org.openntf.domino.big.NoteCoordinate remove(final int index) {
 		return delegate_.remove(index);
 	}
 
@@ -167,7 +167,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	@Override
-	public NoteCoordinate set(final int index, final NoteCoordinate element) {
+	public org.openntf.domino.big.NoteCoordinate set(final int index, final org.openntf.domino.big.NoteCoordinate element) {
 		return delegate_.set(index, element);
 	}
 
@@ -177,7 +177,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	}
 
 	@Override
-	public List<NoteCoordinate> subList(final int fromIndex, final int toIndex) {
+	public List<org.openntf.domino.big.NoteCoordinate> subList(final int fromIndex, final int toIndex) {
 		//return delegate_.subList(fromIndex, toIndex);
 		return delegate_.subList(fromIndex, toIndex);
 	}
@@ -192,15 +192,17 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 		return delegate_.toArray(a);
 	}
 
+	@Override
 	public byte[] toByteArray() {
 		byte[] result = new byte[size() * 24];
 		int pos = 0;
-		for (NoteCoordinate nc : this) {
+		for (org.openntf.domino.big.NoteCoordinate nc : this) {
 			pos = nc.insertToByteArray(result, pos);
 		}
 		return result;
 	}
 
+	@Override
 	public void loadByteArray(final byte[] bytes) {
 		int size = bytes.length / 24;
 		byte[] buffer = new byte[24];
@@ -223,7 +225,7 @@ public class NoteList implements List<NoteCoordinate>, Externalizable {
 	@Override
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
 		arg0.writeInt(size());
-		for (NoteCoordinate coord : this) {
+		for (org.openntf.domino.big.NoteCoordinate coord : this) {
 			arg0.write(coord.toByteArray());
 		}
 	}

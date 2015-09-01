@@ -11,10 +11,11 @@ import java.util.logging.Logger;
 import javolution.util.FastMap;
 import javolution.util.FastSet;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
-import org.openntf.domino.big.impl.NoteCoordinate;
-import org.openntf.domino.big.impl.NoteList;
+import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.big.NoteList;
 import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.graph2.DEdgeList;
 
@@ -112,7 +113,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		if (eid instanceof NoteCoordinate) {
 			// NOP
 		} else if (eid instanceof CharSequence) {
-			eid = new NoteCoordinate((CharSequence) eid);
+			eid = new org.openntf.domino.big.impl.NoteCoordinate((CharSequence) eid);
 		} else {
 			log_.log(Level.WARNING, "Edge ids of type " + eid.getClass().getName() + " not yet supported");
 		}
@@ -139,7 +140,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		if (eid instanceof NoteCoordinate) {
 			// NOP
 		} else if (eid instanceof CharSequence) {
-			eid = new NoteCoordinate((CharSequence) eid);
+			eid = new org.openntf.domino.big.impl.NoteCoordinate((CharSequence) eid);
 		} else {
 			log_.log(Level.WARNING, "Edge ids of type " + eid.getClass().getName() + " not yet supported");
 		}
@@ -316,7 +317,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			String key = DominoVertex.IN_PREFIX + label;
-			edgeIds = new NoteList(true);
+			edgeIds = new org.openntf.domino.big.impl.NoteList(true);
 			Map<String, Object> delegate = getDelegate();
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
@@ -329,7 +330,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					} else if (o instanceof java.util.Collection) {
 						for (Object raw : (Collection<?>) o) {
 							if (raw instanceof String) {
-								edgeIds.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+								edgeIds.add(new org.openntf.domino.big.impl.NoteCoordinate(
+										""/*TODO NTF This should be some default replid*/, (String) raw));
 							} else {
 								//TODO NTF
 							}
@@ -360,7 +362,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			String key = DominoVertex.OUT_PREFIX + label;
-			edgeIds = new NoteList(true);
+			edgeIds = new org.openntf.domino.big.impl.NoteList(true);
 			Map<String, Object> delegate = getDelegate();
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
@@ -376,7 +378,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 						} else if (o instanceof java.util.Collection) {
 							for (Object raw : (Collection<?>) o) {
 								if (raw instanceof String) {
-									edgeIds.add(new NoteCoordinate(""/*TODO NTF This should be some default replid*/, (String) raw));
+									edgeIds.add(new org.openntf.domino.big.impl.NoteCoordinate(
+											""/*TODO NTF This should be some default replid*/, (String) raw));
 								} else {
 									//TODO NTF
 								}
@@ -509,9 +512,10 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			if (result == null) {
 				if (label.equalsIgnoreCase("contents")) {
 					if (getDelegateType().equals(View.class)) {
+						System.out.println("TEMP DEBUG getting contents from ViewVertex");
 						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 						result = edges.unmodifiable();
-					} else if (getClass().equals(DCategoryVertex.class)) {
+					} else if (this instanceof DCategoryVertex) {
 						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 						result = edges.unmodifiable();
 					}
@@ -534,5 +538,14 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			}
 		}
 		return result == null ? null : result.unmodifiable();
+	}
+
+	@Override
+	public View getView() {
+		if (getDelegateType().equals(org.openntf.domino.View.class)) {
+			Database db = ((Document) getDelegate()).getParentDatabase();
+			return db.getView((Document) getDelegate());
+		}
+		return null;
 	}
 }
