@@ -36,8 +36,12 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		@Override
 		public boolean hasNext() {
 			if (hasNextCache_ == null) {
-				next_ = navigator_.getNextSibling(cur_);
-				hasNextCache_ = next_ != null;
+				if (cur_ == null) {
+					hasNextCache_ = true;
+				} else {
+					next_ = navigator_.getNextSibling(cur_);
+					hasNextCache_ = (next_ != null);
+				}
 			}
 			return hasNextCache_;
 		}
@@ -45,8 +49,12 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		@Override
 		public boolean hasPrevious() {
 			if (hasPrevCache_ == null) {
-				prev_ = navigator_.getPrevSibling(cur_);
-				hasPrevCache_ = prev_ != null;
+				if (cur_ == null) {
+					hasPrevCache_ = false;
+				} else {
+					prev_ = navigator_.getPrevSibling(cur_);
+					hasPrevCache_ = prev_ != null;
+				}
 			}
 			return hasPrevCache_;
 		}
@@ -56,7 +64,10 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			hasPrevCache_ = null;
 			hasNextCache_ = null;
 			prev_ = cur_;
-			if (next_ == null) {
+			if (cur_ == null) {
+				ViewEntry newEntry = navigator_.getFirst();
+				cur_ = newEntry;
+			} else if (next_ == null) {
 				ViewEntry newEntry = navigator_.getNextSibling(cur_);
 				cur_ = newEntry;
 			} else {

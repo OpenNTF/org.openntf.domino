@@ -25,11 +25,14 @@ public class DEdgeEntryList implements DEdgeList {
 			delegate_ = iterator;
 			source_ = source;
 			store_ = store;
+			//			System.out.println("TEMP DEBUG Creating a DEdgeEntryListIterator from a " + iterator.getClass().getName());
 		}
 
 		@Override
 		public boolean hasNext() {
-			return delegate_.hasNext();
+			boolean result = delegate_.hasNext();
+			//			System.out.println("TEMP DEBUG hasNext resulted in a " + String.valueOf(result));
+			return result;
 		}
 
 		@Override
@@ -103,16 +106,16 @@ public class DEdgeEntryList implements DEdgeList {
 	}
 
 	protected void initEntryList() {
+		ViewNavigator nav = null;
 		if (source_.getDelegateType().equals(org.openntf.domino.View.class)) {
-			ViewNavigator nav = source_.getView().createViewNavMaxLevel(0);
-			System.out.println("TEMP DEBUG EntryList navigator from ViewVertex has " + nav.getCount() + " entries");
-			entryList_ = new ViewEntryList(nav);
+			nav = source_.getView().createViewNavMaxLevel(0);
 		} else if (source_ instanceof DCategoryVertex) {
-			ViewNavigator nav = ((DCategoryVertex) source_).getSubNavigator();
-			entryList_ = new ViewEntryList(nav);
+			nav = ((DCategoryVertex) source_).getSubNavigator();
 		} else {
 			throw new IllegalStateException("Cannot create a DEdgeEntryList from a Vertex backed by a " + source_.getClass().getName());
 		}
+		//		System.out.println("TEMP DEBUG EntryList navigator from ViewVertex has " + nav.getCount() + " entries");
+		entryList_ = new ViewEntryList(nav);
 	}
 
 	@Override

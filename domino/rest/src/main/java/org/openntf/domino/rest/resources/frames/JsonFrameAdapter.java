@@ -341,8 +341,10 @@ public class JsonFrameAdapter implements JsonObject {
 				if (crystal != null) {
 					try {
 						result = crystal.invoke(frame, (Object[]) null);
-						System.out.println("Invoked " + crystal.getName() + " against an object of type "
-								+ frame.getClass().getName() + ". Result is a " + result.getClass().getName());
+						// System.out.println("Invoked " + crystal.getName() +
+						// " against an object of type "
+						// + frame.getClass().getName() + ". Result is a " +
+						// result.getClass().getName());
 
 						if (getIncludeVertices()) {
 							System.out.println("TEMP DEBUG: Turning EdgeList into VertexList");
@@ -408,7 +410,8 @@ public class JsonFrameAdapter implements JsonObject {
 								if (result instanceof FramedEdgeList) {
 									result = ((FramedEdgeList<?>) result).subList(getStart(), getStart() + getCount());
 								} else if (result instanceof FramedVertexList) {
-									result = ((FramedVertexList<?>) result).subList(getStart(), getStart() + getCount());
+									result = ((FramedVertexList<?>) result)
+											.subList(getStart(), getStart() + getCount());
 								}
 							} else {
 								if (result instanceof FramedEdgeList) {
@@ -420,7 +423,14 @@ public class JsonFrameAdapter implements JsonObject {
 								}
 							}
 						}
-						System.out.println("Result is a " + result.getClass().getName());
+						// if (result instanceof List) {
+						// System.out.println("Result is a " +
+						// result.getClass().getName() + " with "
+						// + ((List) result).size() + " elements");
+						// } else {
+						// System.out.println("Result is a " +
+						// result.getClass().getName());
+						// }
 						if (result instanceof FramedVertexList) {
 							ParamMap listMap = new ParamMap();
 							if (getIncludeEdges()) {

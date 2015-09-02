@@ -26,15 +26,16 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedEdgeIterable;
 
-public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>implements List<T> {
+public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;
 		//		    protected final Direction direction_;
 		protected final ListIterator<Edge> iterator_;
 		protected final FramedGraph<? extends Graph> framedGraph_;
 
-		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Edge> iterator,
-				final Class<T> kind/*, Direction direction*/) {
+		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Edge> iterator, final Class<T> kind/*, Direction direction*/) {
+			//			System.out.println("TEMP DEBUG Created new FramedListIterator with a " + iterator.getClass().getName() + " kind: "
+			//					+ kind.getName());
 			kind_ = kind;
 			//		    	direction_ = direction;
 			iterator_ = iterator;
@@ -50,8 +51,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 			} else if (arg0 instanceof Edge) {
 				iterator_.add((Edge) arg0);
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot add an object of type " + arg0.getClass().getName() + " to an iterator of " + kind_.getName());
+				throw new IllegalArgumentException("Cannot add an object of type " + arg0.getClass().getName() + " to an iterator of "
+						+ kind_.getName());
 			}
 		}
 
@@ -67,7 +68,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 
 		@Override
 		public T next() {
-			return framedGraph_.frame(iterator_.next(), kind_);
+			T result = framedGraph_.frame(iterator_.next(), kind_);
+			//			System.out.println("next() resulted in a " + result.getClass().getName());
+			return result;
 		}
 
 		@Override
@@ -97,8 +100,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 			} else if (kind_.isAssignableFrom(arg0.getClass())) {
 				iterator_.set(((EdgeFrame) kind_.cast(arg0)).asEdge());
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind_.getName());
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+						+ kind_.getName());
 			}
 		}
 
@@ -209,8 +212,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 			} else if (raw instanceof EdgeFrame) {
 				result.add(((EdgeFrame) raw).asEdge());
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
+						+ " to an EdgeFrame iterator");
 			}
 		}
 		return result;
@@ -224,8 +227,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 			} else if (raw instanceof EdgeFrame) {
 				result.add(((EdgeFrame) raw).asEdge());
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
+						+ " to an EdgeFrame iterator");
 			}
 		}
 		return result;
@@ -253,8 +256,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.contains(((EdgeFrame) kind.cast(arg0)).asEdge());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 
@@ -275,8 +278,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.indexOf(((EdgeFrame) kind.cast(arg0)).asEdge());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 
@@ -292,8 +295,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.lastIndexOf(((EdgeFrame) kind.cast(arg0)).asEdge());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 
@@ -325,8 +328,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T>im
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.remove(((EdgeFrame) kind.cast(arg0)).asEdge());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 

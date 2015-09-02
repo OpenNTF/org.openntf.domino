@@ -33,15 +33,15 @@ public class DCategoryVertex extends DVertex {
 
 	public ViewNavigator getSubNavigator() {
 		View view = getView();
-		System.out.println("Getting subnavigator from view " + view.getName());
+		//		System.out.println("Getting subnavigator from view " + view.getName());
 		ViewEntry entry = view.getEntryAtPosition(getProperty("position", String.class));
 		if (entry != null) {
-			System.out.println("Found entry at " + entry.getPosition());
+			//			System.out.println("Found entry at " + entry.getPosition());
 		} else {
-			System.out.println("Entry is null!");
+			//			System.out.println("Entry is null!");
 		}
 		ViewNavigator result = view.createViewNavFromChildren(entry, 100);
-		System.out.println("Subnavigator has " + result.getCount() + " entries");
+		//		System.out.println("Subnavigator has " + result.getCount() + " entries");
 		return result;
 	}
 

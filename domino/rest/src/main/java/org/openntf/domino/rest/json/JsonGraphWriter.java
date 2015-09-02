@@ -201,6 +201,22 @@ public class JsonGraphWriter extends JsonWriter {
 		}
 	}
 
+	@Override
+	public void outArrayLiteral(Object arg0, boolean paramBoolean) throws IOException, JsonException {
+		// Class<?> clazz = arg0.getClass();
+		// String name = clazz.getName();
+		// System.out.println("DEBUG: Attempting to jsonify an array " + name);
+		super.outArrayLiteral(arg0, paramBoolean);
+	}
+
+	@Override
+	public void outArrayLiteral(Object arg0) throws IOException, JsonException {
+		// Class<?> clazz = arg0.getClass();
+		// String name = clazz.getName();
+		// System.out.println("DEBUG: Attempting to jsonify an array " + name);
+		super.outArrayLiteral(arg0);
+	}
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected void outLiteral(Object paramObject, boolean paramBoolean) throws IOException, JsonException {

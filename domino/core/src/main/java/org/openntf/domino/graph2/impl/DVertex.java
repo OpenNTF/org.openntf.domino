@@ -512,7 +512,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			if (result == null) {
 				if (label.equalsIgnoreCase("contents")) {
 					if (getDelegateType().equals(View.class)) {
-						System.out.println("TEMP DEBUG getting contents from ViewVertex");
+						//						System.out.println("TEMP DEBUG getting contents from ViewVertex");
 						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 						result = edges.unmodifiable();
 					} else if (this instanceof DCategoryVertex) {

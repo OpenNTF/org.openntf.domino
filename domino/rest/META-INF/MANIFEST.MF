@@ -31,3 +31,4 @@ Export-Package: org.openntf.domino.rest,
  org.openntf.domino.rest.service,
  org.openntf.domino.rest.servlet
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
