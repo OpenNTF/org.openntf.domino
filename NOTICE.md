@@ -1,5 +1,5 @@
 OpenNTF Domino API
-© Copyright 2012-2014
+&copy; Copyright 2012-2015
   Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkelmeyer, Declan Lynch, Paul Withers, Devin Olson, Mark Leusink, Keith Smillie, Foconis AG
   https://www.foconis.de
 
@@ -56,3 +56,7 @@ Includes Diff Match Patch Java code from Google Inc under Apache License 2.0
 Includes google-code-prettify from Google Inc under Apache License 2.0
   Copyright: 2011 Mike Samuel et al
   Details: https://code.google.com/p/google-code-prettify/source/browse/trunk/COPYING
+
+Includes the XPages Extension Library code from IBM under Apache License 2.0
+  (c) Copyright IBM Corp. 2010, 2015
+  Details: Extlib-LICENSE and ExtLib-NOTICE
