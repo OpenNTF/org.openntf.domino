@@ -10,6 +10,7 @@
 	<name>OpenNTF Domino API</name>
 	<description>The drop-in replacement for the IBM-supported lotus.domino API</description>
 	<packaging>eclipse-plugin</packaging>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -18,7 +19,6 @@
 				<executions>
 					<execution>
 						<id>generate-javadoc</id>
-						<!-- <phase>package</phase> -->
 						<goals>
 							<goal>jar</goal>
 						</goals>

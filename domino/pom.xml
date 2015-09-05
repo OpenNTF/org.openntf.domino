@@ -25,6 +25,7 @@
 		</repository>
 	</repositories>
 
+	<!-- See also profile-triggered module sets below -->
 	<modules>
 		<module>com.ibm.domino.das</module>
 		<module>externals</module>
@@ -36,7 +37,6 @@
 		<!--<module>tests</module>-->
 		<module>org.openntf.domino.feature</module>
 		<module>org.openntf.domino.updatesite</module>
-		<module>oda-dist</module>
 	</modules>
 
 	<build>
@@ -170,6 +170,9 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.9</version>
 					<configuration>
+						<!-- Activated by profile below -->
+						<skip>true</skip>
+					
 						<failOnError>false</failOnError>
 						<excludePackageNames>com.sun.*:com.ibm.commons.*:com.ibm.sbt.core.*:com.ibm.sbt.plugin.*:com.ibm.sbt.jslibrray.*:com.ibm.sbt.proxy.*:com.ibm.sbt.security.*:*.util.*:com.ibm.sbt.portlet.*:com.ibm.sbt.playground.*:demo.*:acme.*</excludePackageNames>
 
@@ -264,5 +267,40 @@
 		</site>
 	</distributionManagement>
 
-
+	<profiles>
+		<profile>
+			<id>distribution</id>
+			
+			<modules>
+				<module>com.ibm.domino.das</module>
+				<module>externals</module>
+				<module>formula</module>
+				<module>core</module>
+				<module>xsp</module>
+				<module>rest</module>
+				<module>junit4xpages</module>
+				<!--<module>tests</module>-->
+				<module>org.openntf.domino.feature</module>
+				<module>org.openntf.domino.updatesite</module>
+				<module>oda-dist</module>
+			</modules>
+			
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<!-- javadoc configuration -->
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.9</version>
+							<configuration>
+								<!-- Activated by profile below -->
+								<skip>false</skip>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
 </project>
