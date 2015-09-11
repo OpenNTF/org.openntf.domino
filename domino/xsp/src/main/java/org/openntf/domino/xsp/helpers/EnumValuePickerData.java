@@ -20,6 +20,7 @@ import org.openntf.domino.utils.DominoUtils;
  *         EnumValuePickerData for use with ValuePicker control<br/>
  *         NOTE: This has not been fully tested
  */
+// TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
 @SuppressWarnings("rawtypes")
 public class EnumValuePickerData extends MapValuePickerData {
 	@SuppressWarnings("unused")
@@ -89,7 +90,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 		if (sorted != null) {
 			return sorted;
 		}
-		ValueBinding vb = getValueBinding("sorted"); // $NON-NLS-1$
+		ValueBinding vb = getValueBinding("sorted");// $NON-NLS-1$
 		if (vb != null) {
 			Boolean b = (Boolean) vb.getValue(getFacesContext());
 			if (b != null) {
