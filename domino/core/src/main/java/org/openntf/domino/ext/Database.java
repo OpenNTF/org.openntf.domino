@@ -115,7 +115,7 @@ public interface Database extends Base {
 	 * 
 	 * @return DocumentCollection ready to have Documents merged into it
 	 */
-	public DocumentCollection createMergableDocumentCollection();
+	public DocumentCollection createMergeableDocumentCollection();
 
 	/**
 	 * Some core XPages controls require a database path in format server!!filePath. This method will extract the relevant components and
@@ -202,7 +202,8 @@ public interface Database extends Base {
 	 * search and sort options the developer wishes to apply.<br/>
 	 * <br/>
 	 * To make code clearer and easier to support, this overloaded method has been added taking a Set of
-	 * {@link org.openntf.domino.Database.FTDomainSearchOption} objects and a Set of {@link org.openntf.domino.Database.FTDomainSortOption}.<br/>
+	 * {@link org.openntf.domino.Database.FTDomainSearchOption} objects and a Set of {@link org.openntf.domino.Database.FTDomainSortOption}.
+	 * <br/>
 	 * <br/>
 	 * The current database must be a Domain Catalog
 	 * 
@@ -259,7 +260,8 @@ public interface Database extends Base {
 	 * @return a DocumentCollection containing the documents matching the search criteria
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt);
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final Set<FTSearchOption> otherOpt);
 
 	/**
 	 * The core {@link lotus.domino.Database.FTSearch} method takes an int worked out by adding the integer value for all the relevant
