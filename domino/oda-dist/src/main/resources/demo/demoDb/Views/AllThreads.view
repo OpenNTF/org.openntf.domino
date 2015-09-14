@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<view name='AllThreads' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.2'
+<view name='AllThreads' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.3'
  replicaid='80257B32007947B2' showinmenu='false' publicaccess='false' designerversion='8.5.3'
  unreadmarks='none' onopengoto='lastopened' onrefresh='displayindicator' headers='beveled'
  opencollapsed='false' showresponsehierarchy='true' showmargin='true' shrinkrows='false'
@@ -8,11 +8,11 @@
  boldunreadrows='false' evaluateactions='false' allownewdocuments='false'
  allowcustomizations='true' hidemarginborder='false' marginwidth='0px' marginbgcolor='white'
  uniquekeys='false' indexrefresh='manual' initialbuildrestricted='false' noemptycategories='false'>
-<noteinfo noteid='eaa' unid='AA450C521B8A60E580257B420041B071' sequence='13'>
+<noteinfo noteid='eaa' unid='AA450C521B8A60E580257B420041B071' sequence='19'>
 <created><datetime dst='true'>20130403T125730,09+01</datetime></created>
-<modified><datetime dst='true'>20140828T170338,46+01</datetime></modified>
-<revised><datetime dst='true'>20140828T170338,45+01</datetime></revised>
-<lastaccessed><datetime dst='true'>20140902T211637,57+01</datetime></lastaccessed>
+<modified><datetime dst='true'>20141008T150530,72+01</datetime></modified>
+<revised><datetime dst='true'>20141008T150530,71+01</datetime></revised>
+<lastaccessed><datetime>20141029T084350,82+00</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20130403T125730,26+01</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
 >SELECT ((Form = "Discussion"))</formula></code>

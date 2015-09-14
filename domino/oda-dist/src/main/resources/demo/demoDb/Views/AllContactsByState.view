@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <view name='AllContactsByState' xmlns='http://www.lotus.com/dxl' version='9.0'
- maintenanceversion='1.2' replicaid='80257B32007947B2' showinmenu='false'
+ maintenanceversion='1.3' replicaid='80257B32007947B2' showinmenu='false'
  publicaccess='false' designerversion='8.5.3' unreadmarks='none' onopengoto='lastopened'
  onrefresh='displayindicator' headers='beveled' opencollapsed='false' showresponsehierarchy='true'
  showmargin='true' shrinkrows='false' extendlastcolumn='false' showhierarchies='false'
@@ -8,14 +8,13 @@
  totalscolor='black' headerbgcolor='white' boldunreadrows='false' evaluateactions='false'
  allownewdocuments='false' allowcustomizations='true' hidemarginborder='false'
  marginwidth='0px' marginbgcolor='white' uniquekeys='false'>
-<noteinfo noteid='e96' unid='E9902AC0CCD2EB2380257B420041B06C' sequence='13'>
+<noteinfo noteid='e96' unid='E9902AC0CCD2EB2380257B420041B06C' sequence='19'>
 <created><datetime dst='true'>20130403T125730,04+01</datetime></created>
-<modified><datetime>20140318T090754,81+00</datetime></modified>
-<revised><datetime>20140318T090754,80+00</datetime></revised>
-<lastaccessed><datetime dst='true'>20140902T211720,40+01</datetime></lastaccessed>
+<modified><datetime dst='true'>20141008T150530,92+01</datetime></modified>
+<revised><datetime dst='true'>20141008T150530,91+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20150613T201856,36+01</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20130403T125730,16+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=admin/O=Intec-PW</name><name>CN=Paul Withers/O=Intec</name></updatedby>
-<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby><code event='selection'><formula
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
 >SELECT ((Form = "Contact"))</formula></code>
 <column sort='ascending' hidedetailrows='false' itemname='State' width='14.5000'
  resizable='true' separatemultiplevalues='true' sortnoaccent='false' sortnocase='true'
