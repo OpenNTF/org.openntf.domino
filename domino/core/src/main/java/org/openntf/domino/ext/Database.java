@@ -235,6 +235,28 @@ public interface Database extends Base {
 			final Set<FTDomainSearchOption> otherOpt, final int start, final int count, final String entryForm);
 
 	/**
+	 * FT domain search.
+	 * 
+	 * @param query
+	 *            the query
+	 * @param maxDocs
+	 *            the max docs
+	 * @param sortOpt
+	 *            the sort opt
+	 * @param otherOpt
+	 *            the other opt
+	 * @param start
+	 *            the start
+	 * @param count
+	 *            the count
+	 * @param entryForm
+	 *            the entry form
+	 * @return the document
+	 */
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final int otherOpt,
+			final int start, final int count, final String entryForm);
+
+	/**
 	 * The core {@link lotus.domino.Database.FTSearch} method takes an int worked out by adding the integer value for all the relevant
 	 * search and sort options the developer wishes to apply.<br/>
 	 * <br/>

@@ -830,28 +830,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start,
 			final int count, final String entryForm);
 
-	/**
-	 * FT domain search.
-	 * 
-	 * @param query
-	 *            the query
-	 * @param maxDocs
-	 *            the max docs
-	 * @param sortOpt
-	 *            the sort opt
-	 * @param otherOpt
-	 *            the other opt
-	 * @param start
-	 *            the start
-	 * @param count
-	 *            the count
-	 * @param entryForm
-	 *            the entry form
-	 * @return the document
-	 */
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start,
-			final int count, final String entryForm);
-
 	/*
 	 * (non-Javadoc)
 	 * 

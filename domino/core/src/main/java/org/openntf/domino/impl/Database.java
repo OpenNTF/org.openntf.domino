@@ -3203,8 +3203,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt,
-			final int start, final int count, final String entryForm) {
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
+			final int otherOpt, final int start, final int count, final String entryForm) {
 		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
 
