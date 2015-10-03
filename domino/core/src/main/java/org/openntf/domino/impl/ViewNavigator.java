@@ -33,8 +33,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-		org.openntf.domino.ViewNavigator {
+public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View>
+		implements org.openntf.domino.ViewNavigator {
 
 	private boolean forceJavaDates_ = false;
 	private int cacheSize_ = -1;
@@ -1213,7 +1213,7 @@ public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigat
 	}
 
 	@Override
-	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
+	protected void resurrect() {// should only happen if the delegate has been destroyed somehow.
 		try {
 			lotus.domino.ViewNavigator newDelegate = null;
 			lotus.domino.ViewEntry entry = null;
@@ -1473,7 +1473,12 @@ public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigat
 	}
 
 	void registerStartPosition() {
-		startingPosition_ = getCurrent().getPosition();
+		ViewEntry current = getCurrent();
+		if (current == null) {
+			startingPosition_ = "";
+		} else {
+			startingPosition_ = getCurrent().getPosition();
+		}
 	}
 
 	void setType(final Types type) {
