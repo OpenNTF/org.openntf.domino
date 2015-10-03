@@ -24,10 +24,10 @@
 		<moduleSet>
 			<useAllReactorProjects>true</useAllReactorProjects>
 			<includes>
-				<include>org.openntf.domino:org.openntf.domino:eclipse-plugin:1.5.0-SNAPSHOT</include>
-				<include>org.openntf.domino:org.openntf.domino.xsp:eclipse-plugin:1.5.0-SNAPSHOT</include>
-				<include>org.openntf.domino:org.openntf.formula:eclipse-plugin:1.5.0-SNAPSHOT</include>
-				<include>org.openntf.domino:org.openntf.domino.rest:eclipse-plugin:1.5.0-SNAPSHOT</include>
+				<include>org.openntf.domino:org.openntf.domino:eclipse-plugin</include>
+				<include>org.openntf.domino:org.openntf.domino.xsp:eclipse-plugin</include>
+				<include>org.openntf.domino:org.openntf.formula:eclipse-plugin</include>
+				<!-- <include>org.openntf.domino:org.openntf.domino.rest:eclipse-plugin</include>-->
 			</includes>
 			
 			<binaries>
