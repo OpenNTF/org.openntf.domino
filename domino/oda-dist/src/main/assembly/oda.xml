@@ -17,6 +17,14 @@
 			</includes>
 			<outputDirectory>.</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../..</directory>
+			<includes>
+				<include>LICENSE</include>
+				<include>NOTICE.md</include>
+				<include>README.md</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 	
 	<moduleSets>
@@ -52,15 +60,6 @@
 				<includeDependencies>false</includeDependencies>
 				<outputFileNameMapping>UpdateSite.zip</outputFileNameMapping>
 			</binaries>
-			
-			<sources>
-				<outputDirectory>.</outputDirectory>
-				<includeModuleDirectory>false</includeModuleDirectory>
-				<includes>
-					<include>LICENSE</include>
-					<include>NOTICE</include>
-				</includes>
-			</sources>
 		</moduleSet>
 		
 		
