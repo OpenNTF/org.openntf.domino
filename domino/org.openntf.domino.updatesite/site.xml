@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="OpenNTF Domino API">
+      OpenNTF Domino API
+   </description>
+   <feature url="features/org.openntf.domino.feature_2.0.0.qualifier.jar" id="org.openntf.domino.feature" version="2.0.0.qualifier">
+      <category name="OpenNTF Domino API"/>
+   </feature>
+   <category-def name="OpenNTF Domino API" label="OpenNTF Domino API"/>
+</site>

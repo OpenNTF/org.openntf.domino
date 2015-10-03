@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.openntf.domino</groupId>
+		<artifactId>domino</artifactId>
+		<version>2.0.0</version>
+	</parent>
+	<artifactId>com.ibm.domino.das</artifactId>
+	<version>9.0.1-SNAPSHOT</version>
+	
+	<packaging>eclipse-plugin</packaging>
+	
+	<repositories>
+		<repository>
+			<id>extlib</id>
+			<layout>p2</layout>
+			<url>${project.baseUri}../../ExtLib-901v00_14</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+	</build>
+</project>

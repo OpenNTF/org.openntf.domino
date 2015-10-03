@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view name='AllContacts' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.3'
+ replicaid='80257B32007947B2' showinmenu='false' publicaccess='false' designerversion='8.5.3'
+ unreadmarks='none' onopengoto='lastopened' onrefresh='displayindicator' headers='beveled'
+ opencollapsed='false' showresponsehierarchy='true' showmargin='true' shrinkrows='false'
+ extendlastcolumn='false' showhierarchies='false' unreadcolor='black' rowlinecount='1'
+ headerlinecount='1' rowspacing='1' bgcolor='white' totalscolor='black' headerbgcolor='white'
+ boldunreadrows='false' evaluateactions='false' allownewdocuments='false'
+ allowcustomizations='true' hidemarginborder='false' marginwidth='0px' marginbgcolor='white'
+ uniquekeys='false'>
+<noteinfo noteid='e92' unid='71D22F1ED3C9B59780257B420041B06B' sequence='18'>
+<created><datetime dst='true'>20130403T125730,03+01</datetime></created>
+<modified><datetime dst='true'>20141008T150530,96+01</datetime></modified>
+<revised><datetime dst='true'>20141008T150530,95+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20150819T085506,76+01</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130403T125730,13+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
+>SELECT ((Form = "Contact"))</formula></code>
+<column hidedetailrows='false' itemname='$0' width='4.5000' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='true' sortnocase='true' showaslinks='false'><columnheader
+ title='#'><font size='9pt' style='bold'/></columnheader><code event='value'><formula
+>@DocNumber</formula></code></column>
+<column hidedetailrows='false' itemname='Id' width='10' resizable='true' separatemultiplevalues='false'
+ sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='Id'><font size='9pt' style='bold'/></columnheader></column>
+<column sort='ascending' resort='both' hidedetailrows='false' itemname='FirstName'
+ width='10' resizable='true' separatemultiplevalues='false' sortnoaccent='false'
+ sortnocase='true' showaslinks='false'><columnheader title='First Name'><font
+ size='9pt' style='bold'/></columnheader></column>
+<column sort='ascending' resort='both' hidedetailrows='false' itemname='LastName'
+ width='12.6250' resizable='true' separatemultiplevalues='false' sortnoaccent='false'
+ sortnocase='true' showaslinks='false'><columnheader title='Last Name'><font
+ size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='EMail' width='16.6250' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='EMail'><font size='9pt' style='bold'/></columnheader></column>
+<column resort='descending' hidedetailrows='false' itemname='City' width='10'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='false' sortnocase='true'
+ showaslinks='false'><columnheader title='City'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='State' width='14.5000' resizable='true'
+ separatemultiplevalues='true' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='State'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='Created' width='14.2500' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='Created'><font size='9pt' style='bold'/></columnheader><code event='value'><formula
+>@Created</formula></code></column>
+<column resort='both' hidedetailrows='false' itemname='$10' width='27.5000'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='false' sortnocase='true'
+ showaslinks='false'><columnheader title='Name'><font size='9pt' style='bold'/></columnheader><code
+ event='value'><formula>FirstName+" "+LastName</formula></code></column>
+<item name='$SelQuery' sign='true'>
+<rawitemdata type='f'>
+gQYAAAAAif8TAAAAAAABAAcAQ29udGFjdAA=
+</rawitemdata></item></view>
+

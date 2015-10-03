@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view name='AllTypes' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.3'
+ replicaid='80257B32007947B2' showinmenu='false' publicaccess='false' designerversion='8.5.3'
+ unreadmarks='none' onopengoto='lastopened' onrefresh='refresh' headers='beveled'
+ opencollapsed='false' showresponsehierarchy='true' showmargin='true' shrinkrows='false'
+ extendlastcolumn='false' showhierarchies='false' unreadcolor='black' rowlinecount='1'
+ headerlinecount='1' rowspacing='1' bgcolor='white' totalscolor='black' headerbgcolor='white'
+ boldunreadrows='false' evaluateactions='false' allownewdocuments='false'
+ allowcustomizations='true' hidemarginborder='false' marginwidth='0px' marginbgcolor='white'
+ uniquekeys='false'>
+<noteinfo noteid='eba' unid='7FE5C4EDB7AD5D5180257B420041B075' sequence='19'>
+<created><datetime dst='true'>20130403T125730,13+01</datetime></created>
+<modified><datetime dst='true'>20141008T150530,56+01</datetime></modified>
+<revised><datetime dst='true'>20141008T150530,55+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20141008T150530,56+01</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130403T125730,34+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
+>SELECT ((Form = "AllTypes"))</formula></code>
+<actionbar bgcolor='#f0f0f0' bordercolor='black'>
+<actionbuttonstyle bgcolor='#f0f0f0'/><font size='9pt' color='system'/><border
+ style='solid' width='0px 0px 1px' color='system'/></actionbar>
+<column hidedetailrows='false' itemname='fldIcon' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'
+ showasicons='true'><columnheader title='fldIcon'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldText' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldText'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldNumber' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldNumber'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldDate' width='15.2500' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldDate'><font size='9pt' style='bold'/></columnheader><datetimeformat
+ show='date' date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminutesecond'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/><numberformat
+ format='general' punctuated='false' parens='false' percent='false' bytes='false'/></column>
+<column hidedetailrows='false' itemname='fldTime' width='14.7500' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldTime'><font size='9pt' style='bold'/></columnheader><datetimeformat
+ show='time' date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminutesecond'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/><numberformat
+ format='general' punctuated='false' parens='false' percent='false' bytes='false'/></column>
+<column hidedetailrows='false' itemname='fldDateTime' width='14.2500' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldDateTime'><font size='9pt' style='bold'/></columnheader><datetimeformat
+ show='datetime' date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminutesecond'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/></column>
+<column hidedetailrows='false' itemname='fldDateTimeRange' width='22.1250'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='false' sortnocase='true'
+ showaslinks='false'><columnheader title='FldDateTimeRange'><font size='9pt'
+ style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldDialogList' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldDialogList'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' listseparator='semicolon' itemname='fldText2'
+ width='20' resizable='true' separatemultiplevalues='false' sortnoaccent='false'
+ sortnocase='true' showaslinks='false'><columnheader title='FldText2'><font
+ size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldNumber2' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldNumber2'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldTime2' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldTime2'><font size='9pt' style='bold'/></columnheader><datetimeformat
+ show='time' date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminutesecond'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/><numberformat
+ format='general' punctuated='false' parens='false' percent='false' bytes='false'/></column>
+<column hidedetailrows='false' itemname='fldDate2' width='8.7500' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldDate2'><font size='9pt' style='bold'/></columnheader><datetimeformat
+ show='date' date='yearmonthday' fourdigityearfor21stcentury='true' time='hourminutesecond'
+ zone='never' dateformat='weekdaymonthdayyear' dayformat='twodigitday' monthformat='twodigitmonth'
+ yearformat='fourdigityear' weekdayformat='shortname' dateseparator1=' ' dateseparator2='/'
+ dateseparator3='/' timeseparator=':' preference='usersetting'/><numberformat
+ format='general' punctuated='false' parens='false' percent='false' bytes='false'/></column>
+<column hidedetailrows='false' itemname='fldDateTime2' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldDateTime2'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldDateTimeRange2' width='11.1250'
+ resizable='true' separatemultiplevalues='false' sortnoaccent='false' sortnocase='true'
+ showaslinks='false'><columnheader title='FldDateTimeRange2'><font size='9pt'
+ style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='fldDialogList2' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='FldDialogList2'><font size='9pt' style='bold'/></columnheader></column>
+<item name='$SelQuery' sign='true'>
+<rawitemdata type='f'>
+gQYAAAAAif8UAAAAAAABAAgAQWxsVHlwZXM=
+</rawitemdata></item></view>
+

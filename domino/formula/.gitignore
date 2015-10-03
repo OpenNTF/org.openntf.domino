@@ -1,0 +1,6 @@
+bin
+Snap*
+core*
+javacore*
+/OSGI-OPT
+/target

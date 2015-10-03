@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<view name='AllMeetings' xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.3'
+ replicaid='80257B32007947B2' showinmenu='false' publicaccess='false' designerversion='8.5.3'
+ unreadmarks='none' onopengoto='lastopened' onrefresh='displayindicator' headers='beveled'
+ opencollapsed='false' showresponsehierarchy='true' showmargin='true' shrinkrows='false'
+ extendlastcolumn='false' showhierarchies='false' unreadcolor='black' rowlinecount='1'
+ headerlinecount='1' rowspacing='1' bgcolor='white' totalscolor='black' headerbgcolor='white'
+ boldunreadrows='false' evaluateactions='false' allownewdocuments='false'
+ allowcustomizations='true' hidemarginborder='false' marginwidth='0px' marginbgcolor='white'
+ uniquekeys='false'>
+<noteinfo noteid='e9e' unid='ECFCA6304FC2684080257B420041B06E' sequence='18'>
+<created><datetime dst='true'>20130403T125730,06+01</datetime></created>
+<modified><datetime dst='true'>20141008T150530,84+01</datetime></modified>
+<revised><datetime dst='true'>20141008T150530,83+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20141008T150530,84+01</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20130403T125730,20+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='selection'><formula
+>SELECT ((Form = "Meeting"))</formula></code>
+<column hidedetailrows='false' itemname='Date' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='true' sortnocase='true' showaslinks='false'><columnheader
+ title='Date'><font size='9pt' style='bold'/></columnheader></column>
+<column hidedetailrows='false' itemname='Icon' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='Icon'><font size='9pt' style='bold'/></columnheader><code event='value'><formula
+>158</formula></code></column>
+<column hidedetailrows='false' itemname='SametimeInfo' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='SametimeInfo'><font size='9pt' style='bold'/></columnheader><code
+ event='value'><formula>@Name([CN]; @Author)</formula></code></column>
+<column hidedetailrows='false' itemname='For' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='For'><font size='9pt' style='bold'/></columnheader><code event='value'><formula
+>Subject</formula></code></column>
+<column hidedetailrows='false' itemname='$UpdatedBy' width='10' resizable='true'
+ separatemultiplevalues='false' sortnoaccent='false' sortnocase='true' showaslinks='false'><columnheader
+ title='Author'><font size='9pt' style='bold'/></columnheader></column>
+<item name='$SelQuery' sign='true'>
+<rawitemdata type='f'>
+gQYAAAAAif8TAAAAAAABAAcATWVldGluZwA=
+</rawitemdata></item></view>
+
