@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="9b8e" sequence="23" unid="E297926F9547EE0680257BE30045A607">
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.3" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="9b8e" sequence="48" unid="E297926F9547EE0680257BE30045A607">
 <created><datetime dst="true">20130911T134044,87+01</datetime></created>
-<modified><datetime>20131121T135632,37+00</datetime></modified>
-<revised><datetime>20131121T135632,36+00</datetime></revised>
-<lastaccessed><datetime>20131121T135632,37+00</datetime></lastaccessed>
+<modified><datetime dst="true">20141008T150546,13+01</datetime></modified>
+<revised><datetime dst="true">20141008T150546,12+01</datetime></revised>
+<lastaccessed><datetime dst="true">20141008T150546,13+01</datetime></lastaccessed>
 <addedtofile><datetime>20131121T135615,71+00</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
-<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
 <item name="$Flags"><text>gC~4K</text></item>
 <item name="$TITLE"><text>OpenLogBean.xsp</text></item>
 

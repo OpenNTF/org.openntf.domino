@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="9dd6" sequence="10" unid="6C471D9F98BDFB0B80257D4A0037C490">
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.3" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="9dd6" sequence="28" unid="6C471D9F98BDFB0B80257D4A0037C490">
 <created><datetime dst="true">20140905T110908,00+01</datetime></created>
-<modified><datetime dst="true">20140905T120024,12+01</datetime></modified>
-<revised><datetime dst="true">20140905T120024,11+01</datetime></revised>
-<lastaccessed><datetime dst="true">20140905T120024,12+01</datetime></lastaccessed>
+<modified><datetime dst="true">20141008T150550,61+01</datetime></modified>
+<revised><datetime dst="true">20141008T150550,60+01</datetime></revised>
+<lastaccessed><datetime dst="true">20141008T150550,61+01</datetime></lastaccessed>
 <addedtofile><datetime dst="true">20140905T110908,03+01</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
-<wassignedby><name>CN=Paul Withers/O=Intec</name></wassignedby>
 <item name="$Flags"><text>gC~4K</text></item>
 <item name="$TITLE" sign="true"><text>Database_MetaReplicaID.xsp</text></item>
+
+
+<item name="$FileNames" sign="true"><text>Database_MetaReplicaID.xsp</text></item>
 <item name="$DesignerVersion"><text>8.5</text></item>
 
 
 
-
-
-<item name="$FileNames" sign="true"><text>Database_MetaReplicaID.xsp</text></item>
 
 </note>

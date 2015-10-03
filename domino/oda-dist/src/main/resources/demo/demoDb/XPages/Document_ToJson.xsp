@@ -21,8 +21,8 @@
 					<xp:button value="Run Java Tests" id="button2"
 						xp:key="javaButton">
 						<xp:eventHandler event="onclick" submit="true"
-							refreshMode="partial" refreshId="JavaDiv">
-							<xp:this.action><![CDATA[#{javascript:openNTFDocumentBean.getDocAsJson()}]]></xp:this.action>
+							refreshMode="complete">
+							<xp:this.action><![CDATA[#{javascript:print("Running");openNTFDocumentBean.getDocAsJson()}]]></xp:this.action>
 						</xp:eventHandler>
 					</xp:button>
 					<xp:button value="Run SSJS Tests" id="button1"

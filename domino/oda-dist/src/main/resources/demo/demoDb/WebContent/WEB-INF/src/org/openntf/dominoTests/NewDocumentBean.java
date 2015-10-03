@@ -30,6 +30,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
@@ -274,13 +275,15 @@ public class NewDocumentBean implements Serializable {
 
 	public void getDocAsJson() {
 		try {
-			Session s = Factory.getSession();
+			System.out.println("Here");
+			Session s = Factory.getSession(SessionType.CURRENT);
 			Database currDb = s.getCurrentDatabase();
 			View contacts = currDb.getView("AllContacts");
-			Document doc = contacts.getFirstDocument();
+			Document doc = contacts.getNthDocument(65);
+			System.out.println(" Doc is " + doc.toJson(true));
 			ExtLibUtil.getViewScope().put("javaTest", doc.toJson(true));
 		} catch (Throwable t) {
-
+			t.printStackTrace();
 		}
 	}
 }

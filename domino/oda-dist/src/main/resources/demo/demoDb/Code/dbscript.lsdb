@@ -1,14 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
-<databasescript xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.2'
+<databasescript xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.3'
  replicaid='80257B32007947B2' designerversion='8.5.3'>
-<noteinfo noteid='9b32' unid='B7A10458ECFDBFEE80257BD4006FA7AD' sequence='9'>
+<noteinfo noteid='9b32' unid='B7A10458ECFDBFEE80257BD4006FA7AD' sequence='15'>
 <created><datetime dst='true'>20130827T211934,21+01</datetime></created>
-<modified><datetime>20131121T135615,62+00</datetime></modified>
-<revised><datetime>20131121T135615,61+00</datetime></revised>
-<lastaccessed><datetime>20131121T135615,62+00</datetime></lastaccessed>
+<modified><datetime dst='true'>20141008T150532,62+01</datetime></modified>
+<revised><datetime dst='true'>20141008T150532,61+01</datetime></revised>
+<lastaccessed><datetime dst='true'>20141008T150532,62+01</datetime></lastaccessed>
 <addedtofile><datetime dst='true'>20130827T211934,24+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=admin/O=Intec-PW</name></updatedby>
-<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby><code event='options'><lotusscript
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby><code event='options'><lotusscript
 >%REM
 	Database Script Database Script
 	Created Aug 27, 2013 by admin/Intec-PW

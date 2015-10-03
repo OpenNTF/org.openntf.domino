@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="991a" sequence="233" unid="EB754AAFE4368C6780257B4A0037EAFE">
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.3" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="991a" sequence="268" unid="EB754AAFE4368C6780257B4A0037EAFE">
 <created><datetime dst="true">20130411T111046,38+01</datetime></created>
-<modified><datetime dst="true">20130825T215405,41+01</datetime></modified>
-<revised><datetime dst="true">20130825T215405,40+01</datetime></revised>
-<lastaccessed><datetime dst="true">20130825T215405,41+01</datetime></lastaccessed>
+<modified><datetime dst="true">20141008T150550,53+01</datetime></modified>
+<revised><datetime dst="true">20141008T150550,52+01</datetime></revised>
+<lastaccessed><datetime dst="true">20141008T150550,53+01</datetime></lastaccessed>
 <addedtofile><datetime dst="true">20130411T111046,40+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=admin/O=Intec-PW</name><name>CN=Paul Withers/O=Intec</name><name>CN=admin/O=Intec-PW</name><name>CN=Paul Withers/O=Intec</name><name>CN=admin/O=Intec-PW</name></updatedby>
-<wassignedby><name>CN=admin/O=Intec-PW</name></wassignedby>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
 <item name="$Flags"><text>gC~4K</text></item>
 <item name="$TITLE" sign="true"><text>DateTime.xsp</text></item>
 
 
-
+<item name="$FileNames" sign="true"><text>DateTime.xsp</text></item>
 <item name="$DesignerVersion"><text>8.5</text></item>
 
 
-<item name="$FileNames" sign="true"><text>DateTime.xsp</text></item>
+
 
 </note>

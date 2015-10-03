@@ -29,7 +29,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface Database.
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
+		Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 
 	/**
 	 * Enum to allow easy access to Schema
@@ -179,12 +179,14 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	 * 
 	 * @since org.openntf.domino 1.0.0
 	 */
+	// TODO: Remove OPTIMIZAION for 3.0
 	public static enum DBOption {
 		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED),
 		MOREFIELDS(Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS),
 		NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(Database.DBOPT_NORESPONSEINFO),
 		NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), NOUNREAD(Database.DBOPT_NOUNREAD),
-		OPTIMIZAION(Database.DBOPT_OPTIMIZATION), REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY),
+		OPTIMIZAION(Database.DBOPT_OPTIMIZATION), OPTIMIZATION(Database.DBOPT_OPTIMIZATION),
+		REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY),
 		REPLICATEUNREADMARKSTOCLUSTER(Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER),
 		REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), SOFTDELETE(Database.DBOPT_SOFTDELETE),
 		COMPRESSDESIGN(Database.DBOPT_COMPRESSDESIGN), COMPRESSDOCUMENTS(Database.DBOPT_COMPRESSDOCUMENTS),
@@ -231,24 +233,15 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	public static enum SignDocType {
 
 		/** The acl. */
-		ACL(Database.DBSIGN_DOC_ACL),
-		/** The agent. */
-		AGENT(Database.DBSIGN_DOC_AGENT),
-		/** The all. */
-		ALL(Database.DBSIGN_DOC_ALL),
-		/** The data. */
-		DATA(Database.DBSIGN_DOC_DATA),
-		/** The form. */
-		FORM(Database.DBSIGN_DOC_FORM),
-		/** The help. */
-		HELP(Database.DBSIGN_DOC_HELP),
-		/** The icon. */
-		ICON(Database.DBSIGN_DOC_ICON),
-		/** The replformula. */
-		REPLFORMULA(Database.DBSIGN_DOC_REPLFORMULA),
-		/** The sharedfield. */
-		SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD),
-		/** The view. */
+		ACL(Database.DBSIGN_DOC_ACL), /** The agent. */
+		AGENT(Database.DBSIGN_DOC_AGENT), /** The all. */
+		ALL(Database.DBSIGN_DOC_ALL), /** The data. */
+		DATA(Database.DBSIGN_DOC_DATA), /** The form. */
+		FORM(Database.DBSIGN_DOC_FORM), /** The help. */
+		HELP(Database.DBSIGN_DOC_HELP), /** The icon. */
+		ICON(Database.DBSIGN_DOC_ICON), /** The replformula. */
+		REPLFORMULA(Database.DBSIGN_DOC_REPLFORMULA), /** The sharedfield. */
+		SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD), /** The view. */
 		VIEW(Database.DBSIGN_DOC_VIEW);
 
 		/** The value_. */
@@ -835,28 +828,6 @@ Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 	@Override
 	@Deprecated
 	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start,
-			final int count, final String entryForm);
-
-	/**
-	 * FT domain search.
-	 * 
-	 * @param query
-	 *            the query
-	 * @param maxDocs
-	 *            the max docs
-	 * @param sortOpt
-	 *            the sort opt
-	 * @param otherOpt
-	 *            the other opt
-	 * @param start
-	 *            the start
-	 * @param count
-	 *            the count
-	 * @param entryForm
-	 *            the entry form
-	 * @return the document
-	 */
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start,
 			final int count, final String entryForm);
 
 	/*

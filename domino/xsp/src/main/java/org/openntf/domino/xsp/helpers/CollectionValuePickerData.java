@@ -16,6 +16,7 @@ import javax.faces.el.ValueBinding;
  * 
  *         CollectionValuePickerData, for use with ValuePicker control
  */
+// TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
 @SuppressWarnings("rawtypes")
 public class CollectionValuePickerData extends MapValuePickerData {
 	//private static final Logger log_ = Logger.getLogger(CollectionValuePickerData.class.getName());

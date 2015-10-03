@@ -55,6 +55,7 @@ public class SessionsByTrack implements Runnable {
 				System.out.println("Outputting sessions ordered by ID for " + track.getKey());
 
 				Track dev = graph.getFramedGraph().getVertex(track.getValue(), Track.class);
+				System.out.println(dev.getDescription());
 				Iterable<Presentation> presentations = dev.getIncludesSessions();
 				Ordering<DVertexFrame> ord = Ordering.from(new DVertexFrameComparator("SessionID"));
 				List<Presentation> presOrdered = ord.sortedCopy(presentations);
