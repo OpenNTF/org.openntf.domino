@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino REST Service plugin
 Bundle-SymbolicName: org.openntf.domino.rest;singleton:=true
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 2.0.1.qualifier
 Bundle-Activator: org.openntf.domino.rest.Activator
 Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -18,7 +18,7 @@ Require-Bundle: com.ibm.domino.commons;bundle-version="9.0.1",
  com.ibm.domino.das;bundle-version="9.0.1",
  com.ibm.domino.services;bundle-version="9.0.1",
  com.ibm.wink;bundle-version="9.0.1",
- org.openntf.domino.xsp;bundle-version="1.5.0";resolution:=optional,
+ org.openntf.domino.xsp;bundle-version="2.0.0";resolution:=optional,
  com.ibm.commons;bundle-version="9.0.1",
  com.ibm.notes.java.api;resolution:=optional
 Export-Package: org.openntf.domino.rest,

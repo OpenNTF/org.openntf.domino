@@ -28,6 +28,7 @@ import com.ibm.xsp.extlib.component.picker.data.SimplePickerResult;
  * 
  *         MapValuePickerData, for use with the ValuePicker control
  */
+// TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
 public class MapValuePickerData extends ValueBindingObjectImpl implements IValuePickerData, Serializable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(MapValuePickerData.class.getName());
@@ -187,7 +188,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		if (caseInsensitive != null) {
 			return caseInsensitive;
 		}
-		ValueBinding vb = getValueBinding("caseInsensitive"); // $NON-NLS-1$
+		ValueBinding vb = getValueBinding("caseInsensitive");// $NON-NLS-1$
 		if (vb != null) {
 			Boolean b = (Boolean) vb.getValue(getFacesContext());
 			if (b != null) {

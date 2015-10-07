@@ -43,16 +43,34 @@
 						<xp:button value="Run Java Test" id="button2">
 							<xp:eventHandler event="onclick" submit="true"
 								refreshMode="partial" refreshId="JavaDiv"
-								action="#{javascript:org.openntf.dominoTests.Utils.runXotsTasklet()}">
+								action="#{javascript:org.openntf.dominoTests.XotsTests.testSessionPassing()}">
 							</xp:eventHandler>
 						</xp:button>
 						<xp:br></xp:br>
 						<xp:text escape="true" id="computedField3"
-							value="Latest Message: #{applicationScope.MessageFromXots}">
+							value="User is: #{viewScope.MessageFromXots}">
 						</xp:text>
 						<xp:br></xp:br>
-						<xp:text escape="true" id="computedField4"
-							value="Constructor Message: #{applicationScope.MessageFromXotsConstructor}">
+						<xp:button value="Run XOTS Background" id="button4">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="JavaDiv"
+								action="#{javascript:org.openntf.dominoTests.XotsTests.testBackground()}">
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xp:text escape="false" id="computedField5"
+							value="#{sessionScope.javaXotsOutput}">
+						</xp:text>
+						<xp:br></xp:br>
+						<xp:button value="Run Java Test Thread" id="button3">
+							<xp:eventHandler event="onclick" submit="true"
+								refreshMode="partial" refreshId="JavaDiv"
+								action="#{javascript:org.openntf.dominoTests.XotsTests.testThread()}">
+							</xp:eventHandler>
+						</xp:button>
+						<xp:br></xp:br>
+						<xp:text escape="false" id="computedField4"
+							value="#{viewScope.MessageFromIterableXots}">
 						</xp:text>
 					</xp:panel>
 				</xp:this.facets>

@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.2" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="146a" sequence="80" unid="4ED5E85EFF36AA6280257B420043DE05">
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.3" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="146a" sequence="106" unid="4ED5E85EFF36AA6280257B420043DE05">
 <created><datetime dst="true">20130403T132117,49+01</datetime></created>
-<modified><datetime>20140317T104039,28+00</datetime></modified>
-<revised><datetime>20140317T104039,27+00</datetime></revised>
-<lastaccessed><datetime>20140317T104039,28+00</datetime></lastaccessed>
+<modified><datetime dst="true">20141008T150551,01+01</datetime></modified>
+<revised><datetime dst="true">20141008T150551,00+01</datetime></revised>
+<lastaccessed><datetime dst="true">20141008T150551,01+01</datetime></lastaccessed>
 <addedtofile><datetime dst="true">20130403T132117,50+01</datetime></addedtofile></noteinfo>
 <updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
-<wassignedby><name>CN=Paul Withers/O=Intec</name></wassignedby>
 <item name="$Flags"><text>gC~4K</text></item>
 <item name="$TITLE" sign="true"><text>Admin_Home.xsp</text></item>
 

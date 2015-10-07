@@ -24,7 +24,7 @@ import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> implements org.openntf.domino.DocumentList {
+public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection>implements org.openntf.domino.DocumentList {
 	protected int realNidLength_;
 	/*TODO 
 	 * NTF for maximum performance, we really should track the length
@@ -288,7 +288,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 
 	@Override
 	public void addDocument(final lotus.domino.Document doc, final boolean checkDups) {
-		addDocument(doc);	//NTF - only the IIOP stuff actually supports dups in DocumentCollections anyway
+		addDocument(doc);//NTF - only the IIOP stuff actually supports dups in DocumentCollections anyway
 	}
 
 	@Override
@@ -850,7 +850,7 @@ public class DocumentList extends BaseImpl<lotus.domino.DocumentCollection> impl
 			return new DocumentIterator(this);
 		} else {
 			org.openntf.domino.Database db = getParentDatabase();
-			org.openntf.domino.DocumentCollection mergeColl = db.createMergableDocumentCollection();
+			org.openntf.domino.DocumentCollection mergeColl = db.createMergeableDocumentCollection();
 			for (int nid : getNids()) {
 				mergeColl.merge(nid);
 			}

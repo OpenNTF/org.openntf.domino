@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.1" replicaid="C1257D8D0067D40B" version="9.0" xmlns="http://www.lotus.com/dxl">
-<noteinfo noteid="1c2" sequence="7" unid="ABD45117D4FA95B5C1257D8D0067D97E">
-<created><datetime>20141111T195418,86+01</datetime></created>
-<modified><datetime>20141111T195442,20+01</datetime></modified>
-<revised><datetime>20141111T195442,19+01</datetime></revised>
-<lastaccessed><datetime>20141111T195442,19+01</datetime></lastaccessed>
-<addedtofile><datetime>20141111T195419,43+01</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Roland Praml/OU=01/OU=int/O=FOCONIS</name></updatedby>
-<wassignedby><name>CN=Roland Praml/OU=01/OU=int/O=FOCONIS</name></wassignedby>
+<?xml version="1.0" encoding="UTF-8"?><note class="form" maintenanceversion="1.3" replicaid="80257B32007947B2" version="9.0" xmlns="http://www.lotus.com/dxl">
+<noteinfo noteid="9e6e" sequence="23" unid="22A916E64A246E1C80257D5B00769192">
+<created><datetime dst="true">20140922T223505,14+01</datetime></created>
+<modified><datetime dst="true">20141008T150546,85+01</datetime></modified>
+<revised><datetime dst="true">20141008T150546,84+01</datetime></revised>
+<lastaccessed><datetime dst="true">20141008T150546,85+01</datetime></lastaccessed>
+<addedtofile><datetime dst="true">20141008T150533,01+01</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Paul Withers/O=Intec</name></updatedby>
 <item name="$Flags"><text>gC~4K</text></item>
 <item name="$TITLE" sign="true"><text>Misc_OtherSessions.xsp</text></item>
 
