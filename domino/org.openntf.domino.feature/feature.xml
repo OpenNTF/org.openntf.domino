@@ -190,7 +190,7 @@
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
+   <!--<plugin
          id="org.openntf.domino.rest"
          download-size="0"
          install-size="0"
@@ -209,6 +209,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
+         unpack="false"/>-->
 
 </feature>
