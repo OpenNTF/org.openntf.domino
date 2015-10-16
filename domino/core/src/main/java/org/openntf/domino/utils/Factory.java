@@ -1199,7 +1199,6 @@ public enum Factory {
 		} finally {
 			tv.clear();
 			threadVariables_.set(null);
-			System.gc();
 		}
 		if (counters != null) {
 			System.out.println(dumpCounters(true));

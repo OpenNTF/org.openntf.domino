@@ -47,7 +47,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	 */
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		if (implicitsDone_) {
+		if (!implicitsDone_) {
 			implicitsDone_ = true;
 			if (!ODAPlatform.isAPIEnabled(null))
 				return;
