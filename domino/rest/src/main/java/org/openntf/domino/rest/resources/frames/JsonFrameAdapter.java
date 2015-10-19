@@ -2,6 +2,7 @@ package org.openntf.domino.rest.resources.frames;
 
 import com.ibm.commons.util.io.json.JsonObject;
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
@@ -19,6 +20,7 @@ import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DEdge;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DVertexList;
@@ -215,6 +217,12 @@ public class JsonFrameAdapter implements JsonObject {
 			result.add("@in");
 			result.add("@out");
 		}
+		if (frame instanceof ViewVertex.Contains) {
+			Edge edge = ((ViewVertex.Contains) frame).asEdge();
+			if (edge instanceof DEdge) {
+				result.addAll(((DEdge) edge).getDelegate().keySet());
+			}
+		}
 		return result.iterator();
 	}
 
@@ -333,8 +341,13 @@ public class JsonFrameAdapter implements JsonObject {
 				if (crystal != null) {
 					try {
 						result = crystal.invoke(frame, (Object[]) null);
+						// System.out.println("Invoked " + crystal.getName() +
+						// " against an object of type "
+						// + frame.getClass().getName() + ". Result is a " +
+						// result.getClass().getName());
+
 						if (getIncludeVertices()) {
-							// System.out.println("TEMP DEBUG: Turning EdgeList into VertexList");
+							System.out.println("TEMP DEBUG: Turning EdgeList into VertexList");
 							if (result instanceof DEdgeList) {
 								result = ((DEdgeList) result).toVertexList();
 
@@ -397,7 +410,8 @@ public class JsonFrameAdapter implements JsonObject {
 								if (result instanceof FramedEdgeList) {
 									result = ((FramedEdgeList<?>) result).subList(getStart(), getStart() + getCount());
 								} else if (result instanceof FramedVertexList) {
-									result = ((FramedVertexList<?>) result).subList(getStart(), getStart() + getCount());
+									result = ((FramedVertexList<?>) result)
+											.subList(getStart(), getStart() + getCount());
 								}
 							} else {
 								if (result instanceof FramedEdgeList) {
@@ -409,6 +423,14 @@ public class JsonFrameAdapter implements JsonObject {
 								}
 							}
 						}
+						// if (result instanceof List) {
+						// System.out.println("Result is a " +
+						// result.getClass().getName() + " with "
+						// + ((List) result).size() + " elements");
+						// } else {
+						// System.out.println("Result is a " +
+						// result.getClass().getName());
+						// }
 						if (result instanceof FramedVertexList) {
 							ParamMap listMap = new ParamMap();
 							if (getIncludeEdges()) {
@@ -433,10 +455,17 @@ public class JsonFrameAdapter implements JsonObject {
 							result = ((EdgeFrame) frame).asEdge().getProperty(paramKey);
 						} else if (frame instanceof VertexFrame) {
 							result = ((VertexFrame) frame).asVertex().getProperty(paramKey);
+						} else {
+							System.err.println("Trying to get property " + paramKey + " from an object "
+									+ frame.getClass().getName());
 						}
 					}
 				} else {
-					System.err.println("No method found for key " + paramKey);
+					if (frame instanceof ViewVertex.Contains) {
+						result = ((EdgeFrame) frame).asEdge().getProperty(paramKey);
+					} else {
+						System.err.println("No method found for key " + paramKey);
+					}
 				}
 			}
 		} else {

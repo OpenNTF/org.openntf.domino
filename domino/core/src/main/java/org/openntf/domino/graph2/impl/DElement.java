@@ -128,7 +128,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 		} else {
 			if (result != null && !type.isAssignableFrom(result.getClass())) {
-				System.out.println(propertyName + " returned a " + result.getClass().getName() + " when we asked for a " + type.getName());
+				//				System.out.println(propertyName + " returned a " + result.getClass().getName() + " when we asked for a " + type.getName());
 
 				try {
 					Map<String, Object> delegate = getDelegate();
@@ -300,14 +300,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public Class<?> getDelegateType() {
 		if (delegate_ == null) {
-			if (delegateKey_ instanceof NoteCoordinate) {
+			if (delegateKey_ instanceof ViewEntryCoordinate) {
+				return org.openntf.domino.ViewEntry.class;
+			} else if (delegateKey_ instanceof NoteCoordinate) {
 				if (((NoteCoordinate) delegateKey_).isView()) {
 					return org.openntf.domino.View.class;
 				} else {
 					return org.openntf.domino.Document.class;
 				}
-			} else if (delegateKey_ instanceof ViewEntryCoordinate) {
-				return org.openntf.domino.ViewEntry.class;
 			} else {
 				return null;
 			}
@@ -317,6 +317,10 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			} else if (delegate_ instanceof View) {
 				return org.openntf.domino.View.class;
 			} else if (delegate_ instanceof Document) {
+				if (delegateKey_ instanceof NoteCoordinate) {
+					if (((NoteCoordinate) delegateKey_).isView())
+						return org.openntf.domino.View.class;
+				}
 				return org.openntf.domino.Document.class;
 			} else {
 				return delegate_.getClass();

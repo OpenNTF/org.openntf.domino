@@ -9,6 +9,7 @@ import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
 import org.openntf.domino.types.CaseInsensitiveString;
@@ -27,21 +28,21 @@ import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
 
-	public class FramedElementIterable<K> implements Iterable<K> {
-		protected final Class<K> kind;
+	public class FramedElementIterable<T> implements Iterable<T> {
+		protected final Class<T> kind;
 		protected final Iterable<Element> iterable;
 		protected final DFramedTransactionalGraph<? extends Graph> framedGraph;
 
 		public FramedElementIterable(final DFramedTransactionalGraph<? extends Graph> framedGraph, final Iterable<Element> iterable,
-				final Class<K> kind) {
+				final Class<T> kind) {
 			this.framedGraph = framedGraph;
 			this.iterable = iterable;
 			this.kind = kind;
 		}
 
 		@Override
-		public Iterator<K> iterator() {
-			return new Iterator<K>() {
+		public Iterator<T> iterator() {
+			return new Iterator<T>() {
 				private Iterator<Element> iterator = iterable.iterator();
 
 				@Override
@@ -55,7 +56,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				}
 
 				@Override
-				public K next() {
+				public T next() {
 					return framedGraph.frame(this.iterator.next(), kind);
 				}
 			};
@@ -342,7 +343,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	//		return frame(vertex, kind);
 	//	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <F> Iterable<F> frameElements(final Iterable<Element> elements, final Class<F> kind) {
 		Iterator<Element> it = elements.iterator();
 		if (it.hasNext()) {
@@ -358,37 +358,36 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return new FramedElementIterable(this, elements, kind);
 	}
 
-	@SuppressWarnings("unchecked")
 	public <F> F frame(final Element element, final Class<F> kind) {
-		Class<F> klazz = kind;
-		DConfiguration config = (DConfiguration) this.getConfig();
-		config.getTypeManager().initElement(klazz, this, element);
-		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
-			if (!(initializer instanceof JavaFrameInitializer)) {
-				initializer.initElement(klazz, this, element);
-			}
-		}
+		//		Class<F> klazz = kind;
+		//		DConfiguration config = (DConfiguration) this.getConfig();
+		//		config.getTypeManager().initElement(klazz, this, element);
+		//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+		//			if (!(initializer instanceof JavaFrameInitializer)) {
+		//				initializer.initElement(klazz, this, element);
+		//			}
+		//		}
+		@SuppressWarnings("deprecation")
 		F result = null;
 		if (element instanceof Edge) {
-			klazz = (Class<F>) (klazz == null ? DEdgeFrame.class : kind);
-			result = frame((Edge) element, klazz);
+			//			klazz = (Class<F>) (klazz == null ? DEdgeFrame.class : kind);
+			result = frame((Edge) element, kind);
 		} else if (element instanceof Vertex) {
-			klazz = (Class<F>) (klazz == null ? DVertexFrame.class : kind);
-			result = frame((Vertex) element, klazz);
+			//			klazz = (Class<F>) (klazz == null ? DVertexFrame.class : kind);
+			result = frame((Vertex) element, kind);
 		} else {
 			throw new IllegalStateException("Cannot frame an element of type " + element.getClass().getName());
 		}
-		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
-			if (initializer instanceof JavaFrameInitializer) {
-				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
-			}
-		}
+		//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
+		//			if (initializer instanceof JavaFrameInitializer) {
+		//				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
+		//			}
+		//		}
 		return result;
 	}
 
 	@Override
 	public <F> F frame(final Edge edge, final Class<F> kind) {
-		@SuppressWarnings("unchecked")
 		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
@@ -410,7 +409,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	@Override
 	@Deprecated
 	public <F> F frame(final Edge edge, final Direction direction, final Class<F> kind) {
-		@SuppressWarnings("unchecked")
 		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
@@ -429,8 +427,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	@Override
-	public <F> F frame(final Vertex vertex, final Class<F> kind) {
-		@SuppressWarnings("unchecked")
+	public <F> F frame(final Vertex vertex, Class<F> kind) {
+		boolean isView = "1".equals(((DVertex) vertex).getProperty("$FormulaClass", String.class));
+		if (isView) {
+			kind = (Class<F>) ViewVertex.class;
+		}
 		Class<F> klazz = (Class<F>) (kind == null ? DVertexFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		DTypeManager manager = config.getTypeManager();
@@ -448,6 +449,15 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
 			}
 		}
+		//		if (isView) {
+		//			StringBuilder sb = new StringBuilder();
+		//			Class<?>[] interfaces = result.getClass().getInterfaces();
+		//			for (Class<?> inter : interfaces) {
+		//				sb.append(inter.getName());
+		//				sb.append(", ");
+		//			}
+		//			System.out.println("Requested a " + klazz.getName() + " and resulted in a [" + sb.toString() + "]");
+		//		}
 		return result;
 	}
 

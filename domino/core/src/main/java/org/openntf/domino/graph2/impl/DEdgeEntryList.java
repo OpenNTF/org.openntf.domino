@@ -25,18 +25,29 @@ public class DEdgeEntryList implements DEdgeList {
 			delegate_ = iterator;
 			source_ = source;
 			store_ = store;
+			//			System.out.println("TEMP DEBUG Creating a DEdgeEntryListIterator from a " + iterator.getClass().getName());
 		}
 
 		@Override
 		public boolean hasNext() {
-			return delegate_.hasNext();
+			boolean result = delegate_.hasNext();
+			//			System.out.println("TEMP DEBUG hasNext resulted in a " + String.valueOf(result));
+			return result;
 		}
 
 		@Override
 		public Edge next() {
-			DEntryEdge result = (DEntryEdge) store_.getEdge(delegate_.next());
-			result.setInVertex(source_);
-			return result;
+			DEntryEdge result = null;
+			ViewEntryCoordinate vec = delegate_.next();
+			Edge edge = store_.getEdge(vec);
+			if (edge instanceof DEntryEdge) {
+				result = (DEntryEdge) edge;
+				result.setInVertex(source_);
+				//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
+				return result;
+			} else {
+				throw new IllegalStateException("ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+			}
 		}
 
 		@Override
@@ -95,15 +106,16 @@ public class DEdgeEntryList implements DEdgeList {
 	}
 
 	protected void initEntryList() {
+		ViewNavigator nav = null;
 		if (source_.getDelegateType().equals(org.openntf.domino.View.class)) {
-			ViewNavigator nav = ((org.openntf.domino.View) source_.getDelegate()).createViewNavMaxLevel(0);
-			entryList_ = new ViewEntryList(nav);
+			nav = source_.getView().createViewNavMaxLevel(0);
 		} else if (source_ instanceof DCategoryVertex) {
-			ViewNavigator nav = ((DCategoryVertex) source_).getSubNavigator();
-			entryList_ = new ViewEntryList(nav);
+			nav = ((DCategoryVertex) source_).getSubNavigator();
 		} else {
 			throw new IllegalStateException("Cannot create a DEdgeEntryList from a Vertex backed by a " + source_.getClass().getName());
 		}
+		//		System.out.println("TEMP DEBUG EntryList navigator from ViewVertex has " + nav.getCount() + " entries");
+		entryList_ = new ViewEntryList(nav);
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import org.openntf.domino.ViewColumn;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.big.impl.NoteList;
-import org.openntf.domino.big.impl.NoteListUnique;
 import org.openntf.domino.big.impl.NoteSet;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -137,31 +136,6 @@ public class NoteListTest implements Runnable {
 				}
 			}
 			timelog("Complete note coordinates of " + notelist.size() + " documents.");
-
-			NoteListUnique notelist3 = new NoteListUnique(100000);
-
-			timelog("Beginning first notelistunique...");
-			NoteCollection notecoll3 = db.createNoteCollection(false);
-			notecoll3.setSelectDocuments(true);
-			notecoll3.setSelectionFormula("@Begins(Title; \"B\")");
-			notecoll3.buildCollection();
-			timelog("Starting note coordinates of " + notecoll3.getCount() + " documents");
-			for (String nid : notecoll3) {
-				NoteCoordinate nc = new NoteCoordinate(notecoll3, nid);
-				notelist3.add(nc);
-			}
-			timelog("Done note coordinates of " + notelist3.size() + " documents. Doing again...");
-			i = 0;
-			for (String nid : notecoll3) {
-				if (i++ < 10000) {
-
-					NoteCoordinate nc = new NoteCoordinate(notecoll3, nid);
-					notelist3.add(nc);
-				} else {
-					break;
-				}
-			}
-			timelog("Complete note coordinates of " + notelist3.size() + " documents.");
 
 			//			Database eventDb = session.getDatabase("", "events4.nsf");
 			//			NoteCollection eventNotecoll = eventDb.createNoteCollection(false);

@@ -8,11 +8,13 @@ import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.graph2.DGraph;
 
 public class DCategoryVertex extends DVertex {
-	//	private ViewNavigator nav_;
+	private static final long serialVersionUID = 1L;
+	//		private ViewNavigator nav_;
 	private View view_;
 
-	DCategoryVertex(final DGraph parent, final Map<String, Object> delegate) {
+	DCategoryVertex(final DGraph parent, final Map<String, Object> delegate, final View sourceView) {
 		super(parent, delegate);
+		view_ = sourceView;
 	}
 
 	@Override
@@ -20,6 +22,7 @@ public class DCategoryVertex extends DVertex {
 		return super.getId();
 	}
 
+	@Override
 	public View getView() {
 		return view_;
 	}
@@ -29,8 +32,16 @@ public class DCategoryVertex extends DVertex {
 	}
 
 	public ViewNavigator getSubNavigator() {
-		ViewEntry entry = getView().getEntryAtPosition(getProperty("position", String.class));
-		ViewNavigator result = getView().createViewNavFrom(entry, 100);
+		View view = getView();
+		//		System.out.println("Getting subnavigator from view " + view.getName());
+		ViewEntry entry = view.getEntryAtPosition(getProperty("position", String.class));
+		if (entry != null) {
+			//			System.out.println("Found entry at " + entry.getPosition());
+		} else {
+			//			System.out.println("Entry is null!");
+		}
+		ViewNavigator result = view.createViewNavFromChildren(entry, 100);
+		//		System.out.println("Subnavigator has " + result.getCount() + " entries");
 		return result;
 	}
 

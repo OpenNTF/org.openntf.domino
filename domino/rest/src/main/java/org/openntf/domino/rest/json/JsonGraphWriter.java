@@ -106,9 +106,9 @@ public class JsonGraphWriter extends JsonWriter {
 
 	@Override
 	public void outObject(Object paramObject) throws IOException, JsonException {
-		/*	if (paramObject == null) {
-				super.outStringLiteral("null");
-			} else*/if (paramObject instanceof EdgeFrame) {
+		if (paramObject == null) {
+			super.outNull();
+		} else if (paramObject instanceof EdgeFrame) {
 			JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (EdgeFrame) paramObject, parameters_);
 			super.outObject(adapter);
 		} else if (paramObject instanceof VertexFrame) {
@@ -199,6 +199,22 @@ public class JsonGraphWriter extends JsonWriter {
 		} else {
 			super.outPropertyName(arg0);
 		}
+	}
+
+	@Override
+	public void outArrayLiteral(Object arg0, boolean paramBoolean) throws IOException, JsonException {
+		// Class<?> clazz = arg0.getClass();
+		// String name = clazz.getName();
+		// System.out.println("DEBUG: Attempting to jsonify an array " + name);
+		super.outArrayLiteral(arg0, paramBoolean);
+	}
+
+	@Override
+	public void outArrayLiteral(Object arg0) throws IOException, JsonException {
+		// Class<?> clazz = arg0.getClass();
+		// String name = clazz.getName();
+		// System.out.println("DEBUG: Attempting to jsonify an array " + name);
+		super.outArrayLiteral(arg0);
 	}
 
 	@SuppressWarnings("rawtypes")

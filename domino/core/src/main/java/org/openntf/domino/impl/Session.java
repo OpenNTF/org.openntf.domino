@@ -81,13 +81,13 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 
-public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
-		implements org.openntf.domino.Session {
+public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
+		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
 	/** The formatter_. */
-	private DominoFormatter formatter_;// RPr: changed to non static as this can cause thread issues
+	private DominoFormatter formatter_; // RPr: changed to non static as this can cause thread issues
 
 	/* A lock object for "getDatabase" to prevent server crashes.
 	 * it seems that the method is not thread safe. (at least if you run the code as java application)
@@ -176,7 +176,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	protected Session(final lotus.domino.Session lotus, final WrapperFactory parent) {
 		super(lotus, parent, NOTES_SESSION);
 		initialize(lotus);
-		featureRestricted_ = false;// currently not implemented
+		featureRestricted_ = false; // currently not implemented
 	}
 
 	/**
@@ -530,7 +530,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 			if (doc instanceof Document) {
 				String lf = formula.toLowerCase();
 				if (lf.contains("field ") || lf.contains("@setfield")) {
-					((Document) doc).markDirty();// the document MAY get dirty by evaluate... 
+					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
 				}
 			}
 			lotus.domino.Session lsession = getDelegate();
@@ -554,7 +554,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 			}
 
 			if (result == null)
-				return null;//this really shouldn't be possible.
+				return null;	//this really shouldn't be possible.
 			return wrapColumnValues(result, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
@@ -775,8 +775,8 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 				//				}
 			} catch (NotesException e) {
 				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-					throw new UserAccessException("User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server,
-							e);
+					throw new UserAccessException(
+							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
 				} else {
 					DominoUtils.handleException(e, this);
 					return null;
@@ -1610,7 +1610,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	}
 
 	@Override
-	public void resurrect() {// should only happen if the delegate has been destroyed somehow.
+	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 		isConvertMime_ = null;
 		org.openntf.domino.Session sess = recreateSession();
@@ -1627,12 +1627,17 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		}
 		try {
 
-			if (!allowSessionUsernameChange && !username_.equals(d.getEffectiveUserName())) {
-				throw new UnableToAcquireSessionException(
-						"The created Session has the wrong user name. (given:" + d.getEffectiveUserName() + ", expected:" + username_);
+			if (!identCleared_ && !username_.equals(d.getEffectiveUserName())) {
+				if ("Anonymous".equalsIgnoreCase(username_)) {
+					username_ = d.getEffectiveUserName();
+				} else {
+					throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:"
+							+ d.getEffectiveUserName() + ", expected:" + username_);
+				}
 			}
 		} catch (NotesException e) {
 		}
+		identCleared_ = false;
 		setDelegate(d, true);
 		/* No special logging, since by now Session is a BaseThreadSafe */
 	}
@@ -1729,11 +1734,11 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		System.out.println(sb.toString());
 	}
 
-	private Boolean allowSessionUsernameChange = false;
+	private boolean identCleared_ = false;
 
 	@Override
 	public void clearIdentity() {
-		allowSessionUsernameChange = true;
+		identCleared_ = true;
 	}
 
 	/* (non-Javadoc)
@@ -2000,9 +2005,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		//super.writeExternal(out);
 		//Session do not write SUPER
-		out.writeInt(EXTERNALVERSIONUID);// data version
+		out.writeInt(EXTERNALVERSIONUID); // data version
 
-		getCurrentDatabase();// initializes the currentDatabaseApiPath_
+		getCurrentDatabase(); // initializes the currentDatabaseApiPath_
 		if (sessionType_ == null) {
 			log_.warning("Serializing a session without a sessionType");
 			out.writeObject(SessionType.CURRENT);

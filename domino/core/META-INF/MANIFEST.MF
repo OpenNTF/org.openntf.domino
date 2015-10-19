@@ -1,15 +1,9 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant(TM) version 1.8.4 compiled on May 22 2012
-Created-By: JDK 1.7.0_51 (Oracle Corporation)
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
-Bundle-Version: 1.5.0.qualifier
+Bundle-Version: 2.0.1.qualifier
 Bundle-Vendor: OpenNTF
-Implementation-Title: OpenNTF Domino API
-Implementation-Version: 1.5.0.qualifier
-Implementation-Vendor: OpenNTF
-Implementation-Vendor-URL: http://www.openntf.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
@@ -63,7 +57,7 @@ Export-Package: org.openntf.arpa,
 Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  javolution;bundle-version="6.1.0";visibility:=reexport,
- org.openntf.formula;bundle-version="1.5.0";visibility:=reexport,
+ org.openntf.formula;bundle-version="2.0.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,

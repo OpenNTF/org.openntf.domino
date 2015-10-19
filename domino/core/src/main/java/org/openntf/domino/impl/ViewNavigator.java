@@ -33,8 +33,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-org.openntf.domino.ViewNavigator {
+public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View>
+		implements org.openntf.domino.ViewNavigator {
 
 	private boolean forceJavaDates_ = false;
 	private int cacheSize_ = -1;
@@ -294,7 +294,7 @@ org.openntf.domino.ViewNavigator {
 	@Override
 	public ViewEntry getNext(final lotus.domino.ViewEntry entry) {
 		try {
-			lotus.domino.ViewEntry newEntry = getDelegate().getNext(entry);
+			lotus.domino.ViewEntry newEntry = getDelegate().getNext(toLotus(entry));
 			if (newEntry != null) {
 				curPosition_ = newEntry.getPosition(DEFAULT_SEPARATOR);
 				if (forceJavaDates_)
@@ -1213,7 +1213,7 @@ org.openntf.domino.ViewNavigator {
 	}
 
 	@Override
-	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
+	protected void resurrect() {// should only happen if the delegate has been destroyed somehow.
 		try {
 			lotus.domino.ViewNavigator newDelegate = null;
 			lotus.domino.ViewEntry entry = null;
@@ -1473,7 +1473,12 @@ org.openntf.domino.ViewNavigator {
 	}
 
 	void registerStartPosition() {
-		startingPosition_ = getCurrent().getPosition();
+		ViewEntry current = getCurrent();
+		if (current == null) {
+			startingPosition_ = "";
+		} else {
+			startingPosition_ = getCurrent().getPosition();
+		}
 	}
 
 	void setType(final Types type) {

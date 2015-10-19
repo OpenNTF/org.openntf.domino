@@ -1,0 +1,25 @@
+Bundle-Name: Domino Access Services Plug-in
+Bundle-SymbolicName: com.ibm.domino.das;singleton:=true
+Bundle-Version: 9.0.1.v00_14_SNAPSHOT
+Bundle-Vendor: IBM
+Bundle-ClassPath: .
+Eclipse-ExtensibleAPI: true
+Require-Bundle: com.ibm.notes.java.api,
+ com.ibm.wink,
+ org.eclipse.equinox.http.registry,
+ org.eclipse.equinox.http.servlet,
+ org.eclipse.core.runtime,
+ com.ibm.domino.osgi.core,
+ com.ibm.commons,
+ com.ibm.domino.services,
+ com.ibm.domino.commons,
+ com.ibm.xsp.core
+Import-Package: javax.servlet;version="[2.5.0,3.0.0)",
+ javax.servlet.http;version="[2.5.0,3.0.0)"
+Bundle-ActivationPolicy: lazy
+Export-Package: com.ibm.domino.das.servlet,
+ com.ibm.domino.das.service,
+ com.ibm.domino.das.resources,
+ com.ibm.domino.das.utils
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ManifestVersion: 2

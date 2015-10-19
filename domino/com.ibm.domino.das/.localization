@@ -1,0 +1,11 @@
+#Localization file used by Workplace Designer
+#Thu Apr 03 10:43:25 BST 2008
+specialAudienceProperties=specialAudience.properties
+loggingPropertiesFileName=das.properties
+resourceHandlerPackage=com.ibm.domino.das
+resourceHandlerClass=DasResourceHandler
+propertiesFileName=messages.properties
+srcFolderName=com.ibm.domino.das/src
+translationLevel=G11N GA UI -- General Audience resources follow
+componentOwner=padraic.edwards@ie.ibm.com
+loggingId=CLFAD

@@ -36,8 +36,12 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		@Override
 		public boolean hasNext() {
 			if (hasNextCache_ == null) {
-				next_ = navigator_.getNextSibling(cur_);
-				hasNextCache_ = next_ != null;
+				if (cur_ == null) {
+					hasNextCache_ = true;
+				} else {
+					next_ = navigator_.getNextSibling(cur_);
+					hasNextCache_ = (next_ != null);
+				}
 			}
 			return hasNextCache_;
 		}
@@ -45,8 +49,12 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		@Override
 		public boolean hasPrevious() {
 			if (hasPrevCache_ == null) {
-				prev_ = navigator_.getPrevSibling(cur_);
-				hasPrevCache_ = prev_ != null;
+				if (cur_ == null) {
+					hasPrevCache_ = false;
+				} else {
+					prev_ = navigator_.getPrevSibling(cur_);
+					hasPrevCache_ = prev_ != null;
+				}
 			}
 			return hasPrevCache_;
 		}
@@ -56,7 +64,10 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			hasPrevCache_ = null;
 			hasNextCache_ = null;
 			prev_ = cur_;
-			if (next_ == null) {
+			if (cur_ == null) {
+				ViewEntry newEntry = navigator_.getFirst();
+				cur_ = newEntry;
+			} else if (next_ == null) {
 				ViewEntry newEntry = navigator_.getNextSibling(cur_);
 				cur_ = newEntry;
 			} else {
@@ -64,7 +75,10 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			}
 			next_ = null;
 			index_++;
-			return new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+			ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+			vec.setSourceNav(navigator_);
+			//			System.out.println("TEMP DEBUG current entry position: " + cur_.getPosition());
+			return vec;
 		}
 
 		@Override
@@ -88,7 +102,9 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			}
 			prev_ = null;
 			index_--;
-			return new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+			ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+			vec.setSourceNav(navigator_);
+			return vec;
 		}
 
 		@Override
@@ -173,7 +189,9 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 	@Override
 	public ViewEntryCoordinate get(final int arg0) {
 		ViewEntry entry = getNavigator().getNth(arg0);
-		return new org.openntf.domino.big.impl.ViewEntryCoordinate(entry);
+		ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(entry);
+		vec.setSourceNav(getNavigator());
+		return vec;
 	}
 
 	@Override
