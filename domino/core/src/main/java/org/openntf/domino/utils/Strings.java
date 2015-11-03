@@ -1,18 +1,18 @@
 /*
  * Copyright 2013
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *
  */
@@ -39,9 +39,9 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 /**
  * String Utilities
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
+ *
  */
 public enum Strings {
 	;
@@ -49,9 +49,9 @@ public enum Strings {
 	/*
 	 * **************************************************************************
 	 * **************************************************************************
-	 * 
+	 *
 	 * PUBLIC STATIC properties
-	 * 
+	 *
 	 * **************************************************************************
 	 * **************************************************************************
 	 */
@@ -123,21 +123,21 @@ public enum Strings {
 	/*
 	 * ************************************************************************
 	 * ************************************************************************
-	 * 
+	 *
 	 * PUBLIC Methods
-	 * 
+	 *
 	 * ************************************************************************
 	 * ************************************************************************
 	 */
 
 	/**
 	 * Gets or generates a Vector of Strings from an Object
-	 * 
+	 *
 	 * @param object
 	 *            Object from which to get or generate the result. Attempts to retrieve the string values from the object.
-	 * 
+	 *
 	 * @return Vector of Strings retrieved or generated from the input. Returns null on error.
-	 * 
+	 *
 	 */
 	public static Vector<String> getVectorizedStrings(final Object object) {
 		final List<String> al = CollectionUtils.getListStrings(object);
@@ -146,12 +146,12 @@ public enum Strings {
 
 	/**
 	 * Generates a properly formatted String which can be used as an Environment Variable name.
-	 * 
+	 *
 	 * Returns trimmed identifier converted to all uppercase with spaces converted to underscores.
-	 * 
+	 *
 	 * @param identifier
 	 *            String from which to generate an Environment Variable name.
-	 * 
+	 *
 	 * @return Environment Variable name generated from identifier. Empty string "" if blank.
 	 */
 	public static String getEnvarName(final String identifier) {
@@ -160,7 +160,7 @@ public enum Strings {
 
 	/**
 	 * Determines if a specified id is a potential id based upon the specified idType.
-	 * 
+	 *
 	 * @param id
 	 *            String to check if potential ID for type.
 	 * @param idType
@@ -209,14 +209,14 @@ public enum Strings {
 
 	/**
 	 * Generates a UniversalID from a String
-	 * 
+	 *
 	 * wrapper method for {@link #getHash(String)}
-	 * 
+	 *
 	 * @param string
 	 *            Source from which to generate the UniversalID.
-	 * 
+	 *
 	 * @return UniversalID (MD5 Message Digest Hash)
-	 * 
+	 *
 	 * @see #getHash(String)
 	 */
 	public static String generateUniversalID(final String string) {
@@ -225,16 +225,16 @@ public enum Strings {
 
 	/**
 	 * Generates a RecordID from a Name
-	 * 
+	 *
 	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
-	 * 
+	 *
 	 * wrapper method for {@link #getSpawnedRecordID(Name)}
-	 * 
+	 *
 	 * @param name
 	 *            Name for which to generate a RecordID
-	 * 
+	 *
 	 * @return new RecordID
-	 * 
+	 *
 	 * @see #generateRecordID(Name)
 	 */
 	public static String generateRecordID(final Name name) {
@@ -243,13 +243,13 @@ public enum Strings {
 
 	/**
 	 * Generates a RecordID from a Name
-	 * 
+	 *
 	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
-	 * 
+	 *
 	 * wrapper method for {@link #getSpawnedRecordID(Session)}
-	 * 
+	 *
 	 * @return new RecordID
-	 * 
+	 *
 	 * @see #generateRecordID()
 	 */
 	public static String generateRecordID() {
@@ -258,13 +258,13 @@ public enum Strings {
 
 	/**
 	 * Generates a Hash from a string.
-	 * 
+	 *
 	 * Uses the MD5 Message Digest Algorythm.
-	 * 
+	 *
 	 * @param string
 	 *            Source from which to generate the hash.
 	 * @return MD5 Message Digest Hash
-	 * 
+	 *
 	 * @see #md5Hex(String)
 	 */
 	public static String getHash(final String string) {
@@ -273,13 +273,13 @@ public enum Strings {
 
 	/**
 	 * Generates a String filled with a specific character.
-	 * 
+	 *
 	 * @param length
 	 *            The length of the String to return. Negative values will be treated as positive.
-	 * 
+	 *
 	 * @param c
 	 *            Character with which to populate the result.
-	 * 
+	 *
 	 * @return String consisting c characters repeated length times.
 	 */
 	public static String getFilledString(final int length, final char c) {
@@ -298,10 +298,10 @@ public enum Strings {
 
 	/**
 	 * Generates a Proper Case (first character capitalized, all other characters unchanged) string from an input string.
-	 * 
+	 *
 	 * @param string
 	 *            Source string for which to generate a Proper Case string.
-	 * 
+	 *
 	 * @return Proper Case string from the specified source string.
 	 */
 	public static String toProperCase(final String string) {
@@ -311,10 +311,10 @@ public enum Strings {
 	/**
 	 * NTF: DO NOT REMOVE. WHILE THIS SEEMS REDUNDANT, SSJS/EL WILL NOT FIND A CHARSEQUENCE Determines whether a String consists only of
 	 * "White Spaces" (or is null or empty)
-	 * 
+	 *
 	 * @param cs
 	 *            The String to test
-	 * 
+	 *
 	 * @return true if it does
 	 */
 	public static boolean isBlankString(final String str) {
@@ -323,49 +323,56 @@ public enum Strings {
 
 	/**
 	 * Determines whether a CharSequence consists only of "White Spaces" (or is null or empty)
-	 * 
+	 *
 	 * @param cs
 	 *            The CharSequence to test
-	 * 
+	 *
 	 * @return true if it does
 	 */
 	public static boolean isBlankString(final CharSequence cs) {
-		if (cs == null)
+		if (cs == null) {
 			return true;
-		for (int i = cs.length() - 1; i >= 0; i--)
-			if (!Character.isWhitespace(cs.charAt(i)))
+		}
+		for (int i = cs.length() - 1; i >= 0; i--) {
+			if (!Character.isWhitespace(cs.charAt(i))) {
 				return false;
+			}
+		}
 		return true;
 	}
 
 	/**
 	 * Determines if a string is null or blank
-	 * 
+	 *
 	 * @param o
 	 *            Source string to check for null or blank value.
-	 * 
+	 *
 	 * @return Flag indicating if the source string is null or blank.
 	 */
 	public static boolean isBlankString(final Object o) {
-		if (o == null)
+		if (o == null) {
 			return true;
-		if (o instanceof CharSequence)
+		}
+		if (o instanceof CharSequence) {
 			return isBlankString((CharSequence) o);
+		}
 		throw new RuntimeException("Cannot check for blankness on a non-null object of type " + o.getClass().getName());
 	}
 
 	/**
 	 * Determines if a specified object is a Hexadecimal string (comprised of characters 0-9 or A-F, case insensitive)
-	 * 
+	 *
 	 * @param o
 	 *            Object to check.
 	 * @return true if it is
 	 */
 	public static boolean isHexadecimalString(final Object o) {
-		if (o == null)
+		if (o == null) {
 			return false;
-		if (o instanceof CharSequence)
+		}
+		if (o instanceof CharSequence) {
 			return isHexadecimalString((CharSequence) o);
+		}
 		throw new RuntimeException("Cannot check for hexidecimal on a non-null object of type " + o.getClass().getName());
 	}
 
@@ -373,7 +380,7 @@ public enum Strings {
 
 	/**
 	 * Determines if a specified string is a Hexadecimal string (comprised of characters 0-9 or A-F, case insensitive)
-	 * 
+	 *
 	 * @param cs
 	 *            Source string to check.
 	 * @return Flag indicating if string is comprised only of Hexadecimal characters.
@@ -384,15 +391,15 @@ public enum Strings {
 
 	/**
 	 * Joins elements into a String using a specified delimiter.
-	 * 
+	 *
 	 * Concatenates the string values of elements from collection using a specified delimiter
-	 * 
+	 *
 	 * @param source
 	 *            Collection to join
-	 * 
+	 *
 	 * @param delimiter
 	 *            String used to delimit elements in source
-	 * 
+	 *
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
 	@SuppressWarnings({ "rawtypes", "cast" })
@@ -436,15 +443,15 @@ public enum Strings {
 
 	/**
 	 * Joins elements into a String using a specified delimiter.
-	 * 
+	 *
 	 * Concatenates the string values of elements from collection using a specified delimiter
-	 * 
+	 *
 	 * @param delimiter
 	 *            String used to delimit elements in source
-	 * 
+	 *
 	 * @param objects
 	 *            Objects to join
-	 * 
+	 *
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
 	public static String join(final String delimiter, final Object... objects) {
@@ -467,15 +474,15 @@ public enum Strings {
 
 	/**
 	 * Joins elements into a String using a specified delimiter.
-	 * 
+	 *
 	 * Concatenates the string values of elements from an array or collection using a specified delimiter
-	 * 
+	 *
 	 * @param source
 	 *            Array or Collection to join
-	 * 
+	 *
 	 * @param delimiter
 	 *            String used to delimit elements
-	 * 
+	 *
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
 	@SuppressWarnings("rawtypes")
@@ -512,7 +519,7 @@ public enum Strings {
 
 	/**
 	 * Removes all blank spaces from a specified StringBuilder object.
-	 * 
+	 *
 	 * @param sb
 	 *            StringBuilder object from which to remove all blank spaces.
 	 * @return StringBuilder object with all blank spaces removed.
@@ -544,13 +551,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the left of the specified substring in the specified String, starting from the left.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the left of the specified substring in the specified String, starting from the left.
 	 */
 	public static String left(final String source, final String searchFor) {
@@ -560,13 +567,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the left of the specified substring in the specified String, starting from the right.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the left of the specified substring in the specified String, starting from the right.
 	 */
 	public static String leftBack(final String source, final String searchFor) {
@@ -576,13 +583,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the right of the specified substring in the specified String, starting from the left.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the right of the specified substring in the specified String, starting from the left.
 	 */
 	public static String right(final String source, final String searchFor) {
@@ -592,13 +599,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the right of the specified substring in the specified String, starting from the right.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the right of the specified substring in the specified String, starting from the right.
 	 */
 	public static String rightBack(final String source, final String searchFor) {
@@ -608,13 +615,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the left of the specified substring in the specified String, starting from the left.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the left of the specified substring in the specified String, starting from the left.
 	 */
 	public static String left(final String source, final char searchFor) {
@@ -624,13 +631,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the left of the specified substring in the specified String, starting from the right.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the left of the specified substring in the specified String, starting from the right.
 	 */
 	public static String leftBack(final String source, final char searchFor) {
@@ -640,13 +647,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the right of the specified substring in the specified String, starting from the left.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the right of the specified substring in the specified String, starting from the left.
 	 */
 	public static String right(final String source, final char searchFor) {
@@ -656,13 +663,13 @@ public enum Strings {
 
 	/**
 	 * Returns the substring to the right of the specified substring in the specified String, starting from the right.
-	 * 
+	 *
 	 * @param source
 	 *            String within which to search for searchFor
-	 * 
+	 *
 	 * @param searchFor
 	 *            String to search for within source
-	 * 
+	 *
 	 * @return Substring to the right of the specified substring in the specified String, starting from the right.
 	 */
 	public static String rightBack(final String source, final char searchFor) {
@@ -672,9 +679,9 @@ public enum Strings {
 
 	/**
 	 * Strips all non-alphanumeric characters from a source string.
-	 * 
+	 *
 	 * Alphanumeric is defined as all characters from A-Z, a-z, and 0-9
-	 * 
+	 *
 	 * @param source
 	 *            String from which to strip the non-alphanumeric characters.
 	 * @return source with all non-alphanumeric characters removed.
@@ -685,46 +692,50 @@ public enum Strings {
 
 	/**
 	 * Checks a String to determine if it begins with a prefix.
-	 * 
+	 *
 	 * Performs a Case-INSENSITIVE check.
-	 * 
+	 *
 	 * <strong>Special Behavior</strong>: Returns false if source or prefix are null.
-	 * 
+	 *
 	 * @param source
 	 *            CharSequence to check if begins with prefix.
-	 * 
+	 *
 	 * @param prefix
 	 *            CharSequence to match against the beginning of source.
-	 * 
+	 *
 	 * @return Flag indicating if source begins with prefix.
 	 */
 	public static boolean startsWithIgnoreCase(final CharSequence source, final CharSequence prefix) {
 		// return source.toLowerCase().startsWith(prefix.toLowerCase());
 		// Of source, this works for Strings, but the variant below is cheaper
-		if (null == source || null == prefix)
+		if (null == source || null == prefix) {
 			return false;
+		}
 		int sz = prefix.length();
-		if (sz > source.length())
+		if (sz > source.length()) {
 			return false;
-		for (int i = 0; i < sz; i++)
-			if (Character.toLowerCase(source.charAt(i)) != Character.toLowerCase(prefix.charAt(i)))
+		}
+		for (int i = 0; i < sz; i++) {
+			if (Character.toLowerCase(source.charAt(i)) != Character.toLowerCase(prefix.charAt(i))) {
 				return false;
+			}
+		}
 		return true;
 	}
 
 	/**
 	 * Generates a RecordID from a Name
-	 * 
+	 *
 	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
-	 * 
+	 *
 	 * @param name
 	 *            Name for which to generate a RecordID
-	 * 
+	 *
 	 * @return new RecordID
-	 * 
+	 *
 	 * @see Name#getIDprefix()
 	 * @see Dates#getTimeCode()
-	 * 
+	 *
 	 */
 	public static String getSpawnedRecordID(final Name name) {
 		try {
@@ -735,7 +746,7 @@ public enum Strings {
 			String result = name.getIDprefix() + "-" + Dates.getTimeCode();
 			// RPr: Dates.getTimeCode() does not produce duplicates any more
 			//			try {
-			//				// avoid potential duplicate consecutive results by sleeping for 1/4 second 
+			//				// avoid potential duplicate consecutive results by sleeping for 1/4 second
 			//				Thread.sleep(5); // 5 millis
 			//			} catch (InterruptedException ex) {
 			//				Thread.currentThread().interrupt();
@@ -753,17 +764,17 @@ public enum Strings {
 
 	/**
 	 * Generates a RecordID from a Name
-	 * 
+	 *
 	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
-	 * 
+	 *
 	 * @param name
 	 *            Name for which to generate a RecordID
-	 * 
+	 *
 	 * @return new RecordID
-	 * 
+	 *
 	 * @see Name#getIDprefix()
 	 * @see Dates#getTimeCode()
-	 * 
+	 *
 	 */
 	public static String getSpawnedRecordID(final lotus.domino.Name name) {
 		WrapperFactory wf = Factory.getWrapperFactory();
@@ -772,17 +783,17 @@ public enum Strings {
 
 	/**
 	 * Generates a RecordID from a Name
-	 * 
+	 *
 	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
-	 * 
+	 *
 	 * @param session
 	 *            Session from which to get the current effective user name.
-	 * 
+	 *
 	 * @return new RecordID
-	 * 
+	 *
 	 * @see Name#getIDprefix()
 	 * @see Dates#getTimeCode()
-	 * 
+	 *
 	 */
 	public static String getSpawnedRecordID(final Session session) {
 		try {
@@ -801,12 +812,12 @@ public enum Strings {
 
 	/**
 	 * Generates a List of Strings from a source String.
-	 * 
+	 *
 	 * Breaks the source string at all br and at the ends of div and p elements.
-	 * 
+	 *
 	 * @param source
 	 *            String from which to generate the list.
-	 * 
+	 *
 	 * @return List constructed of source segments.
 	 */
 	public static List<String> getTextLinesRemoveHTMLtags(final String source) {
@@ -834,14 +845,14 @@ public enum Strings {
 
 	/**
 	 * Wraps String elements of a collection with a prefix and suffix string
-	 * 
+	 *
 	 * @param collection
 	 *            AbstractCollection from which to get or generate the result.
 	 * @param prefix
 	 *            String to prepend each returned element.
 	 * @param suffix
 	 *            String to append each returned element.
-	 * 
+	 *
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
 	@SuppressWarnings({ "rawtypes", "cast" })
@@ -877,10 +888,10 @@ public enum Strings {
 
 	/**
 	 * Strips all HTML tags from a source string.
-	 * 
+	 *
 	 * @param source
 	 *            String from which to strip HTML tags.
-	 * 
+	 *
 	 * @return source with all HTML tags removed.
 	 */
 	public static String stripHTMLtags(final String source) {
@@ -889,12 +900,12 @@ public enum Strings {
 
 	/**
 	 * Gets an HTML Unordered List
-	 * 
+	 *
 	 * Converts TreeSet elements to HTML list item elements.
-	 * 
+	 *
 	 * @param source
 	 *            TreeSet containing elements to be wrapped as HTML List Items
-	 * 
+	 *
 	 * @return Concatenated HTML Unordered List
 	 */
 	public static String getHTMLunorderedList(final TreeSet<String> source) {
@@ -922,12 +933,12 @@ public enum Strings {
 
 	/**
 	 * Generates an XML Node
-	 * 
+	 *
 	 * @param node
 	 *            Node name
 	 * @param content
 	 *            Node content
-	 * 
+	 *
 	 * @return XML Node constructed from name and content
 	 */
 	public static String getXMLnode(String node, final String content) {
@@ -950,14 +961,14 @@ public enum Strings {
 
 	/**
 	 * Generates an XML Node
-	 * 
+	 *
 	 * @param node
 	 *            Node name
 	 * @param content
 	 *            Node content
 	 * @param attributes
 	 *            Attributes for the node.
-	 * 
+	 *
 	 * @return XML Node constructed from name, attributes and content
 	 */
 	public static String getXMLnode(String node, final String content, final Map<String, String> attribs) {
@@ -991,25 +1002,25 @@ public enum Strings {
 	/*
 	 * ************************************************************************
 	 * ************************************************************************
-	 * 
+	 *
 	 * PROTECTED Methods
-	 * 
+	 *
 	 * ************************************************************************
 	 * ************************************************************************
 	 */
 
 	/**
 	 * Generates a Hexidecimal string from an array of bytes
-	 * 
+	 *
 	 * @param array
 	 *            bytes from which to generate the string
-	 * 
+	 *
 	 * @return Hexidecimal String generated from the input array.
 	 */
 	protected static String hex(final byte[] array) {
 		final StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < array.length; ++i) {
-			sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+		for (byte element : array) {
+			sb.append(Integer.toHexString((element & 0xFF) | 0x100).substring(1, 3));
 		}
 
 		return sb.toString().toUpperCase();
@@ -1017,12 +1028,12 @@ public enum Strings {
 
 	/**
 	 * Generates an MD5 MessageDigest String from a source string
-	 * 
+	 *
 	 * @param string
 	 *            Source from which to generate the MessageDigest
-	 * 
+	 *
 	 * @return Generated Message Digest
-	 * 
+	 *
 	 * @see java.security.MessageDigest#digest(byte[])
 	 */
 	protected static String md5Hex(final String arg0) {
@@ -1093,12 +1104,12 @@ public enum Strings {
 
 			syntaxformula = "@CheckFormulaSyntax({" + formula + "})";
 			final Vector syntax = session.evaluate(syntaxformula);
-			if (syntax.elementAt(0).toString().trim().equalsIgnoreCase("1")) {
+			if (syntax.get(0).toString().trim().equalsIgnoreCase("1")) {
 				return true;
 			}
 
 			String msg = Strings.MESSAGE_FORMULA_INVALID;
-			msg += "\n syntax.elementAt(0): \"" + syntax.elementAt(0).toString() + "\"";
+			msg += "\n syntax.elementAt(0): \"" + syntax.get(0).toString() + "\"";
 			final String[] info = (String[]) syntax.toArray(new String[syntax.size()]);
 			for (int i = 0; i < info.length; i++) {
 				msg += "\n  syntax.elementAt(" + i + "):" + info[i];
