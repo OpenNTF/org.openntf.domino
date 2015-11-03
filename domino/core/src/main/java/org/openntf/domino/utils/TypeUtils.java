@@ -1029,6 +1029,8 @@ public enum TypeUtils {
 			}
 		} else if (value instanceof lotus.domino.DateTime) {
 			return DominoUtils.toJavaDateSafe((lotus.domino.DateTime) value);
+		} else if (value instanceof Date) {
+			return (Date) value;
 		} else {
 			throw new DataNotCompatibleException("Cannot create a Date from a " + value.getClass().getName());
 		}
