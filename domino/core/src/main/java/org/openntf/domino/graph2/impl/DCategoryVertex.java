@@ -45,4 +45,23 @@ public class DCategoryVertex extends DVertex {
 		return result;
 	}
 
+	@Override
+	public void applyChanges() {
+		throw new UnsupportedOperationException("Category vertices cannot be updated. They are read-only.");
+	}
+
+	@Override
+	public void commit() {
+		throw new UnsupportedOperationException("Category vertices cannot be updated. They are read-only.");
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException("Category vertices cannot be updated. They are read-only.");
+	}
+
+	@Override
+	protected boolean writeEdges() {
+		throw new UnsupportedOperationException("Category vertices cannot be updated. They are read-only.");
+	}
 }

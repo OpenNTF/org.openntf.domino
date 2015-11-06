@@ -40,6 +40,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
@@ -64,7 +65,7 @@ import com.ibm.commons.util.NotImplementedException;
  * 
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		implements org.openntf.domino.Base<D> {
+implements org.openntf.domino.Base<D> {
 	public static final int SOLO_NOTES_NAMES = 1000;
 	public static final int NOTES_SESSION = 1;
 	public static final int NOTES_DATABASE = 2;
@@ -711,7 +712,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return
 	 */
 	private static Object javaToDominoFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis) {
-
+		//FIXME NTF This stuff should really defer to TypeUtils. We should do ALL type coercion in that utility class
 		if (value instanceof Integer || value instanceof Double) {
 			return value;
 		} else if (value instanceof String) {
@@ -783,6 +784,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
 		} else if (value instanceof Formula) {
 			return ((Formula) value).getExpression();
+		} else if (value instanceof NoteCoordinate) {
+			return ((NoteCoordinate) value).toString();
 		}
 
 		throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());

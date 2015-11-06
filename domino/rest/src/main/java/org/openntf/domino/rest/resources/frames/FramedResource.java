@@ -10,6 +10,7 @@ import com.tinkerpop.frames.VertexFrame;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -19,6 +20,7 @@ import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,6 +34,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
 import org.openntf.domino.rest.json.JsonGraphWriter;
@@ -41,6 +44,7 @@ import org.openntf.domino.rest.service.ODAGraphService;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
+import org.openntf.domino.types.CaseInsensitiveString;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -97,6 +101,38 @@ public class FramedResource extends AbstractResource {
 				writer.outArrayLiteral(maps);
 			}
 			jsonEntity = sw.toString();
+		} else if (pm.getKeys() != null) {
+			Class<?> type = null;
+			if (pm.getTypes() != null) {
+				List<CaseInsensitiveString> types = pm.getTypes();
+				String typename = types.get(0).toString();
+				type = graph.getTypeRegistry().findClassByName(typename);
+			}
+			DKeyResolver resolver = graph.getKeyResolver(type);
+			List<CaseInsensitiveString> keys = pm.getKeys();
+			if (keys.size() == 0) {
+				writer.outNull();
+			} else if (keys.size() == 1) {
+				CaseInsensitiveString id = keys.get(0);
+				NoteCoordinate nc = resolver.resolveKey(type, id);
+				if (nc == null) {
+					System.err.println("NoteCoordinate is null for id " + id);
+				}
+				Object elem = graph.getElement(nc, type);
+				if (elem == null) {
+					throw new IllegalStateException("Graph element is null for id " + id);
+				}
+				writer.outObject(elem);
+			} else {
+				List<Object> maps = new ArrayList<Object>();
+				for (CaseInsensitiveString id : keys) {
+					NoteCoordinate nc = resolver.resolveKey(type, id);
+					maps.add(graph.getElement(nc, null));
+				}
+				writer.outArrayLiteral(maps);
+			}
+			jsonEntity = sw.toString();
+
 		} else {
 			// System.out.println("TEMP DEBUG: ID was null therefore we can't report...");
 
@@ -205,6 +241,90 @@ public class FramedResource extends AbstractResource {
 		result = builder.build();
 
 		return result;
+	}
+
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
+			@PathParam(Routes.NAMESPACE) final String namespace) {
+		@SuppressWarnings("rawtypes")
+		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		String jsonEntity = null;
+		ResponseBuilder builder = Response.ok();
+		ParamMap pm = Parameters.toParamMap(uriInfo);
+		StringWriter sw = new StringWriter();
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+
+		JsonJavaObject jsonItems = null;
+		JsonGraphFactory factory = JsonGraphFactory.instance;
+		try {
+			StringReader reader = new StringReader(requestEntity);
+			try {
+				jsonItems = (JsonJavaObject) JsonParser.fromJson(factory, reader);
+			} finally {
+				reader.close();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		if (jsonItems != null) {
+			List<String> ids = pm.get(Parameters.ID);
+			if (ids.size() == 0) {
+				// TODO no id
+			} else {
+				for (String id : ids) {
+					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+					Object element = graph.getElement(nc, null);
+					if (element instanceof VertexFrame) {
+						VertexFrame parVertex = (VertexFrame) element;
+						Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
+								parVertex.getClass());
+						String rawLabel = jsonItems.getAsString("@label");
+						Method method = adders.get(rawLabel);
+						if (method != null) {
+							String rawId = jsonItems.getAsString("@id");
+							Object otherElement = graph.getElement(rawId, null);
+							if (otherElement instanceof VertexFrame) {
+								VertexFrame otherVertex = (VertexFrame) otherElement;
+								try {
+									Object result = method.invoke(parVertex, otherVertex);
+									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
+									Iterator<String> frameProperties = adapter.getJsonProperties();
+									while (frameProperties.hasNext()) {
+										String key = frameProperties.next();
+										if (!key.startsWith("@")) {
+											Object value = jsonItems.get(key);
+											if (value != null) {
+												adapter.putJsonProperty(key, value);
+												jsonItems.remove(key);
+											}
+										}
+									}
+									for (String jsonKey : jsonItems.keySet()) {
+										if (!jsonKey.startsWith("@")) {
+											Object value = jsonItems.getJsonProperty(jsonKey);
+											if (value != null) {
+												adapter.putJsonProperty(jsonKey, value);
+											}
+										}
+									}
+									writer.outObject(result);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+				}
+
+			}
+		}
+
+		jsonEntity = sw.toString();
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		Response response = builder.build();
+		return response;
 	}
 
 }

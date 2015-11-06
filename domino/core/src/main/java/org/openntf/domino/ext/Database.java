@@ -406,6 +406,8 @@ public interface Database extends Base {
 	 */
 	public int getModifiedNoteCount(final java.util.Date since);
 
+	public int getNoteCount();
+
 	/**
 	 * Gets the date a Database was last modified, as a Java Date
 	 * 

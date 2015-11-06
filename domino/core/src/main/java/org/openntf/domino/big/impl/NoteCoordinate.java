@@ -66,7 +66,15 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	}
 
 	public NoteCoordinate(final CharSequence metaversalid) {
-		this(metaversalid.subSequence(0, 16), metaversalid.subSequence(16, 48));
+		try {
+			this.db = getLongFromReplid(metaversalid.subSequence(0, 16));
+			long[] unids = getLongsFromUnid(metaversalid.subSequence(16, 48));
+			this.x = unids[0];
+			this.y = unids[1];
+		} catch (Throwable t) {
+			System.err.println("Unable to create a NoteCoordinate from character sequence: " + metaversalid);
+			throw new RuntimeException(t);
+		}
 	}
 
 	public NoteCoordinate(final CharSequence replicaid, final CharSequence unid) {
@@ -161,7 +169,17 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	public boolean isView() {
 		if (isView_ == null) {
 			Document doc = getDocument();
-			isView_ = doc.hasItem("$Index");
+			if (!doc.isNewNote()) {
+				try {
+					isView_ = doc.hasItem("$Index");
+				} catch (Exception e) {
+					isView_ = false;
+					//					System.err.println("Exception thrown while checking isView for a document: " + e.getMessage() + " on notecoordinate "
+					//							+ toString());
+				}
+			} else {
+				isView_ = false;
+			}
 		}
 		return isView_;
 	}

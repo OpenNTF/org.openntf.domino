@@ -87,6 +87,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<T> type) {
 		//TODO NTF cached properties should be automatically reset if the base Document is known to have changed
+		//		if ("form".equalsIgnoreCase(propertyName)) {
+		//			System.out.println("Getting form value now...");
+		//		}
 		Object result = null;
 		Map<String, Object> props = getProps();
 		result = props.get(propertyName);
@@ -97,11 +100,17 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					Document doc = (Document) delegate;
 					if (doc.hasItem(propertyName)) {
 						result = doc.getItemValue(propertyName, type);
+						//						if ("form".equalsIgnoreCase(propertyName)) {
+						//							System.out.println("Got form property from a document: '" + (String) result + "'");
+						//						}
 					}
 					if (result == null) {
 						try {
 							Object raw = doc.get(propertyName);
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
+							//							if ("form".equalsIgnoreCase(propertyName)) {
+							//								System.out.println("BACKUP Got form property from a document: '" + (String) result + "'");
+							//							}
 						} catch (Throwable t) {
 							log_.log(Level.FINE, "Invalid property for document " + propertyName);
 						}
@@ -162,6 +171,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (result == Null.INSTANCE) {
 			result = null;
 		}
+		if ("form".equalsIgnoreCase(propertyName)) {
+			if (result == null) {
+				System.out.println("TEMP DEBUG returning null as value for Form field");
+			}
+		}
 		return (T) result;
 	}
 
@@ -169,7 +183,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public <T> T getProperty(final String key) {
 		if ("form".equalsIgnoreCase(key)) {
-			return (T) getProperty(key, String.class);
+			Object result = getProperty(key, String.class);
+			//			System.out.println("Found a " + result.getClass().getName() + " in the form field: '" + (String) result + "'");
+			return (T) result;
 		}
 		Object result = getProperty(key, java.lang.Object.class);
 		return (T) result;
@@ -374,19 +390,31 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
-				delegate_ = getParent().findDelegate(delegateKey_);
+				delegate_ = (Document) getParent().findDelegate(delegateKey_);
 			}
 		} else if (delegate_ instanceof View) {
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((View) delegate_).isDefaultView();
 			} catch (Throwable t) {
-				delegate_ = getParent().findDelegate(delegateKey_);
+				delegate_ = (View) getParent().findDelegate(delegateKey_);
 			}
 		}
 		if (delegate_ == null) {
-			delegate_ = getParent().findDelegate(delegateKey_);
+			delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 		}
+		if (delegate_ == null) {
+			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate. This will not turn out well.");
+			try {
+				String type = getProperty("form", String.class);
+				if (type != null) {
+					System.err.println("The element was framed as a " + type);
+				}
+			} catch (Exception e) {
+
+			}
+		}
+
 		return delegate_;
 	}
 

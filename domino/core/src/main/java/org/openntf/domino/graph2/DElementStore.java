@@ -1,6 +1,7 @@
 package org.openntf.domino.graph2;
 
 import java.io.Externalizable;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +14,16 @@ import com.tinkerpop.blueprints.Vertex;
  * Interface definition to register relationship between a Frame type and an NSF
  */
 public interface DElementStore extends Externalizable {
+
+	public interface CustomProxyResolver {
+		public void setProxiedElementStore(DElementStore store);
+
+		public Map<String, Object> getOriginalDelegate(Serializable key);
+
+		public Map<String, Object> getProxyDelegate(Serializable key);
+	}
+
+	public void setCustomProxyResolver(CustomProxyResolver resolver);
 
 	public void addType(Class<?> type);
 
@@ -42,6 +53,8 @@ public interface DElementStore extends Externalizable {
 
 	public Long getProxyStoreKey();
 
+	public Object getProxyStoreDelegate();
+
 	public void setProxyStoreKey(Long key);
 
 	public void setProxyStoreKey(CharSequence key);
@@ -60,7 +73,7 @@ public interface DElementStore extends Externalizable {
 
 	public void removeEdge(Edge edge);
 
-	public Map<String, Object> findElementDelegate(Object delegateKey, Class<? extends Element> type);
+	public Object findElementDelegate(Object delegateKey, Class<? extends Element> type);
 
 	public void removeElementDelegate(Element element);
 
@@ -87,5 +100,7 @@ public interface DElementStore extends Externalizable {
 	public DElementIterable getElements(String key, Object value);
 
 	public void uncache(Element element);
+
+	public boolean isProxied();
 
 }

@@ -20,7 +20,7 @@ public class IncidenceHandler extends AbstractIncidenceHandler implements Annota
 	public Object processElement(final Incidence annotation, final Method method, final Object[] arguments, final FramedGraph framedGraph,
 			final Element element, final Direction direction) {
 		if (element instanceof Vertex) {
-			return processVertexAdjacency(annotation, method, arguments, framedGraph, (Vertex) element);
+			return processVertexIncidence(annotation, method, arguments, framedGraph, (Vertex) element);
 		} else {
 			throw new UnsupportedOperationException();
 		}

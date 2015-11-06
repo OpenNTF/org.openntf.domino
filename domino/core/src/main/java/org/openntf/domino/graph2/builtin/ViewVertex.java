@@ -5,7 +5,6 @@ import java.util.Map;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
-import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.Shardable;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.impl.DVertex;
@@ -14,6 +13,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
@@ -38,7 +38,7 @@ public interface ViewVertex extends VertexFrame {
 	@TypedProperty("$Title")
 	public String getTitle();
 
-	@IncidenceUnique(label = "contents", direction = Direction.OUT)
+	@Incidence(label = "contents", direction = Direction.OUT)
 	public Iterable<Contains> getContents();
 
 	public abstract static class ViewVertexImpl implements ViewVertex, JavaHandlerContext<Vertex> {

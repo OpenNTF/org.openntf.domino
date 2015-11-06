@@ -1610,6 +1610,12 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	}
 
 	@Override
+	public void switchSessionType(final SessionType type) {
+		sessionType_ = type;
+		identCleared_ = true;
+	}
+
+	@Override
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 		isConvertMime_ = null;

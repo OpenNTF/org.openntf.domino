@@ -1260,7 +1260,9 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
 			try {
-				return fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.SCHEMA, this);
+				lotus.domino.View raw = getDelegate();
+				Vector rawColumns = raw.getColumns();
+				return fromLotusAsVector(rawColumns, org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
 				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
 						+ getAncestorDatabase().getApiPath(), e);
@@ -2670,7 +2672,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			if (candidate != null) {
 				log_.log(Level.WARNING,
 						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
-								+ ", View2:" + ret.getAliases());
+						+ ", View2:" + ret.getAliases());
 				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
 				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
 				ret = candidate;
@@ -3114,13 +3116,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return utilityNavigator_;
 	}
 
-	private transient String metaversalid_;
-
 	@Override
 	public String getMetaversalID() {
-		if (metaversalid_ != null) {
-			metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
-		}
-		return metaversalid_;
+		return getAncestorDatabase().getReplicaID() + getUniversalID();
 	}
 }

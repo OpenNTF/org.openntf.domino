@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import javolution.util.FastSet;
 
-import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph.DominoVertex;
 
 public class DProxyVertex extends DVertex {
@@ -26,7 +26,14 @@ public class DProxyVertex extends DVertex {
 		super(parent, delegate);
 		proxyDelegate_ = vertex;
 		proxyId_ = (NoteCoordinate) vertex.getId();
-		setProperty(PROXY_ITEM, proxyId_.toString());
+		super.setProperty(PROXY_ITEM, proxyId_.toString());
+	}
+
+	DProxyVertex(final org.openntf.domino.graph2.DGraph parent, final NoteCoordinate vertexId, final Map<String, Object> delegate) {
+		super(parent, delegate);
+		//		proxyDelegate_ = vertex;
+		proxyId_ = vertexId;
+		super.setProperty(PROXY_ITEM, proxyId_.toString());
 	}
 
 	DProxyVertex(final org.openntf.domino.graph2.DGraph parent, final Map<String, Object> delegate) {
@@ -35,12 +42,38 @@ public class DProxyVertex extends DVertex {
 
 	protected org.openntf.domino.graph2.DVertex getProxyDelegate() {
 		if (proxyDelegate_ == null) {
-			if (proxyId_ == null) {
-				proxyId_ = new NoteCoordinate((String) super.getProperty(PROXY_ITEM));
+			NoteCoordinate id = getProxiedId();
+			if (id != null) {
+				//				System.out.println("Resolving proxy delegate using id " + id.toString());
+				proxyDelegate_ = (org.openntf.domino.graph2.DVertex) getParent().getVertex(id);
+				//				if (proxyDelegate_ == null) {
+				//					System.err.println("Unable to resolve proxy delegate using id " + String.valueOf(id));
+				//				}
 			}
-			proxyDelegate_ = (org.openntf.domino.graph2.DVertex) getParent().getVertex(proxyId_);
 		}
 		return proxyDelegate_;
+	}
+
+	protected NoteCoordinate getProxiedId() {
+		if (proxyId_ == null) {
+			String storedId = super.getProperty(PROXY_ITEM, String.class);
+			if (storedId == null || storedId.length() == 0)
+				return null;
+			if ("[]".equals(storedId))
+				return null;	//TODO NTF how is this happening!?!
+			proxyId_ = NoteCoordinate.Utils.getNoteCoordinate(storedId);
+		}
+		return proxyId_;
+	}
+
+	protected void setProxiedId(final NoteCoordinate id) {
+		try {
+			//			System.out.println("Setting proxied id to " + String.valueOf(id));
+			proxyId_ = id;
+			setProperty(PROXY_ITEM, String.valueOf(id));
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	protected boolean isGraphKey(final String key) {
@@ -62,10 +95,52 @@ public class DProxyVertex extends DVertex {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getProperty(final String key) {
+		//		System.out.println("TEMP DEBUG: getting property from proxy vertex");
 		if (isGraphKey(key)) {
 			return super.getProperty(key);
 		} else {
-			return getProxyDelegate().getProperty(key);
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			if (delVertex == null) {
+				//				System.out.println("TEMP DEBUG: No delegate available. Proxy acting directly for key " + key);
+				return super.getProperty(key);
+			} else {
+				//				System.out.println("TEMP DEBUG: Proxy found. Retrieving property " + key);
+				return delVertex.getProperty(key);
+			}
+		}
+	}
+
+	@Override
+	public <T> T getProperty(final String propertyName, final Class<T> type) {
+		//		System.out.println("TEMP DEBUG: getting property from proxy vertex");
+		if (isGraphKey(propertyName)) {
+			return super.getProperty(propertyName, type);
+		} else {
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			if (delVertex == null) {
+				//				System.out.println("TEMP DEBUG: No delegate available. Proxy acting directly for key " + propertyName);
+				return super.getProperty(propertyName, type);
+			} else {
+				//				System.out.println("TEMP DEBUG: Proxy found. Retrieving property " + propertyName);
+				return delVertex.getProperty(propertyName, type);
+			}
+		}
+	}
+
+	@Override
+	public <T> T getProperty(final String key, final Class<T> type, final boolean allowNull) {
+		//		System.out.println("TEMP DEBUG: getting property from proxy vertex");
+		if (isGraphKey(key)) {
+			return super.getProperty(key, type, allowNull);
+		} else {
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			if (delVertex == null) {
+				//				System.out.println("TEMP DEBUG: No delegate available. Proxy acting directly for key " + key);
+				return super.getProperty(key, type, allowNull);
+			} else {
+				//				System.out.println("TEMP DEBUG: Proxy found. Retrieving property " + key);
+				return delVertex.getProperty(key, type, allowNull);
+			}
 		}
 	}
 
@@ -73,7 +148,10 @@ public class DProxyVertex extends DVertex {
 	public Set<String> getPropertyKeys() {
 		FastSet<String> result = new FastSet<String>();
 		result.addAll(super.getPropertyKeys());
-		result.addAll(getProxyDelegate().getPropertyKeys());
+		org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+		if (delVertex != null) {
+			result.addAll(delVertex.getPropertyKeys());
+		}
 		return result.unmodifiable();
 	}
 
@@ -82,7 +160,12 @@ public class DProxyVertex extends DVertex {
 		if (isGraphKey(key)) {
 			super.setProperty(key, value);
 		} else {
-			getProxyDelegate().setProperty(key, value);
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			if (delVertex == null) {
+				super.setProperty(key, value);
+			} else {
+				delVertex.setProperty(key, value);
+			}
 		}
 	}
 
@@ -91,7 +174,12 @@ public class DProxyVertex extends DVertex {
 		if (isGraphKey(key)) {
 			return super.removeProperty(key);
 		} else {
-			return getProxyDelegate().removeProperty(key);
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			if (delVertex == null) {
+				return super.removeProperty(key);
+			} else {
+				return delVertex.removeProperty(key);
+			}
 		}
 	}
 

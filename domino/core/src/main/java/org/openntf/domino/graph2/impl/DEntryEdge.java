@@ -70,4 +70,19 @@ public class DEntryEdge extends DEdge {
 	//		return null;
 	//	}
 
+	@Override
+	public void applyChanges() {
+		throw new UnsupportedOperationException("Entry edges cannot be updated. They are read-only.");
+	}
+
+	@Override
+	public void commit() {
+		throw new UnsupportedOperationException("Entry edges cannot be updated. They are read-only.");
+	}
+
+	@Override
+	public void remove() {
+		throw new UnsupportedOperationException("Entry edges cannot be updated. They are read-only.");
+	}
+
 }

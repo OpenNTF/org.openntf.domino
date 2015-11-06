@@ -58,4 +58,6 @@ public interface Form {
 
 	public NoteCollection getNoteCollection();
 
+	public String getMetaversalID();
+
 }

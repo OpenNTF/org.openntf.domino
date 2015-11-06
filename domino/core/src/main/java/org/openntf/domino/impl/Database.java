@@ -81,7 +81,7 @@ import com.ibm.icu.util.GregorianCalendar;
  * The Class Database.
  */
 public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-		org.openntf.domino.Database {
+org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -2703,10 +2703,12 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void setFolderReferencesEnabled(final boolean flag) {
 		try {
-			getDelegate().setFolderReferencesEnabled(flag);
+			boolean current = getDelegate().getFolderReferencesEnabled();
+			if (flag != current) {
+				getDelegate().setFolderReferencesEnabled(flag);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
-
 		}
 	}
 
@@ -3236,13 +3238,20 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 */
 	@Override
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		if (since.after(this.getLastModified().toJavaDate()))
+		if (since != null && since.after(this.getLastModified().toJavaDate()))
 			return 0;
 		NoteCollection nc = createNoteCollection(false);
-		nc.setSinceTime(since);
+		if (since != null) {
+			nc.setSinceTime(since);
+		}
 		nc.setSelectOptions(noteClass);
 		nc.buildCollection();
 		return nc.getCount();
+	}
+
+	@Override
+	public int getNoteCount() {
+		return getModifiedNoteCount(null);
 	}
 
 	public int[] getDailyModifiedNoteCount(final java.util.Date since) {

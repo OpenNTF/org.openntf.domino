@@ -92,7 +92,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
  * The Class Document.
  */
 public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-org.openntf.domino.Document {
+		org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -145,6 +145,7 @@ org.openntf.domino.Document {
 	private String unid_;
 	private long threadid_;
 	private boolean isNew_;
+	private boolean isDeferred_ = false;
 
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
@@ -256,6 +257,7 @@ org.openntf.domino.Document {
 			unid_ = parent.getUNID(id);
 		}
 		isNew_ = false;
+		isDeferred_ = true;
 	}
 
 	protected void setDeferredId(final int noteId) {
@@ -1210,7 +1212,11 @@ org.openntf.domino.Document {
 		// RPr: this should be equal to the code below.
 		MIMEEntity entity = getMIMEEntity(name);
 		if (entity == null) {
-			return TypeUtils.itemValueToClass(this, name, type);
+			T result = TypeUtils.itemValueToClass(this, name, type);
+			//			if ("form".equalsIgnoreCase(name)) {
+			//				System.out.println("Using getItemValue on the form field ");
+			//			}
+			return result;
 		} else {
 			try {
 				return (T) Documents.getItemValueMIME(this, name, entity);
@@ -1937,11 +1943,12 @@ org.openntf.domino.Document {
 		if (checkMimeOpen()) {
 			System.out.println("DEBUG: MimeEntity found open while checking for item name " + name);
 		}
+		lotus.domino.Document delegate = getDelegate();	//NTF outside the try/catch so the exception will bubble
 		try {
-			if (name == null) {
+			if (name == null || delegate == null) {
 				return false;
 			} else {
-				return getDelegate().hasItem(name);
+				return delegate.hasItem(name);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -3404,8 +3411,8 @@ org.openntf.domino.Document {
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3684,10 +3691,23 @@ org.openntf.domino.Document {
 					try {
 						d = db.getDocumentByUNID(unid_);
 					} catch (NotesException ne) {
-						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-								+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+						if (isDeferred_) {
+							try {
+								d = db.createDocument();
+								d.setUniversalID(unid_);
+								isDeferred_ = false;
+							} catch (NotesException ne1) {
+								DominoUtils.handleException(ne1);
+							}
+						} else {
+							log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+									+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+									+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+						}
 					}
+				} else {
+					log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+							+ ", but the parent database object is null!");
 				}
 				setDelegate(d, true);
 				shouldResurrect_ = false;
@@ -3699,19 +3719,20 @@ org.openntf.domino.Document {
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (Exception e) {
 				DominoUtils.handleException(e);
+				//				throw new RuntimeException(e);
 			}
 		} else {
 			long curThreadid = System.identityHashCode(Thread.currentThread());
@@ -3819,8 +3840,11 @@ org.openntf.domino.Document {
 
 		if (key instanceof CharSequence) {
 			String skey = key.toString().toLowerCase();
-			if ("parentdocument".equals(skey)) {
+			if ("parentdocument".equalsIgnoreCase(skey)) {
 				return this.getParentDocument();
+			}
+			if ("form".equalsIgnoreCase(skey)) {
+				return this.getFormName();
 			}
 			if (skey.indexOf("@") != -1) { // TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
 				//TODO NTF: If so, we should change to looking for valid item names first, then trying to treat as formula
@@ -3828,7 +3852,6 @@ org.openntf.domino.Document {
 				if (pos != -1) {
 					skey = skey.substring(0, pos);
 				}
-
 				if ("@accessed".equals(skey)) {
 					return this.getLastAccessed();
 				}

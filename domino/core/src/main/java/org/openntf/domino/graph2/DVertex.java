@@ -34,9 +34,9 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 
 	public Set<Edge> getEdges(final String... labels);
 
-	public Edge findInEdge(final Vertex otherVertex, final String label);
+	public Edge findInEdge(final Vertex otherVertex, final String label, boolean isUnique);
 
-	public Edge findOutEdge(final Vertex otherVertex, final String label);
+	public Edge findOutEdge(final Vertex otherVertex, final String label, boolean isUnique);
 
 	public Edge findEdge(final Vertex otherVertex, final String label);
 

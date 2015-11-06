@@ -22,15 +22,14 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 
-public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterable<T>implements List<T> {
+public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;
 		//		    protected final Direction direction_;
 		protected final ListIterator<Vertex> iterator_;
 		protected final FramedGraph<? extends Graph> framedGraph_;
 
-		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Vertex> iterator,
-				final Class<T> kind/*, Direction direction*/) {
+		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Vertex> iterator, final Class<T> kind/*, Direction direction*/) {
 			kind_ = kind;
 			//		    	direction_ = direction;
 			iterator_ = iterator;
@@ -46,8 +45,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 			} else if (arg0 instanceof Edge) {
 				iterator_.add((Vertex) arg0);
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot add an object of type " + arg0.getClass().getName() + " to an iterator of " + kind_.getName());
+				throw new IllegalArgumentException("Cannot add an object of type " + arg0.getClass().getName() + " to an iterator of "
+						+ kind_.getName());
 			}
 		}
 
@@ -93,8 +92,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 			} else if (kind_.isAssignableFrom(arg0.getClass())) {
 				iterator_.set(((VertexFrame) kind_.cast(arg0)).asVertex());
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind_.getName());
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+						+ kind_.getName());
 			}
 		}
 
@@ -106,6 +105,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 	public FramedVertexList(final FramedGraph<? extends Graph> framedGraph, final Vertex sourceVertex, final Iterable<Vertex> list,
 			final Class<T> kind) {
 		super(framedGraph, list, kind);
+		//		Throwable t = new Throwable();
+		//		t.printStackTrace();
 		sourceVertex_ = sourceVertex;
 		if (list instanceof List) {
 			list_ = (List<Vertex>) list;
@@ -164,8 +165,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 			} else if (raw instanceof VertexFrame) {
 				result.add(((VertexFrame) raw).asVertex());
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
+						+ " to an EdgeFrame iterator");
 			}
 		}
 		return result;
@@ -179,8 +180,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 			} else if (raw instanceof VertexFrame) {
 				result.add(((VertexFrame) raw).asVertex());
 			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
+						+ " to an EdgeFrame iterator");
 			}
 		}
 		return result;
@@ -208,8 +209,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.contains(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 
@@ -230,8 +231,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.indexOf(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 
@@ -247,8 +248,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.lastIndexOf(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 
@@ -283,8 +284,8 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		} else if (kind.isAssignableFrom(arg0.getClass())) {
 			return list_.remove(((VertexFrame) kind.cast(arg0)).asVertex());
 		} else {
-			throw new IllegalArgumentException(
-					"Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of " + kind.getName());
+			throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to an iterator of "
+					+ kind.getName());
 		}
 	}
 

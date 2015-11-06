@@ -1,6 +1,4 @@
-package org.openntf.domino.graph2.builtin;
-
-import java.util.Map;
+package org.openntf.domino.graph2.builtin.identity;
 
 import org.openntf.domino.graph2.impl.DElementStore;
 
@@ -14,7 +12,7 @@ public class PersonStore extends DElementStore {
 	}
 
 	@Override
-	public Map<String, Object> findElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
+	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
 		if (this.getProxyStoreDelegate() == null) {
 			throw new IllegalStateException("Cannot find elements in a User store without a proxy store set");
 		}

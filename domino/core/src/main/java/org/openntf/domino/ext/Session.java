@@ -291,6 +291,8 @@ public interface Session {
 	 */
 	public String getUnique();
 
+	public void switchSessionType(SessionType type);
+
 	/**
 	 * Gets a Database object by its replica ID (e.g. 85255FA900747B84). Deprecated in favour of {@link Session#getDatabase(String)}
 	 * 
