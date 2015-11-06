@@ -129,6 +129,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	public void setThisAgent(final boolean currPage) {
 		try {
 			String fromPage = "";
+			String includeQueryString = ODAPlatform.getXspPropertyAsString("xsp.openlog.includeQueryString");
 			String[] historyUrls = ExtLibUtil.getXspContext().getHistoryUrls();
 			if (StringUtil.isEmpty(historyUrls)) {
 				fromPage = ExtLibUtil.getXspContext().getUrl().toSiteRelativeString(ExtLibUtil.getXspContext());
@@ -143,11 +144,16 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					}
 				}
 			}
-			if (fromPage.indexOf("?") > -1) {
-				super.setThisAgent(fromPage.substring(1, fromPage.indexOf("?")));
-			} else {
-				super.setThisAgent(fromPage);
+
+			if (fromPage.indexOf("/") > -1) {
+				fromPage = fromPage.substring(1, fromPage.length());
 			}
+			if (!"true".equalsIgnoreCase(includeQueryString)) {
+				if (fromPage.indexOf("?") > -1) {
+					fromPage = fromPage.substring(1, fromPage.indexOf("?"));
+				}
+			}
+			super.setThisAgent(fromPage);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -198,7 +204,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 				String logDbName_ = ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath");
 				if (StringUtil.isEmpty(logDbName_)) {
 					super.setLogDbName("OpenLog.nsf");
-				} else if ("[CURRENT]".equals(logDbName_.toUpperCase())) {
+				} else if ("[CURRENT]".equalsIgnoreCase(logDbName_)) {
 					super.setLogDbName(getCurrentDatabase().getFilePath());
 				} else {
 					super.setLogDbName(logDbName_);
@@ -218,7 +224,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			if (StringUtil.isEmpty(dummyVar)) {
 				setSuppressEventStack(true);
 				return true;
-			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
+			} else if ("false".equalsIgnoreCase(dummyVar)) {
 				setSuppressEventStack(false);
 				return false;
 			} else {
@@ -244,7 +250,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			String dummyVar = ODAPlatform.getXspPropertyAsString("xsp.openlog.displayError");
 			if (StringUtil.isEmpty(dummyVar)) {
 				setDisplayError(true);
-			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
+			} else if ("false".equalsIgnoreCase(dummyVar)) {
 				setDisplayError(false);
 			} else {
 				setDisplayError(true);
