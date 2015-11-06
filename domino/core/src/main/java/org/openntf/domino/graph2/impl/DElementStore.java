@@ -10,10 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-import javolution.util.FastTable;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
@@ -33,6 +29,10 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.VertexFrame;
+
+import javolution.util.FastMap;
+import javolution.util.FastSet;
+import javolution.util.FastTable;
 
 public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@SuppressWarnings("unused")
@@ -312,7 +312,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					result = vertex;
 				}
 				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				getKeyCache().put(id, (NoteCoordinate) result.getId());//TODO shouldn't force NoteCoordinate, but it covers all current use cases
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -348,7 +348,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 				result = edge;
 				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				getKeyCache().put(id, (NoteCoordinate) result.getId());//TODO shouldn't force NoteCoordinate, but it covers all current use cases
 				getConfiguration().getGraph().startTransaction(result);
 			}
 		}
@@ -369,8 +369,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			if (type.isAssignableFrom(chk.getClass())) {
 				return chk;
 			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
-						+ chk.getClass().getName());
+				throw new IllegalStateException(
+						"Requested id of " + String.valueOf(id) + " is already in cache but is a " + chk.getClass().getName());
 			}
 		}
 		return null;
@@ -437,7 +437,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 						ViewEntryCoordinate vec = (ViewEntryCoordinate) id;
 						String entryType = vec.getEntryType();
 						if (entryType.startsWith("E")) {
-							DEdge edge = new DEntryEdge(getConfiguration().getGraph(), (ViewEntry) delegate, (ViewEntryCoordinate) id, this);
+							DEdge edge = new DEntryEdge(getConfiguration().getGraph(), (ViewEntry) delegate, (ViewEntryCoordinate) id,
+									this);
 							result = edge;
 						} else if (entryType.startsWith("V")) {
 							ViewEntry entry = (ViewEntry) delegate;
@@ -455,7 +456,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				}
 				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				getKeyCache().put(id, (NoteCoordinate) result.getId());//TODO shouldn't force NoteCoordinate, but it covers all current use cases
 			}
 		}
 		return result;
@@ -498,12 +499,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	public boolean isProxied() {
 		//		Object pDelegate = getProxyStoreDelegate();
 		boolean result = getProxyStoreKey() != null;
-		if (!result) {
-			System.out.println("Checking proxy status on store " + System.identityHashCode(this) + " in thread "
-					+ System.identityHashCode(Thread.currentThread()));
-			Throwable t = new Throwable();
-			t.printStackTrace();
-		}
+		//		if (!result) {
+		//			System.out.println("Checking proxy status on store " + System.identityHashCode(this) + " in thread "
+		//					+ System.identityHashCode(Thread.currentThread()));
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+		//		}
 		return result;
 	}
 
@@ -583,8 +584,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
-	IllegalArgumentException {
+	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type)
+			throws IllegalStateException, IllegalArgumentException {
 		Object result = null;
 		Object del = null;
 		if (isProxied()) {
@@ -689,8 +690,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
 					//okay
 				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-							+ " results in a delegate with a graph type of " + strChk);
+					throw new IllegalStateException(
+							"Requested id of " + String.valueOf(delegateKey) + " results in a delegate with a graph type of " + strChk);
 				}
 			}
 		}
@@ -746,13 +747,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
 					//okay
 				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-							+ " results in a delegate with a graph type of " + strChk);
+					throw new IllegalStateException(
+							"Requested id of " + String.valueOf(delegateKey) + " results in a delegate with a graph type of " + strChk);
 				}
 			}
 		} else {
-			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-					+ " results in a null delegate and therefore cannot be persisted.");
+			throw new IllegalStateException(
+					"Requested id of " + String.valueOf(delegateKey) + " results in a null delegate and therefore cannot be persisted.");
 		}
 
 		return result;
@@ -911,8 +912,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Database db = (Database) raw;
 			NoteCollection nc = db.createNoteCollection(false);
 			nc.setSelectDocuments(true);
-			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER + " | "
-					+ org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
+			nc.setSelectionFormula(
+					org.openntf.domino.graph2.DEdge.FORMULA_FILTER + " | " + org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
 			nc.buildCollection();
 			for (String noteid : nc) {
 				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
