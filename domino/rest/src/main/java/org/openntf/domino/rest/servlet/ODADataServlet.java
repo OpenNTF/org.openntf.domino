@@ -46,7 +46,7 @@ public class ODADataServlet extends DasServlet {
 	public void doService(final HttpServletRequest request, final HttpServletResponse response)
 			throws ServletException, IOException {
 		Factory.initThread(getDataServiceConfig());
-		Factory.setSessionFactory(new DasCurrentSessionFactory(), SessionType.CURRENT);
+		Factory.setSessionFactory(new DasCurrentSessionFactory(request), SessionType.CURRENT);
 		super.doService(request, response);
 		Factory.termThread();
 	}

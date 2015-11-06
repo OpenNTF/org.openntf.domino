@@ -34,6 +34,21 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 			return result;
 		}
 
+		public static String convertToPartialFormula(final String key, final Object value) {
+			String result = "";
+			if (key == null)
+				return "";
+			if ("@".equals(key)) {
+				return String.valueOf(value);
+			}
+			String strValue = String.valueOf(value);
+			if (value instanceof Enum<?>) {
+				strValue = ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
+			}
+			result = "@Contains(" + key + "; \"" + String.valueOf(value) + "\")";
+			return result;
+		}
+
 		//TODO make this more robust by using the TypeRegistry
 		public static String getFormulaForFrame(final Class<?> kind) {
 			String classname = kind.getSimpleName();
@@ -91,6 +106,17 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 			return getFormulaForFrame(kind) + (filterFormula.length() > 0 ? " & " + filterFormula : "");
 		}
 
+		public static String getFramedElementPartialFormula(final List<String> keys, final List<Object> values, final Class<?> kind) {
+			String filterFormula = "";
+			for (int i = 0; i < keys.size(); i++) {
+				String key = keys.get(i);
+				Object value = values.get(i);
+				String curformula = convertToPartialFormula(key, value);
+				filterFormula = filterFormula + (filterFormula.length() > 0 ? " & " : "") + curformula;
+			}
+			return getFormulaForFrame(kind) + (filterFormula.length() > 0 ? " & " + filterFormula : "");
+		}
+
 		public static String getFramedVertexFormula(final List<String> keys, final List<Object> values, final Class<?> kind) {
 			String filterFormula = "";
 			for (int i = 0; i < keys.size(); i++) {
@@ -117,7 +143,7 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 
 	public void startTransaction(final Element elem);
 
-	public Map<String, Object> findDelegate(Object delegateKey);
+	public Object findDelegate(Object delegateKey);
 
 	public void removeDelegate(Element element);
 
@@ -144,5 +170,9 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 	public Object getStoreDelegate(DElementStore store, Object provisionalKey);
 
 	public Object getProxyStoreDelegate(DElementStore store, Object provisionalKey);
+
+	public DKeyResolver getKeyResolver(Class<?> type);
+
+	public void addKeyResolver(DKeyResolver keyResolver);
 
 }

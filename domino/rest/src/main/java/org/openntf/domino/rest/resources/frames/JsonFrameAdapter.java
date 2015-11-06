@@ -3,6 +3,7 @@ package org.openntf.domino.rest.resources.frames;
 import com.ibm.commons.util.io.json.JsonObject;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
@@ -14,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openntf.domino.graph2.DEdgeList;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
@@ -23,6 +25,7 @@ import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DEdge;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
+import org.openntf.domino.graph2.impl.DProxyVertex;
 import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
@@ -162,6 +165,10 @@ public class JsonFrameAdapter implements JsonObject {
 		if (counters_ == null) {
 			counters_ = getGraph().getTypeRegistry().getCounters(type_);
 		}
+		if (counters_.size() == 0) {
+			System.out.println("TEMP DEBUG No counters found for type " + type_.getName() + " and we found "
+					+ getIncidences().size() + " incidences");
+		}
 		return counters_;
 	}
 
@@ -208,6 +215,12 @@ public class JsonFrameAdapter implements JsonObject {
 		if (frame instanceof VertexFrame && getIncludeEdges()) {
 			result.add("@edges");
 		}
+		if (frame instanceof VertexFrame) {
+			Vertex v = ((VertexFrame) frame).asVertex();
+			if (v instanceof DProxyVertex) {
+				result.add("@proxyid");
+			}
+		}
 		if (frame instanceof VertexFrame && getLabels() != null) {
 			for (CaseInsensitiveString cis : getLabels()) {
 				result.add("#" + cis);
@@ -238,6 +251,14 @@ public class JsonFrameAdapter implements JsonObject {
 				}
 				if (frame instanceof VertexFrame) {
 					result = ((VertexFrame) frame).asVertex().getId().toString();
+				}
+			} else if (key.equals("@proxyid")) {
+				// System.out.println("TEMP DEBUG @proxyid requested");
+				if (frame instanceof VertexFrame) {
+					Vertex v = ((VertexFrame) frame).asVertex();
+					if (v instanceof DProxyVertex) {
+						result = ((DProxyVertex) v).getProperty(DProxyVertex.PROXY_ITEM, String.class);
+					}
 				}
 			} else if (key.equals("@type")) {
 				if (frame instanceof EdgeFrame) {
@@ -315,9 +336,14 @@ public class JsonFrameAdapter implements JsonObject {
 				}
 			} else if (key.equals("@edges")) {
 				Map<String, Integer> edgeCounts = new LinkedHashMap<String, Integer>();
-				for (CaseInsensitiveString label : getCounters().keySet()) {
+				Set<CaseInsensitiveString> counterKeys = getCounters().keySet();
+				// System.out.println("TEMP DEBUG Found " + counterKeys.size() +
+				// " edge types");
+				for (CaseInsensitiveString label : counterKeys) {
 					Method crystal = getCounters().get(label);
 					if (crystal != null) {
+						// System.out.println("TEMP DEBUG Found method for " +
+						// key);
 						try {
 							Object raw = crystal.invoke(getFrame(), (Object[]) null);
 							if (raw instanceof Integer) {
@@ -329,7 +355,8 @@ public class JsonFrameAdapter implements JsonObject {
 							e.printStackTrace();
 						}
 					} else {
-						// System.out.println("No method found for key " + key);
+						// System.out.println("TEMP DEBUG No method found for key "
+						// + key);
 					}
 				}
 				result = edgeCounts;
@@ -347,7 +374,7 @@ public class JsonFrameAdapter implements JsonObject {
 						// result.getClass().getName());
 
 						if (getIncludeVertices()) {
-							System.out.println("TEMP DEBUG: Turning EdgeList into VertexList");
+							// System.out.println("TEMP DEBUG: Turning EdgeList into VertexList");
 							if (result instanceof DEdgeList) {
 								result = ((DEdgeList) result).toVertexList();
 
@@ -446,15 +473,26 @@ public class JsonFrameAdapter implements JsonObject {
 					System.err.println("No method found for key " + label);
 				}
 			} else {
+				// System.out.println("TEMP DEBUG finding property " + key);
 				Method crystal = getGetters().get(key);
 				if (crystal != null) {
 					try {
 						result = crystal.invoke(frame, (Object[]) null);
+						if (frame instanceof VertexFrame) {
+							Vertex v = ((VertexFrame) frame).asVertex();
+							if (v instanceof DProxyVertex) {
+								// System.out.println("TEMP DEBUG using a proxy vertex");
+							}
+							// System.out.println("TEMP DEBUG invoking getter for "
+							// + crystal.getName());
+						}
 					} catch (Exception e) {
 						if (frame instanceof EdgeFrame) {
 							result = ((EdgeFrame) frame).asEdge().getProperty(paramKey);
 						} else if (frame instanceof VertexFrame) {
 							result = ((VertexFrame) frame).asVertex().getProperty(paramKey);
+							// System.out.println("TEMP DEBUG using getProperty for key "
+							// + key);
 						} else {
 							System.err.println("Trying to get property " + paramKey + " from an object "
 									+ frame.getClass().getName());

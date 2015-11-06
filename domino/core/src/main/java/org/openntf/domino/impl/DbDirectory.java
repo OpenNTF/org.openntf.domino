@@ -46,7 +46,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class DbDirectory.
  */
 public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-		org.openntf.domino.DbDirectory, Encapsulated {
+org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	/* the MetaData contains s small subset of information of a (closed) Database */
@@ -54,7 +54,7 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 	private transient Iterator<DatabaseMetaData> dbIter; // required for getFirst/getNextDatabase
 	private transient DbDirectoryTree dbDirectoryTree_;
 
-	private org.openntf.domino.DbDirectory.Type type_;
+	private org.openntf.domino.DbDirectory.Type type_ = Type.TEMPLATE_CANDIDATE;
 	private String name_;
 	private String clusterName_;
 	private boolean isHonorOpenDialog_ = false;
@@ -82,7 +82,6 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 			DominoUtils.handleException(e);
 		}
 		//dbHolderSet_ = new ConcurrentSkipListSet<DatabaseMetaData>(DatabaseMetaData.FILEPATH_COMPARATOR);
-		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
 	@Override
@@ -116,8 +115,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 
 	@Override
 	public void setDirectoryType(final Type type) {
+		type_ = type;
 		if (type_ != type) {
-			type_ = type;
 			reset();
 		}
 	}
@@ -148,7 +147,8 @@ public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirector
 		try {
 			lotus.domino.Database rawdb = null;
 			try {
-				rawdb = delegate.getFirstDatabase(type_.getValue());
+				int type = type_.getValue();
+				rawdb = delegate.getFirstDatabase(type);
 			} catch (NotesException ne) {
 				log_.log(Level.WARNING, "For some reason getting the first database reported an exception: " + ne.text
 						+ "  Attempting to move along...");

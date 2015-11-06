@@ -84,29 +84,44 @@ public enum DominoUtils {
 	public static Class<?> getClass(final CharSequence className) {
 		Class<?> result = null;
 		try {
-			result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
-				@Override
-				public Class<?> run() throws Exception {
-					Class<?> result = null;
-					ClassLoader cl = Thread.currentThread().getContextClassLoader();
-					try {
-						result = Class.forName(className.toString(), false, cl);
-					} catch (Throwable t) {
-						System.err.println("Got a " + t.getClass() + " trying to load " + className + " from a " + cl.getClass().getName());
-						ClassLoader parent = cl.getParent();
-						while (null != parent) {
-							System.err.println("Parent ClassLoader: " + parent.getClass().getName());
-							parent = parent.getParent();
+			result = Class.forName(className.toString());
+		} catch (Throwable t) {
+			//			System.out.println("Not able to use simple class access for " + className);
+			//no surprise here. Let's try something more specific...
+		}
+		if (result == null) {
+			try {
+				result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
+					@Override
+					public Class<?> run() throws Exception {
+						Class<?> result = null;
+						ClassLoader cl = Thread.currentThread().getContextClassLoader();
+						try {
+							String cname = className.toString();
+							int pos = cname.indexOf('$');
+							if (pos > -1) {
+								String pname = cname.substring(0, pos);
+								Class<?> pclass = Class.forName(pname, false, cl);
+								String sname = cname.substring(pos + 1);
+								for (Class<?> curClass : pclass.getClasses()) {
+									if (curClass.getSimpleName().equals(sname)) {
+										result = curClass;
+									}
+								}
+							} else {
+								result = Class.forName(cname, false, cl);
+							}
+						} catch (Throwable t) {
+							DominoUtils.handleException(t);
 						}
-						throw new RuntimeException(t);
+						return result;
 					}
-					return result;
-				}
-			});
-		} catch (AccessControlException e) {
-			e.printStackTrace();
-		} catch (PrivilegedActionException e) {
-			e.printStackTrace();
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
+			}
 		}
 		if (result == null) {
 			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details.");
@@ -118,7 +133,7 @@ public enum DominoUtils {
 
 		@Override
 		protected Boolean initialValue() {
-			System.out.println("INIT");
+			//			System.out.println("INIT");
 			return Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
 		}
 	};

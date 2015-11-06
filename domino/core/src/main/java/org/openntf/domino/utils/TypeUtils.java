@@ -110,6 +110,8 @@ public enum TypeUtils {
 			} else if (type.isPrimitive()) {
 				throw new ItemNotFoundException("Item " + itemName + " was not found on document " + noteid + " so we cannot return a "
 						+ type.getName());
+			} else if (type.equals(String.class)) {
+				return (T) "";
 			} else {
 				return null;
 			}
@@ -148,6 +150,7 @@ public enum TypeUtils {
 		T result = null;
 		try {
 			result = collectionToClass(v, type, session);
+
 		} catch (DataNotCompatibleException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
 			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid, e);
@@ -156,7 +159,9 @@ public enum TypeUtils {
 			throw new UnimplementedException(
 					e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid, e);
 		}
-
+		//		if ("form".equalsIgnoreCase(item.getName())) {
+		//			System.out.println("TEMP DEBUG Form value is '" + (String) result + "'");
+		//		}
 		return result;
 	}
 
@@ -1167,15 +1172,19 @@ public enum TypeUtils {
 	}
 
 	public static String toString(final java.lang.Object object) throws DataNotCompatibleException {
-		if (object == null)
+		if (object == null) {
 			return null;
+		}
 		if (object instanceof String) {
-			return (String) object;
+			String result = (String) object;
+			//			System.out.println("Object is a String: '" + result + "'");
+			return result;
 		} else if (object instanceof Collection) {
 			return join((Collection<?>) object);
 		} else if (object.getClass().isArray()) {
 			return join((Object[]) object);
 		} else {
+			//			System.out.println("Converting a " + object.getClass().getName() + " to a String");
 			return String.valueOf(object);
 		}
 	}
