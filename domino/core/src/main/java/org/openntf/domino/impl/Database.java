@@ -1270,7 +1270,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			if (idx != -1) {
 				fileName_ = path_.substring(idx + 1);
 			} else {
-				idx = path_.lastIndexOf('\\');// if no \ is found, it returns -1 (-1+1=0)
+				idx = path_.lastIndexOf('\\'); // if no \ is found, it returns -1 (-1+1=0)
 				fileName_ = path_.substring(idx + 1);
 			}
 		}
@@ -1398,7 +1398,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	public Date getLastFTIndexedDate() {
 		try {
 			lotus.domino.DateTime dt = getDelegate().getLastFTIndexed();
-			Date ret = DominoUtils.toJavaDateSafe(dt);// recycles the javaDate!
+			Date ret = DominoUtils.toJavaDateSafe(dt); // recycles the javaDate!
 			s_recycle(dt);
 			return ret;
 		} catch (NotesException e) {
@@ -2704,10 +2704,12 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void setFolderReferencesEnabled(final boolean flag) {
 		try {
-			getDelegate().setFolderReferencesEnabled(flag);
+			boolean current = getDelegate().getFolderReferencesEnabled();
+			if (flag != current) {
+				getDelegate().setFolderReferencesEnabled(flag);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
-
 		}
 	}
 
@@ -3060,8 +3062,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	}
 
 	@Override
-	public void resurrect() {// should only happen if the delegate has been destroyed somehow.
-		shadowedMetaData_ = null;// clear metaData
+	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		shadowedMetaData_ = null; // clear metaData
 		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
@@ -3069,8 +3071,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (NotesException e) {
 			if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-				throw new UserAccessException(
-						"User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server " + server_, e);
+				throw new UserAccessException("User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server "
+						+ server_, e);
 			} else {
 				DominoUtils.handleException(e, this);
 			}
@@ -3237,13 +3239,20 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 */
 	@Override
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		if (since.after(this.getLastModified().toJavaDate()))
+		if (since != null && since.after(this.getLastModified().toJavaDate()))
 			return 0;
 		NoteCollection nc = createNoteCollection(false);
-		nc.setSinceTime(since);
+		if (since != null) {
+			nc.setSinceTime(since);
+		}
 		nc.setSelectOptions(noteClass);
 		nc.buildCollection();
 		return nc.getCount();
+	}
+
+	@Override
+	public int getNoteCount() {
+		return getModifiedNoteCount(null);
 	}
 
 	public int[] getDailyModifiedNoteCount(final java.util.Date since) {
@@ -3688,7 +3697,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		out.writeInt(EXTERNALVERSIONUID);// data version
+		out.writeInt(EXTERNALVERSIONUID); // data version
 
 		out.writeObject(server_);
 		out.writeObject(path_);

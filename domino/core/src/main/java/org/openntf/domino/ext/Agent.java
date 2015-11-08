@@ -10,5 +10,5 @@ package org.openntf.domino.ext;
  * 
  */
 public interface Agent {
-
+	public String getMetaversalID();
 }

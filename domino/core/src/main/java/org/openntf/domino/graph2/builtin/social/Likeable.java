@@ -3,7 +3,7 @@ package org.openntf.domino.graph2.builtin.social;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.Person;
+import org.openntf.domino.graph2.builtin.identity.Person;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

@@ -1,11 +1,15 @@
 package org.openntf.domino.xsp.session;
 
+import javax.servlet.http.HttpServletRequest;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.designer.runtime.domino.bootstrap.util.StringUtil;
+import com.ibm.domino.napi.c.xsp.XSPNative;
 import com.ibm.domino.osgi.core.context.ContextInfo;
 
 /**
@@ -21,25 +25,11 @@ import com.ibm.domino.osgi.core.context.ContextInfo;
 public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 
 	private static final long serialVersionUID = 1L;
-	private String runAs_;
+	private HttpServletRequest request_;
 
-	public DasCurrentSessionFactory() {
+	public DasCurrentSessionFactory(final HttpServletRequest request) {
 		super();
-		final lotus.domino.Session rawSession = ContextInfo.getUserSession();
-		try {
-			runAs_ = rawSession.getEffectiveUserName();
-			lotus.domino.Database rawDb = rawSession.getCurrentDatabase();
-			if (rawDb != null) {
-				if (StringUtil.isEmpty(rawDb.getServer())) {
-					currentApiPath_ = rawDb.getFilePath();
-				} else {
-					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
-				}
-			}
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-
+		request_ = request;
 	}
 
 	/**
@@ -49,7 +39,47 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 	 */
 	@Override
 	public Session createSession() {
-		return wrapSession(ContextInfo.getUserSession(), false);
+		if (request_ == null) {
+			lotus.domino.Session rawSession = ContextInfo.getUserSession();
+			try {
+				lotus.domino.Database rawDb = rawSession.getCurrentDatabase();
+				if (rawDb != null) {
+					if (StringUtil.isEmpty(rawDb.getServer())) {
+						currentApiPath_ = rawDb.getFilePath();
+					} else {
+						currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+					}
+				}
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			return wrapSession(ContextInfo.getUserSession(), false);
+		} else {
+			String name = request_.getUserPrincipal().getName();
+			//			System.out.println("TEMP DEBUG getting session for " + name);
+			Session session = createSession(name);
+			Factory.setCurrentToSession(session);
+			return session;
+		}
+	}
+
+	public Session createSession(final String userName) {
+		try {
+			final long userHandle = createUserNameList(userName);
+			lotus.domino.Session rawSession = XSPNative.createXPageSessionExt(userName, userHandle, false, true, false);
+			lotus.domino.Database rawDb = rawSession.getCurrentDatabase();
+			if (rawDb != null) {
+				if (StringUtil.isEmpty(rawDb.getServer())) {
+					currentApiPath_ = rawDb.getFilePath();
+				} else {
+					currentApiPath_ = rawDb.getServer() + "!!" + rawDb.getFilePath();
+				}
+			}
+			return wrapSession(rawSession, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

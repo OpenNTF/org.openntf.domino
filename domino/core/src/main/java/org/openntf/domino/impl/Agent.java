@@ -882,4 +882,14 @@ public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino
 		}
 	}
 
+	private transient String metaversalid_;
+
+	@Override
+	public String getMetaversalID() {
+		if (metaversalid_ == null) {
+			metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
+		}
+		return metaversalid_;
+	}
+
 }

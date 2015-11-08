@@ -9,8 +9,7 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.Person;
-import org.openntf.domino.graph2.builtin.social.Comment;
+import org.openntf.domino.graph2.builtin.identity.Person;
 import org.openntf.domino.graph2.builtin.social.Commentable;
 import org.openntf.domino.graph2.builtin.social.Likeable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
@@ -47,7 +46,7 @@ public class Graph2Demo implements Runnable {
 	public static String usersId = "graph2/users.nsf";
 	public static String socialId = "graph2/social.nsf";
 	public static String nabId = "names.nsf";
-	public static String ntfUnid = "2F25B5EDE23C245785257A600059FD2E"; //NTF this is my own person document. You may need to change it.
+	public static String ntfUnid = "15FF62B8D3420FD580257AF10000A5F2";//NTF this is my own person document. You may need to change it.
 
 	private static final String DIRECTEDBY = "DirectedBy";
 	private static final String APPEARSIN = "AppearsIn";
@@ -326,16 +325,25 @@ public class Graph2Demo implements Runnable {
 		System.out.println("Resetting Star Wars test databases");
 		Session session = Factory.getSession(SessionType.NATIVE);
 		Database crewDb = session.getDatabase(crewId);
-		crewDb.getAllDocuments().removeAll(true);
-
+		if (crewDb != null) {
+			crewDb.getAllDocuments().removeAll(true);
+		}
 		Database movieDb = session.getDatabase(movieId);
-		movieDb.getAllDocuments().removeAll(true);
+		if (movieDb != null) {
+			movieDb.getAllDocuments().removeAll(true);
+		}
 		Database characterDb = session.getDatabase(characterId);
-		characterDb.getAllDocuments().removeAll(true);
+		if (characterDb != null) {
+			characterDb.getAllDocuments().removeAll(true);
+		}
 		Database edgeDb = session.getDatabase(edgeId);
-		edgeDb.getAllDocuments().removeAll(true);
+		if (edgeDb != null) {
+			edgeDb.getAllDocuments().removeAll(true);
+		}
 		Database usersDb = session.getDatabase(usersId);
-		usersDb.getAllDocuments().removeAll(true);
+		if (usersDb != null) {
+			usersDb.getAllDocuments().removeAll(true);
+		}
 		//		Database nabDb = session.getDatabase("", "names.nsf");
 		//		Document ntfDoc = nabDb.getDocumentByUNID(ntfUnid);
 		//		ntfDoc.removeItem("_COUNT_OPEN_OUT_rates");
@@ -411,7 +419,8 @@ public class Graph2Demo implements Runnable {
 			Movie revengeMovie = framedGraph.getVertex("Revenge of the Sith", Movie.class);
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + newhopeMovie.getTitle() + " rated " + newhopeMovie.getRaterRating(ntfUser) + " stars");
+			//System.out.println("Don't miss " + newhopeMovie.getTitle() + " rated " + newhopeMovie.getRaterRating(ntfUser) + " stars");
+			System.out.println("Don't miss " + newhopeMovie.getTitle());
 			Iterable<Starring> starrings = newhopeMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -425,7 +434,8 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + empireMovie.getTitle() + " rated " + empireMovie.getRaterRating(ntfUser) + " stars");
+			//System.out.println("Don't miss " + empireMovie.getTitle() + " rated " + empireMovie.getRaterRating(ntfUser) + " stars");
+			System.out.println("Don't miss " + empireMovie.getTitle());
 			starrings = empireMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -439,7 +449,8 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + jediMovie.getTitle() + " rated " + jediMovie.getRaterRating(ntfUser) + " stars");
+			//System.out.println("Don't miss " + jediMovie.getTitle() + " rated " + jediMovie.getRaterRating(ntfUser) + " stars");
+			System.out.println("Don't miss " + jediMovie.getTitle());
 			starrings = jediMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -453,7 +464,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + phantomMovie.getTitle());
+			System.out.println("Do miss " + phantomMovie.getTitle());
 			starrings = phantomMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -467,7 +478,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + clonesMovie.getTitle());
+			System.out.println("Do miss " + clonesMovie.getTitle());
 			starrings = clonesMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -481,7 +492,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Don't miss " + revengeMovie.getTitle());
+			System.out.println("Do miss " + revengeMovie.getTitle());
 			starrings = revengeMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -509,14 +520,14 @@ public class Graph2Demo implements Runnable {
 
 			FramedTransactionalGraph<DGraph> framedGraph = setupGraph();
 
-			Person nathan = framedGraph.addVertex("Nathan Freeman", Person.class);
+			//			Person nathan = framedGraph.addVertex("Nathan Freeman", Person.class);
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			empireMovie.addLikedByUser(nathan);
+			//			empireMovie.addLikedByUser(nathan);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
@@ -529,10 +540,10 @@ public class Graph2Demo implements Runnable {
 
 			Movie revengeMovie = framedGraph.addVertex("Revenge of the Sith", Movie.class);
 			revengeMovie.setTitle("Revenge of the Sith");
-			Comment comment = framedGraph.addVertex(null, Comment.class);
-			comment.setBody("Really the worst of the bunch");
-			comment.addCommenter(nathan);
-			revengeMovie.addComment(comment);
+			//			Comment comment = framedGraph.addVertex(null, Comment.class);
+			//			comment.setBody("Really the worst of the bunch");
+			//			comment.addCommenter(nathan);
+			//			revengeMovie.addComment(comment);
 
 			Crew lucasCrew = framedGraph.addVertex("George Lucas", Crew.class);
 			lucasCrew.setFullName("George Lucas");

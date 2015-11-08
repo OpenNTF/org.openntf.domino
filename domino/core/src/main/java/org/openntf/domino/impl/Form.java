@@ -619,6 +619,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 		return nc.getCount();
 	}
 
+	@Override
 	public NoteCollection getNoteCollection() {
 		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
 		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
@@ -652,6 +653,16 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getAncestorSession().getFactory();
+	}
+
+	private transient String metaversalid_;
+
+	@Override
+	public String getMetaversalID() {
+		if (metaversalid_ == null) {
+			metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
+		}
+		return metaversalid_;
 	}
 
 }

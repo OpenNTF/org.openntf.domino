@@ -17,6 +17,10 @@ public interface DConfiguration extends Externalizable {
 
 	public DElementStore addElementStore(DElementStore store);
 
+	public void addKeyResolver(DKeyResolver resolver);
+
+	public DKeyResolver getKeyResolver(Class<?> type);
+
 	public DGraph getGraph();
 
 	public Module getModule();

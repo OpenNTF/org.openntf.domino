@@ -65,6 +65,7 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -949,7 +950,9 @@ public enum Factory {
 
 			ISessionFactory sf = getSessionFactory(mode);
 			if (sf != null) {
+				//				System.out.println("TEMP DEBUG getting a session using a " + sf.getClass().getName() + " for type " + mode.toString());
 				result = sf.createSession();
+				//				System.out.println("TEMP DEBUG got a session for " + result.getEffectiveUserName());
 				result.setSessionType(mode);
 				tv.sessionHolders[mode.index] = result;
 				// Per default. Session objects are not recycled by the ODA and thats OK so.
@@ -1114,6 +1117,13 @@ public enum Factory {
 		getThreadVariables().classLoader = loader;
 	}
 
+	public static void setCurrentToSession(final Session session) {
+		//		System.out.println("TEMP DEBUG Setting current session to a session for " + session.getEffectiveUserName() + " in thread "
+		//				+ System.identityHashCode(Thread.currentThread()));
+		ThreadVariables tv = getThreadVariables();
+		tv.sessionHolders[SessionType.CURRENT.index] = session;
+	}
+
 	// avoid clear methods
 	//	public static void clearWrapperFactory() {
 	//		currentWrapperFactory.remove();
@@ -1199,7 +1209,7 @@ public enum Factory {
 		} finally {
 			tv.clear();
 			threadVariables_.set(null);
-			System.gc();
+			//			System.gc();
 		}
 		if (counters != null) {
 			System.out.println(dumpCounters(true));

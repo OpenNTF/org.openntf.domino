@@ -92,6 +92,8 @@ public class DEdgeEntryList implements DEdgeList {
 	private ViewEntryList entryList_;
 	private DVertex source_;
 	private DElementStore store_;
+	protected boolean isUnique_;
+	protected String label_;
 
 	private DEdgeEntryList(final DVertex source, final DElementStore store, final ViewEntryList entryList) {
 		source_ = source;
@@ -323,6 +325,26 @@ public class DEdgeEntryList implements DEdgeList {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public boolean isUnique() {
+		return isUnique_;
+	}
+
+	@Override
+	public void setUnique(final boolean isUnique) {
+		isUnique_ = isUnique;
+	}
+
+	@Override
+	public String getLabel() {
+		return label_;
+	}
+
+	@Override
+	public void setLabel(final String label) {
+		label_ = label;
 	}
 
 }

@@ -6,7 +6,7 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.Person;
+import org.openntf.domino.graph2.builtin.identity.Person;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 import org.openntf.domino.graph2.builtin.social.Rates;
 import org.openntf.domino.graph2.impl.DConfiguration;

@@ -14,6 +14,8 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 	private static final long serialVersionUID = 1L;
 	protected final DVertex sourceVertex_;
 	protected List<Edge> delegate_;
+	protected boolean isUnique_;
+	protected String label_;
 
 	private DEdgeList(final DVertex source, final List<Edge> list) {
 		sourceVertex_ = source;
@@ -229,6 +231,26 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		return delegate_.toArray(a);
+	}
+
+	@Override
+	public boolean isUnique() {
+		return isUnique_;
+	}
+
+	@Override
+	public void setUnique(final boolean isUnique) {
+		isUnique_ = isUnique;
+	}
+
+	@Override
+	public String getLabel() {
+		return label_;
+	}
+
+	@Override
+	public void setLabel(final String label) {
+		label_ = label;
 	}
 
 }

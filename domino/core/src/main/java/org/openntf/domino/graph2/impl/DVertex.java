@@ -200,42 +200,27 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	}
 
 	@Override
-	public Edge findInEdge(final Vertex otherVertex, final String label) {
-		//		System.out.println("DEBUG: Attempting to find IN edge of label " + label + " from " + getId() + " to " + otherVertex.getId());
+	public Edge findInEdge(final Vertex otherVertex, final String label, final boolean isUnique) {
 		DEdgeList edgeList = getInEdgeCache(label);
+		edgeList.setUnique(isUnique);
 		Edge result = edgeList.findEdge(otherVertex);
-		//		if (result != null) {
-		//						System.out.println("DEBUG: Found IN edge: " + result.getId());
-		//		} else {
-		//			System.out.println("DEBUG: returning null");
-		//			System.out.println("DEBUG: Checking out edges just in case...");
-		//			result = findOutEdge(otherVertex, label);
-		//			if (result != null) {
-		//				System.out.println("DEBUG: AH! Found an edge in the opposite direction. You might have reversed them.");
-		//				Throwable t = new Throwable();
-		//				t.printStackTrace();
-		//			} else {
-		//				System.out.println("DEBUG: Still no, sorry");
-		//			}
-		//			//			Throwable t = new Throwable();
-		//			//			t.printStackTrace();
-		//		}
 		return result;
 	}
 
 	@Override
-	public Edge findOutEdge(final Vertex otherVertex, final String label) {
+	public Edge findOutEdge(final Vertex otherVertex, final String label, final boolean isUnique) {
 		//		System.out.println("DEBUG: Attempting to find OUT edge");
 		DEdgeList edgeList = getOutEdgeCache(label);
+		edgeList.setUnique(isUnique);
 		return edgeList.findEdge(otherVertex);
 	}
 
 	@Override
 	public Edge findEdge(final Vertex otherVertex, final String label) {
 		//		System.out.println("DEBUG: FIND method");
-		Edge result = findInEdge(otherVertex, label);
+		Edge result = findInEdge(otherVertex, label, false);
 		if (result == null) {
-			result = findOutEdge(otherVertex, label);
+			result = findOutEdge(otherVertex, label, false);
 		}
 		return result;
 	}
@@ -280,6 +265,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		result = inCache.get(label);
 		if (result == null) {
 			result = getParent().getEdgesFromIds(this, getInEdgesSet(label));
+			result.setLabel(label);
 			inCache.put(label, result);
 		}
 		return result.atomic();
@@ -291,6 +277,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		result = outCache.get(label);
 		if (result == null) {
 			result = getParent().getEdgesFromIds(this, getOutEdgesSet(label));
+			result.setLabel(label);
 			outCache.put(label, result);
 		}
 		return result.atomic();
@@ -479,6 +466,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			if (result == null) {
 				NoteList edgeIds = getInEdgesSet(label);
 				DEdgeList edges = getParent().getEdgesFromIds(this, edgeIds);
+				edges.setLabel(label);
 				if (edges != null) {
 					result = edges.atomic();
 				}
@@ -514,9 +502,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					if (getDelegateType().equals(View.class)) {
 						//						System.out.println("TEMP DEBUG getting contents from ViewVertex");
 						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
+						edges.setLabel(label);
 						result = edges.unmodifiable();
 					} else if (this instanceof DCategoryVertex) {
 						DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
+						edges.setLabel(label);
 						result = edges.unmodifiable();
 					}
 				}
@@ -524,6 +514,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			if (result == null) {
 				NoteList edgeIds = getOutEdgesSet(label);
 				DEdgeList edges = getParent().getEdgesFromIds(this, edgeIds);
+				edges.setLabel(label);
 				if (edges != null) {
 					result = edges.atomic();
 				}

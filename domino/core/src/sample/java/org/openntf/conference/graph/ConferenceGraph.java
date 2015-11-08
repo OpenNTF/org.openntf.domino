@@ -13,8 +13,6 @@ import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DGraph;
 
 import com.google.common.collect.Lists;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
 public class ConferenceGraph {
 	public static final String ATTENDEE_PATH = "conference/attendees.nsf";
@@ -80,9 +78,9 @@ public class ConferenceGraph {
 		config.addElementStore(defaultStore);
 		config.setDefaultElementStore(defaultStore.getStoreKey());
 
-		JavaHandlerModule jhm = new JavaHandlerModule();
-		Module module = config.getModule();
-		DFramedGraphFactory factory = new DFramedGraphFactory(module, jhm);
+		//JavaHandlerModule jhm = new JavaHandlerModule();
+		//Module module = config.getModule();
+		DFramedGraphFactory factory = new DFramedGraphFactory(config);
 		framedGraph_ = (DFramedTransactionalGraph) factory.create(graph);
 	}
 

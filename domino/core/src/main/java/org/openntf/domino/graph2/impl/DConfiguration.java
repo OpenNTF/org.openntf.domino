@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 //import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
+import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.AnnotationUtilities;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.Shardable;
@@ -140,7 +141,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		public Class<?> findClassByName(final String name) {
 			for (Class<?> klazz : typeDiscriminators.values()) {
-				if (klazz.getName().equals(name))
+				if (klazz.getName().equals(name) || klazz.getSimpleName().equalsIgnoreCase(name))
 					return klazz;
 			}
 			throw new IllegalArgumentException("No class of " + name + " found in TypeRegistry");
@@ -267,6 +268,22 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return Collections.unmodifiableMap(result);
 		}
 
+		public Map<CaseInsensitiveString, Method> getAdders(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> crystals = adderMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = adderMap_.get(inter);
+				if (crystals != null) {
+					result.putAll(crystals);
+				}
+			}
+			return Collections.unmodifiableMap(result);
+		}
+
 		public Map<CaseInsensitiveString, Method> getPropertiesSetters(final Class<?> type) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> crystals = setterMap_.get(type);
@@ -346,6 +363,9 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				}
 				if (key != null) {
 					if (AnnotationUtilities.isCountMethod(method)) {
+						//						if (type.getSimpleName().equals("User")) {
+						//							System.out.println("Registering count method for User " + method.getName());
+						//						}
 						counters.put(key, method);
 					}
 					if (AnnotationUtilities.isFindMethod(method)) {
@@ -457,7 +477,13 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						Class<?> classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
 						//						System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName()));
 						if (classChk == null) {
-							update = true;
+							if (field.equalsIgnoreCase("form") && currentVal != null && currentVal.length() > 0) {
+								//								System.out.print("Not changing a form value of " + currentVal + " even though we're looking for type "
+								//										+ typeValue.value());
+								update = false;
+							} else {
+								update = true;
+							}
 						} else if (!kind.isAssignableFrom(classChk)) {
 							update = !(currentVal).equals(typeValue.value());
 						} else {
@@ -578,6 +604,13 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		if (schk == null) {
 			getElementStores().put(key, store);
 		}
+		Long pkey = store.getProxyStoreKey();
+		if (pkey != null) {
+			DElementStore pchk = getElementStores().get(pkey);
+			if (pchk == null) {
+				getElementStores().put(pkey, store);
+			}
+		}
 		List<Class<?>> types = store.getTypes();
 		for (Class<?> type : types) {
 			getTypeRegistry().add(type);
@@ -647,6 +680,27 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		for (DElementStore store : getElementStores().values()) {
 			out.writeObject(store);
 		}
+	}
+
+	private Map<Class<?>, DKeyResolver> keyResolverMap_;
+
+	protected Map<Class<?>, DKeyResolver> getResolverMap() {
+		if (keyResolverMap_ == null) {
+			keyResolverMap_ = new HashMap<Class<?>, DKeyResolver>();
+		}
+		return keyResolverMap_;
+	}
+
+	@Override
+	public void addKeyResolver(final DKeyResolver resolver) {
+		for (Class<?> type : resolver.getTypes()) {
+			getResolverMap().put(type, resolver);
+		}
+	}
+
+	@Override
+	public DKeyResolver getKeyResolver(final Class<?> type) {
+		return getResolverMap().get(type);
 	}
 
 }

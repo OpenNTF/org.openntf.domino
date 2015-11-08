@@ -113,6 +113,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 	public FramedEdgeList(final FramedGraph<? extends Graph> framedGraph, final Vertex sourceVertex, final Iterable<Edge> list,
 			final Class<T> kind) {
 		super(framedGraph, list, kind);
+		//		System.out.println("TEMP DEBUG new FramedEdgeList created from a " + list.getClass().getName());
 		sourceVertex_ = sourceVertex;
 		if (list instanceof List) {
 			list_ = (List<Edge>) list;
@@ -126,6 +127,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	//TODO optimize by building a NoteCoordinateList of the target vertices
 	public FramedVertexList<?> toVertexList() {
+		System.out.println("TEMP DEBUG converting a FramedEdgeList to a FramedVertexList");
 		List<Vertex> vertList = new ArrayList<Vertex>();
 		for (Edge edge : list_) {
 			if (edge instanceof DEdge) {

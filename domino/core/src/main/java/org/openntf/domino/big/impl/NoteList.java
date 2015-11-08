@@ -16,6 +16,7 @@ import javolution.util.function.Equality;
 public class NoteList implements org.openntf.domino.big.NoteList {
 	protected List<org.openntf.domino.big.NoteCoordinate> delegate_;
 	protected DbCache localCache_ = null;
+	protected boolean isSynced_ = false;
 
 	protected static class NoteComparator implements Equality<org.openntf.domino.big.NoteCoordinate> {
 		private static final long serialVersionUID = 1L;
@@ -55,12 +56,13 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	public NoteList(final boolean concurrent) {
 		delegate_ = Collections.synchronizedList(new ArrayList<org.openntf.domino.big.NoteCoordinate>());
+		isSynced_ = true;
 	}
 
-	public NoteList(final DbCache cache) {
-		localCache_ = cache;
-		delegate_ = new ArrayList<org.openntf.domino.big.NoteCoordinate>();
-	}
+	//	public NoteList(final DbCache cache) {
+	//		localCache_ = cache;
+	//		delegate_ = new ArrayList<org.openntf.domino.big.NoteCoordinate>();
+	//	}
 
 	//FIXME NTF: find out what the correct sorted list implementation is
 	//	public NoteList(final DbCache cache, final Equality<NoteCoordinate> compare) {
@@ -178,8 +180,9 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public List<org.openntf.domino.big.NoteCoordinate> subList(final int fromIndex, final int toIndex) {
-		//return delegate_.subList(fromIndex, toIndex);
-		return delegate_.subList(fromIndex, toIndex);
+		NoteList result = new NoteList(isSynced_);
+		result.addAll(delegate_.subList(fromIndex, toIndex));
+		return result;
 	}
 
 	@Override
