@@ -475,8 +475,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public void removeEdge(final Edge edge) {
 		if (edge instanceof DEdge) {
-			org.openntf.domino.ViewEntry.class.equals(((DEdge) edge).getDelegateType());
-			throw new UnsupportedOperationException("ViewEntry edges cannot be removed.");
+			if (org.openntf.domino.ViewEntry.class.equals(((DEdge) edge).getDelegateType())) {
+				throw new UnsupportedOperationException("ViewEntry edges cannot be removed.");
+			}
 		}
 		startTransaction(edge);
 		Vertex in = edge.getVertex(Direction.IN);
