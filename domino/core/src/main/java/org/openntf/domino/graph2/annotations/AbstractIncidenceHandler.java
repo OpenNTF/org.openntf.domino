@@ -314,7 +314,7 @@ public abstract class AbstractIncidenceHandler {
 		case IN:
 			if (unique)
 				id = getForcedId(newVertex, vertex, label, replicaid);
-			result = framedGraph.addEdge(null, newVertex, vertex, label);
+			result = framedGraph.addEdge(id, newVertex, vertex, label);
 			break;
 		case BOTH:
 			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
