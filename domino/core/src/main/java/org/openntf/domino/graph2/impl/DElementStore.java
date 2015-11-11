@@ -498,12 +498,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	public boolean isProxied() {
 		//		Object pDelegate = getProxyStoreDelegate();
 		boolean result = getProxyStoreKey() != null;
-		if (!result) {
-			System.out.println("Checking proxy status on store " + System.identityHashCode(this) + " in thread "
-					+ System.identityHashCode(Thread.currentThread()));
-			Throwable t = new Throwable();
-			t.printStackTrace();
-		}
+		//		if (!result) {
+		//			System.out.println("Checking proxy status on store " + System.identityHashCode(this) + " in thread "
+		//					+ System.identityHashCode(Thread.currentThread()));
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+		//		}
 		return result;
 	}
 
