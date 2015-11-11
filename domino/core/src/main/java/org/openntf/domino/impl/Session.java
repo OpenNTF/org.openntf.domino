@@ -82,7 +82,7 @@ import com.ibm.icu.util.Calendar;
  */
 
 public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
-		org.openntf.domino.Session {
+org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -1634,11 +1634,13 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		try {
 
 			if (!identCleared_ && !username_.equals(d.getEffectiveUserName())) {
-				if ("Anonymous".equalsIgnoreCase(username_)) {
+				if ("Anonymous".equalsIgnoreCase(username_) || SessionType.CURRENT == sessionType_) {
+					//NTF if the session used to be Anonymous, it's legitimate for it to change
+					//and if the sessionType is CURRENT, then it's legitimate for the name to have changed.
 					username_ = d.getEffectiveUserName();
 				} else {
 					throw new UnableToAcquireSessionException("The created Session has the wrong user name. (given:"
-							+ d.getEffectiveUserName() + ", expected:" + username_);
+							+ d.getEffectiveUserName() + ", expected:" + username_ + " for a session type " + sessionType_.name());
 				}
 			}
 		} catch (NotesException e) {

@@ -119,7 +119,13 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 
 	@Override
 	public boolean add(final Edge e) {
-		return delegate_.add(e);
+		if (!delegate_.contains(e)) {
+			//			System.out.println("TEMP DEBUG Adding Edge id " + e.getId());
+			return delegate_.add(e);
+		} else {
+			//			System.out.println("TEMP DEBUG Edge id " + e.getId() + " already in list");
+			return false;
+		}
 	}
 
 	@Override

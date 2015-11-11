@@ -23,6 +23,7 @@ import com.ibm.commons.Platform;
 import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.runtime.Application;
+import com.ibm.domino.napi.c.BackendBridge;
 
 public enum ODAPlatform {
 	;
@@ -155,9 +156,9 @@ public enum ODAPlatform {
 		@SuppressWarnings("deprecation")
 		View dummyView = new org.openntf.domino.impl.View();
 		try {
-			//			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
+			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
 		} catch (BackendBridgeSanityCheckException allGood) {
-			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
+			//			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();
