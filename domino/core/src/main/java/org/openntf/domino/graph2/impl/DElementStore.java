@@ -584,7 +584,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
-	IllegalArgumentException {
+			IllegalArgumentException {
 		Object result = null;
 		Object del = null;
 		if (isProxied()) {
@@ -633,7 +633,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				}
 			} else {
-				throw new IllegalArgumentException("Cannot find a delegate with a key of type " + delegateKey.getClass().getName());
+				throw new IllegalArgumentException("Cannot find a delegate with a key of type "
+						+ (delegateKey == null ? "null" : delegateKey.getClass().getName()));
 			}
 		} else {
 			//TODO NTF alternative strategies...

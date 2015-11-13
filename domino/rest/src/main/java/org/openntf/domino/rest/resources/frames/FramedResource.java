@@ -45,6 +45,7 @@ import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.Factory;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -246,9 +247,10 @@ public class FramedResource extends AbstractResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("rawtypes")
 	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) {
-		@SuppressWarnings("rawtypes")
+		Factory.println("Processing a POST for " + namespace);
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
 		ResponseBuilder builder = Response.ok();
@@ -280,7 +282,7 @@ public class FramedResource extends AbstractResource {
 						VertexFrame parVertex = (VertexFrame) element;
 						Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
 								parVertex.getClass());
-						String rawLabel = jsonItems.getAsString("@label");
+						CaseInsensitiveString rawLabel = new CaseInsensitiveString(jsonItems.getAsString("@label"));
 						Method method = adders.get(rawLabel);
 						if (method != null) {
 							String rawId = jsonItems.getAsString("@id");
@@ -313,8 +315,30 @@ public class FramedResource extends AbstractResource {
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
+							} else {
+								// Factory.println("otherElement is not a VertexFrame. It's a "
+								// + otherElement.getClass().getName());
 							}
+						} else {
+							// Class[] interfaces =
+							// element.getClass().getInterfaces();
+							// String intList = "";
+							// for (Class inter : interfaces) {
+							// intList = intList + inter.getName() + ", ";
+							// }
+							// String methList = "";
+							// for (CaseInsensitiveString key : adders.keySet())
+							// {
+							// methList = methList + key.toString() + ", ";
+							// }
+							// Factory.println("No method found for " + rawLabel
+							// + " on element " + intList + ": "
+							// + ((VertexFrame) element).asVertex().getId() +
+							// " methods " + methList);
 						}
+					} else {
+						// Factory.println("element is not a VertexFrame. It's a "
+						// + element.getClass().getName());
 					}
 				}
 
