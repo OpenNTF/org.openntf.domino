@@ -68,6 +68,12 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
+	//	private static ClassLoader defaultLoader = null;
+	//
+	//	public static void TEMP_SET_DEFAULT_CLASSLOADER(final ClassLoader loader) {
+	//		defaultLoader = loader;
+	//	}
+
 	public static final String VIEWNAME_VIM_PEOPLE_AND_GROUPS = "($VIMPeopleAndGroups)";
 	public static final String VIEWNAME_VIM_GROUPS = "($VIMGroups)";
 
@@ -84,10 +90,26 @@ public enum DominoUtils {
 	public static Class<?> getClass(final CharSequence className) {
 		Class<?> result = null;
 		try {
-			result = Class.forName(className.toString());
+			String pname = null;
+			String sname = null;
+			String cname = className.toString();
+			int pos = cname.indexOf('$');
+			if (pos > -1) {
+				pname = cname.substring(0, pos);
+				sname = cname.substring(pos + 1);
+				Class<?> pclass = Class.forName(pname);
+				for (Class<?> curClass : pclass.getClasses()) {
+					if (curClass.getSimpleName().equals(sname)) {
+						result = curClass;
+					}
+				}
+			} else {
+				result = Class.forName(className.toString());
+			}
 		} catch (Throwable t) {
-			//			System.out.println("Not able to use simple class access for " + className);
-			//no surprise here. Let's try something more specific...
+			//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			//			Factory.println("Initial attempt to find " + className.toString() + " using a class loader of type " + cl.getClass().getName()
+			//					+ " (" + System.identityHashCode(cl) + ") failed.");
 		}
 		if (result == null) {
 			try {
@@ -96,20 +118,56 @@ public enum DominoUtils {
 					public Class<?> run() throws Exception {
 						Class<?> result = null;
 						ClassLoader cl = Thread.currentThread().getContextClassLoader();
+						String pname = null;
+						String sname = null;
 						try {
 							String cname = className.toString();
 							int pos = cname.indexOf('$');
 							if (pos > -1) {
-								String pname = cname.substring(0, pos);
+								pname = cname.substring(0, pos);
+								sname = cname.substring(pos + 1);
 								Class<?> pclass = Class.forName(pname, false, cl);
-								String sname = cname.substring(pos + 1);
 								for (Class<?> curClass : pclass.getClasses()) {
 									if (curClass.getSimpleName().equals(sname)) {
 										result = curClass;
 									}
 								}
 							} else {
-								result = Class.forName(cname, false, cl);
+								pname = cname;
+								result = Class.forName(pname, false, cl);
+							}
+						} catch (java.lang.ClassNotFoundException e) {
+							try {
+								//								Factory.println("Could load class " + pname + " using a class loader of type " + cl.getClass().getName()
+								//										+ " (" + System.identityHashCode(cl) + "). Trying new class loader.");
+								cl = DominoUtils.class.getClassLoader();
+								Class<?> pclass = cl.loadClass(pname);
+								if (sname != null) {
+									for (Class<?> curClass : pclass.getClasses()) {
+										if (curClass.getSimpleName().equals(sname)) {
+											result = curClass;
+										}
+									}
+								} else {
+									result = pclass;
+								}
+							} catch (Exception e1) {
+								cl = ClassLoader.getSystemClassLoader();
+								try {
+									Class<?> pclass = cl.loadClass(pname);
+									if (sname != null) {
+										for (Class<?> curClass : pclass.getClasses()) {
+											if (curClass.getSimpleName().equals(sname)) {
+												result = curClass;
+											}
+										}
+									} else {
+										result = pclass;
+									}
+								} catch (Exception e2) {
+									//									Factory.println("STILL couldn't get class " + pname + " using system classloader "
+									//											+ cl.getClass().getName());
+								}
 							}
 						} catch (Throwable t) {
 							DominoUtils.handleException(t);
@@ -118,9 +176,9 @@ public enum DominoUtils {
 					}
 				});
 			} catch (AccessControlException e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			}
 		}
 		if (result == null) {
@@ -934,7 +992,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-			// TODO Need to work out how to get from properties file in NSF
+				// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

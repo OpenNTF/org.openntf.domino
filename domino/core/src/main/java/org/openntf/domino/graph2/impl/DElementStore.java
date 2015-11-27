@@ -587,11 +587,21 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			IllegalArgumentException {
 		Object result = null;
 		Object del = null;
+		del = getStoreDelegate();
 		if (isProxied()) {
-			del = getProxyStoreDelegate();
-			//			System.out.println("TEMP DEBUG Retrieving from proxied store");
-		} else {
-			del = getStoreDelegate();
+			NoteCoordinate nc = null;
+			if (delegateKey instanceof NoteCoordinate) {
+				nc = (NoteCoordinate) delegateKey;
+			} else if (delegateKey instanceof CharSequence) {
+				nc = NoteCoordinate.Utils.getNoteCoordinate((CharSequence) delegateKey);
+			}
+			if (nc != null) {
+				long dbkey = nc.getReplicaLong();
+				if (getProxyStoreKey().equals(dbkey)) {
+					del = getProxyStoreDelegate();
+				}
+				//			System.out.println("TEMP DEBUG Retrieving from proxied store");
+			}
 		}
 		if (del instanceof Database) {
 			Database db = (Database) del;

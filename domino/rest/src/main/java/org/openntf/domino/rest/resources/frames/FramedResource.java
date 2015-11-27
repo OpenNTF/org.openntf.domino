@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +46,6 @@ import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
-import org.openntf.domino.utils.Factory;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -159,7 +159,7 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response putDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, true);
 
@@ -171,22 +171,29 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response patchDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false);
 		return response;
 	}
 
 	protected Response updateFrameByMetaid(String requestEntity, String namespace, String ifUnmodifiedSince,
-			ParamMap pm, boolean isPut) {
+			ParamMap pm, boolean isPut) throws JsonException, IOException {
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
+		StringWriter sw = new StringWriter();
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+
 		try {
 			StringReader reader = new StringReader(requestEntity);
 			try {
 				jsonItems = (JsonJavaObject) JsonParser.fromJson(factory, reader);
+				// System.out.println("TEMP DEBUG requestEntity " +
+				// requestEntity);
+				// System.out.println("TEMP DEBUG check " +
+				// jsonItems.get("FirstName"));
 			} finally {
 				reader.close();
 			}
@@ -194,14 +201,19 @@ public class FramedResource extends AbstractResource {
 			ex.printStackTrace();
 		}
 		if (jsonItems != null) {
+			Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
+			for (String jsonKey : jsonItems.keySet()) {
+				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
+				cisMap.put(cis, jsonItems.get(jsonKey));
+			}
 			List<String> ids = pm.get(Parameters.ID);
 			if (ids.size() == 0) {
 				// TODO no id
 			} else {
+				JsonFrameAdapter adapter = null;
 				for (String id : ids) {
 					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
 					Object element = graph.getElement(nc, null);
-					JsonFrameAdapter adapter = null;
 					if (element instanceof EdgeFrame) {
 						adapter = new JsonFrameAdapter(graph, (EdgeFrame) element, null);
 					} else if (element instanceof VertexFrame) {
@@ -213,31 +225,36 @@ public class FramedResource extends AbstractResource {
 					}
 					Iterator<String> frameProperties = adapter.getJsonProperties();
 					while (frameProperties.hasNext()) {
-						String key = frameProperties.next();
+						CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 						if (!key.startsWith("@")) {
-							Object value = jsonItems.get(key);
+							Object value = cisMap.get(key);
 							if (value != null) {
-								adapter.putJsonProperty(key, value);
-								jsonItems.remove(key);
+								// if ("fullname".equals(key)) {
+								// System.out.println("TEMP DEBUG fullname: " +
+								// value);
+								// }
+								adapter.putJsonProperty(key.toString(), value);
+								cisMap.remove(key);
 							} else if (isPut) {
-								adapter.putJsonProperty(key, value);
+								adapter.putJsonProperty(key.toString(), value);
 							}
 						}
 					}
-					for (String jsonKey : jsonItems.keySet()) {
-						if (!jsonKey.startsWith("@")) {
-							Object value = jsonItems.getJsonProperty(jsonKey);
+					for (CaseInsensitiveString cis : cisMap.keySet()) {
+						if (!cis.startsWith("@")) {
+							Object value = cisMap.get(cis);
 							if (value != null) {
-								adapter.putJsonProperty(jsonKey, value);
+								adapter.putJsonProperty(cis.toString(), value);
 							}
 						}
 					}
+					writer.outObject(element);
 				}
 				graph.commit();
 			}
 		}
 		ResponseBuilder builder = Response.ok();
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(null);
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
 
 		result = builder.build();
 
@@ -250,7 +267,7 @@ public class FramedResource extends AbstractResource {
 	@SuppressWarnings("rawtypes")
 	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) {
-		Factory.println("Processing a POST for " + namespace);
+		// Factory.println("Processing a POST for " + namespace);
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
 		ResponseBuilder builder = Response.ok();
@@ -345,8 +362,7 @@ public class FramedResource extends AbstractResource {
 			}
 		}
 
-		jsonEntity = sw.toString();
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
 		Response response = builder.build();
 		return response;
 	}

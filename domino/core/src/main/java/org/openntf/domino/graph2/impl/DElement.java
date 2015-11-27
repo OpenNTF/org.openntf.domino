@@ -107,16 +107,20 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 							Object raw = doc.get(propertyName);
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
 						} catch (Throwable t) {
-							if (log_.isLoggable(Level.FINE)) {
-								log_.log(Level.FINE, "Invalid property for document " + propertyName);
+							if (log_.isLoggable(Level.WARNING)) {
+								log_.log(Level.WARNING, "Invalid property for document " + propertyName, t);
 							}
 						}
 					}
 				} else if (delegate instanceof SessionDescendant) {
 					Session s = ((SessionDescendant) delegate).getAncestorSession();
 					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-				} else {
-					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+				} else if (delegate != null) {
+					try {
+						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
@@ -147,7 +151,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (delegate instanceof SessionDescendant) {
 						Session s = ((SessionDescendant) delegate).getAncestorSession();
 						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-					} else {
+					} else if (delegate != null) {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
 							result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
@@ -164,7 +168,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					}
 				} catch (Exception e) {
 					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-							+ " but we have a value in the cache.", e);
+							+ " but we have a value in the cache of type " + result.getClass().getName() + " when we were looking for a "
+							+ type.getName(), e);
 				}
 			}
 		}
@@ -407,7 +412,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 		}
 		if (delegate_ == null) {
-			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate. This will not turn out well.");
+			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
+					+ ". This will not turn out well.");
 			try {
 				String type = getProperty("form", String.class);
 				if (type != null) {
