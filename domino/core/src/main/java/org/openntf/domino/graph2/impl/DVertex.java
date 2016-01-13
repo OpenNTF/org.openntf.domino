@@ -351,7 +351,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	public int getOutEdgeCount(final String label) {
 		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
-			return getProperty("_COUNT" + DominoVertex.OUT_PREFIX + label, Integer.class, false);
+			try {
+				return getProperty("_COUNT" + DominoVertex.OUT_PREFIX + label, Integer.class, false);
+			} catch (Throwable t) {
+				throw new RuntimeException("Exception getting edge count for label " + label, t);
+			}
 		} else {
 			return edgeIds.size();
 		}

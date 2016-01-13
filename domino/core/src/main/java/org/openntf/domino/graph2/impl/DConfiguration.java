@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 //import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
+import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.AnnotationUtilities;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.Shardable;
@@ -29,6 +30,7 @@ import org.openntf.domino.utils.TypeUtils;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.ClassUtilities;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FrameInitializer;
@@ -360,18 +362,27 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							//							.println("Added incidence " + key + " for method " + method.getName() + " in class " + type.getName());
 						}
 					}
+					Annotation adjacencyUnique = method.getAnnotation(AdjacencyUnique.class);
+					if (adjacencyUnique != null) {
+						key = new CaseInsensitiveString(((AdjacencyUnique) adjacencyUnique).label());
+					}
+					Annotation adjacency = method.getAnnotation(Adjacency.class);
+					if (adjacency != null) {
+						key = new CaseInsensitiveString(((Adjacency) adjacency).label());
+					}
 				}
 				if (key != null) {
 					if (AnnotationUtilities.isCountMethod(method)) {
-						//						if (type.getSimpleName().equals("User")) {
-						//							System.out.println("Registering count method for User " + method.getName());
-						//						}
 						counters.put(key, method);
 					}
 					if (AnnotationUtilities.isFindMethod(method)) {
 						finders.put(key, method);
 					}
 					if (ClassUtilities.isAddMethod(method)) {
+						//						if (type.getSimpleName().equals("User")) {
+						//							System.out.println("Registering add method for " + type.getName() + ": " + method.getName() + " with key "
+						//									+ key);
+						//						}
 						adders.put(key, method);
 					}
 					if (ClassUtilities.isRemoveMethod(method)) {

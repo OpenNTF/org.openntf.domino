@@ -158,7 +158,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		ResponseBuilder builder = Response.ok();
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
-		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+		// JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false,
+		// true);
 
 		JsonJavaObject jsonItems = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;

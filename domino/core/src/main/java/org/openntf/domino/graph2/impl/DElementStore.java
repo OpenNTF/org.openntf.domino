@@ -585,15 +585,25 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type)
-			throws IllegalStateException, IllegalArgumentException {
+	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
+			IllegalArgumentException {
 		Object result = null;
 		Object del = null;
+		del = getStoreDelegate();
 		if (isProxied()) {
-			del = getProxyStoreDelegate();
-			//			System.out.println("TEMP DEBUG Retrieving from proxied store");
-		} else {
-			del = getStoreDelegate();
+			NoteCoordinate nc = null;
+			if (delegateKey instanceof NoteCoordinate) {
+				nc = (NoteCoordinate) delegateKey;
+			} else if (delegateKey instanceof CharSequence) {
+				nc = NoteCoordinate.Utils.getNoteCoordinate((CharSequence) delegateKey);
+			}
+			if (nc != null) {
+				long dbkey = nc.getReplicaLong();
+				if (getProxyStoreKey().equals(dbkey)) {
+					del = getProxyStoreDelegate();
+				}
+				//			System.out.println("TEMP DEBUG Retrieving from proxied store");
+			}
 		}
 		if (del instanceof Database) {
 			Database db = (Database) del;
@@ -635,7 +645,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				}
 			} else {
-				throw new IllegalArgumentException("Cannot find a delegate with a key of type " + delegateKey.getClass().getName());
+				throw new IllegalArgumentException("Cannot find a delegate with a key of type "
+						+ (delegateKey == null ? "null" : delegateKey.getClass().getName()));
 			}
 		} else {
 			//TODO NTF alternative strategies...

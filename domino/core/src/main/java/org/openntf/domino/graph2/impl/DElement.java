@@ -25,6 +25,7 @@ import org.openntf.domino.big.impl.ViewEntryCoordinate;
 import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable {
@@ -100,33 +101,36 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					Document doc = (Document) delegate;
 					if (doc.hasItem(propertyName)) {
 						result = doc.getItemValue(propertyName, type);
-						//						if ("form".equalsIgnoreCase(propertyName)) {
-						//							System.out.println("Got form property from a document: '" + (String) result + "'");
-						//						}
 					}
-					if (result == null) {
+					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
 							Object raw = doc.get(propertyName);
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
-							//							if ("form".equalsIgnoreCase(propertyName)) {
-							//								System.out.println("BACKUP Got form property from a document: '" + (String) result + "'");
-							//							}
 						} catch (Throwable t) {
-							log_.log(Level.FINE, "Invalid property for document " + propertyName);
+							if (log_.isLoggable(Level.WARNING)) {
+								log_.log(Level.WARNING, "Invalid property for document " + propertyName, t);
+							}
 						}
 					}
 				} else if (delegate instanceof SessionDescendant) {
 					Session s = ((SessionDescendant) delegate).getAncestorSession();
 					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-				} else {
-					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+				} else if (delegate != null) {
+					try {
+						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
 				} else if (result instanceof Serializable) {
 					props.put(propertyName, result);
 				} else {
-					log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
+					if (log_.isLoggable(Level.FINE)) {
+						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
+								+ result.getClass().getName());
+					}
 					props.put(propertyName, result);
 				}
 			} catch (Exception e) {
@@ -147,7 +151,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (delegate instanceof SessionDescendant) {
 						Session s = ((SessionDescendant) delegate).getAncestorSession();
 						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-					} else {
+					} else if (delegate != null) {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
 							result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
@@ -164,7 +168,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					}
 				} catch (Exception e) {
 					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-							+ " but we have a value in the cache.", e);
+							+ " but we have a value in the cache of type " + result.getClass().getName() + " when we were looking for a "
+							+ type.getName(), e);
 				}
 			}
 		}
@@ -173,8 +178,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 		if ("form".equalsIgnoreCase(propertyName)) {
 			if (result == null) {
-				System.out.println("TEMP DEBUG returning null as value for Form field");
+				Factory.println("TEMP DEBUG returning null as value for Form field");
 			}
+		}
+		if (result == Deferred.INSTANCE) {
+			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
 		}
 		return (T) result;
 	}
@@ -404,7 +412,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 		}
 		if (delegate_ == null) {
-			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate. This will not turn out well.");
+			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
+					+ ". This will not turn out well.");
 			try {
 				String type = getProperty("form", String.class);
 				if (type != null) {

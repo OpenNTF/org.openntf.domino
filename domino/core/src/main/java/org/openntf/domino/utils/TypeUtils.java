@@ -755,6 +755,8 @@ public enum TypeUtils {
 			} else {
 				return true;
 			}
+		} else if (value instanceof Boolean) {
+			return ((Boolean) value).booleanValue();
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to boolean primitive.");
 		}
@@ -1302,11 +1304,14 @@ public enum TypeUtils {
 			return null;
 		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
 			return null;
+		if (enumClass == null)
+			return null;
 		Enum<?> result = null;
 		String ename = String.valueOf(value);
 		if (ename.contains(" ")) {
 			ename = String.valueOf(value).substring(ename.indexOf(' ') + 1).trim();
 		}
+
 		Object[] objs = enumClass.getEnumConstants();
 		if (objs.length > 0) {
 			for (Object obj : objs) {
@@ -1318,6 +1323,7 @@ public enum TypeUtils {
 				}
 			}
 		}
+
 		if (result == null) {
 			throw new DataNotCompatibleException("Unable to discover an Enum by the name of " + ename + " in class " + enumClass);
 		}
@@ -1368,7 +1374,11 @@ public enum TypeUtils {
 		} else {
 			try {
 				Class<?> cls = DominoUtils.getClass(cn);
-				result = toEnum(ename, cls);
+				if (cls == null) {
+					Factory.println("Unable to load class " + cn);
+				} else {
+					result = toEnum(ename, cls);
+				}
 			} catch (Exception e) {
 				DominoUtils.handleException(e);
 			}
