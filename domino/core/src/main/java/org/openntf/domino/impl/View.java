@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -59,7 +59,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class View.
  */
-public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
+public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database>implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
 	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
@@ -73,6 +73,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	private ViewNavigator utilityNavigator_;
 
 	private static Method iGetEntryByKeyMethod;
+
 	static {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -108,7 +109,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/**
 	 * Instantiates a new view.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -136,7 +137,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -151,7 +152,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -166,7 +167,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String)
 	 */
 	@Override
@@ -181,7 +182,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int)
 	 */
 	@Override
@@ -196,7 +197,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, int)
 	 */
 	@Override
@@ -211,7 +212,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, int, boolean, boolean, boolean, boolean)
 	 */
 	@Override
@@ -227,7 +228,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String)
 	 */
 	@Override
@@ -242,7 +243,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@Override
@@ -258,7 +259,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -277,7 +278,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -296,7 +297,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -315,7 +316,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -336,7 +337,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -355,7 +356,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -376,7 +377,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#clear()
 	 */
 	@Override
@@ -390,7 +391,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#copyColumn(int)
 	 */
 	@Override
@@ -407,7 +408,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#copyColumn(int, int)
 	 */
 	@Override
@@ -424,7 +425,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#copyColumn(java.lang.String)
 	 */
 	@Override
@@ -441,7 +442,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#copyColumn(java.lang.String, int)
 	 */
 	@Override
@@ -458,7 +459,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#copyColumn(lotus.domino.ViewColumn)
 	 */
 	@Override
@@ -475,7 +476,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#copyColumn(lotus.domino.ViewColumn, int)
 	 */
 	@Override
@@ -492,7 +493,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createColumn()
 	 */
 	@Override
@@ -509,7 +510,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createColumn(int)
 	 */
 	@Override
@@ -526,7 +527,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createColumn(int, java.lang.String)
 	 */
 	@Override
@@ -543,7 +544,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createColumn(int, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -560,7 +561,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewEntryCollection()
 	 */
 	@Override
@@ -575,7 +576,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNav()
 	 */
 	@Override
@@ -594,7 +595,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNav(int)
 	 */
 	@Override
@@ -614,7 +615,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
 	 */
 	@Override
@@ -634,45 +635,9 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return null;
 	}
 
-	/**
-	 * This method is neccessary to get some Backend-functions working.<br>
-	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
-	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
-	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
-	 * 
-	 * To find the correct position, trace a call of<br>
-	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
-	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
-	 * debugger.
-	 * 
-	 * @param paramVector
-	 * @param paramBoolean
-	 * @param paramInt
-	 * @return
-	 * @throws NotesException
-	 */
-	protected ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
-		if (paramVector == null && paramInt == 42) {
-			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
-		}
-		try {
-			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
-					paramInt);
-			return fromLotus(lotus, ViewEntry.SCHEMA, this);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		return null;
-
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object, int)
 	 */
 	@Override
@@ -693,7 +658,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromAllUnread()
 	 */
 	@Override
@@ -712,7 +677,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromAllUnread(java.lang.String)
 	 */
 	@Override
@@ -732,7 +697,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
 	 */
 	@Override
@@ -752,7 +717,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String, int)
 	 */
 	@Override
@@ -773,7 +738,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromChildren(java.lang.Object)
 	 */
 	@Override
@@ -792,7 +757,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromChildren(java.lang.Object, int)
 	 */
 	@Override
@@ -800,7 +765,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		try {
 			getDelegate().setAutoUpdate(false);
 			getDelegate().setEnableNoteIDsForCategories(true);
-			ViewNavigator result = fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA,
+					this);
 			result.setCacheSize(cacheSize);
 			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.CHILDREN);
 			return result;
@@ -812,7 +778,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromDescendants(java.lang.Object)
 	 */
 	@Override
@@ -831,7 +797,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavFromDescendants(java.lang.Object, int)
 	 */
 	@Override
@@ -852,7 +818,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavMaxLevel(int)
 	 */
 	@Override
@@ -872,7 +838,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#createViewNavMaxLevel(int, int)
 	 */
 	@Override
@@ -893,7 +859,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAliases()
 	 */
 	@SuppressWarnings("unchecked")
@@ -922,7 +888,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllDocuments()
 	 */
 	@Override
@@ -968,7 +934,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.lang.Object)
 	 */
 	@Override
@@ -978,7 +944,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.lang.Object, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1007,7 +973,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1018,7 +984,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1029,7 +995,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllEntries()
 	 */
 	@Override
@@ -1044,7 +1010,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.lang.Object)
 	 */
 	@Override
@@ -1054,7 +1020,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.lang.Object, boolean)
 	 */
 	@Override
@@ -1078,9 +1044,44 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return null;
 	}
 
+	/**
+	 * This method is neccessary to get some Backend-functions working.<br>
+	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
+	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
+	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
+	 *
+	 * To find the correct position, trace a call of<br> <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
+	 * debugger.
+	 *
+	 * @param paramVector
+	 * @param paramBoolean
+	 * @param paramInt
+	 * @return
+	 * @throws NotesException
+	 */
+	protected ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
+		if (paramVector == null && paramInt == 42) {
+			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
+		}
+		try {
+			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
+					paramInt);
+			return fromLotus(lotus, ViewEntry.SCHEMA, this);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1091,7 +1092,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1102,7 +1103,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllReadEntries()
 	 */
 	@Override
@@ -1117,7 +1118,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllReadEntries(java.lang.String)
 	 */
 	@Override
@@ -1132,7 +1133,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllUnreadEntries()
 	 */
 	@Override
@@ -1147,7 +1148,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getAllUnreadEntries(java.lang.String)
 	 */
 	@Override
@@ -1162,7 +1163,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getBackgroundColor()
 	 */
 	@Override
@@ -1177,7 +1178,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getChild(lotus.domino.Document)
 	 */
 	@Override
@@ -1192,7 +1193,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getColumn(int)
 	 */
 	@Override
@@ -1207,7 +1208,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getColumnCount()
 	 */
 	@Override
@@ -1222,7 +1223,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getColumnNames()
 	 */
 	@SuppressWarnings("unchecked")
@@ -1238,7 +1239,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getColumnValues(int)
 	 */
 	@Override
@@ -1253,7 +1254,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getColumns()
 	 */
 	@Override
@@ -1264,8 +1265,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 				Vector rawColumns = raw.getColumns();
 				return fromLotusAsVector(rawColumns, org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
-				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
-						+ getAncestorDatabase().getApiPath(), e);
+				throw new RuntimeException(
+						"Unable to get columns for a view called " + getName() + " in database " + getAncestorDatabase().getApiPath(), e);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1275,7 +1276,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getCreated()
 	 */
 	@Override
@@ -1290,7 +1291,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getDocumentByKey(java.lang.Object)
 	 */
 	@Override
@@ -1300,7 +1301,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getDocumentByKey(java.lang.Object, boolean)
 	 */
 	@Override
@@ -1325,7 +1326,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1336,7 +1337,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1347,7 +1348,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getEntryByKey(java.lang.Object)
 	 */
 	@Override
@@ -1357,7 +1358,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getEntryByKey(java.lang.Object, boolean)
 	 */
 	@Override
@@ -1381,7 +1382,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1392,7 +1393,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1403,7 +1404,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getEntryCount()
 	 */
 	@Override
@@ -1418,7 +1419,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getFirstDocument()
 	 */
 	@Override
@@ -1433,7 +1434,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getHeaderLines()
 	 */
 	@Override
@@ -1448,7 +1449,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getHttpURL()
 	 */
 	@Override
@@ -1463,7 +1464,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getLastDocument()
 	 */
 	@Override
@@ -1478,7 +1479,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getLastModified()
 	 */
 	@Override
@@ -1493,7 +1494,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
@@ -1509,7 +1510,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getName()
 	 */
 	@Override
@@ -1524,7 +1525,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getNextDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -1539,7 +1540,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getNextSibling(lotus.domino.Document)
 	 */
 	@Override
@@ -1554,7 +1555,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getNoteID()
 	 */
 	@Override
@@ -1566,7 +1567,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getNotesURL()
 	 */
 	@Override
@@ -1581,7 +1582,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getNthDocument(int)
 	 */
 	@Override
@@ -1596,7 +1597,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -1606,7 +1607,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getParentDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -1621,7 +1622,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getPrevDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -1636,7 +1637,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getPrevSibling(lotus.domino.Document)
 	 */
 	@Override
@@ -1651,7 +1652,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getReaders()
 	 */
 	@SuppressWarnings("unchecked")
@@ -1667,7 +1668,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getRowLines()
 	 */
 	@Override
@@ -1682,7 +1683,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getSelectionFormula()
 	 */
 	@Override
@@ -1697,7 +1698,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getSelectionQuery()
 	 */
 	@Override
@@ -1712,7 +1713,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getSpacing()
 	 */
 	@Override
@@ -1727,7 +1728,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getTopLevelEntryCount()
 	 */
 	@Override
@@ -1742,7 +1743,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getURL()
 	 */
 	@Override
@@ -1757,7 +1758,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getUniversalID()
 	 */
 	@Override
@@ -1772,7 +1773,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getViewInheritedName()
 	 */
 	@Override
@@ -1795,7 +1796,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isAutoUpdate()
 	 */
 	@Override
@@ -1810,7 +1811,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isCalendar()
 	 */
 	@Override
@@ -1820,7 +1821,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isCategorized()
 	 */
 	@Override
@@ -1835,13 +1836,14 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isConflict()
 	 */
 	@Override
 	public boolean isConflict() {
-		if (!isCalendar())
-			return false;	//NTF conflict checking only applies to calendar views
+		if (!isCalendar()) {
+			return false;//NTF conflict checking only applies to calendar views
+		}
 		try {
 			return getDelegate().isConflict();
 		} catch (NotesException e) {
@@ -1852,7 +1854,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isDefaultView()
 	 */
 	@Override
@@ -1867,7 +1869,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isEnableNoteIDsForCategories()
 	 */
 	@Override
@@ -1882,7 +1884,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isFolder()
 	 */
 	@Override
@@ -1892,7 +1894,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isHierarchical()
 	 */
 	@Override
@@ -1907,7 +1909,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isModified()
 	 */
 	@Override
@@ -1922,24 +1924,27 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isPrivate()
 	 */
 	@Override
 	public boolean isPrivate() {
 		IndexType type = getIndexType();
-		if (type == IndexType.PRIVATE)
+		if (type == IndexType.PRIVATE) {
 			return true;
-		if (type == IndexType.SHAREDPRIVATEONDESKTOP)
+		}
+		if (type == IndexType.SHAREDPRIVATEONDESKTOP) {
 			return true;
-		if (type == IndexType.SHAREDPRIVATEONSERVER)
+		}
+		if (type == IndexType.SHAREDPRIVATEONSERVER) {
 			return true;
+		}
 		return false;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isProhibitDesignRefresh()
 	 */
 	@Override
@@ -1954,7 +1959,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isProtectReaders()
 	 */
 	@Override
@@ -1969,7 +1974,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#isQueryView()
 	 */
 	@Override
@@ -1984,7 +1989,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lock()
 	 */
 	@Override
@@ -1999,7 +2004,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lock(boolean)
 	 */
 	@Override
@@ -2014,7 +2019,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lock(java.lang.String)
 	 */
 	@Override
@@ -2029,7 +2034,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lock(java.lang.String, boolean)
 	 */
 	@Override
@@ -2044,7 +2049,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -2060,7 +2065,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -2076,7 +2081,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lockProvisional()
 	 */
 	@Override
@@ -2091,7 +2096,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lockProvisional(java.lang.String)
 	 */
 	@Override
@@ -2106,7 +2111,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -2122,7 +2127,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#markAllRead()
 	 */
 	@Override
@@ -2136,7 +2141,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -2150,7 +2155,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#markAllUnread()
 	 */
 	@Override
@@ -2164,7 +2169,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -2178,7 +2183,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#refresh()
 	 */
 	@Override
@@ -2192,7 +2197,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#remove()
 	 */
 	@Override
@@ -2206,7 +2211,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#removeColumn()
 	 */
 	@Override
@@ -2221,7 +2226,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#removeColumn(int)
 	 */
 	@Override
@@ -2236,7 +2241,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#removeColumn(java.lang.String)
 	 */
 	@Override
@@ -2251,7 +2256,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#resortView()
 	 */
 	@Override
@@ -2265,7 +2270,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#resortView(java.lang.String)
 	 */
 	@Override
@@ -2279,7 +2284,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#resortView(java.lang.String, boolean)
 	 */
 	@Override
@@ -2293,14 +2298,14 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setAliases(java.lang.String)
 	 */
 	@Override
 	public void setAliases(final String alias) {
 		try {
 			getDelegate().setAliases(alias);
-			initialize(getDelegate()); // name and alias may be affected
+			initialize(getDelegate());// name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2308,7 +2313,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setAliases(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -2316,7 +2321,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setAliases(final Vector aliases) {
 		try {
 			getDelegate().setAliases(aliases);
-			initialize(getDelegate()); // name and alias may be affected
+			initialize(getDelegate());// name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2324,7 +2329,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setAutoUpdate(boolean)
 	 */
 	@Override
@@ -2338,7 +2343,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setBackgroundColor(int)
 	 */
 	@Override
@@ -2352,7 +2357,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setDefaultView(boolean)
 	 */
 	@Override
@@ -2367,7 +2372,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setEnableNoteIDsForCategories(boolean)
 	 */
 	@Override
@@ -2381,14 +2386,14 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setName(java.lang.String)
 	 */
 	@Override
 	public void setName(final String name) {
 		try {
 			getDelegate().setName(name);
-			initialize(getDelegate()); // name and alias may be affected
+			initialize(getDelegate());// name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2396,7 +2401,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setProhibitDesignRefresh(boolean)
 	 */
 	@Override
@@ -2411,7 +2416,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setProtectReaders(boolean)
 	 */
 	@Override
@@ -2425,7 +2430,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setReaders(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -2440,7 +2445,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setSelectionFormula(java.lang.String)
 	 */
 	@Override
@@ -2454,7 +2459,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setSelectionQuery(java.lang.String)
 	 */
 	@Override
@@ -2468,7 +2473,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#setSpacing(int)
 	 */
 	@Override
@@ -2482,7 +2487,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#unlock()
 	 */
 	@Override
@@ -2500,7 +2505,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.View#getDocument()
 	 */
 	@Override
@@ -2510,7 +2515,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -2520,7 +2525,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -2552,7 +2557,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/**
 	 * Used by the viewEntry to determine the correct columnValue
-	 * 
+	 *
 	 * @return
 	 */
 	protected List<DominoColumnInfo> getColumnInfos() {
@@ -2569,7 +2574,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/**
 	 * Used by the viewEntry to determine the correct columnValue
-	 * 
+	 *
 	 * @return
 	 */
 	protected Map<String, DominoColumnInfo> getColumnInfoMap() {
@@ -2585,7 +2590,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 	/**
 	 * Metadata about a ViewColumn, comprising the programmatic column name and the column index
-	 * 
+	 *
 	 * @since org.openntf.domino 3.0.0
 	 */
 	public static class DominoColumnInfo implements Serializable {
@@ -2596,7 +2601,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 		/**
 		 * Constructor, passing the ViewColumn object
-		 * 
+		 *
 		 * @param column
 		 *            ViewColumn from which to extract the metadata
 		 * @since org.openntf.domino 3.0.0
@@ -2617,7 +2622,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 		/**
 		 * Gets the programmatic name of the column, from the Advanced tab (beanie image) of the Column
-		 * 
+		 *
 		 * @return String programmatic column name
 		 * @since org.openntf.domino 3.0.0
 		 */
@@ -2627,7 +2632,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 		/**
 		 * Gets the index for the column in the view, beginning at 0
-		 * 
+		 *
 		 * @return int index of the column
 		 * @since org.openntf.domino 3.0.0
 		 */
@@ -2637,7 +2642,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 
 		/**
 		 * If this is a constant
-		 * 
+		 *
 		 * @return the constant value of this column
 		 */
 		public Object getConstantValue() {
@@ -2670,9 +2675,8 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 				}
 			}
 			if (candidate != null) {
-				log_.log(Level.WARNING,
-						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
-						+ ", View2:" + ret.getAliases());
+				log_.log(Level.WARNING, "The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: "
+						+ candidate.getAliases() + ", View2:" + ret.getAliases());
 				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
 				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
 				ret = candidate;
@@ -2683,7 +2687,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	}
 
 	@Override
-	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
+	protected void resurrect() {// should only happen if the delegate has been destroyed somehow.
 		try {
 			lotus.domino.View view = recreateView();
 			setDelegate(view, true);
@@ -2767,10 +2771,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	}
 
 	/*
-	'/P=' + the number of hours until discarding of the view index. 
-	'/T' Discard view index after each use. 
-	'/M' Manual refresh. 
-	'/O' Automatic refresh. 
+	'/P=' + the number of hours until discarding of the view index.
+	'/T' Discard view index after each use.
+	'/M' Manual refresh.
+	'/O' Automatic refresh.
 	'/R=' + the number of seconds between automatically refresh of view.
 	'/C' Don't show empty categories
 	'/L' Disable auto-update
@@ -2929,7 +2933,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		out.writeInt(EXTERNALVERSIONUID); // data version
+		out.writeInt(EXTERNALVERSIONUID);// data version
 
 		out.writeObject(name_);
 		out.writeObject(universalId_);
@@ -2943,8 +2947,9 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		super.readExternal(in);
 
 		int version = in.readInt();
-		if (version != EXTERNALVERSIONUID)
+		if (version != EXTERNALVERSIONUID) {
 			throw new InvalidClassException("Cannot read dataversion " + version);
+		}
 
 		name_ = (String) in.readObject();
 		universalId_ = (String) in.readObject();
