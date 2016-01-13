@@ -55,7 +55,7 @@ public class DatabaseTransaction {
 
 	protected Queue<DatabaseDescendant> getUpdateQueue() {
 		if (updateQueue_ == null) {
-			updateQueue_ = new ArrayDeque<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total
+			updateQueue_ = new ArrayDeque<DatabaseDescendant>();// TODO NTF - Switch to ArrayBlockingQueue and manage total
 			// handles?
 		}
 		return updateQueue_;
@@ -63,7 +63,7 @@ public class DatabaseTransaction {
 
 	protected Queue<DatabaseDescendant> getRemoveQueue() {
 		if (removeQueue_ == null) {
-			removeQueue_ = new ArrayDeque<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total
+			removeQueue_ = new ArrayDeque<DatabaseDescendant>();// TODO NTF - Switch to ArrayBlockingQueue and manage total
 			// handles?
 		}
 		return removeQueue_;
@@ -76,7 +76,9 @@ public class DatabaseTransaction {
 		q.add(base);
 		//		}
 		if (isDocLock(base) && base instanceof Document) {
-			((Document) base).lock();
+			if (!((Document) base).isNewNote()) {
+				((Document) base).lock();
+			}
 		}
 		if (isDesignLock(base)) {
 			if (base instanceof Agent) {

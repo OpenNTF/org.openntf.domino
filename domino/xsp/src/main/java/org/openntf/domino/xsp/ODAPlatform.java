@@ -158,7 +158,7 @@ public enum ODAPlatform {
 		try {
 			BackendBridge.getViewEntryByKeyWithOptions(dummyView, null, 42);
 		} catch (BackendBridgeSanityCheckException allGood) {
-			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
+			//			Factory.println("Operation of BackendBridge.getViewEntryByKeyWithOptions verified");
 			return;
 		} catch (Exception e) {
 			e.printStackTrace();

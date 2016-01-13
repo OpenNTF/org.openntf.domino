@@ -99,6 +99,23 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 		return ncs;
 	}
 
+	public DFastEdgeList(final DVertex source, final DGraph parent, final NoteList notelist, final String label) {
+		sourceVertex_ = source;
+		delegate_ = notelist;
+		parentGraph_ = parent;
+		label_ = label;
+		if (!notelist.isEmpty()) {
+			NoteCoordinate nc = notelist.get(0);
+			storeid_ = nc.getReplicaId();
+		}
+		//		Factory.println("DFastEdgeList " + label + " initialized for source vertex " + source.getId() + " , size " + delegate_.size());
+		//		if (delegate_.size() > 0) {
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+		//		}
+	}
+
+	@Deprecated
 	public DFastEdgeList(final DVertex source, final DGraph parent, final NoteList notelist) {
 		sourceVertex_ = source;
 		delegate_ = notelist;
@@ -107,15 +124,42 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 			NoteCoordinate nc = notelist.get(0);
 			storeid_ = nc.getReplicaId();
 		}
+		//		Factory.println("DFastEdgeList initialized for source vertex " + source.getId() + " , size " + delegate_.size());
+		//		if (delegate_.size() > 0) {
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+		//		}
 	}
+
+	//	Throwable t_ = null;
 
 	@Override
 	public boolean add(final Edge arg0) {
+		//		System.out.println("Adding an edge to a DFastEdgeList");
 		NoteCoordinate nc = getNC(arg0);
 		if (storeid_ == null) {
 			storeid_ = nc.getReplicaId();
 		}
-		return delegate_.add(nc);
+		if (!delegate_.contains(nc)) {
+			//			if ("DirectedBy".equals(label_)) {
+			//				t_ = new Throwable();
+			//			}
+			return delegate_.add(nc);
+		} else {
+			//			if ("DirectedBy".equals(label_)) {
+			//				org.openntf.domino.utils.Factory.println("TEMP DEBUG Stopping an add of edge " + arg0.getId()
+			//						+ " because it is already in the list. Here's where it's trying to add...");
+			//				Throwable t = new Throwable();
+			//				t.printStackTrace();
+			//				if (t_ != null) {
+			//					org.openntf.domino.utils.Factory.println("TEMP DEBUG And here is the prior call stack...");
+			//					t_.printStackTrace();
+			//				} else {
+			//					Factory.println("TEMP DEBUG prior stack trace is null!??!");
+			//				}
+			//			}
+			return false;
+		}
 	}
 
 	@Override
@@ -286,8 +330,8 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public List<Edge> subList(final int arg0, final int arg1) {
-		DFastEdgeList result = new DFastEdgeList(sourceVertex_, parentGraph_, (NoteList) delegate_.subList(arg0, arg1));
-		result.setLabel(label_);
+		DFastEdgeList result = new DFastEdgeList(sourceVertex_, parentGraph_, (NoteList) delegate_.subList(arg0, arg1), label_);
+		//		result.setLabel(label_);
 		result.setUnique(isUnique_);
 		return result;
 	}
@@ -334,7 +378,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 				//NTF then we go back to the old way...
 			}
 		}
-		if (result == null && this.size() > 0) {
+		if (result == null && this.size() > 0 && !isUnique()) {
 			for (Edge edge : this) {
 				if (edge instanceof DEdge) {
 					DEdge dedge = (DEdge) edge;
@@ -412,6 +456,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	@Override
 	public void setLabel(final String label) {
 		label_ = label;
+		//		Factory.println("Setting label to " + label);
 	}
 
 }

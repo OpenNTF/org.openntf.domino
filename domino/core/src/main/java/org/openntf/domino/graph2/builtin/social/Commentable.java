@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.builtin.social;
 
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
+import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -9,6 +10,16 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Commentable")
 public interface Commentable extends DVertexFrame {
+	public static enum CommentType {
+		GENERAL, QUESTION, FEEDBACK;
+	}
+
+	@TypedProperty("CommentType")
+	public CommentType getCommentType();
+
+	@TypedProperty("CommentType")
+	public void setCommentType(CommentType type);
+
 	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public Iterable<CommentsAbout> getCommentsAbout();
 
