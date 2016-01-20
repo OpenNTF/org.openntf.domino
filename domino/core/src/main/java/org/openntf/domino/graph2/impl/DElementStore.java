@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -328,8 +329,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	public void removeVertex(final Vertex vertex) {
 		startTransaction(vertex);
 		DVertex dv = (DVertex) vertex;
-		for (Edge edge : dv.getEdges(Direction.BOTH)) {
-			getConfiguration().getGraph().removeEdge(edge);
+		Iterable<Edge> edges = dv.getEdges(Direction.BOTH);
+		Iterator it = edges.iterator();
+		while (it.hasNext()) {
+			Edge edge = (Edge) it.next();
+			it.remove();
 		}
 		removeCache(vertex);
 		dv._remove();

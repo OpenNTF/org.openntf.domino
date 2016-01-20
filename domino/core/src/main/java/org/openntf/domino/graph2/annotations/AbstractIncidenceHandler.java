@@ -3,6 +3,7 @@ package org.openntf.domino.graph2.annotations;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.DEdgeList;
@@ -325,9 +326,12 @@ public abstract class AbstractIncidenceHandler {
 	@SuppressWarnings("rawtypes")
 	private void removeEdges(final Direction direction, final String label, final Vertex element, final Vertex otherVertex,
 			final FramedGraph framedGraph) {
-		for (final Edge edge : element.getEdges(direction, label)) {
+		Iterable<Edge> edges = element.getEdges(direction, label);
+		Iterator it = edges.iterator();
+		while (it.hasNext()) {
+			Edge edge = (Edge) it.next();
 			if (null == otherVertex || edge.getVertex(direction.opposite()).equals(otherVertex)) {
-				framedGraph.removeEdge(edge);
+				it.remove();
 			}
 		}
 	}
