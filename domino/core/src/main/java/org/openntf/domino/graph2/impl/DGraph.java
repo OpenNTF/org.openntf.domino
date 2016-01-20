@@ -149,6 +149,10 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		findElementStore(edge).removeEdge(edge);
 	}
 
+	public void removeEdge(final Edge edge, final Vertex removingVertex) {
+		findElementStore(edge).removeEdge(edge, removingVertex);
+	}
+
 	@Override
 	public Iterable<Edge> getEdges() {
 		List<Iterable<Edge>> storeList = new ArrayList<Iterable<Edge>>();
@@ -417,8 +421,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getStoreKey();
-		Session session = Factory.getSession(SessionType.CURRENT);
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
+		//		System.out.println("Attempting to find database with replica id " + keyStr);
+		Session session = Factory.getSession(SessionType.CURRENT);
+		//		DbDirectory dir = session.getDbDirectory("");
+		//		result = dir.openDatabaseByReplicaID(keyStr);
+		//		if (result == null) {
+		//			System.err.println("Unable to open database by replica id " + keyStr);
+		//		}
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
 		return result;
 	}

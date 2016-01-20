@@ -6,6 +6,7 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -328,8 +329,26 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	public void removeVertex(final Vertex vertex) {
 		startTransaction(vertex);
 		DVertex dv = (DVertex) vertex;
-		for (Edge edge : dv.getEdges(Direction.BOTH)) {
-			getConfiguration().getGraph().removeEdge(edge);
+		Iterable<Edge> edges = dv.getEdges(Direction.BOTH);
+		int i = 0;
+		try {
+			if (edges instanceof List) {
+				ListIterator<Edge> li = ((List<Edge>) edges).listIterator();
+				while (li.hasNext()) {
+					getConfiguration().getGraph().removeEdge(li.next(), dv);
+					//					li.remove();
+					i++;
+				}
+			} else {
+				for (Edge edge : edges) {
+					getConfiguration().getGraph().removeEdge(edge, dv);
+					i++;
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Problem with a " + dv.getClass().getName() + " with id " + dv.getId() + " on edgelist "
+					+ edges.getClass().getName() + " on iteration " + i);
+			DominoUtils.handleException(e);
 		}
 		removeCache(vertex);
 		dv._remove();
@@ -474,14 +493,35 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public void removeEdge(final Edge edge) {
 		if (edge instanceof DEdge) {
-			org.openntf.domino.ViewEntry.class.equals(((DEdge) edge).getDelegateType());
-			throw new UnsupportedOperationException("ViewEntry edges cannot be removed.");
+			if (org.openntf.domino.ViewEntry.class.equals(((DEdge) edge).getDelegateType())) {
+				throw new UnsupportedOperationException("ViewEntry edges cannot be removed.");
+			}
 		}
 		startTransaction(edge);
 		Vertex in = edge.getVertex(Direction.IN);
 		((DVertex) in).removeEdge(edge);
 		Vertex out = edge.getVertex(Direction.OUT);
 		((DVertex) out).removeEdge(edge);
+		removeCache(edge);
+		((DEdge) edge)._remove();
+	}
+
+	@Override
+	public void removeEdge(final Edge edge, final Vertex removingVertex) {
+		if (edge instanceof DEdge) {
+			if (org.openntf.domino.ViewEntry.class.equals(((DEdge) edge).getDelegateType())) {
+				throw new UnsupportedOperationException("ViewEntry edges cannot be removed.");
+			}
+		}
+		startTransaction(edge);
+		Vertex in = edge.getVertex(Direction.IN);
+		if (!in.equals(removingVertex)) {
+			((DVertex) in).removeEdge(edge);
+		}
+		Vertex out = edge.getVertex(Direction.OUT);
+		if (!out.equals(removingVertex)) {
+			((DVertex) out).removeEdge(edge);
+		}
 		removeCache(edge);
 		((DEdge) edge)._remove();
 	}
@@ -569,7 +609,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				} else {
 					if (originalDelegate == null) {
-						System.out.println("No original delegate found for key " + String.valueOf(originalKey));
+						//						System.out.println("No original delegate found for key " + String.valueOf(originalKey));
 					} else {
 						System.err.println("original delegate returned a " + originalDelegate.getClass().getName());
 					}
@@ -647,6 +687,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 						+ (delegateKey == null ? "null" : delegateKey.getClass().getName()));
 			}
 		} else {
+			throw new IllegalStateException("ElementStore delegate is not a Database; it's a "
+					+ (del == null ? "null" : del.getClass().getName()) + ". We don't handle this case yet.");
 			//TODO NTF alternative strategies...
 		}
 		//		if (result == null && Vertex.class.isAssignableFrom(type)) {

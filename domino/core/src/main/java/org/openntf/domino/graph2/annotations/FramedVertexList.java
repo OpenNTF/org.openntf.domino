@@ -62,7 +62,10 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 
 		@Override
 		public T next() {
-			return framedGraph_.frame(iterator_.next(), kind_);
+			Vertex v = iterator_.next();
+			T result = null;
+			result = framedGraph_.frame(v, kind_);
+			return result;
 		}
 
 		@Override

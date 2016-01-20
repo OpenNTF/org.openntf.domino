@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +29,7 @@ import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
-public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable {
+public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
@@ -323,33 +324,37 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Class<?> getDelegateType() {
+		Class<?> result = null;
 		if (delegate_ == null) {
 			if (delegateKey_ instanceof ViewEntryCoordinate) {
-				return org.openntf.domino.ViewEntry.class;
+				result = org.openntf.domino.ViewEntry.class;
 			} else if (delegateKey_ instanceof NoteCoordinate) {
 				if (((NoteCoordinate) delegateKey_).isView()) {
-					return org.openntf.domino.View.class;
+					result = org.openntf.domino.View.class;
 				} else {
-					return org.openntf.domino.Document.class;
+					result = org.openntf.domino.Document.class;
 				}
 			} else {
-				return null;
+				result = null;
 			}
 		} else {
 			if (delegate_ instanceof ViewEntry) {
-				return org.openntf.domino.ViewEntry.class;
+				result = org.openntf.domino.ViewEntry.class;
 			} else if (delegate_ instanceof View) {
-				return org.openntf.domino.View.class;
+				result = org.openntf.domino.View.class;
 			} else if (delegate_ instanceof Document) {
 				if (delegateKey_ instanceof NoteCoordinate) {
-					if (((NoteCoordinate) delegateKey_).isView())
-						return org.openntf.domino.View.class;
+					if (((NoteCoordinate) delegateKey_).isView()) {
+						result = org.openntf.domino.View.class;
+					} else {
+						result = org.openntf.domino.Document.class;
+					}
 				}
-				return org.openntf.domino.Document.class;
 			} else {
-				return delegate_.getClass();
+				result = delegate_.getClass();
 			}
 		}
+		return result;
 	}
 
 	@Override
@@ -398,14 +403,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
-				delegate_ = (Document) getParent().findDelegate(delegateKey_);
+				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 			}
 		} else if (delegate_ instanceof View) {
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((View) delegate_).isDefaultView();
 			} catch (Throwable t) {
-				delegate_ = (View) getParent().findDelegate(delegateKey_);
+				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 			}
 		}
 		if (delegate_ == null) {
@@ -488,7 +493,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 		getRemovedPropertiesInt().clear();
 		if (delegate instanceof Document) {
-			((Document) delegate).save();
+			Document doc = (Document) delegate;
+			//			if (!doc.hasItem("form")) {
+			//				System.err.println("Graph element being saved without a form value.");
+			//			}
+			doc.save();
 		}
 	}
 
@@ -502,6 +511,69 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public void commit() {
 
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsKey(final Object arg0) {
+		return hasProperty(String.valueOf(arg0));
+	}
+
+	@Override
+	public boolean containsValue(final Object arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object get(final Object arg0) {
+		return getProperty(String.valueOf(arg0));
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return getPropertyKeys();
+	}
+
+	@Override
+	public Object put(final String arg0, final Object arg1) {
+		setProperty(arg0, arg1);
+		return arg1;
+	}
+
+	@Override
+	public void putAll(final Map<? extends String, ? extends Object> arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object remove(final Object arg0) {
+		Object result = getProperty(String.valueOf(arg0));
+		removeProperty(String.valueOf(arg0));
+		return result;
+	}
+
+	@Override
+	public int size() {
+		return getPropertyKeys().size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		throw new UnsupportedOperationException();
 	}
 
 }

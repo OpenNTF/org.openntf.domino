@@ -11,7 +11,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-		com.tinkerpop.blueprints.TransactionalGraph {
+com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -45,14 +45,14 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 			if (value instanceof Enum<?>) {
 				strValue = ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
 			}
-			result = "@Contains(" + key + "; \"" + String.valueOf(value) + "\")";
+			result = "@Contains(@LowerCase(" + key + "); @LowerCase(\"" + String.valueOf(value) + "\"))";
 			return result;
 		}
 
 		//TODO make this more robust by using the TypeRegistry
 		public static String getFormulaForFrame(final Class<?> kind) {
 			String classname = kind.getSimpleName();
-			return "Form =\"" + classname + "\"";
+			return "@LowerCase(Form) = @LowerCase(\"" + classname + "\")";
 		}
 
 		//		public static String getFormulaForFrameName(final String classname) {

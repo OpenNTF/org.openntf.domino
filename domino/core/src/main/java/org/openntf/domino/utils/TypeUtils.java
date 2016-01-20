@@ -755,11 +755,20 @@ public enum TypeUtils {
 			} else {
 				return true;
 			}
+		} else if (value instanceof Vector) {
+			int size = ((Vector) value).size();
+			if (size == 0) {
+				return false;
+			} else if (size == 1) {
+				return toBoolean(((Vector) value).get(0));
+			} else {
+				System.err.println("Vector conversion failed because vector was size " + size);
+			}
 		} else if (value instanceof Boolean) {
 			return ((Boolean) value).booleanValue();
-		} else {
-			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to boolean primitive.");
 		}
+		throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to boolean primitive.");
+
 	}
 
 	public static int toInt(final Object value) {
@@ -767,6 +776,9 @@ public enum TypeUtils {
 			return ((Integer) value).intValue();
 		} else if (value instanceof Double) {
 			return ((Double) value).intValue();
+		} else if (value instanceof CharSequence) {
+			String t = ((CharSequence) value).toString();
+			return Integer.parseInt(t.length() > 0 ? t : "0");
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to int primitive.");
 		}
@@ -777,6 +789,9 @@ public enum TypeUtils {
 			return ((Integer) value).doubleValue();
 		} else if (value instanceof Double) {
 			return ((Double) value).doubleValue();
+		} else if (value instanceof CharSequence) {
+			String t = ((CharSequence) value).toString();
+			return Double.parseDouble(t.length() > 0 ? t : "0");
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to double primitive.");
 		}
@@ -787,6 +802,9 @@ public enum TypeUtils {
 			return ((Integer) value).longValue();
 		} else if (value instanceof Double) {
 			return ((Double) value).longValue();
+		} else if (value instanceof CharSequence) {
+			String t = ((CharSequence) value).toString();
+			return Long.parseLong(t.length() > 0 ? t : "0");
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to long primitive.");
 		}

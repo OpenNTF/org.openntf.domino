@@ -153,13 +153,21 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
-	public <F> Iterable<F> getElements(final String classname) {
-		org.openntf.domino.graph2.DElementStore store = null;
-		DGraph base = (DGraph) this.getBaseGraph();
+	protected Class<?> getClassFromName(final String classname) {
 		Class<?> chkClass = getTypeRegistry().getType(DVertexFrame.class, classname);
 		if (chkClass == null) {
 			chkClass = getTypeRegistry().getType(DEdgeFrame.class, classname);
 		}
+		if (chkClass == null) {
+			chkClass = getTypeRegistry().findClassByName(classname);
+		}
+		return chkClass;
+	}
+
+	public <F> Iterable<F> getElements(final String classname) {
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		Class<?> chkClass = getClassFromName(classname);
 		if (chkClass != null) {
 			store = base.findElementStore(chkClass);
 			if (store != null) {
@@ -179,10 +187,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		//		System.out.println("Getting a filtered list of elements of type " + classname);
 		org.openntf.domino.graph2.DElementStore store = null;
 		DGraph base = (DGraph) this.getBaseGraph();
-		Class<?> chkClass = getTypeRegistry().getType(DVertexFrame.class, classname);
-		if (chkClass == null) {
-			chkClass = getTypeRegistry().getType(DEdgeFrame.class, classname);
-		}
+		Class<?> chkClass = getClassFromName(classname);
 		if (chkClass != null) {
 			store = base.findElementStore(chkClass);
 			if (store != null) {
@@ -204,10 +209,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		//		System.out.println("Getting a filtered list of elements of type " + classname);
 		org.openntf.domino.graph2.DElementStore store = null;
 		DGraph base = (DGraph) this.getBaseGraph();
-		Class<?> chkClass = getTypeRegistry().getType(DVertexFrame.class, classname);
-		if (chkClass == null) {
-			chkClass = getTypeRegistry().getType(DEdgeFrame.class, classname);
-		}
+		Class<?> chkClass = getClassFromName(classname);
 		if (chkClass != null) {
 			store = base.findElementStore(chkClass);
 			if (store != null) {
@@ -483,7 +485,13 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				initializer.initElement(klazz, this, vertex);
 			}
 		}
-		F result = super.frame(vertex, klazz);
+		F result = null;
+		try {
+			result = super.frame(vertex, klazz);
+		} catch (Exception e) {
+			System.out.println("Exception while attempting to frame a vertex " + vertex.getId() + " with class " + klazz.getName());
+			DominoUtils.handleException(e);
+		}
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
 			if (initializer instanceof JavaFrameInitializer) {
 				((JavaFrameInitializer) initializer).initElement(klazz, this, result);

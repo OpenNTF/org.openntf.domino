@@ -288,6 +288,11 @@ public class FramedResource extends AbstractResource {
 			ex.printStackTrace();
 		}
 		if (jsonItems != null) {
+			Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
+			for (String jsonKey : jsonItems.keySet()) {
+				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
+				cisMap.put(cis, jsonItems.get(jsonKey));
+			}
 			List<String> ids = pm.get(Parameters.ID);
 			if (ids.size() == 0) {
 				// TODO no id
@@ -311,20 +316,20 @@ public class FramedResource extends AbstractResource {
 									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
 									Iterator<String> frameProperties = adapter.getJsonProperties();
 									while (frameProperties.hasNext()) {
-										String key = frameProperties.next();
+										CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 										if (!key.startsWith("@")) {
-											Object value = jsonItems.get(key);
+											Object value = cisMap.get(key);
 											if (value != null) {
-												adapter.putJsonProperty(key, value);
-												jsonItems.remove(key);
+												adapter.putJsonProperty(key.toString(), value);
+												cisMap.remove(key);
 											}
 										}
 									}
-									for (String jsonKey : jsonItems.keySet()) {
-										if (!jsonKey.startsWith("@")) {
-											Object value = jsonItems.getJsonProperty(jsonKey);
+									for (CaseInsensitiveString cis : cisMap.keySet()) {
+										if (!cis.startsWith("@")) {
+											Object value = cisMap.get(cis);
 											if (value != null) {
-												adapter.putJsonProperty(jsonKey, value);
+												adapter.putJsonProperty(cis.toString(), value);
 											}
 										}
 									}
@@ -358,8 +363,8 @@ public class FramedResource extends AbstractResource {
 						// + element.getClass().getName());
 					}
 				}
-
 			}
+			graph.commit();
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());

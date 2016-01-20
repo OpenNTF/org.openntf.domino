@@ -73,6 +73,8 @@ public interface DElementStore extends Externalizable {
 
 	public void removeEdge(Edge edge);
 
+	public void removeEdge(final Edge edge, final Vertex removingVertex);
+
 	public Object findElementDelegate(Object delegateKey, Class<? extends Element> type);
 
 	public void removeElementDelegate(Element element);

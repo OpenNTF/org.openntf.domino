@@ -71,4 +71,5 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.icu;bundle-version="3.8.1"
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Import-Package: lotus.domino
+Import-Package: javassist.util.proxy,
+ lotus.domino

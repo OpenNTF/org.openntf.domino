@@ -1116,7 +1116,9 @@ org.openntf.domino.Database {
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
-					doc.setUniversalID(checksum);
+					if (checksum != null) {
+						doc.setUniversalID(checksum);
+					}
 					doc.replaceItemValue("$Created", new Date());
 					doc.replaceItemValue("$$Key", key);
 				}

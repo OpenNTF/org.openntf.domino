@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -18,7 +19,7 @@ import com.tinkerpop.blueprints.Vertex;
 public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	protected final DVertex sourceVertex_;
 	protected final DGraph parentGraph_;
-	protected NoteList delegate_;
+	protected List<NoteCoordinate> delegate_;
 	protected boolean isUnique_;
 	protected String label_;
 	protected String storeid_;
@@ -101,7 +102,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	public DFastEdgeList(final DVertex source, final DGraph parent, final NoteList notelist, final String label) {
 		sourceVertex_ = source;
-		delegate_ = notelist;
+		delegate_ = Collections.synchronizedList(notelist);
 		parentGraph_ = parent;
 		label_ = label;
 		if (!notelist.isEmpty()) {
@@ -118,7 +119,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	@Deprecated
 	public DFastEdgeList(final DVertex source, final DGraph parent, final NoteList notelist) {
 		sourceVertex_ = source;
-		delegate_ = notelist;
+		delegate_ = Collections.synchronizedList(notelist);
 		parentGraph_ = parent;
 		if (!notelist.isEmpty()) {
 			NoteCoordinate nc = notelist.get(0);
