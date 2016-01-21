@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
@@ -22,14 +22,14 @@ import com.ibm.icu.util.Calendar;
 
 /**
  * @author withersp
- * 
+ *
  *         OpenNTF extensions to Session class
  */
 public interface Session {
 
 	/**
 	 * Enum for Khan-mode "fixes" to make lotus.domino methods "better"
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum Fixes {
@@ -66,7 +66,7 @@ public interface Session {
 
 	/**
 	 * Gets the factory that manages processing of the IDominoEvents
-	 * 
+	 *
 	 * @return IDominoEventFactory containing the IDominoEvents
 	 * @since org.openntf.domino 3.0.0
 	 */
@@ -74,7 +74,7 @@ public interface Session {
 
 	/**
 	 * Sets the factory for managing processing of the IDominoEvents
-	 * 
+	 *
 	 * @param factory
 	 *            IDominoEventFactory containing the IDominoEvents
 	 * @since org.openntf.domino 3.0.0
@@ -85,16 +85,16 @@ public interface Session {
 	 * Generates an IDominoEvent into the IDominoEventFactory. The IDominoEvent will be for a specific EnumEvent, e.g.
 	 * BEFORE_CREATE_DATABASE. This method basically triggers the EnumEvent, passing the relevant Objects that are currently being acted
 	 * upon.
-	 * 
+	 *
 	 * <p>
 	 * No EnumEvent types and contents are currently implemented but should be loaded in org.openntf.domino.ext.Session.Events
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The target should not be passed into this method, but the implementation should pass {@code this} to as the target to
 	 * {@link org.openntf.domino.events.IDominoEventFactory.generate}
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            EnumEvent being triggered, e.g. BEFORE_CREATE_DOCUMENT.
 	 * @param source
@@ -104,13 +104,14 @@ public interface Session {
 	 * @return An IDominoEvent which will be passed to {@link org.openntf.domino.ext.Base.fireListener}
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base<?> source, org.openntf.domino.Base<?> target, Object payload);
+	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base<?> source, org.openntf.domino.Base<?> target,
+			Object payload);
 
 	// public RunContext getRunContext();
 
 	/**
 	 * Creates a ColorObject using a Java Color
-	 * 
+	 *
 	 * @param color
 	 *            Color to load into the ColorObject
 	 * @return ColorObject created
@@ -120,7 +121,7 @@ public interface Session {
 
 	/**
 	 * Performs a free time search using a Collection of names to check for.
-	 * 
+	 *
 	 * @param window
 	 *            DateRange window of start and end times to search through
 	 * @param duration
@@ -137,7 +138,7 @@ public interface Session {
 
 	/**
 	 * Performs a free time search using a Collection of names to check for.
-	 * 
+	 *
 	 * @param window
 	 *            DateRange window of start and end times to search through
 	 * @param duration
@@ -154,16 +155,16 @@ public interface Session {
 
 	/**
 	 * A collection of Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
-	 * 
+	 *
 	 * <p>
 	 * To distinguish between a Domino Directory and a Personal Address Book, use isPublicAddressBook and isPrivateAddressBook of Database.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * A database retrieved through getAddressBooks is closed. To access all its properties and methods, you must open the database with the
 	 * open method in NotesDatabase.
 	 * </p>
-	 * 
+	 *
 	 * @return A collection of Databases.
 	 * @since openntf.domino 1.0.0
 	 */
@@ -171,17 +172,17 @@ public interface Session {
 
 	/**
 	 * A collection of groups to which the current user belongs.
-	 * 
+	 *
 	 * <p>
 	 * The "groups" include the hierarchical parents of the current effective user name and the alternate user name, if available. For Mary
 	 * Smith/Department One/Acme, for example, the groups include /Department One/Acme and /Acme.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
-	 * 
+	 *
 	 * @return The user group name collection
 	 * @since openntf.domino 1.0.0
 	 */
@@ -189,18 +190,26 @@ public interface Session {
 
 	/**
 	 * Gets a collection names of the user or server that created the session, and the alternate name if it exists.
-	 * 
+	 *
 	 * @return The user name collection
 	 * @since openntf.domino 1.0.0
 	 */
 	public Collection<String> getUserNameCollection();
 
 	/**
+	 * Gets a <code>Name</code> object for the user returned by {@link org.openntf.domino.Session#getEffectiveUserName()}.
+	 *
+	 * @return a <code>Name</code> object for the effective user
+	 * @since openntf.domino 2.0.1
+	 */
+	public org.openntf.domino.Name getEffectiveUserNameObject();
+
+	/**
 	 * Creates a DateTime object that represents a specified date and time.
-	 * 
+	 *
 	 * @param date
 	 *            The date, time, and time zone you want the object to represent using a {@link com.ibm.icu.util.Calendar} object.
-	 * 
+	 *
 	 * @return The newly created {@link DateTime} object.
 	 * @since lotus.domino 4.5.0
 	 */
@@ -208,7 +217,7 @@ public interface Session {
 
 	/**
 	 * Creates a Name object using a standard lotus.domino.Session, in case the fix is not enabled
-	 * 
+	 *
 	 * @param name
 	 *            String for which to convert into a Notes Name
 	 * @return The newly create {@link Name} object.
@@ -218,14 +227,14 @@ public interface Session {
 
 	/**
 	 * Tells whether the current session object represents an anonymous user.
-	 * 
+	 *
 	 * @return boolean, whether the session is an anonymous user
 	 */
 	public boolean isAnonymous();
 
 	/**
 	 * Tells whether a specific Khan-mode fix is enabled, using {@link Fixes}
-	 * 
+	 *
 	 * @param fix
 	 *            Fixes enum entry to test
 	 * @return boolean, whether the fix is enabled or not
@@ -235,19 +244,19 @@ public interface Session {
 
 	/**
 	 * Returns all enabled fixes on that session
-	 * 
+	 *
 	 * @return a set with all enabled fixes
 	 */
 	public Fixes[] getEnabledFixes();
 
 	/**
 	 * Enables / disables a specific Khan-mode fix for the current Session object.
-	 * 
+	 *
 	 * <p>
 	 * NOTE: The fix will only be enabled / disabled until the Session object is recycled. In the case of XPages, this is at the end of the
 	 * current request lifecycle.
 	 * </p>
-	 * 
+	 *
 	 * @param fix
 	 *            Fixes enum entry to enable / disable
 	 * @param value
@@ -258,7 +267,7 @@ public interface Session {
 	/**
 	 * Converts a String name to common name format. Deprecated in favour of
 	 * {@link org.openntf.domino.utils.DominoUtils#toCommonName(String)}. That method is more performant and avoids creating a Name object.
-	 * 
+	 *
 	 * @param name
 	 *            String hierarchical name to convert
 	 * @return String name converted to common name format
@@ -269,7 +278,7 @@ public interface Session {
 
 	/**
 	 * Easter egg method to print a boogie image onto the server console :-)
-	 * 
+	 *
 	 * @since org.openntf.domino 4.5.0
 	 */
 	public void boogie();
@@ -277,7 +286,7 @@ public interface Session {
 	/**
 	 * Whether the session is feature-restricted. Not currently implemented, but designed to allow us, in the future, to set up sandbox
 	 * Sessions. Now go salivate!
-	 * 
+	 *
 	 * @return boolean
 	 * @since org.openntf.domino 5.0.0
 	 */
@@ -285,7 +294,7 @@ public interface Session {
 
 	/**
 	 * Evaluates @Unique and returns the result as a String
-	 * 
+	 *
 	 * @return String unique reference
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -295,7 +304,7 @@ public interface Session {
 
 	/**
 	 * Gets a Database object by its replica ID (e.g. 85255FA900747B84). Deprecated in favour of {@link Session#getDatabase(String)}
-	 * 
+	 *
 	 * @param server
 	 *            String server name
 	 * @param replicaid
@@ -309,7 +318,7 @@ public interface Session {
 
 	/**
 	 * Gets a database with failover to another server, if it cannot be opened
-	 * 
+	 *
 	 * @param server
 	 *            String server name to try first
 	 * @param dbfile
@@ -321,7 +330,7 @@ public interface Session {
 
 	/**
 	 * Gets a database, if it has been modified since a specific DateTime
-	 * 
+	 *
 	 * @param server
 	 *            String server name
 	 * @param dbfile
@@ -335,7 +344,7 @@ public interface Session {
 
 	/**
 	 * Gets a database, if it has been modified since a specific Java Date
-	 * 
+	 *
 	 * @param server
 	 *            String server name
 	 * @param dbfile
@@ -349,7 +358,7 @@ public interface Session {
 
 	/**
 	 * Gets the current user's mail database, if the user uses Notes Mail
-	 * 
+	 *
 	 * @return Database or null
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -363,7 +372,7 @@ public interface Session {
 	 * <li>Its {@link org.openntf.domino.Database#getReplicaID()} property</li>
 	 * <li>Its {@link org.openntf.domino.Database#getMetaReplicaId()} property</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param key
 	 *            String Api Path, ReplicaID or MetaReplicaID
 	 * @return Database or null
@@ -373,7 +382,7 @@ public interface Session {
 
 	/**
 	 * Gets a document by its {@link org.openntf.domino.Document#getMetaversalID()} property
-	 * 
+	 *
 	 * @param metaversalID
 	 *            String comprising replicaid + UNID
 	 * @return Document
@@ -383,7 +392,7 @@ public interface Session {
 
 	/**
 	 * Gets a document by its {@link org.openntf.domino.Document#getMetaversalID(String)} property
-	 * 
+	 *
 	 * @param metaversalID
 	 *            String comprising replicaid + UNID
 	 * @param serverName
@@ -395,7 +404,7 @@ public interface Session {
 
 	/**
 	 * Checks the Session's mechanism for converting mime, using {@link org.openntf.domino.AutoMime}
-	 * 
+	 *
 	 * @return AutoMime option
 	 * @since org.openntf.domino 5.0.0
 	 */
@@ -403,7 +412,7 @@ public interface Session {
 
 	/**
 	 * Sets the Session's mechanism for converting mime, using {@link org.openntf.domino.AutoMime}
-	 * 
+	 *
 	 * @param autoMime
 	 *            AutoMime option
 	 * @since org.openntf.domino 5.0.0
@@ -412,9 +421,9 @@ public interface Session {
 
 	/**
 	 * This method is needed for testing purposes or for XOTS
-	 * 
+	 *
 	 * ATTENTION: use that with care! You cannot change currentDatabase in delegate (AFAIK)
-	 * 
+	 *
 	 * @param db
 	 *            the database that is the current one.
 	 * @since org.openntf.domino 5.0.0
@@ -423,14 +432,14 @@ public interface Session {
 
 	/**
 	 * Returns a Domino Formatter
-	 * 
+	 *
 	 * @return the formatter
 	 */
 	DominoFormatter getFormatter();
 
 	/**
 	 * Sets the session type on construction, so that it can be recreated if used across threads
-	 * 
+	 *
 	 * @param sessionType
 	 *            the sessionType
 	 */
@@ -438,14 +447,14 @@ public interface Session {
 
 	/**
 	 * Returns the wrapperFactory for this session
-	 * 
+	 *
 	 * @return the {@link WrapperFactory}
 	 */
 	public WrapperFactory getFactory();
 
 	/**
 	 * Sets this session to "no recycle". This means, a recycle call will do nothing.
-	 * 
+	 *
 	 * @param noRecycle
 	 *            true = do not recycle that session
 	 */
