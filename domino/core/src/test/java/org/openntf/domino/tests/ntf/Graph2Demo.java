@@ -87,7 +87,7 @@ public class Graph2Demo implements Runnable {
 		@IncidenceUnique(label = STARRING, direction = Direction.IN)
 		public Starring addStarring(Crew crew);
 
-		@IncidenceUnique(label = STARRING, direction = Direction.IN)
+		@AdjacencyUnique(label = STARRING, direction = Direction.IN)
 		public void removeStarring(Crew crew);
 
 		@AdjacencyUnique(label = STARRING, direction = Direction.IN)
@@ -494,6 +494,7 @@ public class Graph2Demo implements Runnable {
 			System.out.println("***************************");
 			System.out.println("Do miss " + revengeMovie.getTitle());
 			starrings = revengeMovie.getStarring();
+			Crew tmpDaniels = null;
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
 				Iterator<Character> chars = crew.getPortraysCharacters().iterator();
@@ -502,6 +503,9 @@ public class Graph2Demo implements Runnable {
 					System.out.println(crew.getFirstName() + " " + crew.getLastName() + " as " + character.getName());
 				} else {
 					System.out.println(crew.getFirstName() + " " + crew.getLastName());
+				}
+				if (crew.getLastName().equals("Daniels")) {
+					tmpDaniels = crew;
 				}
 			}
 
