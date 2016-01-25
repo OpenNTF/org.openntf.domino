@@ -3,13 +3,14 @@ package org.openntf.domino.rest.resources.frames;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.VertexFrame;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
@@ -64,6 +64,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			List<CaseInsensitiveString> types = pm.getTypes();
 			List<CaseInsensitiveString> filterkeys = pm.getFilterKeys();
 			List<CaseInsensitiveString> filtervalues = pm.getFilterValues();
+			List<CaseInsensitiveString> partialkeys = pm.getPartialKeys();
+			List<CaseInsensitiveString> partialvalues = pm.getPartialValues();
 
 			if (types.size() == 0) {
 				writer.outNull();
@@ -73,6 +75,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				Iterable<?> elements = null;
 				if (filterkeys != null) {
 					elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
+				} else if (partialkeys != null) {
+					elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
 				} else {
 					elements = graph.getElements(typename.toString());
 				}
@@ -116,6 +120,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					Iterable<?> elements = null;
 					if (filterkeys != null) {
 						elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
+					} else if (partialkeys != null) {
+						elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
 					} else {
 						elements = graph.getElements(typename.toString());
 					}
@@ -173,21 +179,44 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			ex.printStackTrace();
 		}
 		if (jsonItems != null) {
+			Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
+			for (String jsonKey : jsonItems.keySet()) {
+				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
+				cisMap.put(cis, jsonItems.get(jsonKey));
+			}
 			String rawType = jsonItems.getAsString("@type");
 			if (rawType != null) {
 				try {
 					Class<?> type = graph.getTypeRegistry().findClassByName(rawType);
-					if (type.isAssignableFrom(EdgeFrame.class)) {
-						JsonJavaObject inJson = jsonItems.getJsonObject("@in");
-						String inId = inJson.getAsString("@id");
-						JsonJavaObject outJson = jsonItems.getJsonObject("@out");
-						String outId = outJson.getAsString("@id");
-						Vertex in = graph.getVertex(NoteCoordinate.Utils.getNoteCoordinate(inId));
-						Vertex out = graph.getVertex(NoteCoordinate.Utils.getNoteCoordinate(outId));
-						String label = jsonItems.getAsString("label");
-						@SuppressWarnings("unchecked")
-						EdgeFrame edge = (EdgeFrame) graph.addEdge(null, out, in, label, type);
+					if (type.isAssignableFrom(VertexFrame.class)) {
+						VertexFrame parVertex = (VertexFrame) graph.addVertex(null, type);
+						try {
+							JsonFrameAdapter adapter = new JsonFrameAdapter(graph, parVertex, null);
+							Iterator<String> frameProperties = adapter.getJsonProperties();
+							while (frameProperties.hasNext()) {
+								CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
+								if (!key.startsWith("@")) {
+									Object value = cisMap.get(key);
+									if (value != null) {
+										adapter.putJsonProperty(key.toString(), value);
+										cisMap.remove(key);
+									}
+								}
+							}
+							for (CaseInsensitiveString cis : cisMap.keySet()) {
+								if (!cis.startsWith("@")) {
+									Object value = cisMap.get(cis);
+									if (value != null) {
+										adapter.putJsonProperty(cis.toString(), value);
+									}
+								}
+							}
+							writer.outObject(parVertex);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
+					graph.commit();
 				} catch (IllegalArgumentException iae) {
 					throw new RuntimeException(iae);
 				}

@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +26,10 @@ import org.openntf.domino.big.impl.ViewEntryCoordinate;
 import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
-public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable {
+public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
@@ -100,33 +102,36 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					Document doc = (Document) delegate;
 					if (doc.hasItem(propertyName)) {
 						result = doc.getItemValue(propertyName, type);
-						//						if ("form".equalsIgnoreCase(propertyName)) {
-						//							System.out.println("Got form property from a document: '" + (String) result + "'");
-						//						}
 					}
-					if (result == null) {
+					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
 							Object raw = doc.get(propertyName);
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
-							//							if ("form".equalsIgnoreCase(propertyName)) {
-							//								System.out.println("BACKUP Got form property from a document: '" + (String) result + "'");
-							//							}
 						} catch (Throwable t) {
-							log_.log(Level.FINE, "Invalid property for document " + propertyName);
+							if (log_.isLoggable(Level.WARNING)) {
+								log_.log(Level.WARNING, "Invalid property for document " + propertyName, t);
+							}
 						}
 					}
 				} else if (delegate instanceof SessionDescendant) {
 					Session s = ((SessionDescendant) delegate).getAncestorSession();
 					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-				} else {
-					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+				} else if (delegate != null) {
+					try {
+						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
 				} else if (result instanceof Serializable) {
 					props.put(propertyName, result);
 				} else {
-					log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
+					if (log_.isLoggable(Level.FINE)) {
+						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
+								+ result.getClass().getName());
+					}
 					props.put(propertyName, result);
 				}
 			} catch (Exception e) {
@@ -147,7 +152,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (delegate instanceof SessionDescendant) {
 						Session s = ((SessionDescendant) delegate).getAncestorSession();
 						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-					} else {
+					} else if (delegate != null) {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
 							result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
@@ -164,7 +169,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					}
 				} catch (Exception e) {
 					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-							+ " but we have a value in the cache.", e);
+							+ " but we have a value in the cache of type " + result.getClass().getName() + " when we were looking for a "
+							+ type.getName(), e);
 				}
 			}
 		}
@@ -173,8 +179,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 		if ("form".equalsIgnoreCase(propertyName)) {
 			if (result == null) {
-				System.out.println("TEMP DEBUG returning null as value for Form field");
+				Factory.println("TEMP DEBUG returning null as value for Form field");
 			}
+		}
+		if (result == Deferred.INSTANCE) {
+			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
 		}
 		return (T) result;
 	}
@@ -315,33 +324,37 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Class<?> getDelegateType() {
+		Class<?> result = null;
 		if (delegate_ == null) {
 			if (delegateKey_ instanceof ViewEntryCoordinate) {
-				return org.openntf.domino.ViewEntry.class;
+				result = org.openntf.domino.ViewEntry.class;
 			} else if (delegateKey_ instanceof NoteCoordinate) {
 				if (((NoteCoordinate) delegateKey_).isView()) {
-					return org.openntf.domino.View.class;
+					result = org.openntf.domino.View.class;
 				} else {
-					return org.openntf.domino.Document.class;
+					result = org.openntf.domino.Document.class;
 				}
 			} else {
-				return null;
+				result = null;
 			}
 		} else {
 			if (delegate_ instanceof ViewEntry) {
-				return org.openntf.domino.ViewEntry.class;
+				result = org.openntf.domino.ViewEntry.class;
 			} else if (delegate_ instanceof View) {
-				return org.openntf.domino.View.class;
+				result = org.openntf.domino.View.class;
 			} else if (delegate_ instanceof Document) {
 				if (delegateKey_ instanceof NoteCoordinate) {
-					if (((NoteCoordinate) delegateKey_).isView())
-						return org.openntf.domino.View.class;
+					if (((NoteCoordinate) delegateKey_).isView()) {
+						result = org.openntf.domino.View.class;
+					} else {
+						result = org.openntf.domino.Document.class;
+					}
 				}
-				return org.openntf.domino.Document.class;
 			} else {
-				return delegate_.getClass();
+				result = delegate_.getClass();
 			}
 		}
+		return result;
 	}
 
 	@Override
@@ -390,21 +403,22 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
-				delegate_ = (Document) getParent().findDelegate(delegateKey_);
+				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 			}
 		} else if (delegate_ instanceof View) {
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((View) delegate_).isDefaultView();
 			} catch (Throwable t) {
-				delegate_ = (View) getParent().findDelegate(delegateKey_);
+				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 			}
 		}
 		if (delegate_ == null) {
 			delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 		}
 		if (delegate_ == null) {
-			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate. This will not turn out well.");
+			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
+					+ ". This will not turn out well.");
 			try {
 				String type = getProperty("form", String.class);
 				if (type != null) {
@@ -479,7 +493,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 		getRemovedPropertiesInt().clear();
 		if (delegate instanceof Document) {
-			((Document) delegate).save();
+			Document doc = (Document) delegate;
+			//			if (!doc.hasItem("form")) {
+			//				System.err.println("Graph element being saved without a form value.");
+			//			}
+			doc.save();
 		}
 	}
 
@@ -493,6 +511,69 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public void commit() {
 
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsKey(final Object arg0) {
+		return hasProperty(String.valueOf(arg0));
+	}
+
+	@Override
+	public boolean containsValue(final Object arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object get(final Object arg0) {
+		return getProperty(String.valueOf(arg0));
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return getPropertyKeys();
+	}
+
+	@Override
+	public Object put(final String arg0, final Object arg1) {
+		setProperty(arg0, arg1);
+		return arg1;
+	}
+
+	@Override
+	public void putAll(final Map<? extends String, ? extends Object> arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object remove(final Object arg0) {
+		Object result = getProperty(String.valueOf(arg0));
+		removeProperty(String.valueOf(arg0));
+		return result;
+	}
+
+	@Override
+	public int size() {
+		return getPropertyKeys().size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		throw new UnsupportedOperationException();
 	}
 
 }

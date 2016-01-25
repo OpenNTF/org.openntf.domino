@@ -80,8 +80,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session>
-		implements org.openntf.domino.Database {
+public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
+org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -226,8 +226,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int)
 	 */
 	@Override
-	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
-			final Set<FTSearchOption> otherOpt) {
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -473,7 +472,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 
 	@Override
 	@Incomplete
-	public DocumentCollection createMergeableDocumentCollection() {
+	public DocumentCollection createMergableDocumentCollection() {
 		try {
 			lotus.domino.Database db = getDelegate();
 			if (!db.isOpen()) {
@@ -516,8 +515,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
 	@Override
-	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit,
-			final int maxSize) {
+	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize) {
 		try {
 			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
@@ -1118,7 +1116,9 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
-					doc.setUniversalID(checksum);
+					if (checksum != null) {
+						doc.setUniversalID(checksum);
+					}
 					doc.replaceItemValue("$Created", new Date());
 					doc.replaceItemValue("$$Key", key);
 				}
@@ -1200,8 +1200,9 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			if (true)
 				return null;
 
-			return fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
-					proxyUser, proxyPassword, returnImmediately), Document.SCHEMA, this);
+			return fromLotus(
+					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
+							proxyPassword, returnImmediately), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -3205,7 +3206,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 * java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
 			final int otherOpt, final int start, final int count, final String entryForm) {
 		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}

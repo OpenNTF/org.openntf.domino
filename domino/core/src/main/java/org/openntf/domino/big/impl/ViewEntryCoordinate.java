@@ -22,6 +22,9 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 	//	private transient ViewEntry sourceEntry_;
 
 	public ViewEntryCoordinate(final ViewEntry viewEntry) {
+		//		System.out.println("A ViewEntryCoordinate is being created with a viewentry");
+		//		new Throwable().printStackTrace();
+
 		parentViewCoordinate_ = new NoteCoordinate(viewEntry.getParentView());
 		position_ = viewEntry.getPosition();
 		if (viewEntry.isCategory()) {
@@ -36,6 +39,10 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 	}
 
 	public ViewEntryCoordinate(final CharSequence metaversalid) {
+		//		if (metaversalid.length() < 50) {
+		//			System.out.println("A ViewEntryCoordinate is being created with a bogus metaversalid: " + metaversalid);
+		//			new Throwable().printStackTrace();
+		//		}
 		entryType_ = metaversalid.subSequence(0, 2).toString();
 		parentViewCoordinate_ = new NoteCoordinate(metaversalid.subSequence(2, 50));
 		position_ = metaversalid.subSequence(50, metaversalid.length()).toString();
@@ -51,6 +58,7 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 		parentViewCoordinate_ = (NoteCoordinate) arg0.readObject();
 		position_ = arg0.readUTF();
 		entryType_ = arg0.readUTF();
+		//		System.out.println("TEMP DEBUG deserializing a ViewEntryCoordinate");
 	}
 
 	@Override

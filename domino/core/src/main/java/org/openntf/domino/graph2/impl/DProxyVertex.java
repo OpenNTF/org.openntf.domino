@@ -98,6 +98,14 @@ public class DProxyVertex extends DVertex {
 		//		System.out.println("TEMP DEBUG: getting property from proxy vertex");
 		if (isGraphKey(key)) {
 			return super.getProperty(key);
+		} else if ("form".equalsIgnoreCase(key)) {
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			Object localChk = super.getProperty(key);
+			if (localChk == null || String.valueOf(localChk).length() == 0) {
+				return null;
+			} else {
+				return localChk;
+			}
 		} else {
 			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
 			if (delVertex == null) {
@@ -115,6 +123,14 @@ public class DProxyVertex extends DVertex {
 		//		System.out.println("TEMP DEBUG: getting property from proxy vertex");
 		if (isGraphKey(propertyName)) {
 			return super.getProperty(propertyName, type);
+		} else if ("form".equalsIgnoreCase(propertyName)) {
+			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			Object localChk = super.getProperty(propertyName, type);
+			if (localChk == null || String.valueOf(localChk).length() == 0) {
+				return null;
+			} else {
+				return (T) localChk;
+			}
 		} else {
 			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
 			if (delVertex == null) {
@@ -158,6 +174,8 @@ public class DProxyVertex extends DVertex {
 	@Override
 	public void setProperty(final String key, final Object value) {
 		if (isGraphKey(key)) {
+			super.setProperty(key, value);
+		} else if ("form".equalsIgnoreCase(key)) {
 			super.setProperty(key, value);
 		} else {
 			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();

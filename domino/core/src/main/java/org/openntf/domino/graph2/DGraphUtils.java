@@ -112,7 +112,12 @@ public enum DGraphUtils {
 					Object val2 = getFramedProperty(graph_, e2, key);
 					Comparable castVal1 = (Comparable) compareType.cast(val1);
 					Comparable castVal2 = (Comparable) compareType.cast(val2);
-					int curComp = castVal1.compareTo(castVal2);
+					int curComp = 0;
+					if (String.class.equals(compareType)) {
+						curComp = String.CASE_INSENSITIVE_ORDER.compare((String) val1, (String) val2);
+					} else {
+						curComp = castVal1.compareTo(castVal2);
+					}
 					if (curComp != 0) {
 						result = curComp;
 					} else {

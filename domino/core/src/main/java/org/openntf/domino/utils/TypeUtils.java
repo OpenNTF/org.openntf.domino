@@ -755,9 +755,20 @@ public enum TypeUtils {
 			} else {
 				return true;
 			}
-		} else {
-			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to boolean primitive.");
+		} else if (value instanceof Vector) {
+			int size = ((Vector) value).size();
+			if (size == 0) {
+				return false;
+			} else if (size == 1) {
+				return toBoolean(((Vector) value).get(0));
+			} else {
+				System.err.println("Vector conversion failed because vector was size " + size);
+			}
+		} else if (value instanceof Boolean) {
+			return ((Boolean) value).booleanValue();
 		}
+		throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to boolean primitive.");
+
 	}
 
 	public static int toInt(final Object value) {
@@ -765,6 +776,9 @@ public enum TypeUtils {
 			return ((Integer) value).intValue();
 		} else if (value instanceof Double) {
 			return ((Double) value).intValue();
+		} else if (value instanceof CharSequence) {
+			String t = ((CharSequence) value).toString();
+			return Integer.parseInt(t.length() > 0 ? t : "0");
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to int primitive.");
 		}
@@ -775,6 +789,9 @@ public enum TypeUtils {
 			return ((Integer) value).doubleValue();
 		} else if (value instanceof Double) {
 			return ((Double) value).doubleValue();
+		} else if (value instanceof CharSequence) {
+			String t = ((CharSequence) value).toString();
+			return Double.parseDouble(t.length() > 0 ? t : "0");
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to double primitive.");
 		}
@@ -785,6 +802,9 @@ public enum TypeUtils {
 			return ((Integer) value).longValue();
 		} else if (value instanceof Double) {
 			return ((Double) value).longValue();
+		} else if (value instanceof CharSequence) {
+			String t = ((CharSequence) value).toString();
+			return Long.parseLong(t.length() > 0 ? t : "0");
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to long primitive.");
 		}
@@ -1300,11 +1320,14 @@ public enum TypeUtils {
 			return null;
 		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
 			return null;
+		if (enumClass == null)
+			return null;
 		Enum<?> result = null;
 		String ename = String.valueOf(value);
 		if (ename.contains(" ")) {
 			ename = String.valueOf(value).substring(ename.indexOf(' ') + 1).trim();
 		}
+
 		Object[] objs = enumClass.getEnumConstants();
 		if (objs.length > 0) {
 			for (Object obj : objs) {
@@ -1316,6 +1339,7 @@ public enum TypeUtils {
 				}
 			}
 		}
+
 		if (result == null) {
 			throw new DataNotCompatibleException("Unable to discover an Enum by the name of " + ename + " in class " + enumClass);
 		}
@@ -1366,7 +1390,11 @@ public enum TypeUtils {
 		} else {
 			try {
 				Class<?> cls = DominoUtils.getClass(cn);
-				result = toEnum(ename, cls);
+				if (cls == null) {
+					Factory.println("Unable to load class " + cn);
+				} else {
+					result = toEnum(ename, cls);
+				}
 			} catch (Exception e) {
 				DominoUtils.handleException(e);
 			}

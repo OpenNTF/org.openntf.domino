@@ -134,6 +134,7 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 		Collection<Class<?>> resolvedTypes = new LinkedHashSet<Class<?>>();
 		resolvedTypes.add(VertexFrame.class);
 		resolvedTypes.add(kind);
+
 		for (TypeResolver typeResolver : config.getTypeResolvers()) {
 			resolvedTypes.addAll(Arrays.asList(typeResolver.resolveTypes(vertex, kind)));
 		}
