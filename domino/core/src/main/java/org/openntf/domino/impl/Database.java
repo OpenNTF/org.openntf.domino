@@ -80,8 +80,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-org.openntf.domino.Database {
+public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session>
+		implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -226,7 +226,8 @@ org.openntf.domino.Database {
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int)
 	 */
 	@Override
-	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt) {
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final Set<FTSearchOption> otherOpt) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -472,7 +473,7 @@ org.openntf.domino.Database {
 
 	@Override
 	@Incomplete
-	public DocumentCollection createMergableDocumentCollection() {
+	public DocumentCollection createMergeableDocumentCollection() {
 		try {
 			lotus.domino.Database db = getDelegate();
 			if (!db.isOpen()) {
@@ -515,7 +516,8 @@ org.openntf.domino.Database {
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
 	@Override
-	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize) {
+	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit,
+			final int maxSize) {
 		try {
 			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
@@ -1200,9 +1202,8 @@ org.openntf.domino.Database {
 			if (true)
 				return null;
 
-			return fromLotus(
-					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
-							proxyPassword, returnImmediately), Document.SCHEMA, this);
+			return fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
+					proxyUser, proxyPassword, returnImmediately), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -1271,7 +1272,7 @@ org.openntf.domino.Database {
 			if (idx != -1) {
 				fileName_ = path_.substring(idx + 1);
 			} else {
-				idx = path_.lastIndexOf('\\'); // if no \ is found, it returns -1 (-1+1=0)
+				idx = path_.lastIndexOf('\\');// if no \ is found, it returns -1 (-1+1=0)
 				fileName_ = path_.substring(idx + 1);
 			}
 		}
@@ -1399,7 +1400,7 @@ org.openntf.domino.Database {
 	public Date getLastFTIndexedDate() {
 		try {
 			lotus.domino.DateTime dt = getDelegate().getLastFTIndexed();
-			Date ret = DominoUtils.toJavaDateSafe(dt); // recycles the javaDate!
+			Date ret = DominoUtils.toJavaDateSafe(dt);// recycles the javaDate!
 			s_recycle(dt);
 			return ret;
 		} catch (NotesException e) {
@@ -3063,8 +3064,8 @@ org.openntf.domino.Database {
 	}
 
 	@Override
-	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		shadowedMetaData_ = null; // clear metaData
+	public void resurrect() {// should only happen if the delegate has been destroyed somehow.
+		shadowedMetaData_ = null;// clear metaData
 		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
@@ -3072,8 +3073,8 @@ org.openntf.domino.Database {
 			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (NotesException e) {
 			if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-				throw new UserAccessException("User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server "
-						+ server_, e);
+				throw new UserAccessException(
+						"User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server " + server_, e);
 			} else {
 				DominoUtils.handleException(e, this);
 			}
@@ -3206,7 +3207,7 @@ org.openntf.domino.Database {
 	 * java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
 			final int otherOpt, final int start, final int count, final String entryForm) {
 		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
@@ -3698,7 +3699,7 @@ org.openntf.domino.Database {
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		out.writeInt(EXTERNALVERSIONUID); // data version
+		out.writeInt(EXTERNALVERSIONUID);// data version
 
 		out.writeObject(server_);
 		out.writeObject(path_);
