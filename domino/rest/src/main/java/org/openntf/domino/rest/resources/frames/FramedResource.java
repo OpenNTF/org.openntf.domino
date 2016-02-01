@@ -4,6 +4,7 @@ import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.httpmethod.PATCH;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -46,6 +48,7 @@ import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.DominoUtils;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -121,7 +124,10 @@ public class FramedResource extends AbstractResource {
 				}
 				Object elem = graph.getElement(nc, type);
 				if (elem == null) {
-					throw new IllegalStateException("Graph element is null for id " + id);
+					elem = resolver.handleMissingKey(type, id);
+					if (elem == null) {
+						throw new IllegalStateException("Graph element is null for id " + id);
+					}
 				}
 				writer.outObject(elem);
 			} else {
@@ -259,6 +265,58 @@ public class FramedResource extends AbstractResource {
 		result = builder.build();
 
 		return result;
+	}
+
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("rawtypes")
+	public Response deleteFramedObject(String requestEntity, @Context final UriInfo uriInfo,
+			@PathParam(Routes.NAMESPACE) final String namespace) {
+		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		String jsonEntity = null;
+		ResponseBuilder builder = Response.ok();
+		ParamMap pm = Parameters.toParamMap(uriInfo);
+		StringWriter sw = new StringWriter();
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+
+		JsonGraphFactory factory = JsonGraphFactory.instance;
+
+		Map<String, String> report = new HashMap<String, String>();
+
+		List<String> ids = pm.get(Parameters.ID);
+		if (ids.size() == 0) {
+			// TODO no id
+		} else {
+			for (String id : ids) {
+				try {
+					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+					Object element = graph.getElement(nc, null);
+					if (element instanceof Element) {
+						((Element) element).remove();
+					} else if (element instanceof VertexFrame) {
+						((VertexFrame) element).asVertex().remove();
+					} else if (element instanceof EdgeFrame) {
+						((EdgeFrame) element).asEdge().remove();
+					}
+					report.put(id, "deleted");
+				} catch (Throwable t) {
+					DominoUtils.handleException(t);
+				}
+			}
+			graph.commit();
+		}
+		try {
+			writer.outObject(report);
+		} catch (JsonException e) {
+			DominoUtils.handleException(e);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
+
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
+		Response response = builder.build();
+		return response;
 	}
 
 	@POST

@@ -41,6 +41,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	protected transient org.openntf.domino.graph2.DGraph parent_;
 	protected Object delegateKey_;
 	protected transient Map<String, Object> delegate_;
+	protected boolean isRemoved_ = false;
 
 	public DElement(final org.openntf.domino.graph2.DGraph parent) {
 		parent_ = parent;
@@ -303,6 +304,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	public abstract void remove();
 
 	void _remove() {
+		isRemoved_ = true;
 		getParent().startTransaction(this);
 		getParent().removeDelegate(this);
 	}
@@ -419,14 +421,18 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (delegate_ == null) {
 			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
 					+ ". This will not turn out well.");
-			try {
-				String type = getProperty("form", String.class);
-				if (type != null) {
-					System.err.println("The element was framed as a " + type);
-				}
-			} catch (Exception e) {
-
+			if (this instanceof DVertex) {
+				Throwable t = new Throwable();
+				t.printStackTrace();
 			}
+			//			try {
+			//				String type = getProperty("form", String.class);
+			//				if (type != null) {
+			//					System.err.println("The element was framed as a " + type);
+			//				}
+			//			} catch (Exception e) {
+			//
+			//			}
 		}
 
 		return delegate_;
@@ -457,6 +463,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	protected void applyChanges() {
+		if (isRemoved_)
+			return;	//NTF there's no point in applying changes to an element that's been removed.
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
 		Set<String> changes = getChangedPropertiesInt();

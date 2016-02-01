@@ -330,25 +330,27 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		startTransaction(vertex);
 		DVertex dv = (DVertex) vertex;
 		Iterable<Edge> edges = dv.getEdges(Direction.BOTH);
-		int i = 0;
-		try {
-			if (edges instanceof List) {
-				ListIterator<Edge> li = ((List<Edge>) edges).listIterator();
-				while (li.hasNext()) {
-					getConfiguration().getGraph().removeEdge(li.next(), dv);
-					//					li.remove();
-					i++;
+		if (edges != null) {
+			int i = 0;
+			try {
+				if (edges instanceof List) {
+					ListIterator<Edge> li = ((List<Edge>) edges).listIterator();
+					while (li.hasNext()) {
+						getConfiguration().getGraph().removeEdge(li.next(), dv);
+						//					li.remove();
+						i++;
+					}
+				} else {
+					for (Edge edge : edges) {
+						getConfiguration().getGraph().removeEdge(edge, dv);
+						i++;
+					}
 				}
-			} else {
-				for (Edge edge : edges) {
-					getConfiguration().getGraph().removeEdge(edge, dv);
-					i++;
-				}
+			} catch (Exception e) {
+				System.err.println("Problem with a " + dv.getClass().getName() + " with id " + dv.getId() + " on edgelist "
+						+ (edges == null ? "null" : edges.getClass().getName()) + " on iteration " + i);
+				DominoUtils.handleException(e);
 			}
-		} catch (Exception e) {
-			System.err.println("Problem with a " + dv.getClass().getName() + " with id " + dv.getId() + " on edgelist "
-					+ edges.getClass().getName() + " on iteration " + i);
-			DominoUtils.handleException(e);
 		}
 		removeCache(vertex);
 		dv._remove();
@@ -531,7 +533,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	private void removeCache(final Element element) {
-		getElementCache().remove(element);
+		Object key = element.getId();
+		getElementCache().remove(key);
+		getKeyCache().remove(key);
 	}
 
 	@Override
@@ -624,7 +628,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
-			IllegalArgumentException {
+	IllegalArgumentException {
 		Object result = null;
 		Object del = null;
 		del = getStoreDelegate();
@@ -752,7 +756,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void removeElementDelegate(final Element element) {
-
+		if (element instanceof DElement) {
+			Object del = ((DElement) element).getDelegate();
+			if (del instanceof Document) {
+				((Document) del).remove(true);
+			} else {
+				System.err.println("Cannot remove a delegate of type " + (del == null ? "null" : del.getClass().getName()));
+			}
+			((DElement) element).setDelegate(null);
+		} else {
+			System.err.println("Cannot remove a delegate for element of type " + (element == null ? "null" : element.getClass().getName()));
+		}
 	}
 
 	protected Map<String, Object> addElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
