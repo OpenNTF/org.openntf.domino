@@ -19,6 +19,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author nfreeman
  * 
  */
+@Deprecated
 public class AbstractEdgeHelper implements IEdgeHelper {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractEdgeHelper.class.getName());

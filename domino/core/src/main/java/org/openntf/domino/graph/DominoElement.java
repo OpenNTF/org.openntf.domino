@@ -24,6 +24,7 @@ import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Element;
 
+@Deprecated
 public abstract class DominoElement implements IDominoElement, Serializable {
 
 	public static boolean setReflectiveProperty(final IDominoElement element, final String prop, final Object value) {

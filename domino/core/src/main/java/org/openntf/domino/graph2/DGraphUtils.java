@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.types.CaseInsensitiveString;
 
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
@@ -196,7 +199,10 @@ public enum DGraphUtils {
 	public static Map<CaseInsensitiveString, Method> getGetters(final FramedGraph<?> graph, final VertexFrame frame) {
 		if (graph instanceof DFramedTransactionalGraph) {
 			DFramedTransactionalGraph<?> dgraph = (DFramedTransactionalGraph<?>) graph;
-			Class<?> type = dgraph.getTypeManager().resolve(frame.asVertex(), findInterface(frame));
+			DTypeManager tman = dgraph.getTypeManager();
+			Vertex v = frame.asVertex();
+			Class<?> inter = findInterface(frame);
+			Class<?> type = tman.resolve(v, inter);
 			return dgraph.getTypeRegistry().getPropertiesGetters(type);
 		}
 		throw new IllegalArgumentException("Cannot discover registered getters for graph type " + graph.getClass().getName());
@@ -205,7 +211,10 @@ public enum DGraphUtils {
 	public static Map<CaseInsensitiveString, Method> getGetters(final FramedGraph<?> graph, final EdgeFrame frame) {
 		if (graph instanceof DFramedTransactionalGraph) {
 			DFramedTransactionalGraph<?> dgraph = (DFramedTransactionalGraph<?>) graph;
-			Class<?> type = dgraph.getTypeManager().resolve(frame.asEdge(), findInterface(frame));
+			DTypeManager tman = dgraph.getTypeManager();
+			Edge e = frame.asEdge();
+			Class<?> inter = findInterface(frame);
+			Class<?> type = tman.resolve(e, inter);
 			return dgraph.getTypeRegistry().getPropertiesGetters(type);
 		}
 		throw new IllegalArgumentException("Cannot discover registered getters for graph type " + graph.getClass().getName());

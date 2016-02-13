@@ -178,13 +178,16 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 	protected static List<Vertex> convertToVertexes(final Object[] arg0) {
 		List<Vertex> result = new ArrayList<Vertex>(arg0.length);
 		for (Object raw : arg0) {
-			if (raw instanceof Vertex) {
+			if (raw == null) {
+
+			} else if (raw instanceof Vertex) {
 				result.add((Vertex) raw);
 			} else if (raw instanceof VertexFrame) {
 				result.add(((VertexFrame) raw).asVertex());
+			} else if (raw.getClass().isArray()) {
+				result.addAll(convertToVertexes((Object[]) raw));
 			} else {
-				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
-						+ " to an EdgeFrame iterator");
+				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName() + " to List<Vertex>");
 			}
 		}
 		return result;
@@ -340,9 +343,28 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		int size = list_.size();
 		Class c = arg0.getClass().getComponentType();
 		U[] result = (U[]) Array.newInstance(c, size);
-		for (int i = 0; i < size; i++) {
-			Vertex e = list_.get(i);
-			result[i] = (U) framedGraph.frame(e, kind);
+		int i = 0;
+		for (Vertex v : list_) {
+			if (v != null) {
+				result[i++] = (U) framedGraph.frame(v, kind);
+			}
+		}
+		//		for (int i = 0; i < size; i++) {
+		//			Vertex e = list_.get(i);
+		//			result[i] = (U) framedGraph.frame(e, kind);
+		//		}
+		if (i < size) {
+			result = Arrays.copyOf(result, i);
+		}
+		return result;
+	}
+
+	public static List<Vertex> toVertexList(final VertexFrame[] vfArray) {
+		List<Vertex> result = new ArrayList<Vertex>(vfArray.length);
+		for (VertexFrame vf : vfArray) {
+			if (vf != null) {
+				result.add(vf.asVertex());
+			}
 		}
 		return result;
 	}
@@ -353,6 +375,6 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		//TODO: optimize! This should really be resorting the Vertex list but using the VertexFrame as the criteria
 		VertexFrame[] array = toArray(VF);
 		Arrays.sort(array, new DGraphUtils.VertexFrameComparator(getGraph(), keys));
-		return new FramedVertexList<T>(framedGraph, sourceVertex_, convertToVertexes(array), kind);
+		return new FramedVertexList<T>(framedGraph, sourceVertex_, toVertexList(array), kind);
 	}
 }

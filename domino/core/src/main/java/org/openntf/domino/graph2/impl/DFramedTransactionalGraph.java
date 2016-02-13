@@ -470,7 +470,10 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	@Override
 	public <F> F frame(final Vertex vertex, Class<F> kind) {
-		boolean isView = "1".equals(((DVertex) vertex).getProperty("$FormulaClass", String.class));
+		if (vertex == null)
+			return null;
+		String chk = ((DVertex) vertex).getProperty("$FormulaClass", String.class);
+		boolean isView = "1".equals(chk);
 		if (isView) {
 			kind = (Class<F>) ViewVertex.class;
 		}
