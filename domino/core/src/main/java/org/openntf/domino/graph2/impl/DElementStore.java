@@ -330,25 +330,27 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		startTransaction(vertex);
 		DVertex dv = (DVertex) vertex;
 		Iterable<Edge> edges = dv.getEdges(Direction.BOTH);
-		int i = 0;
-		try {
-			if (edges instanceof List) {
-				ListIterator<Edge> li = ((List<Edge>) edges).listIterator();
-				while (li.hasNext()) {
-					getConfiguration().getGraph().removeEdge(li.next(), dv);
-					//					li.remove();
-					i++;
+		if (edges != null) {
+			int i = 0;
+			try {
+				if (edges instanceof List) {
+					ListIterator<Edge> li = ((List<Edge>) edges).listIterator();
+					while (li.hasNext()) {
+						getConfiguration().getGraph().removeEdge(li.next(), dv);
+						//					li.remove();
+						i++;
+					}
+				} else {
+					for (Edge edge : edges) {
+						getConfiguration().getGraph().removeEdge(edge, dv);
+						i++;
+					}
 				}
-			} else {
-				for (Edge edge : edges) {
-					getConfiguration().getGraph().removeEdge(edge, dv);
-					i++;
-				}
+			} catch (Exception e) {
+				System.err.println("Problem with a " + dv.getClass().getName() + " with id " + dv.getId() + " on edgelist "
+						+ (edges == null ? "null" : edges.getClass().getName()) + " on iteration " + i);
+				DominoUtils.handleException(e);
 			}
-		} catch (Exception e) {
-			System.err.println("Problem with a " + dv.getClass().getName() + " with id " + dv.getId() + " on edgelist "
-					+ edges.getClass().getName() + " on iteration " + i);
-			DominoUtils.handleException(e);
 		}
 		removeCache(vertex);
 		dv._remove();
@@ -447,8 +449,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 							DEdge edge = new DEdge(getConfiguration().getGraph(), (Document) delegate);
 							result = edge;
 						} else {
-							throw new IllegalStateException("Delegate for key " + id.toString() + " returned a "
-									+ delegate.getClass().getName() + " with a type identifier of " + strChk);
+							DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
+							result = vertex;
 						}
 					}
 				} else if (delegate instanceof ViewEntry) {
@@ -531,7 +533,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	private void removeCache(final Element element) {
-		getElementCache().remove(element);
+		Object key = element.getId();
+		getElementCache().remove(key);
+		getKeyCache().remove(key);
 	}
 
 	@Override
@@ -589,6 +593,10 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		DProxyVertex result = new DProxyVertex(getConfiguration().getGraph(), (Map<String, Object>) proxy);
 		Object rawpid = result.getProxiedId();
 
+		DElement elem = (DElement) getConfiguration().getGraph().getElement(rawpid);
+		if (elem == null) {
+			rawpid = null;
+		}
 		if (rawpid == null) {
 			CustomProxyResolver resolver = getCustomProxyResolver();
 			if (resolver == null) {
@@ -601,7 +609,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (originalDelegate instanceof Document) {
 					String pid = ((Document) originalDelegate).getMetaversalID();
 					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(pid);
-					//					System.out.println("Setting up proxy with id " + nc.toString());
+					System.out.println("Setting up proxy with id " + nc.toString());
 					try {
 						result.setProxiedId(nc);
 					} catch (Throwable t) {
@@ -609,7 +617,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				} else {
 					if (originalDelegate == null) {
-						//						System.out.println("No original delegate found for key " + String.valueOf(originalKey));
+						System.out.println("No original delegate found for key " + String.valueOf(originalKey));
 					} else {
 						System.err.println("original delegate returned a " + originalDelegate.getClass().getName());
 					}
@@ -683,8 +691,14 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				}
 			} else {
-				throw new IllegalArgumentException("Cannot find a delegate with a key of type "
-						+ (delegateKey == null ? "null" : delegateKey.getClass().getName()));
+				if (delegateKey != null) {
+					System.out.println("WARNING: Unknown delegatekey of type " + delegateKey.getClass().getName()
+							+ ". Creating a brand new delegate.");
+				}
+				//null is a perfectly valid key, since it means we want to let the system assign it.
+				result = db.createDocument();
+				//				throw new IllegalArgumentException("Cannot find a delegate with a key of type "
+				//						+ (delegateKey == null ? "null" : delegateKey.getClass().getName()));
 			}
 		} else {
 			throw new IllegalStateException("ElementStore delegate is not a Database; it's a "
@@ -752,7 +766,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void removeElementDelegate(final Element element) {
-
+		if (element instanceof DElement) {
+			Object del = ((DElement) element).getDelegate();
+			if (del instanceof Document) {
+				((Document) del).remove(true);
+			} else {
+				System.err.println("Cannot remove a delegate of type " + (del == null ? "null" : del.getClass().getName()));
+			}
+			((DElement) element).setDelegate(null);
+		} else {
+			System.err.println("Cannot remove a delegate for element of type " + (element == null ? "null" : element.getClass().getName()));
+		}
 	}
 
 	protected Map<String, Object> addElementDelegate(final Object delegateKey, final Class<? extends Element> type) {

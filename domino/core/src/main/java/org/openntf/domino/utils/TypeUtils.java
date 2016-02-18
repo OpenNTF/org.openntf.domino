@@ -45,6 +45,7 @@ public enum TypeUtils {
 	;
 
 	public static final String[] DEFAULT_STR_ARRAY = { "" };
+	private static final DateFormat DEFAULT_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");	//TODO NTF ThreadLocalize for safety?
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getDefaultInstance(final Class<T> type) {
@@ -1043,12 +1044,14 @@ public enum TypeUtils {
 			return new Date(((Long) value).longValue());
 		} else if (value instanceof String) {
 			// TODO finish
-			DateFormat df = new SimpleDateFormat();
+			DateFormat df = DEFAULT_FORMAT;
 			String str = (String) value;
 			if (str.length() < 1)
 				return null;
 			try {
-				return df.parse(str);
+				synchronized (DEFAULT_FORMAT) {
+					return df.parse(str);
+				}
 			} catch (ParseException e) {
 				throw new DataNotCompatibleException("Cannot create a Date from String value " + (String) value);
 			}

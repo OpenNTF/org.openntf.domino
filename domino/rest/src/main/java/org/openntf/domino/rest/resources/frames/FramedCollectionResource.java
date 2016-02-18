@@ -47,7 +47,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		super(service);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace)
@@ -115,7 +115,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					writer.outArrayLiteral(maps);
 				}
 			} else {
-				List<Object> maps = new ArrayList<Object>();
+				FramedVertexList vresult = null;
+				FramedEdgeList eresult = null;
 				for (CaseInsensitiveString typename : types) {
 					Iterable<?> elements = null;
 					if (filterkeys != null) {
@@ -126,11 +127,48 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						elements = graph.getElements(typename.toString());
 					}
 
-					for (Object element : elements) {
-						maps.add(element);
+					if (elements instanceof FramedVertexList) {
+						if (vresult == null) {
+							vresult = (FramedVertexList) elements;
+						} else {
+							vresult.addAll((FramedVertexList) elements);
+						}
+					} else if (elements instanceof FramedEdgeList) {
+						if (eresult == null) {
+							eresult = (FramedEdgeList) elements;
+						} else {
+							eresult.addAll((FramedEdgeList) elements);
+						}
 					}
+
 				}
-				writer.outArrayLiteral(maps);
+				if (vresult != null) {
+					if (pm.getOrderBys() != null) {
+						vresult = vresult.sortBy(pm.getOrderBys());
+					}
+					if (pm.getStart() > 0) {
+						if (pm.getCount() > 0) {
+							vresult = (FramedVertexList<?>) vresult.subList(pm.getStart(),
+									pm.getStart() + pm.getCount());
+						} else {
+							vresult = (FramedVertexList<?>) vresult.subList(pm.getStart(), vresult.size());
+						}
+					}
+					writer.outArrayLiteral(vresult);
+				}
+				if (eresult != null) {
+					if (pm.getOrderBys() != null) {
+						eresult = eresult.sortBy(pm.getOrderBys());
+					}
+					if (pm.getStart() > 0) {
+						if (pm.getCount() > 0) {
+							eresult = (FramedEdgeList<?>) eresult.subList(pm.getStart(), pm.getStart() + pm.getCount());
+						} else {
+							eresult = (FramedEdgeList<?>) eresult.subList(pm.getStart(), eresult.size());
+						}
+					}
+					writer.outArrayLiteral(eresult);
+				}
 			}
 			jsonEntity = sw.toString();
 		} else {
@@ -165,7 +203,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
-
+		// System.out.println("TEMP DEBUG Starting new POST...");
 		JsonJavaObject jsonItems = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
 		try {
@@ -188,7 +226,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			if (rawType != null) {
 				try {
 					Class<?> type = graph.getTypeRegistry().findClassByName(rawType);
-					if (type.isAssignableFrom(VertexFrame.class)) {
+					if (VertexFrame.class.isAssignableFrom(type)) {
 						VertexFrame parVertex = (VertexFrame) graph.addVertex(null, type);
 						try {
 							JsonFrameAdapter adapter = new JsonFrameAdapter(graph, parVertex, null);
@@ -201,13 +239,21 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 										adapter.putJsonProperty(key.toString(), value);
 										cisMap.remove(key);
 									}
+								} else {
+									// System.out.println("TEMP DEBUG Skipping property "
+									// + key);
 								}
 							}
-							for (CaseInsensitiveString cis : cisMap.keySet()) {
-								if (!cis.startsWith("@")) {
-									Object value = cisMap.get(cis);
-									if (value != null) {
-										adapter.putJsonProperty(cis.toString(), value);
+							if (!cisMap.isEmpty()) {
+								for (CaseInsensitiveString cis : cisMap.keySet()) {
+									if (!cis.startsWith("@")) {
+										Object value = cisMap.get(cis);
+										if (value != null) {
+											adapter.putJsonProperty(cis.toString(), value);
+										}
+									} else {
+										// System.out.println("TEMP DEBUG Skipping property "
+										// + cis);
 									}
 								}
 							}
@@ -215,6 +261,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+					} else {
+						// System.out.print("TYPE is not a Vertex and therefore we can't create it through a POST yet.");
 					}
 					graph.commit();
 				} catch (IllegalArgumentException iae) {
@@ -222,6 +270,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 
 			}
+		} else {
+			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items found.");
 		}
 
 		jsonEntity = sw.toString();

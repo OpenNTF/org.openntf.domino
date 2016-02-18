@@ -14,6 +14,7 @@ import com.tinkerpop.blueprints.Element;
  * @author nfreeman
  * 
  */
+@Deprecated
 public interface IDominoElement extends Element {
 
 	public boolean hasProperty(String key);

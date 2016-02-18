@@ -91,6 +91,8 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	}
 
 	private static Collection<NoteCoordinate> getNCs(final Collection<?> arg0) {
+		if (arg0 == null)
+			return null;
 		Collection<NoteCoordinate> ncs = new ArrayList<NoteCoordinate>();
 		for (Object raw : arg0) {
 			if (raw instanceof Edge) {

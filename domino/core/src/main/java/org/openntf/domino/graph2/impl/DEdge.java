@@ -42,6 +42,11 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 
 	@Override
 	public void remove() {
+		//		if (this.getLabel().equalsIgnoreCase("foundin")) {
+		//			System.out.println("Removing a foundin edge? Why?");
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+		//		}
 		getParent().removeEdge(this);
 	}
 

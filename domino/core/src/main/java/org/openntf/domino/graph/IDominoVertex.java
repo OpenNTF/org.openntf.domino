@@ -12,6 +12,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author nfreeman
  * 
  */
+@Deprecated
 public interface IDominoVertex extends Vertex, IDominoElement {
 	public void addInEdge(final Edge edge);
 

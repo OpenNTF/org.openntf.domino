@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import javolution.util.FastSet;
@@ -43,6 +44,9 @@ public class DProxyVertex extends DVertex {
 	protected org.openntf.domino.graph2.DVertex getProxyDelegate() {
 		if (proxyDelegate_ == null) {
 			NoteCoordinate id = getProxiedId();
+			if (id.equals(this.getId())) {
+				System.out.println("ALERT: Vertex is its own proxy! This could be bad.");
+			}
 			if (id != null) {
 				//				System.out.println("Resolving proxy delegate using id " + id.toString());
 				proxyDelegate_ = (org.openntf.domino.graph2.DVertex) getParent().getVertex(id);
@@ -56,11 +60,14 @@ public class DProxyVertex extends DVertex {
 
 	protected NoteCoordinate getProxiedId() {
 		if (proxyId_ == null) {
+			Object raw = super.getProperty(PROXY_ITEM);
+			if (raw instanceof Vector) {
+				if (((Vector) raw).isEmpty())
+					return null;
+			}
 			String storedId = super.getProperty(PROXY_ITEM, String.class);
-			if (storedId == null || storedId.length() == 0)
+			if (storedId == null || storedId.length() != 48)
 				return null;
-			if ("[]".equals(storedId))
-				return null;	//TODO NTF how is this happening!?!
 			proxyId_ = NoteCoordinate.Utils.getNoteCoordinate(storedId);
 		}
 		return proxyId_;
@@ -113,6 +120,9 @@ public class DProxyVertex extends DVertex {
 				return super.getProperty(key);
 			} else {
 				//				System.out.println("TEMP DEBUG: Proxy found. Retrieving property " + key);
+				if (delVertex.getId().equals(this.getId())) {
+					return super.getProperty(key);
+				}
 				return delVertex.getProperty(key);
 			}
 		}

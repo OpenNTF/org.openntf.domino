@@ -23,7 +23,6 @@ import org.openntf.domino.big.impl.NoteCoordinate;
 //import javolution.util.function.Equalities;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.big.impl.ViewEntryCoordinate;
-import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.Factory;
@@ -41,6 +40,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	protected transient org.openntf.domino.graph2.DGraph parent_;
 	protected Object delegateKey_;
 	protected transient Map<String, Object> delegate_;
+	protected boolean isRemoved_ = false;
 
 	public DElement(final org.openntf.domino.graph2.DGraph parent) {
 		parent_ = parent;
@@ -223,9 +223,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					return;
 				}
 				//NTF The standard equality check has a fast out based on array size, so I think it's safe to use here...
-				/*if (key.startsWith(DominoVertex.IN_PREFIX) || key.startsWith(DominoVertex.OUT_PREFIX)) {
+				if (key.startsWith(DVertex.IN_PREFIX) || key.startsWith(DVertex.OUT_PREFIX)) {
 					isEqual = false;	//NTF ALWAYS set edge collections. Checking them can be expensive
-				} else*/if (value != null && current != null) {
+				} else if (value != null && current != null) {
 					if (!(value instanceof java.util.Collection) && !(value instanceof java.util.Map) && !value.getClass().isArray()) {
 						isEqual = value.equals(current);
 					}
@@ -303,6 +303,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	public abstract void remove();
 
 	void _remove() {
+		isRemoved_ = true;
 		getParent().startTransaction(this);
 		getParent().removeDelegate(this);
 	}
@@ -404,6 +405,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
 				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
+				if (delegateKey_ == null && delegate_ instanceof Document) {
+					delegateKey_ = ((Document) delegate_).getMetaversalID();
+				}
 			}
 		} else if (delegate_ instanceof View) {
 			try {
@@ -417,16 +421,12 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 		}
 		if (delegate_ == null) {
-			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
-					+ ". This will not turn out well.");
-			try {
-				String type = getProperty("form", String.class);
-				if (type != null) {
-					System.err.println("The element was framed as a " + type);
-				}
-			} catch (Exception e) {
-
-			}
+			//			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
+			//					+ ". This will not turn out well.");
+			//			if (this instanceof DVertex) {
+			//				Throwable t = new Throwable();
+			//				t.printStackTrace();
+			//			}
 		}
 
 		return delegate_;
@@ -457,8 +457,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	protected void applyChanges() {
+		if (isRemoved_) {
+			return;	//NTF there's no point in applying changes to an element that's been removed.
+		}
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
+		if (delegate == null) {
+			System.out.println("ALERT: Attempt to apply changes to an element with a null delegate will not succeed.");
+		}
 		Set<String> changes = getChangedPropertiesInt();
 		if (!props.isEmpty() && !changes.isEmpty()) {
 			//			System.out.println("TEMP DEBUG: Writing " + getChangedPropertiesInt().size() + " changed properties for " + getId());
@@ -466,22 +472,24 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				String key = s;
 				Object v = props.get(key);
 				//				System.out.println("TEMP DEBUG: Writing a " + v.getClass().getSimpleName() + " to " + key);
-				if (s.startsWith(DominoVertex.IN_PREFIX) || s.startsWith(DominoVertex.OUT_PREFIX)) {
-					if (delegate instanceof Document) {
-						if (v instanceof NoteList) {
-							byte[] bytes = ((NoteList) v).toByteArray();
-							((Document) delegate).writeBinary(s, bytes, 2048 * 24);
-							//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
-							//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
-							//									+ " to a Document in " + s);
+				if (s != null && v != null) {
+					if (s.startsWith(DVertex.IN_PREFIX) || s.startsWith(DVertex.OUT_PREFIX)) {
+						if (delegate instanceof Document) {
+							if (v instanceof NoteList) {
+								byte[] bytes = ((NoteList) v).toByteArray();
+								((Document) delegate).writeBinary(s, bytes, 2048 * 24);
+								//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
+								//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
+								//									+ " to a Document in " + s);
+							} else {
+								((Document) delegate).replaceItemValue(s, v, false);
+							}
 						} else {
-							((Document) delegate).replaceItemValue(s, v, false);
+							delegate.put(s, v);
 						}
 					} else {
 						delegate.put(s, v);
 					}
-				} else {
-					delegate.put(s, v);
 				}
 			}
 			getChangedPropertiesInt().clear();
@@ -520,7 +528,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public boolean containsKey(final Object arg0) {
-		return hasProperty(String.valueOf(arg0));
+		return getDelegate().containsKey(arg0);
 	}
 
 	@Override
@@ -535,7 +543,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Object get(final Object arg0) {
-		return getProperty(String.valueOf(arg0));
+		//NTF this might not work. We're trying to avoid an infinite loop.
+		return getDelegate().get(String.valueOf(arg0));
 	}
 
 	@Override
@@ -550,7 +559,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Object put(final String arg0, final Object arg1) {
-		setProperty(arg0, arg1);
+		getDelegate().put(arg0, arg1);
 		return arg1;
 	}
 

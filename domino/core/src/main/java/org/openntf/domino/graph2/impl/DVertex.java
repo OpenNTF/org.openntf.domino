@@ -15,7 +15,6 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.big.NoteList;
-import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.graph2.DEdgeList;
 
 import com.tinkerpop.blueprints.Direction;
@@ -306,7 +305,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	public int getInEdgeCount(final String label) {
 		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
-			return getProperty("_COUNT" + DominoVertex.IN_PREFIX + label, Integer.class, false);
+			return getProperty("_COUNT" + DVertex.IN_PREFIX + label, Integer.class, false);
 		} else {
 			return edgeIds.size();
 		}
@@ -316,7 +315,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
 			edgeIds = new org.openntf.domino.big.impl.NoteList(true);
-			String key = DominoVertex.IN_PREFIX + label;
+			String key = DVertex.IN_PREFIX + label;
 			Map<String, Object> delegate = getDelegate();
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
@@ -360,7 +359,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			try {
-				return getProperty("_COUNT" + DominoVertex.OUT_PREFIX + label, Integer.class, false);
+				return getProperty("_COUNT" + DVertex.OUT_PREFIX + label, Integer.class, false);
 			} catch (Throwable t) {
 				throw new RuntimeException("Exception getting edge count for label " + label, t);
 			}
@@ -373,7 +372,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		NoteList edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
 			edgeIds = new org.openntf.domino.big.impl.NoteList(true);
-			String key = DominoVertex.OUT_PREFIX + label;
+			String key = DVertex.OUT_PREFIX + label;
 			Map<String, Object> delegate = getDelegate();
 			if (delegate.containsKey(key)) {
 				if (delegate instanceof Document) {
@@ -452,8 +451,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			for (String key : inDirtySet) {
 				NoteList edgeIds = inMap.get(key);
 				if (edgeIds != null) {
-					setProperty(DominoVertex.IN_PREFIX + key, edgeIds);
-					setProperty("_COUNT" + DominoVertex.IN_PREFIX + key, edgeIds.size());
+					//					if ("foundin".equalsIgnoreCase(key)) {
+					//						System.out.println("Writing a FoundIn IN list with " + edgeIds.size() + " elements.");
+					//					}
+					setProperty(DVertex.IN_PREFIX + key, edgeIds);
+					setProperty("_COUNT" + DVertex.IN_PREFIX + key, edgeIds.size());
 					result = true;
 				}
 			}
@@ -466,8 +468,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			for (String key : outDirtySet) {
 				NoteList edgeIds = outMap.get(key);
 				if (edgeIds != null) {
-					setProperty(DominoVertex.OUT_PREFIX + key, edgeIds);
-					setProperty("_COUNT" + DominoVertex.OUT_PREFIX + key, edgeIds.size());
+					//					if ("foundin".equalsIgnoreCase(key)) {
+					//						System.out.println("Writing a FoundIn OUT list with " + edgeIds.size() + " elements.");
+					//					}
+					setProperty(DVertex.OUT_PREFIX + key, edgeIds);
+					setProperty("_COUNT" + DVertex.OUT_PREFIX + key, edgeIds.size());
 					result = true;
 				}
 			}

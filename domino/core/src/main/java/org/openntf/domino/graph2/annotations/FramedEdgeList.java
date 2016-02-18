@@ -127,7 +127,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	//TODO optimize by building a NoteCoordinateList of the target vertices
 	public FramedVertexList<?> toVertexList() {
-		System.out.println("TEMP DEBUG converting a FramedEdgeList to a FramedVertexList");
+		//		System.out.println("TEMP DEBUG converting a FramedEdgeList to a FramedVertexList");
 		List<Vertex> vertList = new ArrayList<Vertex>();
 		for (Edge edge : list_) {
 			if (edge instanceof DEdge) {

@@ -14,6 +14,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author nfreeman
  * 
  */
+@Deprecated
 public interface IEdgeHelper {
 
 	public String getLabel();

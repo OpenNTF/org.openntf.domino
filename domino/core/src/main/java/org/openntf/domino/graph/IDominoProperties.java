@@ -13,6 +13,7 @@ import com.tinkerpop.blueprints.Element;
  * @author nfreeman
  * 
  */
+@Deprecated
 public interface IDominoProperties {
 	public enum Reflect {
 		;
