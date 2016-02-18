@@ -11,8 +11,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -27,6 +25,8 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
+
+import javolution.util.FastMap;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
@@ -101,7 +101,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
 					if (doc.hasItem(propertyName)) {
-						result = doc.getItemValue(propertyName, type);
+						if (NoteList.class.equals(type)) {
+							byte[] edges = doc.readBinary(propertyName);
+							NoteList list = new NoteList();
+							list.loadByteArray(edges);
+							result = list;
+						} else {
+							result = doc.getItemValue(propertyName, type);
+						}
 					}
 					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
@@ -129,14 +136,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					props.put(propertyName, result);
 				} else {
 					if (log_.isLoggable(Level.FINE)) {
-						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
-								+ result.getClass().getName());
+						log_.log(Level.FINE,
+								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
 					}
 					props.put(propertyName, result);
 				}
 			} catch (Exception e) {
-				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-						+ " so we cannot return a value", e);
+				log_.log(Level.WARNING,
+						"Exception occured attempting to get value from document for " + propertyName + " so we cannot return a value", e);
 			}
 		} else if (result == Null.INSTANCE) {
 
@@ -163,14 +170,16 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (result instanceof Serializable) {
 						props.put(propertyName, result);
 					} else {
-						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
-								+ result.getClass().getName());
+						log_.log(Level.FINE,
+								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
 						props.put(propertyName, result);
 					}
 				} catch (Exception e) {
-					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-							+ " but we have a value in the cache of type " + result.getClass().getName() + " when we were looking for a "
-							+ type.getName(), e);
+					log_.log(Level.WARNING,
+							"Exception occured attempting to get value from document for " + propertyName
+									+ " but we have a value in the cache of type " + result.getClass().getName()
+									+ " when we were looking for a " + type.getName(),
+							e);
 				}
 			}
 		}
@@ -224,7 +233,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				}
 				//NTF The standard equality check has a fast out based on array size, so I think it's safe to use here...
 				if (key.startsWith(DVertex.IN_PREFIX) || key.startsWith(DVertex.OUT_PREFIX)) {
-					isEqual = false;	//NTF ALWAYS set edge collections. Checking them can be expensive
+					isEqual = false;//NTF ALWAYS set edge collections. Checking them can be expensive
 				} else if (value != null && current != null) {
 					if (!(value instanceof java.util.Collection) && !(value instanceof java.util.Map) && !value.getClass().isArray()) {
 						isEqual = value.equals(current);
@@ -266,7 +275,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						props.put(key, value);
 					}
 				} else {
-					log_.log(Level.FINE, "Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
+					log_.log(Level.FINE,
+							"Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
 					if (current == null || Null.INSTANCE.equals(current)) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
@@ -458,7 +468,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	protected void applyChanges() {
 		if (isRemoved_) {
-			return;	//NTF there's no point in applying changes to an element that's been removed.
+			return;//NTF there's no point in applying changes to an element that's been removed.
 		}
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
@@ -477,7 +487,10 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						if (delegate instanceof Document) {
 							if (v instanceof NoteList) {
 								byte[] bytes = ((NoteList) v).toByteArray();
+								// PW: This block is encountered for every edge - EdgeLists always get marked as changed.
+								// TODO: This needs to check the edges have changed. If they haven't changed, it shouldn't save
 								((Document) delegate).writeBinary(s, bytes, 2048 * 24);
+								((Document) delegate).markDirty();
 								//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
 								//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
 								//									+ " to a Document in " + s);
