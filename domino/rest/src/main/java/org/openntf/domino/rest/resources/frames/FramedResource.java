@@ -4,7 +4,9 @@ import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.httpmethod.PATCH;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
@@ -122,14 +124,22 @@ public class FramedResource extends AbstractResource {
 				if (nc == null) {
 					System.err.println("NoteCoordinate is null for id " + id);
 				}
-				Object elem = graph.getElement(nc, type);
+				Object elem = graph.getElement(nc);
 				if (elem == null) {
 					elem = resolver.handleMissingKey(type, id);
 					if (elem == null) {
 						throw new IllegalStateException("Graph element is null for id " + id);
 					}
 				}
-				writer.outObject(elem);
+				if (elem instanceof Vertex) {
+					// System.out.println("TEMP DEBUG Framing a vertex of type "
+					// + elem.getClass().getName());
+					Object vf = graph.frame((Vertex) elem, type);
+					writer.outObject(vf);
+				} else if (elem instanceof Edge) {
+					Object ef = graph.frame((Edge) elem, type);
+					writer.outObject(ef);
+				}
 			} else {
 				List<Object> maps = new ArrayList<Object>();
 				for (CaseInsensitiveString id : keys) {
@@ -352,77 +362,95 @@ public class FramedResource extends AbstractResource {
 				cisMap.put(cis, jsonItems.get(jsonKey));
 			}
 			List<String> ids = pm.get(Parameters.ID);
-			if (ids.size() == 0) {
-				// TODO no id
+			if (ids == null) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("error", "Cannot POST to frame without an id parameter");
+				try {
+					writer.outObject(map);
+				} catch (JsonException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
-				for (String id : ids) {
-					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
-					Object element = graph.getElement(nc, null);
-					if (element instanceof VertexFrame) {
-						VertexFrame parVertex = (VertexFrame) element;
-						Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
-								parVertex.getClass());
-						CaseInsensitiveString rawLabel = new CaseInsensitiveString(jsonItems.getAsString("@label"));
-						Method method = adders.get(rawLabel);
-						if (method != null) {
-							String rawId = jsonItems.getAsString("@id");
-							Object otherElement = graph.getElement(rawId, null);
-							if (otherElement instanceof VertexFrame) {
-								VertexFrame otherVertex = (VertexFrame) otherElement;
-								try {
-									Object result = method.invoke(parVertex, otherVertex);
-									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
-									Iterator<String> frameProperties = adapter.getJsonProperties();
-									while (frameProperties.hasNext()) {
-										CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
-										if (!key.startsWith("@")) {
-											Object value = cisMap.get(key);
-											if (value != null) {
-												adapter.putJsonProperty(key.toString(), value);
-												cisMap.remove(key);
+				if (ids.size() == 0) {
+					// TODO no id
+				} else {
+					for (String id : ids) {
+						NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+						Object element = graph.getElement(nc, null);
+						if (element instanceof VertexFrame) {
+							VertexFrame parVertex = (VertexFrame) element;
+							Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
+									parVertex.getClass());
+							CaseInsensitiveString rawLabel = new CaseInsensitiveString(jsonItems.getAsString("@label"));
+							Method method = adders.get(rawLabel);
+							if (method != null) {
+								String rawId = jsonItems.getAsString("@id");
+								Object otherElement = graph.getElement(rawId, null);
+								if (otherElement instanceof VertexFrame) {
+									VertexFrame otherVertex = (VertexFrame) otherElement;
+									try {
+										Object result = method.invoke(parVertex, otherVertex);
+										JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
+										Iterator<String> frameProperties = adapter.getJsonProperties();
+										while (frameProperties.hasNext()) {
+											CaseInsensitiveString key = new CaseInsensitiveString(
+													frameProperties.next());
+											if (!key.startsWith("@")) {
+												Object value = cisMap.get(key);
+												if (value != null) {
+													adapter.putJsonProperty(key.toString(), value);
+													cisMap.remove(key);
+												}
 											}
 										}
-									}
-									for (CaseInsensitiveString cis : cisMap.keySet()) {
-										if (!cis.startsWith("@")) {
-											Object value = cisMap.get(cis);
-											if (value != null) {
-												adapter.putJsonProperty(cis.toString(), value);
+										for (CaseInsensitiveString cis : cisMap.keySet()) {
+											if (!cis.startsWith("@")) {
+												Object value = cisMap.get(cis);
+												if (value != null) {
+													adapter.putJsonProperty(cis.toString(), value);
+												}
 											}
 										}
+										writer.outObject(result);
+									} catch (Exception e) {
+										e.printStackTrace();
 									}
-									writer.outObject(result);
-								} catch (Exception e) {
-									e.printStackTrace();
+								} else {
+									// Factory.println("otherElement is not a VertexFrame. It's a "
+									// + otherElement.getClass().getName());
 								}
 							} else {
-								// Factory.println("otherElement is not a VertexFrame. It's a "
-								// + otherElement.getClass().getName());
+								// Class[] interfaces =
+								// element.getClass().getInterfaces();
+								// String intList = "";
+								// for (Class inter : interfaces) {
+								// intList = intList + inter.getName() + ", ";
+								// }
+								// String methList = "";
+								// for (CaseInsensitiveString key :
+								// adders.keySet())
+								// {
+								// methList = methList + key.toString() + ", ";
+								// }
+								// Factory.println("No method found for " +
+								// rawLabel
+								// + " on element " + intList + ": "
+								// + ((VertexFrame) element).asVertex().getId()
+								// +
+								// " methods " + methList);
 							}
 						} else {
-							// Class[] interfaces =
-							// element.getClass().getInterfaces();
-							// String intList = "";
-							// for (Class inter : interfaces) {
-							// intList = intList + inter.getName() + ", ";
-							// }
-							// String methList = "";
-							// for (CaseInsensitiveString key : adders.keySet())
-							// {
-							// methList = methList + key.toString() + ", ";
-							// }
-							// Factory.println("No method found for " + rawLabel
-							// + " on element " + intList + ": "
-							// + ((VertexFrame) element).asVertex().getId() +
-							// " methods " + methList);
+							// Factory.println("element is not a VertexFrame. It's a "
+							// + element.getClass().getName());
 						}
-					} else {
-						// Factory.println("element is not a VertexFrame. It's a "
-						// + element.getClass().getName());
 					}
 				}
+				graph.commit();
 			}
-			graph.commit();
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());

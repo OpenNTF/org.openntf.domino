@@ -29,6 +29,7 @@ import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.ClassUtilities;
@@ -532,23 +533,28 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 						//						System.out.println("TEMP DEBUG: current value is " + currentVal + " in field " + field + " while typeValue is "
 						//								+ typeValue.value());
-						Class<?> classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
-						//						System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName()));
-						if (classChk == null) {
-							if (field.equalsIgnoreCase("form") && currentVal != null && currentVal.length() > 0) {
-								//								System.out.print("Not changing a form value of " + currentVal + " even though we're looking for type "
-								//										+ typeValue.value());
-								update = false;
-							}
-						} else if (!kind.isAssignableFrom(classChk)) {
-							update = !(currentVal).equals(typeValue.value());
-							if (!update) {
-								//								System.out.println("TEMP DEBUG Not updating form because value is already " + currentVal);
-							}
-						} else {
+						if (currentVal.equals(typeValue.value())) {
 							update = false;
-							//							System.out.println("TEMP DEBUG: existing type value " + classChk.getName() + " extends requested type value "
-							//									+ kind.getName());
+						} else {
+							Class<?> classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+							//							System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName()));
+							if (classChk == null) {
+								if (field.equalsIgnoreCase("form") && currentVal != null && currentVal.length() > 0
+										&& !(element instanceof DProxyVertex)) {
+									//								System.out.print("Not changing a form value of " + currentVal + " even though we're looking for type "
+									//										+ typeValue.value() + " on an Element of type " + element.getClass().getName());
+									update = false;
+								}
+							} else if (!kind.isAssignableFrom(classChk)) {
+								update = !(currentVal).equals(typeValue.value());
+								if (!update) {
+									//								System.out.println("TEMP DEBUG Not updating form because value is already " + currentVal);
+								}
+							} else {
+								update = false;
+								//							System.out.println("TEMP DEBUG: existing type value " + classChk.getName() + " extends requested type value "
+								//									+ kind.getName());
+							}
 						}
 					} else {
 						//						System.out.println("TEMP DEBUG: current value is null in field " + field);
@@ -558,8 +564,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 								|| kind == ViewVertex.Contains.class) {
 							//							System.out.println("TEMP DEBUG not setting form value because kind is excluded");
 						} else {
-							//							System.out.println("TEMP DEBUG setting field " + field + " to " + typeValue.value());
 							element.setProperty(field, typeValue.value());
+							if (framedGraph instanceof TransactionalGraph) {
+								((TransactionalGraph) framedGraph).commit();
+								//								System.out.println("TEMP DEBUG setting field " + field + " to " + typeValue.value() + " and committing");
+							}
 						}
 					}
 				} else {

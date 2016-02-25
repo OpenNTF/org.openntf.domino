@@ -226,6 +226,20 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
+	public Element getElement(final Object id) {
+		DGraph base = (DGraph) this.getBaseGraph();
+		org.openntf.domino.graph2.DElementStore store = null;
+		if (id instanceof NoteCoordinate) {
+			store = base.findElementStore(id);
+			//			System.out.println("Got element store from NoteCoordinate " + id.toString());
+		} else {
+			String typeid = getTypedId(id);
+			store = base.findElementStore(typeid);
+		}
+		Element elem = store.getElement(id);
+		return elem;
+	}
+
 	public <F> F getElement(final Object id, final Class<F> kind) {
 		F result = null;
 		DGraph base = (DGraph) this.getBaseGraph();
