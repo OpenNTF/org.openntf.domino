@@ -31,6 +31,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import org.openntf.arpa.ISO;
 import org.openntf.domino.Document;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
@@ -333,12 +334,7 @@ public enum Strings {
 		if (cs == null) {
 			return true;
 		}
-		for (int i = cs.length() - 1; i >= 0; i--) {
-			if (!Character.isWhitespace(cs.charAt(i))) {
-				return false;
-			}
-		}
-		return true;
+		return ISO.isBlankString(cs.toString());
 	}
 
 	/**
@@ -350,13 +346,7 @@ public enum Strings {
 	 * @return Flag indicating if the source string is null or blank.
 	 */
 	public static boolean isBlankString(final Object o) {
-		if (o == null) {
-			return true;
-		}
-		if (o instanceof CharSequence) {
-			return isBlankString((CharSequence) o);
-		}
-		throw new RuntimeException("Cannot check for blankness on a non-null object of type " + o.getClass().getName());
+		return ISO.isBlankString(getString(o));
 	}
 
 	/**
@@ -997,6 +987,30 @@ public enum Strings {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Gets the String of an object WITHOUT THROWING AN EXCEPTION.
+	 *
+	 * Handles null and enum instances.
+	 *
+	 * Null is returned as an empty string "", Enum instances return the name of the enum. If the object is an instance of String, it will
+	 * be cast as a String and returned. Otherwise, the result of the object's toString() method will be returned.
+	 *
+	 * @param obj
+	 *            object for which to return the String.
+	 *
+	 * @return String representation the object. Empty string "" on exception.
+	 */
+	public static String getString(final Object obj) {
+		try {
+			return (null == obj) ? "" : (obj instanceof Enum<?>) ? ((Enum<?>) obj).name() : obj.toString();
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e, "obj: " + obj);
+		}
+
+		return "";
 	}
 
 	/*

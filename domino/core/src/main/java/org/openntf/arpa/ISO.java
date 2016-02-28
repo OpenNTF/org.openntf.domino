@@ -1,18 +1,18 @@
 /*
  * Copyright 2013
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *
  */
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author dolson
- * 
+ *
  */
 @SuppressWarnings("unused")
 public enum ISO {
@@ -31,11 +31,11 @@ public enum ISO {
 
 	/**
 	 * Carrier for ISO 3166-1 alpha 2 and alpha 3 code
-	 * 
+	 *
 	 * @author Devin S. Olsonm (dolson@czarnowski.com)
-	 * 
+	 *
 	 * @see <a href="http://www.iso.org/iso/home/standards/country_codes.htm">Country Codes - ISO 3166</a>
-	 * 
+	 *
 	 */
 	public static enum ISO3166 {
 		AF("AFG", "Afghanistan"), AX("ALA", "Åland Islands"), AL("ALB", "Albania"), DZ("DZA", "Algeria"), AS("ASM", "American Samoa"),
@@ -86,9 +86,9 @@ public enum ISO {
 		GS("SGS", "South Georgia and the South Sandwich Islands"), SS("SSD", "South Sudan"), ES("ESP", "Spain"), LK("LKA", "Sri Lanka"),
 		SD("SDN", "Sudan"), SR("SUR", "Suriname"), SJ("SJM", "Svalbard and Jan Mayen"), SZ("SWZ", "Swaziland"), SE("SWE", "Sweden"),
 		CH("CHE", "Switzerland"), SY("SYR", "Syrian Arab Republic"), TW("TWN", "Taiwan, Province of China"), TJ("TJK", "Tajikistan"),
-		TZ("TZA", "Tanzania, United Republic of"), TH("THA", "Thailand"), TL("TLS", "Timor-Leste"), TG("TGO", "Togo"),
-		TK("TKL", "Tokelau"), TO("TON", "Tonga"), TT("TTO", "Trinidad and Tobago"), TN("TUN", "Tunisia"), TR("TUR", "Turkey"),
-		TM("TKM", "Turkmenistan"), TC("TCA", "Turks and Caicos Islands"), TV("TUV", "Tuvalu"), UG("UGA", "Uganda"), UA("UKR", "Ukraine"),
+		TZ("TZA", "Tanzania, United Republic of"), TH("THA", "Thailand"), TL("TLS", "Timor-Leste"), TG("TGO", "Togo"), TK("TKL", "Tokelau"),
+		TO("TON", "Tonga"), TT("TTO", "Trinidad and Tobago"), TN("TUN", "Tunisia"), TR("TUR", "Turkey"), TM("TKM", "Turkmenistan"),
+		TC("TCA", "Turks and Caicos Islands"), TV("TUV", "Tuvalu"), UG("UGA", "Uganda"), UA("UKR", "Ukraine"),
 		AE("ARE", "United Arab Emirates"), GB("GBR", "United Kingdom"), US("USA", "United States"),
 		UM("UMI", "United States Minor Outlying Islands"), UY("URY", "Uruguay"), UZ("UZB", "Uzbekistan"), VU("VUT", "Vanuatu"),
 		VE("VEN", "Venezuela, Bolivarian Republic of"), VN("VNM", "Viet Nam"), VG("VGB", "Virgin Islands, British"),
@@ -105,7 +105,7 @@ public enum ISO {
 
 		/**
 		 * Gets the Country String
-		 * 
+		 *
 		 * @return the Country
 		 */
 		public String getCountry() {
@@ -114,7 +114,7 @@ public enum ISO {
 
 		/**
 		 * Sets the Country String
-		 * 
+		 *
 		 * @param country
 		 *            the Country
 		 */
@@ -124,7 +124,7 @@ public enum ISO {
 
 		/**
 		 * Gets the 2 digit Alpha Code
-		 * 
+		 *
 		 * @return 2 digit Alpha Code
 		 */
 		public String getCode2() {
@@ -133,7 +133,7 @@ public enum ISO {
 
 		/**
 		 * Gets the 3 digit Alpha Code
-		 * 
+		 *
 		 * @return 3 digit Alpha Code
 		 */
 		public String getCode3() {
@@ -142,7 +142,7 @@ public enum ISO {
 
 		/**
 		 * Sets the 3 digit Alpha Code
-		 * 
+		 *
 		 * @param code3
 		 *            the 3 digit Alpha Code
 		 */
@@ -152,7 +152,7 @@ public enum ISO {
 
 		/**
 		 * Instance Constructor
-		 * 
+		 *
 		 * @param country
 		 *            Country Name
 		 * @param code3
@@ -167,34 +167,34 @@ public enum ISO {
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * public utility properties & methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 
 	/*
 	 * Pattern PatternRFC822: anytext<anytext>anytext
-	 * 
+	 *
 	 * ^ match the beginning of the string
-	 * 
+	 *
 	 * . match any single character
-	 * 
+	 *
 	 * * match the preceding match character zero or more times.
-	 * 
+	 *
 	 * < match a less than character
-	 * 
+	 *
 	 * . match any single character
-	 * 
+	 *
 	 * * match the preceding match character zero or more times.
-	 * 
+	 *
 	 * > match a greater than character
-	 * 
+	 *
 	 * . match any single character
-	 * 
+	 *
 	 * * match the preceding match character zero or more times.
-	 * 
+	 *
 	 * $ match the preceding match instructions against the end of the string.
 	 */
 	public static Pattern PatternRFC822 = Pattern.compile("^.*<.*>.*$");
@@ -210,10 +210,10 @@ public enum ISO {
 
 	/**
 	 * Gets the ISO3166 enum for the specified code
-	 * 
+	 *
 	 * @param code
 	 *            2 or 3 digit alpha code for the country
-	 * 
+	 *
 	 * @return ISO2166 enum for the specified code, if found. Null otherwise
 	 */
 	public static ISO3166 getISO3166(final String code) {
@@ -240,7 +240,7 @@ public enum ISO {
 			}
 			default:
 				return null;
-			} // switch 
+			}// switch
 
 		}
 
@@ -249,10 +249,10 @@ public enum ISO {
 
 	/**
 	 * Gets the Country String
-	 * 
+	 *
 	 * @param code
 	 *            2 or 3 digit alpha code for the country
-	 * 
+	 *
 	 * @return the Country for the code, if found. Empty string "" otherwise.
 	 */
 	public static String getCountry(final String code) {
@@ -262,10 +262,10 @@ public enum ISO {
 
 	/**
 	 * Determines if the code is a valid 2 digit country code
-	 * 
+	 *
 	 * @param code
 	 *            2 digit alpha code for the country
-	 * 
+	 *
 	 * @return Flag indicating if the code is valid
 	 */
 	public static boolean isCountryCode2(final String code) {
@@ -275,10 +275,10 @@ public enum ISO {
 
 	/**
 	 * Determines if the code is a valid 3 digit country code
-	 * 
+	 *
 	 * @param code
 	 *            3 digit alpha code for the country
-	 * 
+	 *
 	 * @return Flag indicating if the code is valid
 	 */
 	public static boolean isCountryCode3(final String code) {
@@ -288,10 +288,10 @@ public enum ISO {
 
 	/**
 	 * Converts a source string to Proper case (1st character uppercase, all others lowercase)
-	 * 
+	 *
 	 * @param string
 	 *            String to convert
-	 * 
+	 *
 	 * @return Converted string
 	 */
 	public static String toProperCase(final String string) {
@@ -300,10 +300,10 @@ public enum ISO {
 
 	/**
 	 * Determines if an object is not null and an instance of String.
-	 * 
+	 *
 	 * @param object
 	 *            Object to test.
-	 * 
+	 *
 	 * @return Flag indicating whether or not the object is a String.
 	 */
 	public static boolean isString(final Object object) {
@@ -312,36 +312,46 @@ public enum ISO {
 
 	/**
 	 * Determines if a string is null or blank
-	 * 
+	 *
 	 * @param string
 	 *            Source string to check for null or blank value.
-	 * 
+	 *
 	 * @return Flag indicating if the source string is null or blank.
 	 */
 	public static boolean isBlankString(final String string) {
-		if ((null == string) || (string.isEmpty()))
-			return true;
-		int i = string.length();
-		while (--i >= 0) {
-			if (!Character.isWhitespace(string.charAt(i)))
-				return false;
+		try {
+			if ((null == string) || (string.isEmpty())) {
+				return true;
+			}
+
+			int i = string.length();
+			while (--i >= 0) {
+				if (!Character.isWhitespace(string.charAt(i))) {
+					return false;
+				}
+			}
+
+		} catch (Exception e) {
+			// not a blank string 
+			return false;
 		}
+
 		return true;
 	}
 
 	/**
 	 * Checks a String to determine if it begins with a prefix.
-	 * 
+	 *
 	 * Performs a Case-INSENSITIVE check.
-	 * 
+	 *
 	 * <strong>Special Behavior</strong>: Returns false if source or prefix are null.
-	 * 
+	 *
 	 * @param source
 	 *            String to check if begins with prefix.
-	 * 
+	 *
 	 * @param prefix
 	 *            String to match agains the beginning of source.
-	 * 
+	 *
 	 * @return Flag indicating if source begins with prefix.
 	 */
 	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
