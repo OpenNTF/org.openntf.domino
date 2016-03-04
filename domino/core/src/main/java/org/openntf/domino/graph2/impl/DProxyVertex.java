@@ -20,6 +20,8 @@ public class DProxyVertex extends DVertex {
 
 	public DProxyVertex(final org.openntf.domino.graph2.DGraph parent) {
 		super(parent);
+		//		System.out.println("New DProxyVertex was created with option 0. Here's a stack trace to see why...");
+		//		new Throwable().printStackTrace();
 	}
 
 	DProxyVertex(final org.openntf.domino.graph2.DGraph parent, final org.openntf.domino.graph2.DVertex vertex,
@@ -28,6 +30,8 @@ public class DProxyVertex extends DVertex {
 		proxyDelegate_ = vertex;
 		proxyId_ = (NoteCoordinate) vertex.getId();
 		super.setProperty(PROXY_ITEM, proxyId_.toString());
+		//		System.out.println("New DProxyVertex was created with option 1. Here's a stack trace to see why...");
+		//		new Throwable().printStackTrace();
 	}
 
 	DProxyVertex(final org.openntf.domino.graph2.DGraph parent, final NoteCoordinate vertexId, final Map<String, Object> delegate) {
@@ -35,16 +39,20 @@ public class DProxyVertex extends DVertex {
 		//		proxyDelegate_ = vertex;
 		proxyId_ = vertexId;
 		super.setProperty(PROXY_ITEM, proxyId_.toString());
+		//		System.out.println("New DProxyVertex was created with option 2. Here's a stack trace to see why...");
+		//		new Throwable().printStackTrace();
 	}
 
 	DProxyVertex(final org.openntf.domino.graph2.DGraph parent, final Map<String, Object> delegate) {
 		super(parent, delegate);
+		//		System.out.println("New DProxyVertex was created with option 3. Here's a stack trace to see why...");
+		//		new Throwable().printStackTrace();
 	}
 
 	protected org.openntf.domino.graph2.DVertex getProxyDelegate() {
 		if (proxyDelegate_ == null) {
 			NoteCoordinate id = getProxiedId();
-			if (id.equals(this.getId())) {
+			if (id != null && id.equals(this.getId())) {
 				System.out.println("ALERT: Vertex is its own proxy! This could be bad.");
 			}
 			if (id != null) {

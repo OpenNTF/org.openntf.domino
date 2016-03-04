@@ -236,25 +236,35 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		String label = edge.getLabel();
 
 		boolean inChanged = false;
-		NoteList ins = getInEdgesSet(label);
-		if (ins != null) {
-			inChanged = ins.remove(edge.getId());
-		}
-		if (inChanged) {
-			List<Edge> inObjs = getInEdgeCache(label);
-			inObjs.remove(edge);
-			getInDirtyKeySet().add(label);
+		try {
+			NoteList ins = getInEdgesSet(label);
+			if (ins != null) {
+				inChanged = ins.remove(edge.getId());
+			}
+			if (inChanged) {
+				List<Edge> inObjs = getInEdgeCache(label);
+				inObjs.remove(edge);
+				getInDirtyKeySet().add(label);
+			}
+		} catch (Throwable t) {
+			System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": " + t.getClass().getSimpleName());
+			t.printStackTrace();
 		}
 
 		boolean outChanged = false;
-		NoteList outs = getOutEdgesSet(label);
-		if (outs != null) {
-			outChanged = outs.remove(edge.getId());
-		}
-		if (outChanged) {
-			List<Edge> outObjs = getOutEdgeCache(label);
-			outObjs.remove(edge);
-			getOutDirtyKeySet().add(label);
+		try {
+			NoteList outs = getOutEdgesSet(label);
+			if (outs != null) {
+				outChanged = outs.remove(edge.getId());
+			}
+			if (outChanged) {
+				List<Edge> outObjs = getOutEdgeCache(label);
+				outObjs.remove(edge);
+				getOutDirtyKeySet().add(label);
+			}
+		} catch (Throwable t) {
+			System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": " + t.getClass().getSimpleName());
+			t.printStackTrace();
 		}
 	}
 

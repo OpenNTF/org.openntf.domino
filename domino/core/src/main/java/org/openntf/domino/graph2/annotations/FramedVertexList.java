@@ -115,8 +115,9 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 			list_ = (List<Vertex>) list;
 		} else {
 			list_ = new ArrayList<Vertex>();
-			for (Vertex e : list) {
-				list_.add(e);
+			Iterator<Vertex> itty = list.iterator();
+			while (itty.hasNext()) {
+				list_.add(itty.next());
 			}
 		}
 	}

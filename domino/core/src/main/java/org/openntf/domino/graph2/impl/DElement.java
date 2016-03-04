@@ -473,7 +473,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
 		if (delegate == null) {
-			System.out.println("ALERT: Attempt to apply changes to an element with a null delegate will not succeed.");
+			throw new IllegalStateException("Get delegate returned null for id " + getId() + " so we cannot apply changes to it.");
 		}
 		Set<String> changes = getChangedPropertiesInt();
 		if (!props.isEmpty() && !changes.isEmpty()) {
@@ -498,10 +498,23 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 								((Document) delegate).replaceItemValue(s, v, false);
 							}
 						} else {
-							delegate.put(s, v);
+							try {
+								delegate.put(s, v);
+							} catch (Throwable t) {
+								System.err.println("ALERT Failed to write a property of " + s + " to element id " + getId()
+										+ " which has a delegate of type " + delegate.getClass().getName() + " due to a "
+										+ t.getClass().getSimpleName());
+								t.printStackTrace();
+							}
 						}
 					} else {
-						delegate.put(s, v);
+						try {
+							delegate.put(s, v);
+						} catch (Throwable t) {
+							System.err.println("ALERT Failed to write a property of " + s + " to element id " + getId() + " due to a "
+									+ t.getClass().getSimpleName());
+							t.printStackTrace();
+						}
 					}
 				}
 			}
@@ -572,6 +585,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Object put(final String arg0, final Object arg1) {
+		Map delegate = getDelegate();
+		if (delegate == null) {
+			throw new IllegalStateException("An element of type " + getClass().getSimpleName() + " with id " + getId()
+					+ " has no delegate and therefore cannot put new value updates.");
+		}
 		getDelegate().put(arg0, arg1);
 		return arg1;
 	}
