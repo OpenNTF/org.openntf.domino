@@ -330,8 +330,9 @@ public abstract class AbstractIncidenceHandler {
 		Iterator it = edges.iterator();
 		while (it.hasNext()) {
 			Edge edge = (Edge) it.next();
-			if (null == otherVertex || edge.getVertex(direction.opposite()).equals(otherVertex)) {
-				it.remove();
+			if (null == otherVertex || edge.getVertex(direction.opposite()).getId().equals(otherVertex.getId())) {
+				//it.remove();
+				framedGraph.removeEdge(edge);
 			}
 		}
 	}
