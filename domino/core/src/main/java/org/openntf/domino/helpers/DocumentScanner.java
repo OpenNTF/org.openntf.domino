@@ -27,6 +27,7 @@ import org.openntf.domino.big.impl.IScannerStateManager;
 import org.openntf.domino.big.impl.IScannerStateManager.ScanStatus;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 public class DocumentScanner extends Observable {
 	private static final Logger log_ = Logger.getLogger(DocumentScanner.class.getName());
@@ -185,52 +186,55 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	private boolean trackFieldTokens_ = true;
-	private Map<CharSequence, NavigableSet<CharSequence>> fieldTokenMap_;
+	protected boolean trackFieldTokens_ = true;
+	protected Map<CharSequence, NavigableSet<CharSequence>> fieldTokenMap_;
 	//Map<FIELDNAME, Set<TOKEN>>
 
-	private boolean trackTokenLocation_ = true;
-	private Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tokenLocationMap_;
+	protected boolean trackTokenLocation_ = true;
+	protected Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tokenLocationMap_;
 	//Map<TERM, Map<FIELDNAME, List<UNIDS>>>
 
-	private boolean trackNameLocation_ = true;
-	private Map<CharSequence, Map<CharSequence, Set<CharSequence>>> nameLocationMap_;
+	protected boolean trackNameLocation_ = true;
+	protected Map<CharSequence, Map<CharSequence, Set<CharSequence>>> nameLocationMap_;
 
-	private boolean trackFieldValues_ = true;
+	protected boolean trackValueLocation_ = true;
+	protected Map<CharSequence, Map<CharSequence, Set<CharSequence>>> valueLocationMap_;
+
+	protected boolean trackFieldValues_ = true;
 	@SuppressWarnings("rawtypes")
-	private Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
+	protected Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
 
-	private boolean trackFieldTypes_ = true;
-	private Map<CharSequence, Item.Type> fieldTypeMap_;
+	protected boolean trackFieldTypes_ = true;
+	protected Map<CharSequence, Item.Type> fieldTypeMap_;
 	//Map<FIELDNAME, ITEMTYPE>
 
-	private Set<CharSequence> stopTokenList_;
+	protected Set<CharSequence> stopTokenList_;
 
-	private boolean trackTokenFreq_ = true;
-	private NavigableMap<CharSequence, Integer> tokenFreqMap_;
+	protected boolean trackTokenFreq_ = true;
+	protected NavigableMap<CharSequence, Integer> tokenFreqMap_;
 	//Map<TOKEN, INSTANCECOUNT>
 
-	private boolean ignoreDollar_ = true;
-	private boolean caseSensitive_ = false;
+	protected boolean ignoreDollar_ = true;
+	protected boolean caseSensitive_ = false;
 	//	private boolean caseSensitiveValues_ = false;
-	private long docCount_ = 0l;
-	private int docLimit_ = Integer.MAX_VALUE;
-	private Date lastScanDate_;
-	private Date lastDocModDate_;
-	private IScannerStateManager stateManager_;
-	private Object stateManagerKey_;
+	protected long docCount_ = 0l;
+	protected int docLimit_ = Integer.MAX_VALUE;
+	protected Date lastScanDate_;
+	protected Date lastDocModDate_;
+	protected IScannerStateManager stateManager_;
+	protected Object stateManagerKey_;
 
-	private int zeroDocCount_ = 0;
-	private int errCount_ = 0;
-	private long itemCount_ = 0l;
-	private long tokenCount_ = 0l;
+	protected int zeroDocCount_ = 0;
+	protected int errCount_ = 0;
+	protected long itemCount_ = 0l;
+	protected long tokenCount_ = 0l;
 
 	public void setCaseSensitive(final boolean value) {
 		caseSensitive_ = value;
 	}
 
-	public boolean getCaseSensitive() {
+	public boolean isCaseSensitive() {
 		return caseSensitive_;
 	}
 
@@ -365,6 +369,13 @@ public class DocumentScanner extends Observable {
 		return nameLocationMap_;
 	}
 
+	public Map<CharSequence, Map<CharSequence, Set<CharSequence>>> getValueLocationMap() {
+		if (valueLocationMap_ == null) {
+			valueLocationMap_ = new ConcurrentSkipListMap<CharSequence, Map<CharSequence, Set<CharSequence>>>();
+		}
+		return valueLocationMap_;
+	}
+
 	public Map<CharSequence, Set<CharSequence>> getTokenLocationMap(final CharSequence token) {
 		Map<CharSequence, Set<CharSequence>> result = null;
 		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> localMap = getTokenLocationMap();
@@ -381,6 +392,27 @@ public class DocumentScanner extends Observable {
 			}
 			synchronized (localMap) {
 				localMap.put(token, result);
+			}
+		}
+		return result;
+	}
+
+	public Map<CharSequence, Set<CharSequence>> getValueLocationMap(final CharSequence value) {
+		Map<CharSequence, Set<CharSequence>> result = null;
+		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> localMap = getValueLocationMap();
+		result = localMap.get(value);
+		if (result == null) {
+			if (getStateManager() == null) {
+				result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
+			} else {
+				result = getStateManager().restoreValueLocationMap(value, getStateManagerKey());
+				if (result == null) {
+					errCount_++;
+					result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
+				}
+			}
+			synchronized (localMap) {
+				localMap.put(value, result);
 			}
 		}
 		return result;
@@ -536,7 +568,6 @@ public class DocumentScanner extends Observable {
 	public void processDocument(final Document doc) {
 		if (doc != null) {
 			docCount_++;
-			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
 			Map<CharSequence, Item.Type> typeMap = getFieldTypeMap();
 			Vector<Item> items = doc.getItems();
 			boolean hasReaders = doc.hasReaders();
@@ -563,7 +594,7 @@ public class DocumentScanner extends Observable {
 							default:
 							}
 							if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
-								if (item.isNames()) {
+								if (item.isNames() || DominoUtils.isHierarchicalName(value)) {
 									if (values != null && !values.isEmpty()) {
 										for (Object o : values) {
 											if (o instanceof String) {
@@ -576,29 +607,10 @@ public class DocumentScanner extends Observable {
 									itemCount_++;
 									if (values != null && !values.isEmpty()) {
 										for (Object o : values) {
-											if (o instanceof String) {
-												String val = (String) o;
-												Scanner s = new Scanner(val);
-												s.useDelimiter(REGEX_NONALPHANUMERIC);
-												while (s.hasNext()) {
-													CharSequence token = scrubToken(s.next(), caseSensitive_);
-													if (token != null && (token.length() > 2) && !isStopped(token)) {
-														tokenCount_++;
-														processToken(token, name, address, doc);
-													}
-												}
-											}
+											processValue(name, o, address);
 										}
 									} else {
-										Scanner s = new Scanner(value);
-										s.useDelimiter(REGEX_NONALPHANUMERIC);
-										while (s.hasNext()) {
-											CharSequence token = scrubToken(s.next(), caseSensitive_);
-											if (token != null && (token.length() > 2) && !isStopped(token)) {
-												tokenCount_++;
-												processToken(token, name, address, doc);
-											}
-										}
+										processTextValue(name, value, address);
 									}
 								}
 							}
@@ -606,28 +618,6 @@ public class DocumentScanner extends Observable {
 							if (isTrackFieldTypes()) {
 								if (!typeMap.containsKey(name)) {
 									typeMap.put(name, item.getTypeEx());
-								}
-							}
-							if (isTrackFieldValues()) {
-								if (typeMap.get(name).equals(item.getTypeEx())) {
-									Vector<Object> vals = null;
-									vals = item.getValues();
-									if (vals != null && !vals.isEmpty()) {
-										NavigableSet<Comparable> valueSet = new ConcurrentSkipListSet<Comparable>();
-										if (!vmap.containsKey(name)) {
-											vmap.put(name, valueSet);
-										} else {
-											valueSet = vmap.get(name);
-										}
-										try {
-											java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
-											if (!c.isEmpty()) {
-												valueSet.addAll(c);
-											}
-										} catch (Throwable t) {
-											log_.warning("Unable to convert to Comparable from " + vals.getClass().getName());
-										}
-									}
 								}
 							}
 						} catch (Exception e) {
@@ -645,6 +635,77 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
+	public void processTextValue(final CaseInsensitiveString name, final Object value, final String address) {
+		if (value instanceof CharSequence) {
+			String chkVal = value.toString();
+			if (DominoUtils.isUnid(chkVal) || DominoUtils.isReplicaId(chkVal) || DominoUtils.isMetaversalId(chkVal)
+					|| DominoUtils.isNumber(chkVal)) {
+				//				System.out.println("TEMP DEBUG skipping processing on value of '" + chkVal + "'");
+				return;
+			}
+		}
+		if (value instanceof String) {
+			String val = (String) value;
+			Scanner s = new Scanner(val);
+			s.useDelimiter(REGEX_NONALPHANUMERIC);
+			while (s.hasNext()) {
+				CharSequence token = scrubToken(s.next(), caseSensitive_);
+				if (token != null && (token.length() > 2) && !isStopped(token)) {
+					tokenCount_++;
+					processToken(token, name, address);
+				}
+			}
+		}
+	}
+
+	public void processValue(final CaseInsensitiveString name, final Object value, final String address) {
+		if (value instanceof CharSequence) {
+			String chkVal = value.toString();
+			if (DominoUtils.isUnid(chkVal) || DominoUtils.isReplicaId(chkVal) || DominoUtils.isMetaversalId(chkVal)
+					|| DominoUtils.isNumber(chkVal)) {
+				//				System.out.println("TEMP DEBUG skipping processing on value of '" + chkVal + "'");
+				return;
+			}
+		}
+		if (value instanceof String) {
+			String val = (String) value;
+			Scanner s = new Scanner(val);
+			s.useDelimiter(REGEX_NONALPHANUMERIC);
+			while (s.hasNext()) {
+				CharSequence token = scrubToken(s.next(), caseSensitive_);
+				if (token != null && (token.length() > 2) && !isStopped(token)) {
+					tokenCount_++;
+					processToken(token, name, address);
+				}
+			}
+		}
+		if (isTrackFieldValues()) {
+			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
+			NavigableSet<Comparable> valueSet = null;
+			if (!vmap.containsKey(name)) {
+				valueSet = new ConcurrentSkipListSet<Comparable>();
+				vmap.put(name, valueSet);
+			} else {
+				valueSet = vmap.get(name);
+			}
+			Comparable c = TypeUtils.toComparable(value);
+			if (c != null) {
+				valueSet.add(c);
+			}
+		}
+		if (isTrackValueLocation()) {
+			Map<CharSequence, Set<CharSequence>> tlval = getValueLocationMap(String.valueOf(value));
+			if (tlval.containsKey(name)) {
+				Set<CharSequence> tllist = tlval.get(name);
+				tllist.add(address);
+			} else {
+				Set<CharSequence> tllist = new ConcurrentSkipListSet<CharSequence>();
+				tllist.add(address);
+				tlval.put(name, tllist);
+			}
+		}
+	}
+
 	public long getDocCount() {
 		return docCount_;
 	}
@@ -657,7 +718,7 @@ public class DocumentScanner extends Observable {
 		return tokenCount_;
 	}
 
-	private void processName(final CharSequence name, final CharSequence itemName, final Session session, final String address) {
+	protected void processName(final CharSequence name, final CharSequence itemName, final Session session, final String address) {
 		Map<CharSequence, Integer> tfmap = getTokenFreqMap();
 		Map<CharSequence, NavigableSet<CharSequence>> tmap = getFieldTokenMap();
 		NavigableSet<CharSequence> tokenSet = null;
@@ -688,7 +749,6 @@ public class DocumentScanner extends Observable {
 					tlval.put(itemName, tllist);
 				}
 			}
-
 		} else {
 			CharSequence lname = caseSensitive_ ? name : new CaseInsensitiveString(name);
 			if (tfmap.containsKey(lname)) {
@@ -697,10 +757,33 @@ public class DocumentScanner extends Observable {
 				tfmap.put(lname, 1);
 			}
 		}
+		if (name instanceof String) {
+			String val = (String) name;
+			Scanner s = new Scanner(val);
+			s.useDelimiter(REGEX_NONALPHANUMERIC);
+			while (s.hasNext()) {
+				CharSequence token = scrubToken(s.next(), caseSensitive_);
+				if (token != null && (token.length() > 2) && !isStopped(token)) {
+					tokenCount_++;
+					processToken(token, itemName, address);
+				}
+			}
+		}
+		if (isTrackFieldValues()) {
+			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
+			NavigableSet<Comparable> valueSet = null;
+			if (!vmap.containsKey(name)) {
+				valueSet = new ConcurrentSkipListSet<Comparable>();
+				vmap.put(name, valueSet);
+			} else {
+				valueSet = vmap.get(name);
+			}
+			valueSet.add(name.toString());
+		}
+
 	}
 
-	private void processToken(final CharSequence token, final CharSequence itemName, final String address, final Document doc) {
-
+	protected void processToken(final CharSequence token, final CharSequence itemName, final String address/*, final Document doc*/) {
 		if (isTrackFieldTokens()) {
 			Map<CharSequence, NavigableSet<CharSequence>> tmap = getFieldTokenMap();
 			if (!tmap.containsKey(itemName)) {
@@ -745,8 +828,15 @@ public class DocumentScanner extends Observable {
 	}
 
 	public void setTokenLocationMap(final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> value) {
-		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
 		tokenLocationMap_ = value;
+	}
+
+	public void setValueLocationMap(final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> value) {
+		valueLocationMap_ = value;
+	}
+
+	public void setNameLocationMap(final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> value) {
+		nameLocationMap_ = value;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -816,6 +906,10 @@ public class DocumentScanner extends Observable {
 		return trackTokenLocation_;
 	}
 
+	public boolean isTrackValueLocation() {
+		return trackValueLocation_;
+	}
+
 	/**
 	 * @return the trackNameLocation
 	 */
@@ -829,6 +923,10 @@ public class DocumentScanner extends Observable {
 	 */
 	public void setTrackTokenLocation(final boolean trackTokenLocation) {
 		trackTokenLocation_ = trackTokenLocation;
+	}
+
+	public void setTrackValueLocation(final boolean trackValueLocation) {
+		trackValueLocation_ = trackValueLocation;
 	}
 
 	/**

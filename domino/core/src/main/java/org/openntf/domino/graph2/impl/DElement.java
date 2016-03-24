@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javolution.util.FastMap;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -25,7 +27,6 @@ import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.big.impl.ViewEntryCoordinate;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
-import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
@@ -35,6 +36,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	public static enum Deferred {
 		INSTANCE;
+		private static final long serialVersionUID = 1L;
 	}
 
 	protected transient org.openntf.domino.graph2.DGraph parent_;
@@ -78,7 +80,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (props_ == null) {
 			Map<String, Object> localProps = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
 			for (String key : getDelegate().keySet()) {
-				localProps.put(key, Deferred.INSTANCE);
+				if (key != null && key.length() > 0) {
+					localProps.put(key, Deferred.INSTANCE);
+				}
 			}
 			props_ = Collections.synchronizedMap(localProps);
 		}
@@ -100,16 +104,28 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
+					doc.setAutoMime(AutoMime.WRAP_ALL);
 					if (doc.hasItem(propertyName)) {
-						result = doc.getItemValue(propertyName, type);
+						try {
+							result = doc.getItemValue(propertyName, type);
+						} catch (Throwable t) {
+							//							System.out.println("TEMP DEBUG didn't get property " + propertyName + " with type " + type.getSimpleName()
+							//									+ " because of a " + t.getClass().getSimpleName() + ": " + t.getMessage());
+						}
 					}
 					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
 							Object raw = doc.get(propertyName);
+							if (raw instanceof Vector) {
+								if (((Vector) raw).isEmpty()) {
+									props.put(propertyName, Null.INSTANCE);
+									return null;
+								}
+							}
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
 						} catch (Throwable t) {
-							if (log_.isLoggable(Level.WARNING)) {
-								log_.log(Level.WARNING, "Invalid property for document " + propertyName, t);
+							if (log_.isLoggable(Level.FINE)) {
+								log_.log(Level.FINE, "Invalid property for document " + propertyName, t);
 							}
 						}
 					}
@@ -178,9 +194,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			result = null;
 		}
 		if ("form".equalsIgnoreCase(propertyName)) {
-			if (result == null) {
-				Factory.println("TEMP DEBUG returning null as value for Form field");
-			}
+			//			if (result == null) {
+			//				Factory.println("TEMP DEBUG returning null as value for Form field");
+			//			}
 		}
 		if (result == Deferred.INSTANCE) {
 			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
@@ -214,7 +230,15 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			if (key != null) {
 				Object current = null;
 				if (value != null) {
-					current = getProperty(key, value.getClass());
+					try {
+						current = getProperty(key, value.getClass());
+					} catch (Exception e) {
+						if (e instanceof ClassCastException) {
+							current = null;
+						} else {
+							throw new RuntimeException(e);
+						}
+					}
 				} else {
 					current = getProperty(key);
 				}
@@ -601,6 +625,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public Collection<Object> values() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Document asDocument() {
+		return (Document) getDelegate();
 	}
 
 }

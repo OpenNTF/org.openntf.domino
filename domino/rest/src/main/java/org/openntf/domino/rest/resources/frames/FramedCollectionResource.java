@@ -78,6 +78,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				} else if (partialkeys != null) {
 					elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
 				} else {
+					// System.out.println("TEMP DEBUG Getting elements for type "
+					// + typename);
 					elements = graph.getElements(typename.toString());
 				}
 

@@ -105,4 +105,6 @@ public interface DElementStore extends Externalizable {
 
 	public boolean isProxied();
 
+	public void flushCache();
+
 }

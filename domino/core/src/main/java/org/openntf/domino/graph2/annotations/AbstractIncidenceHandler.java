@@ -326,7 +326,7 @@ public abstract class AbstractIncidenceHandler {
 	private void removeEdges(final Direction direction, final String label, final Vertex element, final Vertex otherVertex,
 			final FramedGraph framedGraph) {
 		for (final Edge edge : element.getEdges(direction, label)) {
-			if (null == otherVertex || edge.getVertex(direction.opposite()).equals(otherVertex)) {
+			if (null == otherVertex || edge.getVertex(direction.opposite()).getId().equals(otherVertex.getId())) {
 				framedGraph.removeEdge(edge);
 			}
 		}

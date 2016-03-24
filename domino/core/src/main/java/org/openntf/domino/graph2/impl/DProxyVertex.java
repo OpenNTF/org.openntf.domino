@@ -49,7 +49,7 @@ public class DProxyVertex extends DVertex {
 		//		new Throwable().printStackTrace();
 	}
 
-	protected org.openntf.domino.graph2.DVertex getProxyDelegate() {
+	public org.openntf.domino.graph2.DVertex getProxyDelegate() {
 		if (proxyDelegate_ == null) {
 			NoteCoordinate id = getProxiedId();
 			if (id != null && id.equals(this.getId())) {

@@ -11,7 +11,7 @@ import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
 public enum Parameters {
-	ID, KEY, TYPE, EDGES, VERTICES, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, ADD, REMOVE;
+	ID, KEY, TYPE, EDGES, VERTICES, COUNTS, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, ADD, REMOVE;
 
 	public static ParamMap toParamMap(UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
@@ -123,6 +123,10 @@ public enum Parameters {
 
 		public boolean getIncludeEdges() {
 			return get(Parameters.EDGES) != null;
+		}
+
+		public boolean getIncludeCounts() {
+			return get(Parameters.COUNTS) != null;
 		}
 
 	}

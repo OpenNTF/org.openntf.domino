@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -106,6 +107,9 @@ public class JsonGraphWriter extends JsonWriter {
 
 	@Override
 	public void outObject(Object paramObject) throws IOException, JsonException {
+		// System.out.println("TEMP DEBUG Attempting to jsonify an object of "
+		// + (paramObject == null ? "NULL" : paramObject.getClass().getName()));
+
 		if (paramObject == null) {
 			super.outNull();
 		} else if (paramObject instanceof EdgeFrame) {
@@ -124,10 +128,12 @@ public class JsonGraphWriter extends JsonWriter {
 		} else if (paramObject instanceof org.openntf.domino.impl.View.DominoColumnInfo) {
 			String itemName = ((org.openntf.domino.impl.View.DominoColumnInfo) paramObject).getItemName();
 			super.outStringLiteral(itemName);
+		} else if (paramObject instanceof Set) {
+			// System.out.println("TEMP DEBUG outObject received a Set");
+			outArrayLiteral(((Set) paramObject).toArray());
 		} else {
 			// Class<?> clazz = paramObject.getClass();
 			// String name = clazz.getName();
-			// System.out.println("DEBUG: Attempting to jsonify a " + name);
 			super.outObject(paramObject);
 		}
 	}
@@ -220,6 +226,9 @@ public class JsonGraphWriter extends JsonWriter {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected void outLiteral(Object paramObject, boolean paramBoolean) throws IOException, JsonException {
+		// System.out.println("TEMP DEBUG outputting a literal of "
+		// + (paramObject == null ? "NULL VALUE" :
+		// paramObject.getClass().getName()));
 		if (this.getFactory().isNull(paramObject)) {
 			outNull();
 		} else if (paramObject instanceof EdgeFrame) {
@@ -235,6 +244,11 @@ public class JsonGraphWriter extends JsonWriter {
 			String className = ((Enum) paramObject).getClass().getName();
 			String enumName = ((Enum) paramObject).name();
 			outStringLiteral(className + " " + enumName);
+		} else if (paramObject instanceof CharSequence) {
+			outStringLiteral(paramObject.toString());
+		} else if (paramObject instanceof Set) {
+			// System.out.println("TEMP DEBUG Got a set!");
+			outArrayLiteral(((Set) paramObject).toArray());
 		} else if (this.getFactory().isString(paramObject)) {
 			outStringLiteral(this.getFactory().getString(paramObject));
 		} else if (this.getFactory().isNumber(paramObject)) {

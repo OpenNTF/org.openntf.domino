@@ -384,6 +384,31 @@ public enum TypeUtils {
 		return (T) result;
 	}
 
+	public static Comparable toComparable(final Object value) {
+		if (value == null) {
+			return null;
+		}
+		return (Comparable) toSerializable(value);
+	}
+
+	public static Serializable toSerializable(final Object value) {
+		if (value == null)
+			return null;
+		Serializable result = null;
+		if (value instanceof org.openntf.domino.DateTime) {
+			Date date = null;
+			org.openntf.domino.DateTime dt = (org.openntf.domino.DateTime) value;
+			result = dt.toJavaDate();
+		} else if (value instanceof org.openntf.domino.Name) {
+			result = DominoUtils.toNameString((org.openntf.domino.Name) value);
+		} else if (value instanceof String) {
+			result = (String) value;
+		} else if (value instanceof Number) {
+			result = (Number) value;
+		}
+		return result;
+	}
+
 	public static Collection<Serializable> toSerializables(final Object value) {
 		if (value == null)
 			return null;

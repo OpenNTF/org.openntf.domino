@@ -7,7 +7,9 @@ import java.util.Set;
 import org.openntf.domino.DateTime;
 
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
@@ -51,8 +53,12 @@ com.tinkerpop.blueprints.TransactionalGraph {
 
 		//TODO make this more robust by using the TypeRegistry
 		public static String getFormulaForFrame(final Class<?> kind) {
-			String classname = kind.getSimpleName();
-			return "@LowerCase(Form) = @LowerCase(\"" + classname + "\")";
+			String formname = kind.getSimpleName();
+			TypeValue tv = kind.getAnnotation(TypeValue.class);
+			if (tv != null) {
+				formname = tv.value();
+			}
+			return "@LowerCase(Form) = @LowerCase(\"" + formname + "\")";
 		}
 
 		//		public static String getFormulaForFrameName(final String classname) {
@@ -174,5 +180,11 @@ com.tinkerpop.blueprints.TransactionalGraph {
 	public DKeyResolver getKeyResolver(Class<?> type);
 
 	public void addKeyResolver(DKeyResolver keyResolver);
+
+	public Graph getExtendedGraph();
+
+	public void setExtendedGraph(Graph graph);
+
+	public void flushCache();
 
 }

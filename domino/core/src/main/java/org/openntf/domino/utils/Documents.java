@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -65,6 +66,7 @@ public enum Documents {
 	public static final String ITEMNAME_SERVER = "server";
 	public static final String ITEMNAME_SUBJECT = "subject";
 	public static final String ITEMNAME_UNIVERSALID = "universalID";
+	private static AtomicInteger RESTORE_ERR_COUNT = new AtomicInteger(0);
 
 	/** The Constant log_. */
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
@@ -110,17 +112,17 @@ public enum Documents {
 		Session session = doc.getAncestorSession();
 		Object result = null;
 		Stream mimeStream = session.createStream();
-		//		Class<?> chkClass = null;
+		Class<?> chkClass = null;
 		String allHeaders = entity.getHeaders();
-		//		MIMEHeader header = entity.getNthHeader("X-Java-Class");
-		//		if (header != null) {
-		//			String className = header.getHeaderVal();
-		//			chkClass = DominoUtils.getClass(className);
-		//			if (chkClass == null) {
-		//				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-		//						+ " so object deserialization is likely to fail...");
-		//			}
-		//		}
+		MIMEHeader javaClassHeader = entity.getNthHeader("X-Java-Class");
+		if (javaClassHeader != null) {
+			String className = javaClassHeader.getHeaderVal();
+			chkClass = DominoUtils.getClass(className);
+			if (chkClass == null) {
+				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
+						+ " so object deserialization is likely to fail...");
+			}
+		}
 
 		entity.getContentAsBytes(mimeStream);
 
@@ -158,8 +160,17 @@ public enum Documents {
 			restored.readExternal(objectStream);
 			result = restored;
 		} else {
-			Object restored = objectStream.readObject();
-
+			Object restored = null;
+			try {
+				restored = objectStream.readObject();
+			} catch (Throwable t) {
+				int curCount = RESTORE_ERR_COUNT.incrementAndGet();
+				if (curCount < 20) {
+					System.err.println("Unable to restore an object from item " + itemName + " with expect class " + chkClass.getName()
+							+ " due to a " + t.getClass().getSimpleName() + " for the " + curCount + " time. Message: " + t.getMessage());
+					t.printStackTrace();
+				}
+			}
 			// But wait! It might be a StateHolder object or Collection!
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
@@ -234,7 +245,7 @@ public enum Documents {
 	 *             the throwable
 	 */
 	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Exception {
-		Documents.saveState(object, doc, itemName, true, null);
+		Documents.saveState(object, doc, itemName, false, null);
 	}
 
 	// private static Map<String, Integer> diagCount = new HashMap<String, Integer>();
@@ -269,8 +280,9 @@ public enum Documents {
 			if (object.getClass().getName().equals("[B")) {	// Then it's a byte[]
 				byte[] b = (byte[]) object;
 				if (b.length < 50 ||	// ZIP header + footer take 28 bytes, so in this case zipping doesn't pay
-						(b[0] == (byte) GZIPInputStream.GZIP_MAGIC && b[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)))
+						(b[0] == (byte) GZIPInputStream.GZIP_MAGIC && b[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8))) {
 					compress = false;
+				}
 			}
 		}
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -282,6 +294,7 @@ public enum Documents {
 			((Externalizable) object).writeExternal(objectStream);
 			contentType = "application/x-java-externalized-object";
 		} else {
+			//			System.out.println("TEMP DEBUG Writing a " + object.getClass().getName() + " to a MIME Bean");
 			objectStream.writeObject(object);
 			contentType = "application/x-java-serialized-object";
 		}

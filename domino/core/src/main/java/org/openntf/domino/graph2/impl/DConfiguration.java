@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Document;
 //import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
@@ -29,7 +30,6 @@ import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.ClassUtilities;
@@ -282,7 +282,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					result.putAll(crystals);
 				}
 			}
-			return Collections.unmodifiableMap(result);
+			return result;
 		}
 
 		public Map<CaseInsensitiveString, Method> getCounters(final Class<?> type) {
@@ -564,11 +564,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 								|| kind == ViewVertex.Contains.class) {
 							//							System.out.println("TEMP DEBUG not setting form value because kind is excluded");
 						} else {
-							element.setProperty(field, typeValue.value());
-							if (framedGraph instanceof TransactionalGraph) {
-								((TransactionalGraph) framedGraph).commit();
-								//								System.out.println("TEMP DEBUG setting field " + field + " to " + typeValue.value() + " and committing");
+							//							element.setProperty(field, typeValue.value());
+							if (element instanceof DElement) {
+								Document doc = ((DElement) element).asDocument();
+								doc.replaceItemValue(field, typeValue.value());
 							}
+							//							if (framedGraph instanceof TransactionalGraph) {
+							//								((TransactionalGraph) framedGraph).commit();
+							//							}
 						}
 					}
 				} else {

@@ -6,6 +6,8 @@ package org.openntf.domino.graph2;
 import java.util.Map;
 import java.util.Set;
 
+import org.openntf.domino.Document;
+
 /**
  * @author nfreeman
  * 
@@ -40,4 +42,6 @@ public interface DElement extends com.tinkerpop.blueprints.Element {
 	public void rollback();
 
 	public void commit();
+
+	public Document asDocument();
 }
