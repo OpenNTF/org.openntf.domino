@@ -629,7 +629,15 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Document asDocument() {
-		return (Document) getDelegate();
+		Document result = null;
+		Object raw = getDelegate();
+		if (raw instanceof Document) {
+			result = (Document) raw;
+		} else if (raw instanceof DProxyVertex) {
+			result = (Document) ((DProxyVertex) raw).getDelegate();
+			//			System.out.println("Element has a delegate of a DProxyVertex. It should be the other way around?")
+		}
+		return result;
 	}
 
 }

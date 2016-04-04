@@ -23,20 +23,23 @@ public enum DGraphUtils {
 	public abstract static class AbstractFrameComparator {
 		protected List<CaseInsensitiveString> keys_;
 		protected DFramedTransactionalGraph<?> graph_;
+		protected boolean desc_;
 
-		public AbstractFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys) {
+		public AbstractFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys, final boolean desc) {
 			if (graph instanceof DFramedTransactionalGraph) {
 				graph_ = (DFramedTransactionalGraph<?>) graph;
 			}
 			keys_ = keys;
+			desc_ = desc;
 		}
 
-		public AbstractFrameComparator(final FramedGraph<?> graph, final String key) {
+		public AbstractFrameComparator(final FramedGraph<?> graph, final String key, final boolean desc) {
 			if (graph instanceof DFramedTransactionalGraph) {
 				graph_ = (DFramedTransactionalGraph<?>) graph;
 			}
 			keys_ = new ArrayList<CaseInsensitiveString>();
 			keys_.add(new CaseInsensitiveString(key));
+			desc_ = desc;
 		}
 
 		public Class<?> getCompareType(final Object frame, final CaseInsensitiveString key) {
@@ -57,12 +60,20 @@ public enum DGraphUtils {
 
 	public static class EdgeFrameComparator extends AbstractFrameComparator implements Comparator<EdgeFrame> {
 
-		public EdgeFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys) {
-			super(graph, keys);
+		//		public EdgeFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys) {
+		//			super(graph, keys, false);
+		//		}
+		//
+		//		public EdgeFrameComparator(final FramedGraph<?> graph, final String key) {
+		//			super(graph, key, false);
+		//		}
+
+		public EdgeFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys, final boolean desc) {
+			super(graph, keys, desc);
 		}
 
-		public EdgeFrameComparator(final FramedGraph<?> graph, final String key) {
-			super(graph, key);
+		public EdgeFrameComparator(final FramedGraph<?> graph, final String key, final boolean desc) {
+			super(graph, key, desc);
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -81,7 +92,11 @@ public enum DGraphUtils {
 				Comparable castVal2 = (Comparable) compareType.cast(val2);
 				int curComp = castVal1.compareTo(castVal2);
 				if (curComp != 0) {
-					result = curComp;
+					if (desc_) {
+						result = curComp * -1;
+					} else {
+						result = curComp;
+					}
 				}
 			}
 			return result;
@@ -91,12 +106,20 @@ public enum DGraphUtils {
 
 	public static class VertexFrameComparator extends AbstractFrameComparator implements Comparator<VertexFrame> {
 
-		public VertexFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys) {
-			super(graph, keys);
+		//		public VertexFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys) {
+		//			super(graph, keys, false);
+		//		}
+		//
+		//		public VertexFrameComparator(final FramedGraph<?> graph, final String key) {
+		//			super(graph, key, false);
+		//		}
+
+		public VertexFrameComparator(final FramedGraph<?> graph, final List<CaseInsensitiveString> keys, final boolean desc) {
+			super(graph, keys, desc);
 		}
 
-		public VertexFrameComparator(final FramedGraph<?> graph, final String key) {
-			super(graph, key);
+		public VertexFrameComparator(final FramedGraph<?> graph, final String key, final boolean desc) {
+			super(graph, key, desc);
 		}
 
 		@Override
@@ -122,7 +145,11 @@ public enum DGraphUtils {
 						curComp = castVal1.compareTo(castVal2);
 					}
 					if (curComp != 0) {
-						result = curComp;
+						if (desc_) {
+							result = curComp * -1;
+						} else {
+							result = curComp;
+						}
 					} else {
 						//						System.out.println("Got a matching values for key " + key.toString() + ": " + String.valueOf(castVal1) + ", "
 						//								+ String.valueOf(castVal2));
@@ -139,14 +166,22 @@ public enum DGraphUtils {
 
 	}
 
-	public static Object getFramedProperty(final FramedGraph<?> graph, final Object frame, final CaseInsensitiveString key) {
+	public static Object getFramedProperty(final FramedGraph<?> graph, final Object frame, CaseInsensitiveString key) {
 		Object result = null;
 		Map<CaseInsensitiveString, Method> getters = null;
+
 		if (frame instanceof EdgeFrame) {
 			getters = getGetters(graph, (EdgeFrame) frame);
 		} else {
-			getters = getGetters(graph, (VertexFrame) frame);
+			if (key.startsWith("@counts")) {
+				String labelStr = key.toString().substring("@counts".length());
+				key = new CaseInsensitiveString(labelStr);
+				getters = getCounters(graph, (VertexFrame) frame);
+			} else {
+				getters = getGetters(graph, (VertexFrame) frame);
+			}
 		}
+
 		Method crystal = getters.get(key);
 		if (crystal != null) {
 			try {
@@ -204,6 +239,18 @@ public enum DGraphUtils {
 			Class<?> inter = findInterface(frame);
 			Class<?> type = tman.resolve(v, inter);
 			return dgraph.getTypeRegistry().getPropertiesGetters(type);
+		}
+		throw new IllegalArgumentException("Cannot discover registered getters for graph type " + graph.getClass().getName());
+	}
+
+	public static Map<CaseInsensitiveString, Method> getCounters(final FramedGraph<?> graph, final VertexFrame frame) {
+		if (graph instanceof DFramedTransactionalGraph) {
+			DFramedTransactionalGraph<?> dgraph = (DFramedTransactionalGraph<?>) graph;
+			DTypeManager tman = dgraph.getTypeManager();
+			Vertex v = frame.asVertex();
+			Class<?> inter = findInterface(frame);
+			Class<?> type = tman.resolve(v, inter);
+			return dgraph.getTypeRegistry().getCounters(type);
 		}
 		throw new IllegalArgumentException("Cannot discover registered getters for graph type " + graph.getClass().getName());
 	}

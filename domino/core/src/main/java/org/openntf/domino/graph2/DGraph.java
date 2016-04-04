@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-com.tinkerpop.blueprints.TransactionalGraph {
+		com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -47,7 +47,22 @@ com.tinkerpop.blueprints.TransactionalGraph {
 			if (value instanceof Enum<?>) {
 				strValue = ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
 			}
-			result = "@Contains(@LowerCase(" + key + "); @LowerCase(\"" + String.valueOf(value) + "\"))";
+			result = "@Contains(@LowerCase(" + key + "); \"" + strValue.toLowerCase() + "\")";
+			return result;
+		}
+
+		public static String convertToStartsFormula(final String key, final Object value) {
+			String result = "";
+			if (key == null)
+				return "";
+			if ("@".equals(key)) {
+				return String.valueOf(value);
+			}
+			String strValue = String.valueOf(value);
+			if (value instanceof Enum<?>) {
+				strValue = ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
+			}
+			result = "@Begins(@LowerCase(" + key + "); \"" + strValue.toLowerCase() + "\")";
 			return result;
 		}
 
@@ -58,7 +73,7 @@ com.tinkerpop.blueprints.TransactionalGraph {
 			if (tv != null) {
 				formname = tv.value();
 			}
-			return "@LowerCase(Form) = @LowerCase(\"" + formname + "\")";
+			return "@LowerCase(Form) = \"" + formname.toLowerCase() + "\"";
 		}
 
 		//		public static String getFormulaForFrameName(final String classname) {
@@ -118,6 +133,17 @@ com.tinkerpop.blueprints.TransactionalGraph {
 				String key = keys.get(i);
 				Object value = values.get(i);
 				String curformula = convertToPartialFormula(key, value);
+				filterFormula = filterFormula + (filterFormula.length() > 0 ? " & " : "") + curformula;
+			}
+			return getFormulaForFrame(kind) + (filterFormula.length() > 0 ? " & " + filterFormula : "");
+		}
+
+		public static String getFramedElementStartsFormula(final List<String> keys, final List<Object> values, final Class<?> kind) {
+			String filterFormula = "";
+			for (int i = 0; i < keys.size(); i++) {
+				String key = keys.get(i);
+				Object value = values.get(i);
+				String curformula = convertToStartsFormula(key, value);
 				filterFormula = filterFormula + (filterFormula.length() > 0 ? " & " : "") + curformula;
 			}
 			return getFormulaForFrame(kind) + (filterFormula.length() > 0 ? " & " + filterFormula : "");

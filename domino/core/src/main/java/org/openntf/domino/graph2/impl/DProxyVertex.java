@@ -114,7 +114,7 @@ public class DProxyVertex extends DVertex {
 		if (isGraphKey(key)) {
 			return super.getProperty(key);
 		} else if ("form".equalsIgnoreCase(key)) {
-			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
+			//			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
 			Object localChk = super.getProperty(key);
 			if (localChk == null || String.valueOf(localChk).length() == 0) {
 				return null;
@@ -218,5 +218,15 @@ public class DProxyVertex extends DVertex {
 			}
 		}
 	}
+
+	//	@Override
+	//	public Document asDocument() {
+	//		Document result = null;
+	//		Object raw = getProxyDelegate();
+	//		if (raw instanceof Document) {
+	//			result = (Document) raw;
+	//		}
+	//		return result;
+	//	}
 
 }

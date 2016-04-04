@@ -131,8 +131,14 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		List<Vertex> vertList = new ArrayList<Vertex>();
 		for (Edge edge : list_) {
 			if (edge instanceof DEdge) {
-				Vertex other = ((DEdge) edge).getOtherVertex(sourceVertex_);
-				vertList.add(other);
+				try {
+					Vertex other = ((DEdge) edge).getOtherVertex(sourceVertex_);
+					vertList.add(other);
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			} else {
+				//				System.out.println("TEMP DEBUG edge is actually a " + edge.getClass().getName());
 			}
 		}
 		FramedVertexList<?> result = new FramedVertexList<VertexFrame>(this.framedGraph, sourceVertex_, vertList, null);
@@ -192,7 +198,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		return getGraph().getTypeRegistry().getPropertiesGetters(type);
 	}
 
-	protected DFramedTransactionalGraph<?> getGraph() {
+	public DFramedTransactionalGraph<?> getGraph() {
 		return (DFramedTransactionalGraph<?>) framedGraph;
 	}
 
@@ -392,9 +398,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	private static final EdgeFrame[] EF = new EdgeFrame[1];
 
-	public FramedEdgeList<T> sortBy(final List<CaseInsensitiveString> keys) {
+	public FramedEdgeList<T> sortBy(final List<CaseInsensitiveString> keys, final boolean desc) {
 		EdgeFrame[] array = toArray(EF);
-		Arrays.sort(array, new DGraphUtils.EdgeFrameComparator(getGraph(), keys));
+		Arrays.sort(array, new DGraphUtils.EdgeFrameComparator(getGraph(), keys, desc));
 		return new FramedEdgeList<T>(framedGraph, sourceVertex_, convertToEdges(array), kind);
 	}
 }

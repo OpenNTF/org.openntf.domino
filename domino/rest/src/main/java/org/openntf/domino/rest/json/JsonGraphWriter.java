@@ -16,9 +16,7 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.NotesException;
-
+import org.openntf.domino.DateTime;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.resources.frames.JsonFrameAdapter;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
@@ -86,11 +84,7 @@ public class JsonGraphWriter extends JsonWriter {
 	}
 
 	private String dateToString(DateTime paramDateTime, boolean paramBoolean) throws IOException {
-		try {
-			return dateToString(paramDateTime.toJavaDate(), paramBoolean);
-		} catch (NotesException localNotesException) {
-			throw new AbstractIOException(localNotesException, "");
-		}
+		return dateToString(paramDateTime.toJavaDate(), paramBoolean);
 	}
 
 	private String dateToString(Date paramDate, boolean paramBoolean) throws IOException {
@@ -131,6 +125,9 @@ public class JsonGraphWriter extends JsonWriter {
 		} else if (paramObject instanceof Set) {
 			// System.out.println("TEMP DEBUG outObject received a Set");
 			outArrayLiteral(((Set) paramObject).toArray());
+		} else if (paramObject instanceof DateTime) {
+			// System.out.println("TEMP DEBUG outObject received a Set");
+			outArrayLiteral(paramObject);
 		} else {
 			// Class<?> clazz = paramObject.getClass();
 			// String name = clazz.getName();
@@ -162,22 +159,18 @@ public class JsonGraphWriter extends JsonWriter {
 				return;
 			}
 			if (paramObject instanceof DateTime) {
-				try {
-					if (((DateTime) paramObject).getDateOnly().length() == 0) {
-						outStringLiteral(timeOnlyToString(((DateTime) paramObject).toJavaDate()));
-						return;
-					}
-
-					if (((DateTime) paramObject).getTimeOnly().length() == 0) {
-						outStringLiteral(dateOnlyToString(((DateTime) paramObject).toJavaDate()));
-						return;
-					}
-
-					outStringLiteral(dateToString(((DateTime) paramObject).toJavaDate(), true));
+				if (((DateTime) paramObject).getDateOnly().length() == 0) {
+					outStringLiteral(timeOnlyToString(((DateTime) paramObject).toJavaDate()));
 					return;
-				} catch (NotesException localNotesException) {
-					throw new AbstractIOException(localNotesException, "");
 				}
+
+				if (((DateTime) paramObject).getTimeOnly().length() == 0) {
+					outStringLiteral(dateOnlyToString(((DateTime) paramObject).toJavaDate()));
+					return;
+				}
+
+				outStringLiteral(dateToString(((DateTime) paramObject).toJavaDate(), true));
+				return;
 			}
 			if (paramObject instanceof Vector) {
 				startArray();
@@ -261,6 +254,9 @@ public class JsonGraphWriter extends JsonWriter {
 			outArrayLiteral(paramObject, paramBoolean);
 		} else if (paramObject instanceof JsonReference) {
 			outReference((JsonReference) paramObject);
+		} else if (paramObject instanceof DateTime) {
+			DateTime dt = (DateTime) paramObject;
+			outDateLiteral_(dt.toJavaDate());
 		} else if (paramObject instanceof Date) {
 			outDateLiteral_((Date) paramObject);
 		} else {

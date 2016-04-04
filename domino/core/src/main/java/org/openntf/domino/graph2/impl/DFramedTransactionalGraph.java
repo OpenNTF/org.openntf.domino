@@ -239,6 +239,28 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
+	public <F> Iterable<F> getFilteredElementsStarts(final String classname, final List<CaseInsensitiveString> keys,
+			final List<CaseInsensitiveString> values) {
+		//		System.out.println("Getting a filtered list of elements of type " + classname);
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		Class<?> chkClass = getClassFromName(classname);
+		if (chkClass != null) {
+			store = base.findElementStore(chkClass);
+			if (store != null) {
+				List<String> keystrs = CaseInsensitiveString.toStrings(keys);
+				List<Object> valobj = new ArrayList<Object>(values);
+				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementStartsFormula(keystrs, valobj, chkClass);
+				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
+				return this.frameElements(elements, null);
+			} else {
+				return null;
+			}
+		} else {
+			throw new IllegalArgumentException("Class " + classname + " not registered in graph");
+		}
+	}
+
 	public Element getElement(final Object id) {
 		DGraph base = (DGraph) this.getBaseGraph();
 		org.openntf.domino.graph2.DElementStore store = null;

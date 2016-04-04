@@ -26,6 +26,7 @@ import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DEdge;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DProxyVertex;
+import org.openntf.domino.graph2.impl.DVertex;
 import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
@@ -48,6 +49,22 @@ public class JsonFrameAdapter implements JsonObject {
 			throw new IllegalArgumentException("Cannot verify modification time of a non-framed object: "
 					+ object.getClass().getName());
 		}
+	}
+
+	public static VertexFrame toVertexFrame(DFramedTransactionalGraph graph, Edge edge, Vertex source) {
+		VertexFrame result = null;
+		Vertex other = null;
+		if (edge instanceof DEdge) {
+			try {
+				other = ((DEdge) edge).getOtherVertex(source);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		} else {
+			System.out.println("TEMP DEBUG edge is actually a " + edge.getClass().getName());
+		}
+		result = (VertexFrame) graph.frame(other, null);
+		return result;
 	}
 
 	protected Object frame_;
@@ -151,6 +168,13 @@ public class JsonFrameAdapter implements JsonObject {
 	public boolean getIncludeEdges() {
 		if (parameters_ != null) {
 			return parameters_.getIncludeEdges();
+		}
+		return false;
+	}
+
+	public boolean getDescending() {
+		if (parameters_ != null) {
+			return parameters_.getDescending();
 		}
 		return false;
 	}
@@ -415,22 +439,31 @@ public class JsonFrameAdapter implements JsonObject {
 				Method crystal = getIncidences().get(label);
 				if (crystal != null) {
 					try {
-						result = crystal.invoke(frame, (Object[]) null);
-						// System.out.println("Invoked " + crystal.getName() +
-						// " against an object of type "
-						// + frame.getClass().getName() + ". Result is a " +
-						// result.getClass().getName());
+						try {
+							result = crystal.invoke(frame, (Object[]) null);
+						} catch (Throwable t) {
+							System.err.println("TEMP DEBUG Ignoring an issue with an invokation... ");
+						}
 
+						if (!(result instanceof Iterable)) {
+							if (result instanceof EdgeFrame) {
+								Vertex v = ((VertexFrame) frame).asVertex();
+								List<Edge> edges = new org.openntf.domino.graph2.impl.DEdgeList((DVertex) v);
+								edges.add(((EdgeFrame) result).asEdge());
+								result = new FramedEdgeList(getGraph(), ((VertexFrame) frame).asVertex(), edges,
+										crystal.getReturnType());
+							}
+
+						}
 						if (getIncludeVertices()) {
 							// System.out.println("TEMP DEBUG: Turning EdgeList into VertexList");
 							if (result instanceof DEdgeList) {
 								result = ((DEdgeList) result).toVertexList();
-
 							} else if (result instanceof FramedEdgeList) {
 								result = ((FramedEdgeList<?>) result).toVertexList();
 							} else {
-								// System.err.println("TEMP DEBUG: Expected a DEdgeList but got a "
-								// + result.getClass().getName());
+								System.err.println("TEMP DEBUG: Expected a DEdgeList but got a "
+										+ result.getClass().getName());
 							}
 						}
 						if (getFilterKeys() != null) {
@@ -473,10 +506,10 @@ public class JsonFrameAdapter implements JsonObject {
 						if (getOrderBys() != null) {
 							if (result instanceof FramedEdgeList) {
 								// System.out.println("Ordering an edge list");
-								result = ((FramedEdgeList<?>) result).sortBy(getOrderBys());
+								result = ((FramedEdgeList<?>) result).sortBy(getOrderBys(), getDescending());
 							} else if (result instanceof FramedVertexList) {
 								// System.out.println("Ordering a vertex list");
-								result = ((FramedVertexList<?>) result).sortBy(getOrderBys());
+								result = ((FramedVertexList<?>) result).sortBy(getOrderBys(), getDescending());
 							}
 						}
 
