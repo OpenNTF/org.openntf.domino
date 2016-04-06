@@ -38,8 +38,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements
-		org.openntf.domino.DateTime {
+public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session>
+		implements org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -183,7 +183,8 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 				try {
 					delegate.convertToZone(notesZone_, dst_);
 				} catch (Throwable t) {
-					log_.log(Level.WARNING, "Failed to convert a DateTime to zone " + notesZone_ + " with a dst of " + String.valueOf(dst_));
+					log_.log(Level.WARNING,
+							"Failed to convert a DateTime to zone " + notesZone_ + " with a dst of " + String.valueOf(dst_));
 				}
 			}
 			if (isAnyTime()) {
@@ -577,6 +578,46 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		return date_.after(compareDate.toJavaDate());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#isAfterIgnoreDate(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isAfterIgnoreDate(final org.openntf.domino.DateTime compareDate) {
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.YEAR, 2000);
+		Date d1 = cal.getTime();
+		cal.setTime(compareDate.toJavaDate());
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.YEAR, 2000);
+		Date d2 = cal.getTime();
+		return d1.after(d2);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#isAfterIgnoreTime(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isAfterIgnoreTime(final org.openntf.domino.DateTime compareDate) {
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date d1 = cal.getTime();
+		cal.setTime(compareDate.toJavaDate());
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date d2 = cal.getTime();
+		return d1.after(d2);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -585,6 +626,46 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	@Override
 	public boolean isBefore(final org.openntf.domino.DateTime compareDate) {
 		return date_.before(compareDate.toJavaDate());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#isBeforeIgnoreDate(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isBeforeIgnoreDate(final org.openntf.domino.DateTime compareDate) {
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.YEAR, 2000);
+		Date d1 = cal.getTime();
+		cal.setTime(compareDate.toJavaDate());
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.YEAR, 2000);
+		Date d2 = cal.getTime();
+		return d1.before(d2);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#isBeforeIgnoreTime(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isBeforeIgnoreTime(final org.openntf.domino.DateTime compareDate) {
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date d1 = cal.getTime();
+		cal.setTime(compareDate.toJavaDate());
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date d2 = cal.getTime();
+		return d1.before(d2);
 	}
 
 	/*
