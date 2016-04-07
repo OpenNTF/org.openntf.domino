@@ -27,6 +27,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Features;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.MultiIterable;
@@ -36,6 +37,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	private static final Logger log_ = Logger.getLogger(DGraph.class.getName());
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
 	private DConfiguration configuration_;
+	protected Graph extendedGraph_;
 
 	@SuppressWarnings("unused")
 	//	private DbCache dbCache_;
@@ -518,5 +520,23 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public DKeyResolver getKeyResolver(final Class<?> type) {
 		return getConfiguration().getKeyResolver(type);
+	}
+
+	@Override
+	public void setExtendedGraph(final Graph graph) {
+		extendedGraph_ = graph;
+	}
+
+	@Override
+	public Graph getExtendedGraph() {
+		return extendedGraph_;
+	}
+
+	@Override
+	public void flushCache() {
+		for (Long key : getElementStores().keySet()) {
+			DElementStore elemStore = getElementStores().get(key);
+			elemStore.flushCache();
+		}
 	}
 }

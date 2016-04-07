@@ -66,6 +66,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			List<CaseInsensitiveString> filtervalues = pm.getFilterValues();
 			List<CaseInsensitiveString> partialkeys = pm.getPartialKeys();
 			List<CaseInsensitiveString> partialvalues = pm.getPartialValues();
+			List<CaseInsensitiveString> startskeys = pm.getStartsKeys();
+			List<CaseInsensitiveString> startsvalues = pm.getStartsValues();
 
 			if (types.size() == 0) {
 				writer.outNull();
@@ -77,14 +79,18 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
 				} else if (partialkeys != null) {
 					elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
+				} else if (startskeys != null) {
+					elements = graph.getFilteredElementsStarts(typename.toString(), startskeys, startsvalues);
 				} else {
+					// System.out.println("TEMP DEBUG Getting elements for type "
+					// + typename);
 					elements = graph.getElements(typename.toString());
 				}
 
 				if (elements instanceof FramedEdgeList) {
 					FramedEdgeList<?> result = (FramedEdgeList<?>) elements;
 					if (pm.getOrderBys() != null) {
-						result = result.sortBy(pm.getOrderBys());
+						result = result.sortBy(pm.getOrderBys(), pm.getDescending());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
@@ -97,7 +103,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				} else if (elements instanceof FramedVertexList) {
 					FramedVertexList<?> result = (FramedVertexList<?>) elements;
 					if (pm.getOrderBys() != null) {
-						result = result.sortBy(pm.getOrderBys());
+						result = result.sortBy(pm.getOrderBys(), pm.getDescending());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
@@ -123,6 +129,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
 					} else if (partialkeys != null) {
 						elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
+					} else if (startskeys != null) {
+						elements = graph.getFilteredElementsStarts(typename.toString(), startskeys, startsvalues);
 					} else {
 						elements = graph.getElements(typename.toString());
 					}
@@ -144,7 +152,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 				if (vresult != null) {
 					if (pm.getOrderBys() != null) {
-						vresult = vresult.sortBy(pm.getOrderBys());
+						vresult = vresult.sortBy(pm.getOrderBys(), pm.getDescending());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
@@ -158,7 +166,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 				if (eresult != null) {
 					if (pm.getOrderBys() != null) {
-						eresult = eresult.sortBy(pm.getOrderBys());
+						eresult = eresult.sortBy(pm.getOrderBys(), pm.getDescending());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {

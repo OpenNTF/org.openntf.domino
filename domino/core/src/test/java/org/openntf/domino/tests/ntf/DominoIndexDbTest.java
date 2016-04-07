@@ -3,7 +3,7 @@ package org.openntf.domino.tests.ntf;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
-import org.openntf.domino.big.impl.IndexDatabase;
+import org.openntf.domino.big.IndexDatabase;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
@@ -30,7 +30,7 @@ public class DominoIndexDbTest implements Runnable {
 		Database indexDb = dir.createDatabase("index.nsf", true);
 		//		Database indexDb = session.getDatabase("", "index.nsf", true);
 		//		indexDb.open();
-		IndexDatabase index = new IndexDatabase(indexDb);
+		IndexDatabase index = new org.openntf.domino.big.impl.IndexDatabase(indexDb);
 		index.setCaseSensitive(true);
 
 		index.scanServer(session, "");

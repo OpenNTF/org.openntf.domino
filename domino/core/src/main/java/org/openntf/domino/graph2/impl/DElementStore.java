@@ -609,7 +609,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (originalDelegate instanceof Document) {
 					String pid = ((Document) originalDelegate).getMetaversalID();
 					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(pid);
-					System.out.println("Setting up proxy with id " + nc.toString());
+					//					System.out.println("Setting up proxy with id " + nc.toString());
 					try {
 						result.setProxiedId(nc);
 					} catch (Throwable t) {
@@ -617,9 +617,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				} else {
 					if (originalDelegate == null) {
-						System.out.println("No original delegate found for key " + String.valueOf(originalKey));
+						//						System.out.println("No original delegate found for key " + String.valueOf(originalKey));
 					} else {
-						System.err.println("original delegate returned a " + originalDelegate.getClass().getName());
+						//						System.err.println("original delegate returned a " + originalDelegate.getClass().getName());
 					}
 				}
 			}
@@ -1049,4 +1049,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return proxyResolver_;
 	}
 
+	@Override
+	public void flushCache() {
+		keyCache_ = null;
+		elementCache_ = null;
+	}
 }

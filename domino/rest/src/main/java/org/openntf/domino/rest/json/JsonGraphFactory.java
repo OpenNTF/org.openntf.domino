@@ -1,13 +1,20 @@
 package org.openntf.domino.rest.json;
 
+import com.ibm.commons.ResourceHandler;
+import com.ibm.commons.util.IteratorWrapper;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.json.JsonException;
 // import com.ibm.domino.services.util.*;
 import com.ibm.commons.util.io.json.JsonJavaFactory;
 import com.ibm.commons.util.io.json.JsonJavaObject;
+import com.ibm.commons.util.io.json.JsonObject;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.openntf.domino.types.CaseInsensitiveString;
 
 public class JsonGraphFactory extends JsonJavaFactory {
 	public static final JsonGraphFactory instance = new JsonGraphFactory();
@@ -36,7 +43,11 @@ public class JsonGraphFactory extends JsonJavaFactory {
 		if (arg0 instanceof List) {
 			return super.isArray(arg0);
 		} else if (arg0 instanceof Collection) {
-			return super.isArray(((Collection) arg0).toArray());
+			boolean result = super.isArray(((Collection) arg0).toArray());
+			// System.out.println("TEMP DEBUG Checking array status of a Collection of type "
+			// + arg0.getClass().getName()
+			// + ": " + String.valueOf(result));
+			return result;
 		}
 		return super.isArray(arg0);
 	}
@@ -66,6 +77,8 @@ public class JsonGraphFactory extends JsonJavaFactory {
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Iterator<Object> iterateArrayValues(Object paramObject) throws JsonException {
+		// System.out.println("TEMP DEBUG iterating array values from a " +
+		// paramObject.getClass().getName());
 		if (paramObject instanceof List) {
 			return super.iterateArrayValues(paramObject);
 		} else if (paramObject instanceof Collection) {
@@ -73,4 +86,69 @@ public class JsonGraphFactory extends JsonJavaFactory {
 		}
 		return super.iterateArrayValues(paramObject);
 	}
+
+	@Override
+	public Iterator<String> iterateObjectProperties(Object object) throws JsonException {
+		Iterator it = super.iterateObjectProperties(object);
+		Iterator<String> result = new IteratorWrapper(it) {
+			@Override
+			protected String wrap(Object object) {
+				if (object instanceof CharSequence) {
+					return ((CharSequence) object).toString();
+				} else {
+					return String.valueOf(object);
+				}
+			}
+
+			@Override
+			public Object next() {
+				Object result = super.next();
+				// System.out.println("TEMP DEBUG ObjectProperties Iterator returning a "
+				// + result.getClass().getName()
+				// + " of " + String.valueOf(result));
+				return result;
+			}
+		};
+		return result;
+	}
+
+	private static Class<?> getKeyType(Map map) {
+		if (map != null && !map.isEmpty()) {
+			Object firstKey = map.keySet().iterator().next();
+			if (firstKey != null) {
+				return firstKey.getClass();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Object getProperty(Object paramObject, String paramString) throws JsonException {
+		// NTF Can't use the super method because we may be working with a
+		// CaseInsensitiveHashMap and all of IBM's code insists on String
+		// instead of CharSequence
+		// Object result = super.getProperty(paramObject, paramString);
+		Object result = null;
+		if (paramObject instanceof Map) {
+			Class<?> keyType = getKeyType((Map) paramObject);
+			if (CaseInsensitiveString.class.equals(keyType)) {
+				CaseInsensitiveString localKey = new CaseInsensitiveString(paramString);
+				result = ((Map) paramObject).get(localKey);
+			} else {
+				result = ((Map) paramObject).get(paramString);
+			}
+		} else if (paramObject instanceof JsonObject) {
+			result = ((JsonObject) paramObject).getJsonProperty(paramString);
+		} else {
+			throw new IllegalArgumentException(StringUtil.format(
+					ResourceHandler.getString("JsonJavaFactory.InvalidJsonobjectclass0.1"),
+					new Object[] { (paramObject != null) ? paramObject.getClass().toString() : "null" }));
+		}
+		// System.out.println("TEMP DEBUG Getting a property of " + paramString
+		// + " from an object of type "
+		// + paramObject.getClass().getName() + " yielding a "
+		// + (result == null ? "NULL" : result.getClass().getName()));
+		return result;
+	}
+
 }

@@ -147,7 +147,7 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		return result;
 	}
 
-	protected DFramedTransactionalGraph<?> getGraph() {
+	public DFramedTransactionalGraph<?> getGraph() {
 		return (DFramedTransactionalGraph<?>) framedGraph;
 	}
 
@@ -372,10 +372,10 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 
 	private static final VertexFrame[] VF = new VertexFrame[1];
 
-	public FramedVertexList<T> sortBy(final List<CaseInsensitiveString> keys) {
+	public FramedVertexList<T> sortBy(final List<CaseInsensitiveString> keys, final boolean desc) {
 		//TODO: optimize! This should really be resorting the Vertex list but using the VertexFrame as the criteria
 		VertexFrame[] array = toArray(VF);
-		Arrays.sort(array, new DGraphUtils.VertexFrameComparator(getGraph(), keys));
+		Arrays.sort(array, new DGraphUtils.VertexFrameComparator(getGraph(), keys, desc));
 		return new FramedVertexList<T>(framedGraph, sourceVertex_, toVertexList(array), kind);
 	}
 }

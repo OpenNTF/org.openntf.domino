@@ -32,7 +32,9 @@ public class JsonFrameListAdapter implements JsonArray {
 		@Override
 		public Object next() {
 			Object raw = iterator_.next();
-			if (raw instanceof VertexFrame) {
+			if (raw == null) {
+				return null;
+			} else if (raw instanceof VertexFrame) {
 				return new JsonFrameAdapter(parent_.getGraph(), (VertexFrame) raw, parent_.getParamMap());
 			} else if (raw instanceof EdgeFrame) {
 				return new JsonFrameAdapter(parent_.getGraph(), (EdgeFrame) raw, parent_.getParamMap());

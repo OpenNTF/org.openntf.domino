@@ -11,7 +11,7 @@ import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
 public enum Parameters {
-	ID, KEY, TYPE, EDGES, VERTICES, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, ADD, REMOVE;
+	ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE;
 
 	public static ParamMap toParamMap(UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
@@ -79,6 +79,14 @@ public enum Parameters {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PARTIALVALUE));
 		}
 
+		public List<CaseInsensitiveString> getStartsKeys() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.STARTSKEY));
+		}
+
+		public List<CaseInsensitiveString> getStartsValues() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.STARTSVALUE));
+		}
+
 		public List<CaseInsensitiveString> getOrderBys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.ORDERBY));
 		}
@@ -123,6 +131,14 @@ public enum Parameters {
 
 		public boolean getIncludeEdges() {
 			return get(Parameters.EDGES) != null;
+		}
+
+		public boolean getIncludeCounts() {
+			return get(Parameters.COUNTS) != null;
+		}
+
+		public boolean getDescending() {
+			return get(Parameters.DESC) != null;
 		}
 
 	}

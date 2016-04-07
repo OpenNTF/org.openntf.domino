@@ -147,8 +147,13 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (store != null) {
 			String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(kind);
 			Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
+			if (elements instanceof List) {
+				int size = ((List) elements).size();
+				//				System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + kind.getName());
+			}
 			return this.frameElements(elements, kind);
 		} else {
+			//			System.out.println("TEMP DEBUG Unable to find an element store for type " + kind.getName());
 			return null;
 		}
 	}
@@ -160,6 +165,9 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 		if (chkClass == null) {
 			chkClass = getTypeRegistry().findClassByName(classname);
+		}
+		if (chkClass == null) {
+			//			System.out.println("TEMP DEBUG Unable to find an element store for type " + classname);
 		}
 		return chkClass;
 	}
@@ -173,8 +181,13 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			if (store != null) {
 				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(chkClass);
 				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
+				//				if (elements instanceof List) {
+				//					int size = ((List) elements).size();
+				//					System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + classname);
+				//				}
 				return this.frameElements(elements, null);
 			} else {
+				//				System.out.println("TEMP DEBUG Unable to find an element store for type " + classname);
 				return null;
 			}
 		} else {
@@ -216,6 +229,28 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				List<String> keystrs = CaseInsensitiveString.toStrings(keys);
 				List<Object> valobj = new ArrayList<Object>(values);
 				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementPartialFormula(keystrs, valobj, chkClass);
+				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
+				return this.frameElements(elements, null);
+			} else {
+				return null;
+			}
+		} else {
+			throw new IllegalArgumentException("Class " + classname + " not registered in graph");
+		}
+	}
+
+	public <F> Iterable<F> getFilteredElementsStarts(final String classname, final List<CaseInsensitiveString> keys,
+			final List<CaseInsensitiveString> values) {
+		//		System.out.println("Getting a filtered list of elements of type " + classname);
+		org.openntf.domino.graph2.DElementStore store = null;
+		DGraph base = (DGraph) this.getBaseGraph();
+		Class<?> chkClass = getClassFromName(classname);
+		if (chkClass != null) {
+			store = base.findElementStore(chkClass);
+			if (store != null) {
+				List<String> keystrs = CaseInsensitiveString.toStrings(keys);
+				List<Object> valobj = new ArrayList<Object>(values);
+				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementStartsFormula(keystrs, valobj, chkClass);
 				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
 				return this.frameElements(elements, null);
 			} else {
@@ -334,9 +369,9 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	public <F> F addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
-		if (id != null) {
-			System.out.println("TEMP DEBUG Adding an edge with a forced id of " + String.valueOf(id));
-		}
+		//		if (id != null) {
+		//			System.out.println("TEMP DEBUG Adding an edge with a forced id of " + String.valueOf(id));
+		//		}
 		return (F) super.addEdge(id, outVertex, inVertex, label);
 	}
 

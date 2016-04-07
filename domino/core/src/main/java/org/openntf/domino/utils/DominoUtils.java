@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -68,6 +69,9 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
+	//	private static ConcurrentHashMap CHM = null;
+	//	private static ReentrantLock RL = null;
+
 	//	private static ClassLoader defaultLoader = null;
 	//
 	//	public static void TEMP_SET_DEFAULT_CLASSLOADER(final ClassLoader loader) {
@@ -81,6 +85,8 @@ public enum DominoUtils {
 	public static final int EQUAL = 0;
 	public static final int GREATER_THAN = 1;
 
+	protected static AtomicInteger CLASS_ERROR_COUNT = new AtomicInteger(0);
+
 	/** The Constant log_. */
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
@@ -89,29 +95,46 @@ public enum DominoUtils {
 
 	public static Class<?> getClass(final CharSequence className) {
 		Class<?> result = null;
+		String pname = null;
+		String sname = null;
+		Class<?> pclass = null;
+		String cname = className.toString();
+		if (cname.startsWith("[L")) {
+			cname = cname.substring(2);
+		}
+		if (cname.endsWith(";")) {
+			cname = cname.substring(0, cname.length() - 1);
+		}
 		try {
-			String pname = null;
-			String sname = null;
-			String cname = className.toString();
 			int pos = cname.indexOf('$');
 			if (pos > -1) {
 				pname = cname.substring(0, pos);
 				sname = cname.substring(pos + 1);
-				Class<?> pclass = Class.forName(pname);
-				for (Class<?> curClass : pclass.getClasses()) {
+				pclass = Class.forName(pname);
+				for (Class<?> curClass : pclass.getDeclaredClasses()) {
 					if (curClass.getSimpleName().equals(sname)) {
+						//						Factory.println("FOUND! inner class " + curClass.getSimpleName());
 						result = curClass;
 					}
+				}
+				if (result == null) {
+					//					Factory.println("Failed to default load a class called " + cname + " by parsing to " + pname + " and " + sname
+					//							+ ". The pname resolved to " + (pclass == null ? "null" : pclass.getName()));
 				}
 			} else {
 				result = Class.forName(className.toString());
 			}
 		} catch (Throwable t) {
+			//			if (cname.contains("$")) {
+			//			Factory.println("Failed to default load a class called " + cname + " by parsing to " + pname + " and " + sname
+			//					+ ". The pname resolved to " + (pclass == null ? "null" : pclass.getName()));
+			//			}
 			//			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			//			Factory.println("Initial attempt to find " + className.toString() + " using a class loader of type " + cl.getClass().getName()
 			//					+ " (" + System.identityHashCode(cl) + ") failed.");
 		}
 		if (result == null) {
+			//			Factory.println("TEMP DEBUG Default failed so therefore we're trying privileged versions...");
 			try {
 				result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
 					@Override
@@ -120,14 +143,18 @@ public enum DominoUtils {
 						ClassLoader cl = Thread.currentThread().getContextClassLoader();
 						String pname = null;
 						String sname = null;
+						String cname = className.toString();
+						Class<?> pclass = null;
 						try {
-							String cname = className.toString();
+							if (cname.startsWith("[L")) {
+								cname = cname.substring(2);
+							}
 							int pos = cname.indexOf('$');
 							if (pos > -1) {
 								pname = cname.substring(0, pos);
 								sname = cname.substring(pos + 1);
-								Class<?> pclass = Class.forName(pname, false, cl);
-								for (Class<?> curClass : pclass.getClasses()) {
+								pclass = Class.forName(pname, false, cl);
+								for (Class<?> curClass : pclass.getDeclaredClasses()) {
 									if (curClass.getSimpleName().equals(sname)) {
 										result = curClass;
 									}
@@ -138,12 +165,14 @@ public enum DominoUtils {
 							}
 						} catch (java.lang.ClassNotFoundException e) {
 							try {
-								//								Factory.println("Could load class " + pname + " using a class loader of type " + cl.getClass().getName()
-								//										+ " (" + System.identityHashCode(cl) + "). Trying new class loader.");
+								if (cname.contains("$")) {
+									//									Factory.println("Failed to contextClassLoader load a class called " + cname + " by parsing to " + pname
+									//											+ " and " + sname + ". The pname resolved to " + (pclass == null ? "null" : pclass.getName()));
+								}
 								cl = DominoUtils.class.getClassLoader();
-								Class<?> pclass = cl.loadClass(pname);
+								pclass = cl.loadClass(pname);
 								if (sname != null) {
-									for (Class<?> curClass : pclass.getClasses()) {
+									for (Class<?> curClass : pclass.getDeclaredClasses()) {
 										if (curClass.getSimpleName().equals(sname)) {
 											result = curClass;
 										}
@@ -152,11 +181,16 @@ public enum DominoUtils {
 									result = pclass;
 								}
 							} catch (Exception e1) {
+								if (cname.contains("$")) {
+									//									Factory.println("Failed to DominoUtils.getClassLoader() load a class called " + cname
+									//											+ " by parsing to " + pname + " and " + sname + ". The pname resolved to "
+									//											+ (pclass == null ? "null" : pclass.getName()));
+								}
 								cl = ClassLoader.getSystemClassLoader();
 								try {
-									Class<?> pclass = cl.loadClass(pname);
+									pclass = cl.loadClass(pname);
 									if (sname != null) {
-										for (Class<?> curClass : pclass.getClasses()) {
+										for (Class<?> curClass : pclass.getDeclaredClasses()) {
 											if (curClass.getSimpleName().equals(sname)) {
 												result = curClass;
 											}
@@ -165,24 +199,33 @@ public enum DominoUtils {
 										result = pclass;
 									}
 								} catch (Exception e2) {
+									e2.printStackTrace();
+									DominoUtils.handleException(e2);
 									//									Factory.println("STILL couldn't get class " + pname + " using system classloader "
 									//											+ cl.getClass().getName());
 								}
 							}
 						} catch (Throwable t) {
+							t.printStackTrace();
 							DominoUtils.handleException(t);
 						}
 						return result;
 					}
 				});
 			} catch (AccessControlException e) {
+				e.printStackTrace();
 				DominoUtils.handleException(e);
 			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
 				DominoUtils.handleException(e);
 			}
 		}
 		if (result == null) {
-			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details.");
+			int count = DominoUtils.CLASS_ERROR_COUNT.incrementAndGet();
+			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details. Incident " + count);
+			//			if (count > 50) {
+			//				Thread.currentThread().interrupt();
+			//			}
 		}
 		return result;
 	}
@@ -236,6 +279,12 @@ public enum DominoUtils {
 				result = super.resolveClass(desc);
 			}
 			return result;
+		}
+
+		@Override
+		protected ObjectStreamClass readClassDescriptor() throws IOException, ClassNotFoundException {
+			// TODO Auto-generated method stub
+			return super.readClassDescriptor();
 		}
 	}
 
@@ -992,7 +1041,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

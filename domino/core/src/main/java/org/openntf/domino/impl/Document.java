@@ -1341,6 +1341,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 										+ " in document "
 										+ this.getMetaversalID()
 										+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 						Vector<Object> result = new Vector<Object>(1);
@@ -1647,12 +1648,14 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 	public MIMEEntity getMIMEEntity(final String itemName) {
 		// checkMimeOpen(); This is not needed here
 		// 14-03-14 RPr: disabling convertMime is required here! (Not always... but in some cases)
-		if (!containsMimes())
+		if (!containsMimes()) {
 			return null;
+		}
 		boolean convertMime = getAncestorSession().isConvertMime();
 		try {
-			if (convertMime)
+			if (convertMime) {
 				getAncestorSession().setConvertMime(false);
+			}
 			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName);
 			if (openMIMEEntities_ != null && openMIMEEntities_.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");
@@ -1662,9 +1665,9 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "Item=" + itemName);
 		} finally {
-			if (convertMime)
+			if (convertMime) {
 				getAncestorSession().setConvertMime(true);
-
+			}
 		}
 		return null;
 	}
@@ -3181,7 +3184,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						String newunid = DominoUtils.toUnid(new Date().getTime());
 						String message = "Unable to save a document with id " + getUniversalID()
 								+ " because that id already exists. Saving a " + this.getFormName()
-								+ (this.hasItem("$$Key") ? " (" + getItemValueString("$$Key") + ")" : "")
+								+ (this.hasItem("$$Key") ? " (key: '" + getItemValueString("$$Key") + "')" : "")
 								+ " to a different unid instead: " + newunid;
 						setUniversalID(newunid);
 						try {
@@ -3919,7 +3922,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		Object value = null;
 		String keyS = key.toString();
 		try {
-			value = this.getItemValue(keyS);
+			value = this.getItemValue(keyS, Object.class);
 		} catch (OpenNTFNotesException e) {
 			if (e.getCause() instanceof NotesException || (e.getCause() != null && e.getCause().getCause() instanceof NotesException))
 				value = getFirstItem(keyS, true);

@@ -1114,8 +1114,26 @@ public enum Strings {
 		return false;
 	}
 
-	public String asString(final Object object, final String ifNull) {
+	public static String asString(final Object object, final String ifNull) {
 		return object == null ? ifNull : TypeUtils.toString(object);
+	}
+
+	public static String[] asStringArray(final boolean allowBlanks, final String... args) {
+		String[] result = new String[args.length];
+		int nbCount = 0;
+		for (int i = 0; i < args.length; i++) {
+			if (args[i] != null) {
+				if (allowBlanks) {
+					result[nbCount++] = args[i];
+				} else {
+					if (args[i].length() > 0)
+						result[nbCount++] = args[i];
+				}
+			}
+		}
+		String[] returning = new String[nbCount];
+		System.arraycopy(result, 0, returning, 0, nbCount);
+		return returning;
 	}
 
 }
