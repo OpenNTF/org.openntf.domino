@@ -81,8 +81,8 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 
-public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
-org.openntf.domino.Session {
+public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
+		implements org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -775,8 +775,8 @@ org.openntf.domino.Session {
 				//				}
 			} catch (NotesException e) {
 				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-					throw new UserAccessException(
-							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
+					throw new UserAccessException("User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server,
+							e);
 				} else {
 					DominoUtils.handleException(e, this);
 					return null;
@@ -805,7 +805,7 @@ org.openntf.domino.Session {
 	 */
 	@Override
 	public org.openntf.domino.Database getDatabase(final String apiPath) {
-		String server = "";
+		String server = getServerName();
 		String dbpath = apiPath;
 		int sep = apiPath.indexOf("!!");
 		if (sep > -1) {
