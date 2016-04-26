@@ -199,8 +199,8 @@ public enum DominoUtils {
 										result = pclass;
 									}
 								} catch (Exception e2) {
-									e2.printStackTrace();
-									DominoUtils.handleException(e2);
+									//									e2.printStackTrace();
+									//									DominoUtils.handleException(e2);
 									//									Factory.println("STILL couldn't get class " + pname + " using system classloader "
 									//											+ cl.getClass().getName());
 								}
@@ -1041,7 +1041,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-			// TODO Need to work out how to get from properties file in NSF
+				// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

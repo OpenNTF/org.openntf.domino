@@ -204,6 +204,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
+		org.apache.wink.common.internal.registry.metadata.ResourceMetadataCollector rc;
 		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
@@ -230,8 +231,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
 				cisMap.put(cis, jsonItems.get(jsonKey));
 			}
-			String rawType = jsonItems.getAsString("@type");
-			if (rawType != null) {
+			String rawType = jsonItems.getAsString("@type").trim();
+			if (rawType != null && rawType.length() > 0) {
 				try {
 					Class<?> type = graph.getTypeRegistry().findClassByName(rawType);
 					if (VertexFrame.class.isAssignableFrom(type)) {
@@ -276,7 +277,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				} catch (IllegalArgumentException iae) {
 					throw new RuntimeException(iae);
 				}
-
+			} else {
+				System.err.println("Cannot POST without an @type in the JSON");
 			}
 		} else {
 			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items found.");

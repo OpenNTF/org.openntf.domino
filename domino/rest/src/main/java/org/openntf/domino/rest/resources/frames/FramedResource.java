@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
@@ -51,6 +52,7 @@ import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -182,6 +184,7 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
+	// @OPTIONS
 	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -379,6 +382,7 @@ public class FramedResource extends AbstractResource {
 					// TODO no id
 				} else {
 					for (String id : ids) {
+						// System.out.println("TEMP DEBUG POSTing to " + id);
 						NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
 						Object element = graph.getElement(nc, null);
 						if (element instanceof VertexFrame) {
@@ -389,7 +393,8 @@ public class FramedResource extends AbstractResource {
 							Method method = adders.get(rawLabel);
 							if (method != null) {
 								String rawId = jsonItems.getAsString("@id");
-								Object otherElement = graph.getElement(rawId, null);
+								NoteCoordinate othernc = NoteCoordinate.Utils.getNoteCoordinate(rawId);
+								Object otherElement = graph.getElement(othernc, null);
 								if (otherElement instanceof VertexFrame) {
 									VertexFrame otherVertex = (VertexFrame) otherElement;
 									try {
@@ -420,32 +425,26 @@ public class FramedResource extends AbstractResource {
 										e.printStackTrace();
 									}
 								} else {
-									// Factory.println("otherElement is not a VertexFrame. It's a "
-									// + otherElement.getClass().getName());
+									Factory.println("otherElement is not a VertexFrame. It's a "
+											+ (otherElement == null ? "null" : DGraphUtils.findInterface(otherElement)
+													.getName()));
 								}
 							} else {
-								// Class[] interfaces =
-								// element.getClass().getInterfaces();
-								// String intList = "";
-								// for (Class inter : interfaces) {
-								// intList = intList + inter.getName() + ", ";
-								// }
-								// String methList = "";
-								// for (CaseInsensitiveString key :
-								// adders.keySet())
-								// {
-								// methList = methList + key.toString() + ", ";
-								// }
-								// Factory.println("No method found for " +
-								// rawLabel
-								// + " on element " + intList + ": "
-								// + ((VertexFrame) element).asVertex().getId()
-								// +
-								// " methods " + methList);
+								Class[] interfaces = element.getClass().getInterfaces();
+								String intList = "";
+								for (Class inter : interfaces) {
+									intList = intList + inter.getName() + ", ";
+								}
+								String methList = "";
+								for (CaseInsensitiveString key : adders.keySet()) {
+									methList = methList + key.toString() + ", ";
+								}
+								Factory.println("No method found for " + rawLabel + " on element " + intList + ": "
+										+ ((VertexFrame) element).asVertex().getId() + " methods " + methList);
 							}
 						} else {
-							// Factory.println("element is not a VertexFrame. It's a "
-							// + element.getClass().getName());
+							org.openntf.domino.utils.Factory.println("element is not a VertexFrame. It's a "
+									+ element.getClass().getName());
 						}
 					}
 				}

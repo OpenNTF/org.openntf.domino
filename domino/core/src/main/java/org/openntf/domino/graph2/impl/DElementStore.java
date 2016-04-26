@@ -423,11 +423,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 			if (delegate == null) {
 				Object localkey = localizeKey(id);
-				try {
-					delegate = findElementDelegate(localkey, type);
-				} catch (IllegalStateException ise) {
-					ise.printStackTrace();
-				}
+				//				try {
+				delegate = findElementDelegate(localkey, type);
+				//				} catch (IllegalStateException ise) {
+				//					ise.printStackTrace();
+				//				}
 			}
 			if (delegate != null) {
 				if (delegate instanceof Element) {
@@ -632,7 +632,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
-			IllegalArgumentException {
+	IllegalArgumentException {
 		Object result = null;
 		Object del = null;
 		del = getStoreDelegate();
