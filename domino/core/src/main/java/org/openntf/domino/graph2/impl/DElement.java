@@ -27,6 +27,8 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
 
+import javolution.util.FastMap;
+
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
 	private static final long serialVersionUID = 1L;
