@@ -9,7 +9,6 @@ import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
-import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
@@ -22,9 +21,11 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedTransactionalGraph;
+import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
@@ -147,10 +148,10 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (store != null) {
 			String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(kind);
 			Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
-			if (elements instanceof List) {
-				int size = ((List) elements).size();
-				//				System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + kind.getName());
-			}
+			//			if (elements instanceof List) {
+			//				int size = ((List) elements).size();
+			//				System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + kind.getName());
+			//			}
 			return this.frameElements(elements, kind);
 		} else {
 			//			System.out.println("TEMP DEBUG Unable to find an element store for type " + kind.getName());
@@ -159,9 +160,9 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	protected Class<?> getClassFromName(final String classname) {
-		Class<?> chkClass = getTypeRegistry().getType(DVertexFrame.class, classname);
+		Class<?> chkClass = getTypeRegistry().getType(VertexFrame.class, classname);
 		if (chkClass == null) {
-			chkClass = getTypeRegistry().getType(DEdgeFrame.class, classname);
+			chkClass = getTypeRegistry().getType(EdgeFrame.class, classname);
 		}
 		if (chkClass == null) {
 			chkClass = getTypeRegistry().findClassByName(classname);
@@ -461,10 +462,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		@SuppressWarnings("deprecation")
 		F result = null;
 		if (element instanceof Edge) {
-			//			klazz = (Class<F>) (klazz == null ? DEdgeFrame.class : kind);
 			result = frame((Edge) element, kind);
 		} else if (element instanceof Vertex) {
-			//			klazz = (Class<F>) (klazz == null ? DVertexFrame.class : kind);
 			result = frame((Vertex) element, kind);
 		} else {
 			throw new IllegalStateException("Cannot frame an element of type " + element.getClass().getName());
@@ -479,7 +478,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	@Override
 	public <F> F frame(final Edge edge, final Class<F> kind) {
-		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
+		Class<F> klazz = (Class<F>) (kind == null ? EdgeFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
@@ -526,7 +525,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (isView) {
 			kind = (Class<F>) ViewVertex.class;
 		}
-		Class<F> klazz = (Class<F>) (kind == null ? DVertexFrame.class : kind);
+		Class<F> klazz = (Class<F>) (kind == null ? VertexFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		DTypeManager manager = config.getTypeManager();
 		//		if (manager == null)

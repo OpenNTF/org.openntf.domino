@@ -29,35 +29,6 @@ import com.tinkerpop.blueprints.Graph;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class IndexStore extends DElementStore implements IndexDatabase, IScannerStateManager {
 
-	public static final String BASE_DXL = "<?xml version='1.0'?>\r\n" + "<!DOCTYPE database SYSTEM 'xmlschemas/domino_9_0_1.dtd'>\r\n"
-			+ "<database xmlns='http://www.lotus.com/dxl' version='9.0' maintenanceversion='1.0'\r\n" + "  title='redpill Term Index' \r\n"
-			+ " allowstoredforms='false' maintainunread='false' increasemaxfields='true'>\r\n" + "<acl maxinternetaccess='manager'>\r\n"
-			+ "<aclentry name='-Default-' default='true' level='reader' createpersonalagents='false'\r\n"
-			+ " createpersonalviews='false' createlsjavaagents='false' writepublicdocs='false'/>\r\n"
-			+ "<aclentry name='Anonymous' level='noaccess' readpublicdocs='false' writepublicdocs='false'/>\r\n"
-			+ "<aclentry name='LocalDomainServers' type='servergroup' level='manager' deletedocs='true'/>\r\n"
-			+ "<aclentry name='LocalDomainAdmins' type='persongroup' level='manager' deletedocs='false'/>\r\n" + "</acl>\r\n" + "\r\n"
-			+ "<launchsettings><noteslaunch whenopened='openframeset' restorelastview='true'\r\n"
-			+ " frameset='$fsLaunch'/></launchsettings>\r\n" + "<note default='true' class='icon'>\r\n"
-			+ "<item name='IconBitmap' summary='true'>\r\n" + "<rawitemdata type='6'>\r\n"
-			+ "AiAgAgcA/////////////////+H////Af///gB///wAA//4AAH/8AAAf+AAAB/AAAADgAAAAwAAA\r\n"
-			+ "AcAAAAPAAAAHwAAAD+AAAB/wAAA/+AAAf/44AH///AA///4DH///h4/////H////4/////H////4\r\n"
-			+ "/////P////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\n"
-			+ "AAAAAAAAAAAAAAAAAAAAAA4A4AAAAAAAAAAAAAAAAADg/gDgAAAAAAAAAAAAAAAOD/7uAOAAAAAA\r\n"
-			+ "AAAAAAAA4P8R/u4AAA4AAAAAAAAADg/xERH+7u8A4AAAAAAAAOD/ERERER/w/gDgAAAAAA4P8RER\r\n"
-			+ "EREfDxHuAOAAAADg/xERERER8PEREe4ADgAOD/Ef8RERHw8RERERH/4A4P8RER/xEfDxEREREf8A\r\n"
-			+ "AA/xH/ERER8PERERER/wAADvEREf8RHw8RERERH/AAAA4R/xER8fDxEREREf8AAAAA4RH/ER8PER\r\n"
-			+ "4Q4R/wAAAAAA4RERHw8RERH87/AAAAAAAA7hEeDhEe4RHG4AAAAAAAAADu4ADhER7h/G4AAAAAAA\r\n"
-			+ "AAAAAADhERH/DG4AAAAAAAAAAAAADuEf8ADG4AAAAAAAAAAAAAAO7uAADG4AAAAAAAAAAAAAAAAA\r\n"
-			+ "AADG4AAAAAAAAAAAAAAAAAAADG4AAAAAAAAAAAAAAAAAAADBAAAAAAAAAAAAAAAAAAAAAIgAAAAA\r\n"
-			+ "AAAAAAAAAAAAAABVAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\n" + "AAAAAAAAAAAAAAAAAAAAAAAAAA==\r\n"
-			+ "</rawitemdata></item>\r\n" + "<item name='$LANGUAGE'><text>en</text></item>\r\n"
-			+ "<item name='$DefaultFrameset'><text>$fsLaunch</text></item>\r\n"
-			+ "<item name='$DefaultWebFrameset'><text>$fsLaunch</text></item>\r\n"
-			+ "<item name='$FlagsNoRefresh'><text>t</text></item>\r\n" + "<item name='$Flags'><text>t7JFKzf</text></item>\r\n"
-			+ "<item name='$Daos'><text>1</text></item>\r\n" + "<item name='$TITLE'><text>Graph Full-text Index</text></item></note>\r\n"
-			+ "</database>";
-
 	private IndexDatabase indexDb_;
 
 	public IndexStore() {
@@ -310,7 +281,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 				scanner = (DocumentScanner) o;
 			} else {
 				System.out
-				.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
+						.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
 			}
 			if (status != null) {
 				switch (status) {

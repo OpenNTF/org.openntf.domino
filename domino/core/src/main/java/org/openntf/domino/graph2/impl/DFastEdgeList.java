@@ -52,7 +52,15 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 		@Override
 		public Edge next() {
-			return parent_.getEdge(delegate_.next());
+			Edge result = null;
+			try {
+				result = parent_.getEdge(delegate_.next());
+			} catch (Throwable t) {
+				System.err
+						.println("Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				result = next();
+			}
+			return result;
 		}
 
 		@Override
@@ -62,7 +70,13 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 		@Override
 		public Edge previous() {
-			return parent_.getEdge(delegate_.previous());
+			try {
+				return parent_.getEdge(delegate_.previous());
+			} catch (Throwable t) {
+				System.err
+						.println("Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				return previous();
+			}
 		}
 
 		@Override
