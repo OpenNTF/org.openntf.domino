@@ -187,21 +187,18 @@ public @interface Tasklet {
 		/**
 		 * Run in XSP Context: with access to the Xsp dependencies, but without any context (faces or otherwise)
 		 */
-		@Deprecated
-		XSPBARE,
+		@Deprecated XSPBARE,
 
 		/**
 		 * would be "it's running with access to the scoped variables within it's environment." So that would set up access to
 		 * ApplicationScoped, ServerScope, IdentityScope in it
 		 */
-		@Deprecated
 		XSPSCOPED,
 		/**
 		 * would force the Tasklet to run in the same NSFComponentModule context as any given Xpage this would force the Application to be
 		 * activated, thus triggering ApplicationListeners, for instance
 		 */
-		@Deprecated
-		XSPFORCE
+		@Deprecated XSPFORCE
 	}
 
 	public enum ThreadConfig {
@@ -241,7 +238,8 @@ public @interface Tasklet {
 	 * 08:30 and 22:30. This should be prefered to cron, because cron will start all periodic tasks in the same minute.</li>
 	 * <li><code>period:45m 08:30-22:30 MTWRF</code> to run a periodic task every 45 minutes between 08:30 and 22:30. This should be
 	 * prefered to cron, because cron will start all periodic tasks in the same minute.</li>
-	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)</li>
+	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)
+	 * </li>
 	 * <li><code>dynamic</code> get the dynamic schedule by invoking {@link Tasklet.Interface#getDynamicSchedule()} (this must be the first
 	 * and only annotation. Class must have a default constructor.)</li>
 	 * 
