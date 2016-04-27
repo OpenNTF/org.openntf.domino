@@ -250,17 +250,11 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public Database getLogDb() {
 		if (_logDb == null) {
 			try {
-				_logDb = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), getLogDbName(), false);
+				_logDb = Factory.getSession(SessionType.NATIVE).getDatabase(getLogDbName());
 			} catch (Exception e) {
 				debugPrint(e);
 			}
 		}
-		// RPr: Locking is no longer supported
-		//		} else {
-		//			if (Base.isLocked(_logDb)) {
-		//				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
-		//			}
-		//		}
 		return _logDb;
 	}
 
