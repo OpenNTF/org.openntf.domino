@@ -589,6 +589,16 @@ public interface Database extends Base {
 	public Document getDocumentByID(int noteid, boolean deferDelegate);
 
 	/**
+	 * Single method to get a document regardless of whether it's being passed a note ID or UNID
+	 * 
+	 * @param id
+	 *            String Note or Universal ID
+	 * @return Document
+	 * @since org.openntf.domino 2.5.0
+	 */
+	public Document getDocumentByID_Or_UNID(String id);
+
+	/**
 	 * Passes a DatabaseTransaction to a Database object. This allows a single Transaction to be used to process activity across multiple
 	 * databases
 	 * 

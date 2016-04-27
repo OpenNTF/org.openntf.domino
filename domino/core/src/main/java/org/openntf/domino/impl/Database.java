@@ -1105,6 +1105,19 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		}
 	}
 
+	public Document getDocumentByID_Or_UNID(final String id) {
+		Document doc;
+		doc = getDocumentByUNID(id);
+		if (doc == null) {
+			try {
+				doc = getDocumentByID(id);
+			} catch (Throwable te) {
+				// Just couldn't get doc
+			}
+		}
+		return doc;
+	}
+
 	@Override
 	public Document getDocumentWithKey(final Serializable key) {
 		return this.getDocumentWithKey(key, false);
