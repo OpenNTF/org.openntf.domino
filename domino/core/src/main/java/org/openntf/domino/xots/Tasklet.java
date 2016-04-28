@@ -185,9 +185,9 @@ public @interface Tasklet {
 		MODULE,
 
 		/**
-		 * Run in XSP Context: with access to the Xsp dependencies, but without any context (faces or otherwise)
+		 * Run in XSP Context: with access to the Xsp dependencies, but without any scoped maps, just FacesContext / XspContext
 		 */
-		@Deprecated XSPBARE,
+		XSPBARE,
 
 		/**
 		 * would be "it's running with access to the scoped variables within it's environment." So that would set up access to

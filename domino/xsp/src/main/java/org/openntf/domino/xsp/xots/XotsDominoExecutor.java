@@ -379,10 +379,14 @@ public class XotsDominoExecutor extends DominoExecutor {
 			}
 		} else if (annot.context() == Context.PLUGIN) {
 			return super.wrap(inner);
-		} else if (annot.context() == Context.XSPSCOPED) {
+		} else if (annot.context() == Context.XSPSCOPED || annot.context() == Context.XSPBARE) {
 			if (inner instanceof AbstractXotsXspCallable) {
 				XotsXspContext ctx = new XotsXspContext();
-				ctx.initialiseXspContext();
+				if (annot.context() == Context.XSPSCOPED) {
+					ctx.initialiseXspContext(true);
+				} else {
+					ctx.initialiseXspContext(false);
+				}
 				if (module != null) {
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
@@ -425,10 +429,14 @@ public class XotsDominoExecutor extends DominoExecutor {
 			}
 		} else if (annot.context() == Context.PLUGIN) {
 			return super.wrap(inner);
-		} else if (annot.context() == Context.XSPSCOPED) {
+		} else if (annot.context() == Context.XSPSCOPED || annot.context() == Context.XSPBARE) {
 			if (inner instanceof AbstractXotsXspRunnable) {
 				XotsXspContext ctx = new XotsXspContext();
-				ctx.initialiseXspContext();
+				if (annot.context() == Context.XSPSCOPED) {
+					ctx.initialiseXspContext(true);
+				} else {
+					ctx.initialiseXspContext(false);
+				}
 				if (module != null) {
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());

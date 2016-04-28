@@ -32,12 +32,17 @@ public class XotsXspContext extends XotsContext {
 	/**
 	 * Loads the XPages-related context, ready to be passed to the Xots task
 	 * 
+	 * @param includeScopes
+	 *            Boolean whether or not to include scoped Maps
+	 * 
 	 */
-	public void initialiseXspContext() {
-		setRequestScope(ExtLibUtil.getRequestScope());
-		setViewScope(ExtLibUtil.getViewScope());
-		setSessionScope(ExtLibUtil.getSessionScope());
-		setApplicationScope(ExtLibUtil.getApplicationScope());
+	public void initialiseXspContext(final Boolean includeScopes) {
+		if (!includeScopes) {
+			setRequestScope(ExtLibUtil.getRequestScope());
+			setViewScope(ExtLibUtil.getViewScope());
+			setSessionScope(ExtLibUtil.getSessionScope());
+			setApplicationScope(ExtLibUtil.getApplicationScope());
+		}
 		setFacesContext(FacesContext.getCurrentInstance());
 		setXspContext(ExtLibUtil.getXspContext());
 	}
