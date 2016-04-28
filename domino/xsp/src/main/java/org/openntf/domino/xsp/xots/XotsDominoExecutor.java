@@ -372,6 +372,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 					XotsContext ctx = new XotsContext();
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
+					ctx.setTaskletClass(inner.getClass().getName());
 					((AbstractXotsCallable) inner).setContext(ctx);
 				}
 				return new XotsWrappedCallable<V>(module, inner);
@@ -385,6 +386,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 				if (module != null) {
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
+					ctx.setTaskletClass(inner.getClass().getName());
 				}
 				((AbstractXotsXspCallable) inner).setContext(ctx);
 			}
@@ -416,6 +418,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 					XotsContext ctx = new XotsContext();
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
+					ctx.setTaskletClass(inner.getClass().getName());
 					((AbstractXotsRunnable) inner).setContext(ctx);
 				}
 				return new XotsWrappedRunnable(module, inner);
@@ -429,6 +432,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 				if (module != null) {
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
+					ctx.setTaskletClass(inner.getClass().getName());
 				}
 				((AbstractXotsXspRunnable) inner).setContext(ctx);
 			}

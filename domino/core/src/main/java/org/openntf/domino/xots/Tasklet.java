@@ -112,7 +112,7 @@ public @interface Tasklet {
 		/**
 		 * Clones the {@link SessionType#CURRENT CURRENT} Session from the current context. This means if you are running in a XPage, you
 		 * have the same user session in your XOTS Runnable. If you are running a scheduled servlet, you have a
-		 * {@link Factory.SessionType#SESSION_AS_SIGNER SESSION_AS_SIGNER}.
+		 * {@link Factory.SessionType#NATIVE}.
 		 * 
 		 * This Session may be created with createXPageSession and may be restricted to maximum internet access!
 		 */

@@ -8,6 +8,7 @@ package org.openntf.domino.xots;
 public class XotsContext {
 	private String contextApiPath;
 	private String openLogApiPath;
+	private String taskletClass;
 
 	/**
 	 * Getter for contextApiPath
@@ -45,6 +46,25 @@ public class XotsContext {
 	 */
 	public void setOpenLogApiPath(final String openLogApiPath) {
 		this.openLogApiPath = openLogApiPath;
+	}
+
+	/**
+	 * Getter for taskletClass
+	 * 
+	 * @return String tasklet class to log for in OpenLog
+	 */
+	public String getTaskletClass() {
+		return taskletClass;
+	}
+
+	/**
+	 * Setter for taskletClass
+	 * 
+	 * @param taskletClass
+	 *            String tasklet class to log for in OpenLog
+	 */
+	public void setTaskletClass(final String taskletClass) {
+		this.taskletClass = taskletClass;
 	}
 
 }
