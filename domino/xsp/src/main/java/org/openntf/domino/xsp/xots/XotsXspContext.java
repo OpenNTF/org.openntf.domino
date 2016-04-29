@@ -37,7 +37,7 @@ public class XotsXspContext extends XotsContext {
 	 * 
 	 */
 	public void initialiseXspContext(final Boolean includeScopes) {
-		if (!includeScopes) {
+		if (includeScopes) {
 			setRequestScope(ExtLibUtil.getRequestScope());
 			setViewScope(ExtLibUtil.getViewScope());
 			setSessionScope(ExtLibUtil.getSessionScope());
