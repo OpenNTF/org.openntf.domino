@@ -118,7 +118,7 @@ public interface Document {
 	 * @return Document that is the parent
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public Document getParentDocument();
+	public org.openntf.domino.Document getParentDocument();
 
 	/**
 	 * Identifies whether any Item on the Document has been updated, used by transactional processing to avoid unnecessary saves.
