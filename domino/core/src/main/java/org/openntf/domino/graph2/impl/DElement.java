@@ -393,7 +393,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (allowNull) {
 			return result;
 		} else {
-			if (result == null || Null.INSTANCE == result) {
+			if (result == null || Null.INSTANCE == result || Deferred.INSTANCE == result) {
 				return TypeUtils.getDefaultInstance(type);
 			} else {
 				return result;

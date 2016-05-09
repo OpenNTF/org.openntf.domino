@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @SuppressWarnings("rawtypes")
 public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.blueprints.MetaGraph,
-		com.tinkerpop.blueprints.TransactionalGraph {
+com.tinkerpop.blueprints.TransactionalGraph {
 	public static enum Utils {
 		;
 
@@ -88,6 +88,11 @@ public interface DGraph extends com.tinkerpop.blueprints.Graph, com.tinkerpop.bl
 		public static String getEdgeFormula(final String key, final Object value) {
 			String filterFormula = convertToFormula(key, value);
 			return DEdge.FORMULA_FILTER + (filterFormula.length() > 0 ? " & " + filterFormula : "");
+		}
+
+		public static String getElementFormula(final String key, final Object value) {
+			String filterFormula = convertToFormula(key, value);
+			return DElement.FORMULA_FILTER + (filterFormula.length() > 0 ? " & " + filterFormula : "");
 		}
 
 		public static String getFramedVertexFormula(final Class<?> kind) {

@@ -105,7 +105,7 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 	 */
 	@Override
 	public DVertexList toVertexList() {
-		System.out.println("TEMP DEBUG Converting an edge list to a vertex list");
+		//		System.out.println("TEMP DEBUG Converting an edge list to a vertex list");
 		DVertexList result = new DVertexList(sourceVertex_);
 		if (this.size() > 0) {
 			for (Edge edge : this) {
@@ -122,7 +122,7 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 				}
 			}
 		} else {
-			System.out.println("TEMP DEBUG EdgeList size is not greater than 0.");
+			//			System.out.println("TEMP DEBUG EdgeList size is not greater than 0.");
 		}
 		return result;
 	}

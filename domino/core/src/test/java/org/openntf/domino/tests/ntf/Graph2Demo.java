@@ -525,7 +525,7 @@ public class Graph2Demo implements Runnable {
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			empireMovie.addLikedByUser(nathan);
+			empireMovie.addLiker(nathan);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");

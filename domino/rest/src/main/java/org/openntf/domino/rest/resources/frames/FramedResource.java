@@ -112,16 +112,16 @@ public class FramedResource extends AbstractResource {
 		} else if (pm.getKeys() != null) {
 			Class<?> type = null;
 			if (pm.getTypes() != null) {
-				List<CaseInsensitiveString> types = pm.getTypes();
+				List<CharSequence> types = pm.getTypes();
 				String typename = types.get(0).toString();
 				type = graph.getTypeRegistry().findClassByName(typename);
 			}
 			DKeyResolver resolver = graph.getKeyResolver(type);
-			List<CaseInsensitiveString> keys = pm.getKeys();
+			List<CharSequence> keys = pm.getKeys();
 			if (keys.size() == 0) {
 				writer.outNull();
 			} else if (keys.size() == 1) {
-				CaseInsensitiveString id = keys.get(0);
+				CharSequence id = keys.get(0);
 				NoteCoordinate nc = resolver.resolveKey(type, id);
 				if (nc == null) {
 					System.err.println("NoteCoordinate is null for id " + id);
@@ -144,7 +144,7 @@ public class FramedResource extends AbstractResource {
 				}
 			} else {
 				List<Object> maps = new ArrayList<Object>();
-				for (CaseInsensitiveString id : keys) {
+				for (CharSequence id : keys) {
 					NoteCoordinate nc = resolver.resolveKey(type, id);
 					maps.add(graph.getElement(nc, null));
 				}
@@ -399,6 +399,13 @@ public class FramedResource extends AbstractResource {
 									VertexFrame otherVertex = (VertexFrame) otherElement;
 									try {
 										Object result = method.invoke(parVertex, otherVertex);
+										if (result == null) {
+											System.out.println("Invokation of method " + method.getName()
+													+ " on a vertex of type " + DGraphUtils.findInterface(parVertex)
+													+ " with an argument of type "
+													+ DGraphUtils.findInterface(otherVertex)
+													+ " resulted in null when we expected an Edge");
+										}
 										JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
 										Iterator<String> frameProperties = adapter.getJsonProperties();
 										while (frameProperties.hasNext()) {

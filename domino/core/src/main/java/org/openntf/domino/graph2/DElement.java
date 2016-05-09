@@ -14,6 +14,8 @@ import org.openntf.domino.Document;
  */
 public interface DElement extends com.tinkerpop.blueprints.Element {
 	public static final String TYPE_FIELD = "_ODA_GRAPHTYPE";
+	public static final String FORMULA_FILTER = DElement.TYPE_FIELD + "=\"" + DVertex.GRAPH_TYPE_VALUE + "\" | " + DElement.TYPE_FIELD
+			+ "=\"" + DEdge.GRAPH_TYPE_VALUE + "\"";
 
 	public boolean hasProperty(String key);
 
