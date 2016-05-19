@@ -33,11 +33,16 @@ public class XspUtils {
 	 * version.<br/>
 	 * Avoids the need to catch a NotesException
 	 * 
+	 * <b>NOTE:<b> In recent experience, this results in save conflicts, no idea why. I would recommend not using (PSW)
+	 * 
 	 * @param doc
 	 *            DominoDocument datasource
 	 * @return Document back-end document with front-end values applied, using doc.getDocument(true)
 	 * @since org.openntf.domino.xsp 5.0.0
+	 * @deprecated (seems to cause save conflicts for some reason, possibly related to it being in a plugin, but god knows when we'll get to
+	 *             see enough to try to understand it!)
 	 */
+	@Deprecated
 	public static Document getBEDoc(final DominoDocument doc) {
 		Document beDoc;
 		try {
@@ -46,7 +51,6 @@ public class XspUtils {
 			} else {
 				beDoc = XSPUtil.wrap(doc.getDocument(true));
 			}
-			System.out.println(beDoc.getUniversalID());
 		} catch (Throwable e) {
 			DominoUtils.handleException(e);
 			return null;
