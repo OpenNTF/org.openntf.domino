@@ -323,7 +323,9 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 		}
 		try {
-			addFacesMessage("", m);
+			if (getDisplayError()) {
+				addFacesMessage("", m);
+			}
 			setBase(ee);
 
 			// if (ee.getMessage().length() > 0) {
