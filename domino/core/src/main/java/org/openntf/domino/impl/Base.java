@@ -34,8 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javolution.util.FastMap;
-
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
@@ -53,6 +51,8 @@ import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
 
+import javolution.util.FastMap;
+
 /**
  * A common Base class for almost all org.openntf.domino types.
  * 
@@ -65,7 +65,7 @@ import com.ibm.commons.util.NotImplementedException;
  * 
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-implements org.openntf.domino.Base<D> {
+		implements org.openntf.domino.Base<D> {
 	public static final int SOLO_NOTES_NAMES = 1000;
 	public static final int NOTES_SESSION = 1;
 	public static final int NOTES_DATABASE = 2;
@@ -460,7 +460,8 @@ implements org.openntf.domino.Base<D> {
 				log_.fine("[" + Thread.currentThread().getId() + "] Resurrecting " + getClass().getName() + " '" + super.hashCode() + "'");
 			resurrect();
 			if (log_.isLoggable(Level.FINE))
-				log_.fine("[" + Thread.currentThread().getId() + "] Resurrect " + getClass().getName() + " '" + super.hashCode() + "' done");
+				log_.fine(
+						"[" + Thread.currentThread().getId() + "] Resurrect " + getClass().getName() + " '" + super.hashCode() + "' done");
 			ret = getDelegate_unchecked();
 		}
 		return ret;
@@ -643,9 +644,35 @@ implements org.openntf.domino.Base<D> {
 				return value;
 			}
 			throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
+		} else if (value instanceof Collection) {
+			if (isFriendlyVector(value)) {
+				return value;
+			} else {
+				Collection<?> coll = (Collection<?>) value;
+				Vector<Object> dominoFriendlyVec = new Vector<Object>(coll.size());
+				for (Object valNode : coll) {
+					if (valNode != null) { // CHECKME: Should NULL values discarded?
+						dominoFriendlyVec.add(toItemFriendly(valNode, session, recycleThis));
+					}
+				}
+				return dominoFriendlyVec;
+			}
 		} else {
 			return javaToDominoFriendly(value, session, recycleThis);
 		}
+	}
+
+	protected static boolean isFriendlyVector(final Object value) {
+		if (!(value instanceof Vector))
+			return false;
+		for (Object v : (Vector<?>) value) {
+			if (v instanceof String || v instanceof Integer || v instanceof Double) {
+				// ok
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -743,7 +770,8 @@ implements org.openntf.domino.Base<D> {
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 
-		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar || value instanceof org.openntf.formula.DateTime) {
+		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar
+				|| value instanceof org.openntf.formula.DateTime) {
 
 			lotus.domino.Session lsess = toLotus(session);
 			try {

@@ -33,11 +33,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-import javolution.util.FastSortedMap;
-import javolution.util.function.Equalities;
-
 import lotus.domino.NotesException;
 
 import org.openntf.domino.AutoMime;
@@ -87,12 +82,17 @@ import org.openntf.domino.utils.xml.XMLDocument;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
+import javolution.util.FastMap;
+import javolution.util.FastSet;
+import javolution.util.FastSortedMap;
+import javolution.util.function.Equalities;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Document.
  */
-public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-		org.openntf.domino.Document {
+public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database>
+		implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -635,8 +635,9 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						}
 					}
 				} catch (NotesException e) {
-					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
-							+ " even though we can't find an item by that name.", e);
+					log_.log(Level.INFO,
+							"Attempted to close a MIMEEntity called " + entityItemName + " even though we can't find an item by that name.",
+							e);
 
 				}
 			} else {
@@ -665,8 +666,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 								((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 						}
 					} else {
-						log_.log(Level.FINE, "A request was made to close MIMEEntity " + entityItemName
-								+ " but that entity isn't currently open");
+						log_.log(Level.FINE,
+								"A request was made to close MIMEEntity " + entityItemName + " but that entity isn't currently open");
 					}
 				}
 			}
@@ -1254,7 +1255,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1290,7 +1291,7 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -1334,13 +1335,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						result.add(mimeValue);
 						return result;
 					} else {
-						log_.log(
-								Level.WARNING,
-								"We found a MIMEEntity for item name "
-										+ name
-										+ " in document "
-										+ this.getMetaversalID()
-										+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
+								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
 						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
@@ -1355,8 +1351,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			try {
 				vals = getDelegate().getItemValue(name);
 			} catch (NotesException ne) {
-				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
-						+ " " + noteid_ + ": " + ne.text);
+				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath() + " "
+						+ noteid_ + ": " + ne.text);
 				DominoUtils.handleException(ne, this, "Item=" + name);
 				return null;
 			}
@@ -2631,12 +2627,12 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 						Documents.saveState(state, this, itemName, true, headers);
 
 					} else {
-						throw new IllegalArgumentException(value.getClass()
-								+ " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
+						throw new IllegalArgumentException(
+								value.getClass() + " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
 					}
 				} catch (ClassNotFoundException cnfe) {
-					throw new IllegalArgumentException(value.getClass()
-							+ " is not of type Serializable, DocumentCollection or NoteCollection");
+					throw new IllegalArgumentException(
+							value.getClass() + " is not of type Serializable, DocumentCollection or NoteCollection");
 				}
 			}
 
@@ -2678,7 +2674,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
 			} else {
 				beginEdit();
-				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
+				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
+						this);
 				markDirty(itemName, true);
 				return result;
 			}
@@ -2736,9 +2733,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				} else if (this.getAutoMime() == AutoMime.WRAP_ALL) {
 					// Compatibility mode
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
-					log_.log(Level.INFO, "Writing " + value == null ? "null" : value.getClass() + " causes a " + ex2
-							+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
-							+ " Consider using 'put' or something similar in your code.");
+					log_.log(Level.INFO,
+							"Writing " + value == null ? "null"
+									: value.getClass() + " causes a " + ex2
+											+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
+											+ " Consider using 'put' or something similar in your code.");
 				} else {
 					throw ex2;
 				}
@@ -3021,19 +3020,6 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 		return null;
 	}
 
-	protected boolean isFriendlyVector(final Object value) {
-		if (!(value instanceof Vector))
-			return false;
-		for (Object v : (Vector<?>) value) {
-			if (v instanceof String || v instanceof Integer || v instanceof Double) {
-				// ok
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private AutoMime autoMime_ = null;
 
 	@Override
@@ -3208,8 +3194,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 			} else {
 				// System.out.println("Before Update listener blocked save.");
 				if (log_.isLoggable(Level.FINE)) {
-					log_.log(Level.FINE, "Document " + getNoteID()
-							+ " was not saved because the DatabaseListener for update returned false.");
+					log_.log(Level.FINE,
+							"Document " + getNoteID() + " was not saved because the DatabaseListener for update returned false.");
 				}
 				result = false;
 			}
@@ -3644,9 +3630,11 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 							try {
 								d = db.getDocumentByUNID(unid_);
 							} catch (NotesException ne) {
-								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-										+ getParentDatabase().getFilePath() + " because of: " + ne.text, ne);
+								log_.log(Level.WARNING,
+										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+												+ getParentDatabase().getFilePath() + " because of: " + ne.text,
+										ne);
 							}
 						}
 					} else {
@@ -3657,8 +3645,8 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 				//getFactory().recacheLotusObject(d, this, parent_);
 				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
-						log_.log(Level.FINER, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
-								+ " was rollbacked.");
+						log_.log(Level.FINER,
+								"Document " + noteid_ + " in database path " + getParentDatabase().getFilePath() + " was rollbacked.");
 					}
 				} else {
 					if (log_.isLoggable(Level.FINE)) {
@@ -3703,9 +3691,10 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 								DominoUtils.handleException(ne1);
 							}
 						} else {
-							log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-									+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-									+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+							log_.log(Level.WARNING,
+									"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+											+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+											+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 						}
 					}
 				} else {
@@ -3720,15 +3709,12 @@ public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lot
 					if (log_.isLoggable(Level.FINER)) {
 						Throwable t = new Throwable();
 						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+						log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+								+ elements[0].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+								+ elements[1].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+								+ elements[2].getLineNumber() + ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
