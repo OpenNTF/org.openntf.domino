@@ -150,7 +150,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			}
 			if (!"true".equalsIgnoreCase(includeQueryString)) {
 				if (fromPage.indexOf("?") > -1) {
-					fromPage = fromPage.substring(1, fromPage.indexOf("?"));
+					fromPage = fromPage.substring(0, fromPage.indexOf("?"));
 				}
 			}
 			super.setThisAgent(fromPage);
