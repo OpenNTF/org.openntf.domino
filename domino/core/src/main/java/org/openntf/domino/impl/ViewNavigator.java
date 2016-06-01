@@ -1458,6 +1458,9 @@ public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigat
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
 	@Override
 	public Iterator<org.openntf.domino.ViewEntry> iterator() {
 		return new ViewNavigatorEntryIterator(this);

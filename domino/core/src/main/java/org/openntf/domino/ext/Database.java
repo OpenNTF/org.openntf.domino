@@ -724,6 +724,15 @@ public interface Database extends Base {
 	 */
 	Type getTypeEx();
 
+	/**
+	 * Based on a View design element's document or note, this method retrieves the View Domino object from the Database. Basically, it gets
+	 * the $Title field (name and all aliases), calls {@linkplain org.openntf.domino.Database#getView(String)} for each, ensure's the View
+	 * is not a different view with the same name, and returns that View object.
+	 * 
+	 * @param viewDocument
+	 *            the View design element
+	 * @return View object
+	 */
 	public View getView(final Document viewDocument);
 
 }

@@ -39,10 +39,7 @@ public class XspUtils {
 	 *            DominoDocument datasource
 	 * @return Document back-end document with front-end values applied, using doc.getDocument(true)
 	 * @since org.openntf.domino.xsp 5.0.0
-	 * @deprecated (seems to cause save conflicts for some reason, possibly related to it being in a plugin, but god knows when we'll get to
-	 *             see enough to try to understand it!)
 	 */
-	@Deprecated
 	public static Document getBEDoc(final DominoDocument doc) {
 		Document beDoc;
 		try {
