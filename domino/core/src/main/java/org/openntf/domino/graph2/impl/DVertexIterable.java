@@ -1,11 +1,14 @@
 package org.openntf.domino.graph2.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
 import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.exceptions.UnimplementedException;
+import org.openntf.domino.graph2.DGraphUtils;
 
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -13,10 +16,10 @@ import com.tinkerpop.blueprints.Vertex;
 public class DVertexIterable implements org.openntf.domino.graph2.DVertexIterable {
 	private org.openntf.domino.graph2.impl.DElementIterable delegate_;
 
-	public static class DVertexIterator implements org.openntf.domino.graph2.DVertexIterable.DVertexIterator {
-		private Iterator<Element> delegate_;
+	public static class DVertexIterator implements ListIterator<Vertex> {
+		private ListIterator<Element> delegate_;
 
-		public DVertexIterator(final Iterator<Element> delegate) {
+		public DVertexIterator(final ListIterator<Element> delegate) {
 			delegate_ = delegate;
 		}
 
@@ -41,147 +44,175 @@ public class DVertexIterable implements org.openntf.domino.graph2.DVertexIterabl
 		public void remove() {
 			delegate_.remove();
 		}
+
+		@Override
+		public void add(final Vertex arg0) {
+			delegate_.add(arg0);
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return delegate_.hasPrevious();
+		}
+
+		@Override
+		public int nextIndex() {
+			return delegate_.nextIndex();
+		}
+
+		@Override
+		public int previousIndex() {
+			return delegate_.previousIndex();
+		}
+
+		@Override
+		public void set(final Vertex arg0) {
+			delegate_.set(arg0);
+		}
+
+		@Override
+		public Vertex previous() {
+			DVertex result = null;
+			Element chk = delegate_.previous();
+			if (chk instanceof DVertex) {
+				result = (DVertex) chk;
+			} else {
+				throw new IllegalStateException("Previous element returned is a " + chk.getClass().getName() + " not a Vertex");
+			}
+			return result;
+		}
 	}
 
 	public DVertexIterable(final DElementStore store, final List<NoteCoordinate> index) {
 		delegate_ = new org.openntf.domino.graph2.impl.DElementIterable(store, index);
 	}
 
+	private DVertexIterable(final org.openntf.domino.graph2.impl.DElementIterable delegate) {
+		delegate_ = delegate;
+	}
+
 	@Override
 	public Iterator<Vertex> iterator() {
-		return new DVertexIterator(delegate_.iterator());
+		return new DVertexIterator(delegate_.listIterator());
 	}
 
 	@Override
 	public boolean add(final Vertex e) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.add(e);
 	}
 
 	@Override
 	public void add(final int index, final Vertex element) {
-		// TODO Auto-generated method stub
-
+		delegate_.add(index, element);
 	}
 
 	@Override
 	public boolean addAll(final Collection<? extends Vertex> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.addAll(c);
 	}
 
 	@Override
 	public boolean addAll(final int index, final Collection<? extends Vertex> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.addAll(index, c);
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		delegate_.clear();
 	}
 
 	@Override
 	public boolean contains(final Object o) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.contains(o);
 	}
 
 	@Override
 	public boolean containsAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.containsAll(c);
 	}
 
 	@Override
 	public Vertex get(final int index) {
-		// TODO Auto-generated method stub
-		return null;
+		return (Vertex) delegate_.get(index);
 	}
 
 	@Override
 	public int indexOf(final Object o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return delegate_.indexOf(o);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.isEmpty();
 	}
 
 	@Override
 	public int lastIndexOf(final Object o) {
-		// TODO Auto-generated method stub
-		return 0;
+		return delegate_.lastIndexOf(o);
 	}
 
 	@Override
 	public ListIterator<Vertex> listIterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DVertexIterator(delegate_.listIterator());
 	}
 
 	@Override
 	public ListIterator<Vertex> listIterator(final int index) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DVertexIterator(delegate_.listIterator(index));
 	}
 
 	@Override
 	public Vertex remove(final int index) {
-		// TODO Auto-generated method stub
-		return null;
+		return (Vertex) delegate_.remove(index);
 	}
 
 	@Override
 	public boolean remove(final Object o) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.remove(o);
 	}
 
 	@Override
 	public boolean removeAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.removeAll(c);
 	}
 
 	@Override
 	public boolean retainAll(final Collection<?> c) {
-		// TODO Auto-generated method stub
-		return false;
+		return delegate_.retainAll(c);
 	}
 
 	@Override
 	public Vertex set(final int index, final Vertex element) {
-		// TODO Auto-generated method stub
-		return null;
+		return (Vertex) delegate_.set(index, element);
 	}
 
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return delegate_.size();
 	}
 
 	@Override
 	public List<Vertex> subList(final int fromIndex, final int toIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DVertexIterable((DElementIterable) delegate_.subList(fromIndex, toIndex));
 	}
 
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate_.toArray();
 	}
 
 	@Override
 	public <T> T[] toArray(final T[] a) {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate_.toArray(a);
+	}
+
+	private static final Vertex[] VA = new Vertex[1];
+
+	public DVertexIterable sortBy(final List<CharSequence> keys, final boolean desc) {
+		Vertex[] array = toArray(VA);
+		Arrays.sort(array, new DGraphUtils.VertexComparator(keys, desc));
+		throw new UnimplementedException("sortBy not yet completed for DVertexIterable");
+		//		return new DVertexIterable(framedGraph, sourceVertex_, convertToEdges(array), kind);
 	}
 
 }

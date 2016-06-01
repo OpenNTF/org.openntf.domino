@@ -21,39 +21,40 @@ public interface Share extends Likeable {
 	@TypedProperty("FollowUpDate")
 	public void setFollowUpDate(String date);
 
-	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public SharedBy getSharedBy();
-
-	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public SharedBy addSharedBy(Sharer sharer);
-
-	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public void removeSharedBy(Sharer sharer);
+	@AdjacencyUnique(label = SharedBy.LABEL, direction = Direction.IN)
+	public Iterable<Sharer> getSharers();
 
 	@AdjacencyUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public Sharer getSharer();
-
-	@AdjacencyUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public Sharer addSharer(Sharer sharer);
+	public SharedBy addSharer(Sharer sharer);
 
 	@AdjacencyUnique(label = SharedBy.LABEL, direction = Direction.IN)
 	public void removeSharer(Sharer sharer);
 
-	@IncidenceUnique(label = SharedWith.LABEL)
-	public SharedWith getSharedWith();
+	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
+	public Iterable<SharedBy> getSharedBys();
 
-	@IncidenceUnique(label = SharedWith.LABEL)
-	public SharedWith addSharedWith(Sharer sharer);
+	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
+	public int countSharedBys();
 
-	@IncidenceUnique(label = SharedWith.LABEL)
-	public void removeSharedWith(Sharer sharer);
+	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
+	public void removeSharedBy(SharedBy sharedBy);
 
 	@AdjacencyUnique(label = SharedWith.LABEL)
-	public Sharer getSharedWithSharer();
+	public Iterable<Sharer> getSharedWithSharers();
 
 	@AdjacencyUnique(label = SharedWith.LABEL)
 	public Sharer addSharedWithSharer(Sharer sharer);
 
 	@AdjacencyUnique(label = SharedWith.LABEL)
 	public void removeSharedWithSharer(Sharer sharer);
+
+	@IncidenceUnique(label = SharedWith.LABEL)
+	public Iterable<SharedWith> getSharedWiths();
+
+	@IncidenceUnique(label = SharedWith.LABEL)
+	public int countSharedWiths();
+
+	@IncidenceUnique(label = SharedWith.LABEL)
+	public void removeSharedWith(SharedWith sharedWith);
+
 }

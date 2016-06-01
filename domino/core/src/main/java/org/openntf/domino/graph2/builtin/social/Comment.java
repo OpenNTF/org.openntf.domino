@@ -15,40 +15,58 @@ public interface Comment extends Likeable {
 	@TypedProperty("Body")
 	public void setBody(String body);
 
-	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
-	public CommentsOn getCommentsOn();
-
-	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
-	public CommentsOn addCommentsOn(Commenter commenter);
-
-	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
-	public void removeCommentsOn(Commenter commenter);
-
 	@AdjacencyUnique(label = CommentsOn.LABEL, direction = Direction.IN)
 	public Commenter getCommenter();
 
 	@AdjacencyUnique(label = CommentsOn.LABEL, direction = Direction.IN)
-	public Commenter addCommenter(Commenter commenter);
+	public CommentsOn addCommenter(Commenter commenter);
 
 	@AdjacencyUnique(label = CommentsOn.LABEL, direction = Direction.IN)
 	public void removeCommenter(Commenter commenter);
 
-	@IncidenceUnique(label = CommentsAbout.LABEL)
-	public CommentsAbout getCommentsAbout();
+	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
+	public CommentsOn getCommentsOn();
 
-	@IncidenceUnique(label = CommentsAbout.LABEL)
-	public CommentsAbout addCommentsAbout(Commentable commentable);
+	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
+	public int countCommentsOn();
 
-	@IncidenceUnique(label = CommentsAbout.LABEL)
-	public void removeCommentsAbout(Commentable commentable);
-
-	@AdjacencyUnique(label = CommentsAbout.LABEL)
-	public Iterable<Commentable> getCommentable();
+	@IncidenceUnique(label = CommentsOn.LABEL, direction = Direction.IN)
+	public void removeCommentsOn(CommentsOn commentsOn);
 
 	@AdjacencyUnique(label = CommentsAbout.LABEL)
-	public Commentable addCommentable(Commentable commentable);
+	public Iterable<Commentable> getCommentables();
+
+	@AdjacencyUnique(label = CommentsAbout.LABEL)
+	public CommentsAbout addCommentable(Commentable commentable);
 
 	@AdjacencyUnique(label = CommentsAbout.LABEL)
 	public void removeCommentable(Commentable commentable);
+
+	@IncidenceUnique(label = CommentsAbout.LABEL)
+	public Iterable<CommentsAbout> getCommentsAbouts();
+
+	@IncidenceUnique(label = CommentsAbout.LABEL)
+	public int countCommentsAbouts();
+
+	@IncidenceUnique(label = CommentsAbout.LABEL)
+	public void removeCommentsAbout(CommentsAbout commentsAbout);
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Iterable<Socializer> getSocializers();
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Mentions addSocializer(Socializer socializer);
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public void removeSocializer(Socializer socializer);
+
+	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Iterable<Mentions> getMentions();
+
+	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public int countMentions();
+
+	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public void removeMentions(Mentions mentions);
 
 }

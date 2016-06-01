@@ -8,22 +8,22 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Liker")
 public interface Liker extends DVertexFrame {
+	@AdjacencyUnique(label = Likes.LABEL)
+	public Iterable<Likeable> getLikeables();
+
+	@AdjacencyUnique(label = Likes.LABEL)
+	public Likes addLikeable(Likeable likeable);
+
+	@AdjacencyUnique(label = Likes.LABEL)
+	public void removeLikeable(Likeable likeable);
+
 	@IncidenceUnique(label = Likes.LABEL)
 	public Iterable<Likes> getLikes();
 
 	@IncidenceUnique(label = Likes.LABEL)
-	public Likes addLikes(Likeable likeable);
+	public int countLikes();
 
 	@IncidenceUnique(label = Likes.LABEL)
-	public void removeLikes(Likeable likeable);
-
-	@AdjacencyUnique(label = Likes.LABEL)
-	public Iterable<Likeable> getLikesLikeables();
-
-	@AdjacencyUnique(label = Likes.LABEL)
-	public Likeable addLikesLikeable(Likeable likeable);
-
-	@AdjacencyUnique(label = Likes.LABEL)
-	public void removeLikesLikeable(Likeable likeable);
+	public void removeLikes(Likes likes);
 
 }

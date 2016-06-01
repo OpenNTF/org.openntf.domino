@@ -59,15 +59,15 @@ public class MiscTester implements Runnable {
 			comm.setBody("This is a test comment");
 			paul.addComment(comm);
 			pres.addComment(comm);
-			paul.addLikes(comm);
-			paul.addLikes(pres);
+			paul.addLikeable(comm);
+			paul.addLikeable(pres);
 			// Uncomment this and you get a duplicate
 			//			Rates rate1 = paul.addRates(pres);
 			//			rate1.setRating(5);
 			// This doesn't give a duplicate
-			Rates rate3 = pres.addRates(paul);
+			Rates rate3 = pres.addRater(paul);
 			rate3.setRating(5);
-			Rates rate2 = dv.addRates(pres);
+			Rates rate2 = dv.addRateable(pres);
 			rate2.setRating(2);
 
 			System.out.println("Comments by Paul: " + Lists.newArrayList(paul.getComments()).size());
@@ -76,7 +76,7 @@ public class MiscTester implements Runnable {
 			}
 			System.out.println("Likes by Paul: " + Lists.newArrayList(paul.getLikes()).size());
 			System.out.println("Comments on Pres: " + Lists.newArrayList(pres.getComments()).size());
-			System.out.println("Likes on Pres: " + Lists.newArrayList(pres.getLikedBy()).size());
+			System.out.println("Likes on Pres: " + Lists.newArrayList(pres.countLikedBys()));
 			System.out.println("Rates on Pres: " + Lists.newArrayList(pres.getRates()).size());
 			for (Rates r : Lists.newArrayList(pres.getRates())) {
 				System.out.println("Rating - " + r.asEdge().getId() + " - " + r.getRating());

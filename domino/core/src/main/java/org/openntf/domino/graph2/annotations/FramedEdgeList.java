@@ -398,9 +398,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	private static final EdgeFrame[] EF = new EdgeFrame[1];
 
-	public FramedEdgeList<T> sortBy(final List<CaseInsensitiveString> keys, final boolean desc) {
+	public FramedEdgeList<T> sortBy(final List<? extends CharSequence> list, final boolean desc) {
 		EdgeFrame[] array = toArray(EF);
-		Arrays.sort(array, new DGraphUtils.EdgeFrameComparator(getGraph(), keys, desc));
+		Arrays.sort(array, new DGraphUtils.EdgeFrameComparator(getGraph(), list, desc));
 		return new FramedEdgeList<T>(framedGraph, sourceVertex_, convertToEdges(array), kind);
 	}
 }

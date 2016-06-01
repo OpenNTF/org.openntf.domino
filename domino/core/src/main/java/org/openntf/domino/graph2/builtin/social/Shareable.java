@@ -9,39 +9,40 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Shareable")
 public interface Shareable extends DVertexFrame {
-	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
-	public Iterable<ShareAbout> getShareAbout();
-
-	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
-	public ShareAbout addShareAbout(Share share);
-
-	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
-	public void removeShareAbout(Share share);
-
 	@AdjacencyUnique(label = ShareAbout.LABEL, direction = Direction.IN)
 	public Iterable<Share> getShares();
 
 	@AdjacencyUnique(label = ShareAbout.LABEL, direction = Direction.IN)
-	public Share addShare(Share share);
+	public ShareAbout addShare(Share share);
 
 	@AdjacencyUnique(label = ShareAbout.LABEL, direction = Direction.IN)
 	public void removeShare(Share share);
+
+	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public Iterable<ShareAbout> getShareAbouts();
+
+	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public int countShareAbouts();
+
+	@IncidenceUnique(label = ShareAbout.LABEL, direction = Direction.IN)
+	public void removeShareAbout(ShareAbout shareAbout);
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Iterable<Socializer> getSocializers();
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public Mentions addSocializer(Socializer socializer);
+
+	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
+	public void removeSocializer(Socializer socializer);
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public Iterable<Mentions> getMentions();
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Mentions addMentions(Socializer mentioned);
+	public int countMentions();
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public void removeMentions(Socializer mentioned);
+	public void removeMentions(Mentions mentions);
 
-	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Iterable<Socializer> getMentioned();
-
-	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Socializer addMentioned(Socializer mentioned);
-
-	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public void removeMentioned(Socializer mentioned);
 }

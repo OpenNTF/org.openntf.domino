@@ -196,7 +196,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
-	public <F> Iterable<F> getFilteredElements(final String classname, final List<CaseInsensitiveString> keys,
+	public <F> Iterable<F> getFilteredElements(final String classname, final List<CharSequence> keys,
 			final List<CaseInsensitiveString> values) {
 		//		System.out.println("Getting a filtered list of elements of type " + classname);
 		org.openntf.domino.graph2.DElementStore store = null;
@@ -218,7 +218,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
-	public <F> Iterable<F> getFilteredElementsPartial(final String classname, final List<CaseInsensitiveString> keys,
+	public <F> Iterable<F> getFilteredElementsPartial(final String classname, final List<CharSequence> keys,
 			final List<CaseInsensitiveString> values) {
 		//		System.out.println("Getting a filtered list of elements of type " + classname);
 		org.openntf.domino.graph2.DElementStore store = null;
@@ -240,7 +240,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
-	public <F> Iterable<F> getFilteredElementsStarts(final String classname, final List<CaseInsensitiveString> keys,
+	public <F> Iterable<F> getFilteredElementsStarts(final String classname, final List<CharSequence> keys,
 			final List<CaseInsensitiveString> values) {
 		//		System.out.println("Getting a filtered list of elements of type " + classname);
 		org.openntf.domino.graph2.DElementStore store = null;

@@ -1058,6 +1058,8 @@ public enum TypeUtils {
 	}
 
 	public static Date toDate(Object value) throws DataNotCompatibleException {
+		if (value instanceof Date)
+			return (Date) value;
 		if (value == null)
 			return null;
 		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))

@@ -51,43 +51,43 @@ public enum Parameters {
 			super(Parameters.class);
 		}
 
-		public List<CaseInsensitiveString> getTypes() {
+		public List<CharSequence> getTypes() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.TYPE));
 		}
 
-		public List<CaseInsensitiveString> getKeys() {
+		public List<CharSequence> getKeys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.KEY));
 		}
 
-		public List<CaseInsensitiveString> getProperties() {
+		public List<CharSequence> getProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PROPS));
 		}
 
-		public List<CaseInsensitiveString> getFilterKeys() {
+		public List<CharSequence> getFilterKeys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.FILTERKEY));
 		}
 
-		public List<CaseInsensitiveString> getFilterValues() {
+		public List<CharSequence> getFilterValues() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.FILTERVALUE));
 		}
 
-		public List<CaseInsensitiveString> getPartialKeys() {
+		public List<CharSequence> getPartialKeys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PARTIALKEY));
 		}
 
-		public List<CaseInsensitiveString> getPartialValues() {
+		public List<CharSequence> getPartialValues() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PARTIALVALUE));
 		}
 
-		public List<CaseInsensitiveString> getStartsKeys() {
+		public List<CharSequence> getStartsKeys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.STARTSKEY));
 		}
 
-		public List<CaseInsensitiveString> getStartsValues() {
+		public List<CharSequence> getStartsValues() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.STARTSVALUE));
 		}
 
-		public List<CaseInsensitiveString> getOrderBys() {
+		public List<CharSequence> getOrderBys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.ORDERBY));
 		}
 
@@ -113,15 +113,15 @@ public enum Parameters {
 			return Integer.valueOf(intStr);
 		}
 
-		public List<CaseInsensitiveString> getInProperties() {
+		public List<CharSequence> getInProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.INPROPS));
 		}
 
-		public List<CaseInsensitiveString> getOutProperties() {
+		public List<CharSequence> getOutProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.OUTPROPS));
 		}
 
-		public List<CaseInsensitiveString> getLabels() {
+		public List<CharSequence> getLabels() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.LABEL));
 		}
 

@@ -879,7 +879,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public DElementIterable getElements(final String key, final Object value) {
-		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getEdgeFormula(key, value);
+		String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getElementFormula(key, value);
 		return getElements(formulaFilter);
 	}
 

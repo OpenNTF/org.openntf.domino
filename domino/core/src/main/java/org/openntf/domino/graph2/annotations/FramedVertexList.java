@@ -12,7 +12,6 @@ import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DVertex;
 import org.openntf.domino.graph2.impl.DVertexList;
-import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Edge;
@@ -372,7 +371,7 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 
 	private static final VertexFrame[] VF = new VertexFrame[1];
 
-	public FramedVertexList<T> sortBy(final List<CaseInsensitiveString> keys, final boolean desc) {
+	public FramedVertexList<T> sortBy(final List<CharSequence> keys, final boolean desc) {
 		//TODO: optimize! This should really be resorting the Vertex list but using the VertexFrame as the criteria
 		VertexFrame[] array = toArray(VF);
 		Arrays.sort(array, new DGraphUtils.VertexFrameComparator(getGraph(), keys, desc));

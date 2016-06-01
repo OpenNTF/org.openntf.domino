@@ -103,49 +103,49 @@ public class JsonFrameAdapter implements JsonObject {
 		return graph_;
 	}
 
-	public List<CaseInsensitiveString> getProperties() {
+	public List<CharSequence> getProperties() {
 		if (parameters_ != null) {
 			return parameters_.getProperties();
 		}
 		return null;
 	}
 
-	public List<CaseInsensitiveString> getInProperties() {
+	public List<CharSequence> getInProperties() {
 		if (parameters_ != null) {
 			return parameters_.getInProperties();
 		}
 		return null;
 	}
 
-	public List<CaseInsensitiveString> getOutProperties() {
+	public List<CharSequence> getOutProperties() {
 		if (parameters_ != null) {
 			return parameters_.getOutProperties();
 		}
 		return null;
 	}
 
-	public List<CaseInsensitiveString> getLabels() {
+	public List<CharSequence> getLabels() {
 		if (parameters_ != null) {
 			return parameters_.getLabels();
 		}
 		return null;
 	}
 
-	public List<CaseInsensitiveString> getFilterKeys() {
+	public List<CharSequence> getFilterKeys() {
 		if (parameters_ != null) {
 			return parameters_.getFilterKeys();
 		}
 		return null;
 	}
 
-	public List<CaseInsensitiveString> getFilterValues() {
+	public List<CharSequence> getFilterValues() {
 		if (parameters_ != null) {
 			return parameters_.getFilterValues();
 		}
 		return null;
 	}
 
-	public List<CaseInsensitiveString> getOrderBys() {
+	public List<CharSequence> getOrderBys() {
 		if (parameters_ != null) {
 			return parameters_.getOrderBys();
 		}
@@ -235,9 +235,9 @@ public class JsonFrameAdapter implements JsonObject {
 		List<String> result = new ArrayList<String>();
 		result.add("@id");
 		result.add("@type");
-		Collection<CaseInsensitiveString> props = getProperties();
+		Collection<CharSequence> props = getProperties();
 		if (props == null) {
-			props = new ArrayList<CaseInsensitiveString>();
+			props = new ArrayList<CharSequence>();
 			props.addAll(getGetters().keySet());
 			if (props == null || props.size() < 3) {
 				if (frame_ instanceof DVertexFrame) {
@@ -250,7 +250,7 @@ public class JsonFrameAdapter implements JsonObject {
 				}
 			}
 		}
-		for (CaseInsensitiveString cis : props) {
+		for (CharSequence cis : props) {
 			result.add(cis.toString());
 			// System.out.println("Adding " + cis.toString());
 		}
@@ -270,8 +270,8 @@ public class JsonFrameAdapter implements JsonObject {
 			}
 		}
 		if (frame instanceof VertexFrame && getLabels() != null) {
-			for (CaseInsensitiveString cis : getLabels()) {
-				result.add("#" + cis);
+			for (CharSequence cis : getLabels()) {
+				result.add("#" + cis.toString());
 			}
 		}
 		if (frame instanceof EdgeFrame) {
@@ -478,31 +478,31 @@ public class JsonFrameAdapter implements JsonObject {
 							if (getFilterKeys() != null) {
 								if (result instanceof DEdgeList) {
 									// System.out.println("TEMP DEBUG: Applying a filter to a DEdgeList");
-									List<CaseInsensitiveString> filterKeys = getFilterKeys();
-									List<CaseInsensitiveString> filterValues = getFilterValues();
+									List<CharSequence> filterKeys = getFilterKeys();
+									List<CharSequence> filterValues = getFilterValues();
 									for (int i = 0; i < filterKeys.size(); i++) {
 										result = ((DEdgeList) result).applyFilter(filterKeys.get(i).toString(),
 												filterValues.get(i).toString());
 									}
 								} else if (result instanceof DVertexList) {
 									// System.out.println("TEMP DEBUG: Applying a filter to a DVertexList");
-									List<CaseInsensitiveString> filterKeys = getFilterKeys();
-									List<CaseInsensitiveString> filterValues = getFilterValues();
+									List<CharSequence> filterKeys = getFilterKeys();
+									List<CharSequence> filterValues = getFilterValues();
 									for (int i = 0; i < filterKeys.size(); i++) {
 										result = ((DVertexList) result).applyFilter(filterKeys.get(i).toString(),
 												filterValues.get(i).toString());
 									}
 								} else if (result instanceof FramedEdgeList) {
 									// System.out.println("TEMP DEBUG: Applying a filter to a FramedEdgeList");
-									List<CaseInsensitiveString> filterKeys = getFilterKeys();
-									List<CaseInsensitiveString> filterValues = getFilterValues();
+									List<CharSequence> filterKeys = getFilterKeys();
+									List<CharSequence> filterValues = getFilterValues();
 									for (int i = 0; i < filterKeys.size(); i++) {
 										result = ((FramedEdgeList<?>) result).applyFilter(filterKeys.get(i).toString(),
 												filterValues.get(i).toString());
 									}
 								} else if (result instanceof FramedVertexList) {
-									List<CaseInsensitiveString> filterKeys = getFilterKeys();
-									List<CaseInsensitiveString> filterValues = getFilterValues();
+									List<CharSequence> filterKeys = getFilterKeys();
+									List<CharSequence> filterValues = getFilterValues();
 									for (int i = 0; i < filterKeys.size(); i++) {
 										String curkey = filterKeys.get(i).toString();
 										String curvalue = filterValues.get(i).toString();

@@ -12,6 +12,8 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javolution.util.FastMap;
+
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
@@ -26,8 +28,6 @@ import org.openntf.domino.big.impl.ViewEntryCoordinate;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
-
-import javolution.util.FastMap;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
@@ -398,7 +398,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (allowNull) {
 			return result;
 		} else {
-			if (result == null || Null.INSTANCE == result) {
+			if (result == null || Null.INSTANCE == result || Deferred.INSTANCE == result) {
 				return TypeUtils.getDefaultInstance(type);
 			} else {
 				return result;

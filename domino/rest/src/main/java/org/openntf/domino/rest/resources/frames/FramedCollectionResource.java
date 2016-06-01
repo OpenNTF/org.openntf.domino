@@ -61,18 +61,18 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
 
 		if (pm.getTypes() != null) {
-			List<CaseInsensitiveString> types = pm.getTypes();
-			List<CaseInsensitiveString> filterkeys = pm.getFilterKeys();
-			List<CaseInsensitiveString> filtervalues = pm.getFilterValues();
-			List<CaseInsensitiveString> partialkeys = pm.getPartialKeys();
-			List<CaseInsensitiveString> partialvalues = pm.getPartialValues();
-			List<CaseInsensitiveString> startskeys = pm.getStartsKeys();
-			List<CaseInsensitiveString> startsvalues = pm.getStartsValues();
+			List<CharSequence> types = pm.getTypes();
+			List<CharSequence> filterkeys = pm.getFilterKeys();
+			List<CharSequence> filtervalues = pm.getFilterValues();
+			List<CharSequence> partialkeys = pm.getPartialKeys();
+			List<CharSequence> partialvalues = pm.getPartialValues();
+			List<CharSequence> startskeys = pm.getStartsKeys();
+			List<CharSequence> startsvalues = pm.getStartsValues();
 
 			if (types.size() == 0) {
 				writer.outNull();
 			} else if (types.size() == 1) {
-				CaseInsensitiveString typename = types.get(0);
+				CharSequence typename = types.get(0);
 
 				Iterable<?> elements = null;
 				if (filterkeys != null) {
@@ -123,7 +123,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			} else {
 				FramedVertexList vresult = null;
 				FramedEdgeList eresult = null;
-				for (CaseInsensitiveString typename : types) {
+				for (CharSequence typename : types) {
 					Iterable<?> elements = null;
 					if (filterkeys != null) {
 						elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
