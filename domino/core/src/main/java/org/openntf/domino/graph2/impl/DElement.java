@@ -12,8 +12,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
@@ -28,6 +26,8 @@ import org.openntf.domino.big.impl.ViewEntryCoordinate;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
+
+import javolution.util.FastMap;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
@@ -106,14 +106,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					Document doc = (Document) delegate;
 					doc.setAutoMime(AutoMime.WRAP_ALL);
 					if (doc.hasItem(propertyName)) {
-						if (NoteList.class.equals(type)) {
-							byte[] edges = doc.readBinary(propertyName);
-							NoteList list = new NoteList();
-							list.loadByteArray(edges);
-							result = list;
-						} else {
-							result = doc.getItemValue(propertyName, type);
-						}
+						result = doc.getItemValue(propertyName, type);
 					}
 					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
@@ -509,7 +502,6 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 								// PW: This block is encountered for every edge - EdgeLists always get marked as changed.
 								// TODO: This needs to check the edges have changed. If they haven't changed, it shouldn't save
 								((Document) delegate).writeBinary(s, bytes, 2048 * 24);
-								((Document) delegate).markDirty();
 								//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
 								//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
 								//									+ " to a Document in " + s);
