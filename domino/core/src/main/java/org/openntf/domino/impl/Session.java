@@ -1906,7 +1906,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		} else {
 			id = metaversalID;
 		}
-		return getDocumentByMetaversalID(serverName, id);
+		return getDocumentByMetaversalID(id, serverName);
 	}
 
 	/* (non-Javadoc)
