@@ -88,7 +88,7 @@ public class SessionsByTrack implements Runnable {
 			List<CaseInsensitiveString> keys = new ArrayList<CaseInsensitiveString>();
 			keys.add(new CaseInsensitiveString("Level"));
 			keys.add(new CaseInsensitiveString("Name"));
-			sponsors2.sortBy(keys, true);
+			sponsors2.sortBy((List<CharSequence>) (List<?>) keys, true);
 			for (Sponsor spon : sponsors2) {
 				System.out.println(spon.getLevel().name() + " - " + spon.getName());
 			}

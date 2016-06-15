@@ -1,9 +1,5 @@
 package org.openntf.domino.rest.service;
 
-import com.ibm.domino.das.service.IRestServiceExt;
-import com.ibm.domino.das.service.RestService;
-import com.tinkerpop.frames.FramedGraph;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,6 +24,10 @@ import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Factory.ThreadConfig;
 import org.openntf.domino.xsp.ODAPlatform;
 import org.openntf.domino.xsp.session.DasCurrentSessionFactory;
+
+import com.ibm.domino.das.service.IRestServiceExt;
+import com.ibm.domino.das.service.RestService;
+import com.tinkerpop.frames.FramedGraph;
 
 public class ODAGraphService extends RestService implements IRestServiceExt {
 	private Map<String, FramedGraph<?>> graphMap_;
@@ -144,24 +144,24 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return factoryMap_;
 	}
 
-	public void addFactory(String name, IGraphFactory factory) {
+	public void addFactory(final String name, final IGraphFactory factory) {
 		getFactoryMap().put(name, factory);
 	}
 
-	public IGraphFactory getFactory(String name) {
+	public IGraphFactory getFactory(final String name) {
 		return getFactoryMap().get(name);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public DFramedTransactionalGraph getGraph(String name) {
+	public DFramedTransactionalGraph getGraph(final String name) {
 		return (DFramedTransactionalGraph) getGraphMap().get(name);
 	}
 
-	public void addGraph(String name, FramedGraph<?> graph) {
+	public void addGraph(final String name, final FramedGraph<?> graph) {
 		getGraphMap().put(name, graph);
 	}
 
-	public FramedGraph<?> removeGraph(String name) {
+	public FramedGraph<?> removeGraph(final String name) {
 		return getGraphMap().remove(name);
 	}
 
@@ -187,19 +187,19 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public boolean beforeDoService(HttpServletRequest request) {
+	public boolean beforeDoService(final HttpServletRequest request) {
 		Factory.initThread(getDataServiceConfig());
 		Factory.setSessionFactory(new DasCurrentSessionFactory(request), SessionType.CURRENT);
 		return true;
 	}
 
 	@Override
-	public void afterDoService(HttpServletRequest request) {
+	public void afterDoService(final HttpServletRequest request) {
 		Factory.termThread();
 	}
 
 	@Override
-	public void onError(HttpServletRequest request, Throwable t) {
+	public void onUnknownError(final HttpServletRequest request, final Throwable t) {
 		Factory.termThread();
 		t.printStackTrace();
 	}
