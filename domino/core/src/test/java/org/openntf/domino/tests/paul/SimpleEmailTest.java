@@ -3,11 +3,10 @@
  */
 package org.openntf.domino.tests.paul;
 
-import lotus.domino.NotesThread;
-
-import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.email.DominoEmail;
+import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -15,10 +14,8 @@ import org.openntf.domino.utils.Factory.SessionType;
  * @author withersp
  * 
  */
-public class SimpleEmailTest {
-	// member vars for session and database
-	private Session session = null;
-	private Database database = null;
+public class SimpleEmailTest extends org.openntf.domino.thread.AbstractDominoRunnable {
+	private long marktime;
 
 	/**
 	 * 
@@ -26,46 +23,37 @@ public class SimpleEmailTest {
 	public SimpleEmailTest() {
 	}
 
-	public SimpleEmailTest(final Session s, final Database d) {
-		this.session = s;
-		this.database = d;
-	}
-
 	public static void main(final String[] args) {
-		Session s = null;
-		Database d = null;
-		NotesThread.sinitThread();
 		try {
-			s = Factory.getSession(SessionType.CURRENT);
-			d = s.getDatabase("heracles/intec-pw", "OpenNTF\\OpenNTFDomino.nsf");
-			SimpleEmailTest a = new SimpleEmailTest(s, d);
-			a.NotesMain();
+			System.out.println("Loading TestRunner...");
+			TestRunnerUtil.runAsDominoThread(new SimpleEmailTest(), TestRunnerUtil.NATIVE_SESSION);
+			System.out.println("Finished");
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			NotesThread.stermThread();
 		}
 	}
 
-	@SuppressWarnings("unused")
-	public void NotesMain() {
-		Session session;
-		Database database;
-
-		// Fails on checking current database!!
-
+	@Override
+	public void run() {
 		try {
-			Session s;
-			Database db;
-			if (this.session != null) {
-				s = this.session;
-				db = this.database;
-				DominoEmail myEmail = new DominoEmail(s);
-				myEmail.createSimpleEmail("pwithers@intec.co.uk", "", "", "OpenNTF Domino Email",
-						"Please find attached an email from OpenNTF Domino API", "");
-			}
-		} catch (Throwable t) {
-
+			System.out.println("Starting...");
+			Session session = Factory.getSession(SessionType.NATIVE);
+			DominoEmail myEmail = new DominoEmail(session);
+			myEmail.addToAddress("IntecTestUser1@intec.co.uk");
+			myEmail.addToAddress("IntecTestUser2@intec.co.uk");
+			myEmail.setSubject("Multi email test");
+			myEmail.addText("This is a test email");
+			Document email = myEmail.send();
+			System.out.println(email.getUniversalID());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+	}
+
+	public void timelog(final String message) {
+		long curtime = System.nanoTime();
+		long elapsed = curtime - marktime;
+		marktime = curtime;
+		System.out.println(elapsed / 1000000 + " ms: " + message);
 	}
 }

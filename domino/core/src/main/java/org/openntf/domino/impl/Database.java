@@ -1105,6 +1105,19 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		}
 	}
 
+	public Document getDocumentByID_Or_UNID(final String id) {
+		Document doc;
+		doc = getDocumentByUNID(id);
+		if (doc == null) {
+			try {
+				doc = getDocumentByID(id);
+			} catch (Throwable te) {
+				// Just couldn't get doc
+			}
+		}
+		return doc;
+	}
+
 	@Override
 	public Document getDocumentWithKey(final Serializable key) {
 		return this.getDocumentWithKey(key, false);
@@ -1118,7 +1131,9 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
-					doc.setUniversalID(checksum);
+					if (checksum != null) {
+						doc.setUniversalID(checksum);
+					}
 					doc.replaceItemValue("$Created", new Date());
 					doc.replaceItemValue("$$Key", key);
 				}
@@ -1270,7 +1285,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			if (idx != -1) {
 				fileName_ = path_.substring(idx + 1);
 			} else {
-				idx = path_.lastIndexOf('\\'); // if no \ is found, it returns -1 (-1+1=0)
+				idx = path_.lastIndexOf('\\');// if no \ is found, it returns -1 (-1+1=0)
 				fileName_ = path_.substring(idx + 1);
 			}
 		}
@@ -1398,7 +1413,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	public Date getLastFTIndexedDate() {
 		try {
 			lotus.domino.DateTime dt = getDelegate().getLastFTIndexed();
-			Date ret = DominoUtils.toJavaDateSafe(dt); // recycles the javaDate!
+			Date ret = DominoUtils.toJavaDateSafe(dt);// recycles the javaDate!
 			s_recycle(dt);
 			return ret;
 		} catch (NotesException e) {
@@ -3062,8 +3077,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	}
 
 	@Override
-	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		shadowedMetaData_ = null; // clear metaData
+	public void resurrect() {// should only happen if the delegate has been destroyed somehow.
+		shadowedMetaData_ = null;// clear metaData
 		lotus.domino.Session rawSession = toLotus(parent);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
@@ -3071,8 +3086,8 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (NotesException e) {
 			if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-				throw new UserAccessException("User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server "
-						+ server_, e);
+				throw new UserAccessException(
+						"User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server " + server_, e);
 			} else {
 				DominoUtils.handleException(e, this);
 			}
@@ -3697,7 +3712,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		out.writeInt(EXTERNALVERSIONUID); // data version
+		out.writeInt(EXTERNALVERSIONUID);// data version
 
 		out.writeObject(server_);
 		out.writeObject(path_);

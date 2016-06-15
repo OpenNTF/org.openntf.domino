@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -18,7 +19,7 @@ import com.tinkerpop.blueprints.Vertex;
 public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	protected final DVertex sourceVertex_;
 	protected final DGraph parentGraph_;
-	protected NoteList delegate_;
+	protected List<NoteCoordinate> delegate_;
 	protected boolean isUnique_;
 	protected String label_;
 	protected String storeid_;
@@ -51,7 +52,15 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 		@Override
 		public Edge next() {
-			return parent_.getEdge(delegate_.next());
+			Edge result = null;
+			try {
+				result = parent_.getEdge(delegate_.next());
+			} catch (Throwable t) {
+				System.err
+						.println("Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				result = next();
+			}
+			return result;
 		}
 
 		@Override
@@ -61,7 +70,13 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 		@Override
 		public Edge previous() {
-			return parent_.getEdge(delegate_.previous());
+			try {
+				return parent_.getEdge(delegate_.previous());
+			} catch (Throwable t) {
+				System.err
+						.println("Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				return previous();
+			}
 		}
 
 		@Override
@@ -90,6 +105,8 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	}
 
 	private static Collection<NoteCoordinate> getNCs(final Collection<?> arg0) {
+		if (arg0 == null)
+			return null;
 		Collection<NoteCoordinate> ncs = new ArrayList<NoteCoordinate>();
 		for (Object raw : arg0) {
 			if (raw instanceof Edge) {
@@ -101,7 +118,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	public DFastEdgeList(final DVertex source, final DGraph parent, final NoteList notelist, final String label) {
 		sourceVertex_ = source;
-		delegate_ = notelist;
+		delegate_ = Collections.synchronizedList(notelist);
 		parentGraph_ = parent;
 		label_ = label;
 		if (!notelist.isEmpty()) {
@@ -118,7 +135,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	@Deprecated
 	public DFastEdgeList(final DVertex source, final DGraph parent, final NoteList notelist) {
 		sourceVertex_ = source;
-		delegate_ = notelist;
+		delegate_ = Collections.synchronizedList(notelist);
 		parentGraph_ = parent;
 		if (!notelist.isEmpty()) {
 			NoteCoordinate nc = notelist.get(0);
@@ -425,15 +442,24 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public DVertexList toVertexList() {
+		//		System.out.println("TEMP DEBUG Converting an edge list to a vertex list");
 		DVertexList result = new DVertexList(sourceVertex_);
 		if (this.size() > 0) {
 			for (Edge edge : this) {
 				if (edge instanceof DEdge) {
 					DEdge dedge = (DEdge) edge;
-					DVertex vert = (DVertex) dedge.getOtherVertex(sourceVertex_);
-					result.add(vert);
+					try {
+						DVertex vert = (DVertex) dedge.getOtherVertex(sourceVertex_);
+						result.add(vert);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				} else {
+					//					System.out.println("TEMP DEBUG EdgeList didn't have a DEdge. It had a " + edge.getClass().getName());
 				}
 			}
+		} else {
+			//			System.out.println("TEMP DEBUG EdgeList size is not greater than 0.");
 		}
 		return result;
 	}

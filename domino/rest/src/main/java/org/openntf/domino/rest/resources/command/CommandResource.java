@@ -48,7 +48,8 @@ public class CommandResource extends AbstractResource {
 			IGraphFactory factory = this.getService().getFactory(namespace);
 			if (factory != null) {
 				for (String command : commands) {
-					System.out.println("TEMP DEBUG processing command " + command + " in namespace " + namespace);
+					// System.out.println("TEMP DEBUG processing command " +
+					// command + " in namespace " + namespace);
 					Object curResult = factory.processCommand(namespace, command, uriInfo.getQueryParameters());
 					writer.outObject(curResult);
 				}

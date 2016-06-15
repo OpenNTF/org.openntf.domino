@@ -12,12 +12,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.NotesException;
-
+import org.openntf.domino.DateTime;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.resources.frames.JsonFrameAdapter;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
@@ -85,11 +84,7 @@ public class JsonGraphWriter extends JsonWriter {
 	}
 
 	private String dateToString(DateTime paramDateTime, boolean paramBoolean) throws IOException {
-		try {
-			return dateToString(paramDateTime.toJavaDate(), paramBoolean);
-		} catch (NotesException localNotesException) {
-			throw new AbstractIOException(localNotesException, "");
-		}
+		return dateToString(paramDateTime.toJavaDate(), paramBoolean);
 	}
 
 	private String dateToString(Date paramDate, boolean paramBoolean) throws IOException {
@@ -106,6 +101,9 @@ public class JsonGraphWriter extends JsonWriter {
 
 	@Override
 	public void outObject(Object paramObject) throws IOException, JsonException {
+		// System.out.println("TEMP DEBUG Attempting to jsonify an object of "
+		// + (paramObject == null ? "NULL" : paramObject.getClass().getName()));
+
 		if (paramObject == null) {
 			super.outNull();
 		} else if (paramObject instanceof EdgeFrame) {
@@ -124,10 +122,15 @@ public class JsonGraphWriter extends JsonWriter {
 		} else if (paramObject instanceof org.openntf.domino.impl.View.DominoColumnInfo) {
 			String itemName = ((org.openntf.domino.impl.View.DominoColumnInfo) paramObject).getItemName();
 			super.outStringLiteral(itemName);
+		} else if (paramObject instanceof Set) {
+			// System.out.println("TEMP DEBUG outObject received a Set");
+			outArrayLiteral(((Set) paramObject).toArray());
+		} else if (paramObject instanceof DateTime) {
+			// System.out.println("TEMP DEBUG outObject received a Set");
+			outArrayLiteral(paramObject);
 		} else {
 			// Class<?> clazz = paramObject.getClass();
 			// String name = clazz.getName();
-			// System.out.println("DEBUG: Attempting to jsonify a " + name);
 			super.outObject(paramObject);
 		}
 	}
@@ -156,22 +159,18 @@ public class JsonGraphWriter extends JsonWriter {
 				return;
 			}
 			if (paramObject instanceof DateTime) {
-				try {
-					if (((DateTime) paramObject).getDateOnly().length() == 0) {
-						outStringLiteral(timeOnlyToString(((DateTime) paramObject).toJavaDate()));
-						return;
-					}
-
-					if (((DateTime) paramObject).getTimeOnly().length() == 0) {
-						outStringLiteral(dateOnlyToString(((DateTime) paramObject).toJavaDate()));
-						return;
-					}
-
-					outStringLiteral(dateToString(((DateTime) paramObject).toJavaDate(), true));
+				if (((DateTime) paramObject).getDateOnly().length() == 0) {
+					outStringLiteral(timeOnlyToString(((DateTime) paramObject).toJavaDate()));
 					return;
-				} catch (NotesException localNotesException) {
-					throw new AbstractIOException(localNotesException, "");
 				}
+
+				if (((DateTime) paramObject).getTimeOnly().length() == 0) {
+					outStringLiteral(dateOnlyToString(((DateTime) paramObject).toJavaDate()));
+					return;
+				}
+
+				outStringLiteral(dateToString(((DateTime) paramObject).toJavaDate(), true));
+				return;
 			}
 			if (paramObject instanceof Vector) {
 				startArray();
@@ -220,6 +219,9 @@ public class JsonGraphWriter extends JsonWriter {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected void outLiteral(Object paramObject, boolean paramBoolean) throws IOException, JsonException {
+		// System.out.println("TEMP DEBUG outputting a literal of "
+		// + (paramObject == null ? "NULL VALUE" :
+		// paramObject.getClass().getName()));
 		if (this.getFactory().isNull(paramObject)) {
 			outNull();
 		} else if (paramObject instanceof EdgeFrame) {
@@ -235,6 +237,11 @@ public class JsonGraphWriter extends JsonWriter {
 			String className = ((Enum) paramObject).getClass().getName();
 			String enumName = ((Enum) paramObject).name();
 			outStringLiteral(className + " " + enumName);
+		} else if (paramObject instanceof CharSequence) {
+			outStringLiteral(paramObject.toString());
+		} else if (paramObject instanceof Set) {
+			// System.out.println("TEMP DEBUG Got a set!");
+			outArrayLiteral(((Set) paramObject).toArray());
 		} else if (this.getFactory().isString(paramObject)) {
 			outStringLiteral(this.getFactory().getString(paramObject));
 		} else if (this.getFactory().isNumber(paramObject)) {
@@ -247,6 +254,9 @@ public class JsonGraphWriter extends JsonWriter {
 			outArrayLiteral(paramObject, paramBoolean);
 		} else if (paramObject instanceof JsonReference) {
 			outReference((JsonReference) paramObject);
+		} else if (paramObject instanceof DateTime) {
+			DateTime dt = (DateTime) paramObject;
+			outDateLiteral_(dt.toJavaDate());
 		} else if (paramObject instanceof Date) {
 			outDateLiteral_((Date) paramObject);
 		} else {

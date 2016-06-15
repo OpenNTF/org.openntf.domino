@@ -9,39 +9,40 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Sharer")
 public interface Sharer extends DVertexFrame {
-	@IncidenceUnique(label = SharedBy.LABEL)
-	public Iterable<SharedBy> getSharedBy();
-
-	@IncidenceUnique(label = SharedBy.LABEL)
-	public SharedBy addSharedBy(Share share);
-
-	@IncidenceUnique(label = SharedBy.LABEL)
-	public void removeSharedBy(Share share);
-
 	@AdjacencyUnique(label = SharedBy.LABEL)
 	public Iterable<Share> getShares();
 
 	@AdjacencyUnique(label = SharedBy.LABEL)
-	public Share addShare(Share share);
+	public SharedBy addShare(Share share);
 
 	@AdjacencyUnique(label = SharedBy.LABEL)
 	public void removeShare(Share share);
 
-	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
-	public Iterable<SharedWith> getSharedWith();
+	@IncidenceUnique(label = SharedBy.LABEL)
+	public Iterable<SharedBy> getSharedBys();
 
-	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
-	public SharedBy addSharedWith(Share share);
+	@IncidenceUnique(label = SharedBy.LABEL)
+	public int countSharedBys();
 
-	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
-	public void removeSharedWith(Share share);
+	@IncidenceUnique(label = SharedBy.LABEL)
+	public void removeSharedBy(SharedBy sharedBy);
 
 	@AdjacencyUnique(label = SharedWith.LABEL, direction = Direction.IN)
 	public Iterable<Share> getSharedWithShares();
 
 	@AdjacencyUnique(label = SharedWith.LABEL, direction = Direction.IN)
-	public Share addSharedWithShare(Share share);
+	public SharedWith addSharedWithShare(Share share);
 
 	@AdjacencyUnique(label = SharedWith.LABEL, direction = Direction.IN)
 	public void removeSharedWithShare(Share share);
+
+	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
+	public Iterable<SharedWith> getSharedWiths();
+
+	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
+	public int countSharedWiths();
+
+	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
+	public void removeSharedWith(SharedWith sharedWith);
+
 }

@@ -26,6 +26,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.graph2.annotations,
  org.openntf.domino.graph2.builtin,
  org.openntf.domino.graph2.builtin.identity,
+ org.openntf.domino.graph2.builtin.search,
  org.openntf.domino.graph2.builtin.social,
  org.openntf.domino.graph2.builtin.workflow,
  org.openntf.domino.graph2.builtin.workflow.definition,
@@ -62,7 +63,10 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
- com.ibm.icu;bundle-version="3.8.1"
+ com.ibm.icu;bundle-version="3.8.1",
+ javassist;bundle-version="3.18.2"
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Import-Package: lotus.domino
+Import-Package: javassist.util.proxy,
+ javax.faces.context,
+ lotus.domino

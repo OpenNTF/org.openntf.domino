@@ -54,6 +54,26 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	public boolean isAfter(final org.openntf.domino.DateTime compareDate);
 
 	/**
+	 * Compares current date with another and returns boolean of whether current date is after parameter, ignoring the date element
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to the current DateTime
+	 * @return boolean, whether or not current date is after the parameter
+	 * @since org.openntf.domino 2.0.1
+	 */
+	public boolean isAfterIgnoreDate(final org.openntf.domino.DateTime compareDate);
+
+	/**
+	 * Compares current date with another and returns boolean of whether current date is after parameter, ignoring the time element
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to the current DateTime
+	 * @return boolean, whether or not current date is after the parameter
+	 * @since org.openntf.domino 2.0.1
+	 */
+	public boolean isAfterIgnoreTime(final org.openntf.domino.DateTime compareDate);
+
+	/**
 	 * Checks whether the DateTime is defined as any time, so just a specific Date
 	 * 
 	 * @return boolean, whether the DateTime is a date-only value (e.g. [1/1/2013])
@@ -78,6 +98,26 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public boolean isBefore(final org.openntf.domino.DateTime compareDate);
+
+	/**
+	 * Compares current date with another and returns boolean of whether current date is before parameter, ignoring the date element
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to the current DateTime
+	 * @return boolean, whether or not current date is before the parameter
+	 * @since org.openntf.domino 2.0.1
+	 */
+	public boolean isBeforeIgnoreDate(final org.openntf.domino.DateTime compareDate);
+
+	/**
+	 * Compares current date with another and returns boolean of whether current date is before parameter, ignoring the time element
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to the current DateTime
+	 * @return boolean, whether or not current date is before the parameter
+	 * @since org.openntf.domino 2.0.1
+	 */
+	public boolean isBeforeIgnoreTime(final org.openntf.domino.DateTime compareDate);
 
 	/**
 	 * Returns a Java Calendar object for the DateTime object, same as used internally by org.openntf.domino.DateTime class

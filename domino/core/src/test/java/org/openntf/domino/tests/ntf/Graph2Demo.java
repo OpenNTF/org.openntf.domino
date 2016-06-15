@@ -10,6 +10,7 @@ import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.identity.Person;
+import org.openntf.domino.graph2.builtin.social.Comment;
 import org.openntf.domino.graph2.builtin.social.Commentable;
 import org.openntf.domino.graph2.builtin.social.Likeable;
 import org.openntf.domino.graph2.builtin.social.Rateable;
@@ -46,7 +47,7 @@ public class Graph2Demo implements Runnable {
 	public static String usersId = "graph2/users.nsf";
 	public static String socialId = "graph2/social.nsf";
 	public static String nabId = "names.nsf";
-	public static String ntfUnid = "15FF62B8D3420FD580257AF10000A5F2";//NTF this is my own person document. You may need to change it.
+	public static String ntfUnid = "2F25B5EDE23C245785257A600059FD2E"; //NTF this is my own person document. You may need to change it.
 
 	private static final String DIRECTEDBY = "DirectedBy";
 	private static final String APPEARSIN = "AppearsIn";
@@ -419,8 +420,7 @@ public class Graph2Demo implements Runnable {
 			Movie revengeMovie = framedGraph.getVertex("Revenge of the Sith", Movie.class);
 
 			System.out.println("***************************");
-			//System.out.println("Don't miss " + newhopeMovie.getTitle() + " rated " + newhopeMovie.getRaterRating(ntfUser) + " stars");
-			System.out.println("Don't miss " + newhopeMovie.getTitle());
+			System.out.println("Don't miss " + newhopeMovie.getTitle() + " rated " + newhopeMovie.getRaterRating(ntfUser) + " stars");
 			Iterable<Starring> starrings = newhopeMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -434,8 +434,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			//System.out.println("Don't miss " + empireMovie.getTitle() + " rated " + empireMovie.getRaterRating(ntfUser) + " stars");
-			System.out.println("Don't miss " + empireMovie.getTitle());
+			System.out.println("Don't miss " + empireMovie.getTitle() + " rated " + empireMovie.getRaterRating(ntfUser) + " stars");
 			starrings = empireMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -449,8 +448,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			//System.out.println("Don't miss " + jediMovie.getTitle() + " rated " + jediMovie.getRaterRating(ntfUser) + " stars");
-			System.out.println("Don't miss " + jediMovie.getTitle());
+			System.out.println("Don't miss " + jediMovie.getTitle() + " rated " + jediMovie.getRaterRating(ntfUser) + " stars");
 			starrings = jediMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -464,7 +462,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Do miss " + phantomMovie.getTitle());
+			System.out.println("Don't miss " + phantomMovie.getTitle());
 			starrings = phantomMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -478,7 +476,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Do miss " + clonesMovie.getTitle());
+			System.out.println("Don't miss " + clonesMovie.getTitle());
 			starrings = clonesMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -492,7 +490,7 @@ public class Graph2Demo implements Runnable {
 			}
 
 			System.out.println("***************************");
-			System.out.println("Do miss " + revengeMovie.getTitle());
+			System.out.println("Don't miss " + revengeMovie.getTitle());
 			starrings = revengeMovie.getStarring();
 			for (Starring starring : starrings) {
 				Crew crew = starring.getStar();
@@ -520,14 +518,14 @@ public class Graph2Demo implements Runnable {
 
 			FramedTransactionalGraph<DGraph> framedGraph = setupGraph();
 
-			//			Person nathan = framedGraph.addVertex("Nathan Freeman", Person.class);
+			Person nathan = framedGraph.addVertex("Nathan Freeman", Person.class);
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			//			empireMovie.addLikedByUser(nathan);
+			empireMovie.addLiker(nathan);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
@@ -540,10 +538,10 @@ public class Graph2Demo implements Runnable {
 
 			Movie revengeMovie = framedGraph.addVertex("Revenge of the Sith", Movie.class);
 			revengeMovie.setTitle("Revenge of the Sith");
-			//			Comment comment = framedGraph.addVertex(null, Comment.class);
-			//			comment.setBody("Really the worst of the bunch");
-			//			comment.addCommenter(nathan);
-			//			revengeMovie.addComment(comment);
+			Comment comment = framedGraph.addVertex(null, Comment.class);
+			comment.setBody("Really the worst of the bunch");
+			comment.addCommenter(nathan);
+			revengeMovie.addComment(comment);
 
 			Crew lucasCrew = framedGraph.addVertex("George Lucas", Crew.class);
 			lucasCrew.setFullName("George Lucas");

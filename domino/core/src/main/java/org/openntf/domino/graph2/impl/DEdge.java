@@ -31,7 +31,22 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	}
 
 	@Override
+	protected void applyChanges() {
+		Object inId = getVertexId(Direction.IN);
+		Object outId = getVertexId(Direction.OUT);
+		if (inId.equals(outId)) {
+			throw new IllegalStateException("Edge cannot have the same vertex for both in and out directions.");
+		}
+		super.applyChanges();
+	}
+
+	@Override
 	public void remove() {
+		//		if (this.getLabel().equalsIgnoreCase("foundin")) {
+		//			System.out.println("Removing a foundin edge? Why?");
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+		//		}
 		getParent().removeEdge(this);
 	}
 

@@ -8,22 +8,22 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Commenter")
 public interface Commenter extends DVertexFrame {
-	@IncidenceUnique(label = CommentsOn.LABEL)
-	public Iterable<CommentsOn> getCommentsOn();
-
-	@IncidenceUnique(label = CommentsOn.LABEL)
-	public CommentsOn addCommentsOn(Comment comment);
-
-	@IncidenceUnique(label = CommentsOn.LABEL)
-	public void removeCommentsOn(Comment comment);
-
 	@AdjacencyUnique(label = CommentsOn.LABEL)
 	public Iterable<Comment> getComments();
 
 	@AdjacencyUnique(label = CommentsOn.LABEL)
-	public Comment addComment(Comment comment);
+	public CommentsOn addComment(Comment comment);
 
 	@AdjacencyUnique(label = CommentsOn.LABEL)
 	public void removeComment(Comment comment);
+
+	@IncidenceUnique(label = CommentsOn.LABEL)
+	public Iterable<CommentsOn> getCommentsOns();
+
+	@IncidenceUnique(label = CommentsOn.LABEL)
+	public int countCommentsOns();
+
+	@IncidenceUnique(label = CommentsOn.LABEL)
+	public void removeCommentsOn(CommentsOn commentsOn);
 
 }

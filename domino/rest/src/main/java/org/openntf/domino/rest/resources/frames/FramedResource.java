@@ -4,6 +4,9 @@ import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.httpmethod.PATCH;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
@@ -12,12 +15,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -34,6 +39,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
@@ -45,6 +51,8 @@ import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
@@ -104,28 +112,39 @@ public class FramedResource extends AbstractResource {
 		} else if (pm.getKeys() != null) {
 			Class<?> type = null;
 			if (pm.getTypes() != null) {
-				List<CaseInsensitiveString> types = pm.getTypes();
+				List<CharSequence> types = pm.getTypes();
 				String typename = types.get(0).toString();
 				type = graph.getTypeRegistry().findClassByName(typename);
 			}
 			DKeyResolver resolver = graph.getKeyResolver(type);
-			List<CaseInsensitiveString> keys = pm.getKeys();
+			List<CharSequence> keys = pm.getKeys();
 			if (keys.size() == 0) {
 				writer.outNull();
 			} else if (keys.size() == 1) {
-				CaseInsensitiveString id = keys.get(0);
+				CharSequence id = keys.get(0);
 				NoteCoordinate nc = resolver.resolveKey(type, id);
 				if (nc == null) {
 					System.err.println("NoteCoordinate is null for id " + id);
 				}
-				Object elem = graph.getElement(nc, type);
+				Object elem = graph.getElement(nc);
 				if (elem == null) {
-					throw new IllegalStateException("Graph element is null for id " + id);
+					elem = resolver.handleMissingKey(type, id);
+					if (elem == null) {
+						throw new IllegalStateException("Graph element is null for id " + id);
+					}
 				}
-				writer.outObject(elem);
+				if (elem instanceof Vertex) {
+					// System.out.println("TEMP DEBUG Framing a vertex of type "
+					// + elem.getClass().getName());
+					Object vf = graph.frame((Vertex) elem, type);
+					writer.outObject(vf);
+				} else if (elem instanceof Edge) {
+					Object ef = graph.frame((Edge) elem, type);
+					writer.outObject(ef);
+				}
 			} else {
 				List<Object> maps = new ArrayList<Object>();
-				for (CaseInsensitiveString id : keys) {
+				for (CharSequence id : keys) {
 					NoteCoordinate nc = resolver.resolveKey(type, id);
 					maps.add(graph.getElement(nc, null));
 				}
@@ -158,34 +177,42 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response putDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, true);
 
 		return response;
 	}
 
+	// @OPTIONS
 	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response patchDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false);
 		return response;
 	}
 
 	protected Response updateFrameByMetaid(String requestEntity, String namespace, String ifUnmodifiedSince,
-			ParamMap pm, boolean isPut) {
+			ParamMap pm, boolean isPut) throws JsonException, IOException {
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
+		StringWriter sw = new StringWriter();
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+
 		try {
 			StringReader reader = new StringReader(requestEntity);
 			try {
 				jsonItems = (JsonJavaObject) JsonParser.fromJson(factory, reader);
+				// System.out.println("TEMP DEBUG requestEntity " +
+				// requestEntity);
+				// System.out.println("TEMP DEBUG check " +
+				// jsonItems.get("FirstName"));
 			} finally {
 				reader.close();
 			}
@@ -193,14 +220,19 @@ public class FramedResource extends AbstractResource {
 			ex.printStackTrace();
 		}
 		if (jsonItems != null) {
+			Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
+			for (String jsonKey : jsonItems.keySet()) {
+				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
+				cisMap.put(cis, jsonItems.get(jsonKey));
+			}
 			List<String> ids = pm.get(Parameters.ID);
 			if (ids.size() == 0) {
 				// TODO no id
 			} else {
+				JsonFrameAdapter adapter = null;
 				for (String id : ids) {
 					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
 					Object element = graph.getElement(nc, null);
-					JsonFrameAdapter adapter = null;
 					if (element instanceof EdgeFrame) {
 						adapter = new JsonFrameAdapter(graph, (EdgeFrame) element, null);
 					} else if (element instanceof VertexFrame) {
@@ -212,43 +244,101 @@ public class FramedResource extends AbstractResource {
 					}
 					Iterator<String> frameProperties = adapter.getJsonProperties();
 					while (frameProperties.hasNext()) {
-						String key = frameProperties.next();
+						CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 						if (!key.startsWith("@")) {
-							Object value = jsonItems.get(key);
+							Object value = cisMap.get(key);
 							if (value != null) {
-								adapter.putJsonProperty(key, value);
-								jsonItems.remove(key);
+								// if ("fullname".equals(key)) {
+								// System.out.println("TEMP DEBUG fullname: " +
+								// value);
+								// }
+								adapter.putJsonProperty(key.toString(), value);
+								cisMap.remove(key);
 							} else if (isPut) {
-								adapter.putJsonProperty(key, value);
+								adapter.putJsonProperty(key.toString(), value);
 							}
 						}
 					}
-					for (String jsonKey : jsonItems.keySet()) {
-						if (!jsonKey.startsWith("@")) {
-							Object value = jsonItems.getJsonProperty(jsonKey);
+					for (CaseInsensitiveString cis : cisMap.keySet()) {
+						if (!cis.startsWith("@")) {
+							Object value = cisMap.get(cis);
 							if (value != null) {
-								adapter.putJsonProperty(jsonKey, value);
+								adapter.putJsonProperty(cis.toString(), value);
 							}
 						}
 					}
+					writer.outObject(element);
 				}
 				graph.commit();
 			}
 		}
 		ResponseBuilder builder = Response.ok();
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(null);
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
 
 		result = builder.build();
 
 		return result;
 	}
 
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("rawtypes")
+	public Response deleteFramedObject(String requestEntity, @Context final UriInfo uriInfo,
+			@PathParam(Routes.NAMESPACE) final String namespace) {
+		DFramedTransactionalGraph graph = this.getGraph(namespace);
+		String jsonEntity = null;
+		ResponseBuilder builder = Response.ok();
+		ParamMap pm = Parameters.toParamMap(uriInfo);
+		StringWriter sw = new StringWriter();
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+
+		JsonGraphFactory factory = JsonGraphFactory.instance;
+
+		Map<String, String> report = new HashMap<String, String>();
+
+		List<String> ids = pm.get(Parameters.ID);
+		if (ids.size() == 0) {
+			// TODO no id
+		} else {
+			for (String id : ids) {
+				try {
+					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+					Object element = graph.getElement(nc, null);
+					if (element instanceof Element) {
+						((Element) element).remove();
+					} else if (element instanceof VertexFrame) {
+						((VertexFrame) element).asVertex().remove();
+					} else if (element instanceof EdgeFrame) {
+						((EdgeFrame) element).asEdge().remove();
+					}
+					report.put(id, "deleted");
+				} catch (Throwable t) {
+					DominoUtils.handleException(t);
+				}
+			}
+			graph.commit();
+		}
+		try {
+			writer.outObject(report);
+		} catch (JsonException e) {
+			DominoUtils.handleException(e);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
+
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
+		Response response = builder.build();
+		return response;
+	}
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@SuppressWarnings("rawtypes")
 	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) {
-		@SuppressWarnings("rawtypes")
+		// Factory.println("Processing a POST for " + namespace);
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
 		ResponseBuilder builder = Response.ok();
@@ -269,60 +359,107 @@ public class FramedResource extends AbstractResource {
 			ex.printStackTrace();
 		}
 		if (jsonItems != null) {
+			Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
+			for (String jsonKey : jsonItems.keySet()) {
+				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
+				cisMap.put(cis, jsonItems.get(jsonKey));
+			}
 			List<String> ids = pm.get(Parameters.ID);
-			if (ids.size() == 0) {
-				// TODO no id
+			if (ids == null) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("error", "Cannot POST to frame without an id parameter");
+				try {
+					writer.outObject(map);
+				} catch (JsonException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
-				for (String id : ids) {
-					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
-					Object element = graph.getElement(nc, null);
-					if (element instanceof VertexFrame) {
-						VertexFrame parVertex = (VertexFrame) element;
-						Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
-								parVertex.getClass());
-						String rawLabel = jsonItems.getAsString("@label");
-						Method method = adders.get(rawLabel);
-						if (method != null) {
-							String rawId = jsonItems.getAsString("@id");
-							Object otherElement = graph.getElement(rawId, null);
-							if (otherElement instanceof VertexFrame) {
-								VertexFrame otherVertex = (VertexFrame) otherElement;
-								try {
-									Object result = method.invoke(parVertex, otherVertex);
-									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
-									Iterator<String> frameProperties = adapter.getJsonProperties();
-									while (frameProperties.hasNext()) {
-										String key = frameProperties.next();
-										if (!key.startsWith("@")) {
-											Object value = jsonItems.get(key);
-											if (value != null) {
-												adapter.putJsonProperty(key, value);
-												jsonItems.remove(key);
+				if (ids.size() == 0) {
+					// TODO no id
+				} else {
+					for (String id : ids) {
+						// System.out.println("TEMP DEBUG POSTing to " + id);
+						NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+						Object element = graph.getElement(nc, null);
+						if (element instanceof VertexFrame) {
+							VertexFrame parVertex = (VertexFrame) element;
+							Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
+									parVertex.getClass());
+							CaseInsensitiveString rawLabel = new CaseInsensitiveString(jsonItems.getAsString("@label"));
+							Method method = adders.get(rawLabel);
+							if (method != null) {
+								String rawId = jsonItems.getAsString("@id");
+								NoteCoordinate othernc = NoteCoordinate.Utils.getNoteCoordinate(rawId);
+								Object otherElement = graph.getElement(othernc, null);
+								if (otherElement instanceof VertexFrame) {
+									VertexFrame otherVertex = (VertexFrame) otherElement;
+									try {
+										Object result = method.invoke(parVertex, otherVertex);
+										if (result == null) {
+											System.out.println("Invokation of method " + method.getName()
+													+ " on a vertex of type " + DGraphUtils.findInterface(parVertex)
+													+ " with an argument of type "
+													+ DGraphUtils.findInterface(otherVertex)
+													+ " resulted in null when we expected an Edge");
+										}
+										JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null);
+										Iterator<String> frameProperties = adapter.getJsonProperties();
+										while (frameProperties.hasNext()) {
+											CaseInsensitiveString key = new CaseInsensitiveString(
+													frameProperties.next());
+											if (!key.startsWith("@")) {
+												Object value = cisMap.get(key);
+												if (value != null) {
+													adapter.putJsonProperty(key.toString(), value);
+													cisMap.remove(key);
+												}
 											}
 										}
-									}
-									for (String jsonKey : jsonItems.keySet()) {
-										if (!jsonKey.startsWith("@")) {
-											Object value = jsonItems.getJsonProperty(jsonKey);
-											if (value != null) {
-												adapter.putJsonProperty(jsonKey, value);
+										for (CaseInsensitiveString cis : cisMap.keySet()) {
+											if (!cis.startsWith("@")) {
+												Object value = cisMap.get(cis);
+												if (value != null) {
+													adapter.putJsonProperty(cis.toString(), value);
+												}
 											}
 										}
+										writer.outObject(result);
+									} catch (Exception e) {
+										e.printStackTrace();
 									}
-									writer.outObject(result);
-								} catch (Exception e) {
-									e.printStackTrace();
+								} else {
+									Factory.println("otherElement is not a VertexFrame. It's a "
+											+ (otherElement == null ? "null" : DGraphUtils.findInterface(otherElement)
+													.getName()));
 								}
+							} else {
+								Class[] interfaces = element.getClass().getInterfaces();
+								String intList = "";
+								for (Class inter : interfaces) {
+									intList = intList + inter.getName() + ", ";
+								}
+								String methList = "";
+								for (CaseInsensitiveString key : adders.keySet()) {
+									methList = methList + key.toString() + ", ";
+								}
+								Factory.println("No method found for " + rawLabel + " on element " + intList + ": "
+										+ ((VertexFrame) element).asVertex().getId() + " methods " + methList);
 							}
+						} else {
+							org.openntf.domino.utils.Factory.println("element is not a VertexFrame. It's a "
+									+ element.getClass().getName());
 						}
 					}
 				}
-
+				graph.commit();
 			}
 		}
 
-		jsonEntity = sw.toString();
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
 		Response response = builder.build();
 		return response;
 	}

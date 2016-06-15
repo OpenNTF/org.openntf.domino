@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.openntf.domino.big.IndexDatabase;
+
 /**
  * @author Nathan T. Freeman
  * 
@@ -62,7 +64,7 @@ public class IndexQuery {
 	 *            the terms to set
 	 */
 	public void setTerms(final java.util.Collection<?> terms) {
-		terms_ = IndexDatabase.toStringSet(terms);
+		terms_ = IndexDatabase.Utils.toStringSet(terms);
 	}
 
 	public void setStringTerms(final Set<CharSequence> terms) {
@@ -93,7 +95,7 @@ public class IndexQuery {
 	}
 
 	public void setTerms(final CharSequence term) {
-		terms_ = IndexDatabase.toStringSet(term);
+		terms_ = IndexDatabase.Utils.toStringSet(term);
 	}
 
 	/**
@@ -108,7 +110,7 @@ public class IndexQuery {
 	 *            the dbids to set
 	 */
 	public void setDbids(final Collection<Object> dbids) {
-		dbids_ = IndexDatabase.toStringSet(dbids);
+		dbids_ = IndexDatabase.Utils.toStringSet(dbids);
 		if (dbids != null && !dbids.isEmpty()) {
 			//			System.out.println("Setting dbids filter to " + dbids.getClass().getSimpleName() + " of size " + dbids.size() + ": "
 			//					+ debugStringSet(dbids_));
@@ -127,7 +129,7 @@ public class IndexQuery {
 	 *            the items to set
 	 */
 	public void setItems(final Collection<Object> items) {
-		items_ = IndexDatabase.toStringSet(items);
+		items_ = IndexDatabase.Utils.toStringSet(items);
 	}
 
 	/**
@@ -142,7 +144,7 @@ public class IndexQuery {
 	 *            the forms to set
 	 */
 	public void setForms(final Collection<Object> forms) {
-		forms_ = IndexDatabase.toStringSet(forms);
+		forms_ = IndexDatabase.Utils.toStringSet(forms);
 	}
 
 	private static final boolean profile_ = true;
@@ -210,11 +212,11 @@ public class IndexQuery {
 		//		System.out.println("Executing with: " + debugGetTerms());
 		Set<CharSequence> localTerms = getTerms();
 		if (!db.getCaseSensitive()) {
-			localTerms = IndexDatabase.toCISSet(localTerms);
+			localTerms = IndexDatabase.Utils.toCISSet(localTerms);
 		}
 		if (isAnd() && localTerms.size() > 1) {
 			for (CharSequence term : localTerms) {
-				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
+				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.Utils.toCISSet(getItems()), getForms());
 				if (result == null) {
 					result = createResultsFromHitList(hits);
 				} else {
@@ -225,7 +227,7 @@ public class IndexQuery {
 		} else {
 			result = createResultsFromHitList(new ArrayList<IndexHit>());
 			for (CharSequence term : localTerms) {
-				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
+				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.Utils.toCISSet(getItems()), getForms());
 				IndexResults temp = createResultsFromHitList(hits);
 				result.merge(temp);
 			}
@@ -233,7 +235,7 @@ public class IndexQuery {
 		if (profile_) {
 			int resultCount = result == null ? 0 : result.getHits().size();
 			System.out
-					.println("IndexQuery executed for " + resultCount + " results in " + ((System.nanoTime() - startNanos) / 1000) + "us");
+			.println("IndexQuery executed for " + resultCount + " results in " + ((System.nanoTime() - startNanos) / 1000) + "us");
 		}
 		return result;
 	}

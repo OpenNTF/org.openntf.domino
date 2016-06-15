@@ -32,7 +32,7 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 
 	public Set<String> getOutEdgeLabels();
 
-	public Set<Edge> getEdges(final String... labels);
+	public Iterable<Edge> getEdges(final String... labels);
 
 	public Edge findInEdge(final Vertex otherVertex, final String label, boolean isUnique);
 

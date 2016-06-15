@@ -112,7 +112,7 @@ public @interface Tasklet {
 		/**
 		 * Clones the {@link SessionType#CURRENT CURRENT} Session from the current context. This means if you are running in a XPage, you
 		 * have the same user session in your XOTS Runnable. If you are running a scheduled servlet, you have a
-		 * {@link Factory.SessionType#SESSION_AS_SIGNER SESSION_AS_SIGNER}.
+		 * {@link Factory.SessionType#NATIVE}.
 		 * 
 		 * This Session may be created with createXPageSession and may be restricted to maximum internet access!
 		 */
@@ -185,23 +185,20 @@ public @interface Tasklet {
 		MODULE,
 
 		/**
-		 * Run in XSP Context: with access to the Xsp dependencies, but without any context (faces or otherwise)
+		 * Run in XSP Context: with access to the Xsp dependencies, but without any scoped maps, just FacesContext / XspContext
 		 */
-		@Deprecated
 		XSPBARE,
 
 		/**
 		 * would be "it's running with access to the scoped variables within it's environment." So that would set up access to
 		 * ApplicationScoped, ServerScope, IdentityScope in it
 		 */
-		@Deprecated
 		XSPSCOPED,
 		/**
 		 * would force the Tasklet to run in the same NSFComponentModule context as any given Xpage this would force the Application to be
 		 * activated, thus triggering ApplicationListeners, for instance
 		 */
-		@Deprecated
-		XSPFORCE
+		@Deprecated XSPFORCE
 	}
 
 	public enum ThreadConfig {
@@ -241,7 +238,8 @@ public @interface Tasklet {
 	 * 08:30 and 22:30. This should be prefered to cron, because cron will start all periodic tasks in the same minute.</li>
 	 * <li><code>period:45m 08:30-22:30 MTWRF</code> to run a periodic task every 45 minutes between 08:30 and 22:30. This should be
 	 * prefered to cron, because cron will start all periodic tasks in the same minute.</li>
-	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)</li>
+	 * <li><code>manual</code> if you want to execute the schedule manually. (tell http osgi xots run &lt;module&gt; &lt;taskletClass&gt;)
+	 * </li>
 	 * <li><code>dynamic</code> get the dynamic schedule by invoking {@link Tasklet.Interface#getDynamicSchedule()} (this must be the first
 	 * and only annotation. Class must have a default constructor.)</li>
 	 * 

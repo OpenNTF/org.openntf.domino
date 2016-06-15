@@ -3,13 +3,14 @@ package org.openntf.domino.rest.resources.frames;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.VertexFrame;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
-import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
@@ -47,7 +47,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		super(service);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace)
@@ -61,26 +61,36 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
 
 		if (pm.getTypes() != null) {
-			List<CaseInsensitiveString> types = pm.getTypes();
-			List<CaseInsensitiveString> filterkeys = pm.getFilterKeys();
-			List<CaseInsensitiveString> filtervalues = pm.getFilterValues();
+			List<CharSequence> types = pm.getTypes();
+			List<CharSequence> filterkeys = pm.getFilterKeys();
+			List<CharSequence> filtervalues = pm.getFilterValues();
+			List<CharSequence> partialkeys = pm.getPartialKeys();
+			List<CharSequence> partialvalues = pm.getPartialValues();
+			List<CharSequence> startskeys = pm.getStartsKeys();
+			List<CharSequence> startsvalues = pm.getStartsValues();
 
 			if (types.size() == 0) {
 				writer.outNull();
 			} else if (types.size() == 1) {
-				CaseInsensitiveString typename = types.get(0);
+				CharSequence typename = types.get(0);
 
 				Iterable<?> elements = null;
 				if (filterkeys != null) {
 					elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
+				} else if (partialkeys != null) {
+					elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
+				} else if (startskeys != null) {
+					elements = graph.getFilteredElementsStarts(typename.toString(), startskeys, startsvalues);
 				} else {
+					// System.out.println("TEMP DEBUG Getting elements for type "
+					// + typename);
 					elements = graph.getElements(typename.toString());
 				}
 
 				if (elements instanceof FramedEdgeList) {
 					FramedEdgeList<?> result = (FramedEdgeList<?>) elements;
 					if (pm.getOrderBys() != null) {
-						result = result.sortBy(pm.getOrderBys());
+						result = result.sortBy(pm.getOrderBys(), pm.getDescending());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
@@ -93,7 +103,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				} else if (elements instanceof FramedVertexList) {
 					FramedVertexList<?> result = (FramedVertexList<?>) elements;
 					if (pm.getOrderBys() != null) {
-						result = result.sortBy(pm.getOrderBys());
+						result = result.sortBy(pm.getOrderBys(), pm.getDescending());
 					}
 					if (pm.getStart() > 0) {
 						if (pm.getCount() > 0) {
@@ -111,20 +121,62 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					writer.outArrayLiteral(maps);
 				}
 			} else {
-				List<Object> maps = new ArrayList<Object>();
-				for (CaseInsensitiveString typename : types) {
+				FramedVertexList vresult = null;
+				FramedEdgeList eresult = null;
+				for (CharSequence typename : types) {
 					Iterable<?> elements = null;
 					if (filterkeys != null) {
 						elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
+					} else if (partialkeys != null) {
+						elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
+					} else if (startskeys != null) {
+						elements = graph.getFilteredElementsStarts(typename.toString(), startskeys, startsvalues);
 					} else {
 						elements = graph.getElements(typename.toString());
 					}
 
-					for (Object element : elements) {
-						maps.add(element);
+					if (elements instanceof FramedVertexList) {
+						if (vresult == null) {
+							vresult = (FramedVertexList) elements;
+						} else {
+							vresult.addAll((FramedVertexList) elements);
+						}
+					} else if (elements instanceof FramedEdgeList) {
+						if (eresult == null) {
+							eresult = (FramedEdgeList) elements;
+						} else {
+							eresult.addAll((FramedEdgeList) elements);
+						}
 					}
+
 				}
-				writer.outArrayLiteral(maps);
+				if (vresult != null) {
+					if (pm.getOrderBys() != null) {
+						vresult = vresult.sortBy(pm.getOrderBys(), pm.getDescending());
+					}
+					if (pm.getStart() > 0) {
+						if (pm.getCount() > 0) {
+							vresult = (FramedVertexList<?>) vresult.subList(pm.getStart(),
+									pm.getStart() + pm.getCount());
+						} else {
+							vresult = (FramedVertexList<?>) vresult.subList(pm.getStart(), vresult.size());
+						}
+					}
+					writer.outArrayLiteral(vresult);
+				}
+				if (eresult != null) {
+					if (pm.getOrderBys() != null) {
+						eresult = eresult.sortBy(pm.getOrderBys(), pm.getDescending());
+					}
+					if (pm.getStart() > 0) {
+						if (pm.getCount() > 0) {
+							eresult = (FramedEdgeList<?>) eresult.subList(pm.getStart(), pm.getStart() + pm.getCount());
+						} else {
+							eresult = (FramedEdgeList<?>) eresult.subList(pm.getStart(), eresult.size());
+						}
+					}
+					writer.outArrayLiteral(eresult);
+				}
 			}
 			jsonEntity = sw.toString();
 		} else {
@@ -152,6 +204,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
+		org.apache.wink.common.internal.registry.metadata.ResourceMetadataCollector rc;
 		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
@@ -159,7 +212,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
-
+		// System.out.println("TEMP DEBUG Starting new POST...");
 		JsonJavaObject jsonItems = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
 		try {
@@ -173,26 +226,62 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			ex.printStackTrace();
 		}
 		if (jsonItems != null) {
-			String rawType = jsonItems.getAsString("@type");
-			if (rawType != null) {
+			Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
+			for (String jsonKey : jsonItems.keySet()) {
+				CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
+				cisMap.put(cis, jsonItems.get(jsonKey));
+			}
+			String rawType = jsonItems.getAsString("@type").trim();
+			if (rawType != null && rawType.length() > 0) {
 				try {
 					Class<?> type = graph.getTypeRegistry().findClassByName(rawType);
-					if (type.isAssignableFrom(EdgeFrame.class)) {
-						JsonJavaObject inJson = jsonItems.getJsonObject("@in");
-						String inId = inJson.getAsString("@id");
-						JsonJavaObject outJson = jsonItems.getJsonObject("@out");
-						String outId = outJson.getAsString("@id");
-						Vertex in = graph.getVertex(NoteCoordinate.Utils.getNoteCoordinate(inId));
-						Vertex out = graph.getVertex(NoteCoordinate.Utils.getNoteCoordinate(outId));
-						String label = jsonItems.getAsString("label");
-						@SuppressWarnings("unchecked")
-						EdgeFrame edge = (EdgeFrame) graph.addEdge(null, out, in, label, type);
+					if (VertexFrame.class.isAssignableFrom(type)) {
+						VertexFrame parVertex = (VertexFrame) graph.addVertex(null, type);
+						try {
+							JsonFrameAdapter adapter = new JsonFrameAdapter(graph, parVertex, null);
+							Iterator<String> frameProperties = adapter.getJsonProperties();
+							while (frameProperties.hasNext()) {
+								CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
+								if (!key.startsWith("@")) {
+									Object value = cisMap.get(key);
+									if (value != null) {
+										adapter.putJsonProperty(key.toString(), value);
+										cisMap.remove(key);
+									}
+								} else {
+									// System.out.println("TEMP DEBUG Skipping property "
+									// + key);
+								}
+							}
+							if (!cisMap.isEmpty()) {
+								for (CaseInsensitiveString cis : cisMap.keySet()) {
+									if (!cis.startsWith("@")) {
+										Object value = cisMap.get(cis);
+										if (value != null) {
+											adapter.putJsonProperty(cis.toString(), value);
+										}
+									} else {
+										// System.out.println("TEMP DEBUG Skipping property "
+										// + cis);
+									}
+								}
+							}
+							writer.outObject(parVertex);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					} else {
+						// System.out.print("TYPE is not a Vertex and therefore we can't create it through a POST yet.");
 					}
+					graph.commit();
 				} catch (IllegalArgumentException iae) {
 					throw new RuntimeException(iae);
 				}
-
+			} else {
+				System.err.println("Cannot POST without an @type in the JSON");
 			}
+		} else {
+			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items found.");
 		}
 
 		jsonEntity = sw.toString();

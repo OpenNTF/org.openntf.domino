@@ -16,6 +16,7 @@ import com.tinkerpop.blueprints.Element;
  * @author nfreeman
  * 
  */
+@Deprecated
 public class ElementComparator implements Comparator<Element>, Serializable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ElementComparator.class.getName());

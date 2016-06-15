@@ -80,21 +80,29 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public boolean add(final org.openntf.domino.big.NoteCoordinate e) {
+		if (e == null)
+			return true;
 		return delegate_.add(e);
 	}
 
 	@Override
 	public void add(final int index, final org.openntf.domino.big.NoteCoordinate element) {
-		delegate_.add(index, element);
+		if (element != null) {
+			delegate_.add(index, element);
+		}
 	}
 
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.big.NoteCoordinate> c) {
+		if (c == null)
+			return true;
 		return delegate_.addAll(c);
 	}
 
 	@Override
 	public boolean addAll(final int index, final Collection<? extends org.openntf.domino.big.NoteCoordinate> c) {
+		if (c == null)
+			return true;
 		return delegate_.addAll(index, c);
 	}
 
@@ -105,11 +113,15 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public boolean contains(final Object o) {
+		if (o == null)
+			return true;
 		return delegate_.contains(o);
 	}
 
 	@Override
 	public boolean containsAll(final Collection<?> c) {
+		if (c == null)
+			return true;
 		return delegate_.containsAll(c);
 	}
 

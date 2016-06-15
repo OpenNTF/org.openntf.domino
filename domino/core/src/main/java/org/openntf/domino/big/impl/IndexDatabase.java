@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,26 +35,8 @@ import org.openntf.domino.types.CaseInsensitiveString;
  * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class IndexDatabase implements IScannerStateManager {
+public class IndexDatabase implements IScannerStateManager, org.openntf.domino.big.IndexDatabase {
 	private static final Logger log_ = Logger.getLogger(IndexDatabase.class.getName());
-
-	public static final String TERM_VIEW_NAME = "$TermIndex";
-	public static final String TERM_FORM_NAME = "$TermDoc";
-	public static final String TERM_KEY_NAME = "TermKey";
-	public static final String TERM_MAP_PREFIX = "TermMap_";
-	public static final String DBID_NAME = "DbidList";
-	public static final String DB_VIEW_NAME = "$DbIndex";
-	public static final String DB_FORM_NAME = "$DbDoc";
-	public static final String DB_KEY_NAME = "DbKey";
-	public static final String DB_TOKEN_LOCATION_NAME = "TokenLocationMap";
-	public static final String DB_NAME_LOCATION_NAME = "NameLocationMap";
-	public static final String DB_FIELD_TOKEN_NAME = "FieldTokenMap";
-	public static final String DB_LAST_INDEX_NAME = "LastIndexTime";
-	public static final String DB_DOC_LIST_NAME = "DocumentList";
-	public static final String DB_TITLE_NAME = "Title";
-	public static final String DB_DOC_SORTER_NAME = "DocumentSorter";
-	public static final String[] DEFAULT_STOP_WORDS_EN = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
-			.split(",");
 
 	protected transient Database indexDb_;
 	// protected transient DatabaseHolder dbHolder_;
@@ -65,7 +46,7 @@ public class IndexDatabase implements IScannerStateManager {
 	protected boolean caseSensitive_ = false;
 	protected boolean continue_ = true;
 
-	public static Set<CharSequence> toStringSet(final Object value) {
+	/*public static Set<CharSequence> toStringSet(final Object value) {
 		Set<CharSequence> result = new HashSet<CharSequence>();
 		if (value == null)
 			return result;
@@ -113,7 +94,7 @@ public class IndexDatabase implements IScannerStateManager {
 			result.add(new CaseInsensitiveString(String.valueOf(value)));
 		}
 		return result;
-	}
+	}*/
 
 	public IndexDatabase() {
 
@@ -123,10 +104,18 @@ public class IndexDatabase implements IScannerStateManager {
 		indexDb_ = indexDb;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#setCaseSensitive(boolean)
+	 */
+	@Override
 	public void setCaseSensitive(final boolean value) {
 		caseSensitive_ = value;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getCaseSensitive()
+	 */
+	@Override
 	public boolean getCaseSensitive() {
 		return caseSensitive_;
 	}
@@ -134,10 +123,18 @@ public class IndexDatabase implements IScannerStateManager {
 	@SuppressWarnings("unused")
 	private String indexApiPath_;
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#setDatabase(org.openntf.domino.Database)
+	 */
+	@Override
 	public void setDatabase(final Database indexDb) {
 		indexDb_ = indexDb;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getIndexDb()
+	 */
+	@Override
 	public Database getIndexDb() {
 
 		//		if (indexDb_ == null) {
@@ -178,6 +175,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return indexView;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getStopList()
+	 */
+	@Override
 	public Set<CharSequence> getStopList() {
 		if (stopList_ == null) {
 			stopList_ = new HashSet<CharSequence>();
@@ -188,10 +189,18 @@ public class IndexDatabase implements IScannerStateManager {
 		return stopList_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#setStopList(java.util.Set)
+	 */
+	@Override
 	public void setStopList(final Set<CharSequence> list) {
 		stopList_ = list;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermView()
+	 */
+	@Override
 	public View getTermView() {
 		View result = null;
 		result = getIndexDb().getView(TERM_VIEW_NAME);
@@ -205,6 +214,10 @@ public class IndexDatabase implements IScannerStateManager {
 		//		return dbView_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermStarts(java.lang.String, int)
+	 */
+	@Override
 	public List<String> getTermStarts(final String startsWith, final int count) {
 		List<String> result = new ArrayList<String>();
 		ViewEntry startEntry = getTermView().getFirstEntryByKey(startsWith, false);
@@ -232,6 +245,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getDbView()
+	 */
+	@Override
 	public View getDbView() {
 		View result = null;
 		result = getIndexDb().getView(DB_VIEW_NAME);
@@ -247,6 +264,10 @@ public class IndexDatabase implements IScannerStateManager {
 		//		return termView_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getDbDocument(java.lang.CharSequence)
+	 */
+	@Override
 	public Document getDbDocument(final CharSequence dbid) {
 		String key = dbid.toString().toUpperCase();
 		Document result = getIndexDb().getDocumentWithKey(key, true);
@@ -258,6 +279,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermDocument(java.lang.CharSequence)
+	 */
+	@Override
 	public Document getTermDocument(final CharSequence token) {
 		String key = caseSensitive_ ? token.toString() : token.toString().toLowerCase();
 
@@ -270,6 +295,23 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@Override
+	public Document getValueDocument(final CharSequence value) {
+		String key = caseSensitive_ ? value.toString() : value.toString().toLowerCase();
+
+		Document result = getIndexDb().getDocumentWithKey(key, true);
+		if (result != null && result.isNewNote()) {
+			result.replaceItemValue("Form", VALUE_FORM_NAME);
+			result.replaceItemValue(VALUE_KEY_NAME, value);
+			result.save();
+		}
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getNameDocument(java.lang.CharSequence)
+	 */
+	@Override
 	public Document getNameDocument(final CharSequence name) {
 		String key = caseSensitive_ ? name.toString() : name.toString().toLowerCase();
 
@@ -283,6 +325,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#scanServer(org.openntf.domino.Session, java.lang.String)
+	 */
+	@Override
 	public void scanServer(final Session session, final String serverName) {
 		initIndexDb();
 		DbDirectory dir = session.getDbDirectory(serverName);
@@ -290,13 +336,13 @@ public class IndexDatabase implements IScannerStateManager {
 		for (Database db : dir) {
 			if (!db.getReplicaID().equals(getIndexDb().getReplicaID())) {
 				//				System.out.println("Scanning database " + db.getApiPath());
-				if (!db.getFilePath().equalsIgnoreCase("redpill\\graph.nsf")) {
-					try {
-						scanDatabase(db);
-					} catch (Throwable t) {
-						t.printStackTrace();
-					}
+				//				if (!db.getFilePath().equalsIgnoreCase("redpill\\graph.nsf")) {
+				try {
+					scanDatabase(db);
+				} catch (Throwable t) {
+					t.printStackTrace();
 				}
+				//				}
 			}
 			if (!continue_) {
 				System.out.println("Escaping process early due to continue_ == false");
@@ -306,6 +352,10 @@ public class IndexDatabase implements IScannerStateManager {
 		System.out.println("Completed scan of server " + serverName);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#scanDatabase(org.openntf.domino.Database)
+	 */
+	@Override
 	@SuppressWarnings("unused")
 	public DocumentScanner scanDatabase(final Database db) {
 		Document dbDoc = getDbDocument(db.getReplicaID());
@@ -357,6 +407,10 @@ public class IndexDatabase implements IScannerStateManager {
 	@SuppressWarnings("unused")
 	private int sortedDocCount_ = 0;
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#scanDatabase(org.openntf.domino.Database, org.openntf.domino.helpers.DocumentScanner)
+	 */
+	@Override
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
 		//		System.out.println("Scanning database " + db.getApiPath());
 		curDocCount_ = 0;
@@ -373,7 +427,6 @@ public class IndexDatabase implements IScannerStateManager {
 			System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found "
 					+ rawColl.getCount() + " updates to scan");
 			scanner.processSorter(sorter);
-
 		}
 		return scanner;
 	}
@@ -383,6 +436,10 @@ public class IndexDatabase implements IScannerStateManager {
 	//		saveTokenLocationMap(dbid, tlMap, scanner);
 	//	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermDbids(java.lang.CharSequence)
+	 */
+	@Override
 	public List<String> getTermDbids(final CharSequence term) {
 		List<String> result = new ArrayList<String>();
 		Document doc = getTermDocument(term);
@@ -396,13 +453,16 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermHitCount(java.lang.String)
+	 */
+	@Override
 	public int getTermHitCount(final String term) {
 		int result = 0;
 		Document doc = getTermDocument(term);
 		for (Item item : doc.getItems()) {
 			String itemName = item.getName();
 			if (itemName.startsWith(TERM_MAP_PREFIX)) {
-				//				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
 				Map termMap = doc.getItemValue(itemName, Map.class);
 				for (Object key : termMap.keySet()) {
 					Object val = termMap.get(key);
@@ -430,6 +490,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermItemsInDbids(java.lang.String, java.util.Collection)
+	 */
+	@Override
 	public Set<CharSequence> getTermItemsInDbids(final String term, final Collection<String> dbids) {
 		Set<CharSequence> result = new HashSet<CharSequence>();
 		Document doc = getTermDocument(term);
@@ -443,6 +507,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermResults(java.lang.CharSequence, int, java.util.Set, java.util.Set, java.util.Set)
+	 */
+	@Override
 	public List<IndexHit> getTermResults(final CharSequence term, final int limit, final Set<CharSequence> dbids,
 			final Set<CharSequence> itemNames, final Set<CharSequence> forms) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
@@ -494,7 +562,8 @@ public class IndexDatabase implements IScannerStateManager {
 						hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
 					} else {
 						//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
-						hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+						hits = getTermResultsForForms(org.openntf.domino.big.IndexDatabase.Utils.toStringSet(val), forms, term, dbid,
+								key.toString());
 					}
 					results.addAll(hits);
 				}
@@ -506,11 +575,10 @@ public class IndexDatabase implements IScannerStateManager {
 				Object val = map.get(key);
 				List<IndexHit> hits = null;
 				if (val instanceof Set) {
-					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
 					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
 				} else {
-					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
-					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+					hits = getTermResultsForForms(org.openntf.domino.big.IndexDatabase.Utils.toStringSet(val), forms, term, dbid,
+							key.toString());
 				}
 				results.addAll(hits);
 			}
@@ -550,6 +618,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return new IndexHit(term, dbid, item, unid);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermUnidInDbsItems(java.lang.String, java.util.Collection, java.util.Collection)
+	 */
+	@Override
 	public Set<CharSequence> getTermUnidInDbsItems(final String term, final Collection<String> dbids, final Collection<?> itemNames) {
 		Set<CharSequence> unids = new HashSet<CharSequence>();
 		Document doc = getTermDocument(term);
@@ -583,6 +655,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return unids;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermLinksInDbsItems(org.openntf.domino.Session, java.lang.String, java.lang.String, java.util.Collection, java.util.Collection)
+	 */
+	@Override
 	public Set<String> getTermLinksInDbsItems(final Session session, final String serverName, final String term,
 			final Collection<CharSequence> dbids, final Collection<?> itemNames) {
 		Set<String> unids = new HashSet<String>();
@@ -625,6 +701,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return unids;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermUnidInItems(java.lang.CharSequence, java.util.Collection)
+	 */
+	@Override
 	public Set<CharSequence> getTermUnidInItems(final CharSequence term, final Collection<String> itemNames) {
 		Set<CharSequence> unids = new HashSet<CharSequence>();
 		Document doc = getTermDocument(term);
@@ -651,6 +731,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return unids;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermUnidInDbids(java.lang.CharSequence, java.util.Collection)
+	 */
+	@Override
 	public Set<String> getTermUnidInDbids(final CharSequence term, final Collection<String> dbids) {
 		Set<String> unids = new HashSet<String>();
 		Document doc = getTermDocument(term);
@@ -676,6 +760,10 @@ public class IndexDatabase implements IScannerStateManager {
 		return unids;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermItemMap(java.lang.String)
+	 */
+	@Override
 	public Map<String, Set<CharSequence>> getTermItemMap(final String term) {
 		Map<String, Set<CharSequence>> result = new LinkedHashMap<String, Set<CharSequence>>();
 		Document doc = getTermDocument(term);
@@ -690,7 +778,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
+	/*public static List<String> dbidCollToTitle(final Session session, final String serverName, final Collection<String> dbids) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbids) {
 			Database db = session.getDatabase(serverName, dbid);
@@ -726,8 +814,12 @@ public class IndexDatabase implements IScannerStateManager {
 			result.add(form.substring(16) + " (" + formMap.get(form) + ")|" + form.substring(16));
 		}
 		return result;
-	}
+	}*/
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getTermUnidMap(java.lang.CharSequence)
+	 */
+	@Override
 	public Map<CharSequence, Set<CharSequence>> getTermUnidMap(final CharSequence term) {
 		Map<CharSequence, Set<CharSequence>> result = new LinkedHashMap<CharSequence, Set<CharSequence>>();
 		Document doc = getTermDocument(term);
@@ -757,6 +849,9 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public CharSequence lastToken_ = null;
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#restoreTokenLocationMap(java.lang.CharSequence, java.lang.Object)
+	 */
 	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreTokenLocationMap(final CharSequence token, final Object mapKey) {
 		Map result = null;
@@ -766,20 +861,43 @@ public class IndexDatabase implements IScannerStateManager {
 			result = doc.getItemValue(itemName, Map.class);
 			//			System.out.println("Found existing term match for: " + token.toString() + " with " + result.size() + " items");
 		} else {
-			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>(8, 0.9f, 1);
 		}
 		return result;
 	}
 
 	@Override
-	public void saveTokenLocationMap(final CharSequence token, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
-
-		String term = token.toString();
-		Document termDoc = getTermDocument(term);
-		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
-		termDoc.save();
+	public Map<CharSequence, Set<CharSequence>> restoreValueLocationMap(final CharSequence token, final Object mapKey) {
+		Map result = null;
+		Document doc = getValueDocument(token.toString());
+		String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
+		if (doc.hasItem(itemName)) {
+			result = doc.getItemValue(itemName, Map.class);
+		} else {
+			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>(8, 0.9f, 1);
+		}
+		return result;
 	}
 
+	//	@Override
+	//	public void saveTokenLocationMap(final CharSequence token, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
+	//		String term = token.toString();
+	//		Document termDoc = getTermDocument(term);
+	//		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
+	//		termDoc.save();
+	//	}
+
+	//	@Override
+	//	public void saveValueLocationMap(final CharSequence value, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
+	//		String term = value.toString();
+	//		Document termDoc = getTermDocument(term);
+	//		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
+	//		termDoc.save();
+	//	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#setLastIndexDate(java.lang.Object, java.util.Date)
+	 */
 	@Override
 	public void setLastIndexDate(final Object mapKey, final Date date) {
 		Document dbDoc = getDbDocument((String) mapKey);
@@ -787,6 +905,9 @@ public class IndexDatabase implements IScannerStateManager {
 		dbDoc.save();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#getLastIndexDate(java.lang.Object)
+	 */
 	@Override
 	public Date getLastIndexDate(final Object mapKey) {
 		Document dbDoc = getDbDocument((String) mapKey);
@@ -796,20 +917,13 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#saveTokenLocationMap(java.lang.Object, java.util.Map, org.openntf.domino.helpers.DocumentScanner)
+	 */
 	@Override
 	public void saveTokenLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
 			final DocumentScanner scanner) {
 		setLastIndexDate(mapKey, scanner.getLastDocModDate());
-
-		//		Document dbDoc = getDbDocument((String) mapKey);
-		//		if (scanner.getCollection() != null) {
-		//			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
-		//		}
-		//
-		//		if (scanner.getSorter() != null) {
-		//			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_SORTER_NAME, scanner.getSorter());
-		//		}
-		//		dbDoc.save();
 		Set<CharSequence> keySet = fullMap.keySet();
 		if (keySet.size() > 0) {
 			for (CharSequence cis : keySet) {
@@ -822,7 +936,6 @@ public class IndexDatabase implements IScannerStateManager {
 					//					System.out.println("DEBUG: Saved term doc for " + term);
 				} else {
 					System.out.println("DEBUG: Did not save term doc for " + term);
-
 				}
 			}
 		} else {
@@ -830,6 +943,9 @@ public class IndexDatabase implements IScannerStateManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#update(java.util.Observable, java.lang.Object)
+	 */
 	@Override
 	public void update(final Observable o, final Object arg) {
 		try {
@@ -871,8 +987,18 @@ public class IndexDatabase implements IScannerStateManager {
 							int nlsize = nameLocationMap.size();
 							if (nlsize >= 128) {
 								synchronized (nameLocationMap) {
-									saveTokenLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+									saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
 									nameLocationMap.clear();
+								}
+							}
+						}
+						if (scanner.isTrackFieldValues()) {
+							Map fieldValueMap = scanner.getFieldValueMap();
+							int fvsize = fieldValueMap.size();
+							if (fvsize >= 1024) {
+								synchronized (fieldValueMap) {
+									saveValueLocationMap(scanner.getStateManagerKey(), fieldValueMap, scanner);
+									fieldValueMap.clear();
 								}
 							}
 						}
@@ -890,16 +1016,19 @@ public class IndexDatabase implements IScannerStateManager {
 								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 								tokenLocationMap.clear();
 							}
-							//							System.out.println("Completed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
-							//									+ " items and " + scanner.getTokenCount());
-						} else {
-							//							System.out.println("TokenLocation not being tracked by scanner");
 						}
 						if (scanner.isTrackNameLocation()) {
 							Map nameLocationMap = scanner.getNameLocationMap();
 							synchronized (nameLocationMap) {
 								saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
 								nameLocationMap.clear();
+							}
+						}
+						if (scanner.isTrackValueLocation()) {
+							Map valueLocationMap = scanner.getValueLocationMap();
+							synchronized (valueLocationMap) {
+								saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner);
+								valueLocationMap.clear();
 							}
 						}
 					} else {
@@ -919,6 +1048,9 @@ public class IndexDatabase implements IScannerStateManager {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#restoreNameLocationMap(java.lang.CharSequence, java.lang.Object)
+	 */
 	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreNameLocationMap(final CharSequence name, final Object mapKey) {
 		Map result = null;
@@ -927,19 +1059,22 @@ public class IndexDatabase implements IScannerStateManager {
 		if (doc.hasItem(itemName)) {
 			result = doc.getItemValue(itemName, Map.class);
 		} else {
-			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>(8, 0.9f, 1);
 		}
 		return result;
 	}
 
-	@Override
-	public void saveNameLocationMap(final CharSequence name, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
-		String lname = name.toString();
-		Document nameDoc = getNameDocument(lname);
-		nameDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
-		nameDoc.save();
-	}
+	//	@Override
+	//	public void saveNameLocationMap(final CharSequence name, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
+	//		String lname = name.toString();
+	//		Document nameDoc = getNameDocument(lname);
+	//		nameDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
+	//		nameDoc.save();
+	//	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.big.impl.IIndexDatabase#saveNameLocationMap(java.lang.Object, java.util.Map, org.openntf.domino.helpers.DocumentScanner)
+	 */
 	@Override
 	public void saveNameLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
 			final DocumentScanner scanner) {
@@ -962,6 +1097,29 @@ public class IndexDatabase implements IScannerStateManager {
 			if (nameDoc.save()) {
 				//				System.out.println("Saved term doc for " + term);
 			}
+		}
+	}
+
+	@Override
+	public void saveValueLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
+			final DocumentScanner scanner) {
+		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+		Set<CharSequence> keySet = fullMap.keySet();
+		if (keySet.size() > 0) {
+			for (CharSequence cis : keySet) {
+				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
+				String term = cis.toString();
+				Document termDoc = getValueDocument(term);
+				String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
+				termDoc.replaceItemValue(itemName, tlValue);
+				if (termDoc.save()) {
+					//					System.out.println("DEBUG: Saved term doc for " + term);
+				} else {
+					System.out.println("DEBUG: Did not save term doc for " + term);
+				}
+			}
+		} else {
+			//			System.out.println("DEBUG: keyset was empty for index tokens");
 		}
 	}
 }

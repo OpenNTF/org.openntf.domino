@@ -7,6 +7,12 @@ Bundle-Activator: org.openntf.domino.rest.Activator
 Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.ibm.commons.util.io.json,
+ com.ibm.domino.das,
+ com.ibm.domino.das.resources,
+ com.ibm.domino.das.service,
+ com.ibm.domino.das.servlet,
+ com.ibm.domino.das.utils,
+ com.ibm.domino.httpmethod,
  javax.servlet;version="2.5.0",
  javax.servlet.http;version="2.5.0",
  javax.ws.rs,
@@ -15,12 +21,13 @@ Import-Package: com.ibm.commons.util.io.json,
  org.eclipse.core.runtime;version="3.4.0",
  org.osgi.framework;version="1.3.0"
 Require-Bundle: com.ibm.domino.commons;bundle-version="9.0.1",
- com.ibm.domino.das;bundle-version="9.0.1",
  com.ibm.domino.services;bundle-version="9.0.1",
  com.ibm.wink;bundle-version="9.0.1",
  org.openntf.domino.xsp;bundle-version="2.0.0";resolution:=optional,
  com.ibm.commons;bundle-version="9.0.1",
- com.ibm.notes.java.api;resolution:=optional
+ com.ibm.notes.java.api;resolution:=optional,
+ com.tinkerpop,
+ org.openntf.domino
 Export-Package: org.openntf.domino.rest,
  org.openntf.domino.rest.json,
  org.openntf.domino.rest.resources,

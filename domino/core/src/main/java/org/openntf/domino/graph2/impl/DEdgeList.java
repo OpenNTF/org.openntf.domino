@@ -11,6 +11,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<Edge> {
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	protected final DVertex sourceVertex_;
 	protected List<Edge> delegate_;
@@ -104,15 +105,24 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 	 */
 	@Override
 	public DVertexList toVertexList() {
+		//		System.out.println("TEMP DEBUG Converting an edge list to a vertex list");
 		DVertexList result = new DVertexList(sourceVertex_);
 		if (this.size() > 0) {
 			for (Edge edge : this) {
 				if (edge instanceof DEdge) {
 					DEdge dedge = (DEdge) edge;
-					DVertex vert = (DVertex) dedge.getOtherVertex(sourceVertex_);
-					result.add(vert);
+					try {
+						DVertex vert = (DVertex) dedge.getOtherVertex(sourceVertex_);
+						result.add(vert);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				} else {
+					System.out.println("TEMP DEBUG EdgeList didn't have a DEdge. It had a " + edge.getClass().getName());
 				}
 			}
+		} else {
+			//			System.out.println("TEMP DEBUG EdgeList size is not greater than 0.");
 		}
 		return result;
 	}
