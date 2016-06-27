@@ -627,7 +627,7 @@ public class DominoEmail implements IEmail {
 
 			//set subject
 			mimeHeader = mimeRoot.createHeader("Subject");
-			mimeHeader.setHeaderVal(getSubject());
+			mimeHeader.addValText(getSubject(), "UTF-8");
 
 			//create text/alternative directive: text/plain and text/html part will be childs of this entity
 			MIMEEntity mimeRootChild = mimeRoot.createChildEntity();
