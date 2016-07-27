@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -84,6 +84,11 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	private static lotus.domino.DateTime generateWorker() {
 		try {
 			lotus.domino.Session rawsession = toLotus(Factory.getSession(SessionType.CURRENT));
+			if (rawsession == null) {
+				// Then fall back to getting a native session
+				// This may occur in OSGi servlet contexts
+				rawsession = toLotus(Factory.getSession(SessionType.NATIVE));
+			}
 			return rawsession.createDateTime(new Date());
 		} catch (Exception e) {
 			log_.log(Level.SEVERE, "Could not create the DateTime worker object. DateTime functions may not work as expected", e);
@@ -99,31 +104,37 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 			ret = generateWorker();
 			lotusWorker.set(ret);
 		}
-		if (date_ != null)
+		if (date_ != null) {
 			initWorker(ret);
+		}
 		return ret;
 	}
 
 	private void initWorker(final lotus.domino.DateTime worker) throws NotesException {
-		if (date_ == null)
+		if (date_ == null) {
 			return;
+		}
 		worker.setLocalTime(date_);
-		if (!isTimeOnly_ && !isDateOnly_)
+		if (!isTimeOnly_ && !isDateOnly_) {
 			worker.convertToZone(notesZone_, dst_);
-		if (isTimeOnly_)
+		}
+		if (isTimeOnly_) {
 			worker.setAnyDate();
-		if (isDateOnly_)
+		}
+		if (isDateOnly_) {
 			worker.setAnyTime();
+		}
 	}
 
 	private void workDone(final lotus.domino.DateTime worker, final boolean reInit) {
-		if (reInit)
+		if (reInit) {
 			this.initialize(worker);
+		}
 	}
 
 	/**
 	 * Instantiates a new date time.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -142,7 +153,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/**
 	 * Needed for clone
-	 * 
+	 *
 	 * @param dateTime
 	 */
 	protected DateTime(final DateTime orig, final Session sess) {
@@ -171,7 +182,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	/*
 	 * The returned object MUST get recycled
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getDelegate()
 	 */
 	@Override
@@ -202,7 +213,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/**
 	 * Initialize.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 */
@@ -236,7 +247,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustDay(int, boolean)
 	 */
 	@Override
@@ -252,7 +263,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustDay(int)
 	 */
 	@Override
@@ -262,7 +273,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustHour(int, boolean)
 	 */
 	@Override
@@ -278,7 +289,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustHour(int)
 	 */
 	@Override
@@ -288,7 +299,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustMinute(int, boolean)
 	 */
 	@Override
@@ -304,7 +315,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustMinute(int)
 	 */
 	@Override
@@ -314,7 +325,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustMonth(int, boolean)
 	 */
 	@Override
@@ -330,7 +341,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustMonth(int)
 	 */
 	@Override
@@ -340,7 +351,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustSecond(int, boolean)
 	 */
 	@Override
@@ -356,7 +367,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustSecond(int)
 	 */
 	@Override
@@ -366,7 +377,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustYear(int, boolean)
 	 */
 	@Override
@@ -382,7 +393,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#adjustYear(int)
 	 */
 	@Override
@@ -392,7 +403,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#convertToZone(int, boolean)
 	 */
 	@Override
@@ -458,7 +469,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#getDateOnly()
 	 */
 	@Override
@@ -476,7 +487,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#getGMTTime()
 	 */
 	@Override
@@ -494,7 +505,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#getLocalTime()
 	 */
 	@Override
@@ -512,7 +523,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -522,7 +533,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#getTimeOnly()
 	 */
 	@Override
@@ -540,7 +551,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#getTimeZone()
 	 */
 	@Override
@@ -550,7 +561,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#getZoneTime()
 	 */
 	@Override
@@ -570,7 +581,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#isAfter(org.openntf.domino.DateTime)
 	 */
 	@Override
@@ -620,7 +631,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#isBefore(org.openntf.domino.DateTime)
 	 */
 	@Override
@@ -670,7 +681,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#isDST()
 	 */
 	@Override
@@ -680,7 +691,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setAnyDate()
 	 */
 	@Override
@@ -690,7 +701,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setAnyTime()
 	 */
 	@Override
@@ -700,7 +711,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int, boolean)
 	 */
 	@Override
@@ -716,7 +727,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int)
 	 */
 	@Override
@@ -726,7 +737,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
 	@Override
@@ -747,7 +758,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DateTime#setLocalTime(com.ibm.icu.util.Calendar)
 	 */
 	@Override
@@ -767,7 +778,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Date)
 	 */
 	@Override
@@ -786,7 +797,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setLocalTime(int, int, int, int)
 	 */
 	@Override
@@ -802,7 +813,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.lang.String)
 	 */
 	@Override
@@ -818,7 +829,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#setNow()
 	 */
 	@Override
@@ -828,7 +839,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#timeDifference(lotus.domino.DateTime)
 	 */
 	@Override
@@ -841,7 +852,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#timeDifferenceDouble(lotus.domino.DateTime)
 	 */
 	@Override
@@ -870,14 +881,15 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		} finally {
-			if (lotusDTTmp != null)
+			if (lotusDTTmp != null) {
 				s_recycle(lotusDTTmp);
+			}
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#toJavaDate()
 	 */
 	@Override
@@ -887,7 +899,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -905,7 +917,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -915,7 +927,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DateTime#isAnyDate()
 	 */
 	@Override
@@ -925,7 +937,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DateTime#isAnyTime()
 	 */
 	@Override
@@ -935,7 +947,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateTime#toJavaCal()
 	 */
 	@Override
@@ -985,7 +997,7 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	/**
 	 * Constructs a new DateTime from the given String
-	 * 
+	 *
 	 * @param time
 	 *            the time string in a notes readable format
 	 * @throws java.text.ParseException
@@ -1000,15 +1012,17 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Override
 	public int timeDifference(final org.openntf.formula.DateTime dt) {
-		if (dt instanceof lotus.domino.DateTime)
+		if (dt instanceof lotus.domino.DateTime) {
 			return timeDifference((lotus.domino.DateTime) dt);
+		}
 		return (int) timeDifferenceDouble(dt);
 	}
 
 	@Override
 	public double timeDifferenceDouble(final org.openntf.formula.DateTime dt) {
-		if (dt instanceof lotus.domino.DateTime)
+		if (dt instanceof lotus.domino.DateTime) {
 			return timeDifferenceDouble((lotus.domino.DateTime) dt);
+		}
 		Calendar thisCal = this.toJavaCal();
 		Calendar thatCal = dt.toJavaCal();
 		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
@@ -1016,10 +1030,12 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 
 	@Override
 	public int compare(final org.openntf.formula.DateTime sdt1, final org.openntf.formula.DateTime sdt2) {
-		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
+		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime) {
 			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
-		if (sdt1 instanceof DateTime)
+		}
+		if (sdt1 instanceof DateTime) {
 			return sdt2.compare(sdt2, sdt1);
+		}
 		return sdt1.compare(sdt1, sdt2);
 	}
 
