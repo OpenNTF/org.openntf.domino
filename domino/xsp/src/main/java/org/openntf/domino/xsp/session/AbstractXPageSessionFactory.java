@@ -33,7 +33,9 @@ public abstract class AbstractXPageSessionFactory implements ISessionFactory {
 
 		if (allFix) {
 			for (Fixes fix : Fixes.values()) {
-				sess.setFixEnable(fix, true);
+				if (fix.isKhan()) {
+					sess.setFixEnable(fix, true);
+				}
 			}
 		}
 		sess.setAutoMime(autoMime);
