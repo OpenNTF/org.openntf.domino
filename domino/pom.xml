@@ -5,7 +5,7 @@
 
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>domino</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
@@ -27,12 +27,11 @@
 
 	<!-- See also profile-triggered module sets below -->
 	<modules>
-		<!-- <module>com.ibm.domino.das</module>-->
 		<module>externals</module>
 		<module>formula</module>
 		<module>core</module>
 		<module>xsp</module>
-		<!-- <module>rest</module>-->
+		<module>rest</module>
 		<module>junit4xpages</module>
 		<!--<module>tests</module>-->
 		<module>org.openntf.domino.feature</module>
@@ -277,7 +276,6 @@
 			<id>distribution</id>
 			
 			<modules>
-				<module>com.ibm.domino.das</module>
 				<module>externals</module>
 				<module>formula</module>
 				<module>core</module>

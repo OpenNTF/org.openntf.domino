@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>3.0.0</version>
 	</parent>
 	<artifactId>oda-dist</artifactId>
 	
@@ -18,34 +18,34 @@
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.formula</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.formula</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.xsp</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.xsp</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
@@ -56,7 +56,7 @@
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.updatesite</artifactId>
-			<version>2.0.1-SNAPSHOT</version>
+			<version>3.0.0</version>
 			<type>eclipse-update-site</type>
 		</dependency>
 		<!-- <dependency>
