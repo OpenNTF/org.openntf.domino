@@ -49,6 +49,7 @@ public class SessionsByTimeslot implements Runnable {
 			for (TimeSlot ts : timesSorted) {
 				System.out.println("Sessions running from " + DATE_FORMAT.format(ts.getStartTime().getTime()) + " to "
 						+ DATE_FORMAT.format(ts.getEndTime().getTime()));
+				System.out.println(ts.getDuration());
 				Iterable<Event> presentations = ts.getEvents();
 				for (Event evt : presentations) {
 					if (evt instanceof Presentation) {

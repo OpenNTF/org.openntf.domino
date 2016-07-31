@@ -11,9 +11,12 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<Edge> {
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	protected final DVertex sourceVertex_;
 	protected List<Edge> delegate_;
+	protected boolean isUnique_;
+	protected String label_;
 
 	private DEdgeList(final DVertex source, final List<Edge> list) {
 		sourceVertex_ = source;
@@ -102,22 +105,37 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 	 */
 	@Override
 	public DVertexList toVertexList() {
+		//		System.out.println("TEMP DEBUG Converting an edge list to a vertex list");
 		DVertexList result = new DVertexList(sourceVertex_);
 		if (this.size() > 0) {
 			for (Edge edge : this) {
 				if (edge instanceof DEdge) {
 					DEdge dedge = (DEdge) edge;
-					DVertex vert = (DVertex) dedge.getOtherVertex(sourceVertex_);
-					result.add(vert);
+					try {
+						DVertex vert = (DVertex) dedge.getOtherVertex(sourceVertex_);
+						result.add(vert);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				} else {
+					System.out.println("TEMP DEBUG EdgeList didn't have a DEdge. It had a " + edge.getClass().getName());
 				}
 			}
+		} else {
+			//			System.out.println("TEMP DEBUG EdgeList size is not greater than 0.");
 		}
 		return result;
 	}
 
 	@Override
 	public boolean add(final Edge e) {
-		return delegate_.add(e);
+		if (!delegate_.contains(e)) {
+			//			System.out.println("TEMP DEBUG Adding Edge id " + e.getId());
+			return delegate_.add(e);
+		} else {
+			//			System.out.println("TEMP DEBUG Edge id " + e.getId() + " already in list");
+			return false;
+		}
 	}
 
 	@Override
@@ -229,6 +247,26 @@ public class DEdgeList implements org.openntf.domino.graph2.DEdgeList, Iterable<
 	@Override
 	public <T> T[] toArray(final T[] a) {
 		return delegate_.toArray(a);
+	}
+
+	@Override
+	public boolean isUnique() {
+		return isUnique_;
+	}
+
+	@Override
+	public void setUnique(final boolean isUnique) {
+		isUnique_ = isUnique;
+	}
+
+	@Override
+	public String getLabel() {
+		return label_;
+	}
+
+	@Override
+	public void setLabel(final String label) {
+		label_ = label;
 	}
 
 }

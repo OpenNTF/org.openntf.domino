@@ -561,4 +561,14 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 		return parent.getAncestorSession().getFactory();
 	}
 
+	private transient String metaversalid_;
+
+	@Override
+	public String getMetaversalID() {
+		if (metaversalid_ == null) {
+			metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
+		}
+		return metaversalid_;
+	}
+
 }

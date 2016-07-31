@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -47,7 +46,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class ViewEntry.
  */
 public class ViewEntry extends BaseNonThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements
-org.openntf.domino.ViewEntry {
+		org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
@@ -147,7 +146,8 @@ org.openntf.domino.ViewEntry {
 
 			if (columnValues_ == null) {
 				// cache the columnValues and rely that the caller will NOT modify the objects inside
-				columnValues_ = wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
+				Vector<Object> raw = getDelegate().getColumnValues();
+				columnValues_ = wrapColumnValues(raw, this.getAncestorSession());
 			}
 
 			if (returnConstants) {
@@ -654,8 +654,12 @@ org.openntf.domino.ViewEntry {
 	public Object getCategoryValue() {
 		if (isCategory()) {
 			Vector<Object> values = getColumnValues();
-			ListIterator<Object> li = values.listIterator(values.size());
-			return li.previous();
+			for (Object value : values) {
+				if (!(value == null || String.valueOf(value).length() == 0)) {
+					return value;
+				}
+			}
+			return null;
 		} else {
 			return null;
 		}

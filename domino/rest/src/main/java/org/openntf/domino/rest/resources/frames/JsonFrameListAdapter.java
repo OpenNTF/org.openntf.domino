@@ -32,7 +32,9 @@ public class JsonFrameListAdapter implements JsonArray {
 		@Override
 		public Object next() {
 			Object raw = iterator_.next();
-			if (raw instanceof VertexFrame) {
+			if (raw == null) {
+				return null;
+			} else if (raw instanceof VertexFrame) {
 				return new JsonFrameAdapter(parent_.getGraph(), (VertexFrame) raw, parent_.getParamMap());
 			} else if (raw instanceof EdgeFrame) {
 				return new JsonFrameAdapter(parent_.getGraph(), (EdgeFrame) raw, parent_.getParamMap());
@@ -56,17 +58,19 @@ public class JsonFrameListAdapter implements JsonArray {
 	@SuppressWarnings("unchecked")
 	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedEdgeList<?> edgeList, ParamMap pm) {
 		graph_ = graph;
-		list_ = (List<Object>)edgeList;
+		list_ = (List<Object>) edgeList;
 		pm_ = pm;
 		isVertex_ = false;
+		// System.out.println("TEMP DEBUG JsonFrameListAdapter created from EdgeList");
 	}
 
 	@SuppressWarnings("unchecked")
 	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedVertexList<?> vertexList, ParamMap pm) {
 		graph_ = graph;
-		list_ = (List<Object>)vertexList;
+		list_ = (List<Object>) vertexList;
 		pm_ = pm;
 		isVertex_ = true;
+		// System.out.println("TEMP DEBUG JsonFrameListAdapter created from VertexList");
 	}
 
 	protected DFramedTransactionalGraph<?> getGraph() {

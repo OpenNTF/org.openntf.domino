@@ -430,6 +430,8 @@ public interface Database extends Base {
 	 */
 	public int getModifiedNoteCount(final java.util.Date since);
 
+	public int getNoteCount();
+
 	/**
 	 * Gets the date a Database was last modified, as a Java Date
 	 * 
@@ -587,6 +589,16 @@ public interface Database extends Base {
 	public Document getDocumentByID(int noteid, boolean deferDelegate);
 
 	/**
+	 * Single method to get a document regardless of whether it's being passed a note ID or UNID
+	 * 
+	 * @param id
+	 *            String Note or Universal ID
+	 * @return Document
+	 * @since org.openntf.domino 2.5.0
+	 */
+	public Document getDocumentByID_Or_UNID(String id);
+
+	/**
 	 * Passes a DatabaseTransaction to a Database object. This allows a single Transaction to be used to process activity across multiple
 	 * databases
 	 * 
@@ -712,6 +724,15 @@ public interface Database extends Base {
 	 */
 	Type getTypeEx();
 
+	/**
+	 * Based on a View design element's document or note, this method retrieves the View Domino object from the Database. Basically, it gets
+	 * the $Title field (name and all aliases), calls {@linkplain org.openntf.domino.Database#getView(String)} for each, ensure's the View
+	 * is not a different view with the same name, and returns that View object.
+	 * 
+	 * @param viewDocument
+	 *            the View design element
+	 * @return View object
+	 */
 	public View getView(final Document viewDocument);
 
 }

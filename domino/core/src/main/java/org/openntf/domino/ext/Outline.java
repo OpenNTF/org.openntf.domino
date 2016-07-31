@@ -9,5 +9,5 @@ package org.openntf.domino.ext;
  *         OpenNTF extensions to Outline class
  */
 public interface Outline {
-
+	public String getMetaversalID();
 }

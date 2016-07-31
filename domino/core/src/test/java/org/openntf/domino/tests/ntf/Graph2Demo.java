@@ -9,7 +9,7 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.Person;
+import org.openntf.domino.graph2.builtin.identity.Person;
 import org.openntf.domino.graph2.builtin.social.Comment;
 import org.openntf.domino.graph2.builtin.social.Commentable;
 import org.openntf.domino.graph2.builtin.social.Likeable;
@@ -326,16 +326,25 @@ public class Graph2Demo implements Runnable {
 		System.out.println("Resetting Star Wars test databases");
 		Session session = Factory.getSession(SessionType.NATIVE);
 		Database crewDb = session.getDatabase(crewId);
-		crewDb.getAllDocuments().removeAll(true);
-
+		if (crewDb != null) {
+			crewDb.getAllDocuments().removeAll(true);
+		}
 		Database movieDb = session.getDatabase(movieId);
-		movieDb.getAllDocuments().removeAll(true);
+		if (movieDb != null) {
+			movieDb.getAllDocuments().removeAll(true);
+		}
 		Database characterDb = session.getDatabase(characterId);
-		characterDb.getAllDocuments().removeAll(true);
+		if (characterDb != null) {
+			characterDb.getAllDocuments().removeAll(true);
+		}
 		Database edgeDb = session.getDatabase(edgeId);
-		edgeDb.getAllDocuments().removeAll(true);
+		if (edgeDb != null) {
+			edgeDb.getAllDocuments().removeAll(true);
+		}
 		Database usersDb = session.getDatabase(usersId);
-		usersDb.getAllDocuments().removeAll(true);
+		if (usersDb != null) {
+			usersDb.getAllDocuments().removeAll(true);
+		}
 		//		Database nabDb = session.getDatabase("", "names.nsf");
 		//		Document ntfDoc = nabDb.getDocumentByUNID(ntfUnid);
 		//		ntfDoc.removeItem("_COUNT_OPEN_OUT_rates");
@@ -516,7 +525,7 @@ public class Graph2Demo implements Runnable {
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			empireMovie.addLikedByUser(nathan);
+			empireMovie.addLiker(nathan);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");

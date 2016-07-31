@@ -19,4 +19,12 @@ public interface DEdgeList extends List<Edge> {
 
 	public abstract DVertexList toVertexList();
 
+	public boolean isUnique();
+
+	public void setUnique(boolean isUnique);
+
+	public String getLabel();
+
+	public void setLabel(String label);
+
 }

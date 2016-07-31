@@ -2,16 +2,17 @@ package org.openntf.domino.graph2.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -22,23 +23,26 @@ import org.openntf.domino.big.impl.NoteCoordinate;
 //import javolution.util.function.Equalities;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.big.impl.ViewEntryCoordinate;
-import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
 
-public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable {
+import javolution.util.FastMap;
+
+public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
 
 	public static enum Deferred {
 		INSTANCE;
+		private static final long serialVersionUID = 1L;
 	}
 
 	protected transient org.openntf.domino.graph2.DGraph parent_;
 	protected Object delegateKey_;
 	protected transient Map<String, Object> delegate_;
+	protected boolean isRemoved_ = false;
 
 	public DElement(final org.openntf.domino.graph2.DGraph parent) {
 		parent_ = parent;
@@ -76,7 +80,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (props_ == null) {
 			Map<String, Object> localProps = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
 			for (String key : getDelegate().keySet()) {
-				localProps.put(key, Deferred.INSTANCE);
+				if (key != null && key.length() > 0) {
+					localProps.put(key, Deferred.INSTANCE);
+				}
 			}
 			props_ = Collections.synchronizedMap(localProps);
 		}
@@ -87,6 +93,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<T> type) {
 		//TODO NTF cached properties should be automatically reset if the base Document is known to have changed
+		//		if ("form".equalsIgnoreCase(propertyName)) {
+		//			System.out.println("Getting form value now...");
+		//		}
 		Object result = null;
 		Map<String, Object> props = getProps();
 		result = props.get(propertyName);
@@ -95,34 +104,50 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
+					doc.setAutoMime(AutoMime.WRAP_ALL);
 					if (doc.hasItem(propertyName)) {
 						result = doc.getItemValue(propertyName, type);
 					}
-					if (result == null) {
+					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
 							Object raw = doc.get(propertyName);
+							if (raw instanceof Vector) {
+								if (((Vector) raw).isEmpty()) {
+									props.put(propertyName, Null.INSTANCE);
+									return null;
+								}
+							}
 							result = TypeUtils.objectToClass(raw, type, doc.getAncestorSession());
 						} catch (Throwable t) {
-							log_.log(Level.FINE, "Invalid property for document " + propertyName);
+							if (log_.isLoggable(Level.FINE)) {
+								log_.log(Level.FINE, "Invalid property for document " + propertyName, t);
+							}
 						}
 					}
 				} else if (delegate instanceof SessionDescendant) {
 					Session s = ((SessionDescendant) delegate).getAncestorSession();
 					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-				} else {
-					result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+				} else if (delegate != null) {
+					try {
+						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
 				}
 				if (result == null) {
 					props.put(propertyName, Null.INSTANCE);
 				} else if (result instanceof Serializable) {
 					props.put(propertyName, result);
 				} else {
-					log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
+					if (log_.isLoggable(Level.FINE)) {
+						log_.log(Level.FINE,
+								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
+					}
 					props.put(propertyName, result);
 				}
 			} catch (Exception e) {
-				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-						+ " so we cannot return a value", e);
+				log_.log(Level.WARNING,
+						"Exception occured attempting to get value from document for " + propertyName + " so we cannot return a value", e);
 			}
 		} else if (result == Null.INSTANCE) {
 
@@ -138,7 +163,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (delegate instanceof SessionDescendant) {
 						Session s = ((SessionDescendant) delegate).getAncestorSession();
 						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
-					} else {
+					} else if (delegate != null) {
 						Object chk = delegate.get(propertyName);
 						if (chk != null) {
 							result = TypeUtils.convertToTarget(delegate.get(propertyName), type, null);
@@ -149,18 +174,29 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (result instanceof Serializable) {
 						props.put(propertyName, result);
 					} else {
-						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
-								+ result.getClass().getName());
+						log_.log(Level.FINE,
+								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
 						props.put(propertyName, result);
 					}
 				} catch (Exception e) {
-					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-							+ " but we have a value in the cache.", e);
+					log_.log(Level.WARNING,
+							"Exception occured attempting to get value from document for " + propertyName
+									+ " but we have a value in the cache of type " + result.getClass().getName()
+									+ " when we were looking for a " + type.getName(),
+							e);
 				}
 			}
 		}
 		if (result == Null.INSTANCE) {
 			result = null;
+		}
+		if ("form".equalsIgnoreCase(propertyName)) {
+			//			if (result == null) {
+			//				Factory.println("TEMP DEBUG returning null as value for Form field");
+			//			}
+		}
+		if (result == Deferred.INSTANCE) {
+			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
 		}
 		return (T) result;
 	}
@@ -169,7 +205,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public <T> T getProperty(final String key) {
 		if ("form".equalsIgnoreCase(key)) {
-			return (T) getProperty(key, String.class);
+			Object result = getProperty(key, String.class);
+			//			System.out.println("Found a " + result.getClass().getName() + " in the form field: '" + (String) result + "'");
+			return (T) result;
 		}
 		Object result = getProperty(key, java.lang.Object.class);
 		return (T) result;
@@ -189,7 +227,15 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			if (key != null) {
 				Object current = null;
 				if (value != null) {
-					current = getProperty(key, value.getClass());
+					try {
+						current = getProperty(key, value.getClass());
+					} catch (Exception e) {
+						if (e instanceof ClassCastException) {
+							current = null;
+						} else {
+							throw new RuntimeException(e);
+						}
+					}
 				} else {
 					current = getProperty(key);
 				}
@@ -198,9 +244,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					return;
 				}
 				//NTF The standard equality check has a fast out based on array size, so I think it's safe to use here...
-				/*if (key.startsWith(DominoVertex.IN_PREFIX) || key.startsWith(DominoVertex.OUT_PREFIX)) {
-					isEqual = false;	//NTF ALWAYS set edge collections. Checking them can be expensive
-				} else*/if (value != null && current != null) {
+				if (key.startsWith(DVertex.IN_PREFIX) || key.startsWith(DVertex.OUT_PREFIX)) {
+					isEqual = false;//NTF ALWAYS set edge collections. Checking them can be expensive
+				} else if (value != null && current != null) {
 					if (!(value instanceof java.util.Collection) && !(value instanceof java.util.Map) && !value.getClass().isArray()) {
 						isEqual = value.equals(current);
 					}
@@ -241,7 +287,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						props.put(key, value);
 					}
 				} else {
-					log_.log(Level.FINE, "Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
+					log_.log(Level.FINE,
+							"Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
 					if (current == null || Null.INSTANCE.equals(current)) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
@@ -278,6 +325,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	public abstract void remove();
 
 	void _remove() {
+		isRemoved_ = true;
 		getParent().startTransaction(this);
 		getParent().removeDelegate(this);
 	}
@@ -299,33 +347,37 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Class<?> getDelegateType() {
+		Class<?> result = null;
 		if (delegate_ == null) {
 			if (delegateKey_ instanceof ViewEntryCoordinate) {
-				return org.openntf.domino.ViewEntry.class;
+				result = org.openntf.domino.ViewEntry.class;
 			} else if (delegateKey_ instanceof NoteCoordinate) {
 				if (((NoteCoordinate) delegateKey_).isView()) {
-					return org.openntf.domino.View.class;
+					result = org.openntf.domino.View.class;
 				} else {
-					return org.openntf.domino.Document.class;
+					result = org.openntf.domino.Document.class;
 				}
 			} else {
-				return null;
+				result = null;
 			}
 		} else {
 			if (delegate_ instanceof ViewEntry) {
-				return org.openntf.domino.ViewEntry.class;
+				result = org.openntf.domino.ViewEntry.class;
 			} else if (delegate_ instanceof View) {
-				return org.openntf.domino.View.class;
+				result = org.openntf.domino.View.class;
 			} else if (delegate_ instanceof Document) {
 				if (delegateKey_ instanceof NoteCoordinate) {
-					if (((NoteCoordinate) delegateKey_).isView())
-						return org.openntf.domino.View.class;
+					if (((NoteCoordinate) delegateKey_).isView()) {
+						result = org.openntf.domino.View.class;
+					} else {
+						result = org.openntf.domino.Document.class;
+					}
 				}
-				return org.openntf.domino.Document.class;
 			} else {
-				return delegate_.getClass();
+				result = delegate_.getClass();
 			}
 		}
+		return result;
 	}
 
 	@Override
@@ -339,7 +391,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (allowNull) {
 			return result;
 		} else {
-			if (result == null || Null.INSTANCE == result) {
+			if (result == null || Null.INSTANCE == result || Deferred.INSTANCE == result) {
 				return TypeUtils.getDefaultInstance(type);
 			} else {
 				return result;
@@ -374,19 +426,31 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((Document) delegate_).containsKey("Foo");
 			} catch (Throwable t) {
-				delegate_ = getParent().findDelegate(delegateKey_);
+				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
+				if (delegateKey_ == null && delegate_ instanceof Document) {
+					delegateKey_ = ((Document) delegate_).getMetaversalID();
+				}
 			}
 		} else if (delegate_ instanceof View) {
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((View) delegate_).isDefaultView();
 			} catch (Throwable t) {
-				delegate_ = getParent().findDelegate(delegateKey_);
+				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 			}
 		}
 		if (delegate_ == null) {
-			delegate_ = getParent().findDelegate(delegateKey_);
+			delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 		}
+		if (delegate_ == null) {
+			//			System.err.println("Domino graph element " + getClass().getSimpleName() + " has a null delegate for key " + delegateKey_
+			//					+ ". This will not turn out well.");
+			//			if (this instanceof DVertex) {
+			//				Throwable t = new Throwable();
+			//				t.printStackTrace();
+			//			}
+		}
+
 		return delegate_;
 	}
 
@@ -415,8 +479,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	}
 
 	protected void applyChanges() {
+		if (isRemoved_) {
+			return;//NTF there's no point in applying changes to an element that's been removed.
+		}
 		Map<String, Object> props = getProps();
 		Map<String, Object> delegate = getDelegate();
+		if (delegate == null) {
+			throw new IllegalStateException("Get delegate returned null for id " + getId() + " so we cannot apply changes to it.");
+		}
 		Set<String> changes = getChangedPropertiesInt();
 		if (!props.isEmpty() && !changes.isEmpty()) {
 			//			System.out.println("TEMP DEBUG: Writing " + getChangedPropertiesInt().size() + " changed properties for " + getId());
@@ -424,22 +494,39 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				String key = s;
 				Object v = props.get(key);
 				//				System.out.println("TEMP DEBUG: Writing a " + v.getClass().getSimpleName() + " to " + key);
-				if (s.startsWith(DominoVertex.IN_PREFIX) || s.startsWith(DominoVertex.OUT_PREFIX)) {
-					if (delegate instanceof Document) {
-						if (v instanceof NoteList) {
-							byte[] bytes = ((NoteList) v).toByteArray();
-							((Document) delegate).writeBinary(s, bytes, 2048 * 24);
-							//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
-							//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
-							//									+ " to a Document in " + s);
+				if (s != null && v != null) {
+					if (s.startsWith(DVertex.IN_PREFIX) || s.startsWith(DVertex.OUT_PREFIX)) {
+						if (delegate instanceof Document) {
+							if (v instanceof NoteList) {
+								byte[] bytes = ((NoteList) v).toByteArray();
+								// PW: This block is encountered for every edge - EdgeLists always get marked as changed.
+								// TODO: This needs to check the edges have changed. If they haven't changed, it shouldn't save
+								((Document) delegate).writeBinary(s, bytes, 2048 * 24);
+								//FIXME NTF .writeBinary needs to clear any extra items added to the document if the binary content shrank
+								//							System.out.println("TEMP DEBUG: Writing a NoteList (" + ((NoteList) v).size() + ") of size " + bytes.length
+								//									+ " to a Document in " + s);
+							} else {
+								((Document) delegate).replaceItemValue(s, v, false);
+							}
 						} else {
-							((Document) delegate).replaceItemValue(s, v, false);
+							try {
+								delegate.put(s, v);
+							} catch (Throwable t) {
+								System.err.println("ALERT Failed to write a property of " + s + " to element id " + getId()
+										+ " which has a delegate of type " + delegate.getClass().getName() + " due to a "
+										+ t.getClass().getSimpleName());
+								t.printStackTrace();
+							}
 						}
 					} else {
-						delegate.put(s, v);
+						try {
+							delegate.put(s, v);
+						} catch (Throwable t) {
+							System.err.println("ALERT Failed to write a property of " + s + " to element id " + getId() + " due to a "
+									+ t.getClass().getSimpleName());
+							t.printStackTrace();
+						}
 					}
-				} else {
-					delegate.put(s, v);
 				}
 			}
 			getChangedPropertiesInt().clear();
@@ -451,7 +538,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 		getRemovedPropertiesInt().clear();
 		if (delegate instanceof Document) {
-			((Document) delegate).save();
+			Document doc = (Document) delegate;
+			//			if (!doc.hasItem("form")) {
+			//				System.err.println("Graph element being saved without a form value.");
+			//			}
+			doc.save();
 		}
 	}
 
@@ -465,6 +556,88 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public void commit() {
 
+	}
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsKey(final Object arg0) {
+		return getDelegate().containsKey(arg0);
+	}
+
+	@Override
+	public boolean containsValue(final Object arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object get(final Object arg0) {
+		//NTF this might not work. We're trying to avoid an infinite loop.
+		return getDelegate().get(String.valueOf(arg0));
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return getPropertyKeys();
+	}
+
+	@Override
+	public Object put(final String arg0, final Object arg1) {
+		Map delegate = getDelegate();
+		if (delegate == null) {
+			throw new IllegalStateException("An element of type " + getClass().getSimpleName() + " with id " + getId()
+					+ " has no delegate and therefore cannot put new value updates.");
+		}
+		getDelegate().put(arg0, arg1);
+		return arg1;
+	}
+
+	@Override
+	public void putAll(final Map<? extends String, ? extends Object> arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object remove(final Object arg0) {
+		Object result = getProperty(String.valueOf(arg0));
+		removeProperty(String.valueOf(arg0));
+		return result;
+	}
+
+	@Override
+	public int size() {
+		return getPropertyKeys().size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Document asDocument() {
+		Document result = null;
+		Object raw = getDelegate();
+		if (raw instanceof Document) {
+			result = (Document) raw;
+		} else if (raw instanceof DProxyVertex) {
+			result = (Document) ((DProxyVertex) raw).getDelegate();
+			//			System.out.println("Element has a delegate of a DProxyVertex. It should be the other way around?")
+		}
+		return result;
 	}
 
 }

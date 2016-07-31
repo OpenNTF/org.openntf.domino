@@ -24,6 +24,7 @@ import com.tinkerpop.blueprints.util.DefaultVertexQuery;
 import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
+@Deprecated
 public class DominoVertex extends DominoElement implements IDominoVertex, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoVertex.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";

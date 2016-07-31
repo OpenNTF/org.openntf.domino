@@ -32,6 +32,7 @@ public interface DVertexFrame extends Editable {
 	public Map<CharSequence, Object> asMap();
 
 	@JavaHandler
+	@TypedProperty("Editors")
 	public String[] getEditors();
 
 	//TODO NTF Future
@@ -41,6 +42,7 @@ public interface DVertexFrame extends Editable {
 	//	public String[] getReaders();
 
 	public abstract static class DVertexFrameImpl implements DVertexFrame, JavaHandlerContext<Vertex> {
+
 		@Override
 		public Document asDocument() {
 			Object raw = asVertex();
@@ -75,6 +77,7 @@ public interface DVertexFrame extends Editable {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public String[] getEditors() {
+			//			System.out.println("TEMP DEBUG getting Editors...");
 			String[] result = null;
 			Object raw = asVertex().getProperty("$UpdatedBy");
 			if (raw != null) {

@@ -6,7 +6,7 @@ import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
-import org.openntf.domino.graph2.builtin.Person;
+import org.openntf.domino.graph2.builtin.identity.Person;
 import org.openntf.domino.graph2.builtin.social.Rateable;
 import org.openntf.domino.graph2.builtin.social.Rates;
 import org.openntf.domino.graph2.impl.DConfiguration;
@@ -470,17 +470,17 @@ public class Graph2Demo implements Runnable {
 
 			Movie newhopeMovie = framedGraph.addVertex("Star Wars", Movie.class);
 			newhopeMovie.setTitle("Star Wars");
-			Rates ntfRatesNH = ntfUser.addRates(newhopeMovie);
+			Rates ntfRatesNH = ntfUser.addRateable(newhopeMovie);
 			ntfRatesNH.setRating(4);
 
 			Movie empireMovie = framedGraph.addVertex("The Empire Strikes Back", Movie.class);
 			empireMovie.setTitle("The Empire Strikes Back");
-			Rates ntfRatesESB = ntfUser.addRates(empireMovie);
+			Rates ntfRatesESB = ntfUser.addRateable(empireMovie);
 			ntfRatesESB.setRating(5);
 
 			Movie jediMovie = framedGraph.addVertex("Return of the Jedi", Movie.class);
 			jediMovie.setTitle("Return of the Jedi");
-			Rates ntfRatesRoJ = ntfUser.addRates(jediMovie);
+			Rates ntfRatesRoJ = ntfUser.addRateable(jediMovie);
 			ntfRatesRoJ.setRating(5);
 
 			Movie phantomMovie = framedGraph.addVertex("The Phantom Menace", Movie.class);

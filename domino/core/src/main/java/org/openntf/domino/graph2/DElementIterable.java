@@ -1,18 +1,16 @@
 package org.openntf.domino.graph2;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 
 import com.tinkerpop.blueprints.Element;
 
-@SuppressWarnings("rawtypes")
 public interface DElementIterable {
-	public interface DElementIterator {
-		public Element next();
+	public interface DElementIterator extends ListIterator<Element> {
 
-		public boolean hasNext();
-
-		public void remove();
 	}
 
 	public Iterator<? extends Element> iterator();
+
+	public ListIterator<? extends Element> listIterator();
 }

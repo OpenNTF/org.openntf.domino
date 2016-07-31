@@ -36,7 +36,9 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 		Fixes[] fixes = Factory.getThreadConfig().fixes;
 		if (fixes != null) {
 			for (Fixes fix : fixes) {
-				sess.setFixEnable(fix, true);
+				if (fix.isKhan()) {
+					sess.setFixEnable(fix, true);
+				}
 			}
 		}
 		sess.setAutoMime(Factory.getThreadConfig().autoMime);
@@ -55,7 +57,7 @@ public abstract class AbstractSessionFactory implements ISessionFactory {
 
 	/**
 	 * This method may be overwritten by special XPage databases
-	 * 
+	 *
 	 * @param sess
 	 * @param db
 	 */

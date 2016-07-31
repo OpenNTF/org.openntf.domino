@@ -1,5 +1,6 @@
 package org.openntf.conference.graph.examples;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,10 +12,12 @@ import org.openntf.conference.graph.Sponsor;
 import org.openntf.conference.graph.Sponsor.Level;
 import org.openntf.conference.graph.Track;
 import org.openntf.domino.graph2.DEdge;
+import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrameComparator;
 import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.junit.TestRunnerUtil;
+import org.openntf.domino.types.CaseInsensitiveString;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -77,6 +80,17 @@ public class SessionsByTrack implements Runnable {
 
 					System.out.println(pres.getSessionId() + ": " + pres.getTitle());
 				}
+			}
+
+			System.out.println("OUTPUTTING SORTBY");
+
+			FramedVertexList<Sponsor> sponsors2 = (FramedVertexList<Sponsor>) graph2.getVertices(null, null, Sponsor.class);
+			List<CaseInsensitiveString> keys = new ArrayList<CaseInsensitiveString>();
+			keys.add(new CaseInsensitiveString("Level"));
+			keys.add(new CaseInsensitiveString("Name"));
+			sponsors2.sortBy((List<CharSequence>) (List<?>) keys, true);
+			for (Sponsor spon : sponsors2) {
+				System.out.println(spon.getLevel().name() + " - " + spon.getName());
 			}
 
 			// Throws java.lang.ClassCastException: com.sun.proxy.$Proxy11 incompatible with com.tinkerpop.blueprints.Vertex

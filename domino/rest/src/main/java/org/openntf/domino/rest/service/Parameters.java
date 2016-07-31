@@ -11,7 +11,7 @@ import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
 public enum Parameters {
-	ID, TYPE, EDGES, VERTICES, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH;
+	ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE;
 
 	public static ParamMap toParamMap(UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
@@ -51,23 +51,43 @@ public enum Parameters {
 			super(Parameters.class);
 		}
 
-		public List<CaseInsensitiveString> getTypes() {
+		public List<CharSequence> getTypes() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.TYPE));
 		}
 
-		public List<CaseInsensitiveString> getProperties() {
+		public List<CharSequence> getKeys() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.KEY));
+		}
+
+		public List<CharSequence> getProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PROPS));
 		}
 
-		public List<CaseInsensitiveString> getFilterKeys() {
+		public List<CharSequence> getFilterKeys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.FILTERKEY));
 		}
 
-		public List<CaseInsensitiveString> getFilterValues() {
+		public List<CharSequence> getFilterValues() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.FILTERVALUE));
 		}
 
-		public List<CaseInsensitiveString> getOrderBys() {
+		public List<CharSequence> getPartialKeys() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PARTIALKEY));
+		}
+
+		public List<CharSequence> getPartialValues() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PARTIALVALUE));
+		}
+
+		public List<CharSequence> getStartsKeys() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.STARTSKEY));
+		}
+
+		public List<CharSequence> getStartsValues() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.STARTSVALUE));
+		}
+
+		public List<CharSequence> getOrderBys() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.ORDERBY));
 		}
 
@@ -93,15 +113,15 @@ public enum Parameters {
 			return Integer.valueOf(intStr);
 		}
 
-		public List<CaseInsensitiveString> getInProperties() {
+		public List<CharSequence> getInProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.INPROPS));
 		}
 
-		public List<CaseInsensitiveString> getOutProperties() {
+		public List<CharSequence> getOutProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.OUTPROPS));
 		}
 
-		public List<CaseInsensitiveString> getLabels() {
+		public List<CharSequence> getLabels() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.LABEL));
 		}
 
@@ -111,6 +131,14 @@ public enum Parameters {
 
 		public boolean getIncludeEdges() {
 			return get(Parameters.EDGES) != null;
+		}
+
+		public boolean getIncludeCounts() {
+			return get(Parameters.COUNTS) != null;
+		}
+
+		public boolean getDescending() {
+			return get(Parameters.DESC) != null;
 		}
 
 	}

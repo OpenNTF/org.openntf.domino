@@ -18,6 +18,7 @@ import org.openntf.domino.big.NoteList;
 //import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.graph2.DConfiguration;
 import org.openntf.domino.graph2.DElementStore;
+import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.exception.ElementKeyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -26,6 +27,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Features;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.MultiIterable;
@@ -35,6 +37,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	private static final Logger log_ = Logger.getLogger(DGraph.class.getName());
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
 	private DConfiguration configuration_;
+	protected Graph extendedGraph_;
 
 	@SuppressWarnings("unused")
 	//	private DbCache dbCache_;
@@ -81,7 +84,9 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		if (id instanceof NoteCoordinate) {
 
 		}
-		return findElementStore(id).getElement(id);
+		DElementStore store = findElementStore(id);
+		Element result = store.getElement(id);
+		return result;
 	}
 
 	@Override
@@ -146,6 +151,10 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		findElementStore(edge).removeEdge(edge);
 	}
 
+	public void removeEdge(final Edge edge, final Vertex removingVertex) {
+		findElementStore(edge).removeEdge(edge, removingVertex);
+	}
+
 	@Override
 	public Iterable<Edge> getEdges() {
 		List<Iterable<Edge>> storeList = new ArrayList<Iterable<Edge>>();
@@ -198,7 +207,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				DElement delem = (DElement) elem;
 				delem.applyChanges();
 				DElementStore store = findElementStore(elem.getId());
-				store.uncache(delem);
+				//				store.uncache(delem);
 			}
 			it.remove();
 		}
@@ -216,7 +225,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	}
 
 	@Override
-	public Map<String, Object> findDelegate(final Object delegateKey) {
+	public Object findDelegate(final Object delegateKey) {
 		DElementStore store = findElementStore(delegateKey);
 		return store.findElementDelegate(delegateKey, Element.class);
 	}
@@ -276,6 +285,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				if (DominoUtils.isReplicaId(skey)) {
 					Long rid = NoteCoordinate.Utils.getLongFromReplid(skey);
 					result = getElementStores().get(rid);
+					if (result == null) {
+						DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+						newStore.setStoreKey(rid);
+						newStore.setConfiguration(this.getConfiguration());
+						getElementStores().put(rid, newStore);
+						//						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
+						result = newStore;
+					}
 				} else {
 					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 				}
@@ -289,6 +306,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 						CharSequence ridStr = skey.subSequence(2, 18);
 						Long rid = NoteCoordinate.Utils.getLongFromReplid(ridStr);
 						result = getElementStores().get(rid);
+						if (result == null) {
+							DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+							newStore.setStoreKey(rid);
+							newStore.setConfiguration(this.getConfiguration());
+							getElementStores().put(rid, newStore);
+							//							System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
+							result = newStore;
+						}
 					}
 				} else if (prefix.equals("VC") || prefix.equals("VD") || prefix.equals("VT") || prefix.equals("VU")) {
 					CharSequence mid = skey.subSequence(2, 50);
@@ -296,6 +321,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 						CharSequence ridStr = skey.subSequence(2, 18);
 						Long rid = NoteCoordinate.Utils.getLongFromReplid(ridStr);
 						result = getElementStores().get(rid);
+						if (result == null) {
+							DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+							newStore.setStoreKey(rid);
+							newStore.setConfiguration(this.getConfiguration());
+							getElementStores().put(rid, newStore);
+							//							System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
+							result = newStore;
+						}
 					}
 				}
 				if (result == null) {
@@ -304,8 +337,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			} else if (skey.length() > 16) {
 				CharSequence prefix = skey.subSequence(0, 16);
 				if (DominoUtils.isReplicaId(prefix)) {
+					//					System.out.println("TEMP DEBUG Attempting to resolve replica id " + prefix + " to an element store");
 					Long rid = NoteCoordinate.Utils.getLongFromReplid(prefix);
 					result = getElementStores().get(rid);
+					if (result == null) {
+						DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+						newStore.setStoreKey(rid);
+						newStore.setConfiguration(this.getConfiguration());
+						getElementStores().put(rid, newStore);
+						//						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
+						result = newStore;
+					}
 				} else {
 					throw new ElementKeyException("Cannot resolve a key of " + skey.toString());
 				}
@@ -318,17 +360,21 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			long key = ((NoteCoordinate) delegateKey).getReplicaLong();
 			result = getElementStores().get(key);
 			if (result == null) {
-				System.out.println("Unable to locate element store for replicaid " + ((NoteCoordinate) delegateKey).getReplicaId() + " ("
-						+ ((NoteCoordinate) delegateKey).getReplicaLong() + ") therefore returning the default for the graph");
-				for (DElementStore store : getElementStores().values()) {
-					System.out.println("key: " + store.getStoreKey());
-				}
+				DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+				newStore.setStoreKey(key);
+				newStore.setConfiguration(this.getConfiguration());
+				getElementStores().put(key, newStore);
+				//				System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(key));
+				result = newStore;
 			}
+			//			System.out.println("TEMP DEBUG returning an element store for key " + NoteCoordinate.Utils.getReplidFromLong(key)
+			//					+ " and isProxied is " + result.isProxied());
 		} else {
-			//			System.out.println("delegateKey is a " + delegateKey.getClass().getName());
+			System.err.println("delegateKey is a " + delegateKey.getClass().getName());
 		}
 		if (result == null) {
 			result = getDefaultElementStore();
+			//			System.out.println("Returning default element store");
 		}
 		return result;
 	}
@@ -338,14 +384,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		return getConfiguration().getDefaultElementStore();
 	}
 
-	public DEdgeList getEdgesFromIds(final Vertex source, final NoteList list) {
-		DEdgeList result = new DEdgeList((DVertex) source);
-		for (NoteCoordinate id : list) {
-			Edge edge = getEdge(id);
-			if (edge != null) {
-				result.add(edge);
-			}
-		}
+	public org.openntf.domino.graph2.DEdgeList getEdgesFromIds(final Vertex source, final NoteList list) {
+		org.openntf.domino.graph2.DEdgeList result = new DFastEdgeList((DVertex) source, this, list);
 		return result;
 	}
 
@@ -383,8 +423,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		//FIXME NTF probably need to farm this out to some kind of Factory...
 		Object result = null;
 		Long key = store.getStoreKey();
-		Session session = Factory.getSession(SessionType.CURRENT);
 		String keyStr = NoteCoordinate.Utils.getReplidFromLong(key);
+		//		System.out.println("Attempting to find database with replica id " + keyStr);
+		Session session = Factory.getSession(SessionType.CURRENT);
+		//		DbDirectory dir = session.getDbDirectory("");
+		//		result = dir.openDatabaseByReplicaID(keyStr);
+		//		if (result == null) {
+		//			System.err.println("Unable to open database by replica id " + keyStr);
+		//		}
 		result = session.getDatabase(keyStr);	//TODO NTF sort out server?
 		return result;
 	}
@@ -464,5 +510,33 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			//TODO NTF Unimplemented
 		}
 		return result;
+	}
+
+	@Override
+	public void addKeyResolver(final DKeyResolver resolver) {
+		getConfiguration().addKeyResolver(resolver);
+	}
+
+	@Override
+	public DKeyResolver getKeyResolver(final Class<?> type) {
+		return getConfiguration().getKeyResolver(type);
+	}
+
+	@Override
+	public void setExtendedGraph(final Graph graph) {
+		extendedGraph_ = graph;
+	}
+
+	@Override
+	public Graph getExtendedGraph() {
+		return extendedGraph_;
+	}
+
+	@Override
+	public void flushCache() {
+		for (Long key : getElementStores().keySet()) {
+			DElementStore elemStore = getElementStores().get(key);
+			elemStore.flushCache();
+		}
 	}
 }

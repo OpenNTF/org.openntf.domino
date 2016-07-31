@@ -145,6 +145,7 @@ org.openntf.domino.Document {
 	private String unid_;
 	private long threadid_;
 	private boolean isNew_;
+	private boolean isDeferred_ = false;
 
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
@@ -256,6 +257,7 @@ org.openntf.domino.Document {
 			unid_ = parent.getUNID(id);
 		}
 		isNew_ = false;
+		isDeferred_ = true;
 	}
 
 	protected void setDeferredId(final int noteId) {
@@ -663,8 +665,8 @@ org.openntf.domino.Document {
 								((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 						}
 					} else {
-						log_.log(Level.FINE, "A request was made to close MIMEEntity " + entityItemName
-								+ " but that entity isn't currently open");
+						log_.log(Level.FINE,
+								"A request was made to close MIMEEntity " + entityItemName + " but that entity isn't currently open");
 					}
 				}
 			}
@@ -1210,7 +1212,11 @@ org.openntf.domino.Document {
 		// RPr: this should be equal to the code below.
 		MIMEEntity entity = getMIMEEntity(name);
 		if (entity == null) {
-			return TypeUtils.itemValueToClass(this, name, type);
+			T result = TypeUtils.itemValueToClass(this, name, type);
+			//			if ("form".equalsIgnoreCase(name)) {
+			//				System.out.println("Using getItemValue on the form field ");
+			//			}
+			return result;
 		} else {
 			try {
 				return (T) Documents.getItemValueMIME(this, name, entity);
@@ -1248,7 +1254,7 @@ org.openntf.domino.Document {
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1284,7 +1290,7 @@ org.openntf.domino.Document {
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -1328,13 +1334,9 @@ org.openntf.domino.Document {
 						result.add(mimeValue);
 						return result;
 					} else {
-						log_.log(
-								Level.WARNING,
-								"We found a MIMEEntity for item name "
-										+ name
-										+ " in document "
-										+ this.getMetaversalID()
-										+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
+								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 						Vector<Object> result = new Vector<Object>(1);
@@ -1348,8 +1350,8 @@ org.openntf.domino.Document {
 			try {
 				vals = getDelegate().getItemValue(name);
 			} catch (NotesException ne) {
-				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
-						+ " " + noteid_ + ": " + ne.text);
+				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath() + " "
+						+ noteid_ + ": " + ne.text);
 				DominoUtils.handleException(ne, this, "Item=" + name);
 				return null;
 			}
@@ -1641,12 +1643,14 @@ org.openntf.domino.Document {
 	public MIMEEntity getMIMEEntity(final String itemName) {
 		// checkMimeOpen(); This is not needed here
 		// 14-03-14 RPr: disabling convertMime is required here! (Not always... but in some cases)
-		if (!containsMimes())
+		if (!containsMimes()) {
 			return null;
+		}
 		boolean convertMime = getAncestorSession().isConvertMime();
 		try {
-			if (convertMime)
+			if (convertMime) {
 				getAncestorSession().setConvertMime(false);
+			}
 			MIMEEntity ret = fromLotusMimeEntity(getDelegate().getMIMEEntity(itemName), itemName);
 			if (openMIMEEntities_ != null && openMIMEEntities_.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");
@@ -1656,9 +1660,9 @@ org.openntf.domino.Document {
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "Item=" + itemName);
 		} finally {
-			if (convertMime)
+			if (convertMime) {
 				getAncestorSession().setConvertMime(true);
-
+			}
 		}
 		return null;
 	}
@@ -1934,14 +1938,18 @@ org.openntf.domino.Document {
 	 */
 	@Override
 	public boolean hasItem(final String name) {
-		if (checkMimeOpen()) {
-			System.out.println("DEBUG: MimeEntity found open while checking for item name " + name);
+		//		if (checkMimeOpen()) {
+		//			System.out.println("DEBUG: MimeEntity found open while checking for item name " + name);
+		//		}
+		if (this.fieldNames_ != null) {
+			return fieldNames_.contains(name);
 		}
+		lotus.domino.Document delegate = getDelegate();	//NTF outside the try/catch so the exception will bubble
 		try {
-			if (name == null) {
+			if (name == null || delegate == null) {
 				return false;
 			} else {
-				return getDelegate().hasItem(name);
+				return delegate.hasItem(name);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -2621,12 +2629,12 @@ org.openntf.domino.Document {
 						Documents.saveState(state, this, itemName, true, headers);
 
 					} else {
-						throw new IllegalArgumentException(value.getClass()
-								+ " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
+						throw new IllegalArgumentException(
+								value.getClass() + " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
 					}
 				} catch (ClassNotFoundException cnfe) {
-					throw new IllegalArgumentException(value.getClass()
-							+ " is not of type Serializable, DocumentCollection or NoteCollection");
+					throw new IllegalArgumentException(
+							value.getClass() + " is not of type Serializable, DocumentCollection or NoteCollection");
 				}
 			}
 
@@ -2668,7 +2676,8 @@ org.openntf.domino.Document {
 				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
 			} else {
 				beginEdit();
-				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
+				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
+						this);
 				markDirty(itemName, true);
 				return result;
 			}
@@ -2726,9 +2735,11 @@ org.openntf.domino.Document {
 				} else if (this.getAutoMime() == AutoMime.WRAP_ALL) {
 					// Compatibility mode
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
-					log_.log(Level.INFO, "Writing " + value == null ? "null" : value.getClass() + " causes a " + ex2
-							+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
-							+ " Consider using 'put' or something similar in your code.");
+					log_.log(Level.INFO,
+							"Writing " + value == null ? "null"
+									: value.getClass() + " causes a " + ex2
+											+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
+											+ " Consider using 'put' or something similar in your code.");
 				} else {
 					throw ex2;
 				}
@@ -3011,19 +3022,6 @@ org.openntf.domino.Document {
 		return null;
 	}
 
-	protected boolean isFriendlyVector(final Object value) {
-		if (!(value instanceof Vector))
-			return false;
-		for (Object v : (Vector<?>) value) {
-			if (v instanceof String || v instanceof Integer || v instanceof Double) {
-				// ok
-			} else {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	private AutoMime autoMime_ = null;
 
 	@Override
@@ -3174,7 +3172,7 @@ org.openntf.domino.Document {
 						String newunid = DominoUtils.toUnid(new Date().getTime());
 						String message = "Unable to save a document with id " + getUniversalID()
 								+ " because that id already exists. Saving a " + this.getFormName()
-								+ (this.hasItem("$$Key") ? " (" + getItemValueString("$$Key") + ")" : "")
+								+ (this.hasItem("$$Key") ? " (key: '" + getItemValueString("$$Key") + "')" : "")
 								+ " to a different unid instead: " + newunid;
 						setUniversalID(newunid);
 						try {
@@ -3198,8 +3196,8 @@ org.openntf.domino.Document {
 			} else {
 				// System.out.println("Before Update listener blocked save.");
 				if (log_.isLoggable(Level.FINE)) {
-					log_.log(Level.FINE, "Document " + getNoteID()
-							+ " was not saved because the DatabaseListener for update returned false.");
+					log_.log(Level.FINE,
+							"Document " + getNoteID() + " was not saved because the DatabaseListener for update returned false.");
 				}
 				result = false;
 			}
@@ -3634,9 +3632,11 @@ org.openntf.domino.Document {
 							try {
 								d = db.getDocumentByUNID(unid_);
 							} catch (NotesException ne) {
-								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-										+ getParentDatabase().getFilePath() + " because of: " + ne.text, ne);
+								log_.log(Level.WARNING,
+										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+												+ getParentDatabase().getFilePath() + " because of: " + ne.text,
+										ne);
 							}
 						}
 					} else {
@@ -3647,8 +3647,8 @@ org.openntf.domino.Document {
 				//getFactory().recacheLotusObject(d, this, parent_);
 				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
-						log_.log(Level.FINER, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
-								+ " was rollbacked.");
+						log_.log(Level.FINER,
+								"Document " + noteid_ + " in database path " + getParentDatabase().getFilePath() + " was rollbacked.");
 					}
 				} else {
 					if (log_.isLoggable(Level.FINE)) {
@@ -3684,10 +3684,24 @@ org.openntf.domino.Document {
 					try {
 						d = db.getDocumentByUNID(unid_);
 					} catch (NotesException ne) {
-						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-								+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+						if (isDeferred_) {
+							try {
+								d = db.createDocument();
+								d.setUniversalID(unid_);
+								isDeferred_ = false;
+							} catch (NotesException ne1) {
+								DominoUtils.handleException(ne1);
+							}
+						} else {
+							log_.log(Level.WARNING,
+									"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+											+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+											+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+						}
 					}
+				} else {
+					log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+							+ ", but the parent database object is null!");
 				}
 				setDelegate(d, true);
 				shouldResurrect_ = false;
@@ -3712,6 +3726,7 @@ org.openntf.domino.Document {
 				}
 			} catch (Exception e) {
 				DominoUtils.handleException(e);
+				//				throw new RuntimeException(e);
 			}
 		} else {
 			long curThreadid = System.identityHashCode(Thread.currentThread());
@@ -3819,8 +3834,11 @@ org.openntf.domino.Document {
 
 		if (key instanceof CharSequence) {
 			String skey = key.toString().toLowerCase();
-			if ("parentdocument".equals(skey)) {
+			if ("parentdocument".equalsIgnoreCase(skey)) {
 				return this.getParentDocument();
+			}
+			if ("form".equalsIgnoreCase(skey)) {
+				return this.getFormName();
 			}
 			if (skey.indexOf("@") != -1) { // TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
 				//TODO NTF: If so, we should change to looking for valid item names first, then trying to treat as formula
@@ -3828,7 +3846,6 @@ org.openntf.domino.Document {
 				if (pos != -1) {
 					skey = skey.substring(0, pos);
 				}
-
 				if ("@accessed".equals(skey)) {
 					return this.getLastAccessed();
 				}
@@ -3896,7 +3913,7 @@ org.openntf.domino.Document {
 		Object value = null;
 		String keyS = key.toString();
 		try {
-			value = this.getItemValue(keyS);
+			value = this.getItemValue(keyS, Object.class);
 		} catch (OpenNTFNotesException e) {
 			if (e.getCause() instanceof NotesException || (e.getCause() != null && e.getCause().getCause() instanceof NotesException))
 				value = getFirstItem(keyS, true);
@@ -4189,6 +4206,7 @@ org.openntf.domino.Document {
 		}
 		try {
 			getDelegate().replaceItemValueCustomDataBytes(itemName, CHUNK_TYPE_NAME, data);
+			markDirty(itemName, true);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -4256,10 +4274,10 @@ org.openntf.domino.Document {
 				int actual = 0;
 
 				for (String curChunk : chunkNames) {
-					System.out.println("DEBUG: Attempting binary read from " + curChunk);
+					//					System.out.println("DEBUG: Attempting binary read from " + curChunk);
 					try {
 						byte[] cur = getDelegate().getItemValueCustomDataBytes(curChunk, CHUNK_TYPE_NAME);
-						System.out.println("Found " + cur.length + " bytes from chunk " + curChunk);
+						//						System.out.println("Found " + cur.length + " bytes from chunk " + curChunk);
 						System.arraycopy(cur, 0, accumulated, actual, cur.length);
 						actual = actual + cur.length;
 					} catch (Exception e) {

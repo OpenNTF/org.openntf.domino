@@ -1105,6 +1105,19 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 		}
 	}
 
+	public Document getDocumentByID_Or_UNID(final String id) {
+		Document doc;
+		doc = getDocumentByUNID(id);
+		if (doc == null) {
+			try {
+				doc = getDocumentByID(id);
+			} catch (Throwable te) {
+				// Just couldn't get doc
+			}
+		}
+		return doc;
+	}
+
 	@Override
 	public Document getDocumentWithKey(final Serializable key) {
 		return this.getDocumentWithKey(key, false);
@@ -1118,7 +1131,9 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
-					doc.setUniversalID(checksum);
+					if (checksum != null) {
+						doc.setUniversalID(checksum);
+					}
 					doc.replaceItemValue("$Created", new Date());
 					doc.replaceItemValue("$$Key", key);
 				}
@@ -2704,10 +2719,12 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	@Override
 	public void setFolderReferencesEnabled(final boolean flag) {
 		try {
-			getDelegate().setFolderReferencesEnabled(flag);
+			boolean current = getDelegate().getFolderReferencesEnabled();
+			if (flag != current) {
+				getDelegate().setFolderReferencesEnabled(flag);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
-
 		}
 	}
 
@@ -3237,13 +3254,20 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 */
 	@Override
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		if (since.after(this.getLastModified().toJavaDate()))
+		if (since != null && since.after(this.getLastModified().toJavaDate()))
 			return 0;
 		NoteCollection nc = createNoteCollection(false);
-		nc.setSinceTime(since);
+		if (since != null) {
+			nc.setSinceTime(since);
+		}
 		nc.setSelectOptions(noteClass);
 		nc.buildCollection();
 		return nc.getCount();
+	}
+
+	@Override
+	public int getNoteCount() {
+		return getModifiedNoteCount(null);
 	}
 
 	public int[] getDailyModifiedNoteCount(final java.util.Date since) {

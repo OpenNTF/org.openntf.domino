@@ -4,7 +4,12 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import org.openntf.domino.big.NoteCoordinate;
+import org.openntf.domino.graph2.DEdgeList;
+import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DVertex;
+import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
+import org.openntf.domino.utils.DominoUtils;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -25,27 +30,31 @@ public abstract class AbstractIncidenceHandler {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object processVertexIncidence(final Annotation annotation, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Vertex vertex) {
-		boolean isUnique = annotation instanceof IncidenceUnique;
 		Direction dir = Direction.BOTH;
 		String label = "";
+		boolean unique = false;
 		if (annotation instanceof Adjacency) {
 			dir = ((Adjacency) annotation).direction();
 			label = ((Adjacency) annotation).label();
 		} else if (annotation instanceof AdjacencyUnique) {
 			dir = ((AdjacencyUnique) annotation).direction();
 			label = ((AdjacencyUnique) annotation).label();
+			unique = true;
 		} else if (annotation instanceof Incidence) {
 			dir = ((Incidence) annotation).direction();
 			label = ((Incidence) annotation).label();
 		} else if (annotation instanceof IncidenceUnique) {
 			dir = ((IncidenceUnique) annotation).direction();
 			label = ((IncidenceUnique) annotation).label();
+			unique = true;
 		}
 
 		if (ClassUtilities.isGetMethod(method)) {
 			Class<?> returnType = method.getReturnType();
 			if (Iterable.class.isAssignableFrom(returnType)) {
-				return new FramedEdgeList(framedGraph, vertex, vertex.getEdges(dir, label), ClassUtilities.getGenericClass(method));
+				DEdgeList edgeList = (DEdgeList) vertex.getEdges(dir, label);
+				edgeList.setUnique(unique);
+				return new FramedEdgeList(framedGraph, vertex, edgeList, ClassUtilities.getGenericClass(method));
 			} else if (Edge.class.isAssignableFrom(returnType)) {
 				return vertex.getEdges(dir, label).iterator().next();
 			} else {
@@ -66,9 +75,17 @@ public abstract class AbstractIncidenceHandler {
 			Vertex newVertex;
 			Edge resultEdge = null;
 			newVertex = ((VertexFrame) arguments[0]).asVertex();
-			resultEdge = findEdge(annotation, framedGraph, vertex, newVertex);
+			if (unique) {
+				resultEdge = findEdge(annotation, framedGraph, vertex, newVertex);
+			}
 			if (resultEdge == null) {
-				resultEdge = addEdge(annotation, framedGraph, vertex, newVertex);
+				String replicaid = null;
+				if (framedGraph instanceof DFramedTransactionalGraph) {
+					DElementStore store = ((DFramedTransactionalGraph) framedGraph).getElementStore(method.getReturnType());
+					long rawkey = store.getStoreKey();
+					replicaid = NoteCoordinate.Utils.getReplidFromLong(rawkey);
+				}
+				resultEdge = addEdge(annotation, framedGraph, vertex, newVertex, replicaid);
 			}
 			return framedGraph.frame(resultEdge, method.getReturnType());
 		} else if (ClassUtilities.isRemoveMethod(method)) {
@@ -84,21 +101,23 @@ public abstract class AbstractIncidenceHandler {
 			final FramedGraph framedGraph, final Vertex vertex) {
 		Edge resultEdge = null;
 		Class<?> returnType = method.getReturnType();
-		boolean isUnique = annotation instanceof AdjacencyUnique;
 		Direction dir = Direction.BOTH;
 		String label = "";
+		boolean unique = false;
 		if (annotation instanceof Adjacency) {
 			dir = ((Adjacency) annotation).direction();
 			label = ((Adjacency) annotation).label();
 		} else if (annotation instanceof AdjacencyUnique) {
 			dir = ((AdjacencyUnique) annotation).direction();
 			label = ((AdjacencyUnique) annotation).label();
+			unique = true;
 		} else if (annotation instanceof Incidence) {
 			dir = ((Incidence) annotation).direction();
 			label = ((Incidence) annotation).label();
 		} else if (annotation instanceof IncidenceUnique) {
 			dir = ((IncidenceUnique) annotation).direction();
 			label = ((IncidenceUnique) annotation).label();
+			unique = true;
 		}
 
 		if (ClassUtilities.isGetMethod(method)) {
@@ -120,18 +139,26 @@ public abstract class AbstractIncidenceHandler {
 			} else {
 				newVertex = ((VertexFrame) arguments[0]).asVertex();
 			}
-			if (isUnique) {
+			if (unique) {
 				resultEdge = findEdge(annotation, framedGraph, vertex, newVertex);
 			}
 			if (resultEdge == null) {
-				resultEdge = addEdge(annotation, framedGraph, vertex, newVertex);
+				String replicaid = null;
+				if (framedGraph instanceof DFramedTransactionalGraph) {
+					DElementStore store = ((DFramedTransactionalGraph) framedGraph).getElementStore(returnType);
+					long rawkey = store.getStoreKey();
+					replicaid = NoteCoordinate.Utils.getReplidFromLong(rawkey);
+				}
+				resultEdge = addEdge(annotation, framedGraph, vertex, newVertex, replicaid);
 			}
 			if (returnType.isPrimitive()) {
 				return null;
 			} else if (Edge.class.isAssignableFrom(returnType)) {
 				return resultEdge;
 			} else if (EdgeFrame.class.isAssignableFrom(returnType)) {
-				return framedGraph.frame(resultEdge, returnType);
+				//				System.out.println("TEMP DEBUG about to wrap edge with id " + resultEdge.getId());
+				Object result = framedGraph.frame(resultEdge, returnType);
+				return result;
 			} else {
 				return returnValue;
 			}
@@ -145,13 +172,13 @@ public abstract class AbstractIncidenceHandler {
 			if (ClassUtilities.acceptsIterable(method)) {
 				for (Object o : (Iterable) arguments[0]) {
 					Vertex v = ((VertexFrame) o).asVertex();
-					addEdge(annotation, framedGraph, vertex, v);
+					addEdge(annotation, framedGraph, vertex, v, null);
 				}
 				return null;
 			} else {
 				if (null != arguments[0]) {
 					Vertex newVertex = ((VertexFrame) arguments[0]).asVertex();
-					addEdge(annotation, framedGraph, vertex, newVertex);
+					addEdge(annotation, framedGraph, vertex, newVertex, null);
 				}
 				return null;
 			}
@@ -165,26 +192,29 @@ public abstract class AbstractIncidenceHandler {
 		Edge result = null;
 		Direction dir = Direction.BOTH;
 		String label = "";
+		boolean unique = false;
 		if (annotation instanceof Adjacency) {
 			dir = ((Adjacency) annotation).direction();
 			label = ((Adjacency) annotation).label();
 		} else if (annotation instanceof AdjacencyUnique) {
 			dir = ((AdjacencyUnique) annotation).direction();
 			label = ((AdjacencyUnique) annotation).label();
+			unique = true;
 		} else if (annotation instanceof Incidence) {
 			dir = ((Incidence) annotation).direction();
 			label = ((Incidence) annotation).label();
 		} else if (annotation instanceof IncidenceUnique) {
 			dir = ((IncidenceUnique) annotation).direction();
 			label = ((IncidenceUnique) annotation).label();
+			unique = true;
 		}
 
 		switch (dir) {
 		case OUT:
-			result = ((DVertex) vertex).findOutEdge(newVertex, label);
+			result = ((DVertex) vertex).findOutEdge(newVertex, label, unique);
 			break;
 		case IN:
-			result = ((DVertex) vertex).findInEdge(newVertex, label);
+			result = ((DVertex) vertex).findInEdge(newVertex, label, unique);
 			break;
 		default:
 			break;
@@ -245,30 +275,46 @@ public abstract class AbstractIncidenceHandler {
 		return result;
 	}
 
+	protected NoteCoordinate getForcedId(final Vertex outVertex, final Vertex inVertex, final String label, final String replicaid) {
+		String outString = ((NoteCoordinate) outVertex.getId()).toString();
+		String inString = ((NoteCoordinate) inVertex.getId()).toString();
+		String targetid = DominoUtils.toUnid(outString + label + inString);
+		return NoteCoordinate.Utils.getNoteCoordinate(replicaid, targetid);
+	}
+
 	@SuppressWarnings("rawtypes")
-	private Edge addEdge(final Annotation annotation, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex) {
+	private Edge addEdge(final Annotation annotation, final FramedGraph framedGraph, final Vertex vertex, final Vertex newVertex,
+			final String replicaid) {
 		Edge result = null;
 		Direction dir = Direction.BOTH;
 		String label = "";
+		boolean unique = false;
 		if (annotation instanceof Adjacency) {
 			dir = ((Adjacency) annotation).direction();
 			label = ((Adjacency) annotation).label();
 		} else if (annotation instanceof AdjacencyUnique) {
 			dir = ((AdjacencyUnique) annotation).direction();
 			label = ((AdjacencyUnique) annotation).label();
+			unique = true;
 		} else if (annotation instanceof Incidence) {
 			dir = ((Incidence) annotation).direction();
 			label = ((Incidence) annotation).label();
 		} else if (annotation instanceof IncidenceUnique) {
 			dir = ((IncidenceUnique) annotation).direction();
 			label = ((IncidenceUnique) annotation).label();
+			unique = true;
 		}
+		NoteCoordinate id = null;
 		switch (dir) {
 		case OUT:
-			result = framedGraph.addEdge(null, vertex, newVertex, label);
+			if (unique)
+				id = getForcedId(vertex, newVertex, label, replicaid);
+			result = framedGraph.addEdge(id, vertex, newVertex, label);
 			break;
 		case IN:
-			result = framedGraph.addEdge(null, newVertex, vertex, label);
+			if (unique)
+				id = getForcedId(newVertex, vertex, label, replicaid);
+			result = framedGraph.addEdge(id, newVertex, vertex, label);
 			break;
 		case BOTH:
 			throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
@@ -280,7 +326,7 @@ public abstract class AbstractIncidenceHandler {
 	private void removeEdges(final Direction direction, final String label, final Vertex element, final Vertex otherVertex,
 			final FramedGraph framedGraph) {
 		for (final Edge edge : element.getEdges(direction, label)) {
-			if (null == otherVertex || edge.getVertex(direction.opposite()).equals(otherVertex)) {
+			if (null == otherVertex || edge.getVertex(direction.opposite()).getId().equals(otherVertex.getId())) {
 				framedGraph.removeEdge(edge);
 			}
 		}

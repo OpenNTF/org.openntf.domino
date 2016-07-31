@@ -13,3 +13,9 @@ This distribution contains several components:
    * `demoDb`: a general demonstration application for the API, packaged as an on-disk project suitable for importing into Designer.
    * `emptyConferenceNSFs.zip`: a sample application demonstrating the use of the graph API to create a conference-session application.
    * `OpenNTF Hyper Search Demo.zip`: a sample application demonstrating the use of Hyper Search, packaged as an on-disk project suitable for importing into Designer.
+
+Requirements
+============
+
+- Domino 9.0.1 (recent fix packs recommended)
+- Extension Library v17 or above (for the graph REST service)

@@ -8,21 +8,22 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Socializer")
 public interface Socializer extends Commenter, Liker, Rater {
-	@IncidenceUnique(label = Mentions.LABEL)
-	public Iterable<Mentions> getMentioned();
-
-	@IncidenceUnique(label = Mentions.LABEL)
-	public Mentions addMentioned(Socializer mentioned);
-
-	@IncidenceUnique(label = Mentions.LABEL)
-	public void removeMentioned(Socializer mentioned);
+	@AdjacencyUnique(label = Mentions.LABEL)
+	public Iterable<DVertexFrame> getMentionedOns();
 
 	@AdjacencyUnique(label = Mentions.LABEL)
-	public Iterable<DVertexFrame> getMentionedOn();
-
-	@AdjacencyUnique(label = Mentions.LABEL)
-	public DVertexFrame addMentionedOn(DVertexFrame mentionedOn);
+	public Mentions addMentionedOn(DVertexFrame mentionedOn);
 
 	@AdjacencyUnique(label = Mentions.LABEL)
 	public void removeMentionedOn(DVertexFrame mentionedOn);
+
+	@IncidenceUnique(label = Mentions.LABEL)
+	public Iterable<Mentions> getMentioneds();
+
+	@IncidenceUnique(label = Mentions.LABEL)
+	public int countMentioneds();
+
+	@IncidenceUnique(label = Mentions.LABEL)
+	public void removeMentioned(Mentions mentions);
+
 }

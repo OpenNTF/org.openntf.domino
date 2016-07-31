@@ -27,21 +27,21 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	protected int hash = 0;
 	protected String folded = null;
 
-	public static List<CaseInsensitiveString> toCaseInsensitive(final Iterable<String> strings) {
+	public static List<CharSequence> toCaseInsensitive(final Iterable<? extends CharSequence> strings) {
 		if (strings == null)
 			return null;
-		List<CaseInsensitiveString> result = new ArrayList<CaseInsensitiveString>();
-		for (String str : strings) {
+		List<CharSequence> result = new ArrayList<CharSequence>();
+		for (CharSequence str : strings) {
 			result.add(new CaseInsensitiveString(str));
 		}
 		return result;
 	}
 
-	public static List<String> toStrings(final Iterable<CaseInsensitiveString> cis) {
+	public static List<String> toStrings(final Iterable<CharSequence> cis) {
 		if (cis == null)
 			return null;
 		List<String> result = new ArrayList<String>();
-		for (CaseInsensitiveString str : cis) {
+		for (CharSequence str : cis) {
 			result.add(str.toString());
 		}
 		return result;
