@@ -632,7 +632,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
-	IllegalArgumentException {
+			IllegalArgumentException {
 		Object result = null;
 		Object del = null;
 		del = getStoreDelegate();

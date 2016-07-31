@@ -228,6 +228,14 @@ public interface Session {
 	public Collection<String> getUserNameCollection();
 
 	/**
+	 * Gets a <code>Name</code> object for the user returned by {@link org.openntf.domino.Session#getEffectiveUserName()}.
+	 *
+	 * @return a <code>Name</code> object for the effective user
+	 * @since openntf.domino 2.0.1
+	 */
+	public org.openntf.domino.Name getEffectiveUserNameObject();
+
+	/**
 	 * Creates a DateTime object that represents a specified date and time.
 	 *
 	 * @param date

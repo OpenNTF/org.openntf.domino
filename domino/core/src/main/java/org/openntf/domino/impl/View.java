@@ -59,7 +59,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class View.
  */
-public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
+public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database>implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
 	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
@@ -73,6 +73,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	private ViewNavigator utilityNavigator_;
 
 	private static Method iGetEntryByKeyMethod;
+
 	static {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -669,7 +670,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return null;
 
 	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -1077,6 +1077,41 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	/**
+	 * This method is neccessary to get some Backend-functions working.<br>
+	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
+	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
+	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
+	 *
+	 * To find the correct position, trace a call of<br> <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
+	 * debugger.
+	 *
+	 * @param paramVector
+	 * @param paramBoolean
+	 * @param paramInt
+	 * @return
+	 * @throws NotesException
+	 */
+	protected ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
+		if (paramVector == null && paramInt == 42) {
+			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
+		}
+		try {
+			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
+					paramInt);
+			return fromLotus(lotus, ViewEntry.SCHEMA, this);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 	/*
@@ -1844,6 +1879,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public boolean isConflict() {
 		if (!isCalendar()) {
 			return false;	//NTF conflict checking only applies to calendar views
+			return false;//NTF conflict checking only applies to calendar views
 		}
 		try {
 			return getDelegate().isConflict();
@@ -2306,7 +2342,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setAliases(final String alias) {
 		try {
 			getDelegate().setAliases(alias);
-			initialize(getDelegate()); // name and alias may be affected
+			initialize(getDelegate());// name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2322,7 +2358,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setAliases(final Vector aliases) {
 		try {
 			getDelegate().setAliases(aliases);
-			initialize(getDelegate()); // name and alias may be affected
+			initialize(getDelegate());// name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2394,7 +2430,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public void setName(final String name) {
 		try {
 			getDelegate().setName(name);
-			initialize(getDelegate()); // name and alias may be affected
+			initialize(getDelegate());// name and alias may be affected
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2699,7 +2735,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	}
 
 	@Override
-	protected void resurrect() { // should only happen if the delegate has been destroyed somehow.
+	protected void resurrect() {// should only happen if the delegate has been destroyed somehow.
 		try {
 			lotus.domino.View view = recreateView();
 			setDelegate(view, true);
@@ -2945,7 +2981,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		super.writeExternal(out);
-		out.writeInt(EXTERNALVERSIONUID); // data version
+		out.writeInt(EXTERNALVERSIONUID);// data version
 
 		out.writeObject(name_);
 		out.writeObject(universalId_);

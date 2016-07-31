@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -77,7 +77,7 @@ import com.ibm.icu.util.Calendar;
 
 /**
  * The Class Session.
- * 
+ *
  * @author nfreeman
  */
 
@@ -87,7 +87,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
 	/** The formatter_. */
-	private DominoFormatter formatter_; // RPr: changed to non static as this can cause thread issues
+	private DominoFormatter formatter_;// RPr: changed to non static as this can cause thread issues
 
 	/* A lock object for "getDatabase" to prevent server crashes.
 	 * it seems that the method is not thread safe. (at least if you run the code as java application)
@@ -104,7 +104,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	 * @[18] 0x6122aae0 nlsxbe.ANSession::ANSFindOrCreateDBNoClean+1040 (5f01a91c,5f01a924,5f01a954,1)
 	 * @[19] 0x61231854 nlsxbe.ANSession::ANSFindOrCreateDB+100 (5f01a91c,5f01a924,0,1)
 	 * @[20] 0x612326e2 nlsxbe.Java_lotus_domino_local_Session_NgetDatabase@20+338 (27,5c00634d,7fec41d0,5c011fc8,0)
-	 * 
+	 *
 	 * See also: http://www-01.ibm.com/support/docview.wss?uid=swg1LO39865 (
 	 */
 	private static final Object getDB_lock = new Object();
@@ -163,7 +163,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	// FIXME NTF - not sure if there's a context where this makes sense...
 	/**
 	 * Instantiates a new session.
-	 * 
+	 *
 	 * @param lotus
 	 *            the lotus
 	 * @param parent
@@ -176,12 +176,12 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	protected Session(final lotus.domino.Session lotus, final WrapperFactory parent) {
 		super(lotus, parent, NOTES_SESSION);
 		initialize(lotus);
-		featureRestricted_ = false; // currently not implemented
+		featureRestricted_ = false;// currently not implemented
 	}
 
 	/**
 	 * Initialize.
-	 * 
+	 *
 	 * @param session
 	 *            the session
 	 */
@@ -197,7 +197,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/**
 	 * Gets the formatter.
-	 * 
+	 *
 	 * @return the formatter
 	 */
 	@Override
@@ -207,7 +207,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createAdministrationProcess(java.lang.String)
 	 */
 	@Override
@@ -223,7 +223,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createColorObject()
 	 */
 	@Override
@@ -238,7 +238,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createColorObject(java.awt.Color)
 	 */
 	@Override
@@ -250,7 +250,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateRange()
 	 */
 	@Override
@@ -260,7 +260,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateRange(java.util.Date, java.util.Date)
 	 */
 	@Override
@@ -270,7 +270,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateRange(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
@@ -283,7 +283,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
 	 */
 	@Override
@@ -295,7 +295,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
 	 */
 	@Override
@@ -307,7 +307,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateTime(java.util.Date)
 	 */
 	@Override
@@ -319,7 +319,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateTime(int, int, int, int, int, int)
 	 */
 	@Override
@@ -331,7 +331,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDateTime(java.lang.String)
 	 */
 	@Override
@@ -344,7 +344,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDxlExporter()
 	 */
 	@Override
@@ -360,7 +360,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createDxlImporter()
 	 */
 	@Override
@@ -376,7 +376,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createLog(java.lang.String)
 	 */
 	@Override
@@ -392,13 +392,14 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createName(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Name createName(final String name, final String lang) {
-		if (lang == null)
+		if (lang == null) {
 			return createName(name);
+		}
 		String[] meta = new String[2];
 		meta[0] = name;
 		meta[1] = lang;
@@ -407,7 +408,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createName(java.lang.String)
 	 */
 	@Override
@@ -417,7 +418,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createName(java.lang.String)
 	 */
 	@Override
@@ -433,7 +434,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createNewsletter(lotus.domino.DocumentCollection)
 	 */
 	@Override
@@ -449,7 +450,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createRegistration()
 	 */
 	@Override
@@ -465,7 +466,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createRichTextParagraphStyle()
 	 */
 	@Override
@@ -481,7 +482,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createRichTextStyle()
 	 */
 	@Override
@@ -497,7 +498,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#createStream()
 	 */
 	@Override
@@ -513,7 +514,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
 	@SuppressWarnings("unchecked")
@@ -530,7 +531,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 			if (doc instanceof Document) {
 				String lf = formula.toLowerCase();
 				if (lf.contains("field ") || lf.contains("@setfield")) {
-					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
+					((Document) doc).markDirty();// the document MAY get dirty by evaluate...
 				}
 			}
 			lotus.domino.Session lsession = getDelegate();
@@ -553,8 +554,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 				}
 			}
 
-			if (result == null)
-				return null;	//this really shouldn't be possible.
+			if (result == null) {
+				return null;//this really shouldn't be possible.
+			}
 			return wrapColumnValues(result, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
@@ -564,7 +566,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String)
 	 */
 	@Override
@@ -575,7 +577,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#freeTimeSearch(lotus.domino.DateRange, int, java.lang.Object, boolean)
 	 */
 	@Override
@@ -598,7 +600,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getAddressBooks()
 	 */
 	@Override
@@ -615,7 +617,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getAgentContext()
 	 */
 	@Override
@@ -631,7 +633,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getCalendar(lotus.domino.Database)
 	 */
 	@Override
@@ -653,7 +655,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getCommonUserName()
 	 */
 	@Override
@@ -669,7 +671,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getCredentials()
 	 */
 	@Override
@@ -685,7 +687,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getCurrentDatabase()
 	 */
 	@Override
@@ -710,8 +712,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 			}
 		} else {
-			if (currentDatabase_ == null)
+			if (currentDatabase_ == null) {
 				currentDatabase_ = getDatabase(currentDatabaseApiPath_);
+			}
 			result = currentDatabase_;
 		}
 		return result;
@@ -719,7 +722,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -792,7 +795,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -817,7 +820,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getDbDirectory(java.lang.String)
 	 */
 	@Override
@@ -833,7 +836,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getDirectory()
 	 */
 	@Override
@@ -848,7 +851,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getDirectory(java.lang.String)
 	 */
 	@Override
@@ -864,7 +867,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getEffectiveUserName()
 	 */
 	@Override
@@ -880,7 +883,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getEnvironmentString(java.lang.String, boolean)
 	 */
 	@Override
@@ -895,7 +898,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getEnvironmentString(java.lang.String)
 	 */
 	@Override
@@ -910,7 +913,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getEnvironmentValue(java.lang.String, boolean)
 	 */
 	@Override
@@ -925,7 +928,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getEnvironmentValue(java.lang.String)
 	 */
 	@Override
@@ -941,7 +944,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getHttpURL()
 	 */
 	@Override
@@ -957,7 +960,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getInternational()
 	 */
 	@Override
@@ -973,7 +976,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getNotesVersion()
 	 */
 	@Override
@@ -989,7 +992,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getOrgDirectoryPath()
 	 */
 	@Override
@@ -1005,7 +1008,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getPlatform()
 	 */
 	@Override
@@ -1021,7 +1024,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getPropertyBroker()
 	 */
 	@Override
@@ -1037,7 +1040,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getServerName()
 	 */
 	@Override
@@ -1053,7 +1056,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getSessionToken()
 	 */
 	@Override
@@ -1069,7 +1072,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getSessionToken(java.lang.String)
 	 */
 	@Override
@@ -1085,7 +1088,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getURL()
 	 */
 	@Override
@@ -1101,7 +1104,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getURLDatabase()
 	 */
 	@Override
@@ -1117,7 +1120,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserGroupNameList()
 	 */
 	@Override
@@ -1133,7 +1136,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserName()
 	 */
 	@Override
@@ -1149,7 +1152,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserNameList()
 	 */
 	@Override
@@ -1165,7 +1168,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserNameObject()
 	 */
 	@Override
@@ -1180,9 +1183,14 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		//		}
 	}
 
+	@Override
+	public Name getEffectiveUserNameObject() {
+		return createName(getEffectiveUserName());
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int, java.lang.String)
 	 */
 	@Override
@@ -1200,7 +1208,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int)
 	 */
 	@Override
@@ -1218,7 +1226,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#hashPassword(java.lang.String)
 	 */
 	@Override
@@ -1234,7 +1242,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isConvertMIME()
 	 */
 	@Override
@@ -1253,7 +1261,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isConvertMime()
 	 */
 	@Override
@@ -1263,7 +1271,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isOnServer()
 	 */
 	@Override
@@ -1279,7 +1287,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isRestricted()
 	 */
 	@Override
@@ -1295,7 +1303,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isTrackMillisecInJavaDates()
 	 */
 	@Override
@@ -1311,7 +1319,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isTrustedSession()
 	 */
 	@Override
@@ -1327,7 +1335,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#isValid()
 	 */
 	@Override
@@ -1337,7 +1345,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#resetUserPassword(java.lang.String, java.lang.String, java.lang.String, int)
 	 */
 	@Override
@@ -1352,7 +1360,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#resetUserPassword(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1368,7 +1376,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#resolve(java.lang.String)
 	 */
 	@Override
@@ -1391,7 +1399,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#sendConsoleCommand(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1407,7 +1415,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#setAllowLoopBack(boolean)
 	 */
 	@Override
@@ -1422,7 +1430,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#setConvertMIME(boolean)
 	 */
 	@Override
@@ -1438,7 +1446,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#setConvertMime(boolean)
 	 */
 	@Override
@@ -1448,7 +1456,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#setEnvironmentVar(java.lang.String, java.lang.Object, boolean)
 	 */
 	@Override
@@ -1463,7 +1471,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#setEnvironmentVar(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -1478,7 +1486,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#setTrackMillisecInJavaDates(boolean)
 	 */
 	@Override
@@ -1493,7 +1501,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#verifyPassword(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1508,7 +1516,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserGroupNameCollection()
 	 */
 	@Override
@@ -1526,7 +1534,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getUserNameCollection()
 	 */
 	@Override
@@ -1544,7 +1552,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#getAddressBookCollection()
 	 */
 	@Override
@@ -1561,7 +1569,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#freeTimeSearch(org.openntf.domino.DateRange, int, java.lang.String, boolean)
 	 */
 	@Override
@@ -1580,7 +1588,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Session#freeTimeSearch(org.openntf.domino.DateRange, int, java.util.Collection, boolean)
 	 */
 	@Override
@@ -1616,7 +1624,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	}
 
 	@Override
-	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
+	public void resurrect() {// should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
 		isConvertMime_ = null;
 		org.openntf.domino.Session sess = recreateSession();
@@ -1652,7 +1660,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	//	/*
 	//	 * (non-Javadoc)
-	//	 * 
+	//	 *
 	//	 * @see org.openntf.domino.impl.Base#getDelegate()
 	//	 */
 	//	@Override
@@ -1691,7 +1699,7 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Session#getEventFactory()
 	 */
 	@Override
@@ -1978,8 +1986,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	@Override
 	public void setSessionType(final SessionType sessionType) {
-		if (sessionType_ != null)
+		if (sessionType_ != null) {
 			throw new IllegalStateException("SessionType cannot be changed");
+		}
 		sessionType_ = sessionType;
 	}
 
@@ -1993,8 +2002,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 
 	@Override
 	public void recycle() {
-		if (noRecycle)
+		if (noRecycle) {
 			return;
+		}
 		super.recycle();
 	}
 
@@ -2013,9 +2023,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		//super.writeExternal(out);
 		//Session do not write SUPER
-		out.writeInt(EXTERNALVERSIONUID); // data version
+		out.writeInt(EXTERNALVERSIONUID);// data version
 
-		getCurrentDatabase(); // initializes the currentDatabaseApiPath_
+		getCurrentDatabase();// initializes the currentDatabaseApiPath_
 		if (sessionType_ == null) {
 			log_.warning("Serializing a session without a sessionType");
 			out.writeObject(SessionType.CURRENT);
@@ -2040,8 +2050,9 @@ public class Session extends BaseThreadSafe<org.openntf.domino.Session, lotus.do
 		//super.readExternal(in);
 		parent = Factory.getWrapperFactory();
 		int version = in.readInt();
-		if (version != EXTERNALVERSIONUID)
+		if (version != EXTERNALVERSIONUID) {
 			throw new InvalidClassException("Cannot read dataversion " + version);
+		}
 
 		sessionType_ = (SessionType) in.readObject();
 		username_ = (String) in.readObject();

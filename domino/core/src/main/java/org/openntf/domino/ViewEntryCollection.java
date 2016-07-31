@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -46,7 +46,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#addEntry(java.lang.Object)
 	 */
 	@Override
@@ -54,7 +54,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#addEntry(java.lang.Object, boolean)
 	 */
 	@Override
@@ -62,7 +62,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#cloneCollection()
 	 */
 	@Override
@@ -70,7 +70,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#contains(lotus.domino.Base)
 	 */
 	@Override
@@ -78,7 +78,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#contains(int)
 	 */
 	@Override
@@ -86,7 +86,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#contains(java.lang.String)
 	 */
 	@Override
@@ -94,7 +94,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#deleteEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -102,7 +102,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -110,7 +110,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -118,7 +118,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getCount()
 	 */
 	@Override
@@ -126,7 +126,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getEntry(java.lang.Object)
 	 */
 	@Override
@@ -134,7 +134,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getFirstEntry()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getLastEntry()
 	 */
 	@Override
@@ -150,7 +150,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getNextEntry()
 	 */
 	@Override
@@ -160,7 +160,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getNextEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -170,17 +170,16 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getNthEntry(int)
 	 */
 	@Override
-	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
 	public ViewEntry getNthEntry(final int n);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getParent()
 	 */
 	@Override
@@ -188,7 +187,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getPrevEntry()
 	 */
 	@Override
@@ -196,7 +195,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getPrevEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -204,7 +203,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#getQuery()
 	 */
 	@Override
@@ -212,7 +211,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
@@ -220,7 +219,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#intersect(int)
 	 */
 	@Override
@@ -228,7 +227,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#intersect(java.lang.String)
 	 */
 	@Override
@@ -236,7 +235,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#markAllRead()
 	 */
 	@Override
@@ -244,7 +243,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -252,7 +251,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#markAllUnread()
 	 */
 	@Override
@@ -260,7 +259,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -268,7 +267,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#merge(lotus.domino.Base)
 	 */
 	@Override
@@ -276,7 +275,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#merge(int)
 	 */
 	@Override
@@ -284,7 +283,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#merge(java.lang.String)
 	 */
 	@Override
@@ -292,7 +291,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
@@ -300,7 +299,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -308,7 +307,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#removeAll(boolean)
 	 */
 	@Override
@@ -316,7 +315,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
@@ -324,7 +323,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -332,7 +331,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
@@ -340,7 +339,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#subtract(int)
 	 */
 	@Override
@@ -348,7 +347,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#subtract(java.lang.String)
 	 */
 	@Override
@@ -356,7 +355,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntryCollection#updateAll()
 	 */
 	@Override
