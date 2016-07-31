@@ -154,6 +154,11 @@
 					<resolver>p2</resolver>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-versions-plugin</artifactId>
+				<version>${tycho-version}</version>
+			</plugin>
 			<!-- <plugin> <groupId>org.eclipse.tycho.extras</groupId> <artifactId>tycho-p2-extras-plugin</artifactId> 
 				<version>${tycho-version}</version> <configuration> <source> source repositories 
 				to mirror from <repository> <url>http://download.eclipse.org/releases/juno/</url> 
