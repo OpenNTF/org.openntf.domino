@@ -42,33 +42,14 @@ import com.ibm.commons.util.StringUtil;
  * 
  *         Usage example (extended):
  * 
- *         <code>
- *         DominoEmail myEmail = new DominoEmail();
- *         ArrayList<String> sendTo = new ArrayList<String>();
- *         sendTo.add("pwithers@intec.co.uk");
- *         myEmail.setTo(sendTo);
- *         ArrayList<String> cc = new ArrayList<String>();
- *         cc.add("user@domain.com");
- *         cc.add("anotheruser@domain.com");
- *         myEmail.setCC(cc);
- *         ArrayList<String> bcc = new ArrayList<String>();
- *         bcc.add("user3@domain.com");
- *         myEmail.setBCC(bcc); 
- *         myEmail.setSubject("Your notification");
- *         StringBuilder body = new StringBuilder();
- *         body.append("<h1>Hi!</h1>");
- *         body.append("<table>");
- *         body.append("<tbody>");
- *         body.append("<tr>");
- *         body.append("<td>contents in a table here</td>");
- *         body.append("</tr>");
- *         body.append("</tbody>");
- *         body.append("</table>");
- *         myEmail.addHTML(body);
- *         myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
- *         myEmail.setSenderEmail("pwithers@intec.co.uk");
- *         myEmail.setSenderName("Paul Withers"); 
- *         myEmail.send();
+ *         <code> DominoEmail myEmail = new DominoEmail(); ArrayList<String> sendTo = new ArrayList<String>();
+ *         sendTo.add("pwithers@intec.co.uk"); myEmail.setTo(sendTo); ArrayList<String> cc = new ArrayList<String>();
+ *         cc.add("user@domain.com"); cc.add("anotheruser@domain.com"); myEmail.setCC(cc); ArrayList<String> bcc = new ArrayList<String>();
+ *         bcc.add("user3@domain.com"); myEmail.setBCC(bcc); myEmail.setSubject("Your notification"); StringBuilder body = new
+ *         StringBuilder(); body.append("<h1>Hi!</h1>"); body.append("<table>"); body.append("<tbody>"); body.append("<tr>"); body.append(
+ *         "<td>contents in a table here</td>"); body.append("</tr>"); body.append("</tbody>"); body.append("</table>");
+ *         myEmail.addHTML(body); myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
+ *         myEmail.setSenderEmail("pwithers@intec.co.uk"); myEmail.setSenderName("Paul Withers"); myEmail.send();
  */
 
 public class DominoEmail implements IEmail {
@@ -649,7 +630,7 @@ public class DominoEmail implements IEmail {
 
 			//set subject
 			mimeHeader = mimeRoot.createHeader("Subject");
-			mimeHeader.setHeaderVal(getSubject());
+			mimeHeader.addValText(getSubject(), "UTF-8");
 
 			//create text/alternative directive: text/plain and text/html part will be childs of this entity
 			MIMEEntity mimeRootChild = mimeRoot.createChildEntity();
