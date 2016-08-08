@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.graph2;
 
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 
 /**
@@ -21,5 +22,7 @@ public interface DEdge extends DElement, com.tinkerpop.blueprints.Edge {
 	public Object getOtherVertexProperty(Vertex vertex, String property);
 
 	public Object getOtherVertexId(final Vertex vertex);
+
+	public Object getVertexId(final Direction direction);
 
 }

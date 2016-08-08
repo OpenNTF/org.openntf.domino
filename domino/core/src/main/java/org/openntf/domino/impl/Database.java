@@ -1969,7 +1969,8 @@ org.openntf.domino.Database {
 	@Override
 	public View getView(final Document viewDocument) {
 		View result = null;
-		if (viewDocument.hasItem("$Index")) {
+		if (viewDocument.hasItem("$Index") || viewDocument.hasItem("$Collection") || viewDocument.hasItem("$Collation")
+				|| viewDocument.hasItem("$VIEWFORMAT")) {
 			String unid = viewDocument.getUniversalID();
 			String rawtitles = viewDocument.getItemValue("$Title", String.class);
 			String[] titles = PIPE_SPLIT.split(rawtitles);
@@ -1980,6 +1981,11 @@ org.openntf.domino.Database {
 					break;
 				}
 			}
+			if (result == null) {
+				System.out.println("TEMP DEBUG Unable to find view object from document " + unid);
+			}
+		} else {
+			System.out.println("TEMP DEBUG Document does not have a $Index item!");
 		}
 		return result;
 	}

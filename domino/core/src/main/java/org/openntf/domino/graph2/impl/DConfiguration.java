@@ -5,6 +5,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -28,6 +29,7 @@ import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.TypeUtils;
 
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -98,6 +100,19 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	public static class DTypeRegistry extends TypeRegistry {
+		private static class InternalTypeRegistry extends TypeRegistry {
+			@Override
+			protected void registerTypeValue(final Class<?> type, final Class<?> typeHoldingTypeField) {
+				TypeValue typeValue = type.getAnnotation(TypeValue.class);
+				if (Modifier.isAbstract(type.getModifiers())) {
+					typeDiscriminators.put(new TypeRegistry.TypeDiscriminator(typeHoldingTypeField, type.getCanonicalName()), type);
+				} else {
+					Validate.assertArgument(typeValue != null, "The type does not have a @TypeValue annotation: %s", type.getName());
+					typeDiscriminators.put(new TypeRegistry.TypeDiscriminator(typeHoldingTypeField, typeValue.value()), type);
+				}
+			}
+		}
+
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> getterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> counterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> finderMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
@@ -109,7 +124,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		private Map<Class<?>, Method> outMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<String, String> simpleNameMap_ = new HashMap<String, String>();
 		private Map<String, Class<?>> localTypeMap_ = new HashMap<String, Class<?>>();
-		private Map<DElementStore, TypeRegistry> storeTypeMap_ = new HashMap<DElementStore, TypeRegistry>();
+		private Map<DElementStore, InternalTypeRegistry> storeTypeMap_ = new HashMap<DElementStore, InternalTypeRegistry>();
 		private DConfiguration config_;
 
 		public DTypeRegistry(final DConfiguration config) {
@@ -143,6 +158,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			if (result == null) {
 				result = findClassByName(typeValue);
 			}
+			//			System.out.println("TEMP DEBUG Returning type " + result.getName());
 			return result;
 		}
 
@@ -167,20 +183,22 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			if (name == null || name.length() < 1)
 				return null;
 			for (Class<?> klazz : typeDiscriminators.values()) {
-				if (klazz.getName().equals(name) || klazz.getSimpleName().equalsIgnoreCase(name))
+				if (klazz.getName().equals(name) /*|| klazz.getSimpleName().equalsIgnoreCase(name)*/) {
+					//					System.out.println("TEMP DEBUG Matched name " + name + " to type " + klazz.getName());
 					return klazz;
+				}
 			}
 			Class<?> result = localTypeMap_.get(name);
 			if (result != null) {
 				return result;
 			}
-			String fullName = simpleNameMap_.get(name);
-			if (fullName != null) {
-				result = localTypeMap_.get(fullName);
-				if (result != null) {
-					return result;
-				}
-			}
+			//			String fullName = simpleNameMap_.get(name);
+			//			if (fullName != null) {
+			//				result = localTypeMap_.get(fullName);
+			//				if (result != null) {
+			//					return result;
+			//				}
+			//			}
 			throw new IllegalArgumentException("No class for " + name + " found in TypeRegistry");
 		}
 
@@ -201,14 +219,19 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		@Override
 		public TypeRegistry add(final Class<?> type) {
 			Validate.assertArgument(type.isInterface(), "Not an interface: %s", type.getName());
-			Class<?> typeHoldingTypeField = findTypeHoldingTypeField(type);
+			//			Class<?> typeHoldingTypeField = findTypeHoldingTypeField(type);
 			try {
 				super.add(type);
-				String simpleName = type.getSimpleName();
-				if (!simpleNameMap_.containsKey(simpleName)) {
-					simpleNameMap_.put(simpleName, type.getName());
-				}
+				//				String simpleName = type.getSimpleName();
+				//				if (!simpleNameMap_.containsKey(simpleName)) {
+				//					simpleNameMap_.put(simpleName, type.getName());
+				//				}
 				localTypeMap_.put(type.getName(), type);
+				Annotation valChk = type.getAnnotation(TypeValue.class);
+				if (valChk != null) {
+					String value = ((TypeValue) valChk).value();
+					localTypeMap_.put(value, type);
+				}
 				addProperties(type);
 				//				System.out.println("TEMP DEBUG Adding type " + type.getName() + " to registry");
 			} catch (Throwable t) {
@@ -226,19 +249,24 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		public TypeRegistry add(final Class<?> type, final DElementStore store) {
 			Validate.assertArgument(type.isInterface(), "Not an interface: %s", type.getName());
-			Class<?> typeHoldingTypeField = findTypeHoldingTypeField(type);
-			TypeRegistry reg = storeTypeMap_.get(store);
+			//			Class<?> typeHoldingTypeField = findTypeHoldingTypeField(type);
+			InternalTypeRegistry reg = storeTypeMap_.get(store);
 			if (reg == null) {
-				reg = new TypeRegistry();
+				reg = new InternalTypeRegistry();
 				storeTypeMap_.put(store, reg);
 			}
 			try {
 				reg.add(type);
-				String simpleName = type.getSimpleName();
-				if (!simpleNameMap_.containsKey(simpleName)) {
-					simpleNameMap_.put(simpleName, type.getName());
-				}
+				//				String simpleName = type.getSimpleName();
+				//				if (!simpleNameMap_.containsKey(simpleName)) {
+				//					simpleNameMap_.put(simpleName, type.getName());
+				//				}
 				localTypeMap_.put(type.getName(), type);
+				Annotation valChk = type.getAnnotation(TypeValue.class);
+				if (valChk != null) {
+					String value = ((TypeValue) valChk).value();
+					localTypeMap_.put(value, type);
+				}
 				addProperties(type);
 				//				System.out.println("TEMP DEBUG Adding type " + type.getName() + " to registry");
 			} catch (Throwable t) {
@@ -416,29 +444,31 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				} else {
 					Annotation incidenceUnique = method.getAnnotation(IncidenceUnique.class);
 					if (incidenceUnique != null) {
-						key = new CaseInsensitiveString(((IncidenceUnique) incidenceUnique).label());
+						Direction direction = ((IncidenceUnique) incidenceUnique).direction();
+						key = new CaseInsensitiveString(((IncidenceUnique) incidenceUnique).label()
+								+ (direction == Direction.IN ? "In" : ""));
 						if (ClassUtilities.isGetMethod(method)) {
 							incidences.put(key, method);
-							//							System.out
-							//									.println("Added incidence " + key + " for method " + method.getName() + " in class " + type.getName());
 						}
 					}
 					Annotation incidence = method.getAnnotation(Incidence.class);
 					if (incidence != null) {
-						key = new CaseInsensitiveString(((Incidence) incidence).label());
+						Direction direction = ((Incidence) incidence).direction();
+						key = new CaseInsensitiveString(((Incidence) incidence).label() + (direction == Direction.IN ? "In" : ""));
 						if (ClassUtilities.isGetMethod(method)) {
 							incidences.put(key, method);
-							//							System.out
-							//							.println("Added incidence " + key + " for method " + method.getName() + " in class " + type.getName());
 						}
 					}
 					Annotation adjacencyUnique = method.getAnnotation(AdjacencyUnique.class);
 					if (adjacencyUnique != null) {
-						key = new CaseInsensitiveString(((AdjacencyUnique) adjacencyUnique).label());
+						Direction direction = ((AdjacencyUnique) adjacencyUnique).direction();
+						key = new CaseInsensitiveString(((AdjacencyUnique) adjacencyUnique).label()
+								+ (direction == Direction.IN ? "In" : ""));
 					}
 					Annotation adjacency = method.getAnnotation(Adjacency.class);
 					if (adjacency != null) {
-						key = new CaseInsensitiveString(((Adjacency) adjacency).label());
+						Direction direction = ((Adjacency) adjacency).direction();
+						key = new CaseInsensitiveString(((Adjacency) adjacency).label() + (direction == Direction.IN ? "In" : ""));
 					}
 				}
 				if (key != null) {
@@ -449,10 +479,6 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						finders.put(key, method);
 					}
 					if (ClassUtilities.isAddMethod(method)) {
-						//						if (type.getSimpleName().equals("User")) {
-						//							System.out.println("Registering add method for " + type.getName() + ": " + method.getName() + " with key "
-						//									+ key);
-						//						}
 						adders.put(key, method);
 					}
 					if (ClassUtilities.isRemoveMethod(method)) {
@@ -506,32 +532,50 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		@Override
 		public Class<?>[] resolveTypes(final Vertex v, final Class<?> defaultType) {
-			Class<?>[] result = new Class<?>[] { resolve(v, getDefaultType(v)) };
+			Class<?>[] result = new Class<?>[] { resolve(v,
+					defaultType == null || VertexFrame.class.equals(defaultType) ? getDefaultType(v) : defaultType) };
 			return result;
 		}
 
 		@Override
 		public Class<?>[] resolveTypes(final Edge e, final Class<?> defaultType) {
-			return new Class<?>[] { resolve(e, getDefaultType(e)) };
+			return new Class<?>[] { resolve(e, defaultType == null || EdgeFrame.class.equals(defaultType) ? getDefaultType(e) : defaultType) };
 		}
 
 		public Class<?> resolve(final Element e, final Class<?> defaultType) {
 			//			System.out.println("Resolving element with default type " + defaultType.getName());
+			Class<?> result = defaultType;
 			Class<?> typeHoldingTypeField = typeRegistry_.getTypeHoldingTypeField(defaultType);
 			if (typeHoldingTypeField != null) {
 				String value = ((DElement) e).getProperty(typeHoldingTypeField.getAnnotation(TypeField.class).value(), String.class);
 				//				System.out.println("TEMP DEBUG: Found type value: " + (value == null ? "null" : value));
-				Class<?> type = value == null ? null : typeRegistry_.getType(typeHoldingTypeField, value, e);
+				Class<?> type = null;
+				try {
+					type = value == null ? null : typeRegistry_.getType(typeHoldingTypeField, value, e);
+				} catch (Throwable t) {
+					if (defaultType == DVertexFrame.class) {
+						type = DVertexFrame.class;
+					}
+				}
 				if (type != null) {
 					//					System.out.println("TEMP DEBUG: Returning type: " + type.getName());
-					return type;
+					if (type.getSimpleName().equalsIgnoreCase(defaultType.getSimpleName())) {
+						//						System.out.println("Simple name collision on vertex for name " + defaultType.getSimpleName()
+						//								+ ". Using requested type: " + defaultType.getName());
+						result = defaultType;
+					} else {
+						result = type;
+					}
 				}
 			}
-			return defaultType;
+			//			System.out.println("TEMP DEBUG returning type " + result.getName());
+			return result;
 		}
 
 		@Override
 		public void initElement(Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
+			if (element == null)
+				return;
 			if (kind == null) {
 				if (element instanceof Edge) {
 					kind = getDefaultType((Edge) element);
@@ -547,20 +591,20 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			if (typeHoldingTypeField != null) {
 				TypeValue typeValue = kind.getAnnotation(TypeValue.class);
 				if (typeValue != null) {
+					//					System.out.println("TEMP DEBUG TypeValue is " + typeValue.value());
 					String field = typeHoldingTypeField.getAnnotation(TypeField.class).value();
 					Object current = element.getProperty(field);
 					String currentVal = null;
+					Class<?> classChk = null;
 					boolean update = true;
 					if (current != null) {
 						currentVal = TypeUtils.toString(current);
-						//						System.out.println("TEMP DEBUG: existing type value " + currentVal);
-
-						//						System.out.println("TEMP DEBUG: current value is " + currentVal + " in field " + field + " while typeValue is "
-						//								+ typeValue.value());
+						//						System.out.println("TEMP DEBUG currentVal is " + currentVal);
 						if (currentVal.equals(typeValue.value())) {
 							update = false;
+							//							System.out.println("TEMP DEBUG value already applied: " + typeValue.value());
 						} else {
-							Class<?> classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+							classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
 							//							System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName())
 							//									+ " for name of " + currentVal);
 							if (classChk == null) {
@@ -574,10 +618,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							} else if (!kind.isAssignableFrom(classChk)) {
 								update = !(currentVal).equals(typeValue.value());
 								if (!update) {
-									//								System.out.println("TEMP DEBUG Not updating form because value is already " + currentVal);
+									//									System.out.println("TEMP DEBUG Not updating form because value is already " + currentVal);
 								}
 							} else if (kind.isAssignableFrom(classChk)) {
-
+								update = false;
 							} else {
 								update = false;
 								//							System.out.println("TEMP DEBUG: existing type value " + classChk.getName() + " extends requested type value "
@@ -599,8 +643,9 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 								doc.save();
 								element.setProperty(field, typeValue.value());
 								if (currentVal != null && currentVal.length() > 0) {
-									System.out.println("TEMP DEBUG Forcing type on document id " + doc.getMetaversalID() + " to "
-											+ typeValue.value() + ". Was previously " + String.valueOf(currentVal));
+									//									System.out.println("TEMP DEBUG Forcing type on document id " + doc.getMetaversalID() + " to "
+									//											+ typeValue.value() + ". Was previously " + String.valueOf(currentVal) + " ("
+									//											+ (classChk == null ? "null" : classChk.getName()) + ")");
 								}
 							}
 							//							if (framedGraph instanceof TransactionalGraph) {

@@ -908,10 +908,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	}
 
 	/**
-	 * @deprecated RPr: This might be very slow, so I suggest not to use this
+	 * RPr: This might be very slow, so I suggest not to use this NTF: No, it isn't slow. In fact, it's very fast.
 	 */
 	@Override
-	@Deprecated
+	//	@Deprecated
 	public NoteCollection getNoteCollection() {
 		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
 		nc.setSelectDocuments(true);

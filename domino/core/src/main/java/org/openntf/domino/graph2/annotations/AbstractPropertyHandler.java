@@ -37,8 +37,8 @@ public abstract class AbstractPropertyHandler {
 		if (ClassUtilities.isSetMethod(method) && isDerived) {
 			throw new DerivedPropertySetException("Setting on a derived property " + value + " is not permitted.");
 		}
-		Object raw = orig_processElement(value, method, arguments, framedGraph, element, null);
 		Class<?> type = method.getReturnType();
+		Object raw = orig_processElement(value, method, arguments, framedGraph, element, null);
 		if (raw == null)
 			return null;
 		if (type.isAssignableFrom(raw.getClass()))
@@ -47,7 +47,8 @@ public abstract class AbstractPropertyHandler {
 			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type,
 					org.openntf.domino.utils.Factory.getSession(SessionType.NATIVE));
 		} else {
-			return org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type, null);
+			Object result = org.openntf.domino.utils.TypeUtils.convertToTarget(raw, type, null);
+			return result;
 		}
 
 	}

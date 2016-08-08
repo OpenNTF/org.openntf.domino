@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openntf.domino.View;
+import org.openntf.domino.ViewColumn;
 import org.openntf.domino.graph2.DEdgeList;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
@@ -36,6 +38,7 @@ import org.openntf.domino.utils.TypeUtils;
 
 public class JsonFrameAdapter implements JsonObject {
 	private final static List<String> EMPTY_STRINGS = new ArrayList<String>();
+	protected final boolean isCollectionRoute_;
 
 	// TODO NTF Add support for modification date checking prior to permitting
 	// PUT/PATCH
@@ -79,19 +82,21 @@ public class JsonFrameAdapter implements JsonObject {
 	protected ParamMap parameters_;
 
 	@SuppressWarnings("rawtypes")
-	public JsonFrameAdapter(DFramedTransactionalGraph graph, EdgeFrame frame, ParamMap pm) {
+	public JsonFrameAdapter(DFramedTransactionalGraph graph, EdgeFrame frame, ParamMap pm, boolean isCollectionRoute) {
 		graph_ = graph;
 		frame_ = frame;
 		parameters_ = pm;
 		type_ = graph_.getTypeManager().resolve(frame);
+		isCollectionRoute_ = isCollectionRoute;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public JsonFrameAdapter(DFramedTransactionalGraph graph, VertexFrame frame, ParamMap pm) {
+	public JsonFrameAdapter(DFramedTransactionalGraph graph, VertexFrame frame, ParamMap pm, boolean isCollectionRoute) {
 		graph_ = graph;
 		frame_ = frame;
 		parameters_ = pm;
 		type_ = graph_.getTypeManager().resolve(frame);
+		isCollectionRoute_ = isCollectionRoute;
 	}
 
 	public Object getFrame() {
@@ -106,6 +111,13 @@ public class JsonFrameAdapter implements JsonObject {
 	public List<CharSequence> getProperties() {
 		if (parameters_ != null) {
 			return parameters_.getProperties();
+		}
+		return null;
+	}
+
+	public List<CharSequence> getHideProperties() {
+		if (parameters_ != null) {
+			return parameters_.getHideProperties();
 		}
 		return null;
 	}
@@ -239,7 +251,7 @@ public class JsonFrameAdapter implements JsonObject {
 		if (props == null) {
 			props = new ArrayList<CharSequence>();
 			props.addAll(getGetters().keySet());
-			if (props == null || props.size() < 3) {
+			if (props == null || props.size() < 4) {
 				if (frame_ instanceof DVertexFrame) {
 					Set<CharSequence> raw = ((DVertexFrame) frame_).asMap().keySet();
 					props.addAll(CaseInsensitiveString.toCaseInsensitive(raw));
@@ -278,10 +290,19 @@ public class JsonFrameAdapter implements JsonObject {
 			result.add("@in");
 			result.add("@out");
 		}
+		if (frame instanceof ViewVertex) {
+			result.add("@columninfo");
+		}
 		if (frame instanceof ViewVertex.Contains) {
 			Edge edge = ((ViewVertex.Contains) frame).asEdge();
 			if (edge instanceof DEdge) {
 				result.addAll(((DEdge) edge).getDelegate().keySet());
+			}
+		}
+		Collection<CharSequence> hideProps = getHideProperties();
+		if (hideProps != null && !hideProps.isEmpty()) {
+			for (CharSequence cis : hideProps) {
+				result.remove(cis.toString());
 			}
 		}
 		return result.iterator();
@@ -294,11 +315,10 @@ public class JsonFrameAdapter implements JsonObject {
 		if (frame != null) {
 			CaseInsensitiveString key = new CaseInsensitiveString(paramKey);
 			if (key.equals("@id")) {
-				if (frame instanceof EdgeFrame) {
-					result = ((EdgeFrame) frame).asEdge().getId().toString();
-				}
 				if (frame instanceof VertexFrame) {
 					result = ((VertexFrame) frame).asVertex().getId().toString();
+				} else if (frame instanceof EdgeFrame) {
+					result = ((EdgeFrame) frame).asEdge().getId().toString();
 				}
 			} else if (key.equals("@proxyid")) {
 				// System.out.println("TEMP DEBUG @proxyid requested");
@@ -309,9 +329,9 @@ public class JsonFrameAdapter implements JsonObject {
 					}
 				}
 			} else if (key.equals("@type")) {
-				if (frame instanceof EdgeFrame) {
+				if (frame instanceof VertexFrame) {
 					result = type_;
-				} else if (frame instanceof VertexFrame) {
+				} else if (frame instanceof EdgeFrame) {
 					result = type_;
 				}
 			} else if (key.equals("@in") && frame instanceof EdgeFrame) {
@@ -344,7 +364,7 @@ public class JsonFrameAdapter implements JsonObject {
 							Object raw = inMethod.invoke(frame, (Object[]) null);
 							if (raw instanceof VertexFrame) {
 								VertexFrame inFrame = (VertexFrame) raw;
-								result = new JsonFrameAdapter(graph_, inFrame, inMap);
+								result = new JsonFrameAdapter(graph_, inFrame, inMap, isCollectionRoute_);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -381,7 +401,7 @@ public class JsonFrameAdapter implements JsonObject {
 							Object raw = outMethod.invoke(frame, (Object[]) null);
 							if (raw instanceof VertexFrame) {
 								VertexFrame outFrame = (VertexFrame) raw;
-								result = new JsonFrameAdapter(graph_, outFrame, outMap);
+								result = new JsonFrameAdapter(graph_, outFrame, outMap, isCollectionRoute_);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -434,6 +454,17 @@ public class JsonFrameAdapter implements JsonObject {
 					// System.out.println("TEMP DEBUG No method found for key "
 					// + label);
 				}
+			} else if (key.equals("@columninfo")) {
+				if (frame instanceof ViewVertex) {
+					Map<String, String> columnInfo = new LinkedHashMap<String, String>();
+					View view = ((ViewVertex) frame).asView();
+					for (ViewColumn column : view.getColumns()) {
+						String progName = column.getItemName();
+						String title = column.getTitle();
+						columnInfo.put(progName, title);
+					}
+					return columnInfo;
+				}
 			} else if (key.startsWith("#") && frame instanceof VertexFrame) {
 				CharSequence label = key.subSequence(1, key.length());
 				// System.out.println("DEBUG: Attempting to get edges with label "
@@ -450,8 +481,8 @@ public class JsonFrameAdapter implements JsonObject {
 									+ DGraphUtils.findInterface(frame).getName()
 									+ ": "
 									+ t.getClass().getName()
-									+ (t.getCause() != null ? (" caused by a " + t.getCause().getClass().getName())
-											: ""));
+									+ (t.getCause() != null ? (" caused by a " + t.getCause().getClass().getName()
+											+ ": " + t.getStackTrace()[0].toString()) : ""));
 						}
 						if (result != null) {
 							if (!(result instanceof Iterable)) {
@@ -475,7 +506,7 @@ public class JsonFrameAdapter implements JsonObject {
 											+ result.getClass().getName());
 								}
 							}
-							if (getFilterKeys() != null) {
+							if (getFilterKeys() != null && !isCollectionRoute_) {
 								if (result instanceof DEdgeList) {
 									// System.out.println("TEMP DEBUG: Applying a filter to a DEdgeList");
 									List<CharSequence> filterKeys = getFilterKeys();
@@ -558,7 +589,8 @@ public class JsonFrameAdapter implements JsonObject {
 									listMap.put(Parameters.COUNTS, EMPTY_STRINGS);
 								}
 								listMap.put(Parameters.PROPS, CaseInsensitiveString.toStrings(this.getProperties()));
-								result = new JsonFrameListAdapter(getGraph(), (FramedVertexList<?>) result, listMap);
+								result = new JsonFrameListAdapter(getGraph(), (FramedVertexList<?>) result, listMap,
+										isCollectionRoute_);
 							}
 						}
 					} catch (Exception e) {

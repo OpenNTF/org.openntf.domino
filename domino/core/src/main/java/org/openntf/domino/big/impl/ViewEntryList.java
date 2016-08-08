@@ -37,7 +37,11 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		public boolean hasNext() {
 			if (hasNextCache_ == null) {
 				if (cur_ == null) {
-					hasNextCache_ = true;
+					if (navigator_.getCount() == 0) {
+						hasNextCache_ = false;
+					} else {
+						hasNextCache_ = true;
+					}
 				} else {
 					next_ = navigator_.getNextSibling(cur_);
 					hasNextCache_ = (next_ != null);
@@ -50,7 +54,11 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		public boolean hasPrevious() {
 			if (hasPrevCache_ == null) {
 				if (cur_ == null) {
-					hasPrevCache_ = false;
+					if (navigator_.getCount() == 0) {
+						hasPrevCache_ = false;
+					} else {
+						hasPrevCache_ = true;
+					}
 				} else {
 					prev_ = navigator_.getPrevSibling(cur_);
 					hasPrevCache_ = prev_ != null;
@@ -75,10 +83,14 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			}
 			next_ = null;
 			index_++;
-			ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
-			vec.setSourceNav(navigator_);
-			//			System.out.println("TEMP DEBUG current entry position: " + cur_.getPosition());
-			return vec;
+			if (cur_ != null) {
+				ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+				vec.setSourceNav(navigator_);
+				//			System.out.println("TEMP DEBUG current entry position: " + cur_.getPosition());
+				return vec;
+			} else {
+				return null;
+			}
 		}
 
 		@Override

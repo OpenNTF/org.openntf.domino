@@ -16,6 +16,8 @@ import javolution.util.FastMap;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Document;
+import org.openntf.domino.Item;
+import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
@@ -25,6 +27,7 @@ import org.openntf.domino.big.impl.NoteCoordinate;
 //import javolution.util.function.Equalities;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.big.impl.ViewEntryCoordinate;
+import org.openntf.domino.graph2.builtin.Eventable;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
@@ -41,6 +44,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	protected transient org.openntf.domino.graph2.DGraph parent_;
 	protected Object delegateKey_;
+	protected transient Object framedObject_;
 	protected transient Map<String, Object> delegate_;
 	protected boolean isRemoved_ = false;
 
@@ -106,11 +110,16 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					Document doc = (Document) delegate;
 					doc.setAutoMime(AutoMime.WRAP_ALL);
 					if (doc.hasItem(propertyName)) {
-						try {
-							result = doc.getItemValue(propertyName, type);
-						} catch (Throwable t) {
-							//							System.out.println("TEMP DEBUG didn't get property " + propertyName + " with type " + type.getSimpleName()
-							//									+ " because of a " + t.getClass().getSimpleName() + ": " + t.getMessage());
+						Item item = doc.getFirstItem(propertyName);
+						if (item instanceof RichTextItem && Object.class.equals(type)) {
+							result = item;
+						} else {
+							try {
+								result = doc.getItemValue(propertyName, type);
+							} catch (Throwable t) {
+								//							System.out.println("TEMP DEBUG didn't get property " + propertyName + " with type " + type.getSimpleName()
+								//									+ " because of a " + t.getClass().getSimpleName() + ": " + t.getMessage());
+							}
 						}
 					}
 					if (result == null || Deferred.INSTANCE.equals(result)) {
@@ -164,7 +173,12 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					Map<String, Object> delegate = getDelegate();
 					if (delegate instanceof Document) {
 						Document doc = (Document) delegate;
-						result = doc.getItemValue(propertyName, type);
+						Item item = doc.getFirstItem(propertyName);
+						if (item instanceof RichTextItem && Object.class.equals(type)) {
+							result = ((RichTextItem) item).getUnformattedText();
+						} else {
+							result = doc.getItemValue(propertyName, type);
+						}
 					} else if (delegate instanceof SessionDescendant) {
 						Session s = ((SessionDescendant) delegate).getAncestorSession();
 						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
@@ -199,7 +213,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			//			}
 		}
 		if (result == Deferred.INSTANCE) {
-			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
+			//			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
 		}
 		return (T) result;
 	}
@@ -325,6 +339,22 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public abstract void remove();
+
+	protected boolean beforeRemove() {
+		if (getFramedObject() instanceof Eventable) {
+			return ((Eventable) getFramedObject()).delete();
+		} else {
+			return true;
+		}
+	}
+
+	protected boolean beforeUpdate() {
+		if (getFramedObject() instanceof Eventable) {
+			return ((Eventable) getFramedObject()).update();
+		} else {
+			return true;
+		}
+	}
 
 	void _remove() {
 		isRemoved_ = true;
@@ -638,6 +668,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			//			System.out.println("Element has a delegate of a DProxyVertex. It should be the other way around?")
 		}
 		return result;
+	}
+
+	public Object getFramedObject() {
+		return framedObject_;
+	}
+
+	public void setFramedObject(final Object frame) {
+		framedObject_ = frame;
 	}
 
 }

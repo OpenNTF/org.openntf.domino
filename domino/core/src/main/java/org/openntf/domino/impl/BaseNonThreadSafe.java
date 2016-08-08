@@ -150,10 +150,20 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 	 */
 	@Override
 	protected D getDelegate_unchecked() {
-		if (_myThread != Thread.currentThread() && !isAllowAccessAcrossThreads(_myThread))
+		if (_myThread != Thread.currentThread() && !isAllowAccessAcrossThreads(_myThread) && !allowAccessAcrossThreads())
 			throw new IllegalStateException("Notes-Object of type " + this.getClass().getName() + " is used across threads! This Thread: "
 					+ Thread.currentThread() + " correct Thread: " + _myThread);
 		return delegate_;
+	}
+
+	/*
+	 * From NTF: allows individual classes to override the thread safety based on implementation
+	 * One example is the Document class, which is safe to resurrect across threads if it hasn't been written to
+	 * 
+	 * @return whether cross-thread access should be permitted
+	 */
+	protected boolean allowAccessAcrossThreads() {
+		return false;
 	}
 
 }

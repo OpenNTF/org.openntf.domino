@@ -34,7 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class ViewNavigator.
  */
 public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-		org.openntf.domino.ViewNavigator {
+org.openntf.domino.ViewNavigator {
 
 	private boolean forceJavaDates_ = false;
 	private int cacheSize_ = -1;
@@ -1473,7 +1473,12 @@ public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigat
 	}
 
 	void registerStartPosition() {
-		startingPosition_ = getCurrent().getPosition();
+		ViewEntry ve = this.getCurrent();
+		if (ve != null) {
+			startingPosition_ = ve.getPosition();
+		} else {
+			startingPosition_ = "";
+		}
 	}
 
 	void setType(final Types type) {

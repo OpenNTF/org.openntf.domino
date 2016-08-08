@@ -99,7 +99,6 @@ public interface Term extends DVertexFrame {
 			Map<CharSequence, Object> result = new LinkedHashMap<CharSequence, Object>();
 			for (CharSequence replid : getHitRepls()) {
 				String itemname = IndexDatabase.TERM_MAP_PREFIX + replid;
-				//				System.out.println("TEMP DEBUG getting value from item " + itemname);
 				result.put(replid, this.asVertex().getProperty(itemname));
 			}
 			return result;

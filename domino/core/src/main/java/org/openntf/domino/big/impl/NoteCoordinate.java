@@ -171,7 +171,8 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			Document doc = getDocument();
 			if (!doc.isNewNote()) {
 				try {
-					isView_ = doc.hasItem("$Index");
+					isView_ = (doc.hasItem("$Index") || doc.hasItem("$Collection") || doc.hasItem("$Collation") || doc
+							.hasItem("$VIEWFORMAT"));
 				} catch (Exception e) {
 					isView_ = false;
 					//					System.err.println("Exception thrown while checking isView for a document: " + e.getMessage() + " on notecoordinate "

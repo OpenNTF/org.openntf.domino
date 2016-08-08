@@ -68,9 +68,17 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 		@Override
 		public T next() {
-			T result = framedGraph_.frame(iterator_.next(), kind_);
-			//			System.out.println("next() resulted in a " + result.getClass().getName());
-			return result;
+			Edge e = iterator_.next();
+			while (e == null && iterator_.hasNext()) {
+				e = iterator_.next();
+			}
+			if (e != null) {
+				T result = framedGraph_.frame(e, kind_);
+				//			System.out.println("next() resulted in a " + result.getClass().getName());
+				return result;
+			} else {
+				return null;
+			}
 		}
 
 		@Override

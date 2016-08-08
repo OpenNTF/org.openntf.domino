@@ -32,22 +32,21 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 
 	@Override
 	protected void applyChanges() {
-		Object inId = getVertexId(Direction.IN);
-		Object outId = getVertexId(Direction.OUT);
-		if (inId.equals(outId)) {
-			throw new IllegalStateException("Edge cannot have the same vertex for both in and out directions.");
+		if (beforeUpdate()) {
+			Object inId = getVertexId(Direction.IN);
+			Object outId = getVertexId(Direction.OUT);
+			if (inId.equals(outId)) {
+				throw new IllegalStateException("Edge cannot have the same vertex for both in and out directions.");
+			}
+			super.applyChanges();
 		}
-		super.applyChanges();
 	}
 
 	@Override
 	public void remove() {
-		//		if (this.getLabel().equalsIgnoreCase("foundin")) {
-		//			System.out.println("Removing a foundin edge? Why?");
-		//			Throwable t = new Throwable();
-		//			t.printStackTrace();
-		//		}
-		getParent().removeEdge(this);
+		if (beforeRemove()) {
+			getParent().removeEdge(this);
+		}
 	}
 
 	@Override
@@ -59,6 +58,9 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		if (direction == Direction.IN) {
 			if (inKey_ == null) {
 				String key = getProperty(org.openntf.domino.graph2.DEdge.IN_NAME, String.class);
+				if (key == null) {
+					throw new IllegalStateException("In key is null in edge " + getId());
+				}
 				inKey_ = new org.openntf.domino.big.impl.NoteCoordinate(key);
 			}
 			return inKey_;
@@ -66,6 +68,9 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		if (direction == Direction.OUT) {
 			if (outKey_ == null) {
 				String key = getProperty(org.openntf.domino.graph2.DEdge.OUT_NAME, String.class);
+				if (key == null) {
+					throw new IllegalStateException("Out key is null in edge " + getId());
+				}
 				outKey_ = new org.openntf.domino.big.impl.NoteCoordinate(key);
 			}
 			return outKey_;
