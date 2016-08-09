@@ -38,14 +38,6 @@
 		<module>org.openntf.domino.updatesite</module>
 	</modules>
 
-	<dependencies>
-		<dependency>
-		    <groupId>org.codehaus.groovy</groupId>
-		    <artifactId>groovy-all</artifactId>
-		    <version>2.1.5</version>
-  		</dependency>
-	</dependencies>
-	
 	<build>
 		<plugins>
 			<plugin>
@@ -99,25 +91,10 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-		          <compilerId>groovy-eclipse-compiler</compilerId>
-		          <source>${compiler}</source>
-				  <target>${compiler}</target>
-				  <compilerArgument>-err:-forbidden,discouraged,deprecation</compilerArgument>
-		          <extensions>true</extensions>
-		        </configuration>
-		        <dependencies>
-		          <dependency>
-		            <groupId>org.codehaus.groovy</groupId>
-		            <artifactId>groovy-eclipse-compiler</artifactId>
-		            <version>2.9.1-01</version>
-		          </dependency>
-		          <!-- for 2.8.0-01 and later you must have an explicit dependency on groovy-eclipse-batch -->
-		          <dependency>
-		            <groupId>org.codehaus.groovy</groupId>
-		            <artifactId>groovy-eclipse-batch</artifactId>
-		            <version>2.1.5-03</version>
-		          </dependency>
-		        </dependencies>
+					<source>${compiler}</source>
+					<target>${compiler}</target>
+					<compilerArgument>-err:-forbidden,discouraged,deprecation</compilerArgument>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -233,7 +210,6 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		
 	</build>
 
 	<licenses>
