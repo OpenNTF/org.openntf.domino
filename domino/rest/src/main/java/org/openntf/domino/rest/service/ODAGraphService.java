@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
+import org.openntf.domino.graph2.impl.DGraph;
 import org.openntf.domino.rest.resources.command.CommandResource;
 import org.openntf.domino.rest.resources.frames.FramedCollectionResource;
 import org.openntf.domino.rest.resources.frames.FramedResource;
@@ -195,6 +196,15 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 
 	@Override
 	public void afterDoService(final HttpServletRequest request) {
+		Map<String, FramedGraph<?>> graphs = getGraphMap();
+		for (FramedGraph graph : graphs.values()) {
+			if (graph instanceof DFramedTransactionalGraph) {
+				Object raw = ((DFramedTransactionalGraph) graph).getBaseGraph();
+				if (raw instanceof DGraph) {
+					((DGraph) raw).clearTransaction();
+				}
+			}
+		}
 		Factory.termThread();
 	}
 

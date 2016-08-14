@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.openntf.domino.Database;
@@ -329,6 +328,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 					} else {
 						System.out.println("Scanner is null from notifications");
 					}
+					getGraph().commit();
 					break;
 				case COMPLETE:
 					//					System.out.println("DEBUG: branched to complete status...");
@@ -360,6 +360,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 					} else {
 						System.out.println("ALERT! Scanner was null??");
 					}
+					getGraph().commit();
 					break;
 				case ERROR:
 					break;
@@ -411,19 +412,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 			DVertex dv = (DVertex) nameV.asVertex();
 			String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
 			dv.setProperty(itemName, tlValue);
-
-			Scanner s = new Scanner(name);
-			s.useDelimiter(DocumentScanner.REGEX_NONALPHANUMERIC);
-			while (s.hasNext()) {
-				CharSequence token = DocumentScanner.scrubToken(s.next(), scanner.isCaseSensitive());
-				if (token != null && (token.length() > 2)) {
-					Term tokenV = (Term) getGraph().addVertex(token.toString().toLowerCase(), Term.class);
-					if (tokenV.getValue() == null || tokenV.getValue().length() == 0) {
-						tokenV.setValue(token.toString());
-					}
-					nameV.addPart(tokenV);
-				}
-			}
+			Name.Utils.processName(nameV, getGraph(), scanner.isCaseSensitive(), false);
 		}
 	}
 
@@ -441,18 +430,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 				String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
 				dv.setProperty(itemName, tlValue);
 				valueV.setValue(strValue);
-				Scanner s = new Scanner(strValue);
-				s.useDelimiter(DocumentScanner.REGEX_NONALPHANUMERIC);
-				while (s.hasNext()) {
-					CharSequence token = DocumentScanner.scrubToken(s.next(), scanner.isCaseSensitive());
-					if (token != null && (token.length() > 2)) {
-						Term tokenV = (Term) getGraph().addVertex(token.toString().toLowerCase(), Term.class);
-						if (tokenV.getValue() == null || tokenV.getValue().length() == 0) {
-							tokenV.setValue(token.toString());
-						}
-						valueV.addTerm(tokenV);
-					}
-				}
+				Value.Utils.processValue(valueV, getGraph(), scanner.isCaseSensitive(), false);
 			}
 		} else {
 			//			System.out.println("DEBUG: keyset was empty for index tokens");

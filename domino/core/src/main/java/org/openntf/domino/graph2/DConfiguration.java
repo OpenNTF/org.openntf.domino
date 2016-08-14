@@ -11,6 +11,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 
 public interface DConfiguration extends Externalizable {
 
+	public static interface IExtConfiguration {
+		public void extendConfiguration(DConfiguration config);
+	}
+
 	public Map<Class<?>, Long> getTypeMap();
 
 	public Map<Long, DElementStore> getElementStores();

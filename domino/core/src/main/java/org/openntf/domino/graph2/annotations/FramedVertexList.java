@@ -61,9 +61,14 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 
 		@Override
 		public T next() {
-			Vertex v = iterator_.next();
 			T result = null;
-			result = framedGraph_.frame(v, kind_);
+			Vertex v = iterator_.next();
+			while (v == null && iterator_.hasNext()) {
+				v = iterator_.next();
+			}
+			if (v != null) {
+				result = framedGraph_.frame(v, kind_);
+			}
 			return result;
 		}
 
@@ -104,6 +109,10 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 	protected List<Vertex> list_;
 	protected Vertex sourceVertex_;
 
+	public Class<?> getKind() {
+		return kind;
+	}
+
 	public FramedVertexList(final FramedGraph<? extends Graph> framedGraph, final Vertex sourceVertex, final Iterable<Vertex> list,
 			final Class<T> kind) {
 		super(framedGraph, list, kind);
@@ -116,7 +125,15 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 			list_ = new ArrayList<Vertex>();
 			Iterator<Vertex> itty = list.iterator();
 			while (itty.hasNext()) {
-				list_.add(itty.next());
+				Vertex v = null;
+				try {
+					v = itty.next();
+				} catch (Exception e) {
+					//do nothing
+				}
+				if (v != null) {
+					list_.add(v);
+				}
 			}
 		}
 	}

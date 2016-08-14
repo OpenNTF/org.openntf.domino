@@ -39,15 +39,18 @@ public class DEdgeEntryList implements DEdgeList {
 		public Edge next() {
 			DEntryEdge result = null;
 			ViewEntryCoordinate vec = delegate_.next();
-			Edge edge = store_.getEdge(vec);
-			if (edge instanceof DEntryEdge) {
-				result = (DEntryEdge) edge;
-				result.setInVertex(source_);
-				//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
-				return result;
-			} else {
-				throw new IllegalStateException("ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+			if (vec != null) {
+				Edge edge = store_.getEdge(vec);
+				if (edge instanceof DEntryEdge) {
+					result = (DEntryEdge) edge;
+					result.setInVertex(source_);
+					//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
+					return result;
+				} else {
+					throw new IllegalStateException("ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+				}
 			}
+			return null;
 		}
 
 		@Override

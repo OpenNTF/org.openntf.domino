@@ -35,9 +35,11 @@ public class JsonFrameListAdapter implements JsonArray {
 			if (raw == null) {
 				return null;
 			} else if (raw instanceof VertexFrame) {
-				return new JsonFrameAdapter(parent_.getGraph(), (VertexFrame) raw, parent_.getParamMap());
+				return new JsonFrameAdapter(parent_.getGraph(), (VertexFrame) raw, parent_.getParamMap(),
+						parent_.isCollectionRoute_);
 			} else if (raw instanceof EdgeFrame) {
-				return new JsonFrameAdapter(parent_.getGraph(), (EdgeFrame) raw, parent_.getParamMap());
+				return new JsonFrameAdapter(parent_.getGraph(), (EdgeFrame) raw, parent_.getParamMap(),
+						parent_.isCollectionRoute_);
 			} else {
 				throw new IllegalStateException("Iterator returned a " + raw.getClass().getName());
 			}
@@ -54,22 +56,27 @@ public class JsonFrameListAdapter implements JsonArray {
 	protected List<Object> list_;
 	protected ParamMap pm_;
 	protected boolean isVertex_;
+	protected boolean isCollectionRoute_;
 
 	@SuppressWarnings("unchecked")
-	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedEdgeList<?> edgeList, ParamMap pm) {
+	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedEdgeList<?> edgeList, ParamMap pm,
+			boolean isCollectionRoute) {
 		graph_ = graph;
 		list_ = (List<Object>) edgeList;
 		pm_ = pm;
 		isVertex_ = false;
+		isCollectionRoute_ = isCollectionRoute;
 		// System.out.println("TEMP DEBUG JsonFrameListAdapter created from EdgeList");
 	}
 
 	@SuppressWarnings("unchecked")
-	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedVertexList<?> vertexList, ParamMap pm) {
+	public JsonFrameListAdapter(DFramedTransactionalGraph<?> graph, FramedVertexList<?> vertexList, ParamMap pm,
+			boolean isCollectionRoute) {
 		graph_ = graph;
 		list_ = (List<Object>) vertexList;
 		pm_ = pm;
 		isVertex_ = true;
+		isCollectionRoute_ = isCollectionRoute;
 		// System.out.println("TEMP DEBUG JsonFrameListAdapter created from VertexList");
 	}
 
@@ -102,9 +109,11 @@ public class JsonFrameListAdapter implements JsonArray {
 	@Override
 	public Object get(int paramInt) throws JsonException {
 		if (isVertex()) {
-			return new JsonFrameAdapter(getGraph(), (VertexFrame) getList().get(paramInt), getParamMap());
+			return new JsonFrameAdapter(getGraph(), (VertexFrame) getList().get(paramInt), getParamMap(),
+					isCollectionRoute_);
 		} else {
-			return new JsonFrameAdapter(getGraph(), (EdgeFrame) getList().get(paramInt), getParamMap());
+			return new JsonFrameAdapter(getGraph(), (EdgeFrame) getList().get(paramInt), getParamMap(),
+					isCollectionRoute_);
 		}
 	}
 

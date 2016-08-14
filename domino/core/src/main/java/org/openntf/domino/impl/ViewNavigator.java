@@ -1476,11 +1476,11 @@ public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigat
 	}
 
 	void registerStartPosition() {
-		ViewEntry current = getCurrent();
-		if (current == null) {
-			startingPosition_ = "";
+		ViewEntry ve = this.getCurrent();
+		if (ve != null) {
+			startingPosition_ = ve.getPosition();
 		} else {
-			startingPosition_ = getCurrent().getPosition();
+			startingPosition_ = "";
 		}
 	}
 

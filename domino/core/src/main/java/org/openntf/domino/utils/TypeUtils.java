@@ -147,6 +147,9 @@ public enum TypeUtils {
 		if (v == null) {
 			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
 		}
+		if (java.lang.Object.class.equals(type) & v.size() > 1) {
+			return (T) v;
+		}
 		Session session = item.getAncestorSession();
 		T result = null;
 		try {

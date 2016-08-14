@@ -32,7 +32,7 @@ public interface DVertexFrame extends Editable {
 	public Map<CharSequence, Object> asMap();
 
 	@JavaHandler
-	@TypedProperty("Editors")
+	@TypedProperty("@editors")
 	public String[] getEditors();
 
 	//TODO NTF Future

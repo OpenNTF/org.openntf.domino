@@ -34,6 +34,9 @@ public class DEntryEdge extends DEdge {
 					String entryid = delegateKey_.toString();
 					String mid = "V" + entryid.substring(1);
 					setOutId(ViewEntryCoordinate.Utils.getViewEntryCoordinate(mid));
+				} else if (entry.isTotal()) {
+					setOutId(null);
+					//FIXME NTF Implement this please
 				} else {
 					throw new UnimplementedException();
 				}

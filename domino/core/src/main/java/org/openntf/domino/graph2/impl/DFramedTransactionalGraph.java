@@ -1,5 +1,6 @@
 package org.openntf.domino.graph2.impl;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +10,8 @@ import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
+import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.graph2.builtin.Eventable;
 import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
@@ -93,7 +96,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			String idStr = (String) id;
 			if (idStr.length() == 16) {
 				if (DominoUtils.isReplicaId(idStr)) {
-					result = idStr;
+					//					result = idStr;
 				}
 			} else if (idStr.length() > 16) {
 				if (idStr.length() == 32) {
@@ -131,7 +134,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		}
 		Vertex vertex = store.addVertex(id);
-		return frame(vertex, kind);
+		F result = frame(vertex, kind);
+		if (result instanceof Eventable) {
+
+		}
+		return result;
 	}
 
 	public <F> F getVertex(final Class<F> kind, final Object context, final Object... args) {
@@ -182,11 +189,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			if (store != null) {
 				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(chkClass);
 				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
-				//				if (elements instanceof List) {
-				//					int size = ((List) elements).size();
-				//					System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + classname);
-				//				}
-				return this.frameElements(elements, null);
+				if (elements instanceof List) {
+					int size = ((List) elements).size();
+					//					System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + classname);
+				}
+				return this.frameElements(elements, (Class<F>) chkClass);
 			} else {
 				//				System.out.println("TEMP DEBUG Unable to find an element store for type " + classname);
 				return null;
@@ -323,6 +330,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				store = base.findElementStore(typeid);
 			}
 		}
+		String targetid = NoteCoordinate.Utils.getReplidFromLong(store.getStoreKey());
+		//		System.out.println("TEMP DEBUG getting vertex from " + targetid + " using id " + id);
 		Vertex vertex = store.getVertex(id);
 		if (null == vertex) {
 			return null;
@@ -478,6 +487,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	@Override
 	public <F> F frame(final Edge edge, final Class<F> kind) {
+		if (edge == null)
+			return null;
 		Class<F> klazz = (Class<F>) (kind == null ? EdgeFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
@@ -528,8 +539,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		Class<F> klazz = (Class<F>) (kind == null ? VertexFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		DTypeManager manager = config.getTypeManager();
-		//		if (manager == null)
-		//			System.out.println("TypeManager is null!??!??! How?");
 		manager.initElement(klazz, this, vertex);
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
 			if (!(initializer instanceof JavaFrameInitializer)) {
@@ -539,23 +548,50 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		F result = null;
 		try {
 			result = super.frame(vertex, klazz);
-		} catch (Exception e) {
-			System.out.println("Exception while attempting to frame a vertex " + vertex.getId() + " with class " + klazz.getName());
-			DominoUtils.handleException(e);
+		} catch (Throwable t) {
+			//			System.out.println("Exception while attempting to frame a vertex " + vertex.getId() + " with class " + klazz.getName());
+			//			DominoUtils.handleException(e);
+			try {
+				result = (F) super.frame(vertex, DVertexFrame.class);
+			} catch (Exception e) {
+				System.out.println("Exception while attempting to frame a vertex " + vertex.getId() + " with class " + klazz.getName());
+				DominoUtils.handleException(e);
+			}
 		}
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
 			if (initializer instanceof JavaFrameInitializer) {
 				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
 			}
 		}
+		if (result instanceof Eventable) {
+			if (((Eventable) result).isNew()) {
+				try {
+					Method crystal = result.getClass().getMethod("create", null);
+					if (crystal != null) {
+						((Eventable) result).create();
+					}
+				} catch (Throwable t) {
+					//nothing
+				}
+			} else {
+				try {
+					Method crystal = result.getClass().getMethod("read", null);
+					if (crystal != null) {
+						((Eventable) result).read();
+					}
+				} catch (Throwable t) {
+					//nothing
+				}
+			}
+		}
 		//		if (isView) {
-		//			StringBuilder sb = new StringBuilder();
-		//			Class<?>[] interfaces = result.getClass().getInterfaces();
-		//			for (Class<?> inter : interfaces) {
-		//				sb.append(inter.getName());
-		//				sb.append(", ");
-		//			}
-		//			System.out.println("Requested a " + klazz.getName() + " and resulted in a [" + sb.toString() + "]");
+		StringBuilder sb = new StringBuilder();
+		Class<?>[] interfaces = result.getClass().getInterfaces();
+		for (Class<?> inter : interfaces) {
+			sb.append(inter.getName());
+			sb.append(", ");
+		}
+		//		System.out.println("Requested a " + klazz.getName() + " and resulted in a [" + sb.toString() + "]");
 		//		}
 		return result;
 	}

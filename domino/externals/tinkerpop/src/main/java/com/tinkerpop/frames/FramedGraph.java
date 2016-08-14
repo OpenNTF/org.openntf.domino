@@ -139,8 +139,10 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 			resolvedTypes.addAll(Arrays.asList(typeResolver.resolveTypes(vertex, kind)));
 		}
 		ClassLoader cl = findProxyClassLoader(resolvedTypes);
-		return (F) Proxy.newProxyInstance(cl, resolvedTypes.toArray(new Class[resolvedTypes.size()]),
+		F result = null;
+		result = (F) Proxy.newProxyInstance(cl, resolvedTypes.toArray(new Class[resolvedTypes.size()]),
 				new FramedElement(this, vertex));
+		return result;
 	}
 
 	/**

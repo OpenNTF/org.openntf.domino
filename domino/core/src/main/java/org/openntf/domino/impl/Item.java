@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
 /**
  * The Class Item.
  */
-public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
+public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
 	private static final Logger log_ = Logger.getLogger(Item.class.getName());
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
@@ -1062,13 +1062,13 @@ public class Item extends BaseNonThreadSafe<org.openntf.domino.Item, lotus.domin
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 				}
 			} catch (NotesException e) {

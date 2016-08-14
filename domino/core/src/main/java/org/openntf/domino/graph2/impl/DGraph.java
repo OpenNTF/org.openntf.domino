@@ -2,13 +2,12 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
@@ -39,10 +38,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	private DConfiguration configuration_;
 	protected Graph extendedGraph_;
 
-	@SuppressWarnings("unused")
 	//	private DbCache dbCache_;
-	public static class GraphTransaction extends FastTable<Element> {
+	public static class GraphTransaction extends HashSet<Element> {
 		private static final long serialVersionUID = 1L;
+
+		@Override
+		public boolean add(final Element e) {
+			if (e instanceof DEntryEdge) {
+				return false;
+			}
+			return super.add(e);
+		}
 
 	}
 
@@ -96,7 +102,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Vertex getVertex(final Object id) {
-		return findElementStore(id).getVertex(id);
+		DElementStore store = findElementStore(id);
+		if (store == null) {
+			Throwable t = new IllegalArgumentException("No element store found for id " + String.valueOf(id));
+			t.printStackTrace();
+			try {
+				throw t;
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+		return store.getVertex(id);
 	}
 
 	@Override
@@ -200,17 +216,23 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public void commit() {
 		GraphTransaction txn = localTxn.get();
-		Iterator<Element> it = txn.iterator();
-		while (it.hasNext()) {
-			Element elem = it.next();
-			if (elem instanceof DElement) {
-				DElement delem = (DElement) elem;
-				delem.applyChanges();
-				DElementStore store = findElementStore(elem.getId());
-				//				store.uncache(delem);
+		if (txn != null) {
+			Iterator<Element> it = txn.iterator();
+			int count = 0;
+			while (it.hasNext()) {
+				Element elem = it.next();
+				if (elem instanceof DElement) {
+					DElement delem = (DElement) elem;
+					delem.applyChanges();
+					DElementStore store = findElementStore(elem.getId());
+					//				store.uncache(delem);
+					count++;
+				}
+				it.remove();
 			}
-			it.remove();
+			//			System.out.println("TEMP DEBUG: Transaction committed changes to " + count + " elements");
 		}
+		localTxn.set(null);
 	}
 
 	@Override
@@ -222,6 +244,10 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	public void startTransaction(final Element elem) {
 		GraphTransaction txn = localTxn.get();
 		txn.add(elem);
+	}
+
+	public void clearTransaction() {
+		localTxn.set(null);
 	}
 
 	@Override
@@ -337,7 +363,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			} else if (skey.length() > 16) {
 				CharSequence prefix = skey.subSequence(0, 16);
 				if (DominoUtils.isReplicaId(prefix)) {
-					//					System.out.println("TEMP DEBUG Attempting to resolve replica id " + prefix + " to an element store");
+					System.out.println("TEMP DEBUG Attempting to resolve replica id " + prefix + " to an element store");
 					Long rid = NoteCoordinate.Utils.getLongFromReplid(prefix);
 					result = getElementStores().get(rid);
 					if (result == null) {
@@ -345,7 +371,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 						newStore.setStoreKey(rid);
 						newStore.setConfiguration(this.getConfiguration());
 						getElementStores().put(rid, newStore);
-						//						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
+						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 						result = newStore;
 					}
 				} else {

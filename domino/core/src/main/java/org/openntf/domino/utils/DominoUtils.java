@@ -93,6 +93,11 @@ public enum DominoUtils {
 	/** The Constant logBackup_. */
 	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
+	public static void reportType(final Object o, final String name, final Class<?> expected) {
+		System.out.println("DEBUG " + name + " is not the expected type of " + expected.getName() + ". Instead its a "
+				+ (o == null ? "null" : o.getClass().getName()));
+	}
+
 	public static Class<?> getClass(final CharSequence className) {
 		Class<?> result = null;
 		String pname = null;
@@ -801,11 +806,11 @@ public enum DominoUtils {
 	public static boolean isHex(final CharSequence value) {
 		if (value == null)
 			return false;
-		String chk = value.toString().trim().toLowerCase();
+		String chk = value.toString();
 		for (int i = 0; i < chk.length(); i++) {
 			char c = chk.charAt(i);
 			boolean isHexDigit = Character.isDigit(c) || Character.isWhitespace(c) || c == 'a' || c == 'b' || c == 'c' || c == 'd'
-					|| c == 'e' || c == 'f';
+					|| c == 'e' || c == 'f' || c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' || c == 'F';
 
 			if (!isHexDigit) {
 				return false;
@@ -1041,7 +1046,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

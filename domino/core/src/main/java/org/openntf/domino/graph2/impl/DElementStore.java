@@ -436,7 +436,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					if (isProxiedSource) {
 						DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
 						result = vertex;
-					} else if (((Document) delegate).hasItem("$Index")) {
+					} else if (((Document) delegate).hasItem("$Index") || ((Document) delegate).hasItem("$Collation")) {
 						DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
 						result = vertex;
 					} else {
@@ -471,8 +471,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 										entry.getParentView());
 								vertex.delegateKey_ = vec;
 								result = vertex;
+							} else {
+								System.out.println("TEMP DEBUG ViewVertex entry is not a category");
 							}
 						}
+					} else {
+						System.out.println("TEMP DEBUG ViewEntry's id is not a ViewEntryCoordinate. It's a " + id.getClass().getName());
 					}
 				}
 				getElementCache().put(result.getId(), result);

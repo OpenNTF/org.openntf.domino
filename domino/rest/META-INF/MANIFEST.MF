@@ -11,6 +11,10 @@ Import-Package: com.ibm.commons.util.io.json,
  com.ibm.domino.das.service,
  com.ibm.domino.das.servlet,
  com.ibm.domino.das.utils,
+ com.ibm.domino.httpmethod,
+ com.ibm.domino.napi,
+ com.ibm.domino.napi.c,
+ com.ibm.domino.napi.c.html,
  javax.servlet;version="2.5.0",
  javax.servlet.http;version="2.5.0",
  javax.ws.rs,
@@ -35,6 +39,7 @@ Export-Package: org.openntf.domino.rest,
  org.openntf.domino.rest.resources.frames,
  org.openntf.domino.rest.resources.graph,
  org.openntf.domino.rest.service,
- org.openntf.domino.rest.servlet
+ org.openntf.domino.rest.servlet,
+ org.openntf.domino.rest.utils
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .

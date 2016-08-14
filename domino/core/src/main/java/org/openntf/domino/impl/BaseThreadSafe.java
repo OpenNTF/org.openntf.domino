@@ -31,14 +31,14 @@ import org.openntf.domino.types.Resurrectable;
  * 
  */
 public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		extends Base<T, D, P> implements Resurrectable {
+extends Base<T, D, P> implements Resurrectable {
 
 	/** The Constant log_. */
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BaseThreadSafe.class.getName());
 
 	/** The delegate, here ThreadLocal */
-	private transient ThreadLocal<D> _delegateLocal;
+	protected transient ThreadLocal<D> _delegateLocal;
 
 	/**
 	 * Instantiates a new base.

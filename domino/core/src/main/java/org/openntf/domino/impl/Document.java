@@ -91,7 +91,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-public class Document extends BaseNonThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
+public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
 org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
@@ -1213,9 +1213,6 @@ org.openntf.domino.Document {
 		MIMEEntity entity = getMIMEEntity(name);
 		if (entity == null) {
 			T result = TypeUtils.itemValueToClass(this, name, type);
-			//			if ("form".equalsIgnoreCase(name)) {
-			//				System.out.println("Using getItemValue on the form field ");
-			//			}
 			return result;
 		} else {
 			try {
@@ -1690,13 +1687,14 @@ org.openntf.domino.Document {
 	 */
 	@Override
 	public String getNoteID() {
+		return noteid_;
 		// checkMimeOpen(); RPr: I don't think it is neccessary here
-		try {
-			return getDelegate().getNoteID();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
+		//		try {
+		//			return getDelegate().getNoteID();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e, this);
+		//		}
+		//		return null;
 	}
 
 	/*
@@ -1876,13 +1874,14 @@ org.openntf.domino.Document {
 	 */
 	@Override
 	public String getUniversalID() {
-		// checkMimeOpen(); RPr: I think we do not need it here
-		try {
-			return getDelegate().getUniversalID();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
+		return unid_;
+		//		// checkMimeOpen(); RPr: I think we do not need it here
+		//		try {
+		//			return getDelegate().getUniversalID();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e, this);
+		//		}
+		//		return null;
 	}
 
 	/*
@@ -3693,15 +3692,16 @@ org.openntf.domino.Document {
 								DominoUtils.handleException(ne1);
 							}
 						} else {
-							log_.log(Level.WARNING,
-									"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-											+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-											+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+							if (log_.isLoggable(Level.WARNING))
+								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 						}
 					}
 				} else {
-					log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-							+ ", but the parent database object is null!");
+					if (log_.isLoggable(Level.WARNING))
+						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+								+ ", but the parent database object is null!");
 				}
 				setDelegate(d, true);
 				shouldResurrect_ = false;
@@ -4397,4 +4397,9 @@ org.openntf.domino.Document {
 		}
 		return extendedNoteInfos_.isDefault;
 	}
+
+	//	@Override
+	//	protected boolean allowAccessAcrossThreads() {
+	//		return !isDirty();
+	//	}
 }

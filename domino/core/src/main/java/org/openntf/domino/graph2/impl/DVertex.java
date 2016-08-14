@@ -202,7 +202,9 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public void remove() {
-		getParent().removeVertex(this);
+		if (beforeRemove()) {
+			getParent().removeVertex(this);
+		}
 	}
 
 	@Override
@@ -235,36 +237,44 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		getParent().startTransaction(this);
 		String label = edge.getLabel();
 
-		boolean inChanged = false;
-		try {
-			NoteList ins = getInEdgesSet(label);
-			if (ins != null) {
-				inChanged = ins.remove(edge.getId());
+		Object inId = ((DEdge) edge).getVertexId(Direction.IN);
+		if (inId.equals(this.getId())) {
+			boolean inChanged = false;
+			try {
+				NoteList ins = getInEdgesSet(label);
+				if (ins != null) {
+					inChanged = ins.remove(edge.getId());
+				}
+				if (inChanged) {
+					List<Edge> inObjs = getInEdgeCache(label);
+					inObjs.remove(edge);
+					getInDirtyKeySet().add(label);
+				}
+			} catch (Throwable t) {
+				System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": "
+						+ t.getClass().getSimpleName());
+				t.printStackTrace();
 			}
-			if (inChanged) {
-				List<Edge> inObjs = getInEdgeCache(label);
-				inObjs.remove(edge);
-				getInDirtyKeySet().add(label);
-			}
-		} catch (Throwable t) {
-			System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": " + t.getClass().getSimpleName());
-			t.printStackTrace();
 		}
 
-		boolean outChanged = false;
-		try {
-			NoteList outs = getOutEdgesSet(label);
-			if (outs != null) {
-				outChanged = outs.remove(edge.getId());
+		Object outId = ((DEdge) edge).getVertexId(Direction.OUT);
+		if (outId.equals(this.getId())) {
+			boolean outChanged = false;
+			try {
+				NoteList outs = getOutEdgesSet(label);
+				if (outs != null) {
+					outChanged = outs.remove(edge.getId());
+				}
+				if (outChanged) {
+					List<Edge> outObjs = getOutEdgeCache(label);
+					outObjs.remove(edge);
+					getOutDirtyKeySet().add(label);
+				}
+			} catch (Throwable t) {
+				System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": "
+						+ t.getClass().getSimpleName());
+				t.printStackTrace();
 			}
-			if (outChanged) {
-				List<Edge> outObjs = getOutEdgeCache(label);
-				outObjs.remove(edge);
-				getOutDirtyKeySet().add(label);
-			}
-		} catch (Throwable t) {
-			System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": " + t.getClass().getSimpleName());
-			t.printStackTrace();
 		}
 	}
 
@@ -449,8 +459,10 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public void applyChanges() {
-		writeEdges();
-		super.applyChanges();
+		if (beforeUpdate()) {
+			writeEdges();
+			super.applyChanges();
+		}
 	}
 
 	protected boolean writeEdges() {
@@ -552,10 +564,14 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 					edges.setLabel(label);
 					result = edges.unmodifiable();
-				} else if (this instanceof DCategoryVertex) {
+				} else if (this instanceof DCategoryVertex || String.valueOf(getId()).startsWith("VC")) {
+					//					System.out.println("TEMP DEBUG getting contents from a DCategoryVertex");
 					DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 					edges.setLabel(label);
 					result = edges.unmodifiable();
+				} else {
+					//					System.out.println("TEMP DEBUG unable to get contents edgelist from a " + this.getClass().getName() + " with id "
+					//							+ String.valueOf(this.getId()));
 				}
 			}
 			if (result == null) {
