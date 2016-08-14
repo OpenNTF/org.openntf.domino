@@ -68,5 +68,4 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Import-Package: javassist.util.proxy,
- javax.faces.context,
  lotus.domino
