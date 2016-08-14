@@ -2,7 +2,7 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>oda</id>
+	<id>nonxsp</id>
 	<formats>
 		<format>zip</format>
 	</formats>
@@ -11,7 +11,7 @@
 	<!-- Local files -->
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources/full</directory>
+			<directory>src/main/resources/nonxsp</directory>
 			<includes>
 				<include>**/*</include>
 			</includes>
@@ -32,9 +32,7 @@
 			<useAllReactorProjects>true</useAllReactorProjects>
 			<includes>
 				<include>org.openntf.domino:org.openntf.domino:eclipse-plugin</include>
-				<include>org.openntf.domino:org.openntf.domino.xsp:eclipse-plugin</include>
 				<include>org.openntf.domino:org.openntf.formula:eclipse-plugin</include>
-				<include>org.openntf.domino:org.openntf.domino.rest:eclipse-plugin</include>
 			</includes>
 			
 			<binaries>
@@ -49,7 +47,7 @@
 		<moduleSet>
 			<useAllReactorProjects>true</useAllReactorProjects>
 			<includes>
-				<include>org.openntf.domino:org.openntf.domino.updatesite</include>
+				<include>org.openntf.domino:org.openntf.domino.nonxsp.updatesite</include>
 			</includes>
 			
 			<binaries>

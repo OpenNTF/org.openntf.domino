@@ -37,6 +37,7 @@
 		<module>org.openntf.domino.feature</module>
 		<module>org.openntf.domino.nonxsp.feature</module>
 		<module>org.openntf.domino.updatesite</module>
+		<module>org.openntf.domino.nonxsp.updatesite</module>
 	</modules>
 
 	<build>
