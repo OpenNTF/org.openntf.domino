@@ -139,6 +139,10 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 
 	public Long getReplicaLong();
 
+	public long getX();
+
+	public long getY();
+
 	public String getUNID();
 
 	public Document getDocument();

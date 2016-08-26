@@ -57,6 +57,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
+import org.openntf.domino.big.LocalNoteList;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.IconNote;
 import org.openntf.domino.events.EnumEvent;
@@ -141,7 +142,11 @@ org.openntf.domino.Database {
 		}
 
 		try {
-			replid_ = delegate.getReplicaID();
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+				replid_ = delegate.getReplicaID().toLowerCase();
+			} else {
+				replid_ = delegate.getReplicaID();
+			}
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache replica id for Database due to exception: " + e.text);
 		}
@@ -167,7 +172,11 @@ org.openntf.domino.Database {
 		shadowedMetaData_ = metaData;
 		server_ = metaData.getServer();
 		path_ = metaData.getFilePath();
-		replid_ = metaData.getReplicaID();
+		if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+			replid_ = metaData.getReplicaID().toLowerCase();
+		} else {
+			replid_ = metaData.getReplicaID();
+		}
 	}
 
 	/*
@@ -3239,6 +3248,16 @@ org.openntf.domino.Database {
 		return this.FTSearchRange(query, maxDocs, sortOpt.getValue(), otherOpt, start);
 	}
 
+	public LocalNoteList getLocalNoteList() {
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		NoteCollection nc = createNoteCollection(false);
+		nc.setSelectOptions(noteClass);
+		nc.buildCollection();
+		LocalNoteList result = new org.openntf.domino.big.impl.LocalNoteList(nc, new Date());
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -3246,7 +3265,7 @@ org.openntf.domino.Database {
 	 */
 	@Override
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		if (since != null && since.after(this.getLastModified().toJavaDate()))
+		if (since != null && since.after(this.getLastModifiedDate()))
 			return 0;
 		NoteCollection nc = createNoteCollection(false);
 		if (since != null) {

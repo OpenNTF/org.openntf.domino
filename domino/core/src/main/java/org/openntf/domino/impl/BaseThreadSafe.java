@@ -31,7 +31,7 @@ import org.openntf.domino.types.Resurrectable;
  * 
  */
 public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-extends Base<T, D, P> implements Resurrectable {
+		extends Base<T, D, P> implements Resurrectable {
 
 	/** The Constant log_. */
 	@SuppressWarnings("unused")
@@ -90,6 +90,19 @@ extends Base<T, D, P> implements Resurrectable {
 
 	@Override
 	protected D getDelegate_unchecked() {
+		if (_delegateLocal == null)
+			return null;
+		return _delegateLocal.get();
+	}
+
+	/**
+	 * Gets the delegate without Resurrect
+	 * 
+	 * @return the delegate directly
+	 */
+
+	@Override
+	protected D getDelegate_unchecked(final boolean fromIsDead) {
 		if (_delegateLocal == null)
 			return null;
 		return _delegateLocal.get();

@@ -61,7 +61,10 @@ public interface Session {
 		VIEWENTRY_RETURN_CONSTANT_VALUES,
 
 		/** Alternative implementation of Names */
-		ODA_NAMES
+		ODA_NAMES,
+
+		/** Hex values such as replicaid, unid and noteid are forced to lower case before being returned */
+		FORCE_HEX_LOWER_CASE
 	}
 
 	/**

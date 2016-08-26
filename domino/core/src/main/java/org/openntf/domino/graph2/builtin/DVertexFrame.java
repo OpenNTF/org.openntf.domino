@@ -1,6 +1,5 @@
 package org.openntf.domino.graph2.builtin;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -79,13 +78,18 @@ public interface DVertexFrame extends Editable {
 		public String[] getEditors() {
 			//			System.out.println("TEMP DEBUG getting Editors...");
 			String[] result = null;
-			Object raw = asVertex().getProperty("$UpdatedBy");
-			if (raw != null) {
-				if (raw instanceof Collection) {
-					result = org.openntf.domino.utils.TypeUtils.collectionToStrings((Collection) raw);
+			try {
+				Object raw = asVertex().getProperty("$UpdatedBy");
+				if (raw != null) {
+					result = org.openntf.domino.utils.TypeUtils.toStrings(raw);
+				} else {
+					//					System.out.println("TEMP DEBUG $UpdatedBy was null for " + asVertex().getId().toString());
 				}
+				return result;
+			} catch (Throwable t) {
+				t.printStackTrace();
+				return null;
 			}
-			return result;
 		}
 
 		//		@Override

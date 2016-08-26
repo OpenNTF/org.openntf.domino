@@ -44,8 +44,9 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	long y;
 	transient Boolean isView_;
 	transient private Map<String, Object> propertyCache;
-	transient private Database database_;
-	transient private Document document_;
+
+	//	transient private Database database_;
+	//	transient private Document document_;
 
 	//TODO NTF we should probably have a factory that creates these instead of instantiating them directly
 
@@ -105,6 +106,16 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	@Override
 	public Long getReplicaLong() {
 		return db;
+	}
+
+	@Override
+	public long getX() {
+		return x;
+	}
+
+	@Override
+	public long getY() {
+		return y;
 	}
 
 	protected long getDbid() {

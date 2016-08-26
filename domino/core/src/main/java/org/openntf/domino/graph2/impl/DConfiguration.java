@@ -604,7 +604,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							update = false;
 							//							System.out.println("TEMP DEBUG value already applied: " + typeValue.value());
 						} else {
-							classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+							try {
+								classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+							} catch (IllegalArgumentException iae) {
+								//no problem
+							}
 							//							System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName())
 							//									+ " for name of " + currentVal);
 							if (classChk == null) {

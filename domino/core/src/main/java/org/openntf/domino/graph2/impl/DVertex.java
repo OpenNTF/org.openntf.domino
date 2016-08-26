@@ -604,4 +604,23 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		}
 		return null;
 	}
+
+	protected Map<String, Object> frameImplCache_;
+
+	public Map<String, Object> getFrameImplCache() {
+		if (frameImplCache_ == null) {
+			frameImplCache_ = new FastMap<String, Object>();
+		}
+		return frameImplCache_;
+	}
+
+	@Override
+	public Object getFrameImplObject(final String key) {
+		return getFrameImplCache().get(key);
+	}
+
+	@Override
+	public void setFrameImplObject(final String key, final Object value) {
+		getFrameImplCache().put(key, value);
+	}
 }

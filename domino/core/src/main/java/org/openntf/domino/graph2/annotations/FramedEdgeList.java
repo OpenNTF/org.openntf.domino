@@ -142,6 +142,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 				try {
 					Vertex other = ((DEdge) edge).getOtherVertex(sourceVertex_);
 					vertList.add(other);
+				} catch (IllegalStateException ise) {
+					System.out.println("WARNING: " + ise.getMessage());
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}

@@ -22,6 +22,7 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.exceptions.UnimplementedException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph2.DIdentityFactory;
 import org.openntf.domino.graph2.builtin.CategoryVertex;
 import org.openntf.domino.graph2.builtin.ViewVertex;
@@ -657,6 +658,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 		if (del instanceof Database) {
 			Database db = (Database) del;
+			db.getAncestorSession().setFixEnable(Fixes.MIME_BLOCK_ITEM_INTERFACE, false);
 			if (delegateKey instanceof Serializable) {
 				if (delegateKey instanceof ViewEntryCoordinate) {
 					result = ((ViewEntryCoordinate) delegateKey).getViewEntry();

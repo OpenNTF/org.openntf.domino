@@ -54,12 +54,13 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 		return getParent().getVertex(getVertexId(direction));
 	}
 
+	@Override
 	public Object getVertexId(final Direction direction) {
 		if (direction == Direction.IN) {
 			if (inKey_ == null) {
 				String key = getProperty(org.openntf.domino.graph2.DEdge.IN_NAME, String.class);
 				if (key == null) {
-					throw new IllegalStateException("In key is null in edge " + getId());
+					throw new IllegalStateException("In key is null in " + getLabel() + " edge " + getId());
 				}
 				inKey_ = new org.openntf.domino.big.impl.NoteCoordinate(key);
 			}
@@ -69,7 +70,7 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 			if (outKey_ == null) {
 				String key = getProperty(org.openntf.domino.graph2.DEdge.OUT_NAME, String.class);
 				if (key == null) {
-					throw new IllegalStateException("Out key is null in edge " + getId());
+					throw new IllegalStateException("Out key is null in " + getLabel() + " edge " + getId());
 				}
 				outKey_ = new org.openntf.domino.big.impl.NoteCoordinate(key);
 			}
@@ -119,7 +120,9 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 
 	void setInId(final Object id) {
 		inKey_ = id;
-		setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, inKey_.toString());
+		if (inKey_ != null) {
+			setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, inKey_.toString());
+		}
 	}
 
 	void setLabel(final String label) {
@@ -136,7 +139,9 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 
 	void setOutId(final Object id) {
 		outKey_ = id;
-		setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, outKey_.toString());
+		if (outKey_ != null) {
+			setProperty(org.openntf.domino.graph2.DEdge.IN_NAME, outKey_.toString());
+		}
 	}
 
 }

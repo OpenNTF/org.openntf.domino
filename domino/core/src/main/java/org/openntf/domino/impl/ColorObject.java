@@ -19,6 +19,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -26,7 +27,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class ColorObject.
  */
 public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
-		org.openntf.domino.ColorObject {
+org.openntf.domino.ColorObject {
 
 	/**
 	 * Instantiates a new outline.
@@ -229,6 +230,11 @@ public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObjec
 		String r = Integer.toHexString(this.getRed());
 		String g = Integer.toHexString(this.getGreen());
 		String b = Integer.toHexString(this.getBlue());
+		if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+			r = r.toLowerCase();
+			g = g.toLowerCase();
+			b = b.toLowerCase();
+		}
 		return (r.length() < 2 ? "0" : "") + r + (g.length() < 2 ? "0" : "") + g + (b.length() < 2 ? "0" : "") + b;
 	}
 

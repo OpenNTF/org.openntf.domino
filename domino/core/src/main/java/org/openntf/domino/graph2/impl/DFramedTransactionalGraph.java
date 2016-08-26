@@ -4,6 +4,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import javolution.util.FastMap;
 
 import org.openntf.domino.big.impl.NoteCoordinate;
 import org.openntf.domino.graph2.DKeyResolver;
@@ -32,6 +35,43 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
+	private transient Map<Element, Object> framedElementCache_;
+
+	protected Map<Element, Object> getFramedElementCache() {
+		if (framedElementCache_ == null) {
+			framedElementCache_ = new FastMap<Element, Object>().atomic();
+		}
+		return framedElementCache_;
+	}
+
+	protected <F> F getCachedElement(final Element element, final Class<F> kind) {
+		if (element == null)
+			return null;
+		//		System.out.println("TEMP DEBUG checking cache for element " + element.getId().toString());
+		Object chk = getFramedElementCache().get(element);
+		if (chk != null) {
+			if (kind.isAssignableFrom(chk.getClass())) {
+				//				System.out.println("TEMP DEBUG returning from cache for element " + element.getId().toString());
+				return (F) chk;
+			} else {
+				throw new IllegalStateException("Requested id of " + String.valueOf(element) + " is already in cache but is a "
+						+ chk.getClass().getName());
+			}
+		}
+		return null;
+	}
+
+	private void removeCache(final Object object) {
+		Object key = null;
+		if (object instanceof EdgeFrame) {
+			key = ((EdgeFrame) object).asEdge().getId();
+		} else if (object instanceof VertexFrame) {
+			key = ((VertexFrame) object).asVertex().getId();
+		}
+		if (key != null) {
+			getFramedElementCache().remove(key);
+		}
+	}
 
 	public class FramedElementIterable<T> implements Iterable<T> {
 		protected final Class<T> kind;
@@ -306,6 +346,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			result = frame((Edge) elem, kind);
 		} else if (elem instanceof Vertex) {
 			result = frame((Vertex) elem, kind);
+			//			System.out.println("TEMP DEBUG getElement for vertex " + ((Vertex) elem).getId().toString() + " for type "
+			//					+ (kind == null ? "null" : kind.getName()) + " with object " + System.identityHashCode(result));
 		} else {
 			throw new IllegalStateException("Key " + id.toString() + " returned an element of type " + elem.getClass().getName());
 		}
@@ -459,6 +501,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return new FramedElementIterable(this, elements, kind);
 	}
 
+	@SuppressWarnings("deprecation")
 	public <F> F frame(final Element element, final Class<F> kind) {
 		//		Class<F> klazz = kind;
 		//		DConfiguration config = (DConfiguration) this.getConfig();
@@ -468,8 +511,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		//				initializer.initElement(klazz, this, element);
 		//			}
 		//		}
-		@SuppressWarnings("deprecation")
 		F result = null;
+		Object cacheChk = getCachedElement(element, kind);
+		if (cacheChk != null/* && kind.isAssignableFrom(cacheChk.getClass())*/) {
+			return (F) cacheChk;
+		}
 		if (element instanceof Edge) {
 			result = frame((Edge) element, kind);
 		} else if (element instanceof Vertex) {
@@ -482,6 +528,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		//				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
 		//			}
 		//		}
+		getFramedElementCache().put(element, result);
 		return result;
 	}
 
@@ -490,6 +537,10 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (edge == null)
 			return null;
 		Class<F> klazz = (Class<F>) (kind == null ? EdgeFrame.class : kind);
+		Object cacheChk = getCachedElement(edge, klazz);
+		if (cacheChk != null/* && klazz.isAssignableFrom(cacheChk.getClass())*/) {
+			return (F) cacheChk;
+		}
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
@@ -504,6 +555,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
 			}
 		}
+		getFramedElementCache().put(edge, result);
 		return result;
 	}
 
@@ -511,6 +563,10 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	@Deprecated
 	public <F> F frame(final Edge edge, final Direction direction, final Class<F> kind) {
 		Class<F> klazz = (Class<F>) (kind == null ? DEdgeFrame.class : kind);
+		Object cacheChk = getCachedElement(edge, klazz);
+		if (cacheChk != null/* && klazz.isAssignableFrom(cacheChk.getClass())*/) {
+			return (F) cacheChk;
+		}
 		DConfiguration config = (DConfiguration) this.getConfig();
 		config.getTypeManager().initElement(klazz, this, edge);
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
@@ -524,6 +580,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				((JavaFrameInitializer) initializer).initElement(klazz, this, result);
 			}
 		}
+		getFramedElementCache().put(edge, result);
 		return result;
 	}
 
@@ -531,12 +588,19 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	public <F> F frame(final Vertex vertex, Class<F> kind) {
 		if (vertex == null)
 			return null;
+
 		String chk = ((DVertex) vertex).getProperty("$FormulaClass", String.class);
 		boolean isView = "1".equals(chk);
 		if (isView) {
 			kind = (Class<F>) ViewVertex.class;
 		}
 		Class<F> klazz = (Class<F>) (kind == null ? VertexFrame.class : kind);
+		Object cacheChk = getCachedElement(vertex, klazz);
+		if (cacheChk != null/* && klazz.isAssignableFrom(cacheChk.getClass())*/) {
+			//			System.out.println("TEMP DEBUG got cache hit for vertex " + vertex.getId().toString() + " for type " + klazz.getName()
+			//					+ " with object " + System.identityHashCode(cacheChk));
+			return (F) cacheChk;
+		}
 		DConfiguration config = (DConfiguration) this.getConfig();
 		DTypeManager manager = config.getTypeManager();
 		manager.initElement(klazz, this, vertex);
@@ -585,14 +649,17 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		}
 		//		if (isView) {
-		StringBuilder sb = new StringBuilder();
-		Class<?>[] interfaces = result.getClass().getInterfaces();
-		for (Class<?> inter : interfaces) {
-			sb.append(inter.getName());
-			sb.append(", ");
-		}
+		//		if (false) {
+		//			StringBuilder sb = new StringBuilder();
+		//			Class<?>[] interfaces = result.getClass().getInterfaces();
+		//			for (Class<?> inter : interfaces) {
+		//				sb.append(inter.getName());
+		//				sb.append(", ");
+		//			}
+		//		}
 		//		System.out.println("Requested a " + klazz.getName() + " and resulted in a [" + sb.toString() + "]");
 		//		}
+		getFramedElementCache().put(vertex, result);
 		return result;
 	}
 
