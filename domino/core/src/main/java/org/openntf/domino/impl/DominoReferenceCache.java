@@ -131,7 +131,7 @@ public class DominoReferenceCache {
 		long cppId = 0;
 		// If CPP tracking is enabled for this session, get the inner ID and count it
 		if (value instanceof SessionDescendant
-				&& ((SessionDescendant) value).getAncestorSession().isFixEnabled(Fixes.PENDANTIC_GC_TRACKING)) {
+				&& ((SessionDescendant) value).getAncestorSession().isFixEnabled(Fixes.PEDANTIC_GC_TRACKING)) {
 			cppId = org.openntf.domino.impl.Base.GetCppObj(delegate);
 			synchronized (cppMap) {
 				if (!cppMap.containsKey(cppId)) {

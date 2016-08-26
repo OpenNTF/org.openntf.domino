@@ -73,7 +73,7 @@ public interface Session {
 		 *
 		 * @since ODA 3.0.0
 		 */
-		PENDANTIC_GC_TRACKING(false);
+		PEDANTIC_GC_TRACKING(false);
 
 		private final boolean khan_;
 
