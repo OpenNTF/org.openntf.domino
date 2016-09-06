@@ -894,7 +894,11 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 */
 	@Override
 	public Date toJavaDate() {
-		return new Date(date_.getTime());
+		if (date_ == null) {
+			return null;
+		} else {
+			return new Date(date_.getTime());
+		}
 	}
 
 	/*
