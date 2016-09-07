@@ -73,7 +73,10 @@ public interface Session {
 		 *
 		 * @since ODA 3.0.0
 		 */
-		PEDANTIC_GC_TRACKING(false);
+		PEDANTIC_GC_TRACKING(false),
+
+		/** Hex values such as replicaid, unid and noteid are forced to lower case before being returned */
+		FORCE_HEX_LOWER_CASE;
 
 		private final boolean khan_;
 
@@ -92,9 +95,6 @@ public interface Session {
 		public boolean isKhan() {
 			return khan_;
 		}
-
-		/** Hex values such as replicaid, unid and noteid are forced to lower case before being returned */
-		FORCE_HEX_LOWER_CASE
 	}
 
 	/**

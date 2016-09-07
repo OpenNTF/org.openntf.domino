@@ -3288,7 +3288,7 @@ public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.
 	 */
 	@Override
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		if (since != null && since.after(this.getLastModifiedDate()))
+		if (since != null && since.after(this.getLastModifiedDate())) {
 			return 0;
 		}
 		NoteCollection nc = createNoteCollection(false);
