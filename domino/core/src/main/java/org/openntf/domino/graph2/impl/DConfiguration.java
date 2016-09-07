@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.design.impl.DesignFactory;
 //import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
@@ -513,10 +514,15 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		private Class<?> getDefaultType(final Vertex v) {
 			if (v instanceof DVertex) {
-				if ("1".equals(((DVertex) v).getProperty("$FormulaClass", String.class)))
-					return ViewVertex.class;
-				if (v instanceof DCategoryVertex)
+				Map map = ((DVertex) v).getDelegate();
+				if (map instanceof Document) {
+					if (DesignFactory.isView((Document) map)) {
+						return ViewVertex.class;
+					}
+				}
+				if (v instanceof DCategoryVertex) {
 					return CategoryVertex.class;
+				}
 			}
 			return DVertexFrame.class;
 		}
@@ -604,7 +610,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							update = false;
 							//							System.out.println("TEMP DEBUG value already applied: " + typeValue.value());
 						} else {
-							classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+							try {
+								classChk = typeRegistry_.getType(typeHoldingTypeField, currentVal);
+							} catch (IllegalArgumentException iae) {
+								//no problem
+							}
 							//							System.out.println("TEMP DEBUG: Registry returned " + (classChk == null ? "null" : classChk.getName())
 							//									+ " for name of " + currentVal);
 							if (classChk == null) {

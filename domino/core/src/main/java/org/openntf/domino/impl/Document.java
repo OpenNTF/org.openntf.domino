@@ -73,9 +73,12 @@ import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.iterators.ItemVector;
 import org.openntf.domino.transactions.DatabaseTransaction;
+import org.openntf.domino.types.AuthorsList;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.NamesList;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.types.ReadersList;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -92,7 +95,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
  * The Class Document.
  */
 public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-org.openntf.domino.Document {
+		org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -187,7 +190,7 @@ org.openntf.domino.Document {
 	 * this means: if you have opened a MIME item do NOTHING with this document until you call closeMimeEntities()
 	 * 
 	 */
-	protected Map<String, Set<MIMEEntity>> openMIMEEntities_;
+	protected transient Map<String, Set<MIMEEntity>> openMIMEEntities_;
 
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
@@ -195,28 +198,30 @@ org.openntf.domino.Document {
 	private boolean mimeWarned_ = false;
 
 	protected boolean checkMimeOpen() {
-		if (openMIMEEntities_ != null && !openMIMEEntities_.isEmpty() && getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE)
-				&& mimeWarned_ == false) {
-			if (getAncestorSession().isOnServer()) {
-				System.out.println("******** WARNING ********");
-				System.out.println("Document Items were accessed in a document while MIMEEntities are still open.");
-				System.out.println("This can cause errors leading to JRE crashes.");
-				System.out.println("Document: " + this.noteid_ + " in " + getAncestorDatabase().getApiPath());
-				System.out.println("MIMEEntities: " + Strings.join(openMIMEEntities_.keySet(), ", "));
-				Throwable t = new Throwable();
-				StackTraceElement[] elements = t.getStackTrace();
-				for (int i = 0; i < 10; i++) {
-					if (elements.length > i) {
-						StackTraceElement element = elements[i];
-						System.out.println("at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName()
-								+ ":" + element.getLineNumber() + ")");
+		if (getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE) && mimeWarned_ == false) {
+			if (openMIMEEntities_ != null && !openMIMEEntities_.isEmpty()) {
+				Set<String> MIMEkeys = openMIMEEntities_.keySet();
+				if (getAncestorSession().isOnServer() && MIMEkeys.size() > 0) {
+					System.out.println("******** WARNING ********");
+					System.out.println("Document Items were accessed in a document while MIMEEntities are still open.");
+					System.out.println("This can cause errors leading to JRE crashes.");
+					System.out.println("Document: " + this.noteid_ + " in " + getAncestorDatabase().getApiPath());
+					System.out.println("MIMEEntities: " + Strings.join(MIMEkeys, ", "));
+					Throwable t = new Throwable();
+					StackTraceElement[] elements = t.getStackTrace();
+					for (int i = 0; i < 10; i++) {
+						if (elements.length > i) {
+							StackTraceElement element = elements[i];
+							System.out.println("at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName()
+									+ ":" + element.getLineNumber() + ")");
+						}
 					}
+					System.out.println("******** END WARNING ********");
+					mimeWarned_ = true;
+					return true;
+				} else {
+					throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
 				}
-				System.out.println("******** END WARNING ********");
-				mimeWarned_ = true;
-				return true;
-			} else {
-				throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
 			}
 		}
 		return false;
@@ -272,8 +277,13 @@ org.openntf.domino.Document {
 	 */
 	private void initialize(final lotus.domino.Document delegate) {
 		try {
-			noteid_ = delegate.getNoteID();
-			unid_ = delegate.getUniversalID();
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+				noteid_ = delegate.getNoteID().toLowerCase();
+				unid_ = delegate.getUniversalID().toLowerCase();
+			} else {
+				noteid_ = delegate.getNoteID();
+				unid_ = delegate.getUniversalID();
+			}
 			isNew_ = noteid_.equals("0") || noteid_.isEmpty();
 
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
@@ -610,6 +620,10 @@ org.openntf.domino.Document {
 	@Override
 	public boolean closeMIMEEntities(final boolean saveChanges, final String entityItemName) {
 		// checkMimeOpen(); RPr: This is not needed here (just to tweak my grep command)
+		if (isDeferred_)
+			return true;
+		if (isDead())
+			return true;
 		try {
 			// TODO: $Mime-xxx Fields to fieldNames_ List
 			if (saveChanges) {
@@ -651,9 +665,15 @@ org.openntf.domino.Document {
 			// ensure that every MIME item is recycled before closing.
 			if (openMIMEEntities_ != null) {
 				if (entityItemName == null) {
-					for (Set<MIMEEntity> currEntitySet : openMIMEEntities_.values()) {
-						for (MIMEEntity currEntity : currEntitySet)
-							((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+					Collection<Set<MIMEEntity>> values = openMIMEEntities_.values();
+					if (values != null && !values.isEmpty()) {
+						for (Set<MIMEEntity> currEntitySet : values) {
+							if (currEntitySet != null && !currEntitySet.isEmpty()) {
+								for (MIMEEntity currEntity : currEntitySet) {
+									((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+								}
+							}
+						}
 					}
 					openMIMEEntities_.clear();
 				} else {
@@ -661,8 +681,9 @@ org.openntf.domino.Document {
 					if (openMIMEEntities_.containsKey(lcName)) {
 						Set<MIMEEntity> currEntitySet = openMIMEEntities_.remove(lcName);
 						if (currEntitySet != null) {
-							for (MIMEEntity currEntity : currEntitySet)
+							for (MIMEEntity currEntity : currEntitySet) {
 								((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
+							}
 						}
 					} else {
 						log_.log(Level.FINE,
@@ -1210,15 +1231,17 @@ org.openntf.domino.Document {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
 
 		// RPr: this should be equal to the code below.
-		MIMEEntity entity = getMIMEEntity(name);
-		if (entity == null) {
-			T result = TypeUtils.itemValueToClass(this, name, type);
-			return result;
-		} else {
-			try {
-				return (T) Documents.getItemValueMIME(this, name, entity);
-			} finally {
-				closeMIMEEntities(false, name);
+		synchronized (this) {
+			MIMEEntity entity = getMIMEEntity(name);
+			if (entity == null) {
+				T result = TypeUtils.itemValueToClass(this, name, type);
+				return result;
+			} else {
+				try {
+					return (T) Documents.getItemValueMIME(this, name, entity);
+				} finally {
+					closeMIMEEntities(false, name);
+				}
 			}
 		}
 	}
@@ -1346,10 +1369,11 @@ org.openntf.domino.Document {
 			}
 			try {
 				vals = getDelegate().getItemValue(name);
-			} catch (NotesException ne) {
-				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath() + " "
-						+ noteid_ + ": " + ne.text);
-				DominoUtils.handleException(ne, this, "Item=" + name);
+			} catch (Throwable t) {
+				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
+						+ " " + noteid_ + ": " + t.getMessage());
+				t.printStackTrace();
+				DominoUtils.handleException(t, this, "Item=" + name);
 				return null;
 			}
 			return wrapColumnValues(vals, this.getAncestorSession());
@@ -1737,7 +1761,11 @@ org.openntf.domino.Document {
 	public String getParentDocumentUNID() {
 		// checkMimeOpen(); RPr: I don't think it is neccessary here		
 		try {
-			return getDelegate().getParentDocumentUNID();
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+				return getDelegate().getParentDocumentUNID().toLowerCase();
+			} else {
+				return getDelegate().getParentDocumentUNID();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -2840,6 +2868,7 @@ org.openntf.domino.Document {
 		List<lotus.domino.Base> recycleThis = null;
 
 		boolean isNonSummary = false;
+		boolean isNames = false;
 		lotus.domino.Item result;
 		try {
 			// Special case. If the argument is an Item, just copy it.
@@ -2880,8 +2909,12 @@ org.openntf.domino.Document {
 					dominoFriendlyVec = new Vector<Object>(coll.size());
 					for (Object valNode : coll) {
 						if (valNode != null) { // CHECKME: Should NULL values discarded?
-							if (valNode instanceof BigString)
+							if (valNode instanceof BigString) {
 								isNonSummary = true;
+							}
+							if (valNode instanceof Name) {
+								isNames = true;
+							}
 							dominoFriendlyVec.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
 						}
 					}
@@ -2898,15 +2931,23 @@ org.openntf.domino.Document {
 				for (int i = 0; i < lh; i++) {
 					Object o = Array.get(value, i);
 					if (o != null) { // CHECKME: Should NULL values be discarded?
-						if (o instanceof BigString)
+						if (o instanceof BigString) {
 							isNonSummary = true;
+						}
+						if (o instanceof Name) {
+							isNames = true;
+						}
 						dominoFriendlyVec.add(toItemFriendly(o, getAncestorSession(), recycleThis));
 					}
 				}
 			} else { // Scalar
 				recycleThis = new ArrayList<lotus.domino.Base>();
-				if (value instanceof BigString)
+				if (value instanceof BigString) {
 					isNonSummary = true;
+				}
+				if (value instanceof Name) {
+					isNames = true;
+				}
 				dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
 			}
 			Object firstElement = null;
@@ -2955,8 +2996,9 @@ org.openntf.domino.Document {
 				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
 
 			if (dominoFriendlyVec != null) {
-				for (Object o : dominoFriendlyVec)
+				for (Object o : dominoFriendlyVec) {
 					payload += getLotusPayload(o, firstElementClass);
+				}
 			} else {
 				payload += getLotusPayload(dominoFriendlyObj, firstElementClass);
 			}
@@ -2999,10 +3041,18 @@ org.openntf.domino.Document {
 			markDirty(itemName, true);
 			if (isSummary == null) {
 				// Auto detect
-				if (isNonSummary)
+				if (isNonSummary) {
 					result.setSummary(false);
+				}
 			} else {
 				result.setSummary(isSummary.booleanValue());
+			}
+			if (value instanceof ReadersList) {
+				result.setReaders(true);
+			} else if (value instanceof AuthorsList) {
+				result.setAuthors(true);
+			} else if (value instanceof NamesList || isNames) {
+				result.setNames(true);
 			}
 
 			s_recycle(result);
@@ -3401,8 +3451,8 @@ org.openntf.domino.Document {
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3713,13 +3763,13 @@ org.openntf.domino.Document {
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3962,8 +4012,13 @@ org.openntf.domino.Document {
 				} catch (NotesException ne) {
 					v = new Vector<Object>();
 				}
-				for (Object o : v)
-					fieldNames_.add((String) o);
+				if (v != null && !v.isEmpty()) {
+					for (Object o : v) {
+						if (o != null) {
+							fieldNames_.add(String.valueOf(o));
+						}
+					}
+				}
 			} catch (Exception e) {
 				DominoUtils.handleException(e, this);
 			}

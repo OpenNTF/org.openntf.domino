@@ -14,8 +14,12 @@ import org.openntf.domino.exceptions.UnimplementedException;
 public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoordinate> {
 	private View parentView_;
 	private ViewNavigator navigator_;
+	protected ViewEntry startEntry_;
+	protected ViewEntry stopEntry_;
+	protected boolean emptyIterator_ = false;
 
 	public static class ViewEntryListIterator implements ListIterator<ViewEntryCoordinate> {
+		private ViewEntryList parentList_;
 		private ViewNavigator navigator_;
 		private ViewEntry cur_;
 		private Boolean hasNextCache_;
@@ -23,9 +27,21 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		private Boolean hasPrevCache_;
 		private ViewEntry prev_;
 		private int index_;
+		private String stopPosition_;
 
-		ViewEntryListIterator(final ViewNavigator navigator) {
+		ViewEntryListIterator(final ViewNavigator navigator, final ViewEntryList parent) {
 			navigator_ = navigator;
+			parentList_ = parent;
+			if (parentList_.startEntry_ != null) {
+				navigator_.gotoEntry(parentList_.startEntry_);
+				next_ = navigator_.getCurrent();
+				//				System.out.println("Starting entry is in position " + next_.getPosition());
+				parentList_.startEntry_ = null;
+			}
+			if (parentList_.stopEntry_ != null) {
+				stopPosition_ = parentList_.stopEntry_.getPosition();
+				parentList_.stopEntry_ = null;
+			}
 		}
 
 		@Override
@@ -35,6 +51,16 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 
 		@Override
 		public boolean hasNext() {
+			if (parentList_.emptyIterator_) {
+				parentList_.emptyIterator_ = false;
+				return false;
+			}
+			if (stopPosition_ != null && cur_ != null) {
+				//				System.out.println("Current position is " + cur_.getPosition());
+				if (stopPosition_.equals(cur_.getPosition())) {
+					return false;
+				}
+			}
 			if (hasNextCache_ == null) {
 				if (cur_ == null) {
 					if (navigator_.getCount() == 0) {
@@ -72,6 +98,9 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			hasPrevCache_ = null;
 			hasNextCache_ = null;
 			prev_ = cur_;
+			if (cur_ == null && next_ != null) {
+				cur_ = next_;
+			}
 			if (cur_ == null) {
 				ViewEntry newEntry = navigator_.getFirst();
 				cur_ = newEntry;
@@ -223,7 +252,7 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 
 	@Override
 	public Iterator<org.openntf.domino.big.ViewEntryCoordinate> iterator() {
-		return new ViewEntryListIterator(navigator_);
+		return new ViewEntryListIterator(navigator_, this);
 	}
 
 	@Override
@@ -233,7 +262,7 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 
 	@Override
 	public ListIterator<org.openntf.domino.big.ViewEntryCoordinate> listIterator() {
-		return new ViewEntryListIterator(navigator_);
+		return new ViewEntryListIterator(navigator_, this);
 
 	}
 
@@ -275,7 +304,22 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 
 	@Override
 	public List<ViewEntryCoordinate> subList(final int arg0, final int arg1) {
-		throw new UnimplementedException();
+		//		System.out.println("Getting entry from " + arg0 + " position");
+		if (arg0 >= size()) {
+			emptyIterator_ = true;
+		} else {
+			startEntry_ = navigator_.getNth(arg0);
+		}
+		//		System.out.println("Entry position is " + startEntry_.getPosition());
+		//		navigator_.gotoEntry(startEntry);
+		if (arg1 > 0) {
+			if (arg1 > size()) {
+				stopEntry_ = navigator_.getNth(size());
+			} else {
+				stopEntry_ = navigator_.getNth(arg1);
+			}
+		}
+		return this;
 	}
 
 	@Override

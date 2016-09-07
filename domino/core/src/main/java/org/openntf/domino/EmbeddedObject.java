@@ -30,7 +30,7 @@ import org.xml.sax.InputSource;
  * The Interface EmbeddedObject.
  */
 public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus.domino.EmbeddedObject,
-		org.openntf.domino.ext.EmbeddedObject, DocumentDescendant {
+org.openntf.domino.ext.EmbeddedObject, DocumentDescendant {
 
 	public static class Schema extends FactorySchema<EmbeddedObject, lotus.domino.EmbeddedObject, Document> {
 		@Override
@@ -65,6 +65,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#doVerb(java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public void doVerb(final String verb);
 
 	/*
@@ -127,6 +128,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#getObject()
 	 */
 	@Override
+	@Deprecated
 	public int getObject();
 
 	/*

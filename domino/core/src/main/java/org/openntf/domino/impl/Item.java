@@ -439,9 +439,12 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 			MIMEEntity entity = getMIMEEntity();
 			if (entity != null) {
 				MIMEHeader contentType = entity.getNthHeader("Content-Type");
-				String headerval = contentType.getHeaderVal();
-				if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {
-					itemType = Type.MIME_BEAN;
+				if (contentType != null) {
+					String headerval = contentType.getHeaderVal();
+					if ("application/x-java-serialized-object".equals(headerval)
+							|| "application/x-java-externalized-object".equals(headerval)) {
+						itemType = Type.MIME_BEAN;
+					}
 				}
 				parent.closeMIMEEntities(false, getName());
 			}
@@ -1062,13 +1065,13 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 				}
 			} catch (NotesException e) {

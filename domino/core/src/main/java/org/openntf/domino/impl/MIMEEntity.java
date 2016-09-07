@@ -98,10 +98,14 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	public void closeMIMEEntity() {
 		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
 		while (hdrIter.hasNext()) {
-			((org.openntf.domino.impl.MIMEHeader) hdrIter.next()).recycle();
+			org.openntf.domino.impl.MIMEHeader header = (org.openntf.domino.impl.MIMEHeader) hdrIter.next();
+			if (!header.isDead()) {
+				header.recycle();
+			}
 			hdrIter.remove();
 		}
-		recycle();
+		if (!isDead())
+			recycle();
 	}
 
 	/*

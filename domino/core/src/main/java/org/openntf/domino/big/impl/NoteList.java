@@ -59,17 +59,6 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 		isSynced_ = true;
 	}
 
-	//	public NoteList(final DbCache cache) {
-	//		localCache_ = cache;
-	//		delegate_ = new ArrayList<org.openntf.domino.big.NoteCoordinate>();
-	//	}
-
-	//FIXME NTF: find out what the correct sorted list implementation is
-	//	public NoteList(final DbCache cache, final Equality<NoteCoordinate> compare) {
-	//		localCache_ = cache;	//NTF this doesn't do anything yet
-	//		delegate_ = new ArrayList<NoteCoordinate>(compare);
-	//	}
-
 	@Override
 	public void sortBy(final String key) {
 		NoteComparator comp = new NoteComparator(key);

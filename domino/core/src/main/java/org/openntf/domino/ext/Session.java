@@ -93,6 +93,8 @@ public interface Session {
 			return khan_;
 		}
 
+		/** Hex values such as replicaid, unid and noteid are forced to lower case before being returned */
+		FORCE_HEX_LOWER_CASE
 	}
 
 	/**

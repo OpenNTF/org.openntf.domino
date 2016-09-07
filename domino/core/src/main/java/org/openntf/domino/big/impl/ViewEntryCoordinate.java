@@ -164,4 +164,14 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 		return entryType_;
 	}
 
+	@Override
+	public long getX() {
+		throw new UnimplementedException("X can't be exported for ViewEntryCoordinates");
+	}
+
+	@Override
+	public long getY() {
+		throw new UnimplementedException("Y can't be exported for ViewEntryCoordinates");
+	}
+
 }

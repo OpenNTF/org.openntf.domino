@@ -26,19 +26,30 @@ public class DEntryEdge extends DEdge {
 	public Object getVertexId(final Direction direction) {
 		if (Direction.OUT.equals(direction)) {
 			if (outKey_ == null) {
-				ViewEntry entry = (org.openntf.domino.ViewEntry) getDelegate();
-				if (entry.isDocument()) {
-					String mid = entry.getDocument().getMetaversalID();
-					setOutId(NoteCoordinate.Utils.getNoteCoordinate(mid));
-				} else if (entry.isCategory()) {
-					String entryid = delegateKey_.toString();
-					String mid = "V" + entryid.substring(1);
-					setOutId(ViewEntryCoordinate.Utils.getViewEntryCoordinate(mid));
-				} else if (entry.isTotal()) {
-					setOutId(null);
-					//FIXME NTF Implement this please
-				} else {
-					throw new UnimplementedException();
+				try {
+					ViewEntry entry = (org.openntf.domino.ViewEntry) getDelegate();
+					if (entry.isDocument()) {
+						String mid = entry.getDocument().getMetaversalID();
+						setOutId(NoteCoordinate.Utils.getNoteCoordinate(mid));
+					} else if (entry.isCategory()) {
+						String entryid = delegateKey_.toString();
+						String mid = "V" + entryid.substring(1);
+						setOutId(ViewEntryCoordinate.Utils.getViewEntryCoordinate(mid));
+					} else if (entry.isTotal()) {
+						setOutId("TOTAL");
+						//FIXME NTF Implement this please
+					} else {
+						Exception e = new UnimplementedException();
+						e.printStackTrace();
+						try {
+							throw e;
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
 				}
 			}
 		} else if (Direction.IN.equals(direction)) {

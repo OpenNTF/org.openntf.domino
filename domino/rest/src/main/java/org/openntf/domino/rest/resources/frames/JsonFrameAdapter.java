@@ -251,7 +251,7 @@ public class JsonFrameAdapter implements JsonObject {
 		if (props == null) {
 			props = new ArrayList<CharSequence>();
 			props.addAll(getGetters().keySet());
-			if (props == null || props.size() < 4) {
+			if (props == null || props.size() < 5) {
 				if (frame_ instanceof DVertexFrame) {
 					Set<CharSequence> raw = ((DVertexFrame) frame_).asMap().keySet();
 					props.addAll(CaseInsensitiveString.toCaseInsensitive(raw));
@@ -554,13 +554,15 @@ public class JsonFrameAdapter implements JsonObject {
 							}
 
 							if (getStart() > 0) {
+								// System.out.println("Start is " + getStart() +
+								// " and count is " + getCount());
 								if (getCount() > 0) {
 									if (result instanceof FramedEdgeList) {
 										result = ((FramedEdgeList<?>) result).subList(getStart(), getStart()
-												+ getCount());
+												+ getCount() - 1);
 									} else if (result instanceof FramedVertexList) {
 										result = ((FramedVertexList<?>) result).subList(getStart(), getStart()
-												+ getCount());
+												+ getCount() - 1);
 									}
 								} else {
 									if (result instanceof FramedEdgeList) {
@@ -605,16 +607,22 @@ public class JsonFrameAdapter implements JsonObject {
 				Method crystal = getGetters().get(key);
 				if (crystal != null) {
 					try {
+						// if ("@rendering".equals(key) ||
+						// crystal.getName().equalsIgnoreCase("getRendering")) {
+						// System.out.println("TEMP DEBUG building rendering for object "
+						// + System.identityHashCode(frame));
+						// }
+						// if (Proxy.isProxyClass(frame.getClass())) {
+						// InvocationHandler handler =
+						// Proxy.getInvocationHandler(frame);
+						// result = handler.invoke(frame, crystal, (Object[])
+						// null);
+						// } else {
 						result = crystal.invoke(frame, (Object[]) null);
-						// if (frame instanceof VertexFrame) {
-						// Vertex v = ((VertexFrame) frame).asVertex();
-						// if (v instanceof DProxyVertex) {
-						// System.out.println("TEMP DEBUG using a proxy vertex");
 						// }
-						// System.out.println("TEMP DEBUG invoking getter for "
-						// + crystal.getName());
-						// }
-					} catch (Exception e) {
+					} catch (Throwable t) {
+						// System.out
+						// .println("TEMP DEBUG Throwable occured attempting to invoke property. Falling back...");
 						if (frame instanceof EdgeFrame) {
 							result = ((EdgeFrame) frame).asEdge().getProperty(paramKey);
 						} else if (frame instanceof VertexFrame) {

@@ -490,6 +490,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	protected abstract D getDelegate_unchecked();
 
+	protected abstract D getDelegate_unchecked(boolean fromIsDead);
+
 	protected void resurrect() {
 		throw new AbstractMethodError();
 	}
@@ -553,7 +555,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	@Override
 	public void recycle() {
-		D delegate = getDelegate_unchecked();
+		D delegate = getDelegate_unchecked(true);
 		if (isDead(delegate)) {
 			return;
 		}
@@ -1228,7 +1230,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@Override
 	public boolean isDead() {
-		return isDead(getDelegate_unchecked());
+		//		return isDead(delegate_);
+		return isDead(getDelegate_unchecked(true));
 	}
 
 	@Deprecated

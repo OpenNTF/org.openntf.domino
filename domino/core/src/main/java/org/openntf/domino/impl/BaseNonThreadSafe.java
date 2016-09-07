@@ -156,6 +156,20 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 		return delegate_;
 	}
 
+	/**
+	 * Gets the delegate without Resurrect
+	 * 
+	 * @return the delegate directly
+	 */
+	@Override
+	protected D getDelegate_unchecked(final boolean fromIsDead) {
+		if (fromIsDead) {
+			return delegate_;
+		} else {
+			return getDelegate_unchecked();
+		}
+	}
+
 	/*
 	 * From NTF: allows individual classes to override the thread safety based on implementation
 	 * One example is the Document class, which is safe to resurrect across threads if it hasn't been written to

@@ -2,10 +2,18 @@ package org.openntf.domino.graph2.impl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.design.impl.DesignFactory;
+import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
@@ -18,6 +26,9 @@ import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -32,6 +43,126 @@ import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
+	private Cache<Object, Object> framedElementCache_;
+
+	//	protected Map<Element, Object> getFramedElementCache() {
+	//		if (framedElementCache_ == null) {
+	//			framedElementCache_ = new FastMap<Element, Object>().atomic();
+	//		}
+	//		return framedElementCache_;
+	//	}
+
+	public static class DefaultKeyResolver implements DKeyResolver {
+		private Collection<Class<?>> types_;
+		private DFramedTransactionalGraph dgraph_;
+
+		public DefaultKeyResolver(final DFramedTransactionalGraph graph) {
+			dgraph_ = graph;
+		}
+
+		@Override
+		public Collection<Class<?>> getTypes() {
+			if (types_ == null) {
+				types_ = new HashSet<Class<?>>();
+				types_.add(DVertexFrame.class);
+			}
+			return types_;
+		}
+
+		@Override
+		public Element handleMissingKey(final Class<?> type, final Object key) {
+			return null;
+		}
+
+		@Override
+		public NoteCoordinate resolveKey(final Class<?> type, final Object key) {
+			DElementStore store = dgraph_.getElementStore(type);
+			long pid = store.getStoreKey();
+			String rid = NoteCoordinate.Utils.getReplidFromLong(pid);
+			String id = DominoUtils.toUnid(String.valueOf(key));
+			NoteCoordinate result = NoteCoordinate.Utils.getNoteCoordinate(rid, id);
+			return result;
+		}
+	}
+
+	public static class FrameLoadCallable implements Callable<Object> {
+		protected final DFramedTransactionalGraph parent_;
+		protected Object id_;
+		protected Class<?> kind_;
+		protected Class<?> delegateType_;
+
+		public FrameLoadCallable(final DFramedTransactionalGraph parent, final Object id, final Class<?> kind, final Class<?> delegateType) {
+			parent_ = parent;
+			id_ = id;
+			kind_ = kind;
+			delegateType_ = delegateType;
+		}
+
+		@Override
+		public Object call() throws Exception {
+			Object result = null;
+			DGraph base = (DGraph) parent_.getBaseGraph();
+			org.openntf.domino.graph2.DElementStore store = null;
+			if (id_ instanceof NoteCoordinate) {
+				store = base.findElementStore(id_);
+			} else {
+				String typeid = parent_.getTypedId(id_);
+				if (typeid == null) {
+					store = base.findElementStore(kind_);
+				} else {
+					store = base.findElementStore(typeid);
+				}
+			}
+			Element elem = store.getElement(id_);
+			if (null == elem) {
+				result = null;
+			} else if (elem instanceof Edge) {
+				result = parent_.frame((Edge) elem, kind_);
+			} else if (elem instanceof Vertex) {
+				result = parent_.frame((Vertex) elem, kind_);
+			} else {
+				throw new IllegalStateException("Key " + String.valueOf(id_) + " returned an element of type " + elem.getClass().getName());
+			}
+			return result;
+		}
+
+	}
+
+	protected Cache<Object, Object> getFramedElementCache() {
+		if (framedElementCache_ == null) {
+			framedElementCache_ = CacheBuilder.newBuilder().maximumSize(250000).expireAfterWrite(10, TimeUnit.MINUTES).build();
+		}
+		return framedElementCache_;
+	}
+
+	//	protected <F> F getCachedElement(final Element element, final Class<F> kind) {
+	//		if (element == null)
+	//			return null;
+	//		//		System.out.println("TEMP DEBUG checking cache for element " + element.getId().toString());
+	//		Object chk = getFramedElementCache().get(element);
+	//		if (chk != null) {
+	//			if (kind.isAssignableFrom(chk.getClass())) {
+	//				//				System.out.println("TEMP DEBUG returning from cache for element " + element.getId().toString());
+	//				return (F) chk;
+	//			} else {
+	//				throw new IllegalStateException("Requested id of " + String.valueOf(element) + " is already in cache but is a "
+	//						+ chk.getClass().getName());
+	//			}
+	//		}
+	//		return null;
+	//	}
+
+	private void removeCache(final Object object) {
+		Object key = null;
+		if (object instanceof EdgeFrame) {
+			key = ((EdgeFrame) object).asEdge().getId();
+		} else if (object instanceof VertexFrame) {
+			key = ((VertexFrame) object).asVertex().getId();
+		}
+		if (key != null) {
+			getFramedElementCache().invalidate(key);
+		}
+	}
 
 	public class FramedElementIterable<T> implements Iterable<T> {
 		protected final Class<T> kind;
@@ -62,7 +193,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 				@Override
 				public T next() {
-					return framedGraph.frame(this.iterator.next(), kind);
+					Element e = this.iterator.next();
+					return framedGraph.getElement(e.getId(), kind);
 				}
 			};
 		}
@@ -116,6 +248,12 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	@Override
 	public <F> F addVertex(final Object id, final Class<F> kind) {
+		if (id != null && id instanceof NoteCoordinate) {
+			Object cacheChk = getElement(id, kind);
+			if (cacheChk != null) {
+				return (F) cacheChk;
+			}
+		}
 		DGraph base = (DGraph) this.getBaseGraph();
 		org.openntf.domino.graph2.DElementStore store = null;
 		if (kind != null) {
@@ -138,6 +276,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (result instanceof Eventable) {
 
 		}
+		getFramedElementCache().put(vertex.getId(), result);
 		return result;
 	}
 
@@ -270,98 +409,46 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	public Element getElement(final Object id) {
-		DGraph base = (DGraph) this.getBaseGraph();
-		org.openntf.domino.graph2.DElementStore store = null;
-		if (id instanceof NoteCoordinate) {
-			store = base.findElementStore(id);
-			//			System.out.println("Got element store from NoteCoordinate " + id.toString());
+		Object frame = getElement(id, null);
+		if (frame == null)
+			return null;
+		if (frame instanceof EdgeFrame) {
+			return ((EdgeFrame) frame).asEdge();
+		} else if (frame instanceof VertexFrame) {
+			return ((VertexFrame) frame).asVertex();
 		} else {
-			String typeid = getTypedId(id);
-			store = base.findElementStore(typeid);
+			throw new IllegalStateException("Attempt to get element with id " + String.valueOf(id) + " returned a "
+					+ frame.getClass().getName());
 		}
-		Element elem = store.getElement(id);
-		return elem;
 	}
 
 	public <F> F getElement(final Object id, final Class<F> kind) {
 		F result = null;
-		DGraph base = (DGraph) this.getBaseGraph();
-		org.openntf.domino.graph2.DElementStore store = null;
-		if (id instanceof NoteCoordinate) {
-			store = base.findElementStore(id);
-			//			System.out.println("Got element store from NoteCoordinate " + id.toString());
-		} else {
-			String typeid = getTypedId(id);
-			if (typeid == null) {
-				store = base.findElementStore(kind);
-			} else {
-				store = base.findElementStore(typeid);
+		try {
+			//			System.out.println("Attempting to retrieve a " + (null == kind ? "Frame" : kind.getName()) + " with id "
+			//					+ (null == id ? "null" : String.valueOf(id)));
+			Object cacheChk = getFramedElementCache().get(id, new FrameLoadCallable(this, id, kind, Element.class));
+			if (cacheChk != null && (kind == null || kind.isAssignableFrom(cacheChk.getClass()))) {
+				return (F) cacheChk;
 			}
+		} catch (InvalidCacheLoadException icle) {
+			//			System.out.println("Cache miss on id " + String.valueOf(id) + " for type " + (kind == null ? "null" : kind.getName()));
+			//NTF this is no problem and quite normal
+			return null;
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
-		//		System.out.println("Attempting to get an element from element store " + System.identityHashCode(store));
-		Element elem = store.getElement(id);
-		if (null == elem) {
-			result = null;
-		} else if (elem instanceof Edge) {
-			result = frame((Edge) elem, kind);
-		} else if (elem instanceof Vertex) {
-			result = frame((Vertex) elem, kind);
-		} else {
-			throw new IllegalStateException("Key " + id.toString() + " returned an element of type " + elem.getClass().getName());
-		}
-		//		if (result == null) {
-		//			System.out.println("Unable to resolve an element with id " + id.toString() + " though we did find a store "
-		//					+ store.getStoreKey());
-		//		}
 		return result;
 	}
 
 	@Override
 	public <F> F getVertex(final Object id, final Class<F> kind) {
-		DGraph base = (DGraph) this.getBaseGraph();
-		org.openntf.domino.graph2.DElementStore store = null;
-		if (id instanceof NoteCoordinate) {
-			store = base.findElementStore(id);
-		} else {
-			String typeid = getTypedId(id);
-			if (typeid == null) {
-				store = base.findElementStore(kind);
-			} else {
-				store = base.findElementStore(typeid);
-			}
-		}
-		String targetid = NoteCoordinate.Utils.getReplidFromLong(store.getStoreKey());
-		//		System.out.println("TEMP DEBUG getting vertex from " + targetid + " using id " + id);
-		Vertex vertex = store.getVertex(id);
-		if (null == vertex) {
-			return null;
-		}
-
-		return frame(vertex, kind);
+		return getElement(id, kind);
 	}
 
 	@Override
 	public <F> F getEdge(final Object id, final Class<F> kind) {
-		DGraph base = (DGraph) this.getBaseGraph();
-		org.openntf.domino.graph2.DElementStore store = null;
-		if (id instanceof NoteCoordinate) {
-			store = base.findElementStore(id);
-		} else {
-			String typeid = getTypedId(id);
-			if (typeid == null) {
-				store = base.findElementStore(kind);
-			} else {
-				store = base.findElementStore(typeid);
-			}
-		}
-		Edge edge = store.getEdge(id);
-		if (null == edge) {
-			return null;
-		}
-		//		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
-		//			initializer.initElement(kind, this, edge);
-		//		}
-		return frame(edge, kind);
+		return getElement(id, kind);
 	}
 
 	@Override
@@ -378,16 +465,19 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
-	public <F> F addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
-		//		if (id != null) {
-		//			System.out.println("TEMP DEBUG Adding an edge with a forced id of " + String.valueOf(id));
-		//		}
-		return (F) super.addEdge(id, outVertex, inVertex, label);
-	}
+	//	public <F> F addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
+	//		return (F) super.addEdge(id, outVertex, inVertex, label);
+	//	}
 
 	@Override
 	public <F> F addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label, final Direction direction,
 			final Class<F> kind) {
+		if (id != null && id instanceof NoteCoordinate) {
+			Object cacheChk = getElement(id, kind);
+			if (cacheChk != null) {
+				return (F) cacheChk;
+			}
+		}
 		DGraph base = (DGraph) this.getBaseGraph();
 		org.openntf.domino.graph2.DElementStore store = null;
 		if (id instanceof NoteCoordinate) {
@@ -405,7 +495,9 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		((DEdge) edge).setInVertex(inVertex);
 		((DEdge) edge).setOutVertex(outVertex);
 
-		return frame(edge, kind);
+		F result = frame(edge, kind);
+		getFramedElementCache().put(edge.getId(), result);
+		return result;
 	}
 
 	@Override
@@ -459,6 +551,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return new FramedElementIterable(this, elements, kind);
 	}
 
+	@SuppressWarnings("deprecation")
 	public <F> F frame(final Element element, final Class<F> kind) {
 		//		Class<F> klazz = kind;
 		//		DConfiguration config = (DConfiguration) this.getConfig();
@@ -468,7 +561,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		//				initializer.initElement(klazz, this, element);
 		//			}
 		//		}
-		@SuppressWarnings("deprecation")
 		F result = null;
 		if (element instanceof Edge) {
 			result = frame((Edge) element, kind);
@@ -531,10 +623,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	public <F> F frame(final Vertex vertex, Class<F> kind) {
 		if (vertex == null)
 			return null;
-		String chk = ((DVertex) vertex).getProperty("$FormulaClass", String.class);
-		boolean isView = "1".equals(chk);
-		if (isView) {
-			kind = (Class<F>) ViewVertex.class;
+		Map map = ((DVertex) vertex).getDelegate();
+		if (map instanceof Document) {
+			if (DesignFactory.isView((Document) map)) {
+				kind = (Class<F>) ViewVertex.class;
+			}
 		}
 		Class<F> klazz = (Class<F>) (kind == null ? VertexFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
@@ -574,25 +667,16 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 					//nothing
 				}
 			} else {
-				try {
-					Method crystal = result.getClass().getMethod("read", null);
-					if (crystal != null) {
-						((Eventable) result).read();
-					}
-				} catch (Throwable t) {
-					//nothing
-				}
+				//				try {
+				//					Method crystal = result.getClass().getMethod("read", null);
+				//					if (crystal != null) {
+				//						((Eventable) result).read();
+				//					}
+				//				} catch (Throwable t) {
+				//					//nothing
+				//				}
 			}
 		}
-		//		if (isView) {
-		StringBuilder sb = new StringBuilder();
-		Class<?>[] interfaces = result.getClass().getInterfaces();
-		for (Class<?> inter : interfaces) {
-			sb.append(inter.getName());
-			sb.append(", ");
-		}
-		//		System.out.println("Requested a " + klazz.getName() + " and resulted in a [" + sb.toString() + "]");
-		//		}
 		return result;
 	}
 
@@ -608,7 +692,15 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	public DKeyResolver getKeyResolver(final Class<?> type) {
 		DGraph base = (DGraph) this.getBaseGraph();
-		return base.getKeyResolver(type);
+		DKeyResolver result = base.getKeyResolver(type);
+		if (result == null) {
+			result = base.getKeyResolver(DVertexFrame.class);
+			if (result == null) {
+				result = new DefaultKeyResolver(this);
+				base.addKeyResolver(result);
+			}
+		}
+		return result;
 	}
 
 }

@@ -112,7 +112,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				e.printStackTrace();
 			}
 		}
-		return store.getVertex(id);
+		return (Vertex) store.getElement(id);
 	}
 
 	@Override
@@ -159,7 +159,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		if (id instanceof NoteCoordinate) {
 
 		}
-		return findElementStore(id).getEdge(id);
+		return (Edge) findElementStore(id).getElement(id);
 	}
 
 	@Override
@@ -253,7 +253,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public Object findDelegate(final Object delegateKey) {
 		DElementStore store = findElementStore(delegateKey);
-		return store.findElementDelegate(delegateKey, Element.class);
+		return store.findElementDelegate(delegateKey/*, Element.class*/);
 	}
 
 	@Override
