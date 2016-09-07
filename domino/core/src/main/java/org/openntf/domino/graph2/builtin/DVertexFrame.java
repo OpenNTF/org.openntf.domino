@@ -24,6 +24,9 @@ public interface DVertexFrame extends Editable {
 	@TypedProperty(value = "@ModifiedDate", derived = true)
 	public Date getModified();
 
+	@TypedProperty(value = "$$Key")
+	public String getKey();
+
 	@JavaHandler
 	public Document asDocument();
 

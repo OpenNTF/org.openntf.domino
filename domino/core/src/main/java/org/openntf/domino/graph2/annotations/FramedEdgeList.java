@@ -31,9 +31,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		protected final Class<T> kind_;
 		//		    protected final Direction direction_;
 		protected final ListIterator<Edge> iterator_;
-		protected final FramedGraph<? extends Graph> framedGraph_;
+		protected final DFramedTransactionalGraph framedGraph_;
 
-		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Edge> iterator, final Class<T> kind/*, Direction direction*/) {
+		public FramedListIterator(final DFramedTransactionalGraph graph, final ListIterator<Edge> iterator, final Class<T> kind/*, Direction direction*/) {
 			//			System.out.println("TEMP DEBUG Created new FramedListIterator with a " + iterator.getClass().getName() + " kind: "
 			//					+ kind.getName());
 			kind_ = kind;
@@ -73,8 +73,8 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 				e = iterator_.next();
 			}
 			if (e != null) {
-				T result = framedGraph_.frame(e, kind_);
-				//			System.out.println("next() resulted in a " + result.getClass().getName());
+				T result = (T) framedGraph_.getElement(e.getId(), kind_);
+				//				 framedGraph_.frame(e, kind_);
 				return result;
 			} else {
 				return null;
@@ -88,7 +88,17 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 		@Override
 		public T previous() {
-			return framedGraph_.frame(iterator_.previous(), kind_);
+			Edge e = iterator_.previous();
+			while (e == null && iterator_.hasPrevious()) {
+				e = iterator_.previous();
+			}
+			if (e != null) {
+				T result = (T) framedGraph_.getElement(e.getId(), kind_);
+				//				 framedGraph_.frame(e, kind_);
+				return result;
+			} else {
+				return null;
+			}
 		}
 
 		@Override
@@ -320,17 +330,17 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	@Override
 	public ListIterator<T> listIterator() {
-		return new FramedListIterator<T>(framedGraph, list_.listIterator(), kind);
+		return new FramedListIterator<T>((DFramedTransactionalGraph) framedGraph, list_.listIterator(), kind);
 	}
 
 	@Override
 	public ListIterator<T> listIterator(final int arg0) {
-		return new FramedListIterator<T>(framedGraph, list_.listIterator(arg0), kind);
+		return new FramedListIterator<T>((DFramedTransactionalGraph) framedGraph, list_.listIterator(arg0), kind);
 	}
 
 	@Override
 	public Iterator<T> iterator() {
-		return new FramedListIterator<T>(framedGraph, list_.listIterator(), kind);
+		return new FramedListIterator<T>((DFramedTransactionalGraph) framedGraph, list_.listIterator(), kind);
 	}
 
 	@Override

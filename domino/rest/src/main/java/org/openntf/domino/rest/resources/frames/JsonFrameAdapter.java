@@ -251,7 +251,7 @@ public class JsonFrameAdapter implements JsonObject {
 		if (props == null) {
 			props = new ArrayList<CharSequence>();
 			props.addAll(getGetters().keySet());
-			if (props == null || props.size() < 4) {
+			if (props == null || props.size() < 5) {
 				if (frame_ instanceof DVertexFrame) {
 					Set<CharSequence> raw = ((DVertexFrame) frame_).asMap().keySet();
 					props.addAll(CaseInsensitiveString.toCaseInsensitive(raw));

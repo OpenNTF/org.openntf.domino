@@ -8,11 +8,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-import javolution.util.FastSet;
 import javolution.util.FastTable;
 
 import org.openntf.domino.Database;
@@ -21,6 +20,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph2.DIdentityFactory;
@@ -30,15 +30,185 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.VertexFrame;
 
 public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DElementStore.class.getName());
+
+	public static class ElementStoreCacheLoader extends CacheLoader<Object, Element> {
+		protected DElementStore parent_;
+
+		protected ElementStoreCacheLoader(final DElementStore parent) {
+			parent_ = parent;
+		}
+
+		protected Object getStoreDelegate(final Object key) {
+			Object result = parent_.getStoreDelegate();
+			if (parent_.isProxied()) {
+				NoteCoordinate nc = null;
+				if (key instanceof NoteCoordinate) {
+					nc = (NoteCoordinate) key;
+				} else if (key instanceof CharSequence) {
+					nc = NoteCoordinate.Utils.getNoteCoordinate((CharSequence) key);
+				}
+				if (nc != null) {
+					long dbkey = nc.getReplicaLong();
+					if (parent_.getProxyStoreKey().equals(dbkey)) {
+						result = parent_.getProxyStoreDelegate();
+					}
+					//			System.out.println("TEMP DEBUG Retrieving from proxied store");
+				}
+			}
+			return result;
+		}
+
+		protected Object getElementDelegate(final Database db, final Object key) {
+			Object result = null;
+			db.getAncestorSession().setFixEnable(Fixes.MIME_BLOCK_ITEM_INTERFACE, false);
+			if (key instanceof Serializable) {
+				if (key instanceof ViewEntryCoordinate) {
+					result = ((ViewEntryCoordinate) key).getViewEntry();
+				} else if (key instanceof NoteCoordinate) {
+					String unid = ((NoteCoordinate) key).getUNID();
+					result = db.getDocumentWithKey(unid, false);
+					//					System.out.println("Retrieved result using NoteCoordinate with unid " + unid);
+				} else if (key instanceof CharSequence) {
+					String skey = ((CharSequence) key).toString();
+					if (skey.length() > 50) {
+						String prefix = skey.subSequence(0, 2).toString();
+						String mid = skey.subSequence(2, 50).toString();
+						if ((prefix.equals("EC") || prefix.equals("ED") || prefix.equals("ET") || prefix.equals("EU"))
+								&& DominoUtils.isMetaversalId(mid)) {
+							ViewEntryCoordinate vec = ViewEntryCoordinate.Utils.getViewEntryCoordinate(skey);
+							result = vec.getViewEntry();
+						} else if ((prefix.equals("VC") || prefix.equals("VD") || prefix.equals("VT") || prefix.equals("VU"))
+								&& DominoUtils.isMetaversalId(mid)) {
+							ViewEntryCoordinate vec = ViewEntryCoordinate.Utils.getViewEntryCoordinate(skey);
+							result = vec.getViewEntry();
+						}
+					}
+				}
+				if (result == null) {
+					result = db.getDocumentWithKey((Serializable) key, false);
+				}
+				if (result != null) {
+					//					System.out.println("TEMP DEBUG Checking for proxy status for type " + type.getSimpleName());
+					boolean isProxy = false;
+					if (result instanceof Document) {
+						isProxy = ((Document) result).hasItem(DProxyVertex.PROXY_ITEM);
+					}
+					if (parent_.isProxied()) {
+						result = parent_.setupProxy(result, (Serializable) key);
+					}
+				}
+			} else {
+				if (key != null) {
+					System.out.println("WARNING: Unknown delegatekey of type " + key.getClass().getName()
+							+ ". Creating a brand new delegate.");
+				}
+				//null is a perfectly valid key, since it means we want to let the system assign it.
+				result = db.createDocument();
+			}
+			return result;
+		}
+
+		public Element toElement(final Object delegate, final Object id, final boolean isProxiedSource) {
+			Element result = null;
+			if (delegate instanceof Element) {
+				result = (Element) delegate;
+			} else if (delegate instanceof Document) {
+				if (isProxiedSource) {
+					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
+					result = vertex;
+				} else if (DesignFactory.isView((Document) delegate)) {
+					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
+					result = vertex;
+				} else {
+					Object typeChk = ((Document) delegate).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+					String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+					if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+						DEdge edge = new DEdge(parent_.getConfiguration().getGraph(), (Document) delegate);
+						result = edge;
+					} else {
+						DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
+						result = vertex;
+					}
+				}
+			} else if (delegate instanceof ViewEntry) {
+				if (id instanceof ViewEntryCoordinate) {
+					ViewEntryCoordinate vec = (ViewEntryCoordinate) id;
+					String entryType = vec.getEntryType();
+					if (entryType.startsWith("E")) {
+						DEdge edge = new DEntryEdge(parent_.getConfiguration().getGraph(), (ViewEntry) delegate, (ViewEntryCoordinate) id,
+								parent_);
+						result = edge;
+					} else if (entryType.startsWith("V")) {
+						ViewEntry entry = (ViewEntry) delegate;
+						if (entry.isCategory()) {
+							Map<String, Object> delegateMap = new LinkedHashMap<String, Object>();
+							delegateMap.put("value", entry.getCategoryValue());
+							delegateMap.put("position", entry.getPosition());
+							delegateMap.put("noteid", entry.getNoteID());
+							DCategoryVertex vertex = new DCategoryVertex(parent_.getConfiguration().getGraph(), delegateMap,
+									entry.getParentView());
+							vertex.delegateKey_ = vec;
+							result = vertex;
+						} else {
+							System.out.println("TEMP DEBUG ViewVertex entry is not a category");
+						}
+					}
+				} else {
+					System.out.println("TEMP DEBUG ViewEntry's id is not a ViewEntryCoordinate. It's a " + id.getClass().getName());
+				}
+			}
+			return result;
+		}
+
+		@Override
+		public Element load(final Object key) throws Exception {
+			Element result = null;
+			Object delegate = null;
+			boolean isProxiedSource = false;
+			if (key instanceof NoteCoordinate && parent_.isProxied()) {
+				NoteCoordinate nc = (NoteCoordinate) key;
+				if (parent_.getStoreKey().equals(nc.getReplicaLong())) {
+					//this is a request for a vertex out of the proxied store, not the proxy itself
+					Database sourcedb = (Database) parent_.getStoreDelegate();
+					String unid = nc.getUNID();
+					delegate = sourcedb.getDocumentByUNID(unid, true);
+					if (delegate != null) {
+						isProxiedSource = true;
+					}
+				}
+			}
+			if (delegate == null) {
+				Object del = getStoreDelegate(key);
+				if (del instanceof Database) {
+					Object localkey = parent_.localizeKey(key);
+					delegate = getElementDelegate((Database) del, localkey);
+				} else {
+					throw new IllegalStateException("ElementStore delegate is not a Database; it's a "
+							+ (del == null ? "null" : del.getClass().getName()) + ". We don't handle this case yet.");
+					//TODO NTF alternative strategies...
+				}
+			}
+			if (delegate != null) {
+				result = toElement(delegate, key, isProxiedSource);
+			}
+			return result;
+		}
+
+	}
 
 	private List<Class<?>> types_;
 	private Object delegate_;
@@ -49,26 +219,35 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	private Object provisionalProxyDelegateKey_;
 	private DIdentityFactory identityFactory_;
 	private CustomProxyResolver proxyResolver_;
-	private transient Map<Object, NoteCoordinate> keyCache_;
-	private transient Map<Object, Element> elementCache_;
+	private transient Map<Object, NoteCoordinate> keyMap_;
+	private transient Map<Object, Element> elementCache_OLD;
+	private transient LoadingCache<Object, Element> elementCache_;
 	private transient org.openntf.domino.graph2.DConfiguration configuration_;
 
 	protected void setTypes(final List<Class<?>> types) {
 		types_ = types;
 	}
 
-	protected Map<Object, Element> getElementCache() {
+	protected LoadingCache<Object, Element> getElementCache() {
 		if (elementCache_ == null) {
-			elementCache_ = new FastMap<Object, Element>().atomic();
+			elementCache_ = CacheBuilder.newBuilder().maximumSize(25000).expireAfterWrite(10, TimeUnit.MINUTES)
+					.build(new ElementStoreCacheLoader(this));
 		}
 		return elementCache_;
 	}
 
-	protected Map<Object, NoteCoordinate> getKeyCache() {
-		if (keyCache_ == null) {
-			keyCache_ = new FastMap<Object, NoteCoordinate>().atomic();
+	//	protected Map<Object, Element> getElementCache_OLD() {
+	//		if (elementCache_ == null) {
+	//			elementCache_ = new FastMap<Object, Element>().atomic();
+	//		}
+	//		return elementCache_;
+	//	}
+
+	protected Map<Object, NoteCoordinate> getKeyMap() {
+		if (keyMap_ == null) {
+			keyMap_ = new ConcurrentHashMap<Object, NoteCoordinate>();
 		}
-		return keyCache_;
+		return keyMap_;
 	}
 
 	public DElementStore() {
@@ -78,7 +257,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void uncache(final Element elem) {
-		getElementCache().remove(elem);
+		//		getElementCache().remove(elem);
+		getElementCache().invalidate(elem.getId());
 	}
 
 	@Override
@@ -300,31 +480,34 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Vertex addVertex(final Object id) {
 		Vertex result = null;
-		Element chk = getCachedElement(id, Vertex.class);
-		if (chk != null) {
-			result = (Vertex) chk;
-		} else {
-			Object localkey = localizeKey(id);
-			Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class);
-			if (delegate != null) {
-				if (isProxied()) {
-					result = setupProxy(delegate, (Serializable) id);
-				} else {
-					DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
-					result = vertex;
-				}
-				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
-				getConfiguration().getGraph().startTransaction(result);
+		if (id != null) {
+			Element chk = getElement(id);
+			if (chk != null && chk instanceof Vertex) {
+				return (Vertex) chk;
 			}
+		}
+		Object localkey = localizeKey(id);
+		Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class);
+		if (delegate != null) {
+			if (isProxied()) {
+				result = setupProxy(delegate, (Serializable) id);
+			} else {
+				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
+				result = vertex;
+			}
+			getElementCache().put(result.getId(), result);
+			if (id != null) {
+				getKeyMap().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+			}
+			getConfiguration().getGraph().startTransaction(result);
 		}
 		return result;
 	}
 
-	@Override
-	public Vertex getVertex(final Object id) {
-		return (Vertex) getElement(id, Vertex.class);
-	}
+	//	@Override
+	//	public Vertex getVertex(final Object id) {
+	//		return (Vertex) getElement(id, Vertex.class);
+	//	}
 
 	@Override
 	public void removeVertex(final Vertex vertex) {
@@ -337,8 +520,10 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (edges instanceof List) {
 					ListIterator<Edge> li = ((List<Edge>) edges).listIterator();
 					while (li.hasNext()) {
-						getConfiguration().getGraph().removeEdge(li.next(), dv);
-						//					li.remove();
+						Edge e = li.next();
+						if (e != null) {
+							getConfiguration().getGraph().removeEdge(li.next(), dv);
+						}
 						i++;
 					}
 				} else {
@@ -360,142 +545,149 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Edge addEdge(final Object id) {
 		Edge result = null;
-		Element chk = getCachedElement(id, Edge.class);
-		if (chk != null) {
-			result = (Edge) chk;
-		} else {
-			Object localkey = localizeKey(id);
-			Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
-			if (delegate != null) {
-				DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
-				result = edge;
-				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
-				getConfiguration().getGraph().startTransaction(result);
+		if (id != null) {
+			Element chk = getElement(id);
+			if (chk != null && chk instanceof Vertex) {
+				return (Edge) chk;
 			}
+		}
+		Object localkey = localizeKey(id);
+		Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
+		if (delegate != null) {
+			DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
+			result = edge;
+			getElementCache().put(result.getId(), result);
+			if (id != null) {
+				getKeyMap().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+			}
+			getConfiguration().getGraph().startTransaction(result);
 		}
 		return result;
 	}
 
-	protected Element getCachedElement(final Object id, final Class<? extends Element> type) {
-		if (id == null)
-			return null;
-		Element chk = getElementCache().get(id);
-		if (chk == null) {
-			NoteCoordinate nc = getKeyCache().get(id);
-			if (nc != null) {
-				chk = getElementCache().get(nc);
-			}
-		}
-		if (chk != null) {
-			if (type.isAssignableFrom(chk.getClass())) {
-				return chk;
-			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
-						+ chk.getClass().getName());
-			}
-		}
-		return null;
-	}
-
-	public Element getElement(final Object id, final Class<? extends Element> type) throws IllegalStateException {
-		Element result = null;
-		Element chk = getCachedElement(id, Element.class);
-		if (chk != null) {
-			result = chk;
-		} else {
-			boolean isProxiedSource = false;
-			Object delegate = null;
-			if (id instanceof NoteCoordinate && isProxied()) {
-				NoteCoordinate nc = (NoteCoordinate) id;
-				if (getStoreKey().equals(nc.getReplicaLong())) {
-					//this is a request for a vertex out of the proxied store, not the proxy itself
-					//					System.out.println("TEMP DEBUG Attempted to get a proxied source vertex at " + nc.toString());
-					//					Throwable t = new Throwable();
-					//					t.printStackTrace();
-					Database db = (Database) getStoreDelegate();
-					String unid = nc.getUNID();
-					delegate = db.getDocumentByUNID(unid, true);
-					if (delegate != null) {
-						isProxiedSource = true;
-						//						System.out.println("TEMP DEBUG Got our original source from the proxy's proxiedid");
-					}
-				}
-			}
-			if (delegate == null) {
-				Object localkey = localizeKey(id);
-				//				try {
-				delegate = findElementDelegate(localkey, type);
-				//				} catch (IllegalStateException ise) {
-				//					ise.printStackTrace();
-				//				}
-			}
-			if (delegate != null) {
-				if (delegate instanceof Element) {
-					result = (Element) delegate;
-				} else if (delegate instanceof Document) {
-					if (isProxiedSource) {
-						DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
-						result = vertex;
-					} else if (((Document) delegate).hasItem("$Index") || ((Document) delegate).hasItem("$Collation")) {
-						DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
-						result = vertex;
-					} else {
-						Object typeChk = ((Document) delegate).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-						String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
-						if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
-							DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
-							result = vertex;
-						} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
-							DEdge edge = new DEdge(getConfiguration().getGraph(), (Document) delegate);
-							result = edge;
-						} else {
-							DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
-							result = vertex;
-						}
-					}
-				} else if (delegate instanceof ViewEntry) {
-					if (id instanceof ViewEntryCoordinate) {
-						ViewEntryCoordinate vec = (ViewEntryCoordinate) id;
-						String entryType = vec.getEntryType();
-						if (entryType.startsWith("E")) {
-							DEdge edge = new DEntryEdge(getConfiguration().getGraph(), (ViewEntry) delegate, (ViewEntryCoordinate) id, this);
-							result = edge;
-						} else if (entryType.startsWith("V")) {
-							ViewEntry entry = (ViewEntry) delegate;
-							if (entry.isCategory()) {
-								Map<String, Object> delegateMap = new LinkedHashMap<String, Object>();
-								delegateMap.put("value", entry.getCategoryValue());
-								delegateMap.put("position", entry.getPosition());
-								delegateMap.put("noteid", entry.getNoteID());
-								DCategoryVertex vertex = new DCategoryVertex(getConfiguration().getGraph(), delegateMap,
-										entry.getParentView());
-								vertex.delegateKey_ = vec;
-								result = vertex;
-							} else {
-								System.out.println("TEMP DEBUG ViewVertex entry is not a category");
-							}
-						}
-					} else {
-						System.out.println("TEMP DEBUG ViewEntry's id is not a ViewEntryCoordinate. It's a " + id.getClass().getName());
-					}
-				}
-				getElementCache().put(result.getId(), result);
-				getKeyCache().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
-			}
-		}
-		return result;
-	}
+	//	protected Element getCachedElement(final Object id, final Class<? extends Element> type) {
+	//		if (id == null)
+	//			return null;
+	//		Element chk = getElementCache().get(id);
+	//		if (chk == null) {
+	//			NoteCoordinate nc = getKeyMap().get(id);
+	//			if (nc != null) {
+	//				chk = getElementCache().get(nc);
+	//			}
+	//		}
+	//		if (chk != null) {
+	//			if (type.isAssignableFrom(chk.getClass())) {
+	//				return chk;
+	//			} else {
+	//				throw new IllegalStateException("Requested id of " + String.valueOf(id) + " is already in cache but is a "
+	//						+ chk.getClass().getName());
+	//			}
+	//		}
+	//		return null;
+	//	}
 
 	@Override
 	public Element getElement(final Object id) throws IllegalStateException {
-		return getElement(id, Element.class);
+		try {
+			return getElementCache().get(id);
+		} catch (InvalidCacheLoadException icle) {
+			//NTF this is no problem and quite normal
+			return null;
+		} catch (Throwable t) {
+			throw new IllegalStateException("Unable to retrieve id " + String.valueOf(id), t);
+		}
 	}
 
-	@Override
-	public Edge getEdge(final Object id) {
-		return (Edge) getElement(id, Edge.class);
-	}
+	/*public Element getElement_OLD(final Object id, final Class<? extends Element> type) throws IllegalStateException {
+			Element result = null;
+			Element chk = getCachedElement(id, Element.class);
+			if (chk != null) {
+				result = chk;
+			} else {
+				boolean isProxiedSource = false;
+				Object delegate = null;
+				if (id instanceof NoteCoordinate && isProxied()) {
+					NoteCoordinate nc = (NoteCoordinate) id;
+					if (getStoreKey().equals(nc.getReplicaLong())) {
+						//this is a request for a vertex out of the proxied store, not the proxy itself
+						Database db = (Database) getStoreDelegate();
+						String unid = nc.getUNID();
+						delegate = db.getDocumentByUNID(unid, true);
+						if (delegate != null) {
+							isProxiedSource = true;
+						}
+					}
+				}
+				if (delegate == null) {
+					Object localkey = localizeKey(id);
+					delegate = findElementDelegate(localkey);
+				}
+				if (delegate != null) {
+					if (delegate instanceof Element) {
+						result = (Element) delegate;
+					} else if (delegate instanceof Document) {
+						if (isProxiedSource) {
+							DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
+							result = vertex;
+						} else if (((Document) delegate).hasItem("$Index") || ((Document) delegate).hasItem("$Collation")) {
+							DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
+							result = vertex;
+						} else {
+							Object typeChk = ((Document) delegate).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+							String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+							if (org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
+								DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
+								result = vertex;
+							} else if (org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+								DEdge edge = new DEdge(getConfiguration().getGraph(), (Document) delegate);
+								result = edge;
+							} else {
+								DVertex vertex = new DVertex(getConfiguration().getGraph(), (Document) delegate);
+								result = vertex;
+							}
+						}
+					} else if (delegate instanceof ViewEntry) {
+						if (id instanceof ViewEntryCoordinate) {
+							ViewEntryCoordinate vec = (ViewEntryCoordinate) id;
+							String entryType = vec.getEntryType();
+							if (entryType.startsWith("E")) {
+								DEdge edge = new DEntryEdge(getConfiguration().getGraph(), (ViewEntry) delegate, (ViewEntryCoordinate) id, this);
+								result = edge;
+							} else if (entryType.startsWith("V")) {
+								ViewEntry entry = (ViewEntry) delegate;
+								if (entry.isCategory()) {
+									Map<String, Object> delegateMap = new LinkedHashMap<String, Object>();
+									delegateMap.put("value", entry.getCategoryValue());
+									delegateMap.put("position", entry.getPosition());
+									delegateMap.put("noteid", entry.getNoteID());
+									DCategoryVertex vertex = new DCategoryVertex(getConfiguration().getGraph(), delegateMap,
+											entry.getParentView());
+									vertex.delegateKey_ = vec;
+									result = vertex;
+								} else {
+									System.out.println("TEMP DEBUG ViewVertex entry is not a category");
+								}
+							}
+						} else {
+							System.out.println("TEMP DEBUG ViewEntry's id is not a ViewEntryCoordinate. It's a " + id.getClass().getName());
+						}
+					}
+					getElementCache().put(result.getId(), result);
+					getKeyMap().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				}
+			}
+			return result;
+		}*/
+
+	//	@Override
+	//	public Element getElement(final Object id) throws IllegalStateException {
+	//		return getElement(id, Element.class);
+	//	}
+
+	//	@Override
+	//	public Edge getEdge(final Object id) {
+	//		return (Edge) getElement(id, Edge.class);
+	//	}
 
 	@Override
 	public void removeEdge(final Edge edge) {
@@ -539,8 +731,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	private void removeCache(final Element element) {
 		Object key = element.getId();
-		getElementCache().remove(key);
-		getKeyCache().remove(key);
+		getElementCache().invalidate(key);
+		getKeyMap().remove(key);
 	}
 
 	@Override
@@ -597,10 +789,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		//		System.out.println("TEMP DEBUG Setting up proxy vertex");
 		DProxyVertex result = new DProxyVertex(getConfiguration().getGraph(), (Map<String, Object>) proxy);
 		Object rawpid = result.getProxiedId();
-
-		DElement elem = (DElement) getConfiguration().getGraph().getElement(rawpid);
-		if (elem == null) {
-			rawpid = null;
+		if (rawpid != null) {
+			DElement elem = (DElement) getConfiguration().getGraph().getElement(rawpid);
+			if (elem == null) {
+				rawpid = null;
+			}
 		}
 		if (rawpid == null) {
 			CustomProxyResolver resolver = getCustomProxyResolver();
@@ -635,9 +828,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
+	//	@Override
 	@Override
-	public Object findElementDelegate(final Object delegateKey, final Class<? extends Element> type) throws IllegalStateException,
-			IllegalArgumentException {
+	public Object findElementDelegate(final Object delegateKey) throws IllegalStateException, IllegalArgumentException {
 		Object result = null;
 		Object del = null;
 		del = getStoreDelegate();
@@ -691,8 +884,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					if (result instanceof Document) {
 						isProxy = ((Document) result).hasItem(DProxyVertex.PROXY_ITEM);
 					}
-					if (isProxied() && (isProxy || Vertex.class.isAssignableFrom(type) || VertexFrame.class.isAssignableFrom(type))) {
-						//						System.out.println("TEMP DEBUG Setting up a proxied vertex...");
+					if (isProxied()) {
 						result = setupProxy(result, (Serializable) delegateKey);
 					}
 				}
@@ -733,41 +925,45 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		//			System.out
 		//			.println("Request with delegatekey " + delegateKey.getClass().getName() + " (" + delegateKey + ")" + " returned null");
 		//		}
-		if (result != null) {
-			if (type.equals(Element.class)) {
-				return result;
-			}
-			if (result instanceof org.openntf.domino.ViewEntry) {
-				return result;
-			}
-			if (delegateKey instanceof NoteCoordinate && ((NoteCoordinate) delegateKey).isView()) {
-				return result;
-			}
+		//		if (result != null) {
+		//			setTypeProperty(result, type, delegateKey);
+		//		}
+		return result;
+	}
 
-			Object typeChk = ((Map<String, Object>) result).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
-			String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
-			if (org.openntf.domino.utils.Strings.isBlankString(strChk)) {//NTF new delegate
-				if (Vertex.class.isAssignableFrom(type)) {
-					((Map<String, Object>) result).put(org.openntf.domino.graph2.DElement.TYPE_FIELD,
-							org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE);
-				} else if (Edge.class.isAssignableFrom(type)) {
-					((Map<String, Object>) result).put(org.openntf.domino.graph2.DElement.TYPE_FIELD,
-							org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE);
-				} else {
-					//Illegal request
-				}
-			} else {//NTF existing delegate that's a vertex
-				if (Vertex.class.isAssignableFrom(type) && org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
-					//okay
-				} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
-					//okay
-				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-							+ " results in a delegate with a graph type of " + strChk);
-				}
+	protected void setTypeProperty(final Object result, final Class<?> type, final Object delegateKey) {
+		if (type.equals(Element.class)) {
+			return;
+		}
+		if (result instanceof org.openntf.domino.ViewEntry) {
+			return;
+		}
+		if (delegateKey instanceof NoteCoordinate && ((NoteCoordinate) delegateKey).isView()) {
+			return;
+		}
+
+		Object typeChk = ((Map<String, Object>) result).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
+		String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
+		if (org.openntf.domino.utils.Strings.isBlankString(strChk)) {//NTF new delegate
+			if (Vertex.class.isAssignableFrom(type)) {
+				((Map<String, Object>) result).put(org.openntf.domino.graph2.DElement.TYPE_FIELD,
+						org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE);
+			} else if (Edge.class.isAssignableFrom(type)) {
+				((Map<String, Object>) result).put(org.openntf.domino.graph2.DElement.TYPE_FIELD,
+						org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE);
+			} else {
+				//Illegal request
+			}
+		} else {//NTF existing delegate that's a vertex
+			if (Vertex.class.isAssignableFrom(type) && org.openntf.domino.graph2.DVertex.GRAPH_TYPE_VALUE.equals(strChk)) {
+				//okay
+			} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
+				//okay
+			} else {
+				throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
+						+ " results in a delegate with a graph type of " + strChk);
 			}
 		}
-		return result;
 	}
 
 	@Override
@@ -889,16 +1085,16 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return getElements(formulaFilter);
 	}
 
-	@Override
-	public Set<Vertex> getCachedVertices() {
-		FastSet<Vertex> result = new FastSet<Vertex>();
-		for (Element elem : getElementCache().values()) {
-			if (elem instanceof Vertex) {
-				result.add((Vertex) elem);
-			}
-		}
-		return result.unmodifiable();
-	}
+	//	@Override
+	//	public Set<Vertex> getCachedVertices() {
+	//		FastSet<Vertex> result = new FastSet<Vertex>();
+	//		for (Element elem : getElementCache().values()) {
+	//			if (elem instanceof Vertex) {
+	//				result.add((Vertex) elem);
+	//			}
+	//		}
+	//		return result.unmodifiable();
+	//	}
 
 	protected List<NoteCoordinate> getVertexIds() {
 		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
@@ -938,16 +1134,16 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
-	@Override
-	public Set<Edge> getCachedEdges() {
-		FastSet<Edge> result = new FastSet<Edge>();
-		for (Element elem : getElementCache().values()) {
-			if (elem instanceof Edge) {
-				result.add((Edge) elem);
-			}
-		}
-		return result.unmodifiable();
-	}
+	//	@Override
+	//	public Set<Edge> getCachedEdges() {
+	//		FastSet<Edge> result = new FastSet<Edge>();
+	//		for (Element elem : getElementCache().values()) {
+	//			if (elem instanceof Edge) {
+	//				result.add((Edge) elem);
+	//			}
+	//		}
+	//		return result.unmodifiable();
+	//	}
 
 	protected List<NoteCoordinate> getEdgeIds() {
 		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
@@ -988,7 +1184,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	protected List<NoteCoordinate> getElementIds() {
-		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		List<NoteCoordinate> result = null;
 		Object raw = getStoreDelegate();
 		if (raw instanceof Database) {
 			Database db = (Database) raw;
@@ -997,6 +1193,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER + " | "
 					+ org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
 			nc.buildCollection();
+			result = Lists.newArrayListWithCapacity(nc.getCount());
 			for (String noteid : nc) {
 				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
 			}
@@ -1004,11 +1201,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			//TODO NTF implement alternative
 			throw new IllegalStateException("Non-Domino implementations not yet available");
 		}
-		return result;
+		return ImmutableList.copyOf(result);
 	}
 
 	protected List<NoteCoordinate> getElementIds(final String formulaFilter) {
-		FastTable<NoteCoordinate> result = new FastTable<NoteCoordinate>();
+		List<NoteCoordinate> result = null;
 		Object raw = getStoreDelegate();
 		if (raw instanceof Database) {
 			Database db = (Database) raw;
@@ -1016,6 +1213,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectDocuments(true);
 			nc.setSelectionFormula(formulaFilter);
 			nc.buildCollection();
+			result = Lists.newArrayListWithCapacity(nc.getCount());
 			for (String noteid : nc) {
 				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
 			}
@@ -1023,7 +1221,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			//TODO NTF implement alternative
 			throw new IllegalStateException("Non-Domino implementations not yet available");
 		}
-		return result;
+		return ImmutableList.copyOf(result);
 	}
 
 	@Override
@@ -1057,7 +1255,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void flushCache() {
-		keyCache_ = null;
+		keyMap_ = null;
 		elementCache_ = null;
 	}
 }

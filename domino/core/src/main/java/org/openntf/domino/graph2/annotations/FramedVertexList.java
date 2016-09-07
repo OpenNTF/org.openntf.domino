@@ -26,9 +26,9 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		protected final Class<T> kind_;
 		//		    protected final Direction direction_;
 		protected final ListIterator<Vertex> iterator_;
-		protected final FramedGraph<? extends Graph> framedGraph_;
+		protected final DFramedTransactionalGraph framedGraph_;
 
-		public FramedListIterator(final FramedGraph<? extends Graph> graph, final ListIterator<Vertex> iterator, final Class<T> kind/*, Direction direction*/) {
+		public FramedListIterator(final DFramedTransactionalGraph graph, final ListIterator<Vertex> iterator, final Class<T> kind/*, Direction direction*/) {
 			kind_ = kind;
 			//		    	direction_ = direction;
 			iterator_ = iterator;
@@ -67,7 +67,7 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 				v = iterator_.next();
 			}
 			if (v != null) {
-				result = framedGraph_.frame(v, kind_);
+				result = (T) framedGraph_.getElement(v.getId(), kind_);
 			}
 			return result;
 		}
@@ -79,7 +79,15 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 
 		@Override
 		public T previous() {
-			return framedGraph_.frame(iterator_.previous(), kind_);
+			T result = null;
+			Vertex v = iterator_.previous();
+			while (v == null && iterator_.hasPrevious()) {
+				v = iterator_.previous();
+			}
+			if (v != null) {
+				result = (T) framedGraph_.getElement(v.getId(), kind_);
+			}
+			return result;
 		}
 
 		@Override
@@ -278,12 +286,12 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 
 	@Override
 	public ListIterator<T> listIterator() {
-		return new FramedListIterator<T>(framedGraph, list_.listIterator(), kind);
+		return new FramedListIterator<T>((DFramedTransactionalGraph) framedGraph, list_.listIterator(), kind);
 	}
 
 	@Override
 	public ListIterator<T> listIterator(final int arg0) {
-		return new FramedListIterator<T>(framedGraph, list_.listIterator(arg0), kind);
+		return new FramedListIterator<T>((DFramedTransactionalGraph) framedGraph, list_.listIterator(arg0), kind);
 	}
 
 	@Override
@@ -291,7 +299,7 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		ListIterator<Vertex> iterator = list_.listIterator();
 		if (iterator == null)
 			System.err.println("ListIterator IS NULL from list of type " + list_.getClass().getName());
-		return new FramedListIterator<T>(framedGraph, iterator, kind);
+		return new FramedListIterator<T>((DFramedTransactionalGraph) framedGraph, iterator, kind);
 	}
 
 	@Override

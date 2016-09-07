@@ -157,6 +157,7 @@ public enum TypeUtils {
 		T result = null;
 		try {
 			result = collectionToClass(v, type, session);
+			//FIXME: implement NamesList variations
 
 		} catch (DataNotCompatibleException e) {
 			String noteid = item.getAncestorDocument().getNoteID();

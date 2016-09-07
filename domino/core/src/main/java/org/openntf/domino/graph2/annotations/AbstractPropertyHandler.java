@@ -38,6 +38,19 @@ public abstract class AbstractPropertyHandler {
 			throw new DerivedPropertySetException("Setting on a derived property " + value + " is not permitted.");
 		}
 		Class<?> type = method.getReturnType();
+		if (ClassUtilities.isSetMethod(method)) {
+			Class<?>[] paramTypes = method.getParameterTypes();
+			int i = 0;
+			for (Class paramType : paramTypes) {
+				if (lotus.domino.Base.class.isAssignableFrom(paramType)) {
+					arguments[i] = org.openntf.domino.utils.TypeUtils.convertToTarget(arguments[i], paramType,
+							org.openntf.domino.utils.Factory.getSession(SessionType.NATIVE));
+				} else {
+					arguments[i] = org.openntf.domino.utils.TypeUtils.convertToTarget(arguments[i], paramType, null);
+				}
+				i++;
+			}
+		}
 		Object raw = orig_processElement(value, method, arguments, framedGraph, element, null);
 		if (raw == null)
 			return null;

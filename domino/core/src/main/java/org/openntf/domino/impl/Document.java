@@ -73,9 +73,12 @@ import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.iterators.ItemVector;
 import org.openntf.domino.transactions.DatabaseTransaction;
+import org.openntf.domino.types.AuthorsList;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.NamesList;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.types.ReadersList;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -2867,6 +2870,7 @@ public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.
 		List<lotus.domino.Base> recycleThis = null;
 
 		boolean isNonSummary = false;
+		boolean isNames = false;
 		lotus.domino.Item result;
 		try {
 			// Special case. If the argument is an Item, just copy it.
@@ -2907,8 +2911,12 @@ public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.
 					dominoFriendlyVec = new Vector<Object>(coll.size());
 					for (Object valNode : coll) {
 						if (valNode != null) { // CHECKME: Should NULL values discarded?
-							if (valNode instanceof BigString)
+							if (valNode instanceof BigString) {
 								isNonSummary = true;
+							}
+							if (valNode instanceof Name) {
+								isNames = true;
+							}
 							dominoFriendlyVec.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
 						}
 					}
@@ -2925,15 +2933,23 @@ public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.
 				for (int i = 0; i < lh; i++) {
 					Object o = Array.get(value, i);
 					if (o != null) { // CHECKME: Should NULL values be discarded?
-						if (o instanceof BigString)
+						if (o instanceof BigString) {
 							isNonSummary = true;
+						}
+						if (o instanceof Name) {
+							isNames = true;
+						}
 						dominoFriendlyVec.add(toItemFriendly(o, getAncestorSession(), recycleThis));
 					}
 				}
 			} else { // Scalar
 				recycleThis = new ArrayList<lotus.domino.Base>();
-				if (value instanceof BigString)
+				if (value instanceof BigString) {
 					isNonSummary = true;
+				}
+				if (value instanceof Name) {
+					isNames = true;
+				}
 				dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
 			}
 			Object firstElement = null;
@@ -2982,8 +2998,9 @@ public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.
 				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
 
 			if (dominoFriendlyVec != null) {
-				for (Object o : dominoFriendlyVec)
+				for (Object o : dominoFriendlyVec) {
 					payload += getLotusPayload(o, firstElementClass);
+				}
 			} else {
 				payload += getLotusPayload(dominoFriendlyObj, firstElementClass);
 			}
@@ -3026,10 +3043,18 @@ public class Document extends BaseThreadSafe<org.openntf.domino.Document, lotus.
 			markDirty(itemName, true);
 			if (isSummary == null) {
 				// Auto detect
-				if (isNonSummary)
+				if (isNonSummary) {
 					result.setSummary(false);
+				}
 			} else {
 				result.setSummary(isSummary.booleanValue());
+			}
+			if (value instanceof ReadersList) {
+				result.setReaders(true);
+			} else if (value instanceof AuthorsList) {
+				result.setAuthors(true);
+			} else if (value instanceof NamesList || isNames) {
+				result.setNames(true);
 			}
 
 			s_recycle(result);

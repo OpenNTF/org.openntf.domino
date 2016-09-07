@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.design.impl.DesignFactory;
 //import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
@@ -513,10 +514,15 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		private Class<?> getDefaultType(final Vertex v) {
 			if (v instanceof DVertex) {
-				if ("1".equals(((DVertex) v).getProperty("$FormulaClass", String.class)))
-					return ViewVertex.class;
-				if (v instanceof DCategoryVertex)
+				Map map = ((DVertex) v).getDelegate();
+				if (map instanceof Document) {
+					if (DesignFactory.isView((Document) map)) {
+						return ViewVertex.class;
+					}
+				}
+				if (v instanceof DCategoryVertex) {
 					return CategoryVertex.class;
+				}
 			}
 			return DVertexFrame.class;
 		}

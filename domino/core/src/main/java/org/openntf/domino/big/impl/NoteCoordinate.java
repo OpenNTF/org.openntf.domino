@@ -19,6 +19,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
@@ -74,6 +75,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			this.y = unids[1];
 		} catch (Throwable t) {
 			System.err.println("Unable to create a NoteCoordinate from character sequence: " + metaversalid);
+			t.printStackTrace();
 			throw new RuntimeException(t);
 		}
 	}
@@ -182,8 +184,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			Document doc = getDocument();
 			if (!doc.isNewNote()) {
 				try {
-					isView_ = (doc.hasItem("$Index") || doc.hasItem("$Collection") || doc.hasItem("$Collation") || doc
-							.hasItem("$VIEWFORMAT"));
+					isView_ = DesignFactory.isView(doc);
 				} catch (Exception e) {
 					isView_ = false;
 					//					System.err.println("Exception thrown while checking isView for a document: " + e.getMessage() + " on notecoordinate "
