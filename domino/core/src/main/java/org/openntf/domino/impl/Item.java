@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -55,15 +55,11 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Item(final lotus.domino.Item delegate, final Document parent) {
 		super(delegate, parent, NOTES_ITEM);
@@ -72,11 +68,9 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/**
 	 * Instatiates a new RichtextItem
-	 * 
+	 *
 	 * @param delegate
 	 * @param parent
-	 * @param wf
-	 * @param cppId
 	 */
 	protected Item(final lotus.domino.RichTextItem delegate, final Document parent) {
 		super(delegate, parent, NOTES_RTITEM);
@@ -108,20 +102,27 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 		if (flagSet_ == null) {
 			flagSet_ = EnumSet.noneOf(Flags.class);
 			try {
-				if (getDelegate().isAuthors())
+				if (getDelegate().isAuthors()) {
 					flagSet_.add(Flags.AUTHORS);
-				if (getDelegate().isEncrypted())
+				}
+				if (getDelegate().isEncrypted()) {
 					flagSet_.add(Flags.ENCRYPTED);
-				if (getDelegate().isNames())
+				}
+				if (getDelegate().isNames()) {
 					flagSet_.add(Flags.NAMES);
-				if (getDelegate().isProtected())
+				}
+				if (getDelegate().isProtected()) {
 					flagSet_.add(Flags.PROTECTED);
-				if (getDelegate().isReaders())
+				}
+				if (getDelegate().isReaders()) {
 					flagSet_.add(Flags.READERS);
-				if (getDelegate().isSigned())
+				}
+				if (getDelegate().isSigned()) {
 					flagSet_.add(Flags.SIGNED);
-				if (getDelegate().isSummary())
+				}
+				if (getDelegate().isSummary()) {
 					flagSet_.add(Flags.SUMMARY);
+				}
 			} catch (NotesException ne) {
 				DominoUtils.handleException(ne);
 			}
@@ -135,7 +136,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#abstractText(int, boolean, boolean)
 	 */
 	@Override
@@ -150,7 +151,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#appendToTextList(java.lang.String)
 	 */
 	@Override
@@ -165,7 +166,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#appendToTextList(java.util.Vector)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -186,7 +187,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#containsValue(java.lang.Object)
 	 */
 	@Override
@@ -208,7 +209,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -229,7 +230,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
@@ -250,7 +251,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getDateTimeValue()
 	 */
 	@Override
@@ -270,7 +271,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getInputSource()
 	 */
 	@Override
@@ -285,7 +286,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getInputStream()
 	 */
 	@Override
@@ -300,7 +301,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getLastModified()
 	 */
 	@Override
@@ -315,7 +316,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getLastModified()
 	 */
 	@Override
@@ -336,7 +337,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getMIMEEntity()
 	 */
 	@Override
@@ -346,7 +347,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getName()
 	 */
 	@Override
@@ -361,7 +362,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -371,7 +372,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getReader()
 	 */
 	@Override
@@ -386,7 +387,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getText()
 	 */
 	@Override
@@ -401,7 +402,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getText(int)
 	 */
 	@Override
@@ -416,7 +417,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getType()
 	 */
 	@Override
@@ -440,7 +441,8 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 			if (entity != null) {
 				MIMEHeader contentType = entity.getNthHeader("Content-Type");
 				String headerval = contentType.getHeaderVal();
-				if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {
+				if ("application/x-java-serialized-object".equals(headerval)
+						|| "application/x-java-externalized-object".equals(headerval)) {
 					itemType = Type.MIME_BEAN;
 				}
 				parent.closeMIMEEntities(false, getName());
@@ -452,7 +454,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueCustomData()
 	 */
 	@Override
@@ -467,7 +469,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueCustomData(java.lang.String)
 	 */
 	@Override
@@ -482,7 +484,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueCustomDataBytes(java.lang.String)
 	 */
 	@Override
@@ -497,7 +499,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueDateTimeArray()
 	 */
 	@Override
@@ -513,7 +515,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueDouble()
 	 */
 	@Override
@@ -528,7 +530,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueInteger()
 	 */
 	@Override
@@ -543,7 +545,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueLength()
 	 */
 	@Override
@@ -558,7 +560,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValueString()
 	 */
 	@Override
@@ -573,7 +575,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#getValues()
 	 */
 	@Override
@@ -584,8 +586,8 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 		if (values != null) {
 			return new Vector<Object>(values);
 		} else {
-			log_.log(Level.WARNING, "Item " + getName() + " in document " + getAncestorDatabase().getApiPath() + ": " + parent.getNoteID()
-					+ " is a NULL");
+			log_.log(Level.WARNING,
+					"Item " + getName() + " in document " + getAncestorDatabase().getApiPath() + ": " + parent.getNoteID() + " is a NULL");
 		}
 		return null;
 	}
@@ -597,7 +599,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isAuthors()
 	 */
 	@Override
@@ -607,7 +609,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isEncrypted()
 	 */
 	@Override
@@ -617,7 +619,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isNames()
 	 */
 	@Override
@@ -627,7 +629,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isProtected()
 	 */
 	@Override
@@ -637,7 +639,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isReaders()
 	 */
 	@Override
@@ -647,7 +649,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isSaveToDisk()
 	 */
 	@Override
@@ -662,7 +664,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isSigned()
 	 */
 	@Override
@@ -672,7 +674,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#isSummary()
 	 */
 	@Override
@@ -682,7 +684,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#parseXML(boolean)
 	 */
 	@Override
@@ -697,7 +699,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#remove()
 	 */
 	@Override
@@ -712,7 +714,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setAuthors(boolean)
 	 */
 	@Override
@@ -738,7 +740,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setDateTimeValue(lotus.domino.DateTime)
 	 */
 	@Override
@@ -757,7 +759,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setEncrypted(boolean)
 	 */
 	@Override
@@ -772,7 +774,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setNames(boolean)
 	 */
 	@Override
@@ -798,7 +800,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setProtected(boolean)
 	 */
 	@Override
@@ -813,7 +815,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setReaders(boolean)
 	 */
 	@Override
@@ -839,7 +841,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setSaveToDisk(boolean)
 	 */
 	@Override
@@ -854,7 +856,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setSigned(boolean)
 	 */
 	@Override
@@ -869,7 +871,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setSummary(boolean)
 	 */
 	@Override
@@ -884,7 +886,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValueCustomData(java.lang.Object)
 	 */
 	@Override
@@ -899,7 +901,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -914,7 +916,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValueCustomDataBytes(java.lang.String, byte[])
 	 */
 	@Override
@@ -929,7 +931,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValueDouble(double)
 	 */
 	@Override
@@ -944,7 +946,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValueInteger(int)
 	 */
 	@Override
@@ -959,7 +961,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValueString(java.lang.String)
 	 */
 	@Override
@@ -974,7 +976,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#setValues(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -997,7 +999,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Item#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
@@ -1017,7 +1019,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
@@ -1027,7 +1029,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -1037,7 +1039,7 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -1060,15 +1062,12 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 					if (log_.isLoggable(Level.FINER)) {
 						Throwable t = new Throwable();
 						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+						log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+								+ elements[0].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+								+ elements[1].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+								+ elements[2].getLineNumber() + ")");
 					}
 				}
 			} catch (NotesException e) {

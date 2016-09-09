@@ -132,21 +132,21 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
 
 	private static Method getCppObjMethod;
-	private static Method checkArgMethod;
-	private static Method checkObjectMethod;
-	private static Method checkObjectActiveMethod;
-	private static Method clearCppObjMethod;
+	//	private static Method checkArgMethod;
+	//	private static Method checkObjectMethod;
+	//	private static Method checkObjectActiveMethod;
+	//	private static Method clearCppObjMethod;
 	private static Method getCppSessionMethod;
-	private static Method getGCParentMethod;
+	//	private static Method getGCParentMethod;
 	private static Method getSessionMethod;
 	//	private static Method getStringArrayPropertyMethod;
-	private static Method getWeakMethod;
+	//	private static Method getWeakMethod;
 	private static Method isDeadMethod;
 	private static Method isInvalidMethod;
 	private static Method isEqualMethod;
-	private static Method markInvalidMethod;
+	//	private static Method markInvalidMethod;
 	// private static Method notImplementedMethod;
-	private static Method validateObjArgMethod;
+	//	private static Method validateObjArgMethod;
 	// private static Method restoreObjectMethod;
 	private static final Object[] EMPTY_ARRAY = null;
 	/** the class id of this object type (implemented as precaution) **/
@@ -159,35 +159,35 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					checkArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckArg", Object.class);
-					checkArgMethod.setAccessible(true);
-					checkObjectMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObject", (Class<?>[]) null);
-					checkObjectMethod.setAccessible(true);
-					checkObjectActiveMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObjectActive", (Class<?>[]) null);
-					checkObjectActiveMethod.setAccessible(true);
-					clearCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("ClearCppObj", (Class<?>[]) null);
-					clearCppObjMethod.setAccessible(true);
+					//					checkArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckArg", Object.class);
+					//					checkArgMethod.setAccessible(true);
+					//					checkObjectMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObject", (Class<?>[]) null);
+					//					checkObjectMethod.setAccessible(true);
+					//					checkObjectActiveMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObjectActive", (Class<?>[]) null);
+					//					checkObjectActiveMethod.setAccessible(true);
+					//					clearCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("ClearCppObj", (Class<?>[]) null);
+					//					clearCppObjMethod.setAccessible(true);
 					getCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
 					getCppObjMethod.setAccessible(true);
 					getCppSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppSession", (Class<?>[]) null);
 					getCppSessionMethod.setAccessible(true);
-					getGCParentMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getGCParent", (Class<?>[]) null);
-					getGCParentMethod.setAccessible(true);
+					//					getGCParentMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getGCParent", (Class<?>[]) null);
+					//					getGCParentMethod.setAccessible(true);
 					getSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getSession", (Class<?>[]) null);
 					getSessionMethod.setAccessible(true);
-					getWeakMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getWeak", (Class<?>[]) null);
-					getWeakMethod.setAccessible(true);
+					//					getWeakMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getWeak", (Class<?>[]) null);
+					//					getWeakMethod.setAccessible(true);
 					isDeadMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isDead", (Class<?>[]) null);
 					isDeadMethod.setAccessible(true);
 					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
 					isInvalidMethod.setAccessible(true);
 					isEqualMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isEqual", Long.TYPE);
 					isEqualMethod.setAccessible(true);
-					markInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("markInvalid", (Class<?>[]) null);
-					markInvalidMethod.setAccessible(true);
-					validateObjArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("validateObjArg", Object.class,
-							Boolean.TYPE);
-					validateObjArgMethod.setAccessible(true);
+					//					markInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("markInvalid", (Class<?>[]) null);
+					//					markInvalidMethod.setAccessible(true);
+					//					validateObjArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("validateObjArg", Object.class,
+					//							Boolean.TYPE);
+					//					validateObjArgMethod.setAccessible(true);
 					return null;
 				}
 			});
@@ -331,10 +331,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the delegate
 	 * @param parent
 	 *            the parent (may be null)
-	 * @param wf
-	 *            the wrapperFactory
-	 * @param cppId
-	 *            the cpp-id
 	 * @param classId
 	 *            the class id
 	 */
@@ -366,8 +362,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *
 	 * @param delegate
 	 *            the delegate
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected abstract void setDelegate(final D delegate, boolean fromResurrect);
 

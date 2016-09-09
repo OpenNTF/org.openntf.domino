@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -37,15 +37,11 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final View parent) {
 		super(delegate, parent, NOTES_VECOLL);
@@ -55,7 +51,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 	// the defined behavior.
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object)
 	 */
 	@Override
@@ -69,7 +65,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object, boolean)
 	 */
 	@Override
@@ -83,7 +79,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#cloneCollection()
 	 */
 	@Override
@@ -98,7 +94,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -108,7 +104,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#contains(lotus.domino.Base)
 	 */
 	@Override
@@ -123,7 +119,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#contains(int)
 	 */
 	@Override
@@ -139,7 +135,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#contains(java.lang.String)
 	 */
 	@Override
@@ -155,7 +151,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#deleteEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -169,7 +165,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -183,7 +179,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -197,7 +193,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getCount()
 	 */
 	@Override
@@ -212,7 +208,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getEntry(java.lang.Object)
 	 */
 	@Override
@@ -227,7 +223,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getFirstEntry()
 	 */
 	@Override
@@ -242,7 +238,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getLastEntry()
 	 */
 	@Override
@@ -257,7 +253,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry()
 	 */
 	@Override
@@ -272,7 +268,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -289,7 +285,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getNthEntry(int)
 	 */
 	@Override
@@ -304,7 +300,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -314,7 +310,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry()
 	 */
 	@Override
@@ -329,7 +325,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -346,7 +342,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getQuery()
 	 */
 	@Override
@@ -361,7 +357,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
@@ -375,7 +371,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(int)
 	 */
 	@Override
@@ -389,7 +385,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(java.lang.String)
 	 */
 	@Override
@@ -403,7 +399,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead()
 	 */
 	@Override
@@ -417,7 +413,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -431,7 +427,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread()
 	 */
 	@Override
@@ -445,7 +441,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -459,7 +455,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#merge(lotus.domino.Base)
 	 */
 	@Override
@@ -473,7 +469,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#merge(int)
 	 */
 	@Override
@@ -487,7 +483,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#merge(java.lang.String)
 	 */
 	@Override
@@ -501,7 +497,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
@@ -515,7 +511,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -529,7 +525,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#removeAll(boolean)
 	 */
 	@Override
@@ -543,7 +539,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
@@ -557,7 +553,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -578,7 +574,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
@@ -592,7 +588,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(int)
 	 */
 	@Override
@@ -606,7 +602,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(java.lang.String)
 	 */
 	@Override
@@ -620,7 +616,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#updateAll()
 	 */
 	@Override
@@ -634,7 +630,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -644,7 +640,7 @@ public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.Vi
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

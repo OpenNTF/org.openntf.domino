@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -30,20 +30,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Replication.
  */
-public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
-		org.openntf.domino.Replication {
+public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replication, lotus.domino.Replication, Database>
+		implements org.openntf.domino.Replication {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Replication(final lotus.domino.Replication delegate, final Database parent) {
 		super(delegate, parent, NOTES_REPLICATION);
@@ -51,7 +47,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#clearHistory()
 	 */
 	@Override
@@ -66,7 +62,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getCutoffDate()
 	 */
 	@Override
@@ -81,7 +77,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getCutoffInterval()
 	 */
 	@Override
@@ -96,7 +92,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getDontSendLocalSecurityUpdates()
 	 */
 	@Override
@@ -111,7 +107,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getEntries()
 	 */
 	@Override
@@ -126,7 +122,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -141,7 +137,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getEntry(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -164,7 +160,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#getPriority()
 	 */
 	@Override
@@ -179,7 +175,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#isAbstract()
 	 */
 	@Override
@@ -194,7 +190,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#isCutoffDelete()
 	 */
 	@Override
@@ -209,7 +205,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#isDisabled()
 	 */
 	@Override
@@ -224,7 +220,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#isIgnoreDeletes()
 	 */
 	@Override
@@ -239,7 +235,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#isIgnoreDestDeletes()
 	 */
 	@Override
@@ -254,7 +250,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#reset()
 	 */
 	@Override
@@ -269,7 +265,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#save()
 	 */
 	@Override
@@ -284,7 +280,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setAbstract(boolean)
 	 */
 	@Override
@@ -298,7 +294,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setCutoffDelete(boolean)
 	 */
 	@Override
@@ -312,7 +308,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setCutoffInterval(long)
 	 */
 	@Override
@@ -326,7 +322,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setDisabled(boolean)
 	 */
 	@Override
@@ -341,7 +337,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setDontSendLocalSecurityUpdates(boolean)
 	 */
 	@Override
@@ -355,7 +351,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setIgnoreDeletes(boolean)
 	 */
 	@Override
@@ -369,7 +365,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setIgnoreDestDeletes(boolean)
 	 */
 	@Override
@@ -383,7 +379,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Replication#setPriority(int)
 	 */
 	@Override
@@ -397,7 +393,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -407,7 +403,7 @@ public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replicatio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

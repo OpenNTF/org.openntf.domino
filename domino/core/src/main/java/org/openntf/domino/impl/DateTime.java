@@ -139,10 +139,6 @@ public class DateTime extends BaseNonThreadSafe<org.openntf.domino.DateTime, lot
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DateTime(final lotus.domino.DateTime delegate, final Session parent) {
 		super(delegate, parent, NOTES_TIME);

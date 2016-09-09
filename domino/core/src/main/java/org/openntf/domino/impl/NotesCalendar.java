@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -34,20 +34,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class NotesCalendar.
  */
-public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
-		org.openntf.domino.NotesCalendar {
+public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session>
+		implements org.openntf.domino.NotesCalendar {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent) {
 		super(delegate, parent, NOTES_OUTLINE);
@@ -123,8 +119,8 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 		try {
 			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
 			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
-			return fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
-					org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
+			return fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn), org.openntf.domino.NotesCalendarEntry.SCHEMA,
+					this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -379,7 +375,7 @@ public class NotesCalendar extends BaseNonThreadSafe<org.openntf.domino.NotesCal
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

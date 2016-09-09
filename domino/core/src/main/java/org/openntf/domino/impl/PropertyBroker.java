@@ -9,20 +9,16 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
-		org.openntf.domino.PropertyBroker {
+public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session>
+		implements org.openntf.domino.PropertyBroker {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected PropertyBroker(final lotus.domino.PropertyBroker delegate, final Session parent) {
 		super(delegate, parent, NOTES_PROPERTYBROKER);
@@ -59,7 +55,7 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.PropertyBroker#getPropertyValue(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -75,7 +71,7 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.PropertyBroker#getPropertyValueString(java.lang.String)
 	 */
 	@Override
@@ -90,7 +86,7 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.PropertyBroker#hasProperty(java.lang.String)
 	 */
 	@Override
@@ -105,7 +101,7 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.PropertyBroker#setPropertyValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -120,7 +116,7 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.PropertyBroker#publish()
 	 */
 	@Override
@@ -134,7 +130,7 @@ public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.Propert
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

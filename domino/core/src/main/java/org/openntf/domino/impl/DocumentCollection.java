@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -62,15 +62,11 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent) {
 		super(delegate, parent, NOTES_DOCCOLL);
@@ -90,7 +86,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getCount()
 	 */
 	@Override
@@ -106,7 +102,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getQuery()
 	 */
 	@Override
@@ -122,7 +118,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -132,7 +128,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getFirstDocument()
 	 */
 	@Override
@@ -148,7 +144,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getLastDocument()
 	 */
 	@Override
@@ -164,7 +160,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getNextDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -180,7 +176,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getPrevDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -196,7 +192,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getNthDocument(int)
 	 */
 	@Override
@@ -215,7 +211,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getNextDocument()
 	 */
 	@Override
@@ -231,7 +227,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getPrevDocument()
 	 */
 	@Override
@@ -247,7 +243,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -263,7 +259,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#addDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -278,7 +274,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#addDocument(lotus.domino.Document, boolean)
 	 */
 	@Override
@@ -293,7 +289,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#deleteDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -308,7 +304,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -323,7 +319,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -340,7 +336,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#isSorted()
 	 */
 	@Override
@@ -363,7 +359,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
@@ -378,7 +374,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -393,7 +389,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#removeAll(boolean)
 	 */
 	@Override
@@ -408,7 +404,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
@@ -423,7 +419,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -461,7 +457,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#updateAll()
 	 */
 	@Override
@@ -476,7 +472,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getUntilTime()
 	 */
 	@Override
@@ -492,7 +488,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -507,7 +503,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -522,7 +518,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllRead()
 	 */
 	@Override
@@ -537,7 +533,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllUnread()
 	 */
 	@Override
@@ -552,7 +548,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#intersect(int)
 	 */
 	@Override
@@ -567,7 +563,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#intersect(java.lang.String)
 	 */
 	@Override
@@ -582,7 +578,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
@@ -597,7 +593,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#merge(int)
 	 */
 	@Override
@@ -612,7 +608,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#merge(java.lang.String)
 	 */
 	@Override
@@ -627,7 +623,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#merge(lotus.domino.Base)
 	 */
 	@Override
@@ -642,7 +638,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#subtract(int)
 	 */
 	@Override
@@ -657,7 +653,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#subtract(java.lang.String)
 	 */
 	@Override
@@ -672,7 +668,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
@@ -687,7 +683,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#contains(int)
 	 */
 	@Override
@@ -703,7 +699,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#contains(java.lang.String)
 	 */
 	@Override
@@ -718,7 +714,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#contains(lotus.domino.Base)
 	 */
 	@Override
@@ -733,7 +729,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#cloneCollection()
 	 */
 	@Override
@@ -748,7 +744,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -861,7 +857,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -871,7 +867,7 @@ public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.Doc
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

@@ -114,10 +114,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected View(final lotus.domino.View delegate, final Database parent) {
 		super(delegate, parent, NOTES_VIEW);

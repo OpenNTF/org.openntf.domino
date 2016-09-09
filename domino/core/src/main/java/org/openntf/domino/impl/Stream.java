@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -30,19 +30,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Stream.
  */
-public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.domino.Stream, Session> implements org.openntf.domino.Stream {
+public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.domino.Stream, Session>
+		implements org.openntf.domino.Stream {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Stream(final lotus.domino.Stream delegate, final Session parent) {
 		super(delegate, parent, NOTES_SESSTRM);
@@ -50,7 +47,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#close()
 	 */
 	@Override
@@ -64,7 +61,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#getBytes()
 	 */
 	@Override
@@ -79,7 +76,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#getCharset()
 	 */
 	@Override
@@ -94,7 +91,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#getContents(java.io.OutputStream)
 	 */
 	@Override
@@ -108,7 +105,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#getContents(java.io.Writer)
 	 */
 	@Override
@@ -130,7 +127,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#getPosition()
 	 */
 	@Override
@@ -145,7 +142,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#isEOS()
 	 */
 	@Override
@@ -160,7 +157,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#isReadOnly()
 	 */
 	@Override
@@ -175,7 +172,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#open(java.lang.String)
 	 */
 	@Override
@@ -190,7 +187,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#open(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -205,7 +202,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#read()
 	 */
 	@Override
@@ -220,7 +217,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#read(int)
 	 */
 	@Override
@@ -235,7 +232,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#readText()
 	 */
 	@Override
@@ -250,7 +247,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#readText(int)
 	 */
 	@Override
@@ -265,7 +262,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#readText(int, int)
 	 */
 	@Override
@@ -280,7 +277,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#setContents(java.io.InputStream)
 	 */
 	@Override
@@ -294,7 +291,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#setContents(java.io.Reader)
 	 */
 	@Override
@@ -308,7 +305,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#setPosition(int)
 	 */
 	@Override
@@ -322,7 +319,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#truncate()
 	 */
 	@Override
@@ -336,7 +333,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#write(byte[])
 	 */
 	@Override
@@ -351,7 +348,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#writeText(java.lang.String)
 	 */
 	@Override
@@ -366,7 +363,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Stream#writeText(java.lang.String, int)
 	 */
 	@Override
@@ -381,7 +378,7 @@ public class Stream extends BaseNonThreadSafe<org.openntf.domino.Stream, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

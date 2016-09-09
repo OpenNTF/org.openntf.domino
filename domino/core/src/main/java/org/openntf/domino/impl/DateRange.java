@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -39,7 +39,7 @@ import com.ibm.icu.util.Calendar;
 
 /*
  * Regarding DateRange-s, the behaviour of Notes' Java API is very odd (at least with Notes 9.0.1):
- * 
+ *
  * 1) replaceItemValue works correctly for a value of type DateRange (as it should)
  * 2) replaceItemValue throws a NotesException (Unknown or unsupported object type in Vector)
  *    if value is a Vector containing DateRange-s (even if the Vector has size 1)
@@ -49,12 +49,12 @@ import com.ibm.icu.util.Calendar;
  *    e.g. via LotusScript), yields a Vector of size n with all elements null
  * 5) Finally, getItemValue, applied to a (single or multiple) DateRange item, returns a Vector of size 2*n
  *    containing start and end dates (as DateTime-s) of the DateRange(s).
- *    
+ *
  * On the other hand, in LotusScript everything works well: ReplaceItemValue lets you add an array
  * of NotesDateRange-s, GetItemValueDateTimeArray returns a correct array of NotesDateRange-s and so on.
- *  
+ *
  * Hence, for dealing with DateRange-s, openNTF Domino has 3 possibilities:
- *  
+ *
  * 1) Every DateRange is wrapped, regardless of whether it's a single value or a Vector of DateRange-s.
  *    Then everything works perfectly, but obviously, there's a considerable overhead.
  * 2) Or we let openNTF Domino behave like Notes (especially accept only single DateRange-s), with a workaround
@@ -62,12 +62,12 @@ import com.ibm.icu.util.Calendar;
  *    containing "many" DateRange-s must then be deactivated.
  * 3) A mix of 1 and 2: Native Notes Java API is used, whenever it's a single DateRange (comprising the case of
  *    a Vector containing exactly one DateRange), whereas multiple DateRange-s are always wrapped.
- *    
+ *
  * At the moment, the second variant is implemented (without deactivation of wrapping).
  */
 
-public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements
-		org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
+public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session>
+		implements org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
 
 	//	private java.util.Date startDate_;
 	//	private java.util.Date endDate_;
@@ -92,15 +92,11 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DateRange(final lotus.domino.DateRange delegate, final Session parent) {
 		super(delegate, parent, NOTES_DATERNG);
@@ -113,30 +109,34 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 			lotus.domino.DateTime sdt = delegate.getStartDateTime();
 			lotus.domino.DateTime edt = delegate.getEndDateTime();
 			Base.s_recycle(delegate);
-			if (sdt != null)
+			if (sdt != null) {
 				startDateTime_ = fromLotus(sdt, DateTime.SCHEMA, parent);
-			if (edt != null)
+			}
+			if (edt != null) {
 				endDateTime_ = fromLotus(edt, DateTime.SCHEMA, parent);
+			}
 		} catch (NotesException ne) {
 			throw new RuntimeException(ne);
 		}
 	}
 
 	public Date getEndDate() {
-		if (endDateTime_ == null)
+		if (endDateTime_ == null) {
 			return null;
+		}
 		return endDateTime_.toJavaDate();
 	}
 
 	public Date getStartDate() {
-		if (startDateTime_ == null)
+		if (startDateTime_ == null) {
 			return null;
+		}
 		return startDateTime_.toJavaDate();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateRange#getEndDateTime()
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateRange#getStartDateTime()
 	 */
 	@Override
@@ -167,13 +167,14 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateRange#getText()
 	 */
 	@Override
 	public String getText() {
-		if (startDateTime_ == null || endDateTime_ == null)
+		if (startDateTime_ == null || endDateTime_ == null) {
 			return "";
+		}
 		return startDateTime_.getLocalTime() + " - " + endDateTime_.getLocalTime();
 	}
 
@@ -187,7 +188,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateRange#setEndDateTime(lotus.domino.DateTime)
 	 */
 	@Override
@@ -197,7 +198,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateRange#setStartDateTime(lotus.domino.DateTime)
 	 */
 	@Override
@@ -207,7 +208,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DateRange#setText(java.lang.String)
 	 */
 	@Override
@@ -228,7 +229,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getDelegate()
 	 */
 	@Override
@@ -236,14 +237,16 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 		try {
 			lotus.domino.Session rawsession = toLotus(parent);
 			lotus.domino.DateRange ret;
-			if (startDateTime_ != null && endDateTime_ != null)
+			if (startDateTime_ != null && endDateTime_ != null) {
 				ret = rawsession.createDateRange(startDateTime_.toJavaDate(), endDateTime_.toJavaDate());
-			else {
+			} else {
 				ret = rawsession.createDateRange();
-				if (startDateTime_ != null)
+				if (startDateTime_ != null) {
 					ret.setStartDateTime(startDateTime_);
-				if (endDateTime_ != null)
+				}
+				if (endDateTime_ != null) {
 					ret.setEndDateTime(endDateTime_);
+				}
 			}
 			return ret;
 		} catch (NotesException ne) {
@@ -254,7 +257,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -264,7 +267,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DateRange#contains(org.openntf.domino.DateTime)
 	 */
 	@Override
@@ -307,7 +310,7 @@ public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, l
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DateRange#contains(java.util.Date)
 	 */
 	@Override
