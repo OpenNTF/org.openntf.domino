@@ -106,4 +106,6 @@ public interface DElementStore extends Externalizable {
 
 	public void flushCache();
 
+	public CustomProxyResolver getCustomProxyResolver();
+
 }

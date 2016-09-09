@@ -34,7 +34,6 @@ import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.types.CaseInsensitiveString;
-import org.openntf.domino.utils.TypeUtils;
 
 public class JsonFrameAdapter implements JsonObject {
 	private final static List<String> EMPTY_STRINGS = new ArrayList<String>();
@@ -661,21 +660,35 @@ public class JsonFrameAdapter implements JsonObject {
 			if (crystal != null) {
 				Class<?> type = null;
 				try {
-					Class<?>[] types = crystal.getParameterTypes();
-					if (types != null && types.length > 0) {
-						type = types[0];
-						if (!(type.isPrimitive() && value == null)) {
-							Object newValue = TypeUtils.convertToTarget(value, type, null);
-							crystal.invoke(frame, newValue);
-						}
-					} else {
-						crystal.invoke(frame, value);
-					}
+					crystal.invoke(frame, value);
+					// Class<?>[] types = crystal.getParameterTypes();
+					// if (types != null && types.length > 0) {
+					// type = types[0];
+					// if (!(type.isPrimitive() && value == null)) {
+					// if (type == Boolean.TYPE) {
+					// boolean v = (Boolean) TypeUtils.convertToTarget(value,
+					// type, null);
+					// crystal.invoke(frame, v);
+					// } else if (type == Integer.TYPE) {
+					// int v = (Integer) TypeUtils.convertToTarget(value, type,
+					// null);
+					// crystal.invoke(frame, v);
+					// } else {
+					// Object newValue = TypeUtils.convertToTarget(value, type,
+					// null);
+					// crystal.invoke(frame, newValue);
+					// }
+					// }
+					// } else {
+					// crystal.invoke(frame, value);
+					// }
 				} catch (Exception e) {
-					System.err.println("Exception trying to replace property " + paramKey + " with a value of "
-							+ String.valueOf(value) + " of type "
-							+ (value != null ? value.getClass().getName() : "null")
-							+ (type != null ? " when what we need is a " + type.getName() : ""));
+					// System.err.println("Exception trying to replace property "
+					// + paramKey + " with a value of "
+					// + String.valueOf(value) + " of type "
+					// + (value != null ? value.getClass().getName() : "null")
+					// + (type != null ? " when what we need is a " +
+					// type.getName() : ""));
 					e.printStackTrace();
 				}
 			} else {

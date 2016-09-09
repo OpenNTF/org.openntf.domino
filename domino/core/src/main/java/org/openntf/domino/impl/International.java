@@ -25,8 +25,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class International.
  */
-public class International extends BaseNonThreadSafe<org.openntf.domino.International, lotus.domino.International, Session> implements
-		org.openntf.domino.International {
+public class International extends BaseThreadSafe<org.openntf.domino.International, lotus.domino.International, Session> implements
+org.openntf.domino.International {
 
 	/**
 	 * Instantiates a new International.

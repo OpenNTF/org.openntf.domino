@@ -33,8 +33,9 @@ import org.openntf.domino.utils.Factory;
  *            the parent type
  * 
  */
+@Deprecated
 public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		extends Base<T, D, P> {
+extends Base<T, D, P> {
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(BaseNonThreadSafe.class.getName());

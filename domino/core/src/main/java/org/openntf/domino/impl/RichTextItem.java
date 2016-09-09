@@ -31,7 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextItem.
  */
-public class RichTextItem extends Item implements org.openntf.domino.RichTextItem {
+public class RichTextItem extends Item implements org.openntf.domino.RichTextItem, lotus.domino.Base {
 
 	/**
 	 * Instantiates a new richtext-item.
@@ -678,5 +678,29 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public void markDirty() {
 		getAncestorDocument().markDirty();
+	}
+
+	@Override
+	public EmbeddedObject replaceAttachment(final String filename, final String sourcePath) {
+		EmbeddedObject result = null;
+		RichTextNavigator navigator = this.createNavigator();
+		EmbeddedObject eo = (EmbeddedObject) navigator.getFirstElement(RTELEM_TYPE_FILEATTACHMENT);
+		boolean replaced = false;
+		while (eo != null) {
+			if (filename.equals(eo.getSource())) {
+				//				System.out.println("TEMP DEBUG Found matching embeddedobject for name " + filename);
+				beginInsert(eo, true);
+				result = embedObject(org.openntf.domino.EmbeddedObject.Type.EMBED_ATTACHMENT.getValue(), "", sourcePath, "");
+				endInsert();
+				eo.remove();
+				replaced = true;
+				break;
+			}
+			eo = (EmbeddedObject) navigator.getNextElement(RTELEM_TYPE_FILEATTACHMENT);
+		}
+		if (!replaced) {
+			result = embedObject(org.openntf.domino.EmbeddedObject.Type.EMBED_ATTACHMENT.getValue(), "", sourcePath, "");
+		}
+		return result;
 	}
 }

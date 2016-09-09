@@ -39,8 +39,8 @@ import org.xml.sax.InputSource;
 /**
  * The Class MIMEEntity.
  */
-public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
-		org.openntf.domino.MIMEEntity {
+public class MIMEEntity extends BaseThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
+org.openntf.domino.MIMEEntity {
 
 	/**
 	 * we have to track every child element that was queried from this entity.rec

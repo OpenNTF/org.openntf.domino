@@ -34,8 +34,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextTable.
  */
-public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
-		org.openntf.domino.RichTextTable {
+public class RichTextTable extends BaseThreadSafe<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
+org.openntf.domino.RichTextTable {
 	//private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
 
 	/**

@@ -28,8 +28,8 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class RichTextParagraphStyle.
  */
 public class RichTextParagraphStyle extends
-		BaseNonThreadSafe<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session> implements
-		org.openntf.domino.RichTextParagraphStyle {
+		BaseThreadSafe<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session> implements
+org.openntf.domino.RichTextParagraphStyle {
 
 	/**
 	 * Instantiates a new outline.

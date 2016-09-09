@@ -36,8 +36,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DocumentCollection.
  */
-public class DocumentCollection extends BaseNonThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
-		implements org.openntf.domino.DocumentCollection {
+public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
+implements org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or

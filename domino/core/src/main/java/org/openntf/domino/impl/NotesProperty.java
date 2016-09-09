@@ -28,8 +28,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class NotesProperty.
  */
-public class NotesProperty extends BaseNonThreadSafe<org.openntf.domino.NotesProperty, lotus.domino.NotesProperty, PropertyBroker>
-		implements org.openntf.domino.NotesProperty {
+public class NotesProperty extends BaseThreadSafe<org.openntf.domino.NotesProperty, lotus.domino.NotesProperty, PropertyBroker> implements
+		org.openntf.domino.NotesProperty {
 
 	/**
 	 * Instantiates a new outline.

@@ -31,8 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class AdministrationProcess.
  */
 public class AdministrationProcess extends
-		BaseNonThreadSafe<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session> implements
-		org.openntf.domino.AdministrationProcess {
+BaseThreadSafe<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session> implements
+org.openntf.domino.AdministrationProcess {
 
 	/**
 	 * Instantiates a new administration process.

@@ -33,8 +33,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends BaseThreadSafe<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-org.openntf.domino.ViewNavigator {
+public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
+		org.openntf.domino.ViewNavigator {
 
 	private boolean forceJavaDates_ = false;
 	private int cacheSize_ = -1;

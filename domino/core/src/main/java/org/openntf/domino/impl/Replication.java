@@ -30,8 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Replication.
  */
-public class Replication extends BaseNonThreadSafe<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
-		org.openntf.domino.Replication {
+public class Replication extends BaseThreadSafe<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
+org.openntf.domino.Replication {
 
 	/**
 	 * Instantiates a new outline.

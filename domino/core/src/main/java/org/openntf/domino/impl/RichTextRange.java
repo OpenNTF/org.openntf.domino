@@ -30,8 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextRange.
  */
-public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
-		org.openntf.domino.RichTextRange {
+public class RichTextRange extends BaseThreadSafe<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
+org.openntf.domino.RichTextRange {
 
 	/**
 	 * Instantiates a new outline.

@@ -81,8 +81,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends BaseThreadSafe<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-org.openntf.domino.Database {
+public class Database extends BaseResurrectable<org.openntf.domino.Database, lotus.domino.Database, Session> implements
+		org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */

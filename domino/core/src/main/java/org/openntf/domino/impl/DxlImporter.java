@@ -25,8 +25,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DxlImporter.
  */
-public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
-		org.openntf.domino.DxlImporter {
+public class DxlImporter extends BaseThreadSafe<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
+org.openntf.domino.DxlImporter {
 
 	/**
 	 * Instantiates a new DxlImporter.

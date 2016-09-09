@@ -1249,7 +1249,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		resolver.setProxiedElementStore(this);
 	}
 
-	protected CustomProxyResolver getCustomProxyResolver() {
+	@Override
+	public CustomProxyResolver getCustomProxyResolver() {
 		return proxyResolver_;
 	}
 

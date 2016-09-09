@@ -30,9 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextNavigator.
  */
-public class RichTextNavigator extends
-		BaseNonThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
-		org.openntf.domino.RichTextNavigator {
+public class RichTextNavigator extends BaseThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem>
+		implements org.openntf.domino.RichTextNavigator {
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(RichTextNavigator.class.getName());

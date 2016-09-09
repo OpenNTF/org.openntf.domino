@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
 /**
  * The Class Item.
  */
-public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
+public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
 	private static final Logger log_ = Logger.getLogger(Item.class.getName());
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
@@ -1055,25 +1055,6 @@ public class Item extends BaseThreadSafe<org.openntf.domino.Item, lotus.domino.I
 				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
 				setDelegate(item, true);
-				if (log_.isLoggable(Level.INFO)) {
-					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
-							+ " had been recycled and was auto-restored. Changes may have been lost.");
-					log_.log(Level.FINE,
-							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
-					if (log_.isLoggable(Level.FINER)) {
-						Throwable t = new Throwable();
-						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
-					}
-				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}

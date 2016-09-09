@@ -17,8 +17,6 @@ package org.openntf.domino.impl;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.types.Resurrectable;
-
 /**
  * A common Base class for those org.openntf.domino objects, which may be shared across threads.
  * 
@@ -31,7 +29,7 @@ import org.openntf.domino.types.Resurrectable;
  * 
  */
 public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		extends Base<T, D, P> implements Resurrectable {
+		extends Base<T, D, P> {
 
 	/** The Constant log_. */
 	@SuppressWarnings("unused")
@@ -78,8 +76,9 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 		if (_delegateLocal == null)
 			_delegateLocal = new ThreadLocal<D>();
 		_delegateLocal.set(delegate);
-		if (fromResurrect)
+		if (fromResurrect) {
 			getFactory().recacheLotusObject(delegate, this, parent);
+		}
 	}
 
 	/**
@@ -108,6 +107,4 @@ public abstract class BaseThreadSafe<T extends org.openntf.domino.Base<D>, D ext
 		return _delegateLocal.get();
 	}
 
-	@Override
-	protected abstract void resurrect();
 }

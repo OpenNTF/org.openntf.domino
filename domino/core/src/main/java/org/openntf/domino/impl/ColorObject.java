@@ -26,8 +26,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ColorObject.
  */
-public class ColorObject extends BaseNonThreadSafe<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
-org.openntf.domino.ColorObject {
+public class ColorObject extends BaseThreadSafe<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
+		org.openntf.domino.ColorObject {
 
 	/**
 	 * Instantiates a new outline.

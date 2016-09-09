@@ -423,7 +423,15 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			return new org.openntf.domino.impl.DxlImporter((lotus.domino.DxlImporter) lotus, (Session) parent);
 		}
 		if (lotus instanceof lotus.domino.EmbeddedObject) {
-			return new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus, (Document) parent);
+			if (parent instanceof Document) {
+				return new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus, (Document) parent);
+			} else if (parent instanceof RichTextNavigator) {
+				return new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus,
+						((RichTextNavigator) parent).getAncestorDocument());
+			} else if (parent instanceof RichTextItem) {
+				return new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus,
+						((RichTextItem) parent).getAncestorDocument());
+			}
 		}
 		if (lotus instanceof lotus.domino.Form) {
 			return new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, (Database) parent);

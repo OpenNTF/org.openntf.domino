@@ -59,7 +59,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class View.
  */
-public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
+public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
 	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
@@ -2672,7 +2672,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 			if (candidate != null) {
 				log_.log(Level.WARNING,
 						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
-						+ ", View2:" + ret.getAliases());
+								+ ", View2:" + ret.getAliases());
 				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
 				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
 				ret = candidate;

@@ -31,8 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
  * @author Roland Praml, Foconis AG
  * 
  */
-public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter, Session> implements
-		org.openntf.domino.DxlExporter {
+public class DxlExporter extends BaseThreadSafe<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter, Session> implements
+org.openntf.domino.DxlExporter {
 
 	/**
 	 * Instantiates a new DxlExporter.

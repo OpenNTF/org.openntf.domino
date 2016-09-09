@@ -69,25 +69,29 @@ public abstract class AbstractPropertyHandler {
 	@SuppressWarnings("rawtypes")
 	public Object orig_processElement(final String annotationValue, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
-		if (ClassUtilities.isGetMethod(method)) {
-			Object value = element.getProperty(annotationValue);
-			if (value instanceof java.util.Vector) {
-				if (((java.util.Vector) value).isEmpty()) {
-					value = "";
+		try {
+			if (ClassUtilities.isGetMethod(method)) {
+				Object value = element.getProperty(annotationValue);
+				if (value instanceof java.util.Vector) {
+					if (((java.util.Vector) value).isEmpty()) {
+						value = "";
+					}
 				}
-			}
-			return value;
-		} else if (ClassUtilities.isSetMethod(method)) {
-			Object value = arguments[0];
-			if (null == value) {
+				return value;
+			} else if (ClassUtilities.isSetMethod(method)) {
+				Object value = arguments[0];
+				if (null == value) {
+					element.removeProperty(annotationValue);
+				} else {
+					element.setProperty(annotationValue, value);
+				}
+				return null;
+			} else if (ClassUtilities.isRemoveMethod(method)) {
 				element.removeProperty(annotationValue);
-			} else {
-				element.setProperty(annotationValue, value);
+				return null;
 			}
-			return null;
-		} else if (ClassUtilities.isRemoveMethod(method)) {
-			element.removeProperty(annotationValue);
-			return null;
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 
 		return null;

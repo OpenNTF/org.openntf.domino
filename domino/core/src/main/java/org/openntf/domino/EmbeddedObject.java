@@ -30,7 +30,30 @@ import org.xml.sax.InputSource;
  * The Interface EmbeddedObject.
  */
 public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus.domino.EmbeddedObject,
-org.openntf.domino.ext.EmbeddedObject, DocumentDescendant {
+		org.openntf.domino.ext.EmbeddedObject, DocumentDescendant {
+	public static enum Type {
+
+		EMBED_ATTACHMENT(lotus.domino.EmbeddedObject.EMBED_ATTACHMENT), EMBED_OBJECT(lotus.domino.EmbeddedObject.EMBED_OBJECT);
+
+		public static Type valueOf(final int value) {
+			for (Type level : Type.values()) {
+				if (level.getValue() == value) {
+					return level;
+				}
+			}
+			return null;
+		}
+
+		private final int value_;
+
+		private Type(final int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+	}
 
 	public static class Schema extends FactorySchema<EmbeddedObject, lotus.domino.EmbeddedObject, Document> {
 		@Override

@@ -45,8 +45,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-org.openntf.domino.DbDirectory, Encapsulated {
+public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
+		org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	/* the MetaData contains s small subset of information of a (closed) Database */
