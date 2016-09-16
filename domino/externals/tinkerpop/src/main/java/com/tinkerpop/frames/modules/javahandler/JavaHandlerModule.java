@@ -118,6 +118,9 @@ public class JavaHandlerModule implements Module {
 
 	<T> T createHandler(final Object framedElement, final FramedGraph<?> graph, final Element element,
 			Class<?> frameClass, final Method method) {
+		// System.out.println("TEMP DEBUG creating new Handler for method " +
+		// method.getName() + " on object "
+		// + System.identityHashCode(framedElement));
 		try {
 			Class<T> implClass = (Class<T>) classCache.get(frameClass);
 			T handler = factory.create(implClass);
@@ -128,15 +131,28 @@ public class JavaHandlerModule implements Module {
 				@Override
 				public Object invoke(Object o, Method m, Method proceed, Object[] args) throws Throwable {
 					if (!Modifier.isAbstract(m.getModifiers())) {
-						return proceed.invoke(o, args);
+						try {
+							return proceed.invoke(o, args);
+						} catch (Throwable t) {
+							System.out.println("Exception processing a method called " + m.getName()
+									+ " with an object of type " + o.getClass().getName());
+							t.printStackTrace();
+							return null;
+						}
 					} else {
 						if (m.getAnnotation(JavaHandler.class) != null) {
 							throw new JavaHandlerException("Method " + m
 									+ " is marked with @JavaHandler but is not implemented");
 						}
 						if (m.getDeclaringClass() == JavaHandlerContext.class) {
+							// System.out.println("TEMP DEBUG using JavaHandlerImpl strategy...");
 							return m.invoke(defaultJavahandlerImpl, args);
 						}
+						// System.out.println("TEMP DEBUG using direct invocation strategy for method "
+						// + m.getName()
+						// + " from " + m.getDeclaringClass().getName() +
+						// " and object is "
+						// + System.identityHashCode(framedElement));
 						return m.invoke(framedElement, args);
 					}
 				}

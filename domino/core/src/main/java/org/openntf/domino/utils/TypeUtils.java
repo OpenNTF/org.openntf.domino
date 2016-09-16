@@ -143,6 +143,9 @@ public enum TypeUtils {
 	@SuppressWarnings("rawtypes")
 	public static <T> T itemValueToClass(final Item item, final Class<T> type) {
 		// Object o = item.getAncestorDocument().getItemValue(item.getName());
+		if (Item.Type.USERDATA.equals(item.getTypeEx())) {
+			return null;
+		}
 		Vector v = item.getValues();
 		if (v == null) {
 			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
@@ -154,6 +157,7 @@ public enum TypeUtils {
 		T result = null;
 		try {
 			result = collectionToClass(v, type, session);
+			//FIXME: implement NamesList variations
 
 		} catch (DataNotCompatibleException e) {
 			String noteid = item.getAncestorDocument().getNoteID();

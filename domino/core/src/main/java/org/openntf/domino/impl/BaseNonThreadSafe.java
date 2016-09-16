@@ -33,8 +33,9 @@ import org.openntf.domino.utils.Factory;
  *            the parent type
  *
  */
+@Deprecated
 public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
-		extends Base<T, D, P> {
+extends Base<T, D, P> {
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(BaseNonThreadSafe.class.getName());
@@ -157,6 +158,20 @@ public abstract class BaseNonThreadSafe<T extends org.openntf.domino.Base<D>, D 
 					+ Thread.currentThread() + " correct Thread: " + _myThread);
 		}
 		return delegate_;
+	}
+
+	/**
+	 * Gets the delegate without Resurrect
+	 * 
+	 * @return the delegate directly
+	 */
+	@Override
+	protected D getDelegate_unchecked(final boolean fromIsDead) {
+		if (fromIsDead) {
+			return delegate_;
+		} else {
+			return getDelegate_unchecked();
+		}
 	}
 
 	/*

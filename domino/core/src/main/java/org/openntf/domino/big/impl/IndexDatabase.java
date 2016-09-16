@@ -404,8 +404,9 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 
 	@SuppressWarnings("unused")
 	private int curDocCount_ = 0;
-	@SuppressWarnings("unused")
-	private int sortedDocCount_ = 0;
+
+	//	@SuppressWarnings("unused")
+	//	private int sortedDocCount_ = 0;
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.big.impl.IIndexDatabase#scanDatabase(org.openntf.domino.Database, org.openntf.domino.helpers.DocumentScanner)
@@ -958,7 +959,7 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 				scanner = (DocumentScanner) o;
 			} else {
 				System.out
-				.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
+						.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
 			}
 			if (status != null) {
 				//				System.out.println("DEBUG: Received update with status " + status.name());

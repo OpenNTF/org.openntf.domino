@@ -30,7 +30,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextNavigator.
  */
-public class RichTextNavigator extends BaseNonThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem>
+public class RichTextNavigator extends BaseThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem>
 		implements org.openntf.domino.RichTextNavigator {
 
 	@SuppressWarnings("unused")

@@ -42,4 +42,10 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 
 	public View getView();
 
+	//	public Map<String, Object> getFrameImplCache();
+
+	public Object getFrameImplObject(String key);
+
+	public void setFrameImplObject(String key, Object value);
+
 }

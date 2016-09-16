@@ -42,6 +42,9 @@ public class DFramedGraphFactory {
 	public <T extends TransactionalGraph> FramedTransactionalGraph<T> create(final T baseGraph) {
 		FramedGraphConfiguration config = getConfiguration(TransactionalGraph.class, baseGraph);
 		FramedTransactionalGraph<T> framedGraph = new DFramedTransactionalGraph<T>(baseGraph, config);
+		if (baseGraph instanceof DGraph) {
+			((DGraph) baseGraph).setExtendedGraph(framedGraph);
+		}
 		return framedGraph;
 	}
 

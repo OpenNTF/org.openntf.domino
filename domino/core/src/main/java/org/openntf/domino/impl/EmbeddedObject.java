@@ -39,10 +39,11 @@ import org.xml.sax.InputSource;
 /**
  * The Class EmbeddedObject.
  */
-public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document>
-		implements org.openntf.domino.EmbeddedObject {
+public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
+		org.openntf.domino.EmbeddedObject {
 
 	protected AtomicInteger referenceCounter = new AtomicInteger();
+	protected RichTextItem parent_;
 
 	/**
 	 * Instantiates a new outline.
@@ -213,12 +214,14 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 */
 	@Override
 	public final RichTextItem getParent() {
-		try {
-			return fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, parent);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
+		if (parent_ == null) {
+			try {
+				parent_ = fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, parent);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
 		}
+		return parent_;
 	}
 
 	/*
@@ -233,10 +236,9 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
-
 		} finally {
-			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
-				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
+			if (_delegateLocal.get() instanceof lotus.domino.local.EmbeddedObject) {
+				((lotus.domino.local.EmbeddedObject) _delegateLocal.get()).markInvalid();
 			}
 		}
 	}
@@ -453,7 +455,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 */
 	@Override
 	public void markInvalid() {
-		((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
+		((lotus.domino.local.EmbeddedObject) _delegateLocal.get()).markInvalid();
 	}
 
 	/*

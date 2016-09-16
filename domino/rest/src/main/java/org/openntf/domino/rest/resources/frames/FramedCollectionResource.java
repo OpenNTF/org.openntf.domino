@@ -187,7 +187,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			if (pm.getStart() > 0) {
 				if (pm.getCount() > 0) {
-					result = (FramedEdgeList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
+					result = (FramedEdgeList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount() - 1);
 				} else {
 					result = (FramedEdgeList<?>) result.subList(pm.getStart(), result.size());
 				}
@@ -200,7 +200,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			if (pm.getStart() > 0) {
 				if (pm.getCount() > 0) {
-					result = (FramedVertexList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
+					result = (FramedVertexList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount() - 1);
 				} else {
 					result = (FramedVertexList<?>) result.subList(pm.getStart(), result.size());
 				}

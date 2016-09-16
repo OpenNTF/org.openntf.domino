@@ -31,8 +31,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class MIMEHeader.
  */
-public class MIMEHeader extends BaseNonThreadSafe<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity>
-		implements org.openntf.domino.MIMEHeader {
+public class MIMEHeader extends BaseResurrectable<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> implements
+org.openntf.domino.MIMEHeader {
 	private static final Logger log_ = Logger.getLogger(MIMEHeader.class.getName());
 
 	/**

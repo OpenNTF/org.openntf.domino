@@ -26,8 +26,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextTab.
  */
-public class RichTextTab extends BaseNonThreadSafe<org.openntf.domino.RichTextTab, lotus.domino.RichTextTab, RichTextParagraphStyle>
-		implements org.openntf.domino.RichTextTab {
+public class RichTextTab extends BaseThreadSafe<org.openntf.domino.RichTextTab, lotus.domino.RichTextTab, RichTextParagraphStyle> implements
+		org.openntf.domino.RichTextTab {
 	//private static final Logger log_ = Logger.getLogger(RichTextTab.class.getName());
 
 	/**

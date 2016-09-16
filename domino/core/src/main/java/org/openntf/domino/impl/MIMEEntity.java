@@ -39,8 +39,8 @@ import org.xml.sax.InputSource;
 /**
  * The Class MIMEEntity.
  */
-public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document>
-		implements org.openntf.domino.MIMEEntity {
+public class MIMEEntity extends BaseThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
+org.openntf.domino.MIMEEntity {
 
 	/**
 	 * we have to track every child element that was queried from this entity.rec
@@ -96,10 +96,14 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	public void closeMIMEEntity() {
 		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
 		while (hdrIter.hasNext()) {
-			((org.openntf.domino.impl.MIMEHeader) hdrIter.next()).recycle();
+			org.openntf.domino.impl.MIMEHeader header = (org.openntf.domino.impl.MIMEHeader) hdrIter.next();
+			if (!header.isDead()) {
+				header.recycle();
+			}
 			hdrIter.remove();
 		}
-		recycle();
+		if (!isDead())
+			recycle();
 	}
 
 	/*

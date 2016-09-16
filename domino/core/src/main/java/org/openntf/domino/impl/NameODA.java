@@ -42,8 +42,8 @@ import org.openntf.formula.impl.StringSplitSimple;
  * @author Praml, Steinsiek
  */
 
-public class NameODA extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
-		Comparable<org.openntf.domino.Name>, Cloneable {
+public class NameODA extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
+Comparable<org.openntf.domino.Name>, Cloneable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 
@@ -131,10 +131,10 @@ public class NameODA extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.do
 	private String[] _hierParts = new String[_hpSize];
 
 	private static final String[] _hierPartPrefices = { "A=", "CN=", "C=", "Q=", "G=", "I=", "O=", //
-			"OU1=", "OU2=", "OU3=", "OU4=", "P=", "S=", "OU=" };
+		"OU1=", "OU2=", "OU3=", "OU4=", "P=", "S=", "OU=" };
 
 	private String _routingHint;	// For addresses like CN=John Smith/OU=HR/O=Shell/C=US@SHELL@Esso
-									// In this case, the hint will be "SHELL@Esso"
+	// In this case, the hint will be "SHELL@Esso"
 	private String _idPrefix;
 
 	/*-------------------------------------------------------------------------------------*/
@@ -265,7 +265,7 @@ public class NameODA extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.do
 	public String getAbbreviated() {
 		if (_abbreviated == null)
 			_abbreviated = (_nameFormat == NameFormat.HIERARCHICAL) ? buildX400Path(false, false) : _sourceString;
-		return _abbreviated;
+			return _abbreviated;
 	}
 
 	@Override
@@ -307,7 +307,7 @@ public class NameODA extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.do
 	public String getCanonical() {
 		if (_canonical == null)
 			_canonical = _nameFormat.isHierarchical() && !_nameFormat.isError() ? buildX400Path(true, true) : null2Empty(_sourceString);
-		return _canonical;
+			return _canonical;
 	}
 
 	@Override

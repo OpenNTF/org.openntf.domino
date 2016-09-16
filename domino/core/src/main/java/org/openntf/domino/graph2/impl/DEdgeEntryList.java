@@ -40,7 +40,7 @@ public class DEdgeEntryList implements DEdgeList {
 			DEntryEdge result = null;
 			ViewEntryCoordinate vec = delegate_.next();
 			if (vec != null) {
-				Edge edge = store_.getEdge(vec);
+				Edge edge = (Edge) store_.getElement(vec);
 				if (edge instanceof DEntryEdge) {
 					result = (DEntryEdge) edge;
 					result.setInVertex(source_);
@@ -75,7 +75,7 @@ public class DEdgeEntryList implements DEdgeList {
 
 		@Override
 		public Edge previous() {
-			DEntryEdge result = (DEntryEdge) store_.getEdge(delegate_.previous());
+			DEntryEdge result = (DEntryEdge) store_.getElement(delegate_.previous());
 			result.setInVertex(source_);
 			return result;
 		}
@@ -165,7 +165,7 @@ public class DEdgeEntryList implements DEdgeList {
 
 	@Override
 	public DEdge get(final int arg0) {
-		DEntryEdge result = (DEntryEdge) store_.getEdge(entryList_.get(arg0));
+		DEntryEdge result = (DEntryEdge) store_.getElement(entryList_.get(arg0));
 		result.setInVertex(source_);
 		return result;
 	}

@@ -32,8 +32,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewEntryCollection.
  */
-public class ViewEntryCollection extends BaseNonThreadSafe<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection, View>
-		implements org.openntf.domino.ViewEntryCollection {
+public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection, View>
+implements org.openntf.domino.ViewEntryCollection {
 
 	/**
 	 * Instantiates a new outline.

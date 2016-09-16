@@ -28,7 +28,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DirectoryNavigator.
  */
-public class DirectoryNavigator extends BaseNonThreadSafe<org.openntf.domino.DirectoryNavigator, lotus.domino.DirectoryNavigator, Directory>
+public class DirectoryNavigator extends BaseThreadSafe<org.openntf.domino.DirectoryNavigator, lotus.domino.DirectoryNavigator, Directory>
 		implements org.openntf.domino.DirectoryNavigator {
 
 	/**

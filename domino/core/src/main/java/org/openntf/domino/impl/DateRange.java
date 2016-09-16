@@ -66,8 +66,8 @@ import com.ibm.icu.util.Calendar;
  * At the moment, the second variant is implemented (without deactivation of wrapping).
  */
 
-public class DateRange extends BaseNonThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session>
-		implements org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
+public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements
+org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
 
 	//	private java.util.Date startDate_;
 	//	private java.util.Date endDate_;

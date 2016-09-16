@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -123,7 +124,7 @@ public class FramedResource extends AbstractResource {
 					writer.outNull();
 				} else if (keys.size() == 1) {
 					CharSequence id = keys.get(0);
-					NoteCoordinate nc = resolver.resolveKey(type, id);
+					NoteCoordinate nc = resolver.resolveKey(type, URLDecoder.decode(String.valueOf(id), "UTF-8"));
 					if (nc == null) {
 						System.err.println("NoteCoordinate is null for id " + id);
 					}

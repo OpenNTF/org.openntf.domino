@@ -123,7 +123,11 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 		}
 
 		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final CharSequence metaversalid) {
-			return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
+			if (metaversalid.length() == 48) {
+				return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
+			} else {
+				return null;
+			}
 		}
 
 		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final byte[] bytes) {
@@ -138,6 +142,10 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 	public String getReplicaId();
 
 	public Long getReplicaLong();
+
+	public long getX();
+
+	public long getY();
 
 	public String getUNID();
 

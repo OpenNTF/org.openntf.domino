@@ -26,8 +26,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Newsletter.
  */
-public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session>
-		implements org.openntf.domino.Newsletter {
+public class Newsletter extends BaseThreadSafe<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
+org.openntf.domino.Newsletter {
 
 	/**
 	 * Instantiates a new outline.

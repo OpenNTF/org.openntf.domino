@@ -38,6 +38,19 @@ public abstract class AbstractPropertyHandler {
 			throw new DerivedPropertySetException("Setting on a derived property " + value + " is not permitted.");
 		}
 		Class<?> type = method.getReturnType();
+		if (ClassUtilities.isSetMethod(method)) {
+			Class<?>[] paramTypes = method.getParameterTypes();
+			int i = 0;
+			for (Class paramType : paramTypes) {
+				if (lotus.domino.Base.class.isAssignableFrom(paramType)) {
+					arguments[i] = org.openntf.domino.utils.TypeUtils.convertToTarget(arguments[i], paramType,
+							org.openntf.domino.utils.Factory.getSession(SessionType.NATIVE));
+				} else {
+					arguments[i] = org.openntf.domino.utils.TypeUtils.convertToTarget(arguments[i], paramType, null);
+				}
+				i++;
+			}
+		}
 		Object raw = orig_processElement(value, method, arguments, framedGraph, element, null);
 		if (raw == null)
 			return null;
@@ -56,25 +69,29 @@ public abstract class AbstractPropertyHandler {
 	@SuppressWarnings("rawtypes")
 	public Object orig_processElement(final String annotationValue, final Method method, final Object[] arguments,
 			final FramedGraph framedGraph, final Element element, final Direction direction) {
-		if (ClassUtilities.isGetMethod(method)) {
-			Object value = element.getProperty(annotationValue);
-			if (value instanceof java.util.Vector) {
-				if (((java.util.Vector) value).isEmpty()) {
-					value = "";
+		try {
+			if (ClassUtilities.isGetMethod(method)) {
+				Object value = element.getProperty(annotationValue);
+				if (value instanceof java.util.Vector) {
+					if (((java.util.Vector) value).isEmpty()) {
+						value = "";
+					}
 				}
-			}
-			return value;
-		} else if (ClassUtilities.isSetMethod(method)) {
-			Object value = arguments[0];
-			if (null == value) {
+				return value;
+			} else if (ClassUtilities.isSetMethod(method)) {
+				Object value = arguments[0];
+				if (null == value) {
+					element.removeProperty(annotationValue);
+				} else {
+					element.setProperty(annotationValue, value);
+				}
+				return null;
+			} else if (ClassUtilities.isRemoveMethod(method)) {
 				element.removeProperty(annotationValue);
-			} else {
-				element.setProperty(annotationValue, value);
+				return null;
 			}
-			return null;
-		} else if (ClassUtilities.isRemoveMethod(method)) {
-			element.removeProperty(annotationValue);
-			return null;
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 
 		return null;

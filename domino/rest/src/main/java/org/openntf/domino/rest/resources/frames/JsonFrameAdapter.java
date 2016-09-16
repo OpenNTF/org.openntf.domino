@@ -34,7 +34,6 @@ import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.types.CaseInsensitiveString;
-import org.openntf.domino.utils.TypeUtils;
 
 public class JsonFrameAdapter implements JsonObject {
 	private final static List<String> EMPTY_STRINGS = new ArrayList<String>();
@@ -251,7 +250,7 @@ public class JsonFrameAdapter implements JsonObject {
 		if (props == null) {
 			props = new ArrayList<CharSequence>();
 			props.addAll(getGetters().keySet());
-			if (props == null || props.size() < 4) {
+			if (props == null || props.size() < 5) {
 				if (frame_ instanceof DVertexFrame) {
 					Set<CharSequence> raw = ((DVertexFrame) frame_).asMap().keySet();
 					props.addAll(CaseInsensitiveString.toCaseInsensitive(raw));
@@ -554,13 +553,15 @@ public class JsonFrameAdapter implements JsonObject {
 							}
 
 							if (getStart() > 0) {
+								// System.out.println("Start is " + getStart() +
+								// " and count is " + getCount());
 								if (getCount() > 0) {
 									if (result instanceof FramedEdgeList) {
 										result = ((FramedEdgeList<?>) result).subList(getStart(), getStart()
-												+ getCount());
+												+ getCount() - 1);
 									} else if (result instanceof FramedVertexList) {
 										result = ((FramedVertexList<?>) result).subList(getStart(), getStart()
-												+ getCount());
+												+ getCount() - 1);
 									}
 								} else {
 									if (result instanceof FramedEdgeList) {
@@ -605,16 +606,22 @@ public class JsonFrameAdapter implements JsonObject {
 				Method crystal = getGetters().get(key);
 				if (crystal != null) {
 					try {
+						// if ("@rendering".equals(key) ||
+						// crystal.getName().equalsIgnoreCase("getRendering")) {
+						// System.out.println("TEMP DEBUG building rendering for object "
+						// + System.identityHashCode(frame));
+						// }
+						// if (Proxy.isProxyClass(frame.getClass())) {
+						// InvocationHandler handler =
+						// Proxy.getInvocationHandler(frame);
+						// result = handler.invoke(frame, crystal, (Object[])
+						// null);
+						// } else {
 						result = crystal.invoke(frame, (Object[]) null);
-						// if (frame instanceof VertexFrame) {
-						// Vertex v = ((VertexFrame) frame).asVertex();
-						// if (v instanceof DProxyVertex) {
-						// System.out.println("TEMP DEBUG using a proxy vertex");
 						// }
-						// System.out.println("TEMP DEBUG invoking getter for "
-						// + crystal.getName());
-						// }
-					} catch (Exception e) {
+					} catch (Throwable t) {
+						// System.out
+						// .println("TEMP DEBUG Throwable occured attempting to invoke property. Falling back...");
 						if (frame instanceof EdgeFrame) {
 							result = ((EdgeFrame) frame).asEdge().getProperty(paramKey);
 						} else if (frame instanceof VertexFrame) {
@@ -653,21 +660,35 @@ public class JsonFrameAdapter implements JsonObject {
 			if (crystal != null) {
 				Class<?> type = null;
 				try {
-					Class<?>[] types = crystal.getParameterTypes();
-					if (types != null && types.length > 0) {
-						type = types[0];
-						if (!(type.isPrimitive() && value == null)) {
-							Object newValue = TypeUtils.convertToTarget(value, type, null);
-							crystal.invoke(frame, newValue);
-						}
-					} else {
-						crystal.invoke(frame, value);
-					}
+					crystal.invoke(frame, value);
+					// Class<?>[] types = crystal.getParameterTypes();
+					// if (types != null && types.length > 0) {
+					// type = types[0];
+					// if (!(type.isPrimitive() && value == null)) {
+					// if (type == Boolean.TYPE) {
+					// boolean v = (Boolean) TypeUtils.convertToTarget(value,
+					// type, null);
+					// crystal.invoke(frame, v);
+					// } else if (type == Integer.TYPE) {
+					// int v = (Integer) TypeUtils.convertToTarget(value, type,
+					// null);
+					// crystal.invoke(frame, v);
+					// } else {
+					// Object newValue = TypeUtils.convertToTarget(value, type,
+					// null);
+					// crystal.invoke(frame, newValue);
+					// }
+					// }
+					// } else {
+					// crystal.invoke(frame, value);
+					// }
 				} catch (Exception e) {
-					System.err.println("Exception trying to replace property " + paramKey + " with a value of "
-							+ String.valueOf(value) + " of type "
-							+ (value != null ? value.getClass().getName() : "null")
-							+ (type != null ? " when what we need is a " + type.getName() : ""));
+					// System.err.println("Exception trying to replace property "
+					// + paramKey + " with a value of "
+					// + String.valueOf(value) + " of type "
+					// + (value != null ? value.getClass().getName() : "null")
+					// + (type != null ? " when what we need is a " +
+					// type.getName() : ""));
 					e.printStackTrace();
 				}
 			} else {

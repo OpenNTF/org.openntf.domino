@@ -226,8 +226,8 @@ public enum DominoUtils {
 			}
 		}
 		if (result == null) {
-			int count = DominoUtils.CLASS_ERROR_COUNT.incrementAndGet();
-			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details. Incident " + count);
+			//			int count = DominoUtils.CLASS_ERROR_COUNT.incrementAndGet();
+			//			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details. Incident " + count);
 			//			if (count > 50) {
 			//				Thread.currentThread().interrupt();
 			//			}
@@ -1046,7 +1046,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-			// TODO Need to work out how to get from properties file in NSF
+				// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {

@@ -29,8 +29,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Outline.
  */
-public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus.domino.Outline, Database>
-		implements org.openntf.domino.Outline {
+public class Outline extends BaseThreadSafe<org.openntf.domino.Outline, lotus.domino.Outline, Database> implements
+org.openntf.domino.Outline {
 
 	/**
 	 * Instantiates a new outline.

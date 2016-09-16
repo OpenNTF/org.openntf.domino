@@ -9,8 +9,8 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-public class PropertyBroker extends BaseNonThreadSafe<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session>
-		implements org.openntf.domino.PropertyBroker {
+public class PropertyBroker extends BaseThreadSafe<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker, Session> implements
+org.openntf.domino.PropertyBroker {
 
 	/**
 	 * Instantiates a new outline.

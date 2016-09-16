@@ -103,9 +103,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Object result = null;
 		Map<String, Object> props = getProps();
 		result = props.get(propertyName);
+		Map<String, Object> delegate = getDelegate();
 		if (result == null || Deferred.INSTANCE.equals(result)) {
 			try {
-				Map<String, Object> delegate = getDelegate();
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
 					doc.setAutoMime(AutoMime.WRAP_ALL);
@@ -170,7 +170,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				//				System.out.println(propertyName + " returned a " + result.getClass().getName() + " when we asked for a " + type.getName());
 
 				try {
-					Map<String, Object> delegate = getDelegate();
+					//					Map<String, Object> delegate = getDelegate();
 					if (delegate instanceof Document) {
 						Document doc = (Document) delegate;
 						Item item = doc.getFirstItem(propertyName);
@@ -207,11 +207,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (result == Null.INSTANCE) {
 			result = null;
 		}
-		if ("form".equalsIgnoreCase(propertyName)) {
-			//			if (result == null) {
-			//				Factory.println("TEMP DEBUG returning null as value for Form field");
-			//			}
+		if (delegate instanceof Document && delegate != null) {
+			((Document) delegate).closeMIMEEntities();
 		}
+		//		if ("form".equalsIgnoreCase(propertyName)) {
+		//			if (result == null) {
+		//				Factory.println("TEMP DEBUG returning null as value for Form field");
+		//			}
+		//		}
 		if (result == Deferred.INSTANCE) {
 			//			System.out.println("Returning Deferred INSTANCE for property " + propertyName);
 		}
@@ -522,7 +525,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Set<String> changes = getChangedPropertiesInt();
 		if (!props.isEmpty() && !changes.isEmpty()) {
 			//			System.out.println("TEMP DEBUG: Writing " + getChangedPropertiesInt().size() + " changed properties for " + getId());
-			for (String s : getChangedPropertiesInt()) {
+			for (String s : changes) {
 				String key = s;
 				Object v = props.get(key);
 				//				System.out.println("TEMP DEBUG: Writing a " + v.getClass().getSimpleName() + " to " + key);
