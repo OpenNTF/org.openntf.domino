@@ -1,15 +1,5 @@
 package org.openntf.domino.rest.resources.frames;
 
-import com.ibm.commons.util.io.json.JsonException;
-import com.ibm.commons.util.io.json.JsonJavaObject;
-import com.ibm.commons.util.io.json.JsonParser;
-import com.ibm.domino.httpmethod.PATCH;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.EdgeFrame;
-import com.tinkerpop.frames.VertexFrame;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -55,10 +45,20 @@ import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.Factory;
 
+import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.JsonJavaObject;
+import com.ibm.commons.util.io.json.JsonParser;
+import com.ibm.domino.httpmethod.PATCH;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.VertexFrame;
+
 @Path(Routes.ROOT + "/" + Routes.FRAMED + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedResource extends AbstractResource {
 
-	public FramedResource(ODAGraphService service) {
+	public FramedResource(final ODAGraphService service) {
 		super(service);
 	}
 
@@ -180,7 +180,7 @@ public class FramedResource extends AbstractResource {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response putDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
+	public Response putDocumentByUnid(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
 			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
@@ -193,7 +193,7 @@ public class FramedResource extends AbstractResource {
 	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response patchDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
+	public Response patchDocumentByUnid(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
 			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
@@ -201,8 +201,8 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
-	protected Response updateFrameByMetaid(String requestEntity, String namespace, String ifUnmodifiedSince,
-			ParamMap pm, boolean isPut) throws JsonException, IOException {
+	protected Response updateFrameByMetaid(final String requestEntity, final String namespace, final String ifUnmodifiedSince,
+			final ParamMap pm, final boolean isPut) throws JsonException, IOException {
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
@@ -253,8 +253,8 @@ public class FramedResource extends AbstractResource {
 		return result;
 	}
 
-	private void processJsonUpdate(JsonJavaObject jsonItems, DFramedTransactionalGraph graph, JsonGraphWriter writer,
-			ParamMap pm, boolean isPut) throws JsonException, IOException {
+	private void processJsonUpdate(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
+			final ParamMap pm, final boolean isPut) throws JsonException, IOException {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
 		for (String jsonKey : jsonItems.keySet()) {
 			CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
@@ -312,7 +312,7 @@ public class FramedResource extends AbstractResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("rawtypes")
-	public Response deleteFramedObject(String requestEntity, @Context final UriInfo uriInfo,
+	public Response deleteFramedObject(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
@@ -369,7 +369,7 @@ public class FramedResource extends AbstractResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("rawtypes")
-	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
+	public Response createFramedObject(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
 		// Factory.println("Processing a POST for " + namespace);
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
@@ -424,8 +424,8 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
-	private void processJsonObject(JsonJavaObject jsonItems, DFramedTransactionalGraph graph, JsonGraphWriter writer,
-			ParamMap pm/*, Map<Object, Object> resultMap*/) {
+	private void processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
+			final ParamMap pm/*, Map<Object, Object> resultMap*/) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
 		for (String jsonKey : jsonItems.keySet()) {
 			CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
@@ -471,9 +471,9 @@ public class FramedResource extends AbstractResource {
 									Object result = method.invoke(parVertex, otherVertex);
 									if (result == null) {
 										System.out.println("Invokation of method " + method.getName()
-												+ " on a vertex of type " + DGraphUtils.findInterface(parVertex)
-												+ " with an argument of type " + DGraphUtils.findInterface(otherVertex)
-												+ " resulted in null when we expected an Edge");
+										+ " on a vertex of type " + DGraphUtils.findInterface(parVertex)
+										+ " with an argument of type " + DGraphUtils.findInterface(otherVertex)
+										+ " resulted in null when we expected an Edge");
 									}
 									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null,
 											false);
