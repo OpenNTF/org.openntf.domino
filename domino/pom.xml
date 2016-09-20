@@ -300,7 +300,6 @@
 							<artifactId>maven-javadoc-plugin</artifactId>
 							<version>2.9</version>
 							<configuration>
-								<!-- Activated by profile below -->
 								<skip>false</skip>
 							</configuration>
 						</plugin>
