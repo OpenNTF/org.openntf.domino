@@ -37,10 +37,10 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class DocumentCollection.
  */
 public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
-implements org.openntf.domino.DocumentCollection {
+		implements org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
-	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
+	private static boolean BLOCK_NTH = true;// TODO replace with some static determination from a policy or permissions rule or
 
 	// something...
 
@@ -426,7 +426,14 @@ implements org.openntf.domino.DocumentCollection {
 	public void stampAll(final String itemName, final Object value) {
 		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().stampAll(itemName, toItemFriendly(value, getAncestorSession(), recycleThis));
+			Object val = null;
+			if (value instanceof lotus.domino.Item) {
+				// Special support for items
+				val = value;
+			} else {
+				val = toItemFriendly(value, getAncestorSession(), recycleThis);
+			}
+			getDelegate().stampAll(itemName, val);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -441,7 +448,14 @@ implements org.openntf.domino.DocumentCollection {
 			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
 			for (Map.Entry<String, Object> entry : map.entrySet()) {
 				//NTF - go directly to delegate because we already know the entries are Domino friendly.
-				getDelegate().stampAll(entry.getKey(), toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis));
+				Object val = null;
+				if (entry.getValue() instanceof lotus.domino.Item) {
+					// Special support for items
+					val = entry.getValue();
+				} else {
+					val = toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
+				}
+				getDelegate().stampAll(entry.getKey(), val);
 			}
 		} catch (IllegalArgumentException iae) {
 			for (org.openntf.domino.Document doc : this) {
