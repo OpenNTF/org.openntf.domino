@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class ViewEntryCollection.
  */
 public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection, View>
-implements org.openntf.domino.ViewEntryCollection {
+		implements org.openntf.domino.ViewEntryCollection {
 
 	/**
 	 * Instantiates a new outline.
@@ -558,17 +560,47 @@ implements org.openntf.domino.ViewEntryCollection {
 	 */
 	@Override
 	public void stampAll(final String itemName, final Object value) {
+		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().stampAll(itemName, value);
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
+			Object val = null;
+			if (value instanceof lotus.domino.Item) {
+				// Special support for items
+				val = value;
+			} else {
+				val = toItemFriendly(value, getAncestorSession(), recycleThis);
+			}
+			getDelegate().stampAll(itemName, val);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
 	@Override
 	public void stampAll(final Map<String, Object> map) {
-		for (org.openntf.domino.ViewEntry entry : this) {
-			entry.getDocument().putAll(map);
+		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				//NTF - go directly to delegate because we already know the entries are Domino friendly.
+				Object val = null;
+				if (entry.getValue() instanceof lotus.domino.Item) {
+					// Special support for items
+					val = entry.getValue();
+				} else {
+					val = toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
+				}
+				getDelegate().stampAll(entry.getKey(), val);
+			}
+		} catch (IllegalArgumentException iae) {
+			for (org.openntf.domino.ViewEntry entry : this) {
+				entry.getDocument().putAll(map);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
