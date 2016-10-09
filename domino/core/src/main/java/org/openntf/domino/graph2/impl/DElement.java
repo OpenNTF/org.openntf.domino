@@ -12,8 +12,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
@@ -31,6 +29,8 @@ import org.openntf.domino.graph2.builtin.Eventable;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.TypeUtils;
+
+import javolution.util.FastMap;
 
 public abstract class DElement implements org.openntf.domino.graph2.DElement, Serializable, Map<String, Object> {
 	private static final Logger log_ = Logger.getLogger(DElement.class.getName());
@@ -154,14 +154,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					props.put(propertyName, result);
 				} else {
 					if (log_.isLoggable(Level.FINE)) {
-						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
-								+ result.getClass().getName());
+						log_.log(Level.FINE,
+								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
 					}
 					props.put(propertyName, result);
 				}
 			} catch (Exception e) {
-				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-						+ " so we cannot return a value", e);
+				log_.log(Level.WARNING,
+						"Exception occured attempting to get value from document for " + propertyName + " so we cannot return a value", e);
 			}
 		} else if (result == Null.INSTANCE) {
 
@@ -193,14 +193,16 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					} else if (result instanceof Serializable) {
 						props.put(propertyName, result);
 					} else {
-						log_.log(Level.FINE, "Got a value from the document but it's not Serializable. It's a "
-								+ result.getClass().getName());
+						log_.log(Level.FINE,
+								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
 						props.put(propertyName, result);
 					}
 				} catch (Exception e) {
-					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
-							+ " but we have a value in the cache of type " + result.getClass().getName() + " when we were looking for a "
-							+ type.getName(), e);
+					log_.log(Level.WARNING,
+							"Exception occured attempting to get value from document for " + propertyName
+									+ " but we have a value in the cache of type " + result.getClass().getName()
+									+ " when we were looking for a " + type.getName(),
+							e);
 				}
 			}
 		}
@@ -307,7 +309,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						props.put(key, value);
 					}
 				} else {
-					log_.log(Level.FINE, "Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
+					log_.log(Level.FINE,
+							"Attempted to set property " + key + " to a non-serializable value: " + value.getClass().getName());
 					if (current == null || Null.INSTANCE.equals(current)) {
 						getParent().startTransaction(this);
 						getChangedPropertiesInt().add(key);
@@ -389,6 +392,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			} else if (delegateKey_ instanceof NoteCoordinate) {
 				if (((NoteCoordinate) delegateKey_).isView()) {
 					result = org.openntf.domino.View.class;
+				} else if (((NoteCoordinate) delegateKey_).isIcon()) {
+					result = org.openntf.domino.Document.class;
 				} else {
 					result = org.openntf.domino.Document.class;
 				}
@@ -404,6 +409,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				if (delegateKey_ instanceof NoteCoordinate) {
 					if (((NoteCoordinate) delegateKey_).isView()) {
 						result = org.openntf.domino.View.class;
+					} else if (((NoteCoordinate) delegateKey_).isIcon()) {
+						result = org.openntf.domino.Document.class;
 					} else {
 						result = org.openntf.domino.Document.class;
 					}

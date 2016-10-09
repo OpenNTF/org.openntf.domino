@@ -18,7 +18,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.GenericDeclaration;
@@ -382,6 +384,30 @@ final class Types {
 				}
 				return false;
 			}
+		}
+
+		@Override
+		public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Annotation[] getAnnotations() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Annotation[] getDeclaredAnnotations() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public AnnotatedType[] getAnnotatedBounds() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

@@ -34,8 +34,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class NotesCalendar.
  */
-public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
-org.openntf.domino.NotesCalendar {
+public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session>
+		implements org.openntf.domino.NotesCalendar {
 
 	/**
 	 * Instantiates a new outline.
@@ -123,8 +123,8 @@ org.openntf.domino.NotesCalendar {
 		try {
 			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
 			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
-			return fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
-					org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
+			return fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn), org.openntf.domino.NotesCalendarEntry.SCHEMA,
+					this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -430,6 +430,16 @@ org.openntf.domino.NotesCalendar {
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public String getRecurrenceID(final lotus.domino.DateTime arg0) {
+		try {
+			return getDelegate().getRecurrenceID(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 }

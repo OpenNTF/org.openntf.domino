@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import lotus.domino.IDVault;
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
 
@@ -81,8 +82,8 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  */
 
-public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory> implements
-		org.openntf.domino.Session {
+public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
+		implements org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
@@ -775,8 +776,8 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 				//				}
 			} catch (NotesException e) {
 				if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-					throw new UserAccessException(
-							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
+					throw new UserAccessException("User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server,
+							e);
 				} else {
 					DominoUtils.handleException(e, this);
 					return null;
@@ -2108,5 +2109,35 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public final WrapperFactory getFactory() {
 		return parent;
+	}
+
+	@Override
+	public boolean applicationShouldQuit() throws NotesException {
+		try {
+			return getDelegate().applicationShouldQuit();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean changePassword(final String arg0, final String arg1, final String arg2) {
+		try {
+			return getDelegate().changePassword(arg0, arg1, arg2);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
+
+	@Override
+	public IDVault getIDVault() {
+		try {
+			return getDelegate().getIDVault();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 }

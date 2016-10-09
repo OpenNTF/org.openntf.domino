@@ -8,9 +8,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
@@ -24,6 +21,9 @@ import com.tinkerpop.blueprints.VertexQuery;
 import com.tinkerpop.blueprints.util.DefaultVertexQuery;
 import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
+
+import javolution.util.FastMap;
+import javolution.util.FastSet;
 
 public class DVertex extends DElement implements org.openntf.domino.graph2.DVertex {
 	private static final long serialVersionUID = 1L;
@@ -251,8 +251,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					getInDirtyKeySet().add(label);
 				}
 			} catch (Throwable t) {
-				System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": "
-						+ t.getClass().getSimpleName());
+				System.err
+						.println("Exception occured trying to remove an edge from vertex " + getId() + ": " + t.getClass().getSimpleName());
 				t.printStackTrace();
 			}
 		}
@@ -271,8 +271,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					getOutDirtyKeySet().add(label);
 				}
 			} catch (Throwable t) {
-				System.err.println("Exception occured trying to remove an edge from vertex " + getId() + ": "
-						+ t.getClass().getSimpleName());
+				System.err
+						.println("Exception occured trying to remove an edge from vertex " + getId() + ": " + t.getClass().getSimpleName());
 				t.printStackTrace();
 			}
 		}
@@ -574,6 +574,11 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					//							+ String.valueOf(this.getId()));
 				}
 			}
+			//			if ((result == null || result.isEmpty()) && label.equalsIgnoreCase("hasview")) {
+			//				if (getDelegateType().equals(Document.class)) {
+			//					
+			//				}
+			//			}
 			if (result == null) {
 				//				System.out.println("TEMP DEBUG Getting out edge objects for label " + label);
 				NoteList edgeIds = getOutEdgesSet(label);

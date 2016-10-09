@@ -24,21 +24,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javolution.util.FastMap;
-import javolution.util.FastSet;
-import javolution.util.FastSortedMap;
-import javolution.util.function.Equalities;
-
 import lotus.domino.NotesException;
+import lotus.domino.UserID;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database;
@@ -73,16 +74,11 @@ import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.iterators.ItemVector;
 import org.openntf.domino.transactions.DatabaseTransaction;
-import org.openntf.domino.types.AuthorsList;
-import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.FactorySchema;
-import org.openntf.domino.types.NamesList;
 import org.openntf.domino.types.Null;
-import org.openntf.domino.types.ReadersList;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.LMBCSUtils;
 import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
@@ -94,8 +90,8 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-public class Document extends BaseResurrectable<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-org.openntf.domino.Document {
+public class Document extends BaseResurrectable<org.openntf.domino.Document, lotus.domino.Document, Database>
+		implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -576,7 +572,7 @@ org.openntf.domino.Document {
 	 * This method is called before any change is made to any content. Allows e.g. the locking of the document and the history
 	 * initialization.
 	 */
-	protected void beginEdit() {
+	public void beginEdit() {
 
 	}
 
@@ -649,8 +645,9 @@ org.openntf.domino.Document {
 						}
 					}
 				} catch (NotesException e) {
-					log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
-							+ " even though we can't find an item by that name.", e);
+					log_.log(Level.INFO,
+							"Attempted to close a MIMEEntity called " + entityItemName + " even though we can't find an item by that name.",
+							e);
 
 				}
 			} else {
@@ -686,8 +683,8 @@ org.openntf.domino.Document {
 							}
 						}
 					} else {
-						log_.log(Level.FINE, "A request was made to close MIMEEntity " + entityItemName
-								+ " but that entity isn't currently open");
+						log_.log(Level.FINE,
+								"A request was made to close MIMEEntity " + entityItemName + " but that entity isn't currently open");
 					}
 				}
 			}
@@ -869,11 +866,11 @@ org.openntf.domino.Document {
 
 			String lcName = itemName.toLowerCase();
 			if (openMIMEEntities_ == null) {
-				openMIMEEntities_ = new FastMap<String, Set<MIMEEntity>>();
+				openMIMEEntities_ = new HashMap<String, Set<MIMEEntity>>();
 			}
 			Set<MIMEEntity> entityGroup = openMIMEEntities_.get(lcName);
 			if (entityGroup == null) {
-				entityGroup = new FastSet<MIMEEntity>();
+				entityGroup = new HashSet<MIMEEntity>();
 				openMIMEEntities_.put(lcName, entityGroup);
 			}
 			entityGroup.add(wrapped);
@@ -1274,7 +1271,7 @@ org.openntf.domino.Document {
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1310,7 +1307,7 @@ org.openntf.domino.Document {
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -1354,13 +1351,8 @@ org.openntf.domino.Document {
 						result.add(mimeValue);
 						return result;
 					} else {
-						log_.log(
-								Level.WARNING,
-								"We found a MIMEEntity for item name "
-										+ name
-										+ " in document "
-										+ this.getMetaversalID()
-										+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
+								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
 						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
@@ -1375,8 +1367,8 @@ org.openntf.domino.Document {
 			try {
 				vals = getDelegate().getItemValue(name);
 			} catch (Throwable t) {
-				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
-						+ " " + noteid_ + ": " + t.getMessage());
+				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath() + " "
+						+ noteid_ + ": " + t.getMessage());
 				t.printStackTrace();
 				DominoUtils.handleException(t, this, "Item=" + name);
 				return null;
@@ -1716,14 +1708,14 @@ org.openntf.domino.Document {
 	 */
 	@Override
 	public String getNoteID() {
+		if (noteid_ == null) {
+			try {
+				noteid_ = getDelegate().getNoteID();
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		}
 		return noteid_;
-		// checkMimeOpen(); RPr: I don't think it is neccessary here
-		//		try {
-		//			return getDelegate().getNoteID();
-		//		} catch (NotesException e) {
-		//			DominoUtils.handleException(e, this);
-		//		}
-		//		return null;
 	}
 
 	/*
@@ -2570,9 +2562,6 @@ org.openntf.domino.Document {
 		return false;
 	}
 
-	protected static int MAX_NATIVE_FIELD_SIZE = 32000;
-	protected static int MAX_SUMMARY_FIELD_SIZE = 14000;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2661,12 +2650,12 @@ org.openntf.domino.Document {
 						Documents.saveState(state, this, itemName, true, headers);
 
 					} else {
-						throw new IllegalArgumentException(value.getClass()
-								+ " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
+						throw new IllegalArgumentException(
+								value.getClass() + " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
 					}
 				} catch (ClassNotFoundException cnfe) {
-					throw new IllegalArgumentException(value.getClass()
-							+ " is not of type Serializable, DocumentCollection or NoteCollection");
+					throw new IllegalArgumentException(
+							value.getClass() + " is not of type Serializable, DocumentCollection or NoteCollection");
 				}
 			}
 
@@ -2708,7 +2697,8 @@ org.openntf.domino.Document {
 				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
 			} else {
 				beginEdit();
-				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
+				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
+						this);
 				markDirty(itemName, true);
 				return result;
 			}
@@ -2766,9 +2756,11 @@ org.openntf.domino.Document {
 				} else if (this.getAutoMime() == AutoMime.WRAP_ALL) {
 					// Compatibility mode
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
-					log_.log(Level.INFO, "Writing " + value == null ? "null" : value.getClass() + " causes a " + ex2
-							+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
-							+ " Consider using 'put' or something similar in your code.");
+					log_.log(Level.INFO,
+							"Writing " + value == null ? "null"
+									: value.getClass() + " causes a " + ex2
+											+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
+											+ " Consider using 'put' or something similar in your code.");
 				} else {
 					throw ex2;
 				}
@@ -2799,27 +2791,6 @@ org.openntf.domino.Document {
 			DominoUtils.handleException(t, this, "Item=" + itemName);
 		}
 		return result;
-	}
-
-	/**
-	 * returns the payload that the Object o needs when it is written into an item
-	 * 
-	 * @param o
-	 * @param c
-	 * @return
-	 */
-	private int getLotusPayload(final Object o, final Class<?> c) {
-		if (c.isAssignableFrom(o.getClass())) {
-			if (o instanceof String) {
-				return ((String) o).length(); // LMBCS investigation will be done later (in general not necessary)
-			}
-			if (o instanceof lotus.domino.DateRange) {
-				return 16;
-			} else {
-				return 8; // Number + DateTime has 8 bytes payload
-			}
-		}
-		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
 	}
 
 	/**
@@ -2865,225 +2836,222 @@ org.openntf.domino.Document {
 			}
 		}
 
-		Vector<Object> dominoFriendlyVec = null;
-		Object dominoFriendlyObj = null;
-		List<lotus.domino.Base> recycleThis = null;
+		org.openntf.domino.Item result = TypeUtils.writeToItem(this, itemName, value, isSummary);
+		if (returnItem) {
+			return result;
+		} else {
+			return null;
+		}
 
-		boolean isNonSummary = false;
-		boolean isNames = false;
-		lotus.domino.Item result;
-		try {
-			// Special case. If the argument is an Item, just copy it.
-			if (value instanceof Item) {
-				recycleThis = new ArrayList<lotus.domino.Base>();
-				// remove the mime item first, so that it will not collide with MIME etc.
-				MIMEEntity mimeChk = getMIMEEntity(itemName);
-				if (mimeChk != null) {
-					try {
-						mimeChk.remove();
-					} finally {
-						closeMIMEEntities(true, itemName);
-					}
-				}
-				beginEdit();
-				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
-				markDirty(itemName, true);
-
-				s_recycle(result);
-
-				if (returnItem) {
-					return getFactory().create(Item.SCHEMA, this, itemName);
-				} else {
-					return null;
-				}
-			}
-
-			// first step: Make it domino friendly and put all converted objects into "dominoFriendly"
-			if (value instanceof String || value instanceof Integer || value instanceof Double) {
-				dominoFriendlyObj = value;
-			} else if (value instanceof Collection) {
-				if (isFriendlyVector(value)) {
-					recycleThis = null;
-					dominoFriendlyVec = (Vector<Object>) value;
-				} else {
-					recycleThis = new ArrayList<lotus.domino.Base>();
-					Collection<?> coll = (Collection<?>) value;
-					dominoFriendlyVec = new Vector<Object>(coll.size());
-					for (Object valNode : coll) {
-						if (valNode != null) { // CHECKME: Should NULL values discarded?
-							if (valNode instanceof BigString) {
-								isNonSummary = true;
+		/*
+				Vector<Object> dominoFriendlyVec = null;
+				Object dominoFriendlyObj = null;
+				List<lotus.domino.Base> recycleThis = null;
+		
+				boolean isNonSummary = false;
+				boolean isNames = false;
+				
+				try {
+					// Special case. If the argument is an Item, just copy it.
+					if (value instanceof Item) {
+						recycleThis = new ArrayList<lotus.domino.Base>();
+						// remove the mime item first, so that it will not collide with MIME etc.
+						MIMEEntity mimeChk = getMIMEEntity(itemName);
+						if (mimeChk != null) {
+							try {
+								mimeChk.remove();
+							} finally {
+								closeMIMEEntities(true, itemName);
 							}
-							if (valNode instanceof Name) {
-								isNames = true;
-							}
-							dominoFriendlyVec.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
+						}
+						beginEdit();
+						result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
+						markDirty(itemName, true);
+		
+						s_recycle(result);
+		
+						if (returnItem) {
+							return getFactory().create(Item.SCHEMA, this, itemName);
+						} else {
+							return null;
 						}
 					}
-				}
-			} else if (value.getClass().isArray()) {
-				recycleThis = new ArrayList<lotus.domino.Base>();
-				int lh = Array.getLength(value);
-				if (lh > MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
-					String cn = value.getClass().getName();
-					if (cn.length() == 2)						// It is primitive
-						throw new Domino32KLimitException();
-				}
-				dominoFriendlyVec = new Vector<Object>(lh);
-				for (int i = 0; i < lh; i++) {
-					Object o = Array.get(value, i);
-					if (o != null) { // CHECKME: Should NULL values be discarded?
-						if (o instanceof BigString) {
+		
+					//TODO Replace with TypeUtils calls to allow for extensibility
+		
+					// first step: Make it domino friendly and put all converted objects into "dominoFriendly"
+					if (value instanceof String || value instanceof Integer || value instanceof Double) {
+						dominoFriendlyObj = value;
+					} else if (value instanceof Collection) {
+						if (TypeUtils.isFriendlyVector(value)) {
+							recycleThis = null;
+							dominoFriendlyVec = (Vector<Object>) value;
+						} else {
+							recycleThis = new ArrayList<lotus.domino.Base>();
+							Collection<?> coll = (Collection<?>) value;
+							dominoFriendlyVec = new Vector<Object>(coll.size());
+							for (Object valNode : coll) {
+								if (valNode != null) { // CHECKME: Should NULL values discarded?
+									if (valNode instanceof BigString) {
+										isNonSummary = true;
+									}
+									if (valNode instanceof Name) {
+										isNames = true;
+									}
+									dominoFriendlyVec.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
+								}
+							}
+						}
+					} else if (value.getClass().isArray()) {
+						recycleThis = new ArrayList<lotus.domino.Base>();
+						int lh = Array.getLength(value);
+						if (lh > MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
+							String cn = value.getClass().getName();
+							if (cn.length() == 2)						// It is primitive
+								throw new Domino32KLimitException();
+						}
+						dominoFriendlyVec = new Vector<Object>(lh);
+						for (int i = 0; i < lh; i++) {
+							Object o = Array.get(value, i);
+							if (o != null) { // CHECKME: Should NULL values be discarded?
+								if (o instanceof BigString) {
+									isNonSummary = true;
+								}
+								if (o instanceof Name) {
+									isNames = true;
+								}
+								dominoFriendlyVec.add(toItemFriendly(o, getAncestorSession(), recycleThis));
+							}
+						}
+					} else { // Scalar
+						recycleThis = new ArrayList<lotus.domino.Base>();
+						if (value instanceof BigString) {
 							isNonSummary = true;
 						}
-						if (o instanceof Name) {
+						if (value instanceof Name) {
 							isNames = true;
 						}
-						dominoFriendlyVec.add(toItemFriendly(o, getAncestorSession(), recycleThis));
+						dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
 					}
-				}
-			} else { // Scalar
-				recycleThis = new ArrayList<lotus.domino.Base>();
-				if (value instanceof BigString) {
-					isNonSummary = true;
-				}
-				if (value instanceof Name) {
-					isNames = true;
-				}
-				dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
-			}
-			Object firstElement = null;
-
-			// empty vectors are treated as "null"
-			if (dominoFriendlyObj == null) {
-				if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
-					return replaceItemValueLotus(itemName, null, isSummary, returnItem);
-				} else {
-					firstElement = dominoFriendlyVec.get(0);
-				}
-			} else {
-				firstElement = dominoFriendlyObj;
-			}
-
-			int payloadOverhead = 0;
-
-			if (dominoFriendlyVec != null && dominoFriendlyVec.size() > 1) {	// compute overhead first for multi values
-				// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
-				if (firstElement instanceof String)
-					payloadOverhead = 2 + 2 * dominoFriendlyVec.size();
-				else
-					payloadOverhead = 4;
-			}
-
-			// Next step: Type checking + length computation
-			//
-			// Remark: The special case of a String consisting of only ONE @NewLine (i.e.
-			// 		if (s.equals("\n") || s.equals("\r") || s.equals("\r\n"))
-			// where Domino is a bit ailing) won't be extra considered any longer.
-			// Neither serialization nor throwing an exception would be reasonable here.
-
-			int payload = payloadOverhead;
-			Class<?> firstElementClass;
-			if (firstElement instanceof String)
-				firstElementClass = String.class;
-			else if (firstElement instanceof Number)
-				firstElementClass = Number.class;
-			else if (firstElement instanceof lotus.domino.DateTime)
-				firstElementClass = lotus.domino.DateTime.class;
-			else if (firstElement instanceof lotus.domino.DateRange)
-				firstElementClass = lotus.domino.DateRange.class;
-			// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
-			// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
-			else
-				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
-
-			if (dominoFriendlyVec != null) {
-				for (Object o : dominoFriendlyVec) {
-					payload += getLotusPayload(o, firstElementClass);
-				}
-			} else {
-				payload += getLotusPayload(dominoFriendlyObj, firstElementClass);
-			}
-
-			if (payload > MAX_NATIVE_FIELD_SIZE) {
-				// the datatype is OK, but there's no way to store the data in the Document
-				throw new Domino32KLimitException();
-			}
-			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
-				// each sign may demand up to 3 bytes in LMBCS
-				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
-				if (calc >= MAX_NATIVE_FIELD_SIZE) {
-					if (dominoFriendlyVec != null) {
-						payload = payloadOverhead + LMBCSUtils.getPayload(dominoFriendlyVec);
+					Object firstElement = null;
+		
+					// empty vectors are treated as "null"
+					if (dominoFriendlyObj == null) {
+						if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
+							return replaceItemValueLotus(itemName, null, isSummary, returnItem);
+						} else {
+							firstElement = dominoFriendlyVec.get(0);
+						}
 					} else {
-						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
+						firstElement = dominoFriendlyObj;
 					}
-					if (payload > MAX_NATIVE_FIELD_SIZE)
+		
+					int payloadOverhead = 0;
+		
+					if (dominoFriendlyVec != null && dominoFriendlyVec.size() > 1) {	// compute overhead first for multi values
+						// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
+						if (firstElement instanceof String)
+							payloadOverhead = 2 + 2 * dominoFriendlyVec.size();
+						else
+							payloadOverhead = 4;
+					}
+		
+					// Next step: Type checking + length computation
+					//
+					// Remark: The special case of a String consisting of only ONE @NewLine (i.e.
+					// 		if (s.equals("\n") || s.equals("\r") || s.equals("\r\n"))
+					// where Domino is a bit ailing) won't be extra considered any longer.
+					// Neither serialization nor throwing an exception would be reasonable here.
+		
+					int payload = payloadOverhead;
+					Class<?> firstElementClass;
+					if (firstElement instanceof String)
+						firstElementClass = String.class;
+					else if (firstElement instanceof Number)
+						firstElementClass = Number.class;
+					else if (firstElement instanceof lotus.domino.DateTime)
+						firstElementClass = lotus.domino.DateTime.class;
+					else if (firstElement instanceof lotus.domino.DateRange)
+						firstElementClass = lotus.domino.DateRange.class;
+					// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
+					// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
+					else
+						throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
+		
+					if (dominoFriendlyVec != null) {
+						for (Object o : dominoFriendlyVec) {
+							payload += TypeUtils.getLotusPayload(o, firstElementClass);
+						}
+					} else {
+						payload += TypeUtils.getLotusPayload(dominoFriendlyObj, firstElementClass);
+					}
+		
+					if (payload > MAX_NATIVE_FIELD_SIZE) {
+						// the datatype is OK, but there's no way to store the data in the Document
 						throw new Domino32KLimitException();
-				}
-			}
-			if (payload > MAX_SUMMARY_FIELD_SIZE) {
-				isNonSummary = true;
-			}
-
-			MIMEEntity mimeChk = getMIMEEntity(itemName);
-			if (mimeChk != null) {
-				try {
-					mimeChk.remove();
+					}
+					if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
+						// each sign may demand up to 3 bytes in LMBCS
+						int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
+						if (calc >= MAX_NATIVE_FIELD_SIZE) {
+							if (dominoFriendlyVec != null) {
+								payload = payloadOverhead + LMBCSUtils.getPayload(dominoFriendlyVec);
+							} else {
+								payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
+							}
+							if (payload > MAX_NATIVE_FIELD_SIZE)
+								throw new Domino32KLimitException();
+						}
+					}
+					if (payload > MAX_SUMMARY_FIELD_SIZE) {
+						isNonSummary = true;
+					}
+		
+					MIMEEntity mimeChk = getMIMEEntity(itemName);
+					if (mimeChk != null) {
+						try {
+							mimeChk.remove();
+						} finally {
+							closeMIMEEntities(true, itemName);
+						}
+					}
+					beginEdit();
+					if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 1) {
+						result = getDelegate().replaceItemValue(itemName, firstElement);
+					} else {
+						result = getDelegate().replaceItemValue(itemName, dominoFriendlyVec);
+					}
+					markDirty(itemName, true);
+					if (isSummary == null) {
+						// Auto detect
+						if (isNonSummary) {
+							result.setSummary(false);
+						}
+					} else {
+						result.setSummary(isSummary.booleanValue());
+					}
+					if (value instanceof ReadersList) {
+						result.setReaders(true);
+					} else if (value instanceof AuthorsList) {
+						result.setAuthors(true);
+					} else if (value instanceof NamesList || isNames) {
+						result.setNames(true);
+					}
+		
+					s_recycle(result);
+					if (returnItem) {
+						// to keep compatibility and speed, return a blank item, that will resurrect on demand
+						return getFactory().create(Item.SCHEMA, this, itemName);
+						//return fromLotus(result, Item.SCHEMA, this);
+					}
+		
+				} catch (NotesException ex) {
+					DominoUtils.handleException(ex, this, "Item=" + itemName);
 				} finally {
-					closeMIMEEntities(true, itemName);
+					s_recycle(recycleThis);
 				}
-			}
-			beginEdit();
-			if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 1) {
-				result = getDelegate().replaceItemValue(itemName, firstElement);
-			} else {
-				result = getDelegate().replaceItemValue(itemName, dominoFriendlyVec);
-			}
-			markDirty(itemName, true);
-			if (isSummary == null) {
-				// Auto detect
-				if (isNonSummary) {
-					result.setSummary(false);
-				}
-			} else {
-				result.setSummary(isSummary.booleanValue());
-			}
-			if (value instanceof ReadersList) {
-				result.setReaders(true);
-			} else if (value instanceof AuthorsList) {
-				result.setAuthors(true);
-			} else if (value instanceof NamesList || isNames) {
-				result.setNames(true);
-			}
-
-			s_recycle(result);
-			if (returnItem) {
-				// to keep compatibility and speed, return a blank item, that will resurrect on demand
-				return getFactory().create(Item.SCHEMA, this, itemName);
-				//return fromLotus(result, Item.SCHEMA, this);
-			}
-
-		} catch (NotesException ex) {
-			DominoUtils.handleException(ex, this, "Item=" + itemName);
-		} finally {
-			s_recycle(recycleThis);
-		}
-
-		return null;
-	}
-
-	protected boolean isFriendlyVector(final Object value) {
-		if (!(value instanceof Vector))
-			return false;
-		for (Object v : (Vector<?>) value) {
-			if (v instanceof String || v instanceof Integer || v instanceof Double) {
-				// ok
-			} else {
-				return false;
-			}
-		}
-		return true;
+		
+				return null;*/
 	}
 
 	private AutoMime autoMime_ = null;
@@ -3134,10 +3102,10 @@ org.openntf.domino.Document {
 				} else {
 					// Then destroy it (?)
 					this.removeItem("$$ItemInfo");
-					itemInfo_ = new FastSortedMap<String, Map<String, Serializable>>();
+					itemInfo_ = new TreeMap<String, Map<String, Serializable>>();
 				}
 			} else {
-				itemInfo_ = new FastSortedMap<String, Map<String, Serializable>>();
+				itemInfo_ = new TreeMap<String, Map<String, Serializable>>();
 			}
 		}
 		return itemInfo_;
@@ -3260,8 +3228,8 @@ org.openntf.domino.Document {
 			} else {
 				// System.out.println("Before Update listener blocked save.");
 				if (log_.isLoggable(Level.FINE)) {
-					log_.log(Level.FINE, "Document " + getNoteID()
-							+ " was not saved because the DatabaseListener for update returned false.");
+					log_.log(Level.FINE,
+							"Document " + getNoteID() + " was not saved because the DatabaseListener for update returned false.");
 				}
 				result = false;
 			}
@@ -3466,8 +3434,8 @@ org.openntf.domino.Document {
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3570,7 +3538,7 @@ org.openntf.domino.Document {
 	 * @param itemWritten
 	 *            true if you have written the item, false if not
 	 */
-	protected void markDirty(final String fieldName, final boolean itemWritten) {
+	public void markDirty(final String fieldName, final boolean itemWritten) {
 		markDirtyInt();
 		if (itemWritten) {
 			keySetInt().add(fieldName);
@@ -3696,9 +3664,11 @@ org.openntf.domino.Document {
 							try {
 								d = db.getDocumentByUNID(unid_);
 							} catch (NotesException ne) {
-								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-										+ getParentDatabase().getFilePath() + " because of: " + ne.text, ne);
+								log_.log(Level.WARNING,
+										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+												+ getParentDatabase().getFilePath() + " because of: " + ne.text,
+										ne);
 							}
 						}
 					} else {
@@ -3709,8 +3679,8 @@ org.openntf.domino.Document {
 				//getFactory().recacheLotusObject(d, this, parent_);
 				if (shouldResurrect_) {
 					if (log_.isLoggable(Level.FINER)) {
-						log_.log(Level.FINER, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
-								+ " was rollbacked.");
+						log_.log(Level.FINER,
+								"Document " + noteid_ + " in database path " + getParentDatabase().getFilePath() + " was rollbacked.");
 					}
 				} else {
 					if (log_.isLoggable(Level.FINE)) {
@@ -3756,9 +3726,10 @@ org.openntf.domino.Document {
 							}
 						} else {
 							if (log_.isLoggable(Level.WARNING))
-								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+								log_.log(Level.WARNING,
+										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+												+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 						}
 					}
 				} else {
@@ -3774,15 +3745,12 @@ org.openntf.domino.Document {
 					if (log_.isLoggable(Level.FINER)) {
 						Throwable t = new Throwable();
 						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+						log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+								+ elements[0].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+								+ elements[1].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+								+ elements[2].getLineNumber() + ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -4008,11 +3976,11 @@ org.openntf.domino.Document {
 		return false;
 	}
 
-	private FastSet<String> fieldNames_;
+	private SortedSet<String> fieldNames_;
 
-	protected FastSet<String> keySetInt() {
+	protected SortedSet<String> keySetInt() {
 		if (fieldNames_ == null) {
-			fieldNames_ = new FastSet<String>(Equalities.LEXICAL_CASE_INSENSITIVE);
+			fieldNames_ = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
 			//
 			// evaluate("@DocFields",...) is 3 times faster than lotus.domino.Document.getItems()
 			//
@@ -4046,7 +4014,7 @@ org.openntf.domino.Document {
 
 	@Override
 	public Set<String> keySet() {
-		return keySetInt().unmodifiable();
+		return Collections.unmodifiableSet(keySetInt());
 	}
 
 	@Override
@@ -4466,6 +4434,36 @@ org.openntf.domino.Document {
 		return extendedNoteInfos_.isDefault;
 	}
 
+	@Override
+	public void encrypt(final UserID arg0) {
+		try {
+			getDelegate().encrypt(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void encrypt(final String arg0, final String arg1) {
+		try {
+			getDelegate().encrypt(arg0, arg1);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	public void replaceAttachment(final String richTextName, final String attachmentName, final String file) {
+
+	}
+
+	public void removeAttachment(final String richTextName, final String attachmentName) {
+
+	}
+
+	public Collection<EmbeddedObject> getAllAttachments() {
+		Collection<EmbeddedObject> result = new ArrayList<EmbeddedObject>();
+		return result;
+	}
 	//	@Override
 	//	protected boolean allowAccessAcrossThreads() {
 	//		return !isDirty();

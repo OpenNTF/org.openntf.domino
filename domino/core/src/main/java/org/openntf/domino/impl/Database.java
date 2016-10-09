@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
+import lotus.domino.UserID;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
@@ -81,8 +82,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends BaseResurrectable<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-		org.openntf.domino.Database {
+public class Database extends BaseResurrectable<org.openntf.domino.Database, lotus.domino.Database, Session>
+		implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -235,7 +236,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int)
 	 */
 	@Override
-	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt) {
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final Set<FTSearchOption> otherOpt) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -524,7 +526,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
 	@Override
-	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize) {
+	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit,
+			final int maxSize) {
 		try {
 			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
@@ -1112,6 +1115,13 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	public static final String NOTEID_ICONNOTE = "FFFF0010";
+
+	@Override
+	public Document getIconNote() {
+		return getDocumentByID(NOTEID_ICONNOTE);
+	}
+
 	@Override
 	public Document getDocumentWithKey(final Serializable key) {
 		return this.getDocumentWithKey(key, false);
@@ -1121,6 +1131,12 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	public Document getDocumentWithKey(final Serializable key, final boolean createOnFail) {
 		try {
 			if (key != null) {
+				if (key instanceof String && ((String) key).length() == 32) {
+					if ("000000000000000000000000000000000000".equals(key)) {
+						return getIconNote();
+					}
+				}
+
 				String checksum = DominoUtils.toUnid(key);
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
@@ -1209,9 +1225,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			if (true)
 				return null;
 
-			return fromLotus(
-					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
-							proxyPassword, returnImmediately), Document.SCHEMA, this);
+			return fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
+					proxyUser, proxyPassword, returnImmediately), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -3087,8 +3102,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			/* No special logging, since by now Database is a BaseThreadSafe */
 		} catch (NotesException e) {
 			if (e.id == NotesError.NOTES_ERR_DBNOACCESS) {
-				throw new UserAccessException("User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server "
-						+ server_, e);
+				throw new UserAccessException(
+						"User " + parent.getEffectiveUserName() + " cannot open database " + path_ + " on server " + server_, e);
 			} else {
 				DominoUtils.handleException(e, this);
 			}
@@ -3221,8 +3236,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 * java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
-			final int otherOpt, final int start, final int count, final String entryForm) {
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt,
+			final int start, final int count, final String entryForm) {
 		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
 
@@ -3762,6 +3777,46 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public lotus.domino.Database createFromTemplate(final String arg0, final String arg1, final boolean arg2, final int arg3,
+			final boolean arg4) {
+		try {
+			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3, arg4);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public lotus.domino.NoteCollection getModifiedDocumentsWithOptions(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1,
+			final int arg2) {
+		try {
+			return getDelegate().getModifiedDocumentsWithOptions(arg0, arg1, arg2);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
+		try {
+			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void setUserIDForDecrypt(final UserID arg0) {
+		try {
+			getDelegate().setUserIDForDecrypt(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
 	}
 
 }

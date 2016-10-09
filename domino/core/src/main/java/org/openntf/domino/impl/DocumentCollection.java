@@ -31,6 +31,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -430,7 +431,7 @@ implements org.openntf.domino.DocumentCollection {
 	public void stampAll(final String itemName, final Object value) {
 		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().stampAll(itemName, toItemFriendly(value, getAncestorSession(), recycleThis));
+			getDelegate().stampAll(itemName, TypeUtils.toItemFriendly(value, getAncestorSession(), recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -445,7 +446,7 @@ implements org.openntf.domino.DocumentCollection {
 			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
 			for (Map.Entry<String, Object> entry : map.entrySet()) {
 				//NTF - go directly to delegate because we already know the entries are Domino friendly.
-				getDelegate().stampAll(entry.getKey(), toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis));
+				getDelegate().stampAll(entry.getKey(), TypeUtils.toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis));
 			}
 		} catch (IllegalArgumentException iae) {
 			for (org.openntf.domino.Document doc : this) {

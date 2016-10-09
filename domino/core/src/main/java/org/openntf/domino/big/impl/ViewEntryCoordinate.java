@@ -123,6 +123,11 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 	}
 
 	@Override
+	public boolean isIcon() {
+		return false;
+	}
+
+	@Override
 	public int compareTo(final org.openntf.domino.big.NoteCoordinate arg0) {
 		throw new UnimplementedException("compareTo has not yet been implemented in ViewEntryCoordinate");
 	}

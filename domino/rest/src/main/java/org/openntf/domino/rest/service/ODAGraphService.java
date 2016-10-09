@@ -33,14 +33,19 @@ import org.openntf.domino.xsp.session.DasCurrentSessionFactory;
 public class ODAGraphService extends RestService implements IRestServiceExt {
 	private Map<String, FramedGraph<?>> graphMap_;
 	private Map<String, IGraphFactory> factoryMap_;
+	public static final String PREFIX = "ODA Graph Service: ";
+	static void report(String message) {
+		System.out.println(PREFIX + message);
+	}
 
 	public ODAGraphService() {
+		report("Starting...");
 		init();
 	}
 
 	protected void initDynamicGraphs() {
 		// Get a list of all registered extensions
-
+report ("Searching for extensions...");
 		IExtension extensions[] = null;
 		final IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 		if (extensionRegistry != null) {
@@ -76,13 +81,13 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 						continue;
 					}
 
-					// System.out.println("Found an extension point instance: "
-					// + object.getClass().getName());
+					report("Found an extension point instance: "
+					 + object.getClass().getName());
 					IGraphFactory factory = (IGraphFactory) object;
 					Map<String, FramedGraph<?>> registry = factory.getRegisteredGraphs();
 					for (String key : registry.keySet()) {
 						FramedGraph<?> graph = registry.get(key);
-						// System.out.println("Adding graph called " + key);
+						report("Adding graph called " + key);
 						addGraph(key, graph);
 						addFactory(key, factory);
 					}
@@ -93,6 +98,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 				}
 			}
 		}
+		report ("Extensions complete.");
 	}
 
 	@Override

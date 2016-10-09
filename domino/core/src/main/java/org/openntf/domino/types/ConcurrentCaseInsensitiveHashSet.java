@@ -3,11 +3,10 @@ package org.openntf.domino.types;
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Map;
-
-import javolution.util.FastMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentCaseInsensitiveHashSet extends AbstractSet<String> {
-	private Map<String, String> delegate = new FastMap<String, String>().atomic();
+	private Map<String, String> delegate = new ConcurrentHashMap<String, String>();
 
 	@Override
 	public boolean add(final String e) {

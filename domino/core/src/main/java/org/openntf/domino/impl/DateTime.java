@@ -38,8 +38,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements
-org.openntf.domino.DateTime {
+public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session>
+		implements org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -183,7 +183,8 @@ org.openntf.domino.DateTime {
 				try {
 					delegate.convertToZone(notesZone_, dst_);
 				} catch (Throwable t) {
-					log_.log(Level.WARNING, "Failed to convert a DateTime to zone " + notesZone_ + " with a dst of " + String.valueOf(dst_));
+					log_.log(Level.WARNING,
+							"Failed to convert a DateTime to zone " + notesZone_ + " with a dst of " + String.valueOf(dst_));
 				}
 			}
 			if (isAnyTime()) {
@@ -950,6 +951,16 @@ org.openntf.domino.DateTime {
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public String getReplicaID() {
+		try {
+			return getWorker().getReplicaID();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 }

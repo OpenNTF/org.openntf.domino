@@ -114,8 +114,9 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			index_++;
 			if (cur_ != null) {
 				ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+				//				System.out.println("TEMP DEBUG current entry position: " + cur_.getPosition() + " id: " + cur_.getUniversalID() + " vec "
+				//						+ vec.getUNID());
 				vec.setSourceNav(navigator_);
-				//			System.out.println("TEMP DEBUG current entry position: " + cur_.getPosition());
 				return vec;
 			} else {
 				return null;

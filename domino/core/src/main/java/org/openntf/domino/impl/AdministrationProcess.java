@@ -30,9 +30,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AdministrationProcess.
  */
-public class AdministrationProcess extends
-BaseThreadSafe<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session> implements
-org.openntf.domino.AdministrationProcess {
+public class AdministrationProcess
+		extends BaseThreadSafe<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session>
+		implements org.openntf.domino.AdministrationProcess {
 
 	/**
 	 * Instantiates a new administration process.
@@ -624,8 +624,8 @@ org.openntf.domino.AdministrationProcess {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath,
-			final boolean useSCOS, final Vector newClusterReplicas, final boolean deleteOldClusterReplicas) {
+	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath, final boolean useSCOS,
+			final Vector newClusterReplicas, final boolean deleteOldClusterReplicas) {
 		try {
 			return getDelegate().moveMailUser(userName, newHomeServer, newHomeServerMailPath, useSCOS, newClusterReplicas,
 					deleteOldClusterReplicas);
@@ -705,8 +705,8 @@ org.openntf.domino.AdministrationProcess {
 	 */
 	@Override
 	public String moveUserInHierarchyComplete(final String requestNoteid, final String lastName, final String firstName,
-			final String middleInitial, final String orgUnit, final String altCommonName, final String altOrgUnit,
-			final String altLanguage, final boolean renameWindowsUser) {
+			final String middleInitial, final String orgUnit, final String altCommonName, final String altOrgUnit, final String altLanguage,
+			final boolean renameWindowsUser) {
 		try {
 			return getDelegate().moveUserInHierarchyComplete(requestNoteid, lastName, firstName, middleInitial, orgUnit, altCommonName,
 					altOrgUnit, altLanguage, renameWindowsUser);
@@ -1051,6 +1051,16 @@ org.openntf.domino.AdministrationProcess {
 	public String setEnableOutlookSupport(final String arg0, final boolean arg1) {
 		try {
 			return getDelegate().setEnableOutlookSupport(arg0, arg1);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public String deleteUser(final String arg0, final boolean arg1, final int arg2, final String arg3, final boolean arg4, final int arg5) {
+		try {
+			return getDelegate().deleteUser(arg0, arg1, arg2, arg3, arg4, arg5);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

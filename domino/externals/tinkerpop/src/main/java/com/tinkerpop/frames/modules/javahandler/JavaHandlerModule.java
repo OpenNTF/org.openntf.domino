@@ -171,6 +171,7 @@ public class JavaHandlerModule implements Module {
 		} catch (IllegalAccessException e) {
 			throw new JavaHandlerException("Problem instantiating handler class", e);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			throw new JavaHandlerException("Problem instantiating handler class", t);
 		}
 

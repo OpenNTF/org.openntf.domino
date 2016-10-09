@@ -16,12 +16,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import javolution.util.FastSortedTable;
-import javolution.util.function.Equality;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.UnimplementedException;
@@ -31,6 +29,9 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Longs;
+
+import javolution.util.FastSortedTable;
+import javolution.util.function.Equality;
 
 public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 	private final static int BUFFER_SIZE = 16;
@@ -260,6 +261,16 @@ public class LocalNoteList implements org.openntf.domino.big.LocalNoteList {
 		delegate_ = new ArrayList<LocalNoteCoordinate>(nc.getCount());
 		for (int nid : nc.getNoteIDs()) {
 			String unid = nc.getUNID(Integer.toHexString(nid));
+			delegate_.add(new LocalNoteCoordinate(unid, this));
+		}
+	}
+
+	public LocalNoteList(final DocumentCollection dc, final Date buildDate) {
+		buildDate_ = buildDate;
+		replid_ = org.openntf.domino.big.NoteCoordinate.Utils.getLongFromReplid(dc.getAncestorDatabase().getReplicaID());
+		delegate_ = new ArrayList<LocalNoteCoordinate>(dc.getCount());
+		for (Document doc : dc) {
+			String unid = doc.getUniversalID();
 			delegate_.add(new LocalNoteCoordinate(unid, this));
 		}
 	}

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.openntf.domino.extmgr.EMBridgeMessageQueue;
 import org.openntf.domino.thread.AbstractDominoExecutor;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
 import org.openntf.domino.thread.XotsExecutorService;
@@ -35,6 +36,7 @@ public class Xots {
 
 	// This is our Threadpool that will execute all Runnables
 	private static AbstractDominoExecutor executor_;
+	private static EMBridgeMessageQueue eventListener_;
 
 	//	public void addListener(final IDominoListener listener) {
 	//		executor_.addListener(listener);
@@ -70,6 +72,8 @@ public class Xots {
 		Factory.println(Xots.class, "Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
 
 		executor_ = executor;
+		eventListener_ = new EMBridgeMessageQueue();
+		executor_.execute(eventListener_);
 
 	}
 
@@ -84,7 +88,7 @@ public class Xots {
 	public static synchronized void stop(int wait) {
 		if (isStarted()) {
 			Factory.println(Xots.class, "Stopping XPages OSGi Tasklet Service...");
-
+			eventListener_.stop();
 			executor_.shutdown();
 			long running;
 			try {

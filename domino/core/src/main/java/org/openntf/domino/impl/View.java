@@ -800,7 +800,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		try {
 			getDelegate().setAutoUpdate(false);
 			getDelegate().setEnableNoteIDsForCategories(true);
-			ViewNavigator result = fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA,
+					this);
 			result.setCacheSize(cacheSize);
 			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.CHILDREN);
 			return result;
@@ -1264,8 +1265,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 				Vector rawColumns = raw.getColumns();
 				return fromLotusAsVector(rawColumns, org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
-				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
-						+ getAncestorDatabase().getApiPath(), e);
+				throw new RuntimeException(
+						"Unable to get columns for a view called " + getName() + " in database " + getAncestorDatabase().getApiPath(), e);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2670,9 +2671,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 				}
 			}
 			if (candidate != null) {
-				log_.log(Level.WARNING,
-						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
-								+ ", View2:" + ret.getAliases());
+				log_.log(Level.WARNING, "The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: "
+						+ candidate.getAliases() + ", View2:" + ret.getAliases());
 				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
 				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
 				ret = candidate;
@@ -3119,5 +3119,19 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	@Override
 	public String getMetaversalID() {
 		return getAncestorDatabase().getReplicaID() + getUniversalID();
+	}
+
+	@Override
+	public ViewNavigator createViewNavFromKey(final Vector arg0, final boolean arg1) {
+		try {
+			getDelegate().setAutoUpdate(false);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFromKey(arg0, arg1), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.KEYS);
+			return result;
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 }

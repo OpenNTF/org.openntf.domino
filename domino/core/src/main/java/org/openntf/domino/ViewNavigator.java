@@ -25,7 +25,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 		Iterable<ViewEntry>, DatabaseDescendant {
 
 	static enum Types {
-		NONE, FROM, CATEGORY, CHILDREN, DESCENDANTS, UNREAD, MAXLEVEL
+		NONE, FROM, CATEGORY, CHILDREN, DESCENDANTS, UNREAD, MAXLEVEL, KEYS
 	}
 
 	public static class Schema extends FactorySchema<ViewNavigator, lotus.domino.ViewNavigator, View> {

@@ -12,8 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import javolution.util.FastTable;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
@@ -22,9 +20,11 @@ import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.exceptions.UnimplementedException;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph2.DIdentityFactory;
 import org.openntf.domino.graph2.builtin.CategoryVertex;
+import org.openntf.domino.graph2.builtin.DbInfoVertex;
 import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -36,10 +36,13 @@ import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+
+import javolution.util.FastTable;
 
 public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@SuppressWarnings("unused")
@@ -79,8 +82,12 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (key instanceof ViewEntryCoordinate) {
 					result = ((ViewEntryCoordinate) key).getViewEntry();
 				} else if (key instanceof NoteCoordinate) {
-					String unid = ((NoteCoordinate) key).getUNID();
-					result = db.getDocumentWithKey(unid, false);
+					if (((NoteCoordinate) key).isIcon()) {
+						result = db.getIconNote();
+					} else {
+						String unid = ((NoteCoordinate) key).getUNID();
+						result = db.getDocumentWithKey(unid, false);
+					}
 					//					System.out.println("Retrieved result using NoteCoordinate with unid " + unid);
 				} else if (key instanceof CharSequence) {
 					String skey = ((CharSequence) key).toString();
@@ -99,6 +106,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				}
 				if (result == null) {
+					//					System.out.println("TEMP DEBUG getting document by key " + (key));
 					result = db.getDocumentWithKey((Serializable) key, false);
 				}
 				if (result != null) {
@@ -107,14 +115,15 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					if (result instanceof Document) {
 						isProxy = ((Document) result).hasItem(DProxyVertex.PROXY_ITEM);
 					}
-					if (parent_.isProxied()) {
+					if (parent_.isProxied() && result instanceof Document) {
+						//						System.out.println("TEMP DEBUG Setting up proxy");
 						result = parent_.setupProxy(result, (Serializable) key);
 					}
 				}
 			} else {
 				if (key != null) {
-					System.out.println("WARNING: Unknown delegatekey of type " + key.getClass().getName()
-							+ ". Creating a brand new delegate.");
+					System.out.println(
+							"WARNING: Unknown delegatekey of type " + key.getClass().getName() + ". Creating a brand new delegate.");
 				}
 				//null is a perfectly valid key, since it means we want to let the system assign it.
 				result = db.createDocument();
@@ -131,6 +140,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
 					result = vertex;
 				} else if (DesignFactory.isView((Document) delegate)) {
+					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
+					result = vertex;
+				} else if (DesignFactory.isIcon((Document) delegate)) {
 					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
 					result = vertex;
 				} else {
@@ -179,7 +191,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Element result = null;
 			Object delegate = null;
 			boolean isProxiedSource = false;
-			if (key instanceof NoteCoordinate && parent_.isProxied()) {
+			if (key instanceof NoteCoordinate && parent_.isProxied() && !(key instanceof ViewEntryCoordinate)) {
+				//				System.out.println("TEMP DEBUG in proxy branch...");
 				NoteCoordinate nc = (NoteCoordinate) key;
 				if (parent_.getStoreKey().equals(nc.getReplicaLong())) {
 					//this is a request for a vertex out of the proxied store, not the proxy itself
@@ -253,6 +266,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	public DElementStore() {
 		addType(ViewVertex.class);
 		addType(CategoryVertex.class);
+		addType(DbInfoVertex.class);
 	}
 
 	@Override
@@ -593,6 +607,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		} catch (InvalidCacheLoadException icle) {
 			//NTF this is no problem and quite normal
 			return null;
+		} catch (UncheckedExecutionException uee) {
+			Throwable cause = uee.getCause();
+			if (cause != null && cause instanceof UserAccessException) {
+				throw new UserAccessException(cause.getMessage(), cause);
+			} else {
+				throw uee;
+			}
 		} catch (Throwable t) {
 			throw new IllegalStateException("Unable to retrieve id " + String.valueOf(id), t);
 		}
@@ -799,7 +820,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			CustomProxyResolver resolver = getCustomProxyResolver();
 			if (resolver == null) {
 				System.err.println("No default resolver implemented yet");
-				throw new UnimplementedException("Non-custom resolution of proxied vertices not yet implemented");
+				throw new UnimplementedException("Generics resolution of proxied vertices not yet implemented");
 			} else {
 				//				System.out.println("Resolving using a " + resolver.getClass().getName());
 				Map<String, Object> originalDelegate = resolver.getOriginalDelegate(originalKey);
@@ -941,6 +962,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		if (delegateKey instanceof NoteCoordinate && ((NoteCoordinate) delegateKey).isView()) {
 			return;
 		}
+		if (delegateKey instanceof NoteCoordinate && ((NoteCoordinate) delegateKey).isIcon()) {
+			return;
+		}
 
 		Object typeChk = ((Map<String, Object>) result).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
 		String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
@@ -960,8 +984,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
 				//okay
 			} else {
-				throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-						+ " results in a delegate with a graph type of " + strChk);
+				throw new IllegalStateException(
+						"Requested id of " + String.valueOf(delegateKey) + " results in a delegate with a graph type of " + strChk);
 			}
 		}
 	}
@@ -1025,13 +1049,13 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else if (Edge.class.isAssignableFrom(type) && org.openntf.domino.graph2.DEdge.GRAPH_TYPE_VALUE.equals(strChk)) {
 					//okay
 				} else {
-					throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-							+ " results in a delegate with a graph type of " + strChk);
+					throw new IllegalStateException(
+							"Requested id of " + String.valueOf(delegateKey) + " results in a delegate with a graph type of " + strChk);
 				}
 			}
 		} else {
-			throw new IllegalStateException("Requested id of " + String.valueOf(delegateKey)
-					+ " results in a null delegate and therefore cannot be persisted.");
+			throw new IllegalStateException(
+					"Requested id of " + String.valueOf(delegateKey) + " results in a null delegate and therefore cannot be persisted.");
 		}
 
 		return result;
@@ -1190,8 +1214,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Database db = (Database) raw;
 			NoteCollection nc = db.createNoteCollection(false);
 			nc.setSelectDocuments(true);
-			nc.setSelectionFormula(org.openntf.domino.graph2.DEdge.FORMULA_FILTER + " | "
-					+ org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
+			nc.setSelectionFormula(
+					org.openntf.domino.graph2.DEdge.FORMULA_FILTER + " | " + org.openntf.domino.graph2.DVertex.FORMULA_FILTER);
 			nc.buildCollection();
 			result = Lists.newArrayListWithCapacity(nc.getCount());
 			for (String noteid : nc) {
