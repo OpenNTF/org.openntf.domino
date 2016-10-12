@@ -18,25 +18,16 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class RouterJournalMessageEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	/**
-	 * @param eventId
-	 */
-	public RouterJournalMessageEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public RouterJournalMessageEvent() {
-		super(IEMBridgeEvent.EM_ROUTERJOURNALMESSAGE);
+		super(EMEventIds.EM_ROUTERJOURNALMESSAGE.getId());
 	}
 
 }

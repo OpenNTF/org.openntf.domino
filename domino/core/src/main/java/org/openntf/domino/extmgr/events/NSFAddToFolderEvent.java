@@ -21,92 +21,29 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
  * @author dtaieb
  * 
  */
-public class NSFAddToFolderEvent extends AbstractEMBridgeEvent {
+public class NSFAddToFolderEvent extends DocumentEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.DataDbpath,
-			EMBridgeEventParams.FolderNoteid, EMBridgeEventParams.Noteid, EMBridgeEventParams.AddOperation };
+			EMBridgeEventParams.FolderNoteid, EMBridgeEventParams.Noteid, EMBridgeEventParams.AddOperation, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private String dataDbPath;
-	private String folderNoteID;
-	private String noteID;
-	private boolean isAddOperation;
-
-	/**
-	 * @param eventId
-	 */
-	public NSFAddToFolderEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFAddToFolderEvent() {
-		super(IEMBridgeEvent.EM_NSFADDTOFOLDER);
+		super(EMEventIds.EM_NSFADDTOFOLDER.getId());
 	}
 
-	/**
-	 * @return the dataDbPath
-	 */
 	public String getDataDbPath() {
-		return dataDbPath;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.DataDbpath);
 	}
 
-	/**
-	 * @param dataDbPath
-	 *            the dataDbPath to set
-	 */
-	private void setDataDbPath(final String dataDbPath) {
-		this.dataDbPath = dataDbPath;
-	}
-
-	/**
-	 * @return the folderNoteID
-	 */
 	public String getFolderNoteID() {
-		return folderNoteID;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.FolderNoteid);
 	}
 
-	/**
-	 * @param folderNoteID
-	 *            the folderNoteID to set
-	 */
-	private void setFolderNoteID(final String folderNoteID) {
-		this.folderNoteID = folderNoteID;
-	}
-
-	/**
-	 * @return the noteID
-	 */
-	public String getNoteID() {
-		return noteID;
-	}
-
-	/**
-	 * @param noteID
-	 *            the noteID to set
-	 */
-	private void setNoteID(final String noteID) {
-		this.noteID = noteID;
-	}
-
-	/**
-	 * @return the isAddOperation
-	 */
 	public boolean isAddOperation() {
-		return isAddOperation;
-	}
-
-	/**
-	 * @param isAddOperation
-	 *            the isAddOperation to set
-	 */
-	private void setAddOperation(final boolean isAddOperation) {
-		this.isAddOperation = isAddOperation;
+		return (Boolean) getEventValuesMap().get(EMBridgeEventParams.AddOperation);
 	}
 
 }

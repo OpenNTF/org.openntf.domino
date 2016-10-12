@@ -2,8 +2,8 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class FTDeleteIndexEvent extends AbstractEMBridgeEvent {
-	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath };
+public class FTDeleteIndexEvent extends DatabaseEvent {
+	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -11,7 +11,7 @@ public class FTDeleteIndexEvent extends AbstractEMBridgeEvent {
 	}
 
 	public FTDeleteIndexEvent() {
-		super(IEMBridgeEvent.EM_FTDELETEINDEX);
+		super(EMEventIds.EM_FTDELETEINDEX.getId());
 	}
 
 }

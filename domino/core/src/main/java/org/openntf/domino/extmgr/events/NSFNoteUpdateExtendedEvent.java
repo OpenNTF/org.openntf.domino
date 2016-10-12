@@ -18,7 +18,8 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteUpdateExtendedEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -27,15 +28,12 @@ public class NSFNoteUpdateExtendedEvent extends AbstractEMBridgeEvent {
 
 	private int updateFlag;
 
-	public NSFNoteUpdateExtendedEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEUPDATEXTENDED);
+	public NSFNoteUpdateExtendedEvent(final EMEventIds id) {
+		super(id.getId());
 	}
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteUpdateExtendedEvent(final int eventId) {
-		super(eventId);
+	public NSFNoteUpdateExtendedEvent() {
+		super(EMEventIds.EM_NSFNOTEUPDATEXTENDED.getId());
 	}
 
 	/**

@@ -18,7 +18,8 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteDecryptEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -27,18 +28,8 @@ public class NSFNoteDecryptEvent extends AbstractEMBridgeEvent {
 
 	private int decryptFlags;
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteDecryptEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteDecryptEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEDECRYPT);
+		super(EMEventIds.EM_NSFNOTEDECRYPT.getId());
 	}
 
 	/**

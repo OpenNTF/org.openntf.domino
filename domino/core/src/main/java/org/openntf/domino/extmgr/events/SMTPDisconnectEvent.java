@@ -18,7 +18,7 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class SMTPDisconnectEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SessionId };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SessionId, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -27,18 +27,8 @@ public class SMTPDisconnectEvent extends AbstractEMBridgeEvent {
 
 	private long sessionID;
 
-	/**
-	 * @param eventId
-	 */
-	public SMTPDisconnectEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public SMTPDisconnectEvent() {
-		super(IEMBridgeEvent.EM_SMTPDISCONNECT);
+		super(EMEventIds.EM_SMTPDISCONNECT.getId());
 	}
 
 	/**

@@ -69,7 +69,8 @@ Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
  com.ibm.icu;bundle-version="3.8.1",
  jsr305;bundle-version="1.0.0",
- javolution;bundle-version="6.1.0"
+ javolution;bundle-version="6.1.0",
+ rx;bundle-version="1.0.0"
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Import-Package: com.ibm.commons.util,

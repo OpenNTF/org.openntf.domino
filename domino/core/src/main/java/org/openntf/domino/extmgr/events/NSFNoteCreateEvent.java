@@ -18,25 +18,15 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteCreateEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	/**
-	 * 
-	 */
 	public NSFNoteCreateEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTECREATE);
-	}
-
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteCreateEvent(final int eventId) {
-		super(eventId);
+		super(EMEventIds.EM_NSFNOTECREATE.getId());
 	}
 
 }

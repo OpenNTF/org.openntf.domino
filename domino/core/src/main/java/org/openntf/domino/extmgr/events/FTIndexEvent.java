@@ -17,119 +17,42 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class FTIndexEvent extends AbstractEMBridgeEvent {
+public class FTIndexEvent extends DatabaseEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Options,
 			EMBridgeEventParams.Stopfile, EMBridgeEventParams.DocsAdded, EMBridgeEventParams.DocsUpdated, EMBridgeEventParams.DocsDelete,
-			EMBridgeEventParams.BytesIndexed };
+			EMBridgeEventParams.BytesIndexed, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private int options;
-	private String stopFile;
-	private long docsAdded;
-	private long docsUpdated;
-	private long docsDeleted;
-	private long bytesIndexed;
-
-	/**
-	 * @param eventId
-	 */
-	public FTIndexEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	* 
-	*/
 	public FTIndexEvent() {
-		super(IEMBridgeEvent.EM_FTINDEX);
+		super(EMEventIds.EM_FTINDEX.getId());
 	}
 
-	/**
-	 * @param options
-	 */
-	private void setOptions(final int options) {
-		this.options = options;
-	}
-
-	/**
-	 * @return
-	 */
 	public int getOptions() {
-		return options;
+		return (Integer) getEventValuesMap().get(EMBridgeEventParams.Options);
 	}
 
-	/**
-	 * @param stopFile
-	 */
-	private void setStopFile(final String stopFile) {
-		this.stopFile = stopFile;
-	}
-
-	/**
-	 * @return
-	 */
 	public String getStopFile() {
-		return stopFile;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.Stopfile);
 	}
 
-	/**
-	 * @param docsAdded
-	 */
-	public void setDocsAdded(final long docsAdded) {
-		this.docsAdded = docsAdded;
-	}
-
-	/**
-	 * @return
-	 */
 	public long getDocsAdded() {
-		return docsAdded;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.DocsAdded);
 	}
 
-	/**
-	 * @param docsDeleted
-	 */
-	public void setDocsDeleted(final long docsDeleted) {
-		this.docsDeleted = docsDeleted;
-	}
-
-	/**
-	 * @return
-	 */
 	public long getDocsDeleted() {
-		return docsDeleted;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.DocsDelete);
 	}
 
-	/**
-	 * @param docsUpdated
-	 */
-	public void setDocsUpdated(final long docsUpdated) {
-		this.docsUpdated = docsUpdated;
-	}
-
-	/**
-	 * @return
-	 */
 	public long getDocsUpdated() {
-		return docsUpdated;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.DocsUpdated);
 	}
 
-	/**
-	 * @param bytesIndexed
-	 */
-	public void setBytesIndexed(final long bytesIndexed) {
-		this.bytesIndexed = bytesIndexed;
-	}
-
-	/**
-	 * @return
-	 */
 	public long getBytesIndexed() {
-		return bytesIndexed;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.BytesIndexed);
 	}
 
 }

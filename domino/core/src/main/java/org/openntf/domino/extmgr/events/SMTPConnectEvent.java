@@ -20,7 +20,7 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
 public class SMTPConnectEvent extends AbstractEMBridgeEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SessionId, EMBridgeEventParams.RemoteIP,
 			EMBridgeEventParams.RemoteHost, EMBridgeEventParams.PossibileRelay, EMBridgeEventParams.SMTPGreeting,
-			EMBridgeEventParams.SMTPMaxGreetingLen };
+			EMBridgeEventParams.SMTPMaxGreetingLen, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -34,18 +34,8 @@ public class SMTPConnectEvent extends AbstractEMBridgeEvent {
 	private String greeting;
 	private long maxGreetingLen;
 
-	/**
-	 * @param eventId
-	 */
-	public SMTPConnectEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public SMTPConnectEvent() {
-		super(IEMBridgeEvent.EM_SMTPCONNECT);
+		super(EMEventIds.EM_SMTPCONNECT.getId());
 	}
 
 	/**

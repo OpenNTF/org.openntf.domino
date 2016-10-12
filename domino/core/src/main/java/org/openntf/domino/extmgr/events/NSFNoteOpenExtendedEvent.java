@@ -19,7 +19,7 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteOpenExtendedEvent extends AbstractEMBridgeEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag,
-			EMBridgeEventParams.SinceSeqNum };
+			EMBridgeEventParams.SinceSeqNum, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -29,18 +29,8 @@ public class NSFNoteOpenExtendedEvent extends AbstractEMBridgeEvent {
 	private long flags;
 	private long sinceSeqNum;
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteOpenExtendedEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	* 
-	*/
 	public NSFNoteOpenExtendedEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEOPENEXTENDED);
+		super(EMEventIds.EM_NSFNOTEOPENEXTENDED.getId());
 	}
 
 	/**

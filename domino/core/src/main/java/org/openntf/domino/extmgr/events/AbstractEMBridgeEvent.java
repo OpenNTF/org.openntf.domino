@@ -19,21 +19,17 @@ public abstract class AbstractEMBridgeEvent implements IEMBridgeEvent {
 		eventValuesMap_.put(param, value);
 	}
 
+	EnumMap<EMBridgeEventParams, Object> getEventValuesMap() {
+		return eventValuesMap_;
+	}
+
 	@Override
 	public final int getEventId() {
 		return eventId;
 	}
 
-	public final String getDbPath() {
-		return (String) eventValuesMap_.get(EMBridgeEventParams.SourceDbpath);
-	}
-
 	public final String getDestDbPath() {
 		return (String) eventValuesMap_.get(EMBridgeEventParams.DestDbpath);
-	}
-
-	public final String getNoteId() {
-		return (String) eventValuesMap_.get(EMBridgeEventParams.Noteid);
 	}
 
 	public final String getUsername() {

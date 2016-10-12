@@ -22,25 +22,15 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
  * 
  */
 public class ClearPasswordEvent extends AbstractEMBridgeEvent {
-	private static EMBridgeEventParams[] params = {};
+	private static EMBridgeEventParams[] params = { EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	/**
-	 * @param eventId
-	 */
-	public ClearPasswordEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public ClearPasswordEvent() {
-		super(IEMBridgeEvent.EM_CLEARPASSWORD);
+		super(EMEventIds.EM_CLEARPASSWORD.getId());
 	}
 
 }

@@ -19,7 +19,7 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class SMTPMessageAcceptEvent extends AbstractEMBridgeEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SessionId, EMBridgeEventParams.SourceDbpath,
-			EMBridgeEventParams.Noteid, EMBridgeEventParams.SMTPReply, EMBridgeEventParams.SMTPReplyLength };
+			EMBridgeEventParams.Noteid, EMBridgeEventParams.SMTPReply, EMBridgeEventParams.SMTPReplyLength, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -30,18 +30,8 @@ public class SMTPMessageAcceptEvent extends AbstractEMBridgeEvent {
 	private String SMTPReply;
 	private long SMTPReplyLength;
 
-	/**
-	 * @param eventId
-	 */
-	public SMTPMessageAcceptEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public SMTPMessageAcceptEvent() {
-		super(IEMBridgeEvent.EM_SMTPMESSAGEACCEPT);
+		super(EMEventIds.EM_SMTPMESSAGEACCEPT.getId());
 	}
 
 	/**

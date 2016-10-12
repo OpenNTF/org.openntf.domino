@@ -1,5 +1,6 @@
 package org.openntf.domino.graph2.impl;
 
+import org.openntf.domino.graph2.annotations.ActionHandler;
 import org.openntf.domino.graph2.annotations.AdjacencyHandler;
 import org.openntf.domino.graph2.annotations.AdjacencyUniqueHandler;
 import org.openntf.domino.graph2.annotations.IncidenceHandler;
@@ -99,6 +100,7 @@ public class DFramedGraphFactory {
 	private void initConfiguration(final DConfiguration config) {
 		config.addMethodHandler(new PropertyHandler());
 		config.addMethodHandler(new TypedPropertyHandler());
+		config.addMethodHandler(new ActionHandler());
 		config.addAnnotationHandler(new AdjacencyHandler());
 		config.addAnnotationHandler(new AdjacencyUniqueHandler());
 		config.addAnnotationHandler(new IncidenceHandler());

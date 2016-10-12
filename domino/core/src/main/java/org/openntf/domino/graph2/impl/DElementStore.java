@@ -191,7 +191,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Element result = null;
 			Object delegate = null;
 			boolean isProxiedSource = false;
-			if (key instanceof NoteCoordinate && parent_.isProxied() && !(key instanceof ViewEntryCoordinate)) {
+			if (key instanceof NoteCoordinate && parent_.isProxied()
+					&& !(key instanceof ViewEntryCoordinate || ((NoteCoordinate) key).getX() == 0)) {
 				//				System.out.println("TEMP DEBUG in proxy branch...");
 				NoteCoordinate nc = (NoteCoordinate) key;
 				if (parent_.getStoreKey().equals(nc.getReplicaLong())) {

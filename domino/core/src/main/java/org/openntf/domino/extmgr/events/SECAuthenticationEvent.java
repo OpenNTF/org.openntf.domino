@@ -19,7 +19,7 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class SECAuthenticationEvent extends AbstractEMBridgeEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.WEvent, EMBridgeEventParams.RemoteName, EMBridgeEventParams.Flag,
-			EMBridgeEventParams.NetProtocol, EMBridgeEventParams.NetAddress };
+			EMBridgeEventParams.NetProtocol, EMBridgeEventParams.NetAddress, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -32,18 +32,8 @@ public class SECAuthenticationEvent extends AbstractEMBridgeEvent {
 	private int netProtocol;
 	private String netAddress;
 
-	/**
-	 * @param eventId
-	 */
-	public SECAuthenticationEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public SECAuthenticationEvent() {
-		super(IEMBridgeEvent.EM_SECAUTHENTICATION);
+		super(EMEventIds.EM_SECAUTHENTICATION.getId());
 	}
 
 	/**

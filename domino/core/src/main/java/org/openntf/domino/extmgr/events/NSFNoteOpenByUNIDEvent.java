@@ -18,7 +18,8 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteOpenByUNIDEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Unid, EMBridgeEventParams.Flag };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Unid, EMBridgeEventParams.Flag,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -28,18 +29,8 @@ public class NSFNoteOpenByUNIDEvent extends AbstractEMBridgeEvent {
 	private String unid;
 	private int openFlag;
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteOpenByUNIDEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteOpenByUNIDEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEOPENBYUNID);
+		super(EMEventIds.EM_NSFNOTEOPENBYUNID.getId());
 	}
 
 	/**

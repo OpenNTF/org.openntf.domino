@@ -18,7 +18,8 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteDeleteEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -27,18 +28,8 @@ public class NSFNoteDeleteEvent extends AbstractEMBridgeEvent {
 
 	private int flag;
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteDeleteEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteDeleteEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEDELETE);
+		super(EMEventIds.EM_NSFNOTEDELETE.getId());
 	}
 
 	/**

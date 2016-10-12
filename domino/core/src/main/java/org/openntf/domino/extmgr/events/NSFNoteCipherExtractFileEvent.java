@@ -17,76 +17,29 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class NSFNoteCipherExtractFileEvent extends AbstractEMBridgeEvent {
+public class NSFNoteCipherExtractFileEvent extends DocumentEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag,
-			EMBridgeEventParams.Itemname, EMBridgeEventParams.Filename };
+			EMBridgeEventParams.Itemname, EMBridgeEventParams.Filename, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private long extractFlags;
-	private String itemName;
-	private String fileName;
-
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteCipherExtractFileEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteCipherExtractFileEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTECIPHEREXTRACTFILE);
+		super(EMEventIds.EM_NSFNOTECIPHEREXTRACTFILE.getId());
 	}
 
-	/**
-	 * @return the extractFlags
-	 */
 	public long getExtractFlags() {
-		return extractFlags;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.Flag);
 	}
 
-	/**
-	 * @param extractFlags
-	 *            the extractFlags to set
-	 */
-	private void setExtractFlags(final long extractFlags) {
-		this.extractFlags = extractFlags;
-	}
-
-	/**
-	 * @return the itemName
-	 */
 	public String getItemName() {
-		return itemName;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.Itemname);
 	}
 
-	/**
-	 * @param itemName
-	 *            the itemName to set
-	 */
-	private void setItemName(final String itemName) {
-		this.itemName = itemName;
-	}
-
-	/**
-	 * @return the fileName
-	 */
 	public String getFileName() {
-		return fileName;
-	}
-
-	/**
-	 * @param fileName
-	 *            the fileName to set
-	 */
-	private void setFileName(final String fileName) {
-		this.fileName = fileName;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.Filename);
 	}
 
 }

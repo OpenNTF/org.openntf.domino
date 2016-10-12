@@ -1,6 +1,6 @@
 package org.openntf.domino.extmgr.events;
 
-public enum EMEventId {
+public enum EMEventIds {
 	EM_NSFDBCLOSESESSION(1), EM_NSFDBCLOSE(2), EM_NSFDBCREATE(3), EM_NSFDBDELETE(4), EM_NSFNOTEOPEN(5), EM_NSFNOTECLOSE(6),
 	EM_NSFNOTECREATE(7), EM_NSFNOTEDELETE(8), EM_NSFNOTEOPENBYUNID(10), EM_FTGETLASTINDEXTIME(11), EM_FTINDEX(12), EM_FTSEARCH(13),
 	EM_NIFFINDBYKEY(14), EM_NIFFINDBYNAME(15), EM_NIFOPENNOTE(17), EM_NIFREADENTRIES(18), EM_NIFUPDATECOLLECTION(20),
@@ -29,8 +29,8 @@ public enum EMEventId {
 	EM_NSFNOTECIPHEREXTRACTOLE2OBJECT(254), EM_NSFNOTECIPHERDELETEOLE2OBJECT(255), EM_NSFDBNOTELOCK(256), EM_NSFDBNOTEUNLOCK(257),
 	HOOK_EVENT_NOTE_UPDATE(500), HOOK_EVENT_NOTE_OPEN(501);
 
-	public static EMEventId getEMEventId(final int id) {
-		for (EMEventId event : EMEventId.values()) {
+	public static EMEventIds getEMEventId(final int id) {
+		for (EMEventIds event : EMEventIds.values()) {
 			if (event.getId() == id) {
 				return event;
 			}
@@ -40,7 +40,7 @@ public enum EMEventId {
 
 	private int id_;
 
-	private EMEventId(final int id) {
+	private EMEventIds(final int id) {
 		id_ = id;
 	}
 

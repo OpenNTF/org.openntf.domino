@@ -17,18 +17,8 @@ package org.openntf.domino.extmgr.events;
 
 public class NSFNoteUpdateMailBoxEvent extends NSFNoteUpdateExtendedEvent {
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteUpdateMailBoxEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteUpdateMailBoxEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEUPDATEMAILBOX);
+		super(EMEventIds.EM_NSFNOTEUPDATEMAILBOX);
 	}
 
 }

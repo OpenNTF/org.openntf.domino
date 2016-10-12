@@ -18,6 +18,7 @@ import org.openntf.domino.design.impl.DesignFactory;
 //import javolution.util.FastMap;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
+import org.openntf.domino.graph2.annotations.Action;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.AnnotationUtilities;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
@@ -116,6 +117,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		}
 
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> getterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> actionMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> counterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> finderMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> adderMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
@@ -342,6 +344,22 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return result;
 		}
 
+		public Map<CaseInsensitiveString, Method> getActions(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> crystals = actionMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = actionMap_.get(inter);
+				if (crystals != null) {
+					result.putAll(crystals);
+				}
+			}
+			return Collections.unmodifiableMap(result);
+		}
+
 		public Map<CaseInsensitiveString, Method> getCounters(final Class<?> type) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> crystals = counterMap_.get(type);
@@ -408,6 +426,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		public void addProperties(final Class<?> type) {
 			Map<CaseInsensitiveString, Method> getters = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> actions = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> setters = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> counters = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> finders = new LinkedHashMap<CaseInsensitiveString, Method>();
@@ -439,6 +458,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					if (property != null) {
 						key = new CaseInsensitiveString(((Property) property).value());
 					}
+				}
+				Annotation action = method.getAnnotation(Action.class);
+				if (action != null) {
+					key = new CaseInsensitiveString(((Action) action).name());
+					actions.put(key, method);
 				}
 				if (key != null) {
 					if (ClassUtilities.isGetMethod(method)) {
@@ -497,6 +521,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				}
 			}
 			getterMap_.put(type, getters);
+			actionMap_.put(type, actions);
 			setterMap_.put(type, setters);
 			counterMap_.put(type, counters);
 			finderMap_.put(type, finders);

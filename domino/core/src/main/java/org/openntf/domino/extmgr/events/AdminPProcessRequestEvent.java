@@ -2,9 +2,9 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class AdminPProcessRequestEvent extends AbstractEMBridgeEvent {
+public class AdminPProcessRequestEvent extends DatabaseEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.RequestNoteid,
-			EMBridgeEventParams.ResponseNoteid };
+			EMBridgeEventParams.ResponseNoteid, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -14,46 +14,20 @@ public class AdminPProcessRequestEvent extends AbstractEMBridgeEvent {
 	private String noteIdResponse;
 	private String noteIdRequest;
 
-	/**
-	 * @param eventId
-	 */
 	public AdminPProcessRequestEvent(final int eventId) {
 		super(eventId);
 	}
 
-	/**
-	 * 
-	 */
 	public AdminPProcessRequestEvent() {
-		super(IEMBridgeEvent.EM_ADMINPPROCESSREQUEST);
+		super(EMEventIds.EM_ADMINPPROCESSREQUEST.getId());
 	}
 
-	/**
-	 * @param noteId
-	 */
-	private void setNoteIdResponse(final String noteId) {
-		this.noteIdResponse = noteId;
-	}
-
-	/**
-	 * @return
-	 */
 	public String getNoteIdResponse() {
 		return noteIdResponse;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getNoteIdRequest() {
 		return noteIdRequest;
-	}
-
-	/**
-	 * @param noteId
-	 */
-	private void setNoteIdRequest(final String noteId) {
-		this.noteIdRequest = noteId;
 	}
 
 }

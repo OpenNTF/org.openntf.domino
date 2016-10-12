@@ -21,76 +21,29 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
  * @author dtaieb
  * 
  */
-public class NSFDbCompactEvent extends AbstractEMBridgeEvent {
+public class NSFDbCompactEvent extends DatabaseEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Options,
-			EMBridgeEventParams.SizeBefore, EMBridgeEventParams.SizeAfter };
+			EMBridgeEventParams.SizeBefore, EMBridgeEventParams.SizeAfter, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private int compactOptions;
-	private long beforeSize;
-	private long afterSize;
-
-	/**
-	 * @param eventId
-	 */
-	public NSFDbCompactEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFDbCompactEvent() {
-		super(IEMBridgeEvent.EM_NSFDBCOMPACT);
+		super(EMEventIds.EM_NSFDBCOMPACT.getId());
 	}
 
-	/**
-	 * @return the compactOptions
-	 */
 	public int getCompactOptions() {
-		return compactOptions;
+		return (Integer) getEventValuesMap().get(EMBridgeEventParams.Options);
 	}
 
-	/**
-	 * @param compactOptions
-	 *            the compactOptions to set
-	 */
-	private void setCompactOptions(final int compactOptions) {
-		this.compactOptions = compactOptions;
-	}
-
-	/**
-	 * @return the beforeSize
-	 */
 	public long getBeforeSize() {
-		return beforeSize;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.SizeBefore);
 	}
 
-	/**
-	 * @param beforeSize
-	 *            the beforeSize to set
-	 */
-	private void setBeforeSize(final long beforeSize) {
-		this.beforeSize = beforeSize;
-	}
-
-	/**
-	 * @return the afterSize
-	 */
 	public long getAfterSize() {
-		return afterSize;
-	}
-
-	/**
-	 * @param afterSize
-	 *            the afterSize to set
-	 */
-	private void setAfterSize(final long afterSize) {
-		this.afterSize = afterSize;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.SizeAfter);
 	}
 
 }

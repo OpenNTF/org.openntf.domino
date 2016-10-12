@@ -21,76 +21,25 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
  * @author dtaieb
  * 
  */
-public class NIFOpenCollectionEvent extends AbstractEMBridgeEvent {
+public class NIFOpenCollectionEvent extends ViewEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.DataDbpath,
-			EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag };
+			EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private String dataDbPath;
-	private String viewNoteID;
-	private int openFlags;
-
-	/**
-	 * @param eventId
-	 */
-	public NIFOpenCollectionEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NIFOpenCollectionEvent() {
-		super(IEMBridgeEvent.EM_NIFOPENCOLLECTION);
+		super(EMEventIds.EM_NIFOPENCOLLECTION.getId());
 	}
 
-	/**
-	 * @return the dataDbPath
-	 */
 	public String getDataDbPath() {
-		return dataDbPath;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.DataDbpath);
 	}
 
-	/**
-	 * @param dataDbPath
-	 *            the dataDbPath to set
-	 */
-	private void setDataDbPath(final String dataDbPath) {
-		this.dataDbPath = dataDbPath;
-	}
-
-	/**
-	 * @return the viewNoteID
-	 */
-	public String getViewNoteID() {
-		return viewNoteID;
-	}
-
-	/**
-	 * @param viewNoteID
-	 *            the viewNoteID to set
-	 */
-	private void setViewNoteID(final String viewNoteID) {
-		this.viewNoteID = viewNoteID;
-	}
-
-	/**
-	 * @return the openFlags
-	 */
 	public int getOpenFlags() {
-		return openFlags;
-	}
-
-	/**
-	 * @param openFlags
-	 *            the openFlags to set
-	 */
-	private void setOpenFlags(final int openFlags) {
-		this.openFlags = openFlags;
+		return (Integer) getEventValuesMap().get(EMBridgeEventParams.Flag);
 	}
 
 }

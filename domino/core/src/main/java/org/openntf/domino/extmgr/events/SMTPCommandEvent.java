@@ -19,7 +19,8 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class SMTPCommandEvent extends AbstractEMBridgeEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SessionId, EMBridgeEventParams.Command,
-			EMBridgeEventParams.MaxCommandLen, EMBridgeEventParams.SMTPReply, EMBridgeEventParams.SMTPReplyLength };
+			EMBridgeEventParams.MaxCommandLen, EMBridgeEventParams.SMTPReply, EMBridgeEventParams.SMTPReplyLength,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -32,18 +33,8 @@ public class SMTPCommandEvent extends AbstractEMBridgeEvent {
 	private String SMTPReply;
 	private long SMTPReplyLength;
 
-	/**
-	 * @param eventId
-	 */
-	public SMTPCommandEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public SMTPCommandEvent() {
-		super(IEMBridgeEvent.EM_SMTPCOMMAND);
+		super(EMEventIds.EM_SMTPCOMMAND.getId());
 	}
 
 	/**

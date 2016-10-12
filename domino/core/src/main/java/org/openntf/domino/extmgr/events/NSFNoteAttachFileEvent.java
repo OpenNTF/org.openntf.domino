@@ -17,76 +17,30 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class NSFNoteAttachFileEvent extends AbstractEMBridgeEvent {
+public class NSFNoteAttachFileEvent extends DocumentEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid,
-			EMBridgeEventParams.Filename, EMBridgeEventParams.OriginalFilename, EMBridgeEventParams.EncodingType };
+			EMBridgeEventParams.Filename, EMBridgeEventParams.OriginalFilename, EMBridgeEventParams.EncodingType,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private String fileName;
-	private String orgFileName;
-	private int encodingType;
-
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteAttachFileEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteAttachFileEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEATTACHFILE);
+		super(EMEventIds.EM_NSFNOTEATTACHFILE.getId());
 	}
 
-	/**
-	 * @return the fileName
-	 */
 	public String getFileName() {
-		return fileName;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.Filename);
 	}
 
-	/**
-	 * @param fileName
-	 *            the fileName to set
-	 */
-	private void setFileName(final String fileName) {
-		this.fileName = fileName;
-	}
-
-	/**
-	 * @return the orgFileName
-	 */
 	public String getOrgFileName() {
-		return orgFileName;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.OriginalFilename);
 	}
 
-	/**
-	 * @param orgFileName
-	 *            the orgFileName to set
-	 */
-	private void setOrgFileName(final String orgFileName) {
-		this.orgFileName = orgFileName;
-	}
-
-	/**
-	 * @return the encodingType
-	 */
 	public int getEncodingType() {
-		return encodingType;
-	}
-
-	/**
-	 * @param encodingType
-	 *            the encodingType to set
-	 */
-	private void setEncodingType(final int encodingType) {
-		this.encodingType = encodingType;
+		return (Integer) getEventValuesMap().get(EMBridgeEventParams.EncodingType);
 	}
 
 }

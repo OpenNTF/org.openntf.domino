@@ -25,18 +25,8 @@ public class TerminateNSFEvent extends AbstractEMBridgeEvent {
 		return params;
 	}
 
-	/**
-	 * @param eventId
-	 */
-	public TerminateNSFEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public TerminateNSFEvent() {
-		super(IEMBridgeEvent.EM_TERMINATENSF);
+		super(EMEventIds.EM_TERMINATENSF.getId());
 	}
 
 }

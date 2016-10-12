@@ -17,91 +17,33 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class FTSearchEvent extends AbstractEMBridgeEvent {
+public class FTSearchEvent extends DatabaseEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Query, EMBridgeEventParams.Options,
-			EMBridgeEventParams.Limit, EMBridgeEventParams.DocsReturned };
+			EMBridgeEventParams.Limit, EMBridgeEventParams.DocsReturned, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private String query;
-	private long options;
-	private int limit;
-	private long retNumDocs;
-
-	/**
-	 * @param eventId
-	 */
-	public FTSearchEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public FTSearchEvent() {
-		super(IEMBridgeEvent.EM_FTSEARCH);
+		super(EMEventIds.EM_FTSEARCH.getId());
 	}
 
-	/**
-	 * @param query
-	 */
-	private void setQuery(final String query) {
-		this.query = query;
-	}
-
-	/**
-	 * @return
-	 */
 	public String getQuery() {
-		return query;
+		return (String) getEventValuesMap().get(EMBridgeEventParams.Query);
 	}
 
-	/**
-	 * @return the options
-	 */
 	public long getOptions() {
-		return options;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.Options);
 	}
 
-	/**
-	 * @param options
-	 *            the options to set
-	 */
-	private void setOptions(final long options) {
-		this.options = options;
-	}
-
-	/**
-	 * @return the limit
-	 */
 	public int getLimit() {
-		return limit;
+		return (Integer) getEventValuesMap().get(EMBridgeEventParams.Limit);
 	}
 
-	/**
-	 * @param limit
-	 *            the limit to set
-	 */
-	private void setLimit(final int limit) {
-		this.limit = limit;
-	}
-
-	/**
-	 * @return the retNumDocs
-	 */
 	public long getRetNumDocs() {
-		return retNumDocs;
-	}
-
-	/**
-	 * @param retNumDocs
-	 *            the retNumDocs to set
-	 */
-	private void setRetNumDocs(final long retNumDocs) {
-		this.retNumDocs = retNumDocs;
+		return (Long) getEventValuesMap().get(EMBridgeEventParams.DocsReturned);
 	}
 
 }

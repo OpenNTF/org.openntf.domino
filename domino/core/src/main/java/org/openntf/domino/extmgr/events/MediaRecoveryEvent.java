@@ -21,76 +21,29 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
  * @author dtaieb
  * 
  */
-public class MediaRecoveryEvent extends AbstractEMBridgeEvent {
+public class MediaRecoveryEvent extends DocumentEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid,
-			EMBridgeEventParams.Insert, EMBridgeEventParams.Update, EMBridgeEventParams.Delete };
+			EMBridgeEventParams.Insert, EMBridgeEventParams.Update, EMBridgeEventParams.Delete, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	private boolean isInsert;
-	private boolean isUpdate;
-	private boolean isDelete;
-
-	/**
-	 * @param eventId
-	 */
-	public MediaRecoveryEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public MediaRecoveryEvent() {
-		super(IEMBridgeEvent.EM_MEDIARECOVERY_NOTE);
+		super(EMEventIds.EM_MEDIARECOVERY_NOTE.getId());
 	}
 
-	/**
-	 * @return the isInsert
-	 */
 	public boolean isInsert() {
-		return isInsert;
+		return (Boolean) getEventValuesMap().get(EMBridgeEventParams.Insert);
 	}
 
-	/**
-	 * @param isInsert
-	 *            the isInsert to set
-	 */
-	private void setInsert(final boolean isInsert) {
-		this.isInsert = isInsert;
-	}
-
-	/**
-	 * @return the isUpdate
-	 */
 	public boolean isUpdate() {
-		return isUpdate;
+		return (Boolean) getEventValuesMap().get(EMBridgeEventParams.Update);
 	}
 
-	/**
-	 * @param isUpdate
-	 *            the isUpdate to set
-	 */
-	private void setUpdate(final boolean isUpdate) {
-		this.isUpdate = isUpdate;
-	}
-
-	/**
-	 * @return the isDelete
-	 */
 	public boolean isDelete() {
-		return isDelete;
-	}
-
-	/**
-	 * @param isDelete
-	 *            the isDelete to set
-	 */
-	private void setDelete(final boolean isDelete) {
-		this.isDelete = isDelete;
+		return (Boolean) getEventValuesMap().get(EMBridgeEventParams.Delete);
 	}
 
 }

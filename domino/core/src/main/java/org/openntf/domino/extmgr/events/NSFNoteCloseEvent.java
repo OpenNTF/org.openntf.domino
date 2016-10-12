@@ -17,26 +17,17 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class NSFNoteCloseEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid };
+public class NSFNoteCloseEvent extends DocumentEvent {
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid,
+			EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteCloseEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	* 
-	*/
 	public NSFNoteCloseEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTECLOSE);
+		super(EMEventIds.EM_NSFNOTECLOSE.getId());
 	}
 
 }

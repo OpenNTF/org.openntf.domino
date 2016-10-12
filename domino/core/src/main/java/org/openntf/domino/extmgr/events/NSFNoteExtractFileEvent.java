@@ -19,7 +19,7 @@ import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFNoteExtractFileEvent extends AbstractEMBridgeEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid,
-			EMBridgeEventParams.Itemname, EMBridgeEventParams.Filename };
+			EMBridgeEventParams.Itemname, EMBridgeEventParams.Filename, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
@@ -29,18 +29,8 @@ public class NSFNoteExtractFileEvent extends AbstractEMBridgeEvent {
 	private String itemName;
 	private String fileName;
 
-	/**
-	 * @param eventId
-	 */
-	public NSFNoteExtractFileEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFNoteExtractFileEvent() {
-		super(IEMBridgeEvent.EM_NSFNOTEEXTRACTFILE);
+		super(EMEventIds.EM_NSFNOTEEXTRACTFILE.getId());
 	}
 
 	/**

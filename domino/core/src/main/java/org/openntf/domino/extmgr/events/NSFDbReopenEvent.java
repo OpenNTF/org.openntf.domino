@@ -18,25 +18,15 @@ package org.openntf.domino.extmgr.events;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
 public class NSFDbReopenEvent extends AbstractEMBridgeEvent {
-	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath };
+	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Username };
 
 	@Override
 	public EMBridgeEventParams[] getParams() {
 		return params;
 	}
 
-	/**
-	 * @param eventId
-	 */
-	public NSFDbReopenEvent(final int eventId) {
-		super(eventId);
-	}
-
-	/**
-	 * 
-	 */
 	public NSFDbReopenEvent() {
-		super(IEMBridgeEvent.EM_NSFDBREOPEN);
+		super(EMEventIds.EM_NSFDBREOPEN.getId());
 	}
 
 }

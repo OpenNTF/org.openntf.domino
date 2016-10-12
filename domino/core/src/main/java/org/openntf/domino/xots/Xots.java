@@ -67,13 +67,18 @@ public class Xots {
 	 * Start the XOTS with the given Executor
 	 */
 	public static synchronized void start(final AbstractDominoExecutor executor) throws IllegalStateException {
-		if (isStarted())
+		if (isStarted()) {
 			throw new IllegalStateException("XotsDaemon is already started");
-		Factory.println(Xots.class, "Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
-
-		executor_ = executor;
-		eventListener_ = new EMBridgeMessageQueue();
-		executor_.execute(eventListener_);
+		}
+		//		System.out.println("Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
+		try {
+			executor_ = executor;
+			//TODO Re-enable when it's closer to release.
+			//			eventListener_ = new EMBridgeMessageQueue();
+			//			executor_.execute(eventListener_);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 
 	}
 
@@ -87,8 +92,9 @@ public class Xots {
 
 	public static synchronized void stop(int wait) {
 		if (isStarted()) {
-			Factory.println(Xots.class, "Stopping XPages OSGi Tasklet Service...");
-			eventListener_.stop();
+			//			System.out.println("Stopping XPages OSGi Tasklet Service...");
+			//TODO Re-enable post release
+			//			eventListener_.stop();
 			executor_.shutdown();
 			long running;
 			try {
@@ -100,7 +106,7 @@ public class Xots {
 			}
 
 			if (executor_.getActiveCount() > 0) {
-				Factory.println(Xots.class, "he following Threads did not terminate gracefully:");
+				Factory.println(Xots.class, "The following Threads did not terminate gracefully:");
 				for (DominoFutureTask<?> task : executor_.getTasks(null)) {
 					Factory.println(Xots.class, "* " + task);
 				}

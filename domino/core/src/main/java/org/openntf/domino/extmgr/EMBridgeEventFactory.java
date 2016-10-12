@@ -3,12 +3,14 @@
  */
 package org.openntf.domino.extmgr;
 
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.openntf.domino.extmgr.events.AdminPProcessRequestEvent;
 import org.openntf.domino.extmgr.events.AgentOpenEvent;
 import org.openntf.domino.extmgr.events.ClearPasswordEvent;
+import org.openntf.domino.extmgr.events.EMEventIds;
 import org.openntf.domino.extmgr.events.FTDeleteIndexEvent;
 import org.openntf.domino.extmgr.events.FTIndexEvent;
 import org.openntf.domino.extmgr.events.FTSearchEvent;
@@ -34,8 +36,6 @@ import org.openntf.domino.extmgr.events.NSFDbNoteUnlockEvent;
 import org.openntf.domino.extmgr.events.NSFDbOpenExtendedEvent;
 import org.openntf.domino.extmgr.events.NSFDbRenameEvent;
 import org.openntf.domino.extmgr.events.NSFDbReopenEvent;
-import org.openntf.domino.extmgr.events.NSFHookNoteOpenEvent;
-import org.openntf.domino.extmgr.events.NSFHookNoteUpdateEvent;
 import org.openntf.domino.extmgr.events.NSFNoteAttachFileEvent;
 import org.openntf.domino.extmgr.events.NSFNoteCipherDecryptEvent;
 import org.openntf.domino.extmgr.events.NSFNoteCipherExtractFileEvent;
@@ -71,7 +71,7 @@ public enum EMBridgeEventFactory {
 	private static final String EM_NSFHOOKEVENT_PREFIX = "[[dbhookevent:"; // $NON-NLS-1$
 	private static final String EM_EVENT_POSTFIX = "]];";
 
-	private static final HashMap<Integer, IEMBridgeEvent> eventsMap = new HashMap<Integer, IEMBridgeEvent>();
+	private static final Map<EMEventIds, IEMBridgeEvent> eventsMap = new EnumMap<EMEventIds, IEMBridgeEvent>(EMEventIds.class);
 
 	public static IEMBridgeEvent parseEventBuffer(final String eventBuffer, final IEMBridgeEvent event) {
 		EMBridgeEventParams[] params = event.getParams();
@@ -80,60 +80,58 @@ public enum EMBridgeEventFactory {
 	}
 
 	static {
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCLOSE, new NSFDbCloseEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEUPDATE, new NSFNoteUpdateExtendedEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEUPDATEXTENDED, new NSFNoteUpdateExtendedEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCREATE, new NSFDbCreateEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBDELETE, new NSFDbDeleteEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTECREATE, new NSFNoteCreateEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEDELETE, new NSFNoteDeleteEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEOPEN, new NSFNoteOpenEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTECLOSE, new NSFNoteCloseEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEOPENBYUNID, new NSFNoteOpenByUNIDEvent());
-		eventsMap.put(IEMBridgeEvent.EM_FTINDEX, new FTIndexEvent());
-		eventsMap.put(IEMBridgeEvent.EM_FTSEARCH, new FTSearchEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCOMPACT, new NSFDbCompactEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBDELETENOTES, new NSFDbDeleteNotesEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NIFOPENCOLLECTION, new NIFOpenCollectionEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCOMPACTEXTENDED, new NSFDbCompactEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEOPENEXTENDED, new NSFNoteOpenExtendedEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEDECRYPT, new NSFNoteDecryptEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBNOTELOCK, new NSFDbNoteLockEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBNOTEUNLOCK, new NSFDbNoteUnlockEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCOPYNOTE, new NSFDbCopyNoteEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTECOPY, new NSFNoteCopyEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFCONFLICTHANDLER, new NSFConflictHandlerEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEATTACHFILE, new NSFNoteAttachFileEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEDETACHFILE, new NSFNoteDetachFileEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEEXTRACTFILE, new NSFNoteExtractFileEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTECIPHERDECRYPT, new NSFNoteCipherDecryptEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTECIPHEREXTRACTFILE, new NSFNoteCipherExtractFileEvent());
-		eventsMap.put(IEMBridgeEvent.EM_ADMINPPROCESSREQUEST, new AdminPProcessRequestEvent());
-		eventsMap.put(IEMBridgeEvent.EM_CLEARPASSWORD, new ClearPasswordEvent());
-		eventsMap.put(IEMBridgeEvent.EM_MEDIARECOVERY_NOTE, new MediaRecoveryEvent());
-		eventsMap.put(IEMBridgeEvent.EM_FTDELETEINDEX, new FTDeleteIndexEvent());
-		eventsMap.put(IEMBridgeEvent.EM_AGENTOPEN, new AgentOpenEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFADDTOFOLDER, new NSFAddToFolderEvent());
-		eventsMap.put(IEMBridgeEvent.EM_MAILSENDNOTE, new MailSendNoteEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCLOSE, new NSFDbCloseEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEUPDATE, new NSFNoteUpdateExtendedEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEUPDATEXTENDED, new NSFNoteUpdateExtendedEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCREATE, new NSFDbCreateEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBDELETE, new NSFDbDeleteEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTECREATE, new NSFNoteCreateEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEDELETE, new NSFNoteDeleteEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEOPEN, new NSFNoteOpenEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTECLOSE, new NSFNoteCloseEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEOPENBYUNID, new NSFNoteOpenByUNIDEvent());
+		eventsMap.put(EMEventIds.EM_FTINDEX, new FTIndexEvent());
+		eventsMap.put(EMEventIds.EM_FTSEARCH, new FTSearchEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCOMPACT, new NSFDbCompactEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBDELETENOTES, new NSFDbDeleteNotesEvent());
+		eventsMap.put(EMEventIds.EM_NIFOPENCOLLECTION, new NIFOpenCollectionEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCOMPACTEXTENDED, new NSFDbCompactEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEOPENEXTENDED, new NSFNoteOpenExtendedEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEDECRYPT, new NSFNoteDecryptEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBNOTELOCK, new NSFDbNoteLockEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBNOTEUNLOCK, new NSFDbNoteUnlockEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCOPYNOTE, new NSFDbCopyNoteEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTECOPY, new NSFNoteCopyEvent());
+		eventsMap.put(EMEventIds.EM_NSFCONFLICTHANDLER, new NSFConflictHandlerEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEATTACHFILE, new NSFNoteAttachFileEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEDETACHFILE, new NSFNoteDetachFileEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEEXTRACTFILE, new NSFNoteExtractFileEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTECIPHERDECRYPT, new NSFNoteCipherDecryptEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTECIPHEREXTRACTFILE, new NSFNoteCipherExtractFileEvent());
+		eventsMap.put(EMEventIds.EM_ADMINPPROCESSREQUEST, new AdminPProcessRequestEvent());
+		eventsMap.put(EMEventIds.EM_CLEARPASSWORD, new ClearPasswordEvent());
+		eventsMap.put(EMEventIds.EM_MEDIARECOVERY_NOTE, new MediaRecoveryEvent());
+		eventsMap.put(EMEventIds.EM_FTDELETEINDEX, new FTDeleteIndexEvent());
+		eventsMap.put(EMEventIds.EM_AGENTOPEN, new AgentOpenEvent());
+		eventsMap.put(EMEventIds.EM_NSFADDTOFOLDER, new NSFAddToFolderEvent());
+		eventsMap.put(EMEventIds.EM_MAILSENDNOTE, new MailSendNoteEvent());
 
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBRENAME, new NSFDbRenameEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBREOPEN, new NSFDbReopenEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBOPENEXTENDED, new NSFDbOpenExtendedEvent());
-		eventsMap.put(IEMBridgeEvent.EM_TERMINATENSF, new TerminateNSFEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCOPY, new NSFDbCopyEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCREATEANDCOPY, new NSFDbCreateAndCopyEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCOPYACL, new NSFDbCopyACLEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCOPYTEMPLATEACL, new NSFDbCopyTemplateACLEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFDBCREATEACLFROMTEMPLATE, new NSFDbCreateACLFromTemplateEvent());
-		eventsMap.put(IEMBridgeEvent.EM_NSFNOTEUPDATEMAILBOX, new NSFNoteUpdateMailBoxEvent());
-		eventsMap.put(IEMBridgeEvent.EM_SECAUTHENTICATION, new SECAuthenticationEvent());
-		eventsMap.put(IEMBridgeEvent.EM_ROUTERJOURNALMESSAGE, new RouterJournalMessageEvent());
-		eventsMap.put(IEMBridgeEvent.EM_SMTPCONNECT, new SMTPConnectEvent());
-		eventsMap.put(IEMBridgeEvent.EM_SMTPCOMMAND, new SMTPCommandEvent());
-		eventsMap.put(IEMBridgeEvent.EM_SMTPMESSAGEACCEPT, new SMTPMessageAcceptEvent());
-		eventsMap.put(IEMBridgeEvent.EM_SMTPDISCONNECT, new SMTPDisconnectEvent());
-		eventsMap.put(IEMBridgeEvent.HOOK_EVENT_NOTE_UPDATE, new NSFHookNoteUpdateEvent());
-		eventsMap.put(IEMBridgeEvent.HOOK_EVENT_NOTE_OPEN, new NSFHookNoteOpenEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBRENAME, new NSFDbRenameEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBREOPEN, new NSFDbReopenEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBOPENEXTENDED, new NSFDbOpenExtendedEvent());
+		eventsMap.put(EMEventIds.EM_TERMINATENSF, new TerminateNSFEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCOPY, new NSFDbCopyEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCREATEANDCOPY, new NSFDbCreateAndCopyEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCOPYACL, new NSFDbCopyACLEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCOPYTEMPLATEACL, new NSFDbCopyTemplateACLEvent());
+		eventsMap.put(EMEventIds.EM_NSFDBCREATEACLFROMTEMPLATE, new NSFDbCreateACLFromTemplateEvent());
+		eventsMap.put(EMEventIds.EM_NSFNOTEUPDATEMAILBOX, new NSFNoteUpdateMailBoxEvent());
+		eventsMap.put(EMEventIds.EM_SECAUTHENTICATION, new SECAuthenticationEvent());
+		eventsMap.put(EMEventIds.EM_ROUTERJOURNALMESSAGE, new RouterJournalMessageEvent());
+		eventsMap.put(EMEventIds.EM_SMTPCONNECT, new SMTPConnectEvent());
+		eventsMap.put(EMEventIds.EM_SMTPCOMMAND, new SMTPCommandEvent());
+		eventsMap.put(EMEventIds.EM_SMTPMESSAGEACCEPT, new SMTPMessageAcceptEvent());
+		eventsMap.put(EMEventIds.EM_SMTPDISCONNECT, new SMTPDisconnectEvent());
 
 		// Not yet implemented...
 		// eventsMap.put( IExtensionManagerEvent.EM_NSFDBWRITEOBJECT , NSFDbWriteObjectEvent());

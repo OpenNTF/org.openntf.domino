@@ -145,6 +145,13 @@ public class JsonFrameAdapter implements JsonObject {
 		return null;
 	}
 
+	public List<CharSequence> getActionsParam() {
+		if (parameters_ != null) {
+			return parameters_.getActions();
+		}
+		return null;
+	}
+
 	public List<CharSequence> getFilterKeys() {
 		if (parameters_ != null) {
 			return parameters_.getFilterKeys();
@@ -201,6 +208,13 @@ public class JsonFrameAdapter implements JsonObject {
 		return false;
 	}
 
+	public boolean getIncludeActions() {
+		if (parameters_ != null) {
+			return parameters_.getIncludeActions();
+		}
+		return false;
+	}
+
 	public boolean getDescending() {
 		if (parameters_ != null) {
 			return parameters_.getDescending();
@@ -248,6 +262,13 @@ public class JsonFrameAdapter implements JsonObject {
 		return incidences_;
 	}
 
+	public Map<CaseInsensitiveString, Method> getActions() {
+		if (incidences_ == null) {
+			incidences_ = getGraph().getTypeRegistry().getActions(type_);
+		}
+		return incidences_;
+	}
+
 	public Map<CaseInsensitiveString, Method> getSetters() {
 		if (setters_ == null) {
 			setters_ = getGraph().getTypeRegistry().getPropertiesSetters(type_);
@@ -262,6 +283,11 @@ public class JsonFrameAdapter implements JsonObject {
 		// "
 		// + frame_.getClass().getName());
 		List<String> result = new ArrayList<String>();
+		if (getActionsParam() != null) {
+			for (CharSequence cis : getActionsParam()) {
+				result.add("%" + cis.toString());
+			}
+		}
 		result.add("@id");
 		result.add("@type");
 		Collection<CharSequence> props = getProperties();
@@ -303,6 +329,9 @@ public class JsonFrameAdapter implements JsonObject {
 		Object frame = getFrame();
 		if (frame instanceof VertexFrame && getIncludeEdges()) {
 			result.add("@edges");
+		}
+		if (getIncludeActions()) {
+			result.add("@actions");
 		}
 		if (frame instanceof VertexFrame && getIncludeCounts()) {
 			for (CaseInsensitiveString key : getCounters().keySet()) {
@@ -472,6 +501,13 @@ public class JsonFrameAdapter implements JsonObject {
 					}
 				}
 				result = edgeCounts;
+			} else if (key.equals("@actions")) {
+				List<CaseInsensitiveString> actionList = new ArrayList<CaseInsensitiveString>();
+				Set<CaseInsensitiveString> actionNames = getActions().keySet();
+				for (CaseInsensitiveString name : actionNames) {
+					actionList.add(name);
+				}
+				result = actionList;
 			} else if (key.startsWith("@counts")) {
 				String label = key.toString().substring("@counts".length());
 				Method crystal = getCounters().get(new CaseInsensitiveString(label));
@@ -513,11 +549,31 @@ public class JsonFrameAdapter implements JsonObject {
 					List viewInfo = ((DbInfoVertex) frame).getViewInfo();
 					return viewInfo;
 				}
+			} else if (key.startsWith("%")) {
+				CharSequence name = key.subSequence(1, key.length());
+				Method crystal = getActions().get(name);
+				if (crystal != null) {
+					try {
+						result = crystal.invoke(frame, (Object[]) null);
+					} catch (Throwable t) {
+						System.err
+								.println(
+										"TEMP DEBUG Ignoring an issue with an invokation of " + crystal.getName()
+												+ " on a " + DGraphUtils.findInterface(frame).getName() + ": "
+												+ t.getClass()
+														.getName()
+												+ (t.getCause() != null
+														? (" caused by a " + t.getCause().getClass().getName() + ": "
+																+ t.getStackTrace()[0].toString())
+														: ""));
+
+					}
+				} else {
+					System.err.println("No action method found for name: " + name);
+				}
+				return result;
 			} else if (key.startsWith("#") && frame instanceof VertexFrame) {
 				CharSequence label = key.subSequence(1, key.length());
-				// System.out.println("DEBUG: Attempting to get edges with label
-				// "
-				// + label);
 				Method crystal = getIncidences().get(label);
 				if (crystal != null) {
 					try {
@@ -671,7 +727,7 @@ public class JsonFrameAdapter implements JsonObject {
 					}
 
 				} else {
-					System.err.println("No method found for key " + label);
+					System.err.println("No edge method found for label " + label);
 				}
 			} else {
 				// System.out.println("TEMP DEBUG finding property " + key);
