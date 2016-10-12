@@ -38,8 +38,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements
-org.openntf.domino.DateTime {
+public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.domino.DateTime, Session>
+		implements org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -952,9 +952,13 @@ org.openntf.domino.DateTime {
 	 */
 	@Override
 	public Calendar toJavaCal() {
-		Calendar result = GregorianCalendar.getInstance();
-		result.setTime(date_);
-		return result;
+		if (date_ != null) {
+			Calendar result = GregorianCalendar.getInstance();
+			result.setTime(date_);
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
