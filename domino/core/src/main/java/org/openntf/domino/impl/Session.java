@@ -638,13 +638,13 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public NotesCalendar getCalendar(final lotus.domino.Database db) {
 		try {
-			Database parentDb = null;
-			if (db instanceof Database) {
-				parentDb = (Database) db;
-			} else {
-				parentDb = fromLotus(db, Database.SCHEMA, this);
-			}
-			return fromLotus(getDelegate().getCalendar(toLotus(db)), NotesCalendar.SCHEMA, parentDb);
+			//			Database parentDb = null;
+			//			if (db instanceof Database) {
+			//				parentDb = (Database) db;
+			//			} else {
+			//				parentDb = fromLotus(db, Database.SCHEMA, this);
+			//			}
+			return fromLotus(getDelegate().getCalendar(toLotus(db)), NotesCalendar.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
