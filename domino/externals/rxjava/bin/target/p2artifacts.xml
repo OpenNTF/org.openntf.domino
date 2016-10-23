@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository version='1.1.0'?>
+<artifacts size='2'>
+  <artifact classifier='osgi.bundle' id='rx' version='1.0.0.201610231727'>
+    <properties size='5'>
+      <property name='artifact.size' value='653226'/>
+      <property name='download.size' value='653226'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='rx'/>
+      <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+    </properties>
+  </artifact>
+  <artifact classifier='osgi.bundle' id='rx.source' version='1.0.0.201610231727'>
+    <properties size='6'>
+      <property name='artifact.size' value='365503'/>
+      <property name='download.size' value='365503'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='rx'/>
+      <property name='maven-version' value='1.0.0-SNAPSHOT'/>
+      <property name='maven-classifier' value='sources'/>
+    </properties>
+  </artifact>
+</artifacts>
