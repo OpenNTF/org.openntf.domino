@@ -56,16 +56,17 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.utils.xml,
  org.openntf.domino.xots,
  org.openntf.domino.xots.events
-Require-Bundle: com.google.guava;bundle-version="18.0.0";visibility:=reexport,
- com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
+Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  javolution;bundle-version="6.1.0";visibility:=reexport,
  org.openntf.formula;bundle-version="2.0.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
- org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
  com.ibm.icu;bundle-version="3.8.1",
  javassist;bundle-version="3.18.2";visibility:=reexport
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Import-Package: javassist.util.proxy,
+Import-Package: com.google.common.base,
+ com.google.common.cache,
+ com.google.common.primitives,
+ javassist.util.proxy,
  lotus.domino
