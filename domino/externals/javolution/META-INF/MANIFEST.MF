@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: javolution
 Bundle-SymbolicName: javolution
-Bundle-Version: 6.1.0.qualifier
+Bundle-Version: 6.1.1
 Export-Package: javax.realtime,
  javolution,
  javolution.context,

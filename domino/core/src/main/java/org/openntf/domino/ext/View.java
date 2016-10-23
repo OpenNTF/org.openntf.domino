@@ -41,9 +41,6 @@ public interface View {
 	/**
 	 * Gets all documents from the View as a NoteCollection.
 	 * 
-	 * <p>
-	 * NOTE: This may not be particularly performant at this time so has been deprecated.
-	 * </p>
 	 * 
 	 * @return NoteCollection
 	 * @since org.openntf.domino 3.0.0
@@ -257,7 +254,7 @@ public interface View {
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 * The original method is poorly named, as it doesn't indicate what happens when more than one
 	 * ViewEntry matches the key.
-
+	
 	 */
 	@SuppressWarnings("rawtypes")
 	@Legacy(Legacy.GENERICS_WARNING)

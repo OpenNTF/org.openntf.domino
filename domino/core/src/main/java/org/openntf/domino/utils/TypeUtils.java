@@ -104,6 +104,7 @@ public enum TypeUtils {
 
 	public static synchronized void addCustomConverter(final CustomConverter converter) {
 		converterList_.add(converter);
+		//		System.out.println("TEMP DEBUG added custom converter");
 		//		converterFromList_.add(converter.getFrom());
 
 	}
@@ -119,6 +120,7 @@ public enum TypeUtils {
 	protected static CustomConverter findCustomConverter(final Class<?> fromClass) {
 		for (CustomConverter converter : getConverterList()) {
 			if (converter.isCompatible(fromClass)) {
+				//				System.out.println("TEMP DEBUG found custom converter");
 				return converter;
 			}
 		}
@@ -187,8 +189,8 @@ public enum TypeUtils {
 					return null;
 				}
 			} else if (type.isPrimitive()) {
-				throw new ItemNotFoundException("Item " + itemName + " was not found on document " + noteid + " so we cannot return a "
-						+ type.getName());
+				throw new ItemNotFoundException(
+						"Item " + itemName + " was not found on document " + noteid + " so we cannot return a " + type.getName());
 			} else if (type.equals(String.class)) {
 				return (T) "";
 			} else {
@@ -242,8 +244,8 @@ public enum TypeUtils {
 			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid, e);
 		} catch (UnimplementedException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
-			throw new UnimplementedException(
-					e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid, e);
+			throw new UnimplementedException(e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid,
+					e);
 		}
 		//		if ("form".equalsIgnoreCase(item.getName())) {
 		//			System.out.println("TEMP DEBUG Form value is '" + (String) result + "'");
@@ -429,15 +431,15 @@ public enum TypeUtils {
 				if (session != null) {
 					result = session.createDateTime(toDate(o));
 				} else {
-					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
-							+ " to DateTime without a valid Session object");
+					throw new IllegalArgumentException(
+							"Cannont convert a " + o.getClass().getName() + " to DateTime without a valid Session object");
 				}
 			} else if (org.openntf.domino.Name.class.isAssignableFrom(type)) {
 				if (session != null) {
 					result = session.createName(String.valueOf(o));
 				} else {
-					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
-							+ " to Name without a valid Session object");
+					throw new IllegalArgumentException(
+							"Cannont convert a " + o.getClass().getName() + " to Name without a valid Session object");
 				}
 			} else if (Boolean.class.equals(type)) {
 				result = toBoolean(o);
@@ -2056,7 +2058,8 @@ public enum TypeUtils {
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 
-		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar || value instanceof org.openntf.formula.DateTime) {
+		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar
+				|| value instanceof org.openntf.formula.DateTime) {
 
 			lotus.domino.Session lsess = toLotus(session);
 			try {

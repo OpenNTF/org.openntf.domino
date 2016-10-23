@@ -683,6 +683,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 
 	@Override
 	public EmbeddedObject replaceAttachment(final String filename, final String sourcePath) {
+		//		System.out.println("TEMP DEBUG replacing filename " + filename + " from source at " + sourcePath);
 		EmbeddedObject result = null;
 		RichTextNavigator navigator = this.createNavigator();
 		EmbeddedObject eo = (EmbeddedObject) navigator.getFirstElement(RTELEM_TYPE_FILEATTACHMENT);

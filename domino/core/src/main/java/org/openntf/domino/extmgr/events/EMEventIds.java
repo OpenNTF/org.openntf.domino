@@ -29,13 +29,20 @@ public enum EMEventIds {
 	EM_NSFNOTECIPHEREXTRACTOLE2OBJECT(254), EM_NSFNOTECIPHERDELETEOLE2OBJECT(255), EM_NSFDBNOTELOCK(256), EM_NSFDBNOTEUNLOCK(257),
 	HOOK_EVENT_NOTE_UPDATE(500), HOOK_EVENT_NOTE_OPEN(501);
 
-	public static EMEventIds getEMEventId(final int id) {
-		for (EMEventIds event : EMEventIds.values()) {
-			if (event.getId() == id) {
-				return event;
-			}
+	private static EMEventIds[] eventArray;
+
+	public static EMEventIds getEMEventFromId(final int id) {
+		if (eventArray == null) {
+			initEventArray();
 		}
-		return null;
+		return eventArray[id];
+	}
+
+	synchronized static private void initEventArray() {
+		eventArray = new EMEventIds[502];
+		for (EMEventIds event : EMEventIds.values()) {
+			eventArray[event.getId()] = event;
+		}
 	}
 
 	private int id_;

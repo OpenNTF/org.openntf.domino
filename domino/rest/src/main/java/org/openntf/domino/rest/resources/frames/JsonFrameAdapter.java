@@ -10,12 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
 import org.openntf.domino.graph2.DEdgeList;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
+import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.DbInfoVertex;
@@ -29,7 +31,10 @@ import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.TypeUtils;
 
+import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -790,7 +795,23 @@ public class JsonFrameAdapter implements JsonObject {
 			Method crystal = getSetters().get(key);
 			if (crystal != null) {
 				try {
-					crystal.invoke(frame, value);
+					Class<?>[] types = crystal.getParameterTypes();
+					Class<?> type = types[0];
+					if (!type.isAssignableFrom(value.getClass())) {
+						value = TypeUtils.convertToTarget(value, type,
+								org.openntf.domino.utils.Factory.getSession(SessionType.CURRENT));
+						crystal.invoke(frame, value);
+					} else if (JsonJavaObject.class.equals(type)) {
+						// FIXME NTF this is a complete hack :(
+						TypedProperty prop = crystal.getAnnotation(TypedProperty.class);
+						String itemname = prop.value();
+						if (frame instanceof DVertexFrame) {
+							Document doc = ((DVertexFrame) frame).asDocument();
+							TypeUtils.writeToItem(doc, itemname, value, false);
+						}
+					} else {
+						crystal.invoke(frame, value);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

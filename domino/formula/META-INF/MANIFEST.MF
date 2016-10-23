@@ -4,7 +4,7 @@ Created-By: JDK 1.7.0_51 (Oracle Corporation)
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Formula Engine
 Bundle-SymbolicName: org.openntf.formula;singleton:=true
-Bundle-Version: 3.0.1.qualifier
+Bundle-Version: 3.0.2
 Bundle-Vendor: foconis.de
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Implementation-Title: OpenNTF Domino Formula engine

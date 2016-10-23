@@ -36,7 +36,6 @@ public class Xots {
 
 	// This is our Threadpool that will execute all Runnables
 	private static AbstractDominoExecutor executor_;
-	private static EMBridgeMessageQueue eventListener_;
 
 	//	public void addListener(final IDominoListener listener) {
 	//		executor_.addListener(listener);
@@ -74,8 +73,8 @@ public class Xots {
 		try {
 			executor_ = executor;
 			//TODO Re-enable when it's closer to release.
-			//			eventListener_ = new EMBridgeMessageQueue();
-			//			executor_.execute(eventListener_);
+			EMBridgeMessageQueue.start();
+
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -94,7 +93,7 @@ public class Xots {
 		if (isStarted()) {
 			//			System.out.println("Stopping XPages OSGi Tasklet Service...");
 			//TODO Re-enable post release
-			//			eventListener_.stop();
+			EMBridgeMessageQueue.stop();
 			executor_.shutdown();
 			long running;
 			try {

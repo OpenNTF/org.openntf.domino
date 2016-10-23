@@ -107,11 +107,4 @@ public class DominoExecutor extends AbstractDominoExecutor {
 		// TODO: maybe we can load the class with the design-class loader.
 	}
 
-	private int emcount = 0;
-
-	@Override
-	public void addEMMessage(final String message) throws InterruptedException {
-		System.out.println("DOTS event " + ++emcount + " " + message);
-	}
-
 }

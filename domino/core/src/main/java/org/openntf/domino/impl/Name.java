@@ -38,8 +38,8 @@ import org.openntf.domino.utils.Strings;
  * The Class Name.
  */
 
-public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
-		Comparable<Name>, Cloneable {
+public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session>
+		implements org.openntf.domino.Name, Comparable<Name>, Cloneable {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
@@ -819,8 +819,8 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 			if (casesensitive) {
 				return ((this.getAbbreviated().startsWith(prefix)) || (this.getCanonical().startsWith(prefix)));
 			} else {
-				return ((Strings.startsWithIgnoreCase(this.getAbbreviated(), prefix)) || (Strings.startsWithIgnoreCase(this.getCanonical(),
-						prefix)));
+				return ((Strings.startsWithIgnoreCase(this.getAbbreviated(), prefix))
+						|| (Strings.startsWithIgnoreCase(this.getCanonical(), prefix)));
 			}
 		}
 

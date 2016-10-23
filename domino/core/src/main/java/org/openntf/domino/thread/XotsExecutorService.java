@@ -20,6 +20,4 @@ public interface XotsExecutorService extends ScheduledExecutorService {
 
 	ScheduledFuture<?> runTasklet(String moduleName, String className, Object... ctorArgs);
 
-	void addEMMessage(String message) throws InterruptedException;
-
 }

@@ -186,12 +186,27 @@ public enum EMBridgeEventFactory {
 		return result;
 	}
 
+	public static int toInt(final char c) {
+		return Character.digit(c, 10);
+	}
+
 	public static int getEventId(final String commandBuffer) {
-		int iIndex = commandBuffer.indexOf(EM_EVENT_POSTFIX);
-		if (iIndex < 0)
-			return -1;
-		int eventId = Integer.parseInt(commandBuffer.substring(EM_EVENT_PREFIX_LEN, iIndex).trim());
-		return eventId;
+		char[] charBuffer = commandBuffer.toCharArray();
+		char d1 = charBuffer[EM_EVENT_PREFIX_LEN + 0];
+		char d2 = charBuffer[EM_EVENT_PREFIX_LEN + 1];
+		char d3 = charBuffer[EM_EVENT_PREFIX_LEN + 2];
+		if (Character.isDigit(d3)) {
+			return (100 * toInt(d1)) + (10 * toInt(d2)) + toInt(d3);
+		} else if (Character.isDigit(d2)) {
+			return (10 * toInt(d1)) + toInt(d2);
+		} else {
+			return toInt(d1);
+		}
+		//			int iIndex = commandBuffer.indexOf(EM_EVENT_POSTFIX);
+		//		if (iIndex < 0)
+		//			return -1;
+		//		int eventId = Integer.parseInt(commandBuffer.substring(EM_EVENT_PREFIX_LEN, iIndex).trim());
+		//		return eventId;
 	}
 
 	public static String getEventParams(final String commandBuffer) {
