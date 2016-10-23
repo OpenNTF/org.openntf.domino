@@ -4,7 +4,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Vector;
 
+import org.openntf.domino.View;
+import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.big.impl.ViewEntryList;
@@ -13,6 +16,7 @@ import org.openntf.domino.graph2.DEdgeList;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DEdgeEntryList implements DEdgeList {
@@ -40,14 +44,21 @@ public class DEdgeEntryList implements DEdgeList {
 			DEntryEdge result = null;
 			ViewEntryCoordinate vec = delegate_.next();
 			if (vec != null) {
-				Edge edge = (Edge) store_.getElement(vec);
-				if (edge instanceof DEntryEdge) {
-					result = (DEntryEdge) edge;
-					result.setInVertex(source_);
-					//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
-					return result;
+				Element raw = store_.getElement(vec);
+				if (raw instanceof Edge) {
+					Edge edge = (Edge) raw;
+					if (edge instanceof DEntryEdge) {
+						result = (DEntryEdge) edge;
+						result.setInVertex(source_);
+						//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
+						return result;
+					} else {
+						throw new IllegalStateException(
+								"ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+					}
 				} else {
-					throw new IllegalStateException("ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+					//					System.out.println("Next entry is not an edge. It's a " + raw.getClass().getName() + " id: " + raw.getId());
+					//					System.out.println("VEC is " + vec.getPosition() + ": " + vec.getUNID());
 				}
 			}
 			return null;
@@ -110,6 +121,12 @@ public class DEdgeEntryList implements DEdgeList {
 		initEntryList();
 	}
 
+	//	public DEdgeEntryList(final DVertex source, final DElementStore store, final List<CharSequence> startkeys) {
+	//		source_ = source;
+	//		store_ = store;
+	//		initEntryList(startkeys);
+	//	}
+
 	protected void initEntryList() {
 		ViewNavigator nav = null;
 		if (source_.getDelegateType().equals(org.openntf.domino.View.class)) {
@@ -121,6 +138,20 @@ public class DEdgeEntryList implements DEdgeList {
 		}
 		//		System.out.println("TEMP DEBUG EntryList navigator from ViewVertex has " + nav.getCount() + " entries");
 		entryList_ = new ViewEntryList(nav);
+	}
+
+	public void initEntryList(final List<CharSequence> list) {
+		ViewNavigator nav = null;
+		if (source_.getDelegateType().equals(org.openntf.domino.View.class)) {
+			View view = source_.getView();
+			Vector<Object> repeatKeys = new Vector<Object>();
+			repeatKeys.addAll(list);
+			ViewEntry entry = view.getFirstEntryByKey(repeatKeys, false);
+			nav = view.createViewNavFrom(entry);
+			entryList_ = new ViewEntryList(nav);
+		} else {
+			throw new IllegalArgumentException("Cannot use start keys on anything except a view root.");
+		}
 	}
 
 	@Override

@@ -29,6 +29,7 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.ViewEntryIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -567,7 +568,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 				// Special support for items
 				val = value;
 			} else {
-				val = toItemFriendly(value, getAncestorSession(), recycleThis);
+				val = TypeUtils.toItemFriendly(value, getAncestorSession(), recycleThis);
 			}
 			getDelegate().stampAll(itemName, val);
 		} catch (NotesException e) {
@@ -589,7 +590,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 					// Special support for items
 					val = entry.getValue();
 				} else {
-					val = toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
+					val = TypeUtils.toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
 				}
 				getDelegate().stampAll(entry.getKey(), val);
 			}

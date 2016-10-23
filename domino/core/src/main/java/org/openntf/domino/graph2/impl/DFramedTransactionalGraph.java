@@ -11,14 +11,16 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.design.impl.DesignFactory;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
+import org.openntf.domino.graph2.builtin.DbInfoVertex;
 import org.openntf.domino.graph2.builtin.Eventable;
 import org.openntf.domino.graph2.builtin.ViewVertex;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
@@ -29,6 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -91,7 +94,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		protected Class<?> kind_;
 		protected Class<?> delegateType_;
 
-		public FrameLoadCallable(final DFramedTransactionalGraph parent, final Object id, final Class<?> kind, final Class<?> delegateType) {
+		public FrameLoadCallable(final DFramedTransactionalGraph parent, final Object id, final Class<?> kind,
+				final Class<?> delegateType) {
 			parent_ = parent;
 			id_ = id;
 			kind_ = kind;
@@ -106,6 +110,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			if (id_ instanceof NoteCoordinate) {
 				store = base.findElementStore(id_);
 			} else {
+				//				System.out.println("Resolving an id of type " + (id_ == null ? "null" : id_.getClass().getName()));
 				String typeid = parent_.getTypedId(id_);
 				if (typeid == null) {
 					store = base.findElementStore(kind_);
@@ -417,8 +422,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		} else if (frame instanceof VertexFrame) {
 			return ((VertexFrame) frame).asVertex();
 		} else {
-			throw new IllegalStateException("Attempt to get element with id " + String.valueOf(id) + " returned a "
-					+ frame.getClass().getName());
+			throw new IllegalStateException(
+					"Attempt to get element with id " + String.valueOf(id) + " returned a " + frame.getClass().getName());
 		}
 	}
 
@@ -435,8 +440,20 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			//			System.out.println("Cache miss on id " + String.valueOf(id) + " for type " + (kind == null ? "null" : kind.getName()));
 			//NTF this is no problem and quite normal
 			return null;
+		} catch (UncheckedExecutionException uee) {
+			Throwable cause = uee.getCause();
+			if (cause != null && cause instanceof UserAccessException) {
+				throw new UserAccessException(cause.getMessage(), cause);
+			} else {
+				throw uee;
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
+			try {
+				throw t;
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
@@ -627,6 +644,9 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (map instanceof Document) {
 			if (DesignFactory.isView((Document) map)) {
 				kind = (Class<F>) ViewVertex.class;
+			}
+			if (DesignFactory.isIcon((Document) map)) {
+				kind = (Class<F>) DbInfoVertex.class;
 			}
 		}
 		Class<F> klazz = (Class<F>) (kind == null ? VertexFrame.class : kind);

@@ -166,6 +166,10 @@ public class DocumentSyncHelper {
 		// TODO allow for constructor arguments to configure
 	}
 
+	public DocumentSyncHelper(final Document controlDoc) {
+		this(controlDoc, new HashMap<Controls, String>());
+	}
+
 	/**
 	 * Instantiates a new DocumentSyncHelper with a Document of sync settings and a Map of field names for each setting in the control doc
 	 * 

@@ -46,9 +46,23 @@ import com.ibm.commons.util.StringUtil;
  *         sendTo.add("pwithers@intec.co.uk"); myEmail.setTo(sendTo); ArrayList<String> cc = new ArrayList<String>();
  *         cc.add("user@domain.com"); cc.add("anotheruser@domain.com"); myEmail.setCC(cc); ArrayList<String> bcc = new ArrayList<String>();
  *         bcc.add("user3@domain.com"); myEmail.setBCC(bcc); myEmail.setSubject("Your notification"); StringBuilder body = new
+<<<<<<< HEAD
  *         StringBuilder(); body.append("<h1>Hi!</h1>"); body.append("<table>"); body.append("<tbody>"); body.append("<tr>"); body.append(
  *         "<td>contents in a table here</td>"); body.append("</tr>"); body.append("</tbody>"); body.append("</table>");
  *         myEmail.addHTML(body); myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
+=======
+ *         StringBuilder(); body.append("
+ *         <h1>Hi!</h1>"); body.append("
+ *         <table>
+ * 		"); body.append("<tbody>"); body.append("
+ *         <tr>
+ * 		"); body.append("
+ *         <td>contents in a table here</td>"); body.append("
+ *         </tr>
+ * 		"); body.append("</tbody>"); body.append("
+ *         </table>
+ * 		"); myEmail.addHTML(body); myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
+>>>>>>> nathan
  *         myEmail.setSenderEmail("pwithers@intec.co.uk"); myEmail.setSenderName("Paul Withers"); myEmail.send();
  */
 
@@ -516,6 +530,11 @@ public class DominoEmail implements IEmail {
 	@Override
 	public void setTo(final Collection<String> to) {
 		to_ = new ArrayList<String>(to);
+	}
+
+	public void setTo(final String to) {
+		to_ = new ArrayList<String>();
+		to_.add(to);
 	}
 
 	/* (non-Javadoc)

@@ -8,7 +8,7 @@ package org.openntf.domino.ext;
  * 
  *         OpenNTF extensions to Name object
  */
-public interface Name {
+public interface Name extends Cloneable {
 
 	/**
 	 * Gets groups for the person / group / server etc the Name object pertains to.<br/>

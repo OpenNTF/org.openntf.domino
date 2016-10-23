@@ -31,6 +31,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -431,7 +432,7 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 				// Special support for items
 				val = value;
 			} else {
-				val = toItemFriendly(value, getAncestorSession(), recycleThis);
+				val = TypeUtils.toItemFriendly(value, getAncestorSession(), recycleThis);
 			}
 			getDelegate().stampAll(itemName, val);
 		} catch (NotesException e) {
@@ -447,13 +448,12 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		try {
 			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
 			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				//NTF - go directly to delegate because we already know the entries are Domino friendly.
 				Object val = null;
 				if (entry.getValue() instanceof lotus.domino.Item) {
 					// Special support for items
 					val = entry.getValue();
 				} else {
-					val = toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
+					val = TypeUtils.toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
 				}
 				getDelegate().stampAll(entry.getKey(), val);
 			}

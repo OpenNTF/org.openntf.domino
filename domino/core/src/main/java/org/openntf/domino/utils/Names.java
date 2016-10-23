@@ -773,8 +773,8 @@ public enum Names {
 						if (!Strings.isBlankString(s)) {
 							final Name name = session.createName(s);
 							if (!result.contains(name)) {
-								final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(database.queryAccessRoles(name
-										.getCanonical()));
+								final TreeSet<String> roles = CollectionUtils
+										.getTreeSetStrings(database.queryAccessRoles(name.getCanonical()));
 								if (null == roles) {
 									result.add(name);
 								} else {
@@ -1013,8 +1013,8 @@ public enum Names {
 								result.put(key, Names.LookupType.Group);
 								Document document = vent.getDocument();
 
-								final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(document
-										.getItemValue(Documents.ITEMNAME_MEMBERS));
+								final TreeSet<String> ts = CollectionUtils
+										.getTreeSetStrings(document.getItemValue(Documents.ITEMNAME_MEMBERS));
 								if (null != ts) {
 									final HashMap<String, Names.LookupType> found = Names.expandNamesList(session, view, ts, result);
 									if ((null != found) && (found.size() > 0)) {

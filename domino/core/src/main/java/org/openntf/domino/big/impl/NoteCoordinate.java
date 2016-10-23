@@ -11,8 +11,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Map;
 
-import javolution.util.FastMap;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
@@ -25,6 +23,8 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.primitives.Longs;
+
+import javolution.util.FastMap;
 
 /*
  * NTF This class stores information on where to find a note in a simple 3-long address
@@ -44,6 +44,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	long x;
 	long y;
 	transient Boolean isView_;
+	transient Boolean isIcon_;
 	transient private Map<String, Object> propertyCache;
 
 	//	transient private Database database_;
@@ -195,6 +196,24 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			}
 		}
 		return isView_;
+	}
+
+	@Override
+	public boolean isIcon() {
+		if (isIcon_ == null) {
+			if (x == 0l && y == 0l) {
+				isIcon_ = true;
+			} else {
+				Document doc = getDocument();
+				if (!doc.isNewNote()) {
+					//					System.out.println("TEMP DEBUG Icon checking noteid " + String.valueOf(doc.getNoteID()));
+					//					String fields = Strings.join(doc.keySet(), ",");
+					//					System.out.println("TEMP DEBUG fields: " + fields);
+					isIcon_ = DesignFactory.isIcon(doc);
+				}
+			}
+		}
+		return isIcon_;
 	}
 
 	@Override

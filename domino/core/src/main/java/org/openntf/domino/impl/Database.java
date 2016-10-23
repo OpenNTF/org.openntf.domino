@@ -180,6 +180,12 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	@Override
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final int otherOpt,
+			final int start, final int count, final String entryForm) {
+		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -1119,6 +1125,13 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	public static final String NOTEID_ICONNOTE = "FFFF0010";
+
+	@Override
+	public Document getIconNote() {
+		return getDocumentByID(NOTEID_ICONNOTE);
+	}
+
 	@Override
 	public Document getDocumentByID_Or_UNID(final String id) {
 		Document doc;
@@ -1142,6 +1155,12 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	public Document getDocumentWithKey(final Serializable key, final boolean createOnFail) {
 		try {
 			if (key != null) {
+				if (key instanceof String && ((String) key).length() == 32) {
+					if ("000000000000000000000000000000000000".equals(key)) {
+						return getIconNote();
+					}
+				}
+
 				String checksum = DominoUtils.toUnid(key);
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
@@ -3241,18 +3260,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int, int, int,
-	 * java.lang.String)
-	 */
-	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
-			final int otherOpt, final int start, final int count, final String entryForm) {
-		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
 
 	/*

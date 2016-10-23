@@ -212,7 +212,7 @@ public interface Session {
 	 * </p>
 	 *
 	 * <p>
-	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
+	 * The groups include those to which the user name belongs in the Domino Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
 	 *

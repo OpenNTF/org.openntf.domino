@@ -14,7 +14,7 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public interface DElementStore extends Externalizable {
 
-	public interface CustomProxyResolver {
+	public static interface CustomProxyResolver {
 		public void setProxiedElementStore(DElementStore store);
 
 		public Map<String, Object> getOriginalDelegate(Serializable key);

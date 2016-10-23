@@ -31,6 +31,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
@@ -44,6 +45,7 @@ import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
@@ -90,15 +92,18 @@ public class FramedResource extends AbstractResource {
 						nc = ViewEntryCoordinate.Utils.getViewEntryCoordinate(id);
 					} else {
 						nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+//						System.out.println("TEMP DEBUG isIcon: " + String.valueOf(nc.isIcon()));
 					}
 					if (nc == null) {
-						System.err.println("NoteCoordinate is null for id " + id);
+//						writer.outStringProperty("message", "NoteCoordinate is null for id " + id);
 					}
 					if (graph == null) {
-						System.err.println("Graph is null for namespace " + namespace);
+//						writer.outStringProperty("message", "Graph is null for namespace " + namespace);
 					}
 					Object elem = graph.getElement(nc, null);
 					if (elem == null) {
+						builder = Response.status(Status.NOT_FOUND);
+//						writer.outStringProperty("currentUsername", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 						throw new IllegalStateException("Graph element is null for id " + id);
 					}
 					writer.outObject(elem);
@@ -126,12 +131,14 @@ public class FramedResource extends AbstractResource {
 					CharSequence id = keys.get(0);
 					NoteCoordinate nc = resolver.resolveKey(type, URLDecoder.decode(String.valueOf(id), "UTF-8"));
 					if (nc == null) {
-						System.err.println("NoteCoordinate is null for id " + id);
+//						writer.outStringProperty("message", "NoteCoordinate is null for id " + id);
 					}
 					Object elem = graph.getElement(nc);
 					if (elem == null) {
 						elem = resolver.handleMissingKey(type, id);
 						if (elem == null) {
+							builder = Response.status(Status.NOT_FOUND);
+//							writer.outStringProperty("currentUsername", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 							throw new IllegalStateException("Graph element is null for id " + id);
 						}
 					}
@@ -165,9 +172,12 @@ public class FramedResource extends AbstractResource {
 				jsonMap.put("status", "active");
 				writer.outObject(jsonMap);
 			}
-			builder = Response.ok();
-		} catch (Exception e) {
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+			if (null==builder) builder = Response.ok();
+		} catch (UserAccessException uae) {
+			if (null==builder) builder = Response.status(Status.UNAUTHORIZED);
+			writer.outObject(uae);
+		} catch (Throwable e) {
+			if (null==builder) builder = Response.status(Status.INTERNAL_SERVER_ERROR);
 			writer.outObject(e);
 		}
 

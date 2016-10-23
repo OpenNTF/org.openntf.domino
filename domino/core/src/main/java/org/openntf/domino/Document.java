@@ -28,7 +28,9 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
-		DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
+DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
+	public static int MAX_NATIVE_FIELD_SIZE = 32000;
+	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override

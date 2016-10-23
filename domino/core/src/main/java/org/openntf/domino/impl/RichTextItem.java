@@ -26,6 +26,7 @@ import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.RichTextNavigator;
 import org.openntf.domino.RichTextRange;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -379,7 +380,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendTable(final int rows, final int columns, final Vector labels, final int leftMargin, final Vector pstyles) {
 		markDirty();
 		try {
-			getDelegate().appendTable(rows, columns, labels, leftMargin, toLotus(pstyles));
+			getDelegate().appendTable(rows, columns, labels, leftMargin, TypeUtils.toLotus(pstyles));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -678,6 +679,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 
 	@Override
 	public EmbeddedObject replaceAttachment(final String filename, final String sourcePath) {
+		//		System.out.println("TEMP DEBUG replacing filename " + filename + " from source at " + sourcePath);
 		EmbeddedObject result = null;
 		RichTextNavigator navigator = this.createNavigator();
 		EmbeddedObject eo = (EmbeddedObject) navigator.getFirstElement(RTELEM_TYPE_FILEATTACHMENT);

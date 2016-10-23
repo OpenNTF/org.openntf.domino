@@ -3133,4 +3133,19 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	public String getMetaversalID() {
 		return getAncestorDatabase().getReplicaID() + getUniversalID();
 	}
+
+	// TODO uncomment when this exists in the core API
+	//	@Override
+	//	public ViewNavigator createViewNavFromKey(final Vector arg0, final boolean arg1) {
+	//		try {
+	//			getDelegate().setAutoUpdate(false);
+	//			getDelegate().setEnableNoteIDsForCategories(true);
+	//			ViewNavigator result = fromLotus(getDelegate().createViewNavFromKey(arg0, arg1), ViewNavigator.SCHEMA, this);
+	//			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.KEYS);
+	//			return result;
+	//		} catch (Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//		return null;
+	//	}
 }

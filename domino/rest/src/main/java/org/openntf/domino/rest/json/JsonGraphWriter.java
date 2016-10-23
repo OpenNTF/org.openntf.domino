@@ -26,6 +26,7 @@ import org.openntf.domino.rest.json.JsonGraphFactory.IJsonWriterAdapter;
 import org.openntf.domino.rest.resources.frames.JsonFrameAdapter;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.utils.RTtoHTMLUtil;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class JsonGraphWriter extends JsonWriter {
 	protected DFramedTransactionalGraph<?> graph_;
@@ -167,6 +168,7 @@ public class JsonGraphWriter extends JsonWriter {
 
 	public void outException(Throwable throwable) throws IOException, JsonException {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		result.put("currentUsername", org.openntf.domino.utils.Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 		result.put("exceptionType", throwable.getClass().getSimpleName());
 		result.put("message", throwable.getMessage());
 		StackTraceElement[] trace = throwable.getStackTrace();

@@ -203,8 +203,8 @@ public interface Database extends Base {
 	 * search and sort options the developer wishes to apply.<br/>
 	 * <br/>
 	 * To make code clearer and easier to support, this overloaded method has been added taking a Set of
-	 * {@link org.openntf.domino.Database.FTDomainSearchOption} objects and a Set of {@link org.openntf.domino.Database.FTDomainSortOption}.
-	 * <br/>
+	 * {@link org.openntf.domino.Database.FTDomainSearchOption} objects and a Set of
+	 * {@link org.openntf.domino.Database.FTDomainSortOption}.<br/>
 	 * <br/>
 	 * The current database must be a Domain Catalog
 	 *
@@ -582,6 +582,8 @@ public interface Database extends Base {
 	public String getUNID(String noteid);
 
 	public String getUNID(int noteid);
+
+	public Document getIconNote();
 
 	public Document getDocumentByUNID(String unid, boolean deferDelegate);
 

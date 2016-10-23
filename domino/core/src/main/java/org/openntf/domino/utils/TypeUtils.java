@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,19 +21,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import lotus.domino.DateTime;
 import lotus.domino.Name;
+import lotus.domino.NotesException;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
+import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
+import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
+import org.openntf.domino.impl.ImplUtils;
+import org.openntf.domino.types.AuthorsList;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.NamesList;
+import org.openntf.domino.types.ReadersList;
 
+import com.google.common.collect.ImmutableList;
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -45,7 +57,75 @@ public enum TypeUtils {
 	;
 
 	public static final String[] DEFAULT_STR_ARRAY = { "" };
-	private static final DateFormat DEFAULT_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");	//TODO NTF ThreadLocalize for safety?
+	protected static final List<CustomConverter> converterList_ = new ArrayList<CustomConverter>();
+	//	protected static final List<Class<?>> converterFromList_ = new ArrayList<Class<?>>();
+
+	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		}
+	};
+
+	public static interface CustomConverter {
+
+		public Object convert(Object from);
+
+		public Object get(Document doc, String itemName);
+
+		public Object put(Document doc, String itemName, Object from);
+
+		public Class<?> getFrom();
+
+		public Class<?> getTo();
+
+		public boolean isCompatible(@Nonnull final Class<?> fromClass);
+	}
+
+	public static abstract class AbstractConverter implements CustomConverter {
+		protected Class<?> fromClass_;
+		protected Class<?> toClass_;
+
+		@Override
+		public Class<?> getFrom() {
+			return fromClass_;
+		}
+
+		@Override
+		public Class<?> getTo() {
+			return toClass_;
+		}
+
+		@Override
+		public boolean isCompatible(@Nonnull final Class<?> fromClass) {
+			return fromClass_.isAssignableFrom(fromClass);
+		}
+	}
+
+	public static synchronized void addCustomConverter(final CustomConverter converter) {
+		converterList_.add(converter);
+		//		System.out.println("TEMP DEBUG added custom converter");
+		//		converterFromList_.add(converter.getFrom());
+
+	}
+
+	public static synchronized void removeCustomConverter(final CustomConverter converter) {
+		converterList_.remove(converter);
+	}
+
+	public static List<CustomConverter> getConverterList() {
+		return ImmutableList.copyOf(converterList_);
+	}
+
+	protected static CustomConverter findCustomConverter(final Class<?> fromClass) {
+		for (CustomConverter converter : getConverterList()) {
+			if (converter.isCompatible(fromClass)) {
+				//				System.out.println("TEMP DEBUG found custom converter");
+				return converter;
+			}
+		}
+		return null;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getDefaultInstance(final Class<T> type) {
@@ -94,7 +174,7 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<T> type) {
-		String noteid = doc.getNoteID();
+		String noteid = doc.getMetaversalID();
 		boolean hasItem = doc.hasItem(itemName);
 		if (!hasItem) {
 			// System.out.println("Item " + itemName + " doesn't exist in document " + doc.getNoteID() + " in "
@@ -109,8 +189,8 @@ public enum TypeUtils {
 					return null;
 				}
 			} else if (type.isPrimitive()) {
-				throw new ItemNotFoundException("Item " + itemName + " was not found on document " + noteid + " so we cannot return a "
-						+ type.getName());
+				throw new ItemNotFoundException(
+						"Item " + itemName + " was not found on document " + noteid + " so we cannot return a " + type.getName());
 			} else if (type.equals(String.class)) {
 				return (T) "";
 			} else {
@@ -164,8 +244,8 @@ public enum TypeUtils {
 			throw new DataNotCompatibleException(e.getMessage() + " for field " + item.getName() + " in document " + noteid, e);
 		} catch (UnimplementedException e) {
 			String noteid = item.getAncestorDocument().getNoteID();
-			throw new UnimplementedException(
-					e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid, e);
+			throw new UnimplementedException(e.getMessage() + ", so cannot auto-box for field " + item.getName() + " in document " + noteid,
+					e);
 		}
 		//		if ("form".equalsIgnoreCase(item.getName())) {
 		//			System.out.println("TEMP DEBUG Form value is '" + (String) result + "'");
@@ -351,15 +431,15 @@ public enum TypeUtils {
 				if (session != null) {
 					result = session.createDateTime(toDate(o));
 				} else {
-					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
-							+ " to DateTime without a valid Session object");
+					throw new IllegalArgumentException(
+							"Cannont convert a " + o.getClass().getName() + " to DateTime without a valid Session object");
 				}
 			} else if (org.openntf.domino.Name.class.isAssignableFrom(type)) {
 				if (session != null) {
 					result = session.createName(String.valueOf(o));
 				} else {
-					throw new IllegalArgumentException("Cannont convert a " + o.getClass().getName()
-							+ " to Name without a valid Session object");
+					throw new IllegalArgumentException(
+							"Cannont convert a " + o.getClass().getName() + " to Name without a valid Session object");
 				}
 			} else if (Boolean.class.equals(type)) {
 				result = toBoolean(o);
@@ -1078,7 +1158,7 @@ public enum TypeUtils {
 			return new Date(((Long) value).longValue());
 		} else if (value instanceof String) {
 			// TODO finish
-			DateFormat df = DEFAULT_FORMAT;
+			DateFormat df = DEFAULT_FORMAT.get();
 			String str = (String) value;
 			if (str.length() < 1)
 				return null;
@@ -1599,6 +1679,491 @@ public enum TypeUtils {
 			ret[i] = iterator.next().byteValue();
 		}
 		return ret;
+	}
+
+	public static boolean isFriendlyVector(final Object value) {
+		if (!(value instanceof Vector))
+			return false;
+		for (Object v : (Vector<?>) value) {
+			if (v instanceof String || v instanceof Integer || v instanceof Double) {
+				// ok
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * returns the payload that the Object o needs when it is written into an item
+	 * 
+	 * @param o
+	 * @param c
+	 * @return
+	 */
+	public static int getLotusPayload(final Object o, final Class<?> c) {
+		if (c.isAssignableFrom(o.getClass())) {
+			if (o instanceof String) {
+				return ((String) o).length(); // LMBCS investigation will be done later (in general not necessary)
+			}
+			if (o instanceof lotus.domino.DateRange) {
+				return 16;
+			} else {
+				return 8; // Number + DateTime has 8 bytes payload
+			}
+		}
+		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
+	}
+
+	public static Item writeToItem(@Nonnull final org.openntf.domino.Document doc, @Nonnull final String itemName, @Nonnull Object value,
+			final Boolean isSummary) throws Domino32KLimitException {
+		Class<?> fromClass = value.getClass();
+		CustomConverter converter = findCustomConverter(fromClass);
+		if (converter != null) {
+			//look for customConverter
+			Class<?> toClass = converter.getTo();
+			if (MIMEEntity.class.isAssignableFrom(toClass) || Item.class.isAssignableFrom(toClass)) {
+				converter.put(doc, itemName, value);
+				return doc.getAncestorSession().getFactory().create(Item.SCHEMA, doc, itemName);
+			} else {
+				value = converter.convert(value);
+			}
+		}
+
+		Vector<Object> dominoFriendlyVec = null;
+		Object dominoFriendlyObj = null;
+		List<lotus.domino.Base> recycleThis = null;
+
+		boolean isNonSummary = false;
+		boolean isNames = false;
+		lotus.domino.Item result;
+		try {
+			// first step: Make it domino friendly and put all converted objects into "dominoFriendly"
+			if (value instanceof String || value instanceof Integer || value instanceof Double) {
+				dominoFriendlyObj = value;
+			} else if (value instanceof Collection) {
+				if (isFriendlyVector(value)) {
+					recycleThis = null;
+					dominoFriendlyVec = (Vector<Object>) value;
+				} else {
+					recycleThis = new ArrayList<lotus.domino.Base>();
+					Collection<?> coll = (Collection<?>) value;
+					dominoFriendlyVec = new Vector<Object>(coll.size());
+					for (Object valNode : coll) {
+						if (valNode != null) { // CHECKME: Should NULL values discarded?
+							if (valNode instanceof BigString) {
+								isNonSummary = true;
+							}
+							if (valNode instanceof Name) {
+								isNames = true;
+							}
+							dominoFriendlyVec.add(toItemFriendly(valNode, doc.getAncestorSession(), recycleThis));
+						}
+					}
+				}
+			} else if (value.getClass().isArray()) {
+				recycleThis = new ArrayList<lotus.domino.Base>();
+				int lh = Array.getLength(value);
+				if (lh > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
+					String cn = value.getClass().getName();
+					if (cn.length() == 2) {				// It is primitive
+						throw new Domino32KLimitException();
+					}
+				}
+				dominoFriendlyVec = new Vector<Object>(lh);
+				for (int i = 0; i < lh; i++) {
+					Object o = Array.get(value, i);
+					if (o != null) { // CHECKME: Should NULL values be discarded?
+						if (o instanceof BigString) {
+							isNonSummary = true;
+						}
+						if (o instanceof Name) {
+							isNames = true;
+						}
+						dominoFriendlyVec.add(toItemFriendly(o, doc.getAncestorSession(), recycleThis));
+					}
+				}
+			} else { // Scalar
+				recycleThis = new ArrayList<lotus.domino.Base>();
+				if (value instanceof BigString) {
+					isNonSummary = true;
+				}
+				if (value instanceof Name) {
+					isNames = true;
+				}
+				dominoFriendlyObj = toItemFriendly(value, doc.getAncestorSession(), recycleThis);
+			}
+			Object firstElement = null;
+
+			// empty vectors are treated as "null"
+			if (dominoFriendlyObj == null) {
+				if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
+					return writeToItem(doc, itemName, null, isSummary);
+				} else {
+					firstElement = dominoFriendlyVec.get(0);
+				}
+			} else {
+				firstElement = dominoFriendlyObj;
+			}
+
+			int payloadOverhead = 0;
+
+			if (dominoFriendlyVec != null && dominoFriendlyVec.size() > 1) {	// compute overhead first for multi values
+				// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
+				if (firstElement instanceof String)
+					payloadOverhead = 2 + 2 * dominoFriendlyVec.size();
+				else
+					payloadOverhead = 4;
+			}
+
+			// Next step: Type checking + length computation
+			//
+			// Remark: The special case of a String consisting of only ONE @NewLine (i.e.
+			// 		if (s.equals("\n") || s.equals("\r") || s.equals("\r\n"))
+			// where Domino is a bit ailing) won't be extra considered any longer.
+			// Neither serialization nor throwing an exception would be reasonable here.
+
+			int payload = payloadOverhead;
+			Class<?> firstElementClass;
+			if (firstElement instanceof String)
+				firstElementClass = String.class;
+			else if (firstElement instanceof Number)
+				firstElementClass = Number.class;
+			else if (firstElement instanceof lotus.domino.DateTime)
+				firstElementClass = lotus.domino.DateTime.class;
+			else if (firstElement instanceof lotus.domino.DateRange)
+				firstElementClass = lotus.domino.DateRange.class;
+			// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
+			// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
+			else
+				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
+
+			if (dominoFriendlyVec != null) {
+				for (Object o : dominoFriendlyVec) {
+					payload += getLotusPayload(o, firstElementClass);
+				}
+			} else {
+				payload += getLotusPayload(dominoFriendlyObj, firstElementClass);
+			}
+
+			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
+				// the datatype is OK, but there's no way to store the data in the Document
+				throw new Domino32KLimitException();
+			}
+			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
+				// each sign may demand up to 3 bytes in LMBCS
+				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
+				if (calc >= org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
+					if (dominoFriendlyVec != null) {
+						payload = payloadOverhead + LMBCSUtils.getPayload(dominoFriendlyVec);
+					} else {
+						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
+					}
+					if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE)
+						throw new Domino32KLimitException();
+				}
+			}
+			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
+				isNonSummary = true;
+			}
+
+			MIMEEntity mimeChk = doc.getMIMEEntity(itemName);
+			if (mimeChk != null) {
+				try {
+					mimeChk.remove();
+				} finally {
+					doc.closeMIMEEntities(true, itemName);
+				}
+			}
+			((org.openntf.domino.impl.Document) doc).beginEdit();
+			if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 1) {
+				result = ((lotus.domino.Document) ImplUtils.getLotus(doc)).replaceItemValue(itemName, firstElement);
+			} else {
+				result = ((lotus.domino.Document) ImplUtils.getLotus(doc)).replaceItemValue(itemName, dominoFriendlyVec);
+			}
+			((org.openntf.domino.impl.Document) doc).markDirty(itemName, true);
+			if (isSummary == null) {
+				if (isNonSummary) {
+					result.setSummary(false);
+				}
+			} else {
+				result.setSummary(isSummary.booleanValue());
+			}
+			if (value instanceof ReadersList) {
+				result.setReaders(true);
+			} else if (value instanceof AuthorsList) {
+				result.setAuthors(true);
+			} else if (value instanceof NamesList || isNames) {
+				result.setNames(true);
+			}
+
+			ImplUtils.recycle(result);
+		} catch (NotesException ex) {
+			DominoUtils.handleException(ex, doc, "Item=" + itemName);
+		} finally {
+			ImplUtils.recycle(recycleThis);
+		}
+		return doc.getAncestorSession().getFactory().create(Item.SCHEMA, doc, itemName);
+	}
+
+	/**
+	 * toItemFriendly: special case for "toDominoFriendly" that handles "DateTime" / "DateRange" correctly
+	 * 
+	 * @param value
+	 *            The Object value to coerce into an Item-friendly type.
+	 * @param context
+	 *            The context object.
+	 * @param recycleThis
+	 *            A rolling collection of to-recycle objects
+	 * @return An object value that can be stored in an Item.
+	 * @throws IllegalArgumentException
+	 *             When the provided value cannot be successfully converted into an Item-safe value.
+	 */
+	public static Object toItemFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis)
+			throws IllegalArgumentException {
+		if (value == null) {
+			return null;
+		}
+
+		if (value instanceof lotus.domino.Base) {
+			if (value instanceof lotus.domino.Name) {
+				// Names are written as canonical
+				try {
+					return ((lotus.domino.Name) value).getCanonical();
+				} catch (NotesException e) {
+					DominoUtils.handleException(e);
+				}
+			} else if (value instanceof org.openntf.formula.DateTime) {
+				return javaToDominoFriendly(value, session, recycleThis);
+			} else if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange) {
+				// according to documentation, these datatypes should be compatible to write to a field ... but DateRanges make problems
+				return toLotus((org.openntf.domino.Base<?>) value, recycleThis);
+			} else if (value instanceof lotus.domino.DateTime || value instanceof lotus.domino.DateRange) {
+				return value;
+			}
+			throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
+		} else {
+			return javaToDominoFriendly(value, session, recycleThis);
+		}
+	}
+
+	/**
+	 * 
+	 * @param values
+	 *            the values
+	 * @param context
+	 * 
+	 * @param recycleThis
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public static java.util.Vector<Object> toDominoFriendly(final Collection<?> values, final Session session,
+			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
+		java.util.Vector<Object> result = new java.util.Vector<Object>();
+		for (Object value : values) {
+			result.add(toDominoFriendly(value, session, recycleThis));
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * <p>
+	 * Attempts to convert a provided scalar value to a "Domino-friendly" data type like DateTime, String, etc. Currently, the data types
+	 * supported are the already-Domino-friendly ones, Number, Date, Calendar, and CharSequence.
+	 * </p>
+	 * 
+	 * @param value
+	 *            The incoming non-collection value
+	 * @param context
+	 *            The context Base object, for finding the correct session
+	 * @return The Domino-friendly conversion of the object, or the object itself if it is already usable.
+	 * @throws IllegalArgumentException
+	 *             When the object is not convertible.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static Object toDominoFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis)
+			throws IllegalArgumentException {
+		if (value == null) {
+			return null;
+		}
+		//Extended in order to deal with Arrays
+		if (value.getClass().isArray()) {
+			int i = Array.getLength(value);
+
+			java.util.Vector<Object> result = new java.util.Vector<Object>(i);
+			for (int k = 0; k < i; ++k) {
+				Object o = Array.get(value, k);
+				result.add(toDominoFriendly(o, session, recycleThis));
+			}
+			return result;
+		}
+
+		if (value instanceof Collection) {
+			java.util.Vector<Object> result = new java.util.Vector<Object>();
+			Collection<?> coll = (Collection) value;
+			for (Object o : coll) {
+				result.add(toDominoFriendly(o, session, recycleThis));
+			}
+			return result;
+		}
+
+		if (value instanceof org.openntf.domino.Base) {
+			// this is a wrapper
+			return toLotus((org.openntf.domino.Base) value, recycleThis);
+		} else if (value instanceof lotus.domino.Base) {
+			// this is already domino friendly
+			return value;
+		} else {
+			return javaToDominoFriendly(value, session, recycleThis);
+		}
+
+	}
+
+	/**
+	 * converts a lot of java types to domino-friendly types
+	 * 
+	 * @param value
+	 * @param context
+	 * @param recycleThis
+	 * @return
+	 */
+	public static Object javaToDominoFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis) {
+		//FIXME NTF This stuff should really defer to TypeUtils. We should do ALL type coercion in that utility class
+		if (value instanceof Integer || value instanceof Double) {
+			return value;
+		} else if (value instanceof String) {
+			return value;
+		} else if (value.getClass().isPrimitive()) {
+			//FIXME: NTF IS A COMPLETE HACK!!!! (but we just want to know if it'll fix PWithers' problem)
+
+			Class<?> cl = value.getClass();
+			if (cl == Boolean.TYPE) {
+				if ((Boolean) value) {
+					return "1";
+				} else {
+					return "0";
+				}
+			}
+		} else if (value instanceof Boolean) {
+			if ((Boolean) value) {
+				return "1";
+			} else {
+				return "0";
+			}
+		} else if (value instanceof Character) {
+			return value.toString();
+		}
+		// Now for the illegal-but-convertible types
+		if (value instanceof Number) {
+			// TODO Check if this is greater than what Domino can handle and serialize if so
+			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
+			return ((Number) value).doubleValue();
+
+		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar
+				|| value instanceof org.openntf.formula.DateTime) {
+
+			lotus.domino.Session lsess = toLotus(session);
+			try {
+
+				lotus.domino.DateTime dt = null;
+				if (value instanceof java.util.Date) {
+					dt = lsess.createDateTime((java.util.Date) value);
+				} else if (value instanceof org.openntf.formula.DateTime) {
+					org.openntf.formula.DateTime fdt = (org.openntf.formula.DateTime) value;
+					dt = lsess.createDateTime(fdt.toJavaDate());
+					if (fdt.isAnyDate())
+						dt.setAnyDate();
+					if (fdt.isAnyTime())
+						dt.setAnyTime();
+				} else {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					java.util.Calendar intermediate = (java.util.Calendar) value;
+					dt = lsess.createDateTime(sdf.format(intermediate.getTime()) + " " + intermediate.getTimeZone().getID());
+				}
+				if (recycleThis != null) {
+					recycleThis.add(dt);
+				}
+				return dt;
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+				return null;
+			}
+		} else if (value instanceof CharSequence) {
+			return value.toString();
+		} else if (value instanceof Pattern) {
+			return ((Pattern) value).pattern();
+		} else if (value instanceof Class<?>) {
+			return ((Class<?>) value).getName();
+		} else if (value instanceof Enum<?>) {
+			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
+		} else if (value instanceof Formula) {
+			return ((Formula) value).getExpression();
+		} else if (value instanceof NoteCoordinate) {
+			return ((NoteCoordinate) value).toString();
+		}
+
+		throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
+	}
+
+	/**
+	 * gets the delegate
+	 * 
+	 * @param wrapper
+	 *            the wrapper
+	 * @param recycleThis
+	 *            adds the delegate to the list, if it has to be recycled.
+	 * @return the delegate
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T extends lotus.domino.Base> T toLotus(final T wrapper, final Collection recycleThis) {
+		if (wrapper instanceof org.openntf.domino.impl.Base) {
+			lotus.domino.Base ret = ImplUtils.getLotus((org.openntf.domino.Base) wrapper);
+			if (wrapper instanceof Encapsulated && recycleThis != null) {
+				recycleThis.add(ret);
+			}
+			return (T) ret;
+		}
+		return wrapper;
+	}
+
+	/**
+	 * Gets the delegate.
+	 * 
+	 * @param wrapper
+	 *            the wrapper
+	 * @return the delegate
+	 */
+	//
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T extends lotus.domino.Base> T toLotus(final T wrapper) {
+		if (wrapper instanceof org.openntf.domino.impl.Base) {
+			return (T) ImplUtils.getLotus((org.openntf.domino.Base) wrapper);
+		}
+		return wrapper;
+	}
+
+	/**
+	 * To lotus.
+	 * 
+	 * @param values
+	 *            the values
+	 * @return the java.util. vector
+	 */
+	public static java.util.Vector<Object> toLotus(final Collection<?> values) {
+		if (values == null) {
+			return null;
+		} else {
+			java.util.Vector<Object> result = new java.util.Vector<Object>(values.size());
+			for (Object value : values) {
+				if (value instanceof lotus.domino.Base) {
+					result.add(toLotus((lotus.domino.Base) value));
+				} else {
+					result.add(value);
+				}
+			}
+			return result;
+		}
 	}
 
 }

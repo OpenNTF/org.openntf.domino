@@ -454,8 +454,18 @@ public enum DesignFactory {
 	}
 
 	public static boolean isView(final Document doc) {
-		return (doc.hasItem("$FormulaClass") || doc.hasItem("$Index") || doc.hasItem("$Collation") || doc.hasItem("$VIEWFORMAT") || doc
-				.hasItem("$Collection"));
+		return (doc.hasItem("$FormulaClass") || doc.hasItem("$Index") || doc.hasItem("$Collation") || doc.hasItem("$VIEWFORMAT")
+				|| doc.hasItem("$Collection"));
+	}
+
+	public static final String NOTEID_ICONNOTE = "FFFF0010";
+
+	public static boolean isIcon(final Document doc) {
+		return NOTEID_ICONNOTE.equals(doc.getNoteID()) || doc.hasItem("IconBitmap");
+	}
+
+	public static Document getIconNote(final Database db) {
+		return db.getIconNote();
 	}
 
 	public static <T extends org.openntf.domino.design.DesignBase> DesignCollection<T> search(final Database db, final Class<T> type,
