@@ -62,7 +62,8 @@ Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
  com.ibm.icu;bundle-version="3.8.1",
- javassist;bundle-version="3.18.2";visibility:=reexport
+ javassist;bundle-version="3.18.2";visibility:=reexport,
+ org.openntf.junit4xpages;bundle-version="4.11.0"
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.common.base,
