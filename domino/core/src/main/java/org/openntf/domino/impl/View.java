@@ -59,7 +59,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class View.
  */
-public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
+public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database>implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
 	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
@@ -609,36 +609,13 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
-	 */
-	@Override
-	public ViewNavigator createViewNavFrom(final Object entry) {
-		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
-		try {
-			getDelegate().setAutoUpdate(false);
-			getDelegate().setEnableNoteIDsForCategories(true);
-			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
-			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
-			return result;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		} finally {
-			s_recycle(recycleThis);
-		}
-		return null;
-	}
-
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
 	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
 	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
 	 *
-	 * To find the correct position, trace a call of<br>
-	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * To find the correct position, trace a call of<br> <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
 	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
 	 * debugger.
 	 *
@@ -665,6 +642,28 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return null;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
+	 */
+	@Override
+	public ViewNavigator createViewNavFrom(final Object entry) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			getDelegate().setAutoUpdate(false);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
+			return result;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
+		}
+		return null;
 	}
 
 	/*
@@ -1840,7 +1839,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	@Override
 	public boolean isConflict() {
 		if (!isCalendar()) {
-			return false;	//NTF conflict checking only applies to calendar views
+			return false;//NTF conflict checking only applies to calendar views
 		}
 		try {
 			return getDelegate().isConflict();
@@ -2684,9 +2683,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 				}
 			}
 			if (candidate != null) {
-				log_.log(Level.WARNING,
-						"The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: " + candidate.getAliases()
-								+ ", View2:" + ret.getAliases());
+				log_.log(Level.WARNING, "The view name '" + name_ + "' is not unique in " + getAncestorDatabase() + ". View1: "
+						+ candidate.getAliases() + ", View2:" + ret.getAliases());
 				// recycle our first view by adding a wrapper (a recycle call will probably hard recycle the delegate)
 				fromLotus(ret, View.SCHEMA, getAncestorDatabase());
 				ret = candidate;
