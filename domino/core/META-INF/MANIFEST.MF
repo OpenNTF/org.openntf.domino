@@ -66,11 +66,9 @@ Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  com.ibm.icu;bundle-version="3.8.1",
  javassist;bundle-version="3.18.2";visibility:=reexport,
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
- jsr305;bundle-version="1.0.1"
+ jsr305;bundle-version="1.0.1",
+ com.google.guava;bundle-version="18.0.1"
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
-Import-Package: com.google.common.base,
- com.google.common.cache,
- com.google.common.primitives,
- javassist.util.proxy,
+Import-Package: javassist.util.proxy,
  lotus.domino
