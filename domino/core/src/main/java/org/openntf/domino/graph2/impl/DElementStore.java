@@ -537,7 +537,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					while (li.hasNext()) {
 						Edge e = li.next();
 						if (e != null) {
-							getConfiguration().getGraph().removeEdge(li.next(), dv);
+							getConfiguration().getGraph().removeEdge(e, dv);
 						}
 						i++;
 					}

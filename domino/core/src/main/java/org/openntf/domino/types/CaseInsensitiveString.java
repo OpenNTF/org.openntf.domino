@@ -104,19 +104,20 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		if (this == o) {
 			return true;
 		}
-		getFolded();
-		try {
-			CaseInsensitiveString cis = (CaseInsensitiveString) o;
-			cis.getFolded();
-			return folded.equals(cis.folded);
-		} catch (ClassCastException e) {
-			try {
-				String s = (String) o;
-				return folded.equals(foldCase(s));
-			} catch (ClassCastException e2) {
-				return false;
-			}
-		}
+		return string.equalsIgnoreCase(String.valueOf(o));
+		//		getFolded();
+		//		try {
+		//			CaseInsensitiveString cis = (CaseInsensitiveString) o;
+		//			cis.getFolded();
+		//			return folded.equals(cis.folded);
+		//		} catch (ClassCastException e) {
+		//			try {
+		//				String s = (String) o;
+		//				return folded.equals(foldCase(s));
+		//			} catch (ClassCastException e2) {
+		//				return false;
+		//			}
+		//		}
 	}
 
 	/**

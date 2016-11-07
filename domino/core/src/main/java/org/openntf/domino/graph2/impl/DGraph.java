@@ -14,6 +14,7 @@ import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.NoteList;
+import org.openntf.domino.ext.Session.Fixes;
 //import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.graph2.DConfiguration;
 import org.openntf.domino.graph2.DElementStore;
@@ -475,17 +476,26 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			DbDirectory dir = session.getDbDirectory(server);
 			result = dir.openDatabase(key);
 			if (result == null) {
+				//				System.out.println("Creating NSF for delegate: " + key);
 				Session localSession = Factory.getSession(SessionType.NATIVE);
+				localSession.setFixEnable(Fixes.CREATE_DB, true);
 				DbDirectory localDir = localSession.getDbDirectory(server);
-				Database newDb = localDir.createDatabase(key);
-				newDb.setCategories("graph2");
-				//				newDb.setFolderReferencesEnabled(false);
-				newDb.setTitle("Auto-generated graph2 element store");
-				for (org.openntf.domino.View v : newDb.getViews()) {
-					v.setName("NONE");
-					v.setSelectionFormula("SELECT @False");
+				Database newDb = localDir.createDatabase(key, true);
+				if (newDb.isOpen()) {
+					//					System.out.println("Configuring NSF...");
+					newDb.setCategories("graph2");
+					newDb.setFolderReferencesEnabled(false);
+					newDb.setTitle("Auto-generated for " + key);
+					//					System.out.println("Configuring view...");
+					for (org.openntf.domino.View v : newDb.getViews()) {
+						v.setName("NONE");
+						v.setSelectionFormula("SELECT @False");
+					}
+				} else {
+					System.out.println("Database is not open");
 				}
 				result = newDb;
+				//				System.out.println("New NSF complete");
 			}
 			store.setStoreKey(((Database) result).getReplicaID());
 		} else {
@@ -519,17 +529,26 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			DbDirectory dir = session.getDbDirectory(server);
 			result = dir.openDatabase(key);
 			if (result == null) {
+				//				System.out.println("Creating NSF for proxy delegate: " + key);
 				Session localSession = Factory.getSession(SessionType.NATIVE);
+				localSession.setFixEnable(Fixes.CREATE_DB, true);
 				DbDirectory localDir = localSession.getDbDirectory(server);
-				Database newDb = localDir.createDatabase(key);
-				newDb.setCategories("graph2");
-				newDb.setFolderReferencesEnabled(false);
-				newDb.setTitle("Auto-generated graph2 element store");
-				for (org.openntf.domino.View v : newDb.getViews()) {
-					v.setName("NONE");
-					v.setSelectionFormula("SELECT @False");
+				Database newDb = localDir.createDatabase(key, true);
+				if (newDb.isOpen()) {
+					//					System.out.println("Configuring NSF...");
+					newDb.setCategories("graph2");
+					newDb.setFolderReferencesEnabled(false);
+					newDb.setTitle("Auto-generated for " + key);
+					//					System.out.println("Configuring view...");
+					for (org.openntf.domino.View v : newDb.getViews()) {
+						v.setName("NONE");
+						v.setSelectionFormula("SELECT @False");
+					}
+				} else {
+					System.out.println("Db not open");
 				}
 				result = newDb;
+				//				System.out.println("New NSF complete");
 			}
 			store.setProxyStoreKey(((Database) result).getReplicaID());
 		} else {
