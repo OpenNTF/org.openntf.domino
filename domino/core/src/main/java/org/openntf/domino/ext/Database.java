@@ -6,6 +6,7 @@ package org.openntf.domino.ext;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -695,5 +696,9 @@ public interface Database extends Base {
 	Type getTypeEx();
 
 	public View getView(final Document viewDocument);
+
+	public Set<String> getCurrentRoles();
+
+	public EnumSet<ACL.Privilege> getCurrentPrivileges();
 
 }

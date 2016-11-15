@@ -14,6 +14,7 @@ import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.NoteList;
+import org.openntf.domino.exceptions.DocumentWriteAccessException;
 import org.openntf.domino.ext.Session.Fixes;
 //import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.graph2.DConfiguration;
@@ -224,8 +225,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				Element elem = it.next();
 				if (elem instanceof DElement) {
 					DElement delem = (DElement) elem;
-					delem.applyChanges();
-					DElementStore store = findElementStore(elem.getId());
+					try {
+						delem.applyChanges();
+					} catch (DocumentWriteAccessException t) {
+						System.err.println(t.getMessage());
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+					//					DElementStore store = findElementStore(elem.getId());
 					//				store.uncache(delem);
 					count++;
 				}
@@ -336,7 +343,11 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 						if (result == null) {
 							DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
 							newStore.setStoreKey(rid);
-							newStore.setConfiguration(this.getConfiguration());
+							DConfiguration config = this.getConfiguration();
+							if (config.getDefaultProxyStore() != null) {
+								newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+							}
+							newStore.setConfiguration(config);
 							getElementStores().put(rid, newStore);
 							//							System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 							result = newStore;
@@ -351,7 +362,11 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 						if (result == null) {
 							DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
 							newStore.setStoreKey(rid);
-							newStore.setConfiguration(this.getConfiguration());
+							DConfiguration config = this.getConfiguration();
+							if (config.getDefaultProxyStore() != null) {
+								newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+							}
+							newStore.setConfiguration(config);
 							getElementStores().put(rid, newStore);
 							//							System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 							result = newStore;

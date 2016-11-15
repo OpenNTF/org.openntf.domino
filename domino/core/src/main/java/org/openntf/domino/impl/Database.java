@@ -27,11 +27,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -3817,6 +3819,27 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
+	}
+
+	@Override
+	public Set<String> getCurrentRoles() {
+		Session s = getAncestorSession();
+		String name = s.getEffectiveUserName();
+		Vector<String> rawroles = this.queryAccessRoles(name);
+		if (rawroles.size() > 0) {
+			Set<String> result = new TreeSet<String>(rawroles);
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public EnumSet<ACL.Privilege> getCurrentPrivileges() {
+		Session s = getAncestorSession();
+		String name = s.getEffectiveUserName();
+		int privs = this.queryAccessPrivileges(name);
+		return ACL.Privilege.getPrivileges(privs);
 	}
 
 }

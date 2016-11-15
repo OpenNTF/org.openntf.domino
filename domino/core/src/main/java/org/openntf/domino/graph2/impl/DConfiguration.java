@@ -687,8 +687,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							//							element.setProperty(field, typeValue.value());
 							if (element instanceof DElement) {
 								Document doc = ((DElement) element).asDocument();
-								doc.replaceItemValue(field, typeValue.value());
-								doc.save();
+								if (!(element instanceof DProxyVertex)) {
+									doc.replaceItemValue(field, typeValue.value());
+									doc.save();
+								}
 								element.setProperty(field, typeValue.value());
 								if (currentVal != null && currentVal.length() > 0) {
 									//									System.out.println("TEMP DEBUG Forcing type on document id " + doc.getMetaversalID() + " to "
@@ -730,6 +732,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 	private Long defaultElementStoreKey_ = null;
 	private DElementStore defaultElementStore_;
+	private Long defaultProxyStoreKey_ = null;
+	private DElementStore defaultProxyStore_;
 	private Map<Long, DElementStore> elementStoreMap_;
 	private Map<Class<?>, Long> typeMap_;
 	private transient DGraph graph_;
@@ -773,11 +777,29 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	@Override
+	public void setDefaultProxyStore(final Long key) {
+		defaultProxyStoreKey_ = key;
+	}
+
+	@Override
+	public void setDefaultProxyStore(final DElementStore store) {
+		defaultProxyStore_ = store;
+	}
+
+	@Override
 	public DElementStore getDefaultElementStore() {
 		if (defaultElementStore_ == null) {
 			defaultElementStore_ = getElementStores().get(defaultElementStoreKey_);
 		}
 		return defaultElementStore_;
+	}
+
+	@Override
+	public DElementStore getDefaultProxyStore() {
+		if (defaultProxyStore_ == null) {
+			defaultProxyStore_ = getElementStores().get(defaultProxyStoreKey_);
+		}
+		return defaultProxyStore_;
 	}
 
 	@Override

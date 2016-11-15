@@ -63,6 +63,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
+import org.openntf.domino.exceptions.DocumentWriteAccessException;
 import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
@@ -3217,6 +3218,8 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 							log_.log(Level.SEVERE, "Okay, now it's time to really panic. Sorry...");
 							DominoUtils.handleException(e, this);
 						}
+					} else if (e.text.contains("You are not authorized")) {
+						throw new DocumentWriteAccessException(this);
 					} else {
 						DominoUtils.handleException(e, this);
 					}

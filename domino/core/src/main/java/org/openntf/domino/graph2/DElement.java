@@ -46,4 +46,5 @@ public interface DElement extends com.tinkerpop.blueprints.Element {
 	public void commit();
 
 	public Document asDocument();
+
 }

@@ -5,12 +5,11 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import javolution.util.FastSet;
-
 import org.openntf.domino.Document;
 import org.openntf.domino.big.NoteCoordinate;
-import org.openntf.domino.graph.DominoVertex;
 import org.openntf.domino.graph2.DElementStore.CustomProxyResolver;
+
+import javolution.util.FastSet;
 
 public class DProxyVertex extends DVertex {
 	private static final long serialVersionUID = 1L;
@@ -50,6 +49,15 @@ public class DProxyVertex extends DVertex {
 		super(parent, delegate);
 		//		System.out.println("New DProxyVertex was created with option 3. Here's a stack trace to see why...");
 		//		new Throwable().printStackTrace();
+	}
+
+	@Override
+	public void applyChanges() {
+		org.openntf.domino.graph2.DVertex pd = getProxyDelegate();
+		if (pd != null) {
+			((DVertex) pd).applyChanges();
+		}
+		super.applyChanges();
 	}
 
 	public org.openntf.domino.graph2.DVertex getProxyDelegate() {
@@ -122,14 +130,16 @@ public class DProxyVertex extends DVertex {
 		}
 	}
 
-	protected boolean isGraphKey(final String key) {
-		if (key.startsWith(DominoVertex.IN_PREFIX))
+	protected static boolean isGraphKey(final String key) {
+		if (key.startsWith("_ODA_"))
 			return true;
-		if (key.startsWith(DominoVertex.OUT_PREFIX))
+		if (key.startsWith(DVertex.IN_PREFIX))
 			return true;
-		if (key.startsWith("_COUNT" + DominoVertex.OUT_PREFIX))
+		if (key.startsWith(DVertex.OUT_PREFIX))
 			return true;
-		if (key.startsWith("_COUNT" + DominoVertex.IN_PREFIX))
+		if (key.startsWith("_COUNT" + DVertex.IN_PREFIX))
+			return true;
+		if (key.startsWith("_COUNT" + DVertex.OUT_PREFIX))
 			return true;
 		if (key.equals(DElement.TYPE_FIELD))
 			return true;
@@ -226,11 +236,14 @@ public class DProxyVertex extends DVertex {
 			super.setProperty(key, value);
 		} else if ("form".equalsIgnoreCase(key)) {
 			super.setProperty(key, value);
+		} else if (PROXY_ITEM.equalsIgnoreCase(key)) {
+			super.setProperty(key, value);
 		} else {
 			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
 			if (delVertex == null) {
 				super.setProperty(key, value);
 			} else {
+				System.out.println("TEMP DEBUG setting a proxy delegate for property " + key + " in a " + delVertex.getProperty("form"));
 				delVertex.setProperty(key, value);
 			}
 		}

@@ -19,6 +19,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -178,7 +179,12 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(60);
+		builder.cacheControl(cc);
 		Response response = builder.build();
+
 		return response;
 	}
 
@@ -291,6 +297,10 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 
 		jsonEntity = sw.toString();
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		Response response = builder.build();
 		return response;
 	}
@@ -518,7 +528,10 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
-
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		result = builder.build();
 
 		return result;

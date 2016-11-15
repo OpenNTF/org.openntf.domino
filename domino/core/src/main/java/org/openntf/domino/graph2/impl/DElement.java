@@ -247,6 +247,18 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Map<String, Object> props = getProps();
 		if (props != null) {
 			if (key != null) {
+				Object rawDelegate = this.getDelegate();
+				if (rawDelegate instanceof Document) {
+					if ("names.nsf".equalsIgnoreCase(((Document) rawDelegate).getAncestorDatabase().getFileName())) {
+						if (this instanceof DProxyVertex) {
+							System.out.println("TEMP DEBUG Setting a property called " + key
+									+ " on a directory element even though it's supposed to be proxied!");
+						} else {
+							System.out.println(
+									"TEMP DEBUG Setting a property called " + key + " on a directory element because it's not proxied!");
+						}
+					}
+				}
 				Object current = null;
 				if (value != null) {
 					try {
@@ -529,8 +541,10 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		if (delegate == null) {
 			throw new IllegalStateException("Get delegate returned null for id " + getId() + " so we cannot apply changes to it.");
 		}
+		boolean saveNeeded = false;
 		Set<String> changes = getChangedPropertiesInt();
 		if (!props.isEmpty() && !changes.isEmpty()) {
+			saveNeeded = true;
 			//			System.out.println("TEMP DEBUG: Writing " + getChangedPropertiesInt().size() + " changed properties for " + getId());
 			for (String s : changes) {
 				String key = s;
@@ -575,14 +589,17 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		}
 		for (String key : getRemovedPropertiesInt()) {
 			delegate.remove(key);
+			saveNeeded = true;
 		}
 		getRemovedPropertiesInt().clear();
 		if (delegate instanceof Document) {
-			Document doc = (Document) delegate;
-			//			if (!doc.hasItem("form")) {
-			//				System.err.println("Graph element being saved without a form value.");
-			//			}
-			doc.save();
+			if (saveNeeded) {
+				Document doc = (Document) delegate;
+				//			if (!doc.hasItem("form")) {
+				//				System.err.println("Graph element being saved without a form value.");
+				//			}
+				doc.save();
+			}
 		}
 	}
 
@@ -686,6 +703,14 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	public void setFramedObject(final Object frame) {
 		framedObject_ = frame;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj instanceof DElement) {
+			return this.getId().equals(((DElement) obj).getId());
+		}
+		return false;
 	}
 
 }

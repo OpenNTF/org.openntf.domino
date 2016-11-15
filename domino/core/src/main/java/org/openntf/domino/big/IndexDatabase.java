@@ -23,11 +23,11 @@ public interface IndexDatabase extends IScannerStateManager {
 	public static final String TERM_VIEW_NAME = "$TermIndex";
 	public static final String TERM_FORM_NAME = "$TermDoc";
 	public static final String TERM_KEY_NAME = "TermKey";
-	public static final String TERM_MAP_PREFIX = "TermMap_";
+	public static final String TERM_MAP_PREFIX = "_ODA_TermMap_";
 
 	public static final String VALUE_FORM_NAME = "$ValueDoc";
 	public static final String VALUE_KEY_NAME = "ValueKey";
-	public static final String VALUE_MAP_PREFIX = "ValueMap_";
+	public static final String VALUE_MAP_PREFIX = "_ODA_ValueMap_";
 
 	public static final String DBID_NAME = "DbidList";
 	public static final String DB_VIEW_NAME = "$DbIndex";
