@@ -32,7 +32,7 @@ public final class DominoEnumUtil {
 		EnumSet<T> result = EnumSet.noneOf(clazz);
 		for (T enumVal : clazz.getEnumConstants()) {
 			N enumValue = enumVal.getValue();
-			if ((enumValue.longValue() & value.longValue()) > 0) {
+			if ((enumValue.longValue() & value.longValue()) != 0) {
 				result.add(enumVal);
 			}
 		}
