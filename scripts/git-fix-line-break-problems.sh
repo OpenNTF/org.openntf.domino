@@ -1,4 +1,4 @@
-#!/bih/sh
+#!/bin/sh
 
 # Periodically, at least on non-Windows platforms, Git will declare that thousands of files
 # in this repo have been changed completely, with every line considered changed and then
