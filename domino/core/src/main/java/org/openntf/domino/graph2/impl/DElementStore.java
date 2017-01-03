@@ -84,9 +84,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else if (key instanceof NoteCoordinate) {
 					if (((NoteCoordinate) key).isIcon()) {
 						result = db.getIconNote();
+						if (result == null) {	//NTF the database doesn't have an icon
+							result = db.getACLNote();
+							System.out.println("TEMP DEBUG icon request is returning document "
+									+ (result == null ? "null" : ((Document) result).getUniversalID()));
+						}
 					} else {
 						String unid = ((NoteCoordinate) key).getUNID();
 						result = db.getDocumentWithKey(unid, false);
+						if (result != null && ((Document) result).isNewNote()) {
+							((Document) result).save();
+						}
 					}
 					//					System.out.println("Retrieved result using NoteCoordinate with unid " + unid);
 				} else if (key instanceof CharSequence) {
@@ -108,6 +116,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (result == null) {
 					//					System.out.println("TEMP DEBUG getting document by key " + (key));
 					result = db.getDocumentWithKey((Serializable) key, false);
+					if (result != null && ((Document) result).isNewNote()) {
+						((Document) result).save();
+					}
 				}
 				if (result != null) {
 					//					System.out.println("TEMP DEBUG Checking for proxy status for type " + type.getSimpleName());
@@ -142,7 +153,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else if (DesignFactory.isView((Document) delegate)) {
 					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
 					result = vertex;
-				} else if (DesignFactory.isIcon((Document) delegate)) {
+				} else if (DesignFactory.isIcon((Document) delegate) || DesignFactory.isACL((Document) delegate)) {
 					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
 					result = vertex;
 				} else {
@@ -187,7 +198,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 
 		@Override
-		public Element load(final Object key) throws Exception {
+		public Element load(Object key) throws Exception {
 			Element result = null;
 			Object delegate = null;
 			boolean isProxiedSource = false;
@@ -205,8 +216,22 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					}
 				}
 			}
+			Object del = null;
+			if (key instanceof CharSequence) {
+				if (!org.openntf.domino.big.NoteCoordinate.Utils.isNoteCoordinate((CharSequence) key)) {
+					if (parent_.isProxied()) {
+						del = parent_.getProxyStoreDelegate();
+					} else {
+						del = parent_.getStoreDelegate();
+					}
+					String unid = DominoUtils.toUnid((Serializable) key).toLowerCase();
+					key = org.openntf.domino.big.NoteCoordinate.Utils.getNoteCoordinate(((Database) del).getReplicaID(), unid);
+				}
+			}
 			if (delegate == null) {
-				Object del = getStoreDelegate(key);
+				if (del == null) {
+					del = getStoreDelegate(key);
+				}
 				if (del instanceof Database) {
 					Object localkey = parent_.localizeKey(key);
 					delegate = getElementDelegate((Database) del, localkey);
@@ -493,7 +518,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
-	public Vertex addVertex(final Object id) {
+	public Vertex addVertex(final Object id, final boolean temporary) {
 		Vertex result = null;
 		if (id != null) {
 			Element chk = getElement(id);
@@ -502,7 +527,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		Object localkey = localizeKey(id);
-		Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class);
+		Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class, temporary);
 		if (delegate != null) {
 			if (isProxied()) {
 				result = setupProxy(delegate, (Serializable) id);
@@ -510,13 +535,20 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
 				result = vertex;
 			}
-			getElementCache().put(result.getId(), result);
-			if (id != null) {
-				getKeyMap().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+			if (!temporary) {
+				getElementCache().put(result.getId(), result);
+				if (id != null) {
+					getKeyMap().put(id, (NoteCoordinate) result.getId()); //TODO shouldn't force NoteCoordinate, but it covers all current use cases
+				}
+				getConfiguration().getGraph().startTransaction(result);
 			}
-			getConfiguration().getGraph().startTransaction(result);
 		}
 		return result;
+	}
+
+	@Override
+	public Vertex addVertex(final Object id) {
+		return addVertex(id, false);
 	}
 
 	//	@Override
@@ -537,7 +569,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					while (li.hasNext()) {
 						Edge e = li.next();
 						if (e != null) {
-							getConfiguration().getGraph().removeEdge(li.next(), dv);
+							getConfiguration().getGraph().removeEdge(e, dv);
 						}
 						i++;
 					}
@@ -567,7 +599,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			}
 		}
 		Object localkey = localizeKey(id);
-		Map<String, Object> delegate = addElementDelegate(localkey, Edge.class);
+		Map<String, Object> delegate = addElementDelegate(localkey, Edge.class, false);
 		if (delegate != null) {
 			DEdge edge = new DEdge(getConfiguration().getGraph(), delegate);
 			result = edge;
@@ -799,6 +831,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Database pDb = ((Database) pDelegate);
 			//			System.out.println("Creating proxy version in database " + pDb.getApiPath());
 			Document pDoc = pDb.getDocumentWithKey(pKey, true);
+			if (pDoc != null && pDoc.isNewNote()) {
+				pDoc.save();
+			}
 			proxyDelegate = pDoc;
 		} else {
 			//TODO future implementations...
@@ -880,6 +915,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else if (delegateKey instanceof NoteCoordinate) {
 					String unid = ((NoteCoordinate) delegateKey).getUNID();
 					result = db.getDocumentWithKey(unid, false);
+					if (result != null && ((Document) result).isNewNote()) {
+						((Document) result).save();
+					}
 					//					System.out.println("Retrieved result using NoteCoordinate with unid " + unid);
 				} else if (delegateKey instanceof CharSequence) {
 					String skey = ((CharSequence) delegateKey).toString();
@@ -1006,7 +1044,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		}
 	}
 
-	protected Map<String, Object> addElementDelegate(final Object delegateKey, final Class<? extends Element> type) {
+	protected Map<String, Object> addElementDelegate(final Object delegateKey, final Class<? extends Element> type,
+			final boolean temporary) {
 		Map<String, Object> result = null;
 		//		System.out.println("Adding a " + type.getName() + " to Element Store " + System.identityHashCode(this));
 		Object del = null;
@@ -1019,6 +1058,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Database db = (Database) del;
 			if (delegateKey == null || delegateKey instanceof Serializable) {
 				result = db.getDocumentWithKey((Serializable) delegateKey, true);
+				if (result != null && ((Document) result).isNewNote()) {
+					if (!temporary) {
+						//						((Document) result).save();
+					}
+				}
 			} else {
 				throw new IllegalArgumentException("Cannot add a delegate with a key of type " + delegateKey.getClass().getName());
 			}

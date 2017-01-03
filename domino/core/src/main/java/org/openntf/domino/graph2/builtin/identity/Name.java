@@ -64,16 +64,16 @@ public interface Name extends DVertexFrame, Socializer {
 	}
 
 	@JavaHandler
-	@TypedProperty("Name")
+	@TypedProperty("_ODA_Name")
 	public String getName();
 
-	@TypedProperty("Name")
+	@TypedProperty("_ODA_Name")
 	public void setName(String name);
 
-	@TypedProperty("isTokenProcessed")
+	@TypedProperty("_ODA_isTokenProcessed")
 	public Boolean isTokenProcessed();
 
-	@TypedProperty("isTokenProcessed")
+	@TypedProperty("_ODA_isTokenProcessed")
 	public void setTokenProcessed(boolean processed);
 
 	@AdjacencyUnique(label = ContainsPart.LABEL, direction = Direction.IN)

@@ -3,6 +3,7 @@ package org.openntf.domino.big;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 
 public interface ViewEntryCoordinate extends NoteCoordinate {
@@ -24,5 +25,7 @@ public interface ViewEntryCoordinate extends NoteCoordinate {
 	public Document getViewDocument();
 
 	public void setSourceNav(ViewNavigator nav);
+
+	public void setSourceColl(ViewEntryCollection coll);
 
 }

@@ -61,6 +61,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 		public DefaultKeyResolver(final DFramedTransactionalGraph graph) {
 			dgraph_ = graph;
+			//			System.out.println("TEMP DEBUG Created new DefaultKeyResolver");
 		}
 
 		@Override
@@ -74,7 +75,18 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 		@Override
 		public Element handleMissingKey(final Class<?> type, final Object key) {
+			//			System.out.println("TEMP DEBUG default resolver handling missing key");
+			if (String.valueOf(key).equals("NEW")) {
+				//				System.out.println("TEMP DEBUG handling NEW case");
+				Object rawFrame = dgraph_.addVertex(null, type, true);
+				//				System.out.println("TEMP DEBUG added a " + rawFrame.getClass().getName());
+				if (rawFrame instanceof VertexFrame) {
+					//					System.out.println("TEMP DEBUG returning vertex");
+					return ((VertexFrame) rawFrame).asVertex();
+				}
+			}
 			return null;
+
 		}
 
 		@Override
@@ -251,8 +263,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return result;
 	}
 
-	@Override
-	public <F> F addVertex(final Object id, final Class<F> kind) {
+	public <F> F addVertex(final Object id, final Class<F> kind, final boolean temporary) {
 		if (id != null && id instanceof NoteCoordinate) {
 			Object cacheChk = getElement(id, kind);
 			if (cacheChk != null) {
@@ -276,13 +287,20 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				}
 			}
 		}
-		Vertex vertex = store.addVertex(id);
-		F result = frame(vertex, kind);
+		Vertex vertex = store.addVertex(id, temporary);
+		F result = frame(vertex, kind, temporary);
 		if (result instanceof Eventable) {
 
 		}
-		getFramedElementCache().put(vertex.getId(), result);
+		if (!temporary) {
+			getFramedElementCache().put(vertex.getId(), result);
+		}
 		return result;
+	}
+
+	@Override
+	public <F> F addVertex(final Object id, final Class<F> kind) {
+		return addVertex(id, kind, false);
 	}
 
 	public <F> F getVertex(final Class<F> kind, final Object context, final Object... args) {
@@ -429,6 +447,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	public <F> F getElement(final Object id, final Class<F> kind) {
 		F result = null;
+		if (id == null)
+			return null;
 		try {
 			//			System.out.println("Attempting to retrieve a " + (null == kind ? "Frame" : kind.getName()) + " with id "
 			//					+ (null == id ? "null" : String.valueOf(id)));
@@ -636,8 +656,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return result;
 	}
 
-	@Override
-	public <F> F frame(final Vertex vertex, Class<F> kind) {
+	public <F> F frame(final Vertex vertex, Class<F> kind, final boolean temporary) {
 		if (vertex == null)
 			return null;
 		Map map = ((DVertex) vertex).getDelegate();
@@ -645,14 +664,15 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			if (DesignFactory.isView((Document) map)) {
 				kind = (Class<F>) ViewVertex.class;
 			}
-			if (DesignFactory.isIcon((Document) map)) {
+			if (DesignFactory.isIcon((Document) map) || DesignFactory.isACL((Document) map)) {
+				System.out.println("TEMP DEBUG framing an icon note");
 				kind = (Class<F>) DbInfoVertex.class;
 			}
 		}
 		Class<F> klazz = (Class<F>) (kind == null ? VertexFrame.class : kind);
 		DConfiguration config = (DConfiguration) this.getConfig();
 		DTypeManager manager = config.getTypeManager();
-		manager.initElement(klazz, this, vertex);
+		manager.initElement(klazz, this, vertex, temporary);
 		for (FrameInitializer initializer : getConfig().getFrameInitializers()) {
 			if (!(initializer instanceof JavaFrameInitializer)) {
 				initializer.initElement(klazz, this, vertex);
@@ -698,6 +718,11 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public <F> F frame(final Vertex vertex, final Class<F> kind) {
+		return frame(vertex, kind, false);
 	}
 
 	public org.openntf.domino.graph2.DElementStore getElementStore(final Class<?> kind) {

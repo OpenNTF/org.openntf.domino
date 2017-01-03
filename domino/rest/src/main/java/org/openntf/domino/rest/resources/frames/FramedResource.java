@@ -21,12 +21,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
@@ -34,6 +35,7 @@ import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
+import org.openntf.domino.graph2.impl.DEdgeEntryList.KeyNotFoundException;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
 import org.openntf.domino.rest.json.JsonGraphWriter;
@@ -50,6 +52,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
+import com.ibm.domino.das.utils.ErrorHelper;
 import com.ibm.domino.httpmethod.PATCH;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -92,19 +95,26 @@ public class FramedResource extends AbstractResource {
 						nc = ViewEntryCoordinate.Utils.getViewEntryCoordinate(id);
 					} else {
 						nc = NoteCoordinate.Utils.getNoteCoordinate(id);
-//						System.out.println("TEMP DEBUG isIcon: " + String.valueOf(nc.isIcon()));
+						// System.out.println("TEMP DEBUG isIcon: " +
+						// String.valueOf(nc.isIcon()));
 					}
 					if (nc == null) {
-//						writer.outStringProperty("message", "NoteCoordinate is null for id " + id);
+						// writer.outStringProperty("message", "NoteCoordinate
+						// is null for id " + id);
 					}
 					if (graph == null) {
-//						writer.outStringProperty("message", "Graph is null for namespace " + namespace);
+						// writer.outStringProperty("message", "Graph is null
+						// for namespace " + namespace);
 					}
 					Object elem = graph.getElement(nc, null);
 					if (elem == null) {
-						builder = Response.status(Status.NOT_FOUND);
-//						writer.outStringProperty("currentUsername", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
-						throw new IllegalStateException("Graph element is null for id " + id);
+						// builder = Response.status(Status.NOT_FOUND);
+						// writer.outStringProperty("currentUsername",
+						// Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
+						// throw new IllegalStateException();
+						throw new WebApplicationException(ErrorHelper
+								.createErrorResponse("Graph element is null for id " + id, Response.Status.NOT_FOUND)); // $NLX-AbstractDasResource.DatabasenotallowedforWebAccess-1$
+
 					}
 					writer.outObject(elem);
 				} else {
@@ -131,19 +141,20 @@ public class FramedResource extends AbstractResource {
 					CharSequence id = keys.get(0);
 					NoteCoordinate nc = resolver.resolveKey(type, URLDecoder.decode(String.valueOf(id), "UTF-8"));
 					if (nc == null) {
-//						writer.outStringProperty("message", "NoteCoordinate is null for id " + id);
+						// writer.outStringProperty("message", "NoteCoordinate
+						// is null for id " + id);
 					}
 					Object elem = graph.getElement(nc);
 					if (elem == null) {
 						elem = resolver.handleMissingKey(type, id);
 						if (elem == null) {
-							builder = Response.status(Status.NOT_FOUND);
-//							writer.outStringProperty("currentUsername", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
-							throw new IllegalStateException("Graph element is null for id " + id);
+							throw new WebApplicationException(ErrorHelper.createErrorResponse(
+									"Graph element is null for id " + id, Response.Status.NOT_FOUND)); // $NLX-AbstractDasResource.DatabasenotallowedforWebAccess-1$
 						}
 					}
 					if (elem instanceof Vertex) {
-						// System.out.println("TEMP DEBUG Framing a vertex of type "
+						// System.out.println("TEMP DEBUG Framing a vertex of
+						// type "
 						// + elem.getClass().getName());
 						Object vf = graph.frame((Vertex) elem, type);
 						writer.outObject(vf);
@@ -160,7 +171,7 @@ public class FramedResource extends AbstractResource {
 					writer.outArrayLiteral(maps);
 				}
 				jsonEntity = sw.toString();
-
+				graph.rollback();
 			} else {
 				MultivaluedMap<String, String> mvm = uriInfo.getQueryParameters();
 				for (String key : mvm.keySet()) {
@@ -172,17 +183,25 @@ public class FramedResource extends AbstractResource {
 				jsonMap.put("status", "active");
 				writer.outObject(jsonMap);
 			}
-			if (null==builder) builder = Response.ok();
+			if (null == builder)
+				builder = Response.ok();
 		} catch (UserAccessException uae) {
-			if (null==builder) builder = Response.status(Status.UNAUTHORIZED);
-			writer.outObject(uae);
-		} catch (Throwable e) {
-			if (null==builder) builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-			writer.outObject(e);
+			throw new WebApplicationException(ErrorHelper
+					.createErrorResponse("User " + Factory.getSession(SessionType.CURRENT).getEffectiveUserName()
+							+ " is not authorized to access this resource", Response.Status.UNAUTHORIZED));
+		} catch (KeyNotFoundException knfe) {
+			throw new WebApplicationException(Response.Status.NO_CONTENT);
+		} catch (Exception e) {
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 
 		jsonEntity = sw.toString();
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(60);
+		builder.cacheControl(cc);
 		Response response = builder.build();
 		return response;
 	}
@@ -192,7 +211,8 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response putDocumentByUnid(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince)
+			throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, true);
 
@@ -205,7 +225,8 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response patchDocumentByUnid(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince)
+			throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false);
 		return response;
@@ -232,15 +253,21 @@ public class FramedResource extends AbstractResource {
 					jsonArray = (List) jsonRaw;
 				}
 				builder = Response.ok();
-			} catch (Throwable t) {
-				builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-				writer.outObject(t);
+			} catch (UserAccessException uae) {
+				throw new WebApplicationException(ErrorHelper
+						.createErrorResponse("User " + Factory.getSession(SessionType.CURRENT).getEffectiveUserName()
+								+ " is not authorized to update this resource", Response.Status.UNAUTHORIZED));
+			} catch (Exception e) {
+				throw new WebApplicationException(
+						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
+
 			} finally {
 				reader.close();
 			}
 		} catch (Exception ex) {
-			writer.outObject(ex);
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(ex, Response.Status.INTERNAL_SERVER_ERROR));
+
 		}
 		if (jsonArray != null) {
 			writer.startArray();
@@ -257,7 +284,10 @@ public class FramedResource extends AbstractResource {
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
-
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		result = builder.build();
 
 		return result;
@@ -288,6 +318,7 @@ public class FramedResource extends AbstractResource {
 					throw new RuntimeException("TODO"); // TODO
 				}
 				Iterator<String> frameProperties = adapter.getJsonProperties();
+				CaseInsensitiveString actionName = null;
 				while (frameProperties.hasNext()) {
 					CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 					if (!key.startsWith("@")) {
@@ -305,12 +336,18 @@ public class FramedResource extends AbstractResource {
 					}
 				}
 				for (CaseInsensitiveString cis : cisMap.keySet()) {
-					if (!cis.startsWith("@")) {
+					if (cis.equals("%action")) {
+						actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+					} else if (!cis.startsWith("@")) {
 						Object value = cisMap.get(cis);
 						if (value != null) {
 							adapter.putJsonProperty(cis.toString(), value);
 						}
 					}
+				}
+				adapter.updateReadOnlyProperties();
+				if (actionName != null) {
+					adapter.runAction(actionName);
 				}
 				writer.outObject(element);
 			}
@@ -352,9 +389,10 @@ public class FramedResource extends AbstractResource {
 					}
 					report.put(id, "deleted");
 					builder = Response.ok();
-				} catch (Throwable t) {
-					builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-					writer.outObject(t);
+				} catch (Exception e) {
+					throw new WebApplicationException(
+							ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
+
 				}
 			}
 			graph.commit();
@@ -363,14 +401,19 @@ public class FramedResource extends AbstractResource {
 			writer.outObject(report);
 			builder = Response.ok();
 		} catch (JsonException e) {
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-			writer.outObject(e);
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
+
 		} catch (IOException e) {
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-			writer.outObject(e);
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		Response response = builder.build();
 		return response;
 	}
@@ -402,15 +445,15 @@ public class FramedResource extends AbstractResource {
 					jsonArray = (List) jsonRaw;
 				}
 				builder = Response.ok();
-			} catch (Throwable t) {
-				builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-				writer.outObject(t);
+			} catch (Exception e) {
+				throw new WebApplicationException(
+						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 			} finally {
 				reader.close();
 			}
 		} catch (Exception ex) {
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-			writer.outObject(ex);
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(ex, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 		// Map<Object, Object> results = new LinkedHashMap<Object, Object>();
 		if (jsonArray != null) {
@@ -418,24 +461,29 @@ public class FramedResource extends AbstractResource {
 			for (Object raw : jsonArray) {
 				if (raw instanceof JsonJavaObject) {
 					writer.startArrayItem();
-					processJsonObject((JsonJavaObject) raw, graph, writer, pm/*, results*/);
+					processJsonObject((JsonJavaObject) raw, graph, writer, pm/* , results */);
 					writer.endArrayItem();
 				}
 			}
 			writer.endArray();
 		} else if (jsonItems != null) {
-			processJsonObject(jsonItems, graph, writer, pm/*, results*/);
+			processJsonObject(jsonItems, graph, writer, pm/* , results */);
 		} else {
-			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items found.");
+			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items
+			// found.");
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		Response response = builder.build();
 		return response;
 	}
 
-	private void processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
-			final ParamMap pm/*, Map<Object, Object> resultMap*/) {
+	private void processJsonObject(JsonJavaObject jsonItems, DFramedTransactionalGraph graph, JsonGraphWriter writer,
+			ParamMap pm/* , Map<Object, Object> resultMap */) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
 		for (String jsonKey : jsonItems.keySet()) {
 			CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
@@ -448,11 +496,11 @@ public class FramedResource extends AbstractResource {
 			try {
 				writer.outObject(map);
 			} catch (JsonException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new WebApplicationException(
+						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new WebApplicationException(
+						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 			}
 		} else {
 			if (ids.size() == 0) {
@@ -464,8 +512,8 @@ public class FramedResource extends AbstractResource {
 					Object element = graph.getElement(nc, null);
 					if (element instanceof VertexFrame) {
 						VertexFrame parVertex = (VertexFrame) element;
-						Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry().getAdders(
-								parVertex.getClass());
+						Map<CaseInsensitiveString, Method> adders = graph.getTypeRegistry()
+								.getAdders(parVertex.getClass());
 						CaseInsensitiveString rawLabel = new CaseInsensitiveString(jsonItems.getAsString("@label"));
 						Method method = adders.get(rawLabel);
 						if (method == null) {
@@ -488,6 +536,7 @@ public class FramedResource extends AbstractResource {
 									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null,
 											false);
 									Iterator<String> frameProperties = adapter.getJsonProperties();
+									CaseInsensitiveString actionName = null;
 									while (frameProperties.hasNext()) {
 										CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 										if (!key.startsWith("@")) {
@@ -499,21 +548,27 @@ public class FramedResource extends AbstractResource {
 										}
 									}
 									for (CaseInsensitiveString cis : cisMap.keySet()) {
-										if (!cis.startsWith("@")) {
+										if (cis.equals("%action")) {
+											actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+										} else if (!cis.startsWith("@")) {
 											Object value = cisMap.get(cis);
 											if (value != null) {
 												adapter.putJsonProperty(cis.toString(), value);
 											}
 										}
 									}
+									adapter.updateReadOnlyProperties();
+									if (actionName != null) {
+										adapter.runAction(actionName);
+									}
 									writer.outObject(result);
 								} catch (Exception e) {
-									e.printStackTrace();
+									throw new WebApplicationException(
+											ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 								}
 							} else {
-								Factory.println("otherElement is not a VertexFrame. It's a "
-										+ (otherElement == null ? "null" : DGraphUtils.findInterface(otherElement)
-												.getName()));
+								Factory.println("otherElement is not a VertexFrame. It's a " + (otherElement == null
+										? "null" : DGraphUtils.findInterface(otherElement).getName()));
 							}
 						} else {
 							Class[] interfaces = element.getClass().getInterfaces();
@@ -529,13 +584,12 @@ public class FramedResource extends AbstractResource {
 									+ ((VertexFrame) element).asVertex().getId() + " methods " + methList);
 						}
 					} else {
-						org.openntf.domino.utils.Factory.println("element is not a VertexFrame. It's a "
-								+ element.getClass().getName());
+						throw new WebApplicationException(ErrorHelper.createErrorResponse("Element is null",
+								Response.Status.INTERNAL_SERVER_ERROR));
 					}
 				}
 			}
 			graph.commit();
 		}
 	}
-
 }

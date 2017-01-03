@@ -27,6 +27,7 @@ import lotus.domino.DateTime;
 import lotus.domino.Name;
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateRange;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.MIMEEntity;
@@ -326,6 +327,9 @@ public enum TypeUtils {
 			return null;
 		}
 		Object result = null;
+		if (type.isAssignableFrom(o.getClass())) {
+			return (T) o;
+		}
 		if (o instanceof Collection) {
 			result = collectionToClass((Collection) o, type, session);
 		}
@@ -369,6 +373,8 @@ public enum TypeUtils {
 						result = toDates(o);
 					} else if (DateTime.class.isAssignableFrom(CType)) {
 						result = toDateTimes(o, session);
+					} else if (DateRange.class.isAssignableFrom(CType)) {
+						result = toDateRanges(o, session);
 					} else if (Name.class.isAssignableFrom(CType)) {
 						result = toNames(o, session);
 					} else if (CType == Boolean.class) {
@@ -433,6 +439,14 @@ public enum TypeUtils {
 				} else {
 					throw new IllegalArgumentException(
 							"Cannont convert a " + o.getClass().getName() + " to DateTime without a valid Session object");
+				}
+			} else if (org.openntf.domino.DateRange.class.isAssignableFrom(type)) {
+				if (session != null) {
+					Date[] dates = toDates(o);
+					result = session.createDateRange(dates[0], dates[1]);
+				} else {
+					throw new IllegalArgumentException(
+							"Cannont convert a " + o.getClass().getName() + " to DateRange without a valid Session object");
 				}
 			} else if (org.openntf.domino.Name.class.isAssignableFrom(type)) {
 				if (session != null) {
@@ -568,6 +582,8 @@ public enum TypeUtils {
 						result = toDates(v);
 					} else if (DateTime.class.isAssignableFrom(CType)) {
 						result = toDateTimes(v, session);
+					} else if (DateRange.class.isAssignableFrom(CType)) {
+						result = toDateRanges(v, session);
 					} else if (Name.class.isAssignableFrom(CType)) {
 						result = toNames(v, session);
 					} else if (CType == Boolean.class) {
@@ -1186,6 +1202,20 @@ public enum TypeUtils {
 			return collectionToDates((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
 			return collectionToDates(Arrays.asList(value));
+		} else if (value instanceof String) {
+			String valStr = (String) value;
+			if (valStr.contains("-")) {
+				String startStr = valStr.substring(0, valStr.indexOf('-') - 1).trim();
+				String endStr = valStr.substring(valStr.indexOf('-') + 1).trim();
+				Date[] result = new Date[2];
+				result[0] = toDate(startStr);
+				result[1] = toDate(endStr);
+				return result;
+			} else {
+				Date[] result = new Date[1];
+				result[0] = toDate(value);
+				return result;
+			}
 		} else {
 			Date[] result = new Date[1];
 			result[0] = toDate(value);
@@ -1222,6 +1252,23 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static org.openntf.domino.DateRange[] toDateRanges(final Object value, final org.openntf.domino.Session session)
+			throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Collection) {
+			return collectionToDateRanges((Collection<Object>) value, session);
+		} else if (value.getClass().isArray()) {
+			return collectionToDateRanges(Arrays.asList(value), session);
+		} else {
+			org.openntf.domino.DateRange[] result = new org.openntf.domino.DateRange[1];
+			Date[] dates = toDates(value);
+			result[0] = session.createDateRange(dates[0], dates[1]);
+			return result;
+		}
+	}
+
 	public static org.openntf.domino.DateTime[] collectionToDateTimes(final Collection<Object> vector,
 			final org.openntf.domino.Session session) throws DataNotCompatibleException {
 		if (vector == null || vector.isEmpty())
@@ -1236,6 +1283,64 @@ public enum TypeUtils {
 			return result;
 		} else {
 			throw new IllegalArgumentException("Cannont convert to DateTime without a valid Session object");
+		}
+	}
+
+	public static org.openntf.domino.DateTime toDateTime(final Object raw, final org.openntf.domino.Session session)
+			throws DataNotCompatibleException {
+		if (raw == null) {
+			return null;
+		}
+
+		if (session != null) {
+			return session.createDateTime(toDate(raw));
+		} else {
+			throw new IllegalArgumentException("Cannont convert to DateTime without a valid Session object");
+		}
+	}
+
+	public static org.openntf.domino.DateRange toDateRange(final Object raw, final org.openntf.domino.Session session)
+			throws DataNotCompatibleException {
+		if (raw == null) {
+			return null;
+		}
+
+		if (session != null) {
+			if (raw instanceof Vector && ((Vector) raw).size() == 2) {
+				System.out.println("TEMP DEBUG processing a size 2 vector to DateRange");
+				Object startRaw = ((Vector) raw).get(0);
+				Object endRaw = ((Vector) raw).get(1);
+				if (startRaw instanceof DateTime && endRaw instanceof DateTime) {
+					System.out.println("TEMP DEBUG processing a DateTime pair into a DateRange");
+					return session.createDateRange((DateTime) startRaw, (DateTime) endRaw);
+				} else {
+					throw new IllegalArgumentException("Can't convert a Vector to DateRange where the elements are "
+							+ startRaw.getClass().getName() + " and " + endRaw.getClass().getName());
+				}
+			} else {
+				Date[] dates = toDates(raw);
+				return session.createDateRange(dates[0], dates[1]);
+			}
+		} else {
+			throw new IllegalArgumentException("Cannont convert to DateTime without a valid Session object");
+		}
+	}
+
+	public static org.openntf.domino.DateRange[] collectionToDateRanges(final Collection<Object> vector,
+			final org.openntf.domino.Session session) throws DataNotCompatibleException {
+		if (vector == null || vector.isEmpty())
+			return new org.openntf.domino.DateRange[0];
+
+		org.openntf.domino.DateRange[] result = new org.openntf.domino.DateRange[vector.size()];
+		if (session != null) {
+			int i = 0;
+			for (Object o : vector) {
+				Date[] dates = toDates(o);
+				result[i++] = session.createDateRange(dates[0], dates[1]);
+			}
+			return result;
+		} else {
+			throw new IllegalArgumentException("Cannont convert to DateRange without a valid Session object");
 		}
 	}
 

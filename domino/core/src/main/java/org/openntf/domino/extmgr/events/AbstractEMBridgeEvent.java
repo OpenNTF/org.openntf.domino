@@ -19,7 +19,7 @@ public abstract class AbstractEMBridgeEvent implements IEMBridgeEvent {
 		eventValuesMap_.put(param, value);
 	}
 
-	EnumMap<EMBridgeEventParams, Object> getEventValuesMap() {
+	protected EnumMap<EMBridgeEventParams, Object> getEventValuesMap() {
 		return eventValuesMap_;
 	}
 

@@ -31,6 +31,9 @@ public interface DEdgeFrame extends EdgeFrame {
 	@JavaHandler
 	public Document asDocument();
 
+	@JavaHandler
+	public void updateReadOnlyProperties();
+
 	public abstract static class DEdgeFrameImpl implements DEdgeFrame, JavaHandlerContext<Vertex> {
 		@Override
 		public Document asDocument() {
@@ -56,11 +59,16 @@ public interface DEdgeFrame extends EdgeFrame {
 				if (delegate instanceof Map) {
 					return (Map<CharSequence, Object>) delegate;
 				}
-				throw new RuntimeException("EdgeFrame not backed by a Map. Instead it's a "
-						+ (delegate == null ? "null" : delegate.getClass().getName()));
+				throw new RuntimeException(
+						"EdgeFrame not backed by a Map. Instead it's a " + (delegate == null ? "null" : delegate.getClass().getName()));
 			}
 			throw new RuntimeException("EdgeFrame not backed by org.openntf.domino.graph2.DEdge. Instead it's a "
 					+ (raw == null ? "null" : raw.getClass().getName()));
+		}
+
+		@Override
+		public void updateReadOnlyProperties() {
+
 		}
 	}
 

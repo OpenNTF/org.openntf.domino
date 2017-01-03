@@ -56,9 +56,11 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 			try {
 				result = parent_.getEdge(delegate_.next());
 			} catch (Throwable t) {
-				System.err
-						.println("Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
-				result = next();
+				System.err.println(
+						"Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				if (hasNext()) {
+					result = next();
+				}
 			}
 			return result;
 		}
@@ -70,13 +72,17 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 		@Override
 		public Edge previous() {
+			Edge result = null;
 			try {
-				return parent_.getEdge(delegate_.previous());
+				result = parent_.getEdge(delegate_.previous());
 			} catch (Throwable t) {
-				System.err
-						.println("Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
-				return previous();
+				System.err.println(
+						"Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				if (hasPrevious()) {
+					result = previous();
+				}
 			}
+			return result;
 		}
 
 		@Override
@@ -216,8 +222,8 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate((CharSequence) arg0);
 			return delegate_.contains(nc);
 		} else {
-			throw new IllegalArgumentException("Cannot check whether a DFastEdgeList contains an object of type "
-					+ arg0.getClass().getName());
+			throw new IllegalArgumentException(
+					"Cannot check whether a DFastEdgeList contains an object of type " + arg0.getClass().getName());
 		}
 	}
 

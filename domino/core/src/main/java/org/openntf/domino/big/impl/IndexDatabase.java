@@ -70,7 +70,7 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		}
 		return result;
 	}
-
+	
 	public static Set<CharSequence> toCISSet(final Object value) {
 		Set<CharSequence> result = new HashSet<CharSequence>();
 		if (value == null)
@@ -316,7 +316,7 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		String key = caseSensitive_ ? name.toString() : name.toString().toLowerCase();
 
 		Document result = getIndexDb().getDocumentWithKey(key, true);
-		if (result.isNewNote()) {
+		if (result != null && result.isNewNote()) {
 			result.replaceItemValue("Form", TERM_FORM_NAME);
 			result.replaceItemValue("isName", "1");
 			result.replaceItemValue(TERM_KEY_NAME, name);
@@ -789,7 +789,7 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		}
 		return result;
 	}
-
+	
 	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
 		List<String> result = new ArrayList<String>();
 		for (String dbid : dbMap.keySet()) {
@@ -800,7 +800,7 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		}
 		return result;
 	}
-
+	
 	public static List<String> itemMapToCheckbox(final Map<String, AtomicInteger> itemMap) {
 		List<String> result = new ArrayList<String>();
 		for (String item : itemMap.keySet()) {
@@ -808,7 +808,7 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		}
 		return result;
 	}
-
+	
 	public static List<String> formMapToCheckbox(final Map<String, AtomicInteger> formMap) {
 		List<String> result = new ArrayList<String>();
 		for (String form : formMap.keySet()) {

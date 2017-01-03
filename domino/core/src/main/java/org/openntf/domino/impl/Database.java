@@ -27,11 +27,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -1146,6 +1148,16 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return doc;
 	}
 
+	public Document getACLNote() {
+		NoteCollection nc = createNoteCollection(false);
+		nc.setSelectionFormula("@all");
+		nc.setSelectAcl(true);
+		nc.buildCollection();
+		String nid = nc.getFirstNoteID();
+		System.out.println("TEMP DEBUG getting ACL from noteid " + nid + " in a note collection with " + nc.getCount() + " entries");
+		return getDocumentByID(nid);
+	}
+
 	@Override
 	public Document getDocumentWithKey(final Serializable key) {
 		return this.getDocumentWithKey(key, false);
@@ -1157,7 +1169,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			if (key != null) {
 				if (key instanceof String && ((String) key).length() == 32) {
 					if ("000000000000000000000000000000000000".equals(key)) {
-						return getIconNote();
+						Document result = getIconNote();
+						if (result == null) {
+							result = getACLNote();
+						}
+						return result;
 					}
 				}
 
@@ -3806,6 +3822,67 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public lotus.domino.Database createFromTemplate(final String arg0, final String arg1, final boolean arg2, final int arg3,
+			final boolean arg4) {
+		try {
+			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3, arg4);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public lotus.domino.NoteCollection getModifiedDocumentsWithOptions(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1,
+			final int arg2) {
+		try {
+			return getDelegate().getModifiedDocumentsWithOptions(arg0, arg1, arg2);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
+		try {
+			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void setUserIDForDecrypt(final UserID arg0) {
+		try {
+			getDelegate().setUserIDForDecrypt(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public Set<String> getCurrentRoles() {
+		Session s = getAncestorSession();
+		String name = s.getEffectiveUserName();
+		Vector<String> rawroles = this.queryAccessRoles(name);
+		if (rawroles.size() > 0) {
+			Set<String> result = new TreeSet<String>(rawroles);
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public EnumSet<ACL.Privilege> getCurrentPrivileges() {
+		Session s = getAncestorSession();
+		String name = s.getEffectiveUserName();
+		int privs = this.queryAccessPrivileges(name);
+		return ACL.Privilege.getPrivileges(privs);
 	}
 
 }

@@ -40,6 +40,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
 public class JsonFrameAdapter implements JsonObject {
@@ -288,11 +289,11 @@ public class JsonFrameAdapter implements JsonObject {
 		// "
 		// + frame_.getClass().getName());
 		List<String> result = new ArrayList<String>();
-		if (getActionsParam() != null) {
-			for (CharSequence cis : getActionsParam()) {
-				result.add("%" + cis.toString());
-			}
-		}
+		// if (getActionsParam() != null) {
+		// for (CharSequence cis : getActionsParam()) {
+		// result.add("%" + cis.toString());
+		// }
+		// }
 		result.add("@id");
 		result.add("@type");
 		Collection<CharSequence> props = getProperties();
@@ -497,7 +498,7 @@ public class JsonFrameAdapter implements JsonObject {
 
 							}
 						} catch (Exception e) {
-							e.printStackTrace();
+							throw new RuntimeException(e);
 						}
 					} else {
 						// System.out.println("TEMP DEBUG No method found for
@@ -528,7 +529,7 @@ public class JsonFrameAdapter implements JsonObject {
 							// raw.getClass().getName()));
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						throw new RuntimeException(e);
 					}
 				} else {
 					// System.out.println("TEMP DEBUG No method found for key "
@@ -554,183 +555,146 @@ public class JsonFrameAdapter implements JsonObject {
 					List viewInfo = ((DbInfoVertex) frame).getViewInfo();
 					return viewInfo;
 				}
-			} else if (key.startsWith("%")) {
-				CharSequence name = key.subSequence(1, key.length());
-				Method crystal = getActions().get(name);
-				if (crystal != null) {
-					try {
-						result = crystal.invoke(frame, (Object[]) null);
-					} catch (Throwable t) {
-						System.err
-								.println(
-										"TEMP DEBUG Ignoring an issue with an invokation of " + crystal.getName()
-												+ " on a " + DGraphUtils.findInterface(frame).getName() + ": "
-												+ t.getClass()
-														.getName()
-												+ (t.getCause() != null
-														? (" caused by a " + t.getCause().getClass().getName() + ": "
-																+ t.getStackTrace()[0].toString())
-														: ""));
-
-					}
-				} else {
-					System.err.println("No action method found for name: " + name);
-				}
-				return result;
 			} else if (key.startsWith("#") && frame instanceof VertexFrame) {
 				CharSequence label = key.subSequence(1, key.length());
 				Method crystal = getIncidences().get(label);
 				if (crystal != null) {
 					try {
-						try {
-							result = crystal.invoke(frame, (Object[]) null);
-						} catch (Throwable t) {
-							System.err
-									.println(
-											"TEMP DEBUG Ignoring an issue with an invokation of " + crystal.getName()
-													+ " on a " + DGraphUtils.findInterface(frame).getName()
-													+ ": " + t
-															.getClass().getName()
-													+ (t.getCause() != null
-															? (" caused by a " + t.getCause().getClass().getName()
-																	+ ": " + t.getStackTrace()[0].toString())
-															: ""));
-						}
-						if (result != null) {
-							if (!(result instanceof Iterable)) {
-								if (result instanceof EdgeFrame) {
-									Vertex v = ((VertexFrame) frame).asVertex();
-									List<Edge> edges = new org.openntf.domino.graph2.impl.DEdgeList((DVertex) v);
-									edges.add(((EdgeFrame) result).asEdge());
-									result = new FramedEdgeList(getGraph(), ((VertexFrame) frame).asVertex(), edges,
-											crystal.getReturnType());
-								}
-
-							}
-							if (getIncludeVertices()) {
-								// System.out.println("TEMP DEBUG: Turning
-								// EdgeList into VertexList");
-								if (result instanceof DEdgeList) {
-									result = ((DEdgeList) result).toVertexList();
-								} else if (result instanceof FramedEdgeList) {
-									result = ((FramedEdgeList<?>) result).toVertexList();
-								} else {
-									System.err.println("TEMP DEBUG: Expected a DEdgeList but got a "
-											+ result.getClass().getName());
-								}
-							}
-							if (getFilterKeys() != null && !isCollectionRoute_) {
-								if (result instanceof DEdgeList) {
-									// System.out.println("TEMP DEBUG: Applying
-									// a filter to a DEdgeList");
-									List<CharSequence> filterKeys = getFilterKeys();
-									List<CharSequence> filterValues = getFilterValues();
-									for (int i = 0; i < filterKeys.size(); i++) {
-										result = ((DEdgeList) result).applyFilter(filterKeys.get(i).toString(),
-												filterValues.get(i).toString());
-									}
-								} else if (result instanceof DVertexList) {
-									// System.out.println("TEMP DEBUG: Applying
-									// a filter to a DVertexList");
-									List<CharSequence> filterKeys = getFilterKeys();
-									List<CharSequence> filterValues = getFilterValues();
-									for (int i = 0; i < filterKeys.size(); i++) {
-										result = ((DVertexList) result).applyFilter(filterKeys.get(i).toString(),
-												filterValues.get(i).toString());
-									}
-								} else if (result instanceof FramedEdgeList) {
-									// System.out.println("TEMP DEBUG: Applying
-									// a filter to a FramedEdgeList");
-									List<CharSequence> filterKeys = getFilterKeys();
-									List<CharSequence> filterValues = getFilterValues();
-									for (int i = 0; i < filterKeys.size(); i++) {
-										result = ((FramedEdgeList<?>) result).applyFilter(filterKeys.get(i).toString(),
-												filterValues.get(i).toString());
-									}
-								} else if (result instanceof FramedVertexList) {
-									List<CharSequence> filterKeys = getFilterKeys();
-									List<CharSequence> filterValues = getFilterValues();
-									for (int i = 0; i < filterKeys.size(); i++) {
-										String curkey = filterKeys.get(i).toString();
-										String curvalue = filterValues.get(i).toString();
-										// System.out.println("TEMP DEBUG:
-										// Applying a filter to a
-										// FramedVertexList - "
-										// + curkey + ":" + curvalue);
-										result = ((FramedVertexList<?>) result).applyFilter(curkey, curvalue);
-									}
-								}
-							}
-							if (getStartsValues() != null) {
-								// System.out.println(
-								// "TEMP DEBUG Processing starts values with a "
-								// + result.getClass().getName());
-								if (result instanceof DEdgeEntryList) {
-									((DEdgeEntryList) result).initEntryList(getStartsValues());
-								} else if (result instanceof FramedEdgeList) {
-									// System.out.println("TEMP DEBUG dealing
-									// with FramdedEdgeList");
-									((FramedEdgeList) result).applyFilter("lookup", getStartsValues());
-								}
-							}
-							if (getOrderBys() != null) {
-								if (result instanceof FramedEdgeList) {
-									// System.out.println("Ordering an edge
-									// list");
-									result = ((FramedEdgeList<?>) result).sortBy(getOrderBys(), getDescending());
-								} else if (result instanceof FramedVertexList) {
-									// System.out.println("Ordering a vertex
-									// list");
-									result = ((FramedVertexList<?>) result).sortBy(getOrderBys(), getDescending());
-								}
-							}
-
-							if (getStart() > 0) {
-								// System.out.println("Start is " + getStart() +
-								// " and count is " + getCount());
-								if (getCount() > 0) {
-									if (result instanceof FramedEdgeList) {
-										result = ((FramedEdgeList<?>) result).subList(getStart(),
-												getStart() + getCount() - 1);
-									} else if (result instanceof FramedVertexList) {
-										result = ((FramedVertexList<?>) result).subList(getStart(),
-												getStart() + getCount() - 1);
-									}
-								} else {
-									if (result instanceof FramedEdgeList) {
-										result = ((FramedEdgeList<?>) result).subList(getStart(),
-												((FramedEdgeList<?>) result).size());
-									} else if (result instanceof FramedVertexList) {
-										result = ((FramedVertexList<?>) result).subList(getStart(),
-												((FramedVertexList<?>) result).size());
-									}
-								}
-							}
-							// if (result instanceof List) {
-							// System.out.println("Result is a " +
-							// result.getClass().getName() + " with "
-							// + ((List) result).size() + " elements");
-							// } else {
-							// System.out.println("Result is a " +
-							// result.getClass().getName());
-							// }
-							if (result instanceof FramedVertexList) {
-								ParamMap listMap = new ParamMap();
-								if (getIncludeEdges()) {
-									listMap.put(Parameters.EDGES, EMPTY_STRINGS);
-								}
-								if (getIncludeCounts()) {
-									listMap.put(Parameters.COUNTS, EMPTY_STRINGS);
-								}
-								listMap.put(Parameters.PROPS, CaseInsensitiveString.toStrings(this.getProperties()));
-								result = new JsonFrameListAdapter(getGraph(), (FramedVertexList<?>) result, listMap,
-										isCollectionRoute_);
-							}
-						}
+						result = crystal.invoke(frame, (Object[]) null);
 					} catch (Exception e) {
-						e.printStackTrace();
+						throw new RuntimeException(e);
 					}
+					if (result != null) {
+						if (!(result instanceof Iterable)) {
+							if (result instanceof EdgeFrame) {
+								Vertex v = ((VertexFrame) frame).asVertex();
+								List<Edge> edges = new org.openntf.domino.graph2.impl.DEdgeList((DVertex) v);
+								edges.add(((EdgeFrame) result).asEdge());
+								result = new FramedEdgeList(getGraph(), ((VertexFrame) frame).asVertex(), edges,
+										crystal.getReturnType());
+							}
 
+						}
+						if (getIncludeVertices()) {
+							// System.out.println("TEMP DEBUG: Turning
+							// EdgeList into VertexList");
+							if (result instanceof DEdgeList) {
+								result = ((DEdgeList) result).toVertexList();
+							} else if (result instanceof FramedEdgeList) {
+								result = ((FramedEdgeList<?>) result).toVertexList();
+							} else {
+								System.err.println(
+										"TEMP DEBUG: Expected a DEdgeList but got a " + result.getClass().getName());
+							}
+						}
+						if (getFilterKeys() != null && !isCollectionRoute_) {
+							if (result instanceof DEdgeList) {
+								// System.out.println("TEMP DEBUG: Applying
+								// a filter to a DEdgeList");
+								List<CharSequence> filterKeys = getFilterKeys();
+								List<CharSequence> filterValues = getFilterValues();
+								for (int i = 0; i < filterKeys.size(); i++) {
+									result = ((DEdgeList) result).applyFilter(filterKeys.get(i).toString(),
+											filterValues.get(i).toString());
+								}
+							} else if (result instanceof DVertexList) {
+								// System.out.println("TEMP DEBUG: Applying
+								// a filter to a DVertexList");
+								List<CharSequence> filterKeys = getFilterKeys();
+								List<CharSequence> filterValues = getFilterValues();
+								for (int i = 0; i < filterKeys.size(); i++) {
+									result = ((DVertexList) result).applyFilter(filterKeys.get(i).toString(),
+											filterValues.get(i).toString());
+								}
+							} else if (result instanceof FramedEdgeList) {
+								// System.out.println("TEMP DEBUG: Applying
+								// a filter to a FramedEdgeList");
+								List<CharSequence> filterKeys = getFilterKeys();
+								List<CharSequence> filterValues = getFilterValues();
+								for (int i = 0; i < filterKeys.size(); i++) {
+									result = ((FramedEdgeList<?>) result).applyFilter(filterKeys.get(i).toString(),
+											filterValues.get(i).toString());
+								}
+							} else if (result instanceof FramedVertexList) {
+								List<CharSequence> filterKeys = getFilterKeys();
+								List<CharSequence> filterValues = getFilterValues();
+								for (int i = 0; i < filterKeys.size(); i++) {
+									String curkey = filterKeys.get(i).toString();
+									String curvalue = filterValues.get(i).toString();
+									// System.out.println("TEMP DEBUG:
+									// Applying a filter to a
+									// FramedVertexList - "
+									// + curkey + ":" + curvalue);
+									result = ((FramedVertexList<?>) result).applyFilter(curkey, curvalue);
+								}
+							}
+						}
+						if (getStartsValues() != null) {
+							// System.out.println(
+							// "TEMP DEBUG Processing starts values with a "
+							// + result.getClass().getName());
+							if (result instanceof DEdgeEntryList) {
+								((DEdgeEntryList) result).initEntryList(getStartsValues());
+							} else if (result instanceof FramedEdgeList) {
+								// System.out.println("TEMP DEBUG dealing
+								// with FramdedEdgeList");
+								((FramedEdgeList) result).applyFilter("lookup", getStartsValues());
+							}
+						}
+						if (getOrderBys() != null) {
+							if (result instanceof FramedEdgeList) {
+								// System.out.println("Ordering an edge
+								// list");
+								result = ((FramedEdgeList<?>) result).sortBy(getOrderBys(), getDescending());
+							} else if (result instanceof FramedVertexList) {
+								// System.out.println("Ordering a vertex
+								// list");
+								result = ((FramedVertexList<?>) result).sortBy(getOrderBys(), getDescending());
+							}
+						}
+
+						if (getStart() > 0) {
+							// System.out.println("Start is " + getStart() +
+							// " and count is " + getCount());
+							if (getCount() > 0) {
+								if (result instanceof FramedEdgeList) {
+									result = ((FramedEdgeList<?>) result).subList(getStart(),
+											getStart() + getCount() - 1);
+								} else if (result instanceof FramedVertexList) {
+									result = ((FramedVertexList<?>) result).subList(getStart(),
+											getStart() + getCount() - 1);
+								}
+							} else {
+								if (result instanceof FramedEdgeList) {
+									result = ((FramedEdgeList<?>) result).subList(getStart(),
+											((FramedEdgeList<?>) result).size());
+								} else if (result instanceof FramedVertexList) {
+									result = ((FramedVertexList<?>) result).subList(getStart(),
+											((FramedVertexList<?>) result).size());
+								}
+							}
+						}
+						// if (result instanceof List) {
+						// System.out.println("Result is a " +
+						// result.getClass().getName() + " with "
+						// + ((List) result).size() + " elements");
+						// } else {
+						// System.out.println("Result is a " +
+						// result.getClass().getName());
+						// }
+						if (result instanceof FramedVertexList) {
+							ParamMap listMap = new ParamMap();
+							if (getIncludeEdges()) {
+								listMap.put(Parameters.EDGES, EMPTY_STRINGS);
+							}
+							if (getIncludeCounts()) {
+								listMap.put(Parameters.COUNTS, EMPTY_STRINGS);
+							}
+							listMap.put(Parameters.PROPS, CaseInsensitiveString.toStrings(this.getProperties()));
+							result = new JsonFrameListAdapter(getGraph(), (FramedVertexList<?>) result, listMap,
+									isCollectionRoute_);
+						}
+					}
 				} else {
 					System.err.println("No edge method found for label " + label);
 				}
@@ -797,7 +761,29 @@ public class JsonFrameAdapter implements JsonObject {
 				try {
 					Class<?>[] types = crystal.getParameterTypes();
 					Class<?> type = types[0];
-					if (!type.isAssignableFrom(value.getClass())) {
+					if (value == null) {
+						String propName = null;
+						TypedProperty tprop = crystal.getAnnotation(TypedProperty.class);
+						if (tprop != null) {
+							propName = tprop.value();
+						} else {
+							Property prop = crystal.getAnnotation(Property.class);
+							if (prop != null) {
+								propName = prop.value();
+							}
+						}
+						if (propName != null) {
+							if (frame instanceof VertexFrame) {
+								((VertexFrame) frame).asVertex().setProperty(propName, null);
+							} else if (frame instanceof EdgeFrame) {
+								((EdgeFrame) frame).asEdge().setProperty(propName, null);
+							}
+						} else {
+							System.err.println("ALERT the next operation will probably throw an exception");
+							Object[] nullarg = { type.cast(null) };
+							crystal.invoke(frame, nullarg);
+						}
+					} else if (!type.isAssignableFrom(value.getClass())) {
 						value = TypeUtils.convertToTarget(value, type,
 								org.openntf.domino.utils.Factory.getSession(SessionType.CURRENT));
 						crystal.invoke(frame, value);
@@ -813,16 +799,52 @@ public class JsonFrameAdapter implements JsonObject {
 						crystal.invoke(frame, value);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
 			} else {
-				if (frame instanceof EdgeFrame) {
-					((EdgeFrame) frame).asEdge().setProperty(paramKey, value);
-				} else if (frame instanceof VertexFrame) {
-					((VertexFrame) frame).asVertex().setProperty(paramKey, value);
+				Method man = getGetters().get(key);
+				if (man == null) { // NTF if there's no getter, it's an
+									// undefined property
+					if (frame instanceof EdgeFrame) {
+						((EdgeFrame) frame).asEdge().setProperty(paramKey, value);
+					} else if (frame instanceof VertexFrame) {
+						((VertexFrame) frame).asVertex().setProperty(paramKey, value);
+					}
+				} else {
+					// NTF if there is a getter but no setter, this is a
+					// read-only property. Disregard the JSON
 				}
 			}
 		}
+	}
+
+	public void updateReadOnlyProperties() {
+		Object frame = getFrame();
+		try {
+			if (frame instanceof DVertexFrame) {
+				((DVertexFrame) frame).updateReadOnlyProperties((DVertexFrame) frame);
+			} else if (frame instanceof DEdgeFrame) {
+				((DEdgeFrame) frame).updateReadOnlyProperties();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean runAction(CharSequence key) {
+		Object result = Boolean.FALSE;
+		CharSequence name = key/* .subSequence(1, key.length()) */;
+		Method crystal = getActions().get(name);
+		if (crystal != null) {
+			try {
+				result = crystal.invoke(getFrame(), (Object[]) null);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			System.err.println("No action method found for name: " + name);
+		}
+		return (Boolean) result;
 	}
 
 }

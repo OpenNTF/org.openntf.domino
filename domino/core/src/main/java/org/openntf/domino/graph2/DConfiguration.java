@@ -41,4 +41,10 @@ public interface DConfiguration extends Externalizable {
 
 	public void setDefaultElementStore(DElementStore store);
 
+	public DElementStore getDefaultProxyStore();
+
+	public void setDefaultProxyStore(Long key);
+
+	public void setDefaultProxyStore(DElementStore store);
+
 }

@@ -31,9 +31,16 @@ import com.ibm.domino.das.service.RestService;
 import com.tinkerpop.frames.FramedGraph;
 
 public class ODAGraphService extends RestService implements IRestServiceExt {
+	private static ThreadLocal<HttpServletRequest> REQUEST_CTX = new ThreadLocal<HttpServletRequest>();
+
+	public static HttpServletRequest getCurrentRequest() {
+		return REQUEST_CTX.get();
+	}
+
 	private Map<String, FramedGraph<?>> graphMap_;
 	private Map<String, IGraphFactory> factoryMap_;
 	public static final String PREFIX = "ODA Graph Service: ";
+
 	static void report(String message) {
 		System.out.println(PREFIX + message);
 	}
@@ -45,7 +52,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 
 	protected void initDynamicGraphs() {
 		// Get a list of all registered extensions
-report ("Searching for extensions...");
+		report("Searching for extensions...");
 		IExtension extensions[] = null;
 		final IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 		if (extensionRegistry != null) {
@@ -81,8 +88,7 @@ report ("Searching for extensions...");
 						continue;
 					}
 
-					report("Found an extension point instance: "
-					 + object.getClass().getName());
+					report("Found an extension point instance: " + object.getClass().getName());
 					IGraphFactory factory = (IGraphFactory) object;
 					Map<String, FramedGraph<?>> registry = factory.getRegisteredGraphs();
 					for (String key : registry.keySet()) {
@@ -98,7 +104,7 @@ report ("Searching for extensions...");
 				}
 			}
 		}
-		report ("Extensions complete.");
+		report("Extensions complete.");
 	}
 
 	@Override
@@ -195,8 +201,13 @@ report ("Searching for extensions...");
 
 	@Override
 	public boolean beforeDoService(final HttpServletRequest request) {
-		Factory.initThread(getDataServiceConfig());
-		Factory.setSessionFactory(new DasCurrentSessionFactory(request), SessionType.CURRENT);
+		try {
+			Factory.initThread(getDataServiceConfig());
+			REQUEST_CTX.set(request);
+			Factory.setSessionFactory(new DasCurrentSessionFactory(request), SessionType.CURRENT);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 		return true;
 	}
 
@@ -211,6 +222,7 @@ report ("Searching for extensions...");
 				}
 			}
 		}
+		REQUEST_CTX.set(null);
 		Factory.termThread();
 	}
 

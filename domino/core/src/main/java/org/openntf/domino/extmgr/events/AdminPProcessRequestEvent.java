@@ -2,7 +2,7 @@ package org.openntf.domino.extmgr.events;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public class AdminPProcessRequestEvent extends DatabaseEvent {
+public class AdminPProcessRequestEvent extends AbstractDatabaseEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.RequestNoteid,
 			EMBridgeEventParams.ResponseNoteid, EMBridgeEventParams.Username };
 

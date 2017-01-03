@@ -21,6 +21,7 @@ import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.Action;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.AnnotationUtilities;
+import org.openntf.domino.graph2.annotations.ComputedProperty;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.Shardable;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -124,6 +125,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> removerMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> setterMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> incidenceMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
+		private Map<Class<?>, Map<CaseInsensitiveString, Method>> computedMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Method> inMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<Class<?>, Method> outMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<String, String> simpleNameMap_ = new HashMap<String, String>();
@@ -360,6 +362,22 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return Collections.unmodifiableMap(result);
 		}
 
+		public Map<CaseInsensitiveString, Method> getComputeds(final Class<?> type) {
+			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> crystals = computedMap_.get(type);
+			if (crystals != null) {
+				result.putAll(crystals);
+			}
+			Class<?>[] inters = type.getInterfaces();
+			for (Class<?> inter : inters) {
+				crystals = computedMap_.get(inter);
+				if (crystals != null) {
+					result.putAll(crystals);
+				}
+			}
+			return Collections.unmodifiableMap(result);
+		}
+
 		public Map<CaseInsensitiveString, Method> getCounters(final Class<?> type) {
 			Map<CaseInsensitiveString, Method> result = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> crystals = counterMap_.get(type);
@@ -433,6 +451,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			Map<CaseInsensitiveString, Method> adders = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> removers = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Map<CaseInsensitiveString, Method> incidences = new LinkedHashMap<CaseInsensitiveString, Method>();
+			Map<CaseInsensitiveString, Method> computations = new LinkedHashMap<CaseInsensitiveString, Method>();
 			Method in = null;
 			Method out = null;
 			Method[] methods = type.getMethods();
@@ -449,14 +468,23 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				}
 				CaseInsensitiveString key = null;
 				boolean derived = false;
+				boolean isComputed = false;
 				Annotation typed = method.getAnnotation(TypedProperty.class);
 				if (typed != null) {
 					key = new CaseInsensitiveString(((TypedProperty) typed).value());
 					derived = ((TypedProperty) typed).derived();
 				} else {
-					Annotation property = method.getAnnotation(Property.class);
-					if (property != null) {
-						key = new CaseInsensitiveString(((Property) property).value());
+					Annotation computed = method.getAnnotation(ComputedProperty.class);
+					if (computed != null) {
+						key = new CaseInsensitiveString(((ComputedProperty) computed).value());
+						//						System.out.println("TEMP DEBUG adding a computed property for " + key);
+						derived = true;
+						isComputed = true;
+					} else {
+						Annotation property = method.getAnnotation(Property.class);
+						if (property != null) {
+							key = new CaseInsensitiveString(((Property) property).value());
+						}
 					}
 				}
 				Annotation action = method.getAnnotation(Action.class);
@@ -467,9 +495,14 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				if (key != null) {
 					if (ClassUtilities.isGetMethod(method)) {
 						getters.put(key, method);
+						if (isComputed) {
+							computations.put(key, method);
+						}
 					}
-					if (ClassUtilities.isSetMethod(method) && !derived) {
-						setters.put(key, method);
+					if (ClassUtilities.isSetMethod(method)) {
+						if (!derived) {
+							setters.put(key, method);
+						}
 					}
 				} else {
 					Annotation incidenceUnique = method.getAnnotation(IncidenceUnique.class);
@@ -527,6 +560,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			finderMap_.put(type, finders);
 			adderMap_.put(type, adders);
 			removerMap_.put(type, removers);
+			computedMap_.put(type, computations);
 			if (in != null) {
 				inMap_.put(type, in);
 				//				System.out.println("TEMP DEBUG: registering InVertex method " + in.getName() + " for class " + type.getName());
@@ -553,7 +587,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 					if (DesignFactory.isView((Document) map)) {
 						return ViewVertex.class;
 					}
-					if (DesignFactory.isIcon((Document) map)) {
+					if (DesignFactory.isIcon((Document) map) || DesignFactory.isACL((Document) map)) {
+						System.out.println("TEMP DEBUG returning a DbInfoVertex");
 						return DbInfoVertex.class;
 					}
 				}
@@ -616,8 +651,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return result;
 		}
 
-		@Override
-		public void initElement(Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
+		public void initElement(Class<?> kind, final FramedGraph<?> framedGraph, final Element element, final boolean temporary) {
 			if (element == null)
 				return;
 			if (kind == null) {
@@ -687,8 +721,12 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 							//							element.setProperty(field, typeValue.value());
 							if (element instanceof DElement) {
 								Document doc = ((DElement) element).asDocument();
-								doc.replaceItemValue(field, typeValue.value());
-								doc.save();
+								if (!(element instanceof DProxyVertex)) {
+									doc.replaceItemValue(field, typeValue.value());
+									if (!temporary) {
+										doc.save();
+									}
+								}
 								element.setProperty(field, typeValue.value());
 								if (currentVal != null && currentVal.length() > 0) {
 									//									System.out.println("TEMP DEBUG Forcing type on document id " + doc.getMetaversalID() + " to "
@@ -707,7 +745,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			} else {
 				//				System.out.println("TEMP DEBUG: TypeHoldingTypeField is null for type " + kind.getName());
 			}
+		}
 
+		@Override
+		public void initElement(final Class<?> kind, final FramedGraph<?> framedGraph, final Element element) {
+			initElement(kind, framedGraph, element, false);
 		}
 
 		public Class<?> resolve(final VertexFrame vertex, final Class<?> defaultType) {
@@ -730,6 +772,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 	private Long defaultElementStoreKey_ = null;
 	private DElementStore defaultElementStore_;
+	private Long defaultProxyStoreKey_ = null;
+	private DElementStore defaultProxyStore_;
 	private Map<Long, DElementStore> elementStoreMap_;
 	private Map<Class<?>, Long> typeMap_;
 	private transient DGraph graph_;
@@ -773,11 +817,29 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	@Override
+	public void setDefaultProxyStore(final Long key) {
+		defaultProxyStoreKey_ = key;
+	}
+
+	@Override
+	public void setDefaultProxyStore(final DElementStore store) {
+		defaultProxyStore_ = store;
+	}
+
+	@Override
 	public DElementStore getDefaultElementStore() {
 		if (defaultElementStore_ == null) {
 			defaultElementStore_ = getElementStores().get(defaultElementStoreKey_);
 		}
 		return defaultElementStore_;
+	}
+
+	@Override
+	public DElementStore getDefaultProxyStore() {
+		if (defaultProxyStore_ == null) {
+			defaultProxyStore_ = getElementStores().get(defaultProxyStoreKey_);
+		}
+		return defaultProxyStore_;
 	}
 
 	@Override

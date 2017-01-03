@@ -6,6 +6,7 @@ package org.openntf.domino.ext;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -585,6 +586,8 @@ public interface Database extends Base {
 
 	public Document getIconNote();
 
+	public Document getACLNote();
+
 	public Document getDocumentByUNID(String unid, boolean deferDelegate);
 
 	public Document getDocumentByID(String noteid, boolean deferDelegate);
@@ -750,5 +753,8 @@ public interface Database extends Base {
 	 * @return a <code>Set</code> of the user's privileges
 	 */
 	public Set<DBPrivilege> queryAccessPrivilegesEx(String user);
+	public Set<String> getCurrentRoles();
+
+	public EnumSet<ACL.Privilege> getCurrentPrivileges();
 
 }

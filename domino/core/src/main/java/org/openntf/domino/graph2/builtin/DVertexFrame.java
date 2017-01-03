@@ -1,11 +1,14 @@
 package org.openntf.domino.graph2.builtin;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Map;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.graph2.annotations.TypedProperty;
+import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DVertex;
+import org.openntf.domino.types.CaseInsensitiveString;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
@@ -36,6 +39,9 @@ public interface DVertexFrame extends Editable {
 	@JavaHandler
 	@TypedProperty("@editors")
 	public String[] getEditors();
+
+	@JavaHandler
+	public void updateReadOnlyProperties(DVertexFrame frame);
 
 	//TODO NTF Future
 	//	public String[] getOwners();
@@ -69,8 +75,8 @@ public interface DVertexFrame extends Editable {
 				if (delegate instanceof Map) {
 					return (Map<CharSequence, Object>) delegate;
 				}
-				throw new RuntimeException("VertexFrame not backed by a Map. Instead it's a "
-						+ (delegate == null ? "null" : delegate.getClass().getName()));
+				throw new RuntimeException(
+						"VertexFrame not backed by a Map. Instead it's a " + (delegate == null ? "null" : delegate.getClass().getName()));
 			}
 			throw new RuntimeException("VertexFrame not backed by org.openntf.domino.graph2.DVertex. Instead it's a "
 					+ (raw == null ? "null" : raw.getClass().getName()));
@@ -92,6 +98,30 @@ public interface DVertexFrame extends Editable {
 			} catch (Throwable t) {
 				t.printStackTrace();
 				return null;
+			}
+		}
+
+		@Override
+		public void updateReadOnlyProperties(final DVertexFrame frame) {
+			DFramedTransactionalGraph graph = (DFramedTransactionalGraph) g();
+			Class<?> type = graph.getTypeManager().resolve(frame);
+			Map<CaseInsensitiveString, Method> computeds = graph.getTypeRegistry().getComputeds(type);
+			for (Map.Entry<CaseInsensitiveString, Method> entry : computeds.entrySet()) {
+				CharSequence key = entry.getKey();
+				Method crystal = entry.getValue();
+				try {
+					crystal.invoke(frame, null);
+				} catch (Exception e) {
+					System.err.println("ALERT Exception encountered attempting to update computed property: " + key
+							+ " using a method called " + crystal.getName() + " in a frame of type " + type.getName()
+							+ ". The exception is " + e.getClass().getName() + ": " + e.getMessage());
+					Throwable cause = e;
+					while (cause.getCause() != null) {
+						cause = cause.getCause();
+						System.err.println("Caused by: " + cause.getClass().getName() + " " + cause.getMessage());
+					}
+
+				}
 			}
 		}
 

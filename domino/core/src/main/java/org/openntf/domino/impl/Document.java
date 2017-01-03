@@ -62,6 +62,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
+import org.openntf.domino.exceptions.DocumentWriteAccessException;
 import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
@@ -2069,6 +2070,14 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 */
 	@Override
 	public boolean isNewNote() {
+		if (!isDead()) {
+			try {
+				return getDelegate().isNewNote();
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				return isNew_;
+			}
+		}
 		return isNew_;
 	}
 
@@ -3034,6 +3043,8 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 							log_.log(Level.SEVERE, "Okay, now it's time to really panic. Sorry...");
 							DominoUtils.handleException(e, this);
 						}
+					} else if (e.text.contains("You are not authorized")) {
+						throw new DocumentWriteAccessException(this);
 					} else {
 						DominoUtils.handleException(e, this);
 					}
@@ -3468,7 +3479,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				lotus.domino.Document d = null;
 				lotus.domino.Database db = toLotus(getParentDatabase());
 				if (db != null) {
-					if (Integer.valueOf(noteid_, 16) == 0) {
+					if (noteid_.length() == 0 || Integer.valueOf(noteid_, 16) == 0) {
 						if (isNewNote()) {//NTF this is redundant... not sure what the best move here is...
 							d = db.createDocument();
 							d.setUniversalID(unid_);

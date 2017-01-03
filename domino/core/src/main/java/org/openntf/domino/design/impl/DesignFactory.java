@@ -464,6 +464,10 @@ public enum DesignFactory {
 		return NOTEID_ICONNOTE.equals(doc.getNoteID()) || doc.hasItem("IconBitmap");
 	}
 
+	public static boolean isACL(final Document doc) {
+		return doc.hasItem("$ACLDigest");
+	}
+
 	public static Document getIconNote(final Database db) {
 		return db.getIconNote();
 	}

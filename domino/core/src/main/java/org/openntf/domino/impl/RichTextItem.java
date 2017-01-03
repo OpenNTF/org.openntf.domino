@@ -701,4 +701,39 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		}
 		return result;
 	}
+
+	public boolean removeAttachment(final String filename) {
+		boolean result = false;
+		RichTextNavigator navigator = this.createNavigator();
+		EmbeddedObject eo = (EmbeddedObject) navigator.getFirstElement(RTELEM_TYPE_FILEATTACHMENT);
+		while (eo != null) {
+			if (filename.equals(eo.getSource())) {
+				eo.remove();
+				result = true;
+				break;
+			}
+			eo = (EmbeddedObject) navigator.getNextElement(RTELEM_TYPE_FILEATTACHMENT);
+		}
+		return result;
+	}
+
+	@Override
+	public String ConvertToHTML(final Vector arg0) {
+		try {
+			return getDelegate().ConvertToHTML(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public Vector getHTMLReferences() {
+		try {
+			return getDelegate().getHTMLReferences();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
 }

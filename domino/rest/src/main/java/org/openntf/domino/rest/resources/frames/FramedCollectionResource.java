@@ -1,12 +1,5 @@
 package org.openntf.domino.rest.resources.frames;
 
-import com.ibm.commons.util.io.json.JsonException;
-import com.ibm.commons.util.io.json.JsonJavaObject;
-import com.ibm.commons.util.io.json.JsonParser;
-import com.ibm.domino.httpmethod.PATCH;
-import com.tinkerpop.frames.EdgeFrame;
-import com.tinkerpop.frames.VertexFrame;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -25,12 +18,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
 import org.openntf.domino.big.NoteCoordinate;
@@ -49,6 +43,14 @@ import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.Factory;
+
+import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.JsonJavaObject;
+import com.ibm.commons.util.io.json.JsonParser;
+import com.ibm.domino.das.utils.ErrorHelper;
+import com.ibm.domino.httpmethod.PATCH;
+import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.VertexFrame;
 
 @Path(Routes.ROOT + "/" + Routes.FRAMES + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedCollectionResource extends AbstractCollectionResource {
@@ -116,18 +118,20 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						if (filterkeys != null) {
 							elements = graph.getFilteredElements(typename.toString(), filterkeys, filtervalues);
 						} else if (partialkeys != null) {
-							elements = graph
-									.getFilteredElementsPartial(typename.toString(), partialkeys, partialvalues);
+							elements = graph.getFilteredElementsPartial(typename.toString(), partialkeys,
+									partialvalues);
 						} else if (startskeys != null) {
 							elements = graph.getFilteredElementsStarts(typename.toString(), startskeys, startsvalues);
 						} else {
 							elements = graph.getElements(typename.toString());
 						}
-						/*	if (elements != null) {
-								System.out.println("TEMP DEBUG found elements for type " + typename.toString());
-							} else {
-								System.out.println("TEMP DEBUG NO elements for type " + typename.toString());
-							}*/
+						/*
+						 * if (elements != null) { System.out.
+						 * println("TEMP DEBUG found elements for type " +
+						 * typename.toString()); } else {
+						 * System.out.println("TEMP DEBUG NO elements for type "
+						 * + typename.toString()); }
+						 */
 						if (elements instanceof FramedVertexList) {
 							if (vresult == null) {
 								vresult = new MixedFramedVertexList(graph, null, (FramedVertexList) elements);
@@ -154,7 +158,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 				jsonEntity = sw.toString();
 			} else {
-				// System.out.println("TEMP DEBUG: ID was null therefore we can't report...");
+				// System.out.println("TEMP DEBUG: ID was null therefore we
+				// can't report...");
 
 				MultivaluedMap<String, String> mvm = uriInfo.getQueryParameters();
 				for (String key : mvm.keySet()) {
@@ -169,13 +174,17 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			builder = Response.ok();
 		} catch (Exception e) {
-			writer.outObject(e);
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-			jsonEntity = sw.toString();
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(60);
+		builder.cacheControl(cc);
 		Response response = builder.build();
+
 		return response;
 	}
 
@@ -220,8 +229,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			return result;
 		} else
-			throw new IllegalArgumentException("Cannot sort a list of type "
-					+ (elements == null ? "null" : elements.getClass().getName()));
+			throw new IllegalArgumentException(
+					"Cannot sort a list of type " + (elements == null ? "null" : elements.getClass().getName()));
 		// writer.outArrayLiteral(result);
 	}
 
@@ -252,20 +261,21 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				} else if (jsonRaw instanceof List) {
 					jsonArray = (List) jsonRaw;
 				} else {
-					// System.out.println("TEMP DEBUG Got an unexpected object from parser "
+					// System.out.println("TEMP DEBUG Got an unexpected object
+					// from parser "
 					// + (jsonRaw == null ? "null" :
 					// jsonRaw.getClass().getName()));
 				}
 				builder = Response.ok();
-			} catch (Throwable t) {
-				builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-				writer.outObject(t);
+			} catch (Exception e) {
+				throw new WebApplicationException(
+						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 			} finally {
 				reader.close();
 			}
 		} catch (Exception ex) {
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-			writer.outObject(ex);
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(ex, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 		Map<Object, Object> results = new LinkedHashMap<Object, Object>();
 		if (jsonArray != null) {
@@ -281,11 +291,16 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		} else if (jsonItems != null) {
 			processJsonObject(jsonItems, graph, writer, results);
 		} else {
-			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items found.");
+			// System.out.println("TEMP DEBUG Nothing to POST. No JSON items
+			// found.");
 		}
 
 		jsonEntity = sw.toString();
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		Response response = builder.build();
 		return response;
 	}
@@ -311,6 +326,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					try {
 						JsonFrameAdapter adapter = new JsonFrameAdapter(graph, parVertex, null, true);
 						Iterator<String> frameProperties = adapter.getJsonProperties();
+						CaseInsensitiveString actionName = null;
 						while (frameProperties.hasNext()) {
 							CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 							if (!key.startsWith("@")) {
@@ -320,33 +336,38 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 									cisMap.remove(key);
 								}
 							} else {
-								// System.out.println("TEMP DEBUG Skipping property "
+								// System.out.println("TEMP DEBUG Skipping
+								// property "
 								// + key);
 							}
 						}
 						if (!cisMap.isEmpty()) {
 							for (CaseInsensitiveString cis : cisMap.keySet()) {
-								if (!cis.startsWith("@")) {
+								if (cis.equals("%action")) {
+									actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+								} else if (!cis.startsWith("@")) {
 									Object value = cisMap.get(cis);
 									if (value != null) {
 										adapter.putJsonProperty(cis.toString(), value);
 									}
-								} else {
-									// System.out.println("TEMP DEBUG Skipping property "
-									// + cis);
 								}
+							}
+							adapter.updateReadOnlyProperties();
+							if (actionName != null) {
+								adapter.runAction(actionName);
 							}
 						}
 						writer.outObject(parVertex);
 					} catch (Exception e) {
-						e.printStackTrace();
+						throw new WebApplicationException(
+								ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 					}
 				}
 			} catch (IllegalArgumentException iae) {
 				throw new RuntimeException(iae);
 			}
 		} else if (label != null && label.length() > 0) {
-			System.out.println("TEMP DEBUG adding an inline edge...");
+			// System.out.println("TEMP DEBUG adding an inline edge...");
 			String inid = null;
 			String outid = null;
 			JsonJavaObject in = jsonItems.getAsObject("@in");
@@ -367,7 +388,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				Object rawoutid = out.get("@id");
 				if (rawoutid instanceof Double) {
 					outid = String.valueOf(results.get(rawoutid));
-					System.out.println("out id is an integer. It resolves to " + outid);
+					// System.out.println("out id is an integer. It resolves to
+					// " + outid);
 					out.put("@id", outid);
 				} else {
 					outid = String.valueOf(rawoutid);
@@ -421,7 +443,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 							}
 							writer.outObject(result);
 						} catch (Exception e) {
-							e.printStackTrace();
+							throw new WebApplicationException(
+									ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 						}
 					} else {
 						Factory.println("otherElement is not a VertexFrame. It's a "
@@ -441,8 +464,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 							+ ((VertexFrame) element).asVertex().getId() + " methods " + methList);
 				}
 			} else {
-				org.openntf.domino.utils.Factory.println("element is not a VertexFrame. It's a "
-						+ element.getClass().getName());
+				org.openntf.domino.utils.Factory
+						.println("element is not a VertexFrame. It's a " + element.getClass().getName());
 			}
 		} else {
 			System.err.println("Cannot POST without an @type in the JSON");
@@ -455,7 +478,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response patchDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince) throws JsonException, IOException {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince)
+			throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false);
 		return response;
@@ -482,15 +506,16 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					jsonArray = (List) jsonRaw;
 				}
 				builder = Response.ok();
-			} catch (Throwable t) {
-				builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-				writer.outObject(t);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new WebApplicationException(
+						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 			} finally {
 				reader.close();
 			}
 		} catch (Exception ex) {
-			writer.outObject(ex);
-			builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+			throw new WebApplicationException(
+					ErrorHelper.createErrorResponse(ex, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 		if (jsonArray != null) {
 			writer.startArray();
@@ -499,6 +524,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					writer.startArrayItem();
 					processJsonUpdate((JsonJavaObject) raw, graph, writer, pm, isPut);
 					writer.endArrayItem();
+				} else {
+					System.err.println("Expected a JsonJavaObject but instead we got a " + raw.getClass().getName());
 				}
 			}
 			writer.endArray();
@@ -507,7 +534,10 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		}
 
 		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
-
+		CacheControl cc = new CacheControl();
+		cc.setPrivate(true);
+		cc.setMaxAge(1);
+		builder.cacheControl(cc);
 		result = builder.build();
 
 		return result;
@@ -534,6 +564,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			throw new RuntimeException("TODO"); // TODO
 		}
 		Iterator<String> frameProperties = adapter.getJsonProperties();
+		CaseInsensitiveString actionName = null;
 		while (frameProperties.hasNext()) {
 			CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 			if (!key.startsWith("@")) {
@@ -547,12 +578,18 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 		}
 		for (CaseInsensitiveString cis : cisMap.keySet()) {
-			if (!cis.startsWith("@")) {
+			if (cis.equals("%action")) {
+				actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+			} else if (!cis.startsWith("@")) {
 				Object value = cisMap.get(cis);
 				if (value != null) {
 					adapter.putJsonProperty(cis.toString(), value);
 				}
 			}
+		}
+		adapter.updateReadOnlyProperties();
+		if (actionName != null) {
+			adapter.runAction(actionName);
 		}
 		writer.outObject(element);
 		graph.commit();

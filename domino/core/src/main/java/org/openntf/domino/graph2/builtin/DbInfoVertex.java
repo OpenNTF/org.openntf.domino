@@ -2,11 +2,14 @@ package org.openntf.domino.graph2.builtin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openntf.domino.ACL;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.graph2.annotations.Shardable;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -47,6 +50,10 @@ public interface DbInfoVertex extends VertexFrame {
 	@JavaHandler
 	@TypedProperty("@viewInfo")
 	public List<Object> getViewInfo();
+
+	@JavaHandler
+	@TypedProperty("@userInfo")
+	public Map<String, Object> getUserInfo();
 
 	@JavaHandler
 	public Document asDocument();
@@ -112,6 +119,20 @@ public interface DbInfoVertex extends VertexFrame {
 				cur.put(view.getName(), prefix + view.getUniversalID().toLowerCase());
 				result.add(cur);
 			}
+			return result;
+		}
+
+		@Override
+		public Map<String, Object> getUserInfo() {
+			Map<String, Object> result = new LinkedHashMap<String, Object>();
+			Document doc = asDocument();
+			Database db = doc.getAncestorDatabase();
+			Session s = db.getAncestorSession();
+			String name = s.getEffectiveUserName();
+			result.put("username", name);
+			result.put("accesslevel", ACL.Level.getLevel(db.getCurrentAccessLevel()));
+			result.put("roles", db.getCurrentRoles());
+			result.put("privileges", db.getCurrentPrivileges());
 			return result;
 		}
 

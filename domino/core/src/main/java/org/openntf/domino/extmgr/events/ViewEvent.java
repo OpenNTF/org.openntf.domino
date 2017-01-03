@@ -6,7 +6,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.extmgr.EMBridgeEventParams;
 
-public abstract class ViewEvent extends DatabaseEvent {
+public abstract class ViewEvent extends AbstractDatabaseEvent {
 
 	public ViewEvent(final int eventId) {
 		super(eventId);

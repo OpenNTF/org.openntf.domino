@@ -14,6 +14,10 @@ import com.google.common.primitives.UnsignedLongs;
 public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinate> {
 	public static enum Utils {
 		;
+		public static boolean isNoteCoordinate(final CharSequence chars) {
+			return chars.length() == 48 && DominoUtils.isHex(chars);
+		}
+
 		public static String getUnidFromBytes(final byte[] bytes) {
 			if (bytes.length >= 16) {
 				long first = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);

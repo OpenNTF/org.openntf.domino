@@ -18,4 +18,6 @@ public interface RichTextItem {
 	public void markDirty();
 
 	public EmbeddedObject replaceAttachment(final String filename, final String sourcePath);
+
+	public boolean removeAttachment(final String filename);
 }
