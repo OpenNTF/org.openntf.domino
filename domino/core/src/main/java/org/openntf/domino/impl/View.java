@@ -59,7 +59,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class View.
  */
-public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database>implements org.openntf.domino.View {
+public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
 	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
@@ -615,7 +615,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
 	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
 	 *
-	 * To find the correct position, trace a call of<br> <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * To find the correct position, trace a call of<br>
+	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
 	 * and hit "step into" until you are in one of the methods of this file. Move <b>this</b> method to the position you found with the
 	 * debugger.
 	 *
@@ -3132,6 +3133,32 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	@Override
 	public String getMetaversalID() {
 		return getAncestorDatabase().getReplicaID() + getUniversalID();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isResortable()
+	 */
+	@Override
+	public boolean isResortable() {
+		if (getDocument().hasItem("$Collation1")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getIndexCount()
+	 */
+	@Override
+	public int getIndexCount() {
+		int count = 1;
+		for (int x = 1; x < 100; x++) {
+			if (getDocument().hasItem("$Collation" + x)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	// TODO uncomment when this exists in the core API
