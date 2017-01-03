@@ -4,6 +4,7 @@
 package org.openntf.domino.ext;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author jgallagher
@@ -34,4 +35,6 @@ public interface DateRange {
 	public boolean contains(final Date date);
 
 	public org.openntf.domino.DateRange clone();
+
+	public List<Date> getDays();
 }

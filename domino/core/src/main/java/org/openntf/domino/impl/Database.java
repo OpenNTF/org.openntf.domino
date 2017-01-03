@@ -1125,6 +1125,17 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
+	public Document getACLNote() {
+		NoteCollection nc = createNoteCollection(false);
+		nc.setSelectionFormula("@all");
+		nc.setSelectAcl(true);
+		nc.buildCollection();
+		String nid = nc.getFirstNoteID();
+		System.out.println("TEMP DEBUG getting ACL from noteid " + nid + " in a note collection with " + nc.getCount() + " entries");
+		return getDocumentByID(nid);
+	}
+
+	@Override
 	public Document getDocumentWithKey(final Serializable key) {
 		return this.getDocumentWithKey(key, false);
 	}
@@ -1135,7 +1146,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			if (key != null) {
 				if (key instanceof String && ((String) key).length() == 32) {
 					if ("000000000000000000000000000000000000".equals(key)) {
-						return getIconNote();
+						Document result = getIconNote();
+						if (result == null) {
+							result = getACLNote();
+						}
+						return result;
 					}
 				}
 

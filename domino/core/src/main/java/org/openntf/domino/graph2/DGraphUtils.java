@@ -165,8 +165,8 @@ public enum DGraphUtils {
 				Comparable castVal2 = (Comparable) TypeUtils.objectToClass(val2, compareType, null);
 				int curComp = 0;
 				if (String.class.equals(compareType)) {
-					curComp = String.CASE_INSENSITIVE_ORDER.compare((castVal1 == null ? "" : (String) castVal1), (castVal2 == null ? ""
-							: (String) castVal2));
+					curComp = String.CASE_INSENSITIVE_ORDER.compare((castVal1 == null ? "" : (String) castVal1),
+							(castVal2 == null ? "" : (String) castVal2));
 				} else {
 					if (castVal1 == null || castVal2 == null) {
 						result = 0;
@@ -223,8 +223,8 @@ public enum DGraphUtils {
 					Comparable castVal2 = (Comparable) TypeUtils.objectToClass(val2, compareType, null);
 					int curComp = 0;
 					if (String.class.equals(compareType)) {
-						curComp = String.CASE_INSENSITIVE_ORDER.compare((castVal1 == null ? "" : (String) castVal1), (castVal2 == null ? ""
-								: (String) castVal2));
+						curComp = String.CASE_INSENSITIVE_ORDER.compare((castVal1 == null ? "" : (String) castVal1),
+								(castVal2 == null ? "" : (String) castVal2));
 					} else {
 						if (castVal1 == null || castVal2 == null) {
 							result = 0;

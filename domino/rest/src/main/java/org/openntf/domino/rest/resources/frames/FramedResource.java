@@ -35,6 +35,7 @@ import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
+import org.openntf.domino.graph2.impl.DEdgeEntryList.KeyNotFoundException;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
 import org.openntf.domino.rest.json.JsonGraphWriter;
@@ -170,7 +171,7 @@ public class FramedResource extends AbstractResource {
 					writer.outArrayLiteral(maps);
 				}
 				jsonEntity = sw.toString();
-
+				graph.rollback();
 			} else {
 				MultivaluedMap<String, String> mvm = uriInfo.getQueryParameters();
 				for (String key : mvm.keySet()) {
@@ -188,6 +189,8 @@ public class FramedResource extends AbstractResource {
 			throw new WebApplicationException(ErrorHelper
 					.createErrorResponse("User " + Factory.getSession(SessionType.CURRENT).getEffectiveUserName()
 							+ " is not authorized to access this resource", Response.Status.UNAUTHORIZED));
+		} catch (KeyNotFoundException knfe) {
+			throw new WebApplicationException(Response.Status.NO_CONTENT);
 		} catch (Exception e) {
 			throw new WebApplicationException(
 					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
@@ -333,11 +336,8 @@ public class FramedResource extends AbstractResource {
 					}
 				}
 				for (CaseInsensitiveString cis : cisMap.keySet()) {
-					// System.out.println("TEMP DEBUG key: " + cis);
 					if (cis.equals("%action")) {
 						actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
-						// System.out.println("TEMP DEBUG action found " +
-						// actionName);
 					} else if (!cis.startsWith("@")) {
 						Object value = cisMap.get(cis);
 						if (value != null) {
@@ -345,6 +345,7 @@ public class FramedResource extends AbstractResource {
 						}
 					}
 				}
+				adapter.updateReadOnlyProperties();
 				if (actionName != null) {
 					adapter.runAction(actionName);
 				}
@@ -535,6 +536,7 @@ public class FramedResource extends AbstractResource {
 									JsonFrameAdapter adapter = new JsonFrameAdapter(graph, (EdgeFrame) result, null,
 											false);
 									Iterator<String> frameProperties = adapter.getJsonProperties();
+									CaseInsensitiveString actionName = null;
 									while (frameProperties.hasNext()) {
 										CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 										if (!key.startsWith("@")) {
@@ -546,12 +548,18 @@ public class FramedResource extends AbstractResource {
 										}
 									}
 									for (CaseInsensitiveString cis : cisMap.keySet()) {
-										if (!cis.startsWith("@")) {
+										if (cis.equals("%action")) {
+											actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+										} else if (!cis.startsWith("@")) {
 											Object value = cisMap.get(cis);
 											if (value != null) {
 												adapter.putJsonProperty(cis.toString(), value);
 											}
 										}
+									}
+									adapter.updateReadOnlyProperties();
+									if (actionName != null) {
+										adapter.runAction(actionName);
 									}
 									writer.outObject(result);
 								} catch (Exception e) {
@@ -576,8 +584,8 @@ public class FramedResource extends AbstractResource {
 									+ ((VertexFrame) element).asVertex().getId() + " methods " + methList);
 						}
 					} else {
-						org.openntf.domino.utils.Factory
-								.println("element is not a VertexFrame. It's a " + element.getClass().getName());
+						throw new WebApplicationException(ErrorHelper.createErrorResponse("Element is null",
+								Response.Status.INTERNAL_SERVER_ERROR));
 					}
 				}
 			}

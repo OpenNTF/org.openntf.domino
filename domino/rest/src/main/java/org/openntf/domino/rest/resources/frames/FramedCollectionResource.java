@@ -326,6 +326,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					try {
 						JsonFrameAdapter adapter = new JsonFrameAdapter(graph, parVertex, null, true);
 						Iterator<String> frameProperties = adapter.getJsonProperties();
+						CaseInsensitiveString actionName = null;
 						while (frameProperties.hasNext()) {
 							CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 							if (!key.startsWith("@")) {
@@ -342,16 +343,18 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						}
 						if (!cisMap.isEmpty()) {
 							for (CaseInsensitiveString cis : cisMap.keySet()) {
-								if (!cis.startsWith("@")) {
+								if (cis.equals("%action")) {
+									actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+								} else if (!cis.startsWith("@")) {
 									Object value = cisMap.get(cis);
 									if (value != null) {
 										adapter.putJsonProperty(cis.toString(), value);
 									}
-								} else {
-									// System.out.println("TEMP DEBUG Skipping
-									// property "
-									// + cis);
 								}
+							}
+							adapter.updateReadOnlyProperties();
+							if (actionName != null) {
+								adapter.runAction(actionName);
 							}
 						}
 						writer.outObject(parVertex);
@@ -504,6 +507,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 				builder = Response.ok();
 			} catch (Exception e) {
+				e.printStackTrace();
 				throw new WebApplicationException(
 						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 			} finally {
@@ -520,6 +524,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					writer.startArrayItem();
 					processJsonUpdate((JsonJavaObject) raw, graph, writer, pm, isPut);
 					writer.endArrayItem();
+				} else {
+					System.err.println("Expected a JsonJavaObject but instead we got a " + raw.getClass().getName());
 				}
 			}
 			writer.endArray();
@@ -558,6 +564,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			throw new RuntimeException("TODO"); // TODO
 		}
 		Iterator<String> frameProperties = adapter.getJsonProperties();
+		CaseInsensitiveString actionName = null;
 		while (frameProperties.hasNext()) {
 			CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
 			if (!key.startsWith("@")) {
@@ -571,12 +578,18 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 		}
 		for (CaseInsensitiveString cis : cisMap.keySet()) {
-			if (!cis.startsWith("@")) {
+			if (cis.equals("%action")) {
+				actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+			} else if (!cis.startsWith("@")) {
 				Object value = cisMap.get(cis);
 				if (value != null) {
 					adapter.putJsonProperty(cis.toString(), value);
 				}
 			}
+		}
+		adapter.updateReadOnlyProperties();
+		if (actionName != null) {
+			adapter.runAction(actionName);
 		}
 		writer.outObject(element);
 		graph.commit();

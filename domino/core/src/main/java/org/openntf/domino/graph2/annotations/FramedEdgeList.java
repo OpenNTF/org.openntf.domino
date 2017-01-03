@@ -256,14 +256,24 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 	protected static Collection<Edge> convertToEdges(final Object[] arg0) {
 		List<Edge> result = new ArrayList<Edge>(arg0.length);
-		for (Object raw : arg0) {
-			if (raw instanceof Edge) {
-				result.add((Edge) raw);
-			} else if (raw instanceof EdgeFrame) {
-				result.add(((EdgeFrame) raw).asEdge());
-			} else {
-				throw new IllegalArgumentException(
-						"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
+		if (arg0.length > 0) {
+			for (Object raw : arg0) {
+				if (raw != null) {
+					if (raw instanceof Edge) {
+						result.add((Edge) raw);
+					} else if (raw instanceof EdgeFrame) {
+						result.add(((EdgeFrame) raw).asEdge());
+					} else if (raw.getClass().isArray() && (raw.getClass().getComponentType().equals(Edge.class))) {
+						result.addAll(Arrays.asList((Edge[]) raw));
+					} else if (raw.getClass().isArray() && (raw.getClass().getComponentType().equals(EdgeFrame.class))) {
+						for (EdgeFrame ef : ((EdgeFrame[]) raw)) {
+							result.add(ef.asEdge());
+						}
+					} else {
+						throw new IllegalArgumentException(
+								"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
+					}
+				}
 			}
 		}
 		return result;

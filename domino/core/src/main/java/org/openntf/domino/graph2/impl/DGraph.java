@@ -99,7 +99,12 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Vertex addVertex(final Object id) {
-		return findElementStore(id).addVertex(id);
+		return addVertex(id, false);
+	}
+
+	@Override
+	public Vertex addVertex(final Object id, final boolean temporary) {
+		return findElementStore(id).addVertex(id, temporary);
 	}
 
 	@Override

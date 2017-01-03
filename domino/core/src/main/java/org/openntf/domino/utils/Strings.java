@@ -1136,4 +1136,75 @@ public enum Strings {
 		return returning;
 	}
 
+	/**
+	 * Gets the String of an object WITHOUT THROWING AN EXCEPTION.
+	 * 
+	 * Handles null and enum instances.
+	 * 
+	 * Null is returned as an empty string "", Enum instances return the name of the enum. If the object is an instance of String, it will
+	 * be cast as a String and returned. Otherwise, the result of the object's toString() method will be returned.
+	 * 
+	 * @param source
+	 *            object for which to return the String.
+	 * 
+	 * @return String representation the object. Empty string "" on exception.
+	 */
+	public static String getString(final Object source) {
+		return getString(source, "");
+	}
+
+	/**
+	 * Gets the String of an object WITHOUT THROWING AN EXCEPTION.
+	 * 
+	 * Handles null and enum instances.
+	 * 
+	 * Null is returned as an empty string "", Enum instances return the name of the enum. If the object is an instance of String, it will
+	 * be cast as a String and returned. Otherwise, the result of the object's toString() method will be returned.
+	 * 
+	 * @param source
+	 *            object for which to return the String.
+	 * 
+	 * @param delimiter
+	 *            Delimiter to use between collection members.
+	 * 
+	 * 
+	 * @return String representation the object. Empty string "" on exception.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static String getString(final Object source, final String delimiter) {
+		if (null == source) {
+			return "";
+		}
+
+		try {
+			// Enums
+			if (source instanceof Enum<?>) {
+				return ((Enum<?>) source).name();
+			}
+
+			// Collections
+			if (source instanceof Collection) {
+				final Object[] array = ((Collection) source).toArray();
+				if (array.length < 1) {
+					return "";
+				}
+
+				final Collection<String> list = new ArrayList<String>();
+				for (final Object element : array) {
+					list.add(asString(element, ""));
+				}
+
+				return Strings.join(list, (Strings.isBlankString(delimiter)) ? "" : delimiter);
+			}
+
+			// everything else
+			return (source instanceof String) ? (String) source : String.valueOf(source);
+
+		} catch (final Exception e) {
+			// do nothing
+		}
+
+		return "";
+	}
+
 }

@@ -563,6 +563,8 @@ public interface Database extends Base {
 
 	public Document getIconNote();
 
+	public Document getACLNote();
+
 	public Document getDocumentByUNID(String unid, boolean deferDelegate);
 
 	public Document getDocumentByID(String noteid, boolean deferDelegate);

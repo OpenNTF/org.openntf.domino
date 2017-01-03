@@ -40,6 +40,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
 public class JsonFrameAdapter implements JsonObject {
@@ -760,7 +761,29 @@ public class JsonFrameAdapter implements JsonObject {
 				try {
 					Class<?>[] types = crystal.getParameterTypes();
 					Class<?> type = types[0];
-					if (!type.isAssignableFrom(value.getClass())) {
+					if (value == null) {
+						String propName = null;
+						TypedProperty tprop = crystal.getAnnotation(TypedProperty.class);
+						if (tprop != null) {
+							propName = tprop.value();
+						} else {
+							Property prop = crystal.getAnnotation(Property.class);
+							if (prop != null) {
+								propName = prop.value();
+							}
+						}
+						if (propName != null) {
+							if (frame instanceof VertexFrame) {
+								((VertexFrame) frame).asVertex().setProperty(propName, null);
+							} else if (frame instanceof EdgeFrame) {
+								((EdgeFrame) frame).asEdge().setProperty(propName, null);
+							}
+						} else {
+							System.err.println("ALERT the next operation will probably throw an exception");
+							Object[] nullarg = { type.cast(null) };
+							crystal.invoke(frame, nullarg);
+						}
+					} else if (!type.isAssignableFrom(value.getClass())) {
 						value = TypeUtils.convertToTarget(value, type,
 								org.openntf.domino.utils.Factory.getSession(SessionType.CURRENT));
 						crystal.invoke(frame, value);
@@ -779,12 +802,32 @@ public class JsonFrameAdapter implements JsonObject {
 					throw new RuntimeException(e);
 				}
 			} else {
-				if (frame instanceof EdgeFrame) {
-					((EdgeFrame) frame).asEdge().setProperty(paramKey, value);
-				} else if (frame instanceof VertexFrame) {
-					((VertexFrame) frame).asVertex().setProperty(paramKey, value);
+				Method man = getGetters().get(key);
+				if (man == null) { // NTF if there's no getter, it's an
+									// undefined property
+					if (frame instanceof EdgeFrame) {
+						((EdgeFrame) frame).asEdge().setProperty(paramKey, value);
+					} else if (frame instanceof VertexFrame) {
+						((VertexFrame) frame).asVertex().setProperty(paramKey, value);
+					}
+				} else {
+					// NTF if there is a getter but no setter, this is a
+					// read-only property. Disregard the JSON
 				}
 			}
+		}
+	}
+
+	public void updateReadOnlyProperties() {
+		Object frame = getFrame();
+		try {
+			if (frame instanceof DVertexFrame) {
+				((DVertexFrame) frame).updateReadOnlyProperties((DVertexFrame) frame);
+			} else if (frame instanceof DEdgeFrame) {
+				((DEdgeFrame) frame).updateReadOnlyProperties();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

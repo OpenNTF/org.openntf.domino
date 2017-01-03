@@ -9,6 +9,7 @@ import java.io.ObjectOutput;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.exceptions.UnimplementedException;
 
@@ -18,6 +19,7 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 	private String position_;
 	private String entryType_;
 	private transient ViewNavigator sourceNav_;
+	private transient ViewEntryCollection sourceColl_;
 
 	//	private transient ViewEntry sourceEntry_;
 
@@ -51,6 +53,11 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 	@Override
 	public void setSourceNav(final ViewNavigator nav) {
 		sourceNav_ = nav;
+	}
+
+	@Override
+	public void setSourceColl(final ViewEntryCollection coll) {
+		sourceColl_ = coll;
 	}
 
 	@Override

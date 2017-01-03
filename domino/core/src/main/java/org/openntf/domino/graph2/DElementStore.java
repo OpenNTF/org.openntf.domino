@@ -62,6 +62,8 @@ public interface DElementStore extends Externalizable {
 
 	public Vertex addVertex(Object id);
 
+	public Vertex addVertex(Object id, boolean temporary);
+
 	//	public Vertex getVertex(Object id);
 
 	public void removeVertex(Vertex vertex);

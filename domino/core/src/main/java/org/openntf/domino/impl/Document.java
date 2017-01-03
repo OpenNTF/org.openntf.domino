@@ -2046,6 +2046,14 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 */
 	@Override
 	public boolean isNewNote() {
+		if (!isDead()) {
+			try {
+				return getDelegate().isNewNote();
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				return isNew_;
+			}
+		}
 		return isNew_;
 	}
 
@@ -3653,7 +3661,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				lotus.domino.Document d = null;
 				lotus.domino.Database db = toLotus(getParentDatabase());
 				if (db != null) {
-					if (Integer.valueOf(noteid_, 16) == 0) {
+					if (noteid_.length() == 0 || Integer.valueOf(noteid_, 16) == 0) {
 						if (isNewNote()) {	//NTF this is redundant... not sure what the best move here is...
 							d = db.createDocument();
 							d.setUniversalID(unid_);

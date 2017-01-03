@@ -19,7 +19,10 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.Date;
+//import java.util.GregorianCalendar;
+import java.util.List;
 
 import lotus.domino.NotesException;
 
@@ -31,6 +34,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.GregorianCalendar;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -66,8 +70,8 @@ import com.ibm.icu.util.Calendar;
  * At the moment, the second variant is implemented (without deactivation of wrapping).
  */
 
-public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements
-org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
+public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotus.domino.DateRange, Session>
+		implements org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
 
 	//	private java.util.Date startDate_;
 	//	private java.util.Date endDate_;
@@ -351,6 +355,25 @@ org.openntf.domino.DateRange, lotus.domino.DateRange, Cloneable {
 	@Override
 	protected final WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	public List<Date> getDays() {
+		try {
+			final List<Date> dates = new ArrayList<Date>();
+			final Calendar calendar = new GregorianCalendar();
+			calendar.setTime(this.getStartDate());
+
+			while (calendar.getTime().before(this.getEndDate())) {
+				final Date result = calendar.getTime();
+				dates.add(result);
+				calendar.add(Calendar.DATE, 1);
+			}
+
+			return dates;
+
+		} catch (final Exception e) {
+			throw new RuntimeException((null == e.getCause()) ? e : e.getCause());
+		}
 	}
 
 }

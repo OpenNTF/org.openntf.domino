@@ -64,6 +64,7 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -1154,9 +1155,6 @@ public enum Factory {
 	public static void initThread(final ThreadConfig tc) { // RPr: Method was deliberately renamed
 		if (!started) {
 			throw new IllegalStateException("Factory is not yet started");
-		}
-		if (log_.isLoggable(Level.FINER)) {
-			log_.log(Level.FINER, "Factory.initThread()", new Throwable());
 		}
 		if (threadVariables_.get() != null) {
 			log_.log(Level.SEVERE,
