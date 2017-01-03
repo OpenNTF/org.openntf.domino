@@ -64,9 +64,11 @@ public abstract class FormulaParser {
 		}
 
 		class FCMapEntryComparator implements Comparator<Object> {
+			@Override
 			public int compare(final Object ent1, final Object ent2) {
-				if (!(ent1 instanceof Map.Entry) || !(ent2 instanceof Map.Entry))
+				if (!(ent1 instanceof Map.Entry) || !(ent2 instanceof Map.Entry)) {
 					throw new IllegalArgumentException("FCMapEntryComparator");
+				}
 				@SuppressWarnings("unchecked")
 				int us1 = ((Map.Entry<String, FormulaCacheEntry>) ent1).getValue().usageCount;
 				@SuppressWarnings("unchecked")
@@ -79,8 +81,9 @@ public abstract class FormulaParser {
 
 		ASTNode get(final String key) {
 			FormulaCacheEntry fce = cacheMap.get(key);
-			if (fce == null)
+			if (fce == null) {
 				return null;
+			}
 			fce.usageCount++;
 			return fce.node;
 		}
@@ -96,13 +99,16 @@ public abstract class FormulaParser {
 				Arrays.sort(arr, new FCMapEntryComparator());
 				int numToThrow = cacheMap.size() - REDUCE_FORMULA_CACHESIZE_TO;
 				String[] toThrow = new String[numToThrow];
-				for (int i = 0; i < numToThrow; i++)
+				for (int i = 0; i < numToThrow; i++) {
 					toThrow[i] = ((Map.Entry<String, FormulaCacheEntry>) arr[i]).getKey();
-				for (int i = 0; i < numToThrow; i++)
+				}
+				for (int i = 0; i < numToThrow; i++) {
 					cacheMap.remove(toThrow[i]);
+				}
 				Set<Map.Entry<String, FormulaCacheEntry>> cacheSet = cacheMap.entrySet();
-				for (Map.Entry<String, FormulaCacheEntry> ent : cacheSet)
+				for (Map.Entry<String, FormulaCacheEntry> ent : cacheSet) {
 					ent.getValue().usageCount = 1;
+				}
 			}
 			cacheMap.put(key, new FormulaCacheEntry(node));
 		}
@@ -138,12 +144,11 @@ public abstract class FormulaParser {
 	 * @return the function or null
 	 */
 	public Function getFunctionLC(final String funcName) {
-
-		Function func = customFunc.get(funcName);
+		Function func = getCustomFunc().get(funcName);
 		if (func != null) {
 			return func;
 		}
-		return functionFactory.getFunction(funcName);
+		return getFunctionFactory().getFunction(funcName);
 	}
 
 	/**
@@ -154,7 +159,7 @@ public abstract class FormulaParser {
 	 */
 	public void declareFunction(final Function func) {
 		String funcName = func.getImage();
-		customFunc.put(funcName.toLowerCase(), func);
+		getCustomFunc().put(funcName.toLowerCase(), func);
 	}
 
 	/**
@@ -231,9 +236,9 @@ public abstract class FormulaParser {
 		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
 		parser.reset();
 		parser.formatter = formatter;
-		parser.functionFactory = functionFactory;
+		parser.functionFactory = getFunctionFactory();
 		parser.includeProvider = includeProvider;
-		parser.customFunc = customFunc;
+		parser.customFunc = getCustomFunc();
 		parser.focFormulaCache = focFormulaCache;
 		parser.ntfFormulaCache = ntfFormulaCache;
 		return parser;
@@ -341,5 +346,19 @@ public abstract class FormulaParser {
 			return includeProvider.get(key);
 		}
 		return null;
+	}
+
+	private Map<String, Function> getCustomFunc() {
+		if (this.customFunc == null) {
+			this.customFunc = new HashMap<String, Function>();
+		}
+		return this.customFunc;
+	}
+
+	private FunctionFactory getFunctionFactory() {
+		if (this.functionFactory == null) {
+			this.functionFactory = FunctionFactory.createInstance();
+		}
+		return this.functionFactory;
 	}
 }
