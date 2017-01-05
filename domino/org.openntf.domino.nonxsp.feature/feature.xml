@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.domino.nonxsp.feature"
       label="OpenNTF Domino API Non-XSP"
-      version="3.1.0.qualifier"
+      version="3.2.0.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
