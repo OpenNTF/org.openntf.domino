@@ -1148,6 +1148,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return doc;
 	}
 
+	@Override
 	public Document getACLNote() {
 		NoteCollection nc = createNoteCollection(false);
 		nc.setSelectionFormula("@all");
@@ -3822,46 +3823,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
-	}
-
-	@Override
-	public lotus.domino.Database createFromTemplate(final String arg0, final String arg1, final boolean arg2, final int arg3,
-			final boolean arg4) {
-		try {
-			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3, arg4);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
-	}
-
-	@Override
-	public lotus.domino.NoteCollection getModifiedDocumentsWithOptions(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1,
-			final int arg2) {
-		try {
-			return getDelegate().getModifiedDocumentsWithOptions(arg0, arg1, arg2);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
-	}
-
-	@Override
-	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
-		try {
-			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-	}
-
-	@Override
-	public void setUserIDForDecrypt(final UserID arg0) {
-		try {
-			getDelegate().setUserIDForDecrypt(arg0);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
 	}
 
 	@Override

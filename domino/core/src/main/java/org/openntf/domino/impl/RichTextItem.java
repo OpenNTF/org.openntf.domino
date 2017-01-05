@@ -702,6 +702,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		return result;
 	}
 
+	@Override
 	public boolean removeAttachment(final String filename) {
 		boolean result = false;
 		RichTextNavigator navigator = this.createNavigator();
@@ -715,25 +716,5 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 			eo = (EmbeddedObject) navigator.getNextElement(RTELEM_TYPE_FILEATTACHMENT);
 		}
 		return result;
-	}
-
-	@Override
-	public String ConvertToHTML(final Vector arg0) {
-		try {
-			return getDelegate().ConvertToHTML(arg0);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
-	}
-
-	@Override
-	public Vector getHTMLReferences() {
-		try {
-			return getDelegate().getHTMLReferences();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
 	}
 }
