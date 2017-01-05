@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
+import lotus.domino.UserID;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
@@ -3844,6 +3845,24 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		String name = s.getEffectiveUserName();
 		int privs = this.queryAccessPrivileges(name);
 		return ACL.Privilege.getPrivileges(privs);
+	}
+
+	@Override
+	public void setUserIDForDecrypt(final UserID arg0) {
+		try {
+			getDelegate().setUserIDForDecrypt(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
+		try {
+			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
 	}
 
 }

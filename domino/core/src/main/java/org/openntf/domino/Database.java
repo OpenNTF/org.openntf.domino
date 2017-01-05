@@ -19,6 +19,8 @@ import java.io.Externalizable;
 import java.util.Comparator;
 import java.util.Vector;
 
+import lotus.domino.UserID;
+
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
@@ -231,15 +233,24 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public static enum SignDocType implements INumberEnum<Integer> {
 
 		/** The acl. */
-		ACL(Database.DBSIGN_DOC_ACL), /** The agent. */
-		AGENT(Database.DBSIGN_DOC_AGENT), /** The all. */
-		ALL(Database.DBSIGN_DOC_ALL), /** The data. */
-		DATA(Database.DBSIGN_DOC_DATA), /** The form. */
-		FORM(Database.DBSIGN_DOC_FORM), /** The help. */
-		HELP(Database.DBSIGN_DOC_HELP), /** The icon. */
-		ICON(Database.DBSIGN_DOC_ICON), /** The replformula. */
-		REPLFORMULA(Database.DBSIGN_DOC_REPLFORMULA), /** The sharedfield. */
-		SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD), /** The view. */
+		ACL(Database.DBSIGN_DOC_ACL),
+		/** The agent. */
+		AGENT(Database.DBSIGN_DOC_AGENT),
+		/** The all. */
+		ALL(Database.DBSIGN_DOC_ALL),
+		/** The data. */
+		DATA(Database.DBSIGN_DOC_DATA),
+		/** The form. */
+		FORM(Database.DBSIGN_DOC_FORM),
+		/** The help. */
+		HELP(Database.DBSIGN_DOC_HELP),
+		/** The icon. */
+		ICON(Database.DBSIGN_DOC_ICON),
+		/** The replformula. */
+		REPLFORMULA(Database.DBSIGN_DOC_REPLFORMULA),
+		/** The sharedfield. */
+		SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD),
+		/** The view. */
 		VIEW(Database.DBSIGN_DOC_VIEW);
 
 		/** The value_. */
@@ -1883,5 +1894,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public void updateFTIndex(final boolean create);
+
+	@Override
+	public void setUserIDForDecrypt(UserID arg0);
+
+	@Override
+	public void setUserIDFileForDecrypt(String arg0, String arg1);
 
 }

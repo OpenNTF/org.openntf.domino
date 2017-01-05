@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -20,6 +20,8 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Vector;
 
+import lotus.domino.UserID;
+
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
@@ -28,7 +30,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
-DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
+		DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 	public static int MAX_NATIVE_FIELD_SIZE = 32000;
 	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
 
@@ -53,7 +55,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String)
 	 */
 	@Override
@@ -61,7 +63,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, double)
 	 */
 	@Override
@@ -69,7 +71,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, int)
 	 */
 	@Override
@@ -77,7 +79,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -85,7 +87,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#attachVCard(lotus.domino.Base)
 	 */
 	@Override
@@ -93,7 +95,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#attachVCard(lotus.domino.Base, java.lang.String)
 	 */
 	@Override
@@ -101,7 +103,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#closeMIMEEntities()
 	 */
 	@Override
@@ -109,7 +111,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#closeMIMEEntities(boolean)
 	 */
 	@Override
@@ -117,7 +119,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#closeMIMEEntities(boolean, java.lang.String)
 	 */
 	@Override
@@ -125,7 +127,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#computeWithForm(boolean, boolean)
 	 */
 	@Override
@@ -133,7 +135,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#convertToMIME()
 	 */
 	@Override
@@ -141,7 +143,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#convertToMIME(int)
 	 */
 	@Override
@@ -149,7 +151,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#convertToMIME(int, int)
 	 */
 	@Override
@@ -157,7 +159,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#copyAllItems(lotus.domino.Document, boolean)
 	 */
 	@Override
@@ -165,7 +167,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#copyItem(lotus.domino.Item)
 	 */
 	@Override
@@ -173,7 +175,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#copyItem(lotus.domino.Item, java.lang.String)
 	 */
 	@Override
@@ -181,7 +183,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#copyToDatabase(lotus.domino.Database)
 	 */
 	@Override
@@ -189,7 +191,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#createMIMEEntity()
 	 */
 	@Override
@@ -197,7 +199,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#createMIMEEntity(java.lang.String)
 	 */
 	@Override
@@ -205,7 +207,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#createReplyMessage(boolean)
 	 */
 	@Override
@@ -213,7 +215,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#createRichTextItem(java.lang.String)
 	 */
 	@Override
@@ -221,7 +223,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#encrypt()
 	 */
 	@Override
@@ -229,7 +231,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#generateXML()
 	 */
 	@Override
@@ -237,7 +239,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#generateXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
@@ -245,7 +247,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#generateXML(java.io.Writer)
 	 */
 	@Override
@@ -253,7 +255,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getAttachment(java.lang.String)
 	 */
 	@Override
@@ -261,7 +263,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getAuthors()
 	 */
 	@Override
@@ -269,7 +271,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getColumnValues()
 	 */
 	@Override
@@ -277,7 +279,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getCreated()
 	 */
 	@Override
@@ -285,7 +287,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getEmbeddedObjects()
 	 */
 	@Override
@@ -293,7 +295,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getEncryptionKeys()
 	 */
 	@Override
@@ -301,7 +303,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getFirstItem(java.lang.String)
 	 */
 	@Override
@@ -309,7 +311,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
 	@Override
@@ -317,7 +319,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getFTSearchScore()
 	 */
 	@Override
@@ -325,7 +327,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getHttpURL()
 	 */
 	@Override
@@ -333,7 +335,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getInitiallyModified()
 	 */
 	@Override
@@ -341,7 +343,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItems()
 	 */
 	// @SuppressWarnings("unchecked")
@@ -350,7 +352,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValue(java.lang.String)
 	 */
 	@Override
@@ -358,7 +360,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueCustomData(java.lang.String)
 	 */
 	@Override
@@ -366,7 +368,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueCustomData(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -374,7 +376,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueCustomDataBytes(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -382,7 +384,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
 	@Override
@@ -390,7 +392,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueDouble(java.lang.String)
 	 */
 	@Override
@@ -398,7 +400,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueInteger(java.lang.String)
 	 */
 	@Override
@@ -406,7 +408,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getItemValueString(java.lang.String)
 	 */
 	@Override
@@ -414,7 +416,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getKey()
 	 */
 	@Override
@@ -422,7 +424,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getLastAccessed()
 	 */
 	@Override
@@ -430,7 +432,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getLastModified()
 	 */
 	@Override
@@ -438,7 +440,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getLockHolders()
 	 */
 	@Override
@@ -446,7 +448,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getMIMEEntity()
 	 */
 	@Override
@@ -454,7 +456,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getMIMEEntity(java.lang.String)
 	 */
 	@Override
@@ -462,7 +464,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getNameOfProfile()
 	 */
 	@Override
@@ -470,7 +472,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getNoteID()
 	 */
 	@Override
@@ -478,7 +480,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getNotesURL()
 	 */
 	@Override
@@ -486,7 +488,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getParentDatabase()
 	 */
 	@Override
@@ -494,7 +496,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getParentDocumentUNID()
 	 */
 	@Override
@@ -502,7 +504,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getParentView()
 	 */
 	@Override
@@ -510,7 +512,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getRead()
 	 */
 	@Override
@@ -518,7 +520,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getRead(java.lang.String)
 	 */
 	@Override
@@ -526,7 +528,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getReceivedItemText()
 	 */
 	@Override
@@ -534,7 +536,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getResponses()
 	 */
 	@Override
@@ -542,7 +544,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getSigner()
 	 */
 	@Override
@@ -550,7 +552,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getSize()
 	 */
 	@Override
@@ -558,7 +560,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getUniversalID()
 	 */
 	@Override
@@ -566,7 +568,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getURL()
 	 */
 	@Override
@@ -574,7 +576,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#getVerifier()
 	 */
 	@Override
@@ -582,7 +584,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#hasEmbedded()
 	 */
 	@Override
@@ -590,7 +592,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#hasItem(java.lang.String)
 	 */
 	@Override
@@ -598,7 +600,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isDeleted()
 	 */
 	@Override
@@ -606,7 +608,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isEncrypted()
 	 */
 	@Override
@@ -614,7 +616,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isEncryptOnSend()
 	 */
 	@Override
@@ -622,7 +624,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isNewNote()
 	 */
 	@Override
@@ -630,7 +632,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isPreferJavaDates()
 	 */
 	@Override
@@ -638,7 +640,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isProfile()
 	 */
 	@Override
@@ -646,7 +648,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isResponse()
 	 */
 	@Override
@@ -654,7 +656,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isSaveMessageOnSend()
 	 */
 	@Override
@@ -662,7 +664,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isSentByAgent()
 	 */
 	@Override
@@ -670,7 +672,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isSigned()
 	 */
 	@Override
@@ -678,7 +680,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isSignOnSend()
 	 */
 	@Override
@@ -686,7 +688,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#isValid()
 	 */
 	@Override
@@ -694,7 +696,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lock()
 	 */
 	@Override
@@ -702,7 +704,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lock(boolean)
 	 */
 	@Override
@@ -710,7 +712,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lock(java.lang.String)
 	 */
 	@Override
@@ -718,7 +720,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lock(java.lang.String, boolean)
 	 */
 	@Override
@@ -726,7 +728,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -735,7 +737,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -744,7 +746,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lockProvisional()
 	 */
 	@Override
@@ -752,7 +754,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lockProvisional(java.lang.String)
 	 */
 	@Override
@@ -760,7 +762,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -769,7 +771,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#makeResponse(lotus.domino.Document)
 	 */
 	@Override
@@ -777,7 +779,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#markRead()
 	 */
 	@Override
@@ -785,7 +787,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#markRead(java.lang.String)
 	 */
 	@Override
@@ -793,7 +795,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#markUnread()
 	 */
 	@Override
@@ -801,7 +803,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#markUnread(java.lang.String)
 	 */
 	@Override
@@ -809,7 +811,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#putInFolder(java.lang.String)
 	 */
 	@Override
@@ -817,7 +819,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#putInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -825,7 +827,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#remove(boolean)
 	 */
 	@Override
@@ -833,7 +835,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#removeFromFolder(java.lang.String)
 	 */
 	@Override
@@ -841,7 +843,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#removeItem(java.lang.String)
 	 */
 	@Override
@@ -849,7 +851,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#removePermanently(boolean)
 	 */
 	@Override
@@ -857,7 +859,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#renderToRTItem(lotus.domino.RichTextItem)
 	 */
 	@Override
@@ -865,7 +867,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -873,7 +875,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -881,7 +883,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -889,7 +891,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
@@ -898,7 +900,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#save()
 	 */
 	@Override
@@ -906,7 +908,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#save(boolean)
 	 */
 	@Override
@@ -914,7 +916,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#save(boolean, boolean)
 	 */
 	@Override
@@ -922,7 +924,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#save(boolean, boolean, boolean)
 	 */
 	@Override
@@ -930,7 +932,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#send()
 	 */
 	@Override
@@ -938,7 +940,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#send(boolean)
 	 */
 	@Override
@@ -946,7 +948,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#send(boolean, java.lang.String)
 	 */
 	@Override
@@ -954,7 +956,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#send(boolean, java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -963,7 +965,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#send(java.lang.String)
 	 */
 	@Override
@@ -971,7 +973,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#send(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -980,7 +982,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#setEncryptionKeys(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -989,7 +991,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#setEncryptOnSend(boolean)
 	 */
 	@Override
@@ -997,7 +999,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#setPreferJavaDates(boolean)
 	 */
 	@Override
@@ -1005,7 +1007,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#setSaveMessageOnSend(boolean)
 	 */
 	@Override
@@ -1013,7 +1015,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#setSignOnSend(boolean)
 	 */
 	@Override
@@ -1021,7 +1023,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#setUniversalID(java.lang.String)
 	 */
 	@Override
@@ -1029,7 +1031,7 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#sign()
 	 */
 	@Override
@@ -1037,10 +1039,16 @@ DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Document#unlock()
 	 */
 	@Override
 	public void unlock();
+
+	@Override
+	public void encrypt(UserID arg0);
+
+	@Override
+	public void encrypt(String arg0, String arg1);
 
 }
