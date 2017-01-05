@@ -1,7 +1,9 @@
 package org.openntf.domino.big.impl;
 
 import static org.openntf.domino.big.NoteCoordinate.Utils.getReplidFromLong;
-import javolution.util.FastMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
@@ -11,7 +13,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 public class DbCache {
-	private final FastMap<Long, Database> dbMap_ = new FastMap<Long, Database>();	//note: not Thread-safe yet.
+	private final Map<Long, Database> dbMap_ = new HashMap<Long, Database>();	//note: not Thread-safe yet.
 	private String defaultServerName_ = "";
 
 	public DbCache() {

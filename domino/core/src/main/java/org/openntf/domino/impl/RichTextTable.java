@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -34,21 +34,17 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextTable.
  */
-public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
-		org.openntf.domino.RichTextTable {
+public class RichTextTable extends BaseThreadSafe<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
+org.openntf.domino.RichTextTable {
 	//private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected RichTextTable(final lotus.domino.RichTextTable delegate, final RichTextItem parent) {
 		super(delegate, parent, NOTES_RTTABLE);
@@ -56,7 +52,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#addRow()
 	 */
 	@Override
@@ -71,7 +67,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#addRow(int)
 	 */
 	@Override
@@ -86,7 +82,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#addRow(int, int)
 	 */
 	@Override
@@ -101,7 +97,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#getAlternateColor()
 	 */
 	@Override
@@ -116,7 +112,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#getColor()
 	 */
 	@Override
@@ -131,7 +127,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#getColumnCount()
 	 */
 	@Override
@@ -154,7 +150,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#getRowCount()
 	 */
 	@Override
@@ -169,7 +165,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#getRowLabels()
 	 */
 	@SuppressWarnings("unchecked")
@@ -185,7 +181,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#getStyle()
 	 */
 	@Override
@@ -200,7 +196,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#isRightToLeft()
 	 */
 	@Override
@@ -215,7 +211,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#remove()
 	 */
 	@Override
@@ -230,7 +226,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#removeRow()
 	 */
 	@Override
@@ -245,7 +241,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#removeRow(int)
 	 */
 	@Override
@@ -260,7 +256,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#removeRow(int, int)
 	 */
 	@Override
@@ -275,7 +271,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#setAlternateColor(lotus.domino.ColorObject)
 	 */
 	@Override
@@ -290,7 +286,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#setColor(lotus.domino.ColorObject)
 	 */
 	@Override
@@ -305,7 +301,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#setRightToLeft(boolean)
 	 */
 	@Override
@@ -320,7 +316,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#setRowLabels(java.util.Vector)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -339,7 +335,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextTable#setStyle(int)
 	 */
 	@Override
@@ -358,7 +354,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
@@ -368,7 +364,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -378,7 +374,7 @@ public class RichTextTable extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

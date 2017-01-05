@@ -163,7 +163,17 @@ public enum DGraphUtils {
 				Object val2 = getFramedProperty(graph_, e2, key);
 				Comparable castVal1 = (Comparable) TypeUtils.objectToClass(val1, compareType, null);
 				Comparable castVal2 = (Comparable) TypeUtils.objectToClass(val2, compareType, null);
-				int curComp = castVal1.compareTo(castVal2);
+				int curComp = 0;
+				if (String.class.equals(compareType)) {
+					curComp = String.CASE_INSENSITIVE_ORDER.compare((castVal1 == null ? "" : (String) castVal1),
+							(castVal2 == null ? "" : (String) castVal2));
+				} else {
+					if (castVal1 == null || castVal2 == null) {
+						result = 0;
+					} else {
+						curComp = castVal1.compareTo(castVal2);
+					}
+				}
 				if (curComp != 0) {
 					if (desc_) {
 						result = curComp * -1;
@@ -213,9 +223,14 @@ public enum DGraphUtils {
 					Comparable castVal2 = (Comparable) TypeUtils.objectToClass(val2, compareType, null);
 					int curComp = 0;
 					if (String.class.equals(compareType)) {
-						curComp = String.CASE_INSENSITIVE_ORDER.compare((String) val1, (String) val2);
+						curComp = String.CASE_INSENSITIVE_ORDER.compare((castVal1 == null ? "" : (String) castVal1),
+								(castVal2 == null ? "" : (String) castVal2));
 					} else {
-						curComp = castVal1.compareTo(castVal2);
+						if (castVal1 == null || castVal2 == null) {
+							result = 0;
+						} else {
+							curComp = castVal1.compareTo(castVal2);
+						}
 					}
 					if (curComp != 0) {
 						if (desc_) {
@@ -305,6 +320,18 @@ public enum DGraphUtils {
 	public static Class<?> findInterface(final Object frame) {
 		Class<?>[] interfaces = frame.getClass().getInterfaces();
 		return interfaces[interfaces.length - 1];
+	}
+
+	public static Class<?>[] getTypesForFrame(final Object element) {
+		return element.getClass().getInterfaces();
+	}
+
+	public static String getInterfaceList(final Object element) {
+		StringBuilder sb = new StringBuilder();
+		for (Class<?> klazz : getTypesForFrame(element)) {
+			sb.append(klazz.getName() + ",");
+		}
+		return sb.toString();
 	}
 
 	public static Map<CaseInsensitiveString, Method> getGetters(final FramedGraph<?> graph, final VertexFrame frame) {

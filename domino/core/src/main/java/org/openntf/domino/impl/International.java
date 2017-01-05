@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -25,20 +25,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class International.
  */
-public class International extends BaseNonThreadSafe<org.openntf.domino.International, lotus.domino.International, Session> implements
-		org.openntf.domino.International {
+public class International extends BaseThreadSafe<org.openntf.domino.International, lotus.domino.International, Session> implements
+org.openntf.domino.International {
 
 	/**
 	 * Instantiates a new International.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected International(final lotus.domino.International delegate, final Session parent) {
 		super(delegate, parent, NOTES_INTL);
@@ -46,7 +42,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getAMString()
 	 */
 	@Override
@@ -61,7 +57,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getCurrencyDigits()
 	 */
 	@Override
@@ -76,7 +72,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getCurrencySymbol()
 	 */
 	@Override
@@ -91,7 +87,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getDateSep()
 	 */
 	@Override
@@ -106,7 +102,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getDecimalSep()
 	 */
 	@Override
@@ -121,7 +117,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -131,7 +127,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getPMString()
 	 */
 	@Override
@@ -146,7 +142,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getThousandsSep()
 	 */
 	@Override
@@ -161,7 +157,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getTimeSep()
 	 */
 	@Override
@@ -176,7 +172,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getTimeZone()
 	 */
 	@Override
@@ -191,7 +187,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getToday()
 	 */
 	@Override
@@ -206,7 +202,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getTomorrow()
 	 */
 	@Override
@@ -221,7 +217,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#getYesterday()
 	 */
 	@Override
@@ -236,7 +232,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isCurrencySpace()
 	 */
 	@Override
@@ -251,7 +247,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isCurrencySuffix()
 	 */
 	@Override
@@ -266,7 +262,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isCurrencyZero()
 	 */
 	@Override
@@ -281,7 +277,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isDST()
 	 */
 	@Override
@@ -296,7 +292,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isDateDMY()
 	 */
 	@Override
@@ -311,7 +307,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isDateMDY()
 	 */
 	@Override
@@ -326,7 +322,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isDateYMD()
 	 */
 	@Override
@@ -341,7 +337,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.International#isTime24Hour()
 	 */
 	@Override
@@ -356,7 +352,7 @@ public class International extends BaseNonThreadSafe<org.openntf.domino.Internat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

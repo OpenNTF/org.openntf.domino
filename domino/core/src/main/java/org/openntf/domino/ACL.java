@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.EnumSet;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
@@ -104,6 +105,68 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 		}
 	}
 
+	public static enum Privilege {
+		CREATE_DOCS(Database.DBACL_CREATE_DOCS), DELETE_DOCS(Database.DBACL_DELETE_DOCS),
+		CREATE_PRIVATE_AGENTS(Database.DBACL_CREATE_PRIV_AGENTS), CREATE_PRIVATE_VIEWS(Database.DBACL_CREATE_PRIV_FOLDERS_VIEWS),
+		CREATE_SHARED_VIEWS(Database.DBACL_CREATE_SHARED_FOLDERS_VIEWS), CREATE_LS_JAVA_AGENTS(Database.DBACL_CREATE_SCRIPT_AGENTS),
+		READ_PUBLIC_DOCS(Database.DBACL_READ_PUBLIC_DOCS), WRITE_PUBLIC_DOCS(Database.DBACL_WRITE_PUBLIC_DOCS),
+		REPLICATE_COPY_DOCS(Database.DBACL_REPLICATE_COPY_DOCS);
+
+		public static Privilege getPrivilege(final int value) {
+			for (Privilege privilege : Privilege.values()) {
+				if (privilege.getValue() == value) {
+					return privilege;
+				}
+			}
+			return null;
+		}
+
+		public static EnumSet<Privilege> getPrivileges(final int value) {
+			EnumSet<Privilege> result = EnumSet.noneOf(Privilege.class);
+			if ((value & Database.DBACL_CREATE_DOCS) > 0)
+				result.add(CREATE_DOCS);
+			if ((value & Database.DBACL_DELETE_DOCS) > 0)
+				result.add(DELETE_DOCS);
+			if ((value & Database.DBACL_CREATE_PRIV_AGENTS) > 0)
+				result.add(CREATE_PRIVATE_AGENTS);
+			if ((value & Database.DBACL_CREATE_PRIV_FOLDERS_VIEWS) > 0)
+				result.add(CREATE_PRIVATE_VIEWS);
+			if ((value & Database.DBACL_CREATE_SHARED_FOLDERS_VIEWS) > 0)
+				result.add(CREATE_SHARED_VIEWS);
+			if ((value & Database.DBACL_CREATE_SCRIPT_AGENTS) > 0)
+				result.add(CREATE_LS_JAVA_AGENTS);
+			if ((value & Database.DBACL_READ_PUBLIC_DOCS) > 0)
+				result.add(READ_PUBLIC_DOCS);
+			if ((value & Database.DBACL_WRITE_PUBLIC_DOCS) > 0)
+				result.add(WRITE_PUBLIC_DOCS);
+			if ((value & Database.DBACL_REPLICATE_COPY_DOCS) > 0)
+				result.add(REPLICATE_COPY_DOCS);
+			return result;
+		}
+
+		/** The value_. */
+		private final int value_;
+
+		/**
+		 * Instantiates a new level.
+		 * 
+		 * @param value
+		 *            the value
+		 */
+		private Privilege(final int value) {
+			value_ = value;
+		}
+
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
+		public int getValue() {
+			return value_;
+		}
+	}
+
 	/**
 	 * Adds a role with the specified name to an ACL.
 	 * 
@@ -122,7 +185,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 *            name, but hierarchical names can be in abbreviated format. Case is not significant.
 	 * @param level
 	 *            The level that you want to assign to this person, group, or server in the ACL. May be any of the following :<br>
-	 * <br>
+	 *            <br>
 	 *            <ul>
 	 *            <li>ACL.LEVEL_NOACCESS (0)</li>
 	 *            <li>ACL.LEVEL_DEPOSITOR (1)</li>
@@ -411,7 +474,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * 
 	 * @param level
 	 *            The new maximum Internet level you want to set in the ACL. May be any of the following :<br>
-	 * <br>
+	 *            <br>
 	 *            <ul>
 	 *            <li>ACL.LEVEL_NOACCESS (0)
 	 *            <li>ACL.LEVEL_DEPOSITOR (1)

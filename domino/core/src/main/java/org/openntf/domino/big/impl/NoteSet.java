@@ -7,24 +7,25 @@ import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-
-import javolution.util.FastSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class NoteSet implements Set<NoteCoordinate>, Externalizable {
-	protected FastSet<NoteCoordinate> delegate_;
+	protected SortedSet<NoteCoordinate> delegate_;
 	protected DbCache localCache_ = null;
 
 	public NoteSet() {
-		delegate_ = new FastSet<NoteCoordinate>();
+		delegate_ = new TreeSet<NoteCoordinate>();
 	}
 
 	public NoteSet(final boolean concurrent) {
-		delegate_ = new FastSet<NoteCoordinate>().atomic();
+		delegate_ = new ConcurrentSkipListSet<NoteCoordinate>();
 	}
 
 	public NoteSet(final DbCache cache) {
 		localCache_ = cache;
-		delegate_ = new FastSet<NoteCoordinate>();
+		delegate_ = new TreeSet<NoteCoordinate>();
 	}
 
 	@Override

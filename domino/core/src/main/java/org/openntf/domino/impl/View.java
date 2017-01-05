@@ -59,7 +59,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 /**
  * The Class View.
  */
-public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
+public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
 	private transient Map<String, org.openntf.domino.ViewColumn> columnMap_;
@@ -114,10 +114,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected View(final lotus.domino.View delegate, final Database parent) {
 		super(delegate, parent, NOTES_VIEW);
@@ -613,28 +609,6 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
-	 */
-	@Override
-	public ViewNavigator createViewNavFrom(final Object entry) {
-		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
-		try {
-			getDelegate().setAutoUpdate(false);
-			getDelegate().setEnableNoteIDsForCategories(true);
-			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
-			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
-			return result;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		} finally {
-			s_recycle(recycleThis);
-		}
-		return null;
-	}
-
 	/**
 	 * This method is neccessary to get some Backend-functions working.<br>
 	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
@@ -669,6 +643,28 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 		}
 		return null;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
+	 */
+	@Override
+	public ViewNavigator createViewNavFrom(final Object entry) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			getDelegate().setAutoUpdate(false);
+			getDelegate().setEnableNoteIDsForCategories(true);
+			ViewNavigator result = fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.SCHEMA, this);
+			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.FROM);
+			return result;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
+		}
+		return null;
 	}
 
 	/*
@@ -910,10 +906,10 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	}
 
 	/**
-	 * @deprecated RPr: This might be very slow, so I suggest not to use this
+	 * RPr: This might be very slow, so I suggest not to use this NTF: No, it isn't slow. In fact, it's very fast.
 	 */
 	@Override
-	@Deprecated
+	//	@Deprecated
 	public NoteCollection getNoteCollection() {
 		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
 		nc.setSelectDocuments(true);
@@ -1844,7 +1840,7 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	@Override
 	public boolean isConflict() {
 		if (!isCalendar()) {
-			return false;	//NTF conflict checking only applies to calendar views
+			return false;//NTF conflict checking only applies to calendar views
 		}
 		try {
 			return getDelegate().isConflict();
@@ -3138,4 +3134,45 @@ public class View extends BaseThreadSafe<org.openntf.domino.View, lotus.domino.V
 	public String getMetaversalID() {
 		return getAncestorDatabase().getReplicaID() + getUniversalID();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isResortable()
+	 */
+	@Override
+	public boolean isResortable() {
+		if (getDocument().hasItem("$Collation1")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getIndexCount()
+	 */
+	@Override
+	public int getIndexCount() {
+		int count = 1;
+		for (int x = 1; x < 100; x++) {
+			if (getDocument().hasItem("$Collation" + x)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	// TODO uncomment when this exists in the core API
+	//	@Override
+	//	public ViewNavigator createViewNavFromKey(final Vector arg0, final boolean arg1) {
+	//		try {
+	//			getDelegate().setAutoUpdate(false);
+	//			getDelegate().setEnableNoteIDsForCategories(true);
+	//			ViewNavigator result = fromLotus(getDelegate().createViewNavFromKey(arg0, arg1), ViewNavigator.SCHEMA, this);
+	//			((org.openntf.domino.impl.ViewNavigator) result).setType(ViewNavigator.Types.KEYS);
+	//			return result;
+	//		} catch (Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//		return null;
+	//	}
 }

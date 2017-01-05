@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -38,8 +38,8 @@ import org.openntf.domino.utils.Strings;
  * The Class Name.
  */
 
-public class Name extends BaseNonThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name,
-Comparable<Name>, Cloneable {
+public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.Name, Session>
+		implements org.openntf.domino.Name, Comparable<Name>, Cloneable {
 	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
@@ -59,7 +59,7 @@ Comparable<Name>, Cloneable {
 
 	//	/**
 	//	 * Optional Constructor
-	//	 * 
+	//	 *
 	//	 * @param session
 	//	 *            Session used for Name processing
 	//	 */
@@ -70,7 +70,7 @@ Comparable<Name>, Cloneable {
 
 	//	/**
 	//	 * Optional Constructor to clone a name
-	//	 * 
+	//	 *
 	//	 * @param name
 	//	 *            the name to clone
 	//	 */
@@ -81,10 +81,10 @@ Comparable<Name>, Cloneable {
 
 	//	/**
 	//	 * Optional Constructor
-	//	 * 
+	//	 *
 	//	 * @param session
 	//	 *            Session used for Name processing
-	//	 * 
+	//	 *
 	//	 * @param name
 	//	 *            String used to construct the Name object
 	//	 */
@@ -95,7 +95,7 @@ Comparable<Name>, Cloneable {
 
 	//	/**
 	//	 * Optional Constructor
-	//	 * 
+	//	 *
 	//	 * @param name
 	//	 *            String used to construct the Name object
 	//	 */
@@ -106,15 +106,11 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Instantiates a new name.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	public Name(final lotus.domino.Name delegate, final Session parent) {
 		super(delegate, parent, NOTES_NAME);
@@ -158,15 +154,15 @@ Comparable<Name>, Cloneable {
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * private methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 	//	/**
 	//	 * Flag indicating if the object is Hierarchical
-	//	 * 
+	//	 *
 	//	 * @param arg0
 	//	 *            Hierarchical indicator flag
 	//	 */
@@ -176,7 +172,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the NamePartsMap for the object.
-	 * 
+	 *
 	 * @return NamePartsMap for the object.
 	 */
 	private NamePartsMap getNamePartsMap() {
@@ -188,7 +184,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Sets the NamePartsMap for the object.
-	 * 
+	 *
 	 * @param namePartsMap
 	 *            NamePartsMap for the object.
 	 */
@@ -244,9 +240,9 @@ Comparable<Name>, Cloneable {
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * protected methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
@@ -271,15 +267,15 @@ Comparable<Name>, Cloneable {
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * Other public methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 	/**
 	 * Flag indicating if the object is Hierarchical
-	 * 
+	 *
 	 * @return Hierarchical indicator flag
 	 */
 	@Override
@@ -306,7 +302,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Parses the source string and sets the appropriate RFC822 values.
-	 * 
+	 *
 	 * @param string
 	 *            RFC822 source string from which to set the appropriate RFC822 values.
 	 */
@@ -316,7 +312,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Indicates whether the object has RFC82xContent
-	 * 
+	 *
 	 * @return Flag indicating if the object has RFC82xContent
 	 */
 	public boolean isHasRFC82xContent() {
@@ -337,7 +333,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Sets the Name for the object.
-	 * 
+	 *
 	 * @param name
 	 *            Name for the object.
 	 */
@@ -408,7 +404,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Sets the Name for the object.
-	 * 
+	 *
 	 * @param name
 	 *            Name for the object.
 	 */
@@ -428,12 +424,12 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Name Part for the specified key.
-	 * 
+	 *
 	 * @param key
 	 *            Key identifying the specific mapped Name Part string to return.
-	 * 
+	 *
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
-	 * 
+	 *
 	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.domino.ext.Name.NamePartKey)
 	 * @see java.util.HashMap#get(Object)
 	 */
@@ -456,7 +452,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Source String used to construct this object.
-	 * 
+	 *
 	 * @return the sourceString used to construct this object
 	 */
 	public String getSourceString() {
@@ -465,7 +461,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Abbreviated form of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getAbbreviated()
 	 */
 	@Override
@@ -476,7 +472,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr821 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr821()
 	 */
 	@Override
@@ -488,7 +484,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822Comment1 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment1()
 	 */
 	@Override
@@ -499,7 +495,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822Comment2 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment2()
 	 */
 	@Override
@@ -510,7 +506,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822Comment3 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment3()
 	 */
 	@Override
@@ -521,7 +517,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822LocalPart portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822LocalPart()
 	 */
 	@Override
@@ -532,7 +528,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822Phrase portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Phrase()
 	 */
 	@Override
@@ -543,7 +539,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822Full portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
 	public String getAddr822Full() {
@@ -553,7 +549,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Addr822FullFirstLast portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822FullFirstLast()
 	 */
 	public String getAddr822FullFirstLast() {
@@ -563,7 +559,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Administration Management Domain Name portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getADMD()
 	 */
 	@Override
@@ -574,7 +570,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Canonical form of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getCanonical()
 	 */
 	@Override
@@ -585,7 +581,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Common portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getCommon()
 	 */
 	@Override
@@ -596,7 +592,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Country portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getCountry()
 	 */
 	@Override
@@ -607,7 +603,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Generation portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getGeneration()
 	 */
 	@Override
@@ -618,7 +614,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Given portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getGiven()
 	 */
 	@Override
@@ -629,7 +625,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Initials portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getInitials()
 	 */
 	@Override
@@ -640,7 +636,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Keyword portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getKeyword()
 	 */
 	@Override
@@ -651,7 +647,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Language portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getLanguage()
 	 */
 	@Override
@@ -662,7 +658,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Organization portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrganization()
 	 */
 	@Override
@@ -673,7 +669,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the OrgUnit1 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit1()
 	 */
 	@Override
@@ -684,7 +680,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the OrgUnit2 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit2()
 	 */
 	@Override
@@ -695,7 +691,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the OrgUnit3 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit3()
 	 */
 	@Override
@@ -706,7 +702,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the OrgUnit4 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit4()
 	 */
 	@Override
@@ -717,7 +713,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Private Management Domain Name portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getPRMD()
 	 */
 	@Override
@@ -728,7 +724,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the NameType (Hierarchical/Flat/RFC8229)
-	 * 
+	 *
 	 */
 	@Override
 	public NameFormat getNameFormat() {
@@ -738,17 +734,17 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the RFC821 or RFC822 internet address
-	 * 
+	 *
 	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
 	 * <ul>
 	 * <li>jbg@us.acme.com
 	 * <li>"John B Goode" <jbg@us.acme.com>
 	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
 	 * </ul>
-	 * 
+	 *
 	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
 	 *         returned.
-	 * 
+	 *
 	 * @see Name#getAddr821()
 	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
@@ -760,7 +756,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the Surname portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getSurname()
 	 */
 	@Override
@@ -771,7 +767,7 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Gets the IDprefix portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.NamePartsMap#getIDprefix()
 	 */
 	@Override
@@ -783,10 +779,10 @@ Comparable<Name>, Cloneable {
 	/**
 	 * Determines if any portion or form of the name object's internal NamePartsMap values are equal to the passed in string. Performs a
 	 * case-insensitive check.
-	 * 
+	 *
 	 * @param string
 	 *            String tom compare values against
-	 * 
+	 *
 	 * @return Flag indicating if any of the values are equal to the string.
 	 */
 	public boolean equalsIgnoreCase(final String compString) {
@@ -795,19 +791,19 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Determines if one of the Name's properties begins with the prefix.
-	 * 
+	 *
 	 * Checks the following properties, in order:
 	 * <ul>
 	 * <li>Abbreviated</li>
 	 * <li>Canonical</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param prefix
 	 *            Value to compare to the properties of the Name
-	 * 
+	 *
 	 * @param casesensitive
 	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
-	 * 
+	 *
 	 * @return Flag indicating if any of the mapped values begin with the prefix.
 	 */
 	public boolean startsWith(final String prefix, final boolean casesensitive) {
@@ -819,8 +815,8 @@ Comparable<Name>, Cloneable {
 			if (casesensitive) {
 				return ((this.getAbbreviated().startsWith(prefix)) || (this.getCanonical().startsWith(prefix)));
 			} else {
-				return ((Strings.startsWithIgnoreCase(this.getAbbreviated(), prefix)) || (Strings.startsWithIgnoreCase(this.getCanonical(),
-						prefix)));
+				return ((Strings.startsWithIgnoreCase(this.getAbbreviated(), prefix))
+						|| (Strings.startsWithIgnoreCase(this.getCanonical(), prefix)));
 			}
 		}
 
@@ -829,16 +825,16 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Determines if the name is a member of the passed in set of name strings.
-	 * 
+	 *
 	 * Conditionally expands the names list prior to checking.
-	 * 
+	 *
 	 * @param session
 	 *            Session used for generating Name objects
 	 * @param names
 	 *            String name values to check against
 	 * @param expandNames
 	 *            Flag indicating if the set of name strings should be expanded.
-	 * 
+	 *
 	 * @return Flag indicating if the Name is a member of the set of strings.
 	 */
 	public boolean isMemberOfNames(final Session session, final TreeSet<String> names, final boolean expandNames) {
@@ -878,7 +874,7 @@ Comparable<Name>, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -888,7 +884,7 @@ Comparable<Name>, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -899,9 +895,9 @@ Comparable<Name>, Cloneable {
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * hashcode, equals, and comparison methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
@@ -948,13 +944,13 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Compares this object with another Name
-	 * 
+	 *
 	 * @param arg0
 	 *            Name object to be compared.
-	 * 
+	 *
 	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
-	 * 
-	 * 
+	 *
+	 *
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -967,20 +963,20 @@ Comparable<Name>, Cloneable {
 
 	/**
 	 * Default Comparable implementation. (Natural Comparison Method)
-	 * 
+	 *
 	 * <ol>
 	 * <li>Equality using .equals() method</li>
 	 * <li>Abbreviated Name</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param arg0
 	 *            First Name object for comparison.
 	 * @param arg1
 	 *            Second Name object for comparison.
-	 * 
+	 *
 	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
-	 * 
-	 * 
+	 *
+	 *
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL

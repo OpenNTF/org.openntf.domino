@@ -29,4 +29,6 @@ public @interface TypedProperty {
 	public boolean derived() default false;
 
 	public boolean specified() default false;
+
+	public String defaultValue() default "";
 }

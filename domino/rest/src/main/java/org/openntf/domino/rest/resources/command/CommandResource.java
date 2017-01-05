@@ -41,7 +41,7 @@ public class CommandResource extends AbstractResource {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
-		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true);
+		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
 		// writer.outObject(null);
 		List<String> commands = pm.get(Parameters.COMMAND);
 		if (commands != null && commands.size() > 0) {

@@ -73,7 +73,14 @@ public interface Session {
 		 *
 		 * @since ODA 3.0.0
 		 */
-		PENDANTIC_GC_TRACKING(false);
+		PEDANTIC_GC_TRACKING(false),
+
+		/**
+		 *
+		 * Hex values such as replicaid, unid and noteid are forced to lower case before being returned
+		 *
+		 */
+		FORCE_HEX_LOWER_CASE;
 
 		private final boolean khan_;
 
@@ -92,7 +99,6 @@ public interface Session {
 		public boolean isKhan() {
 			return khan_;
 		}
-
 	}
 
 	/**
@@ -210,7 +216,7 @@ public interface Session {
 	 * </p>
 	 *
 	 * <p>
-	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
+	 * The groups include those to which the user name belongs in the Domino Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
 	 *

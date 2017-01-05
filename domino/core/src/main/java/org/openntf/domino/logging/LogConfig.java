@@ -61,17 +61,20 @@ public class LogConfig {
 					_formatterGetInstance = _formatterClass.getMethod("getInstance");
 				}
 				Object o = _handlerConfigFromProps.invoke(null, _props);
-				if (!(o instanceof LogHandlerConfigIF))
+				if (!(o instanceof LogHandlerConfigIF)) {
 					throw new IllegalArgumentException(_handlerClassName + ".configFromProps returned " + o.getClass().getName());
+				}
 				_handlerConfig = (LogHandlerConfigIF) o;
 			} catch (Exception e) {
 				System.err.println("LogConfig: Caught " + e.getClass().getName() + ": " + e.getMessage());
 				e.printStackTrace();
 				return false;
 			}
-			if (_minimalLevelName != null)
-				if ((_minimalLevel = LogConfig.parseLevel(_minimalLevelName)) == null)
+			if (_minimalLevelName != null) {
+				if ((_minimalLevel = LogConfig.parseLevel(_minimalLevelName)) == null) {
 					return false;
+				}
+			}
 			return true;
 		}
 	}
@@ -112,15 +115,18 @@ public class LogConfig {
 
 			boolean checkYourself(final String[] loggerNames) {
 				int i;
-				for (i = 0; i < loggerNames.length; i++)
-					if (_logPrefix.startsWith(loggerNames[i]))
+				for (i = 0; i < loggerNames.length; i++) {
+					if (_logPrefix.startsWith(loggerNames[i])) {
 						break;
+					}
+				}
 				if (i == loggerNames.length) {
 					System.err.println("LogConfig: Invalid prefix: " + _logPrefix);
 					return false;
 				}
-				if ((_level = LogConfig.parseLevel(_levelName)) == null)
+				if ((_level = LogConfig.parseLevel(_levelName)) == null) {
 					return false;
+				}
 				if (_formulaCondition != null) {
 					try {
 						_parsedCond = _myFormulaParser.get().parse(_formulaCondition);
@@ -160,8 +166,9 @@ public class LogConfig {
 			}
 
 			public void setHandlersInUse() {
-				for (int i = 0; i < _logHandlerObjs.length; i++)
+				for (int i = 0; i < _logHandlerObjs.length; i++) {
 					_logHandlerObjs[i]._inUse = true;
+				}
 			}
 		}
 
@@ -188,11 +195,14 @@ public class LogConfig {
 		}
 
 		boolean checkYourself() {
-			if ((_defaultLevel = LogConfig.parseLevel(_defaultLevelName)) == null)
+			if ((_defaultLevel = LogConfig.parseLevel(_defaultLevelName)) == null) {
 				return false;
-			for (L_LogFilterConfigEntry fce : _logFCEList)
-				if (!fce.checkYourself(_loggerNames))
+			}
+			for (L_LogFilterConfigEntry fce : _logFCEList) {
+				if (!fce.checkYourself(_loggerNames)) {
 					return false;
+				}
+			}
 			return true;
 		}
 
@@ -211,9 +221,11 @@ public class LogConfig {
 					return false;
 				}
 			}
-			for (L_LogFilterConfigEntry fce : _logFCEList)
-				if (!fce.checkHandlers(definedHandlers))
+			for (L_LogFilterConfigEntry fce : _logFCEList) {
+				if (!fce.checkHandlers(definedHandlers)) {
 					return false;
+				}
+			}
 			return true;
 		}
 
@@ -228,10 +240,12 @@ public class LogConfig {
 		}
 
 		public void setHandlersInUse() {
-			for (int i = 0; i < _defaultHandlers.length; i++)
+			for (int i = 0; i < _defaultHandlers.length; i++) {
 				_defaultHandlers[i]._inUse = true;
-			for (L_LogFilterConfigEntry fce : _logFCEList)
+			}
+			for (L_LogFilterConfigEntry fce : _logFCEList) {
 				fce.setHandlersInUse();
+			}
 		}
 	}
 
@@ -241,25 +255,33 @@ public class LogConfig {
 
 	public static LogConfig fromProperties(final Properties props) {
 		LogConfig ret = new LogConfig();
-		if (!ret.initFromProperties(props))
+		if (!ret.initFromProperties(props)) {
 			return null;
+		}
 		return ret;
 	}
 
 	private boolean initFromProperties(final Properties props) {
 		String[] propList;
-		if ((propList = readAndCheckPropAsList(props, "Handlers", true)) == null)
+		if ((propList = readAndCheckPropAsList(props, "Handlers", true)) == null) {
 			return false;
-		for (int i = 0; i < propList.length; i++)
-			if (!initOneLogHandler(props, propList[i]))
+		}
+		for (int i = 0; i < propList.length; i++) {
+			if (!initOneLogHandler(props, propList[i])) {
 				return false;
-		if ((propList = readAndCheckPropAsList(props, "FilterHandlers", true)) == null)
+			}
+		}
+		if ((propList = readAndCheckPropAsList(props, "FilterHandlers", true)) == null) {
 			return false;
-		for (int i = 0; i < propList.length; i++)
-			if (!initOneFilterHandler(props, propList[i]))
+		}
+		for (int i = 0; i < propList.length; i++) {
+			if (!initOneFilterHandler(props, propList[i])) {
 				return false;
-		if (!checkLogHandlerRefs())
+			}
+		}
+		if (!checkLogHandlerRefs()) {
 			return false;
+		}
 		throwExpiredFCEs();
 		setHandlersInUse();
 		return true;
@@ -268,8 +290,9 @@ public class LogConfig {
 	private boolean initOneLogHandler(final Properties props, final String handlerName) {
 		String keyPref = "Handler." + handlerName;
 		String className = readProp(props, keyPref + ".Class", true);
-		if (className == null)
+		if (className == null) {
 			return false;
+		}
 		String formatterClassName = readProp(props, keyPref + ".Formatter", false);
 		String minLevelName = readProp(props, keyPref + ".MinimalLevel", false);
 		String props4Handler = readProp(props, keyPref + ".Props", false);
@@ -283,17 +306,20 @@ public class LogConfig {
 		String[] loggerNames = readAndCheckPropAsList(props, keyPref + ".LoggerPrefices", true);
 		String defaultLevelName = readProp(props, keyPref + ".DefaultLevel", true);
 		String[] defaultHandlerNames = readAndCheckPropAsList(props, keyPref + ".DefaultHandlers", true);
-		if (loggerNames == null || defaultLevelName == null || defaultHandlerNames == null)
+		if (loggerNames == null || defaultLevelName == null || defaultHandlerNames == null) {
 			return false;
+		}
 		L_LogFilterHandler lfh = new L_LogFilterHandler(filterHandlerName, loggerNames, defaultLevelName, defaultHandlerNames);
 		_logFilterHandlers.put(filterHandlerName, lfh);
 		for (int i = 1;; i++) {
 			String keyPrefI = keyPref + ".FCE" + i;
 			String prefix = readProp(props, keyPrefI, false);
-			if (prefix == null)
+			if (prefix == null) {
 				break;
-			if (!initOneFCE(props, prefix, keyPrefI, lfh))
+			}
+			if (!initOneFCE(props, prefix, keyPrefI, lfh)) {
 				return false;
+			}
 		}
 		return lfh.checkYourself();
 	}
@@ -301,8 +327,9 @@ public class LogConfig {
 	private boolean initOneFCE(final Properties props, final String prefix, final String keyPrefI, final L_LogFilterHandler lfh) {
 		String levelName = readProp(props, keyPrefI + ".Level", true);
 		String[] handlerNames = readAndCheckPropAsList(props, keyPrefI + ".Handlers", true);
-		if (levelName == null || handlerNames == null)
+		if (levelName == null || handlerNames == null) {
 			return false;
+		}
 		String formulaCond = readProp(props, keyPrefI + ".FormulaCondition", false);
 		String validUntil = readProp(props, keyPrefI + ".ValidUntil", false);
 		lfh.addFCE(prefix, levelName, handlerNames, formulaCond, validUntil);
@@ -310,44 +337,52 @@ public class LogConfig {
 	}
 
 	private boolean checkLogHandlerRefs() {
-		for (L_LogFilterHandler lfh : _logFilterHandlers.values())
-			if (!lfh.checkHandlers(_logHandlers))
+		for (L_LogFilterHandler lfh : _logFilterHandlers.values()) {
+			if (!lfh.checkHandlers(_logHandlers)) {
 				return false;
+			}
+		}
 		return true;
 	}
 
 	private void throwExpiredFCEs() {
 		Date now = new Date();
-		for (L_LogFilterHandler lfh : _logFilterHandlers.values())
+		for (L_LogFilterHandler lfh : _logFilterHandlers.values()) {
 			lfh.throwExpiredFCEs(now);
+		}
 	}
 
 	private void setHandlersInUse() {
-		for (L_LogFilterHandler lfh : _logFilterHandlers.values())
+		for (L_LogFilterHandler lfh : _logFilterHandlers.values()) {
 			lfh.setHandlersInUse();
+		}
 	}
 
 	/*--------------------------------------------------------------*/
 	private static String readProp(final Properties props, final String key, final boolean required) {
 		String ret = props.getProperty(key);
-		if (ret != null && ret.isEmpty())
+		if (ret != null && ret.isEmpty()) {
 			ret = null;
-		if (required && ret == null)
+		}
+		if (required && ret == null) {
 			System.err.println("LogConfig: Required Property " + key + " isn't supplied");
+		}
 		return ret;
 	}
 
 	private static String[] readPropAsList(final Properties props, final String key, final boolean required) {
 		String prop = readProp(props, key, required);
-		if (prop == null)
+		if (prop == null) {
 			return null;
+		}
 		return splitAlongComma(prop);
 	}
 
 	public static String[] splitAlongComma(final String prop) {
 		String[] ret = prop.split(",");
-		for (int i = 0; i < ret.length; i++)
+		for (int i = 0; i < ret.length; i++) {
 			ret[i] = ret[i].trim();
+		}
 		Arrays.sort(ret);
 		return ret;
 	}
@@ -357,38 +392,48 @@ public class LogConfig {
 			System.err.println("LogConfig: Multiple property for key " + key + " contains empty part");
 			return false;
 		}
-		for (int i = 0; i < propList.length - 1; i++)
+		for (int i = 0; i < propList.length - 1; i++) {
 			if (propList[i].equals(propList[i + 1])) {
 				System.err.println("LogConfig: Multiple property for key " + key + " contains duplicates: " + propList[i]);
 				return false;
 			}
+		}
 		return true;
 	}
 
 	private static String[] readAndCheckPropAsList(final Properties props, final String key, final boolean required) {
 		String[] ret = readPropAsList(props, key, required);
-		if (ret != null)
-			if (!checkPropList(key, ret))
+		if (ret != null) {
+			if (!checkPropList(key, ret)) {
 				ret = null;
+			}
+		}
 		return ret;
 	}
 
 	/*--------------------------------------------------------------*/
 	public static Level parseLevel(final String levelName) {
-		if (Level.SEVERE.getName().equals(levelName))
+		if (Level.SEVERE.getName().equals(levelName)) {
 			return Level.SEVERE;
-		if (Level.WARNING.getName().equals(levelName))
+		}
+		if (Level.WARNING.getName().equals(levelName)) {
 			return Level.WARNING;
-		if (Level.INFO.getName().equals(levelName))
+		}
+		if (Level.INFO.getName().equals(levelName)) {
 			return Level.INFO;
-		if (Level.CONFIG.getName().equals(levelName))
+		}
+		if (Level.CONFIG.getName().equals(levelName)) {
 			return Level.CONFIG;
-		if (Level.FINE.getName().equals(levelName))
+		}
+		if (Level.FINE.getName().equals(levelName)) {
 			return Level.FINE;
-		if (Level.FINER.getName().equals(levelName))
+		}
+		if (Level.FINER.getName().equals(levelName)) {
 			return Level.FINER;
-		if (Level.FINEST.getName().equals(levelName))
+		}
+		if (Level.FINEST.getName().equals(levelName)) {
 			return Level.FINEST;
+		}
 		System.err.println("LogConfig.parseLevel: Invalid name for log level: " + levelName);
 		return null;
 	}

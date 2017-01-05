@@ -43,7 +43,7 @@ import com.ibm.commons.util.StringUtil;
 /**
  * The Class Agent.
  */
-public class Agent extends BaseThreadSafe<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
+public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
 	private static final Logger log_ = Logger.getLogger(Agent.class.getName());
 	private String names_;
 

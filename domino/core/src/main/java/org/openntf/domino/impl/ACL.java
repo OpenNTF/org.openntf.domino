@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ACL.
  */
-public class ACL extends BaseNonThreadSafe<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
+public class ACL extends BaseResurrectable<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
 	private static final Logger log_ = Logger.getLogger(ACL.class.getName());
 
 	/**

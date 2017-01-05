@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -30,20 +30,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextRange.
  */
-public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
-		org.openntf.domino.RichTextRange {
+public class RichTextRange extends BaseThreadSafe<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
+org.openntf.domino.RichTextRange {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected RichTextRange(final lotus.domino.RichTextRange delegate, final RichTextItem parent) {
 		super(delegate, parent, NOTES_RTRANGE);
@@ -51,7 +47,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#Clone()
 	 */
 	@Override
@@ -66,7 +62,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -74,8 +70,9 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 		int result = 0;
 		try {
 			result = getDelegate().findandReplace(target, replacement);
-			if (result > 0)
+			if (result > 0) {
 				markDirty();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -84,7 +81,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String, long)
 	 */
 	@Override
@@ -92,8 +89,9 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 		int result = 0;
 		try {
 			result = getDelegate().findandReplace(target, replacement, options);
-			if (result > 0)
+			if (result > 0) {
 				markDirty();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -102,7 +100,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#getNavigator()
 	 */
 	@Override
@@ -125,7 +123,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#getStyle()
 	 */
 	@Override
@@ -140,7 +138,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#getTextParagraph()
 	 */
 	@Override
@@ -155,7 +153,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#getTextRun()
 	 */
 	@Override
@@ -170,7 +168,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#getType()
 	 */
 	@Override
@@ -185,7 +183,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#remove()
 	 */
 	@Override
@@ -200,7 +198,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#reset(boolean, boolean)
 	 */
 	@Override
@@ -214,7 +212,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#setBegin(lotus.domino.Base)
 	 */
 	@Override
@@ -228,7 +226,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#setEnd(lotus.domino.Base)
 	 */
 	@Override
@@ -242,7 +240,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextRange#setStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
@@ -261,7 +259,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
@@ -271,7 +269,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -281,7 +279,7 @@ public class RichTextRange extends BaseNonThreadSafe<org.openntf.domino.RichText
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

@@ -17,7 +17,8 @@ public @interface Nonnegative {
 
     class Checker implements TypeQualifierValidator<Nonnegative> {
 
-        public When forConstantValue(Nonnegative annotation, Object v) {
+        @Override
+		public When forConstantValue(Nonnegative annotation, Object v) {
             if (!(v instanceof Number))
                 return When.NEVER;
             boolean isNegative;

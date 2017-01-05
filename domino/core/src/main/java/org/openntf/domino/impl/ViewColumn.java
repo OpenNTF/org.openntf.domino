@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -33,20 +33,16 @@ import com.ibm.commons.util.StringUtil;
 /**
  * The Class ViewColumn.
  */
-public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View>
-		implements org.openntf.domino.ViewColumn {
+public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements
+		org.openntf.domino.ViewColumn {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected ViewColumn(final lotus.domino.ViewColumn delegate, final View parent) {
 		super(delegate, parent, NOTES_VIEWCOLUMN);
@@ -70,7 +66,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getAlignment()
 	 */
 	@Override
@@ -85,7 +81,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getColumnValuesIndex()
 	 */
 	@Override
@@ -95,8 +91,9 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	@Override
 	public int getColumnValuesIndex(final boolean correctValue) {
-		if (correctValue)
+		if (correctValue) {
 			return getIndex();
+		}
 		try {
 			return getDelegate().getColumnValuesIndex();
 		} catch (NotesException e) {
@@ -107,7 +104,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getDateFmt()
 	 */
 	@Override
@@ -130,7 +127,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getFontColor()
 	 */
 	@Override
@@ -145,7 +142,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getFontFace()
 	 */
 	@Override
@@ -160,7 +157,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getFontPointSize()
 	 */
 	@Override
@@ -175,7 +172,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getFontStyle()
 	 */
 	@Override
@@ -190,7 +187,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getFormula()
 	 */
 	@Override
@@ -205,7 +202,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getHeaderAlignment()
 	 */
 	@Override
@@ -220,7 +217,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getHeaderFontColor()
 	 */
 	@Override
@@ -235,7 +232,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getHeaderFontFace()
 	 */
 	@Override
@@ -250,7 +247,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getHeaderFontPointSize()
 	 */
 	@Override
@@ -265,7 +262,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getHeaderFontStyle()
 	 */
 	@Override
@@ -280,7 +277,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getItemName()
 	 */
 	@Override
@@ -295,7 +292,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getListSep()
 	 */
 	@Override
@@ -318,7 +315,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getNumberAttrib()
 	 */
 	@Override
@@ -333,7 +330,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getNumberDigits()
 	 */
 	@Override
@@ -348,7 +345,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getNumberFormat()
 	 */
 	@Override
@@ -363,7 +360,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -373,7 +370,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getPosition()
 	 */
 	@Override
@@ -388,7 +385,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getResortToViewName()
 	 */
 	@Override
@@ -403,7 +400,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getSecondaryResortColumnIndex()
 	 */
 	@Override
@@ -418,7 +415,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getTimeDateFmt()
 	 */
 	@Override
@@ -433,7 +430,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getTimeFmt()
 	 */
 	@Override
@@ -448,7 +445,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getTimeZoneFmt()
 	 */
 	@Override
@@ -463,7 +460,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getTitle()
 	 */
 	@Override
@@ -486,7 +483,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#getWidth()
 	 */
 	@Override
@@ -501,7 +498,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isAccentSensitiveSort()
 	 */
 	@Override
@@ -516,7 +513,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isCaseSensitiveSort()
 	 */
 	@Override
@@ -531,7 +528,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isCategory()
 	 */
 	@Override
@@ -546,7 +543,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isConstant()
 	 */
 	@Override
@@ -561,7 +558,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isField()
 	 */
 	@Override
@@ -576,7 +573,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isFontBold()
 	 */
 	@Override
@@ -591,7 +588,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isFontItalic()
 	 */
 	@Override
@@ -606,7 +603,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isFontStrikethrough()
 	 */
 	@Override
@@ -621,7 +618,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isFontUnderline()
 	 */
 	@Override
@@ -636,7 +633,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isFormula()
 	 */
 	@Override
@@ -651,7 +648,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHeaderFontBold()
 	 */
 	@Override
@@ -666,7 +663,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHeaderFontItalic()
 	 */
 	@Override
@@ -681,7 +678,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHeaderFontStrikethrough()
 	 */
 	@Override
@@ -696,7 +693,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHeaderFontUnderline()
 	 */
 	@Override
@@ -711,7 +708,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHidden()
 	 */
 	@Override
@@ -726,7 +723,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHideDetail()
 	 */
 	@Override
@@ -741,7 +738,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isHideFormula()
 	 */
 	@Override
@@ -756,7 +753,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isIcon()
 	 */
 	@Override
@@ -771,7 +768,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isNumberAttribParens()
 	 */
 	@Override
@@ -786,7 +783,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isNumberAttribPercent()
 	 */
 	@Override
@@ -801,7 +798,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isNumberAttribPunctuated()
 	 */
 	@Override
@@ -816,7 +813,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isResize()
 	 */
 	@Override
@@ -831,7 +828,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isResortAscending()
 	 */
 	@Override
@@ -846,7 +843,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isResortDescending()
 	 */
 	@Override
@@ -861,7 +858,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isResortToView()
 	 */
 	@Override
@@ -876,7 +873,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isResponse()
 	 */
 	@Override
@@ -891,7 +888,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isSecondaryResort()
 	 */
 	@Override
@@ -906,7 +903,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isSecondaryResortDescending()
 	 */
 	@Override
@@ -921,7 +918,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isShowTwistie()
 	 */
 	@Override
@@ -936,7 +933,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isSortDescending()
 	 */
 	@Override
@@ -951,7 +948,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#isSorted()
 	 */
 	@Override
@@ -966,7 +963,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setAccentSensitiveSort(boolean)
 	 */
 	@Override
@@ -980,7 +977,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setAlignment(int)
 	 */
 	@Override
@@ -994,7 +991,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setCaseSensitiveSort(boolean)
 	 */
 	@Override
@@ -1008,7 +1005,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setDateFmt(int)
 	 */
 	@Override
@@ -1022,7 +1019,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontBold(boolean)
 	 */
 	@Override
@@ -1036,7 +1033,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontColor(int)
 	 */
 	@Override
@@ -1050,7 +1047,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontFace(java.lang.String)
 	 */
 	@Override
@@ -1064,7 +1061,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontItalic(boolean)
 	 */
 	@Override
@@ -1078,7 +1075,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontPointSize(int)
 	 */
 	@Override
@@ -1092,7 +1089,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontStrikethrough(boolean)
 	 */
 	@Override
@@ -1106,7 +1103,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontStyle(int)
 	 */
 	@Override
@@ -1120,7 +1117,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFontUnderline(boolean)
 	 */
 	@Override
@@ -1134,7 +1131,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setFormula(java.lang.String)
 	 */
 	@Override
@@ -1148,7 +1145,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderAlignment(int)
 	 */
 	@Override
@@ -1162,7 +1159,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontBold(boolean)
 	 */
 	@Override
@@ -1176,7 +1173,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontColor(int)
 	 */
 	@Override
@@ -1190,7 +1187,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontFace(java.lang.String)
 	 */
 	@Override
@@ -1204,7 +1201,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontItalic(boolean)
 	 */
 	@Override
@@ -1218,7 +1215,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontPointSize(int)
 	 */
 	@Override
@@ -1232,7 +1229,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontStrikethrough(boolean)
 	 */
 	@Override
@@ -1246,7 +1243,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontStyle(int)
 	 */
 	@Override
@@ -1260,7 +1257,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontUnderline(boolean)
 	 */
 	@Override
@@ -1274,7 +1271,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHidden(boolean)
 	 */
 	@Override
@@ -1288,7 +1285,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHideDetail(boolean)
 	 */
 	@Override
@@ -1302,7 +1299,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setHideFormula(boolean)
 	 */
 	@Override
@@ -1316,7 +1313,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setListSep(int)
 	 */
 	@Override
@@ -1330,7 +1327,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setNumberAttrib(int)
 	 */
 	@Override
@@ -1344,7 +1341,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setNumberAttribParens(boolean)
 	 */
 	@Override
@@ -1358,7 +1355,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setNumberAttribPercent(boolean)
 	 */
 	@Override
@@ -1372,7 +1369,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setNumberAttribPunctuated(boolean)
 	 */
 	@Override
@@ -1386,7 +1383,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setNumberDigits(int)
 	 */
 	@Override
@@ -1400,7 +1397,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setNumberFormat(int)
 	 */
 	@Override
@@ -1414,7 +1411,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setPosition(int)
 	 */
 	@Override
@@ -1428,7 +1425,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setResize(boolean)
 	 */
 	@Override
@@ -1442,7 +1439,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setResortAscending(boolean)
 	 */
 	@Override
@@ -1456,7 +1453,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setResortDescending(boolean)
 	 */
 	@Override
@@ -1470,7 +1467,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setResortToView(boolean)
 	 */
 	@Override
@@ -1484,7 +1481,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setResortToViewName(java.lang.String)
 	 */
 	@Override
@@ -1498,7 +1495,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setSecondaryResort(boolean)
 	 */
 	@Override
@@ -1512,7 +1509,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setSecondaryResortColumnIndex(int)
 	 */
 	@Override
@@ -1526,7 +1523,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setSecondaryResortDescending(boolean)
 	 */
 	@Override
@@ -1540,7 +1537,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setShowTwistie(boolean)
 	 */
 	@Override
@@ -1554,7 +1551,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setSortDescending(boolean)
 	 */
 	@Override
@@ -1568,7 +1565,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setSorted(boolean)
 	 */
 	@Override
@@ -1582,7 +1579,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setTimeDateFmt(int)
 	 */
 	@Override
@@ -1596,7 +1593,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setTimeFmt(int)
 	 */
 	@Override
@@ -1610,7 +1607,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setTimeZoneFmt(int)
 	 */
 	@Override
@@ -1624,7 +1621,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setTitle(java.lang.String)
 	 */
 	@Override
@@ -1638,7 +1635,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewColumn#setWidth(int)
 	 */
 	@Override
@@ -1652,7 +1649,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -1662,7 +1659,7 @@ public class ViewColumn extends BaseNonThreadSafe<org.openntf.domino.ViewColumn,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

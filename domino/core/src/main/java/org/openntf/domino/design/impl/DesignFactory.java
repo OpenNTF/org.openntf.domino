@@ -27,7 +27,7 @@ import com.ibm.commons.util.StringUtil;
  * @author jgallagher
  * 
  */
-enum DesignFactory {
+public enum DesignFactory {
 	INSTANCE;
 
 	//public static final String DFLAGPAT_IMAGE_DBICON = "(+-*i~";
@@ -451,7 +451,25 @@ enum DesignFactory {
 		}
 		// e.g. the $BEProfileR7
 		return new OtherDesignElement(doc);
+	}
 
+	public static boolean isView(final Document doc) {
+		return (doc.hasItem("$FormulaClass") || doc.hasItem("$Index") || doc.hasItem("$Collation") || doc.hasItem("$VIEWFORMAT")
+				|| doc.hasItem("$Collection"));
+	}
+
+	public static final String NOTEID_ICONNOTE = "FFFF0010";
+
+	public static boolean isIcon(final Document doc) {
+		return NOTEID_ICONNOTE.equals(doc.getNoteID()) || doc.hasItem("IconBitmap");
+	}
+
+	public static boolean isACL(final Document doc) {
+		return doc.hasItem("$ACLDigest");
+	}
+
+	public static Document getIconNote(final Database db) {
+		return db.getIconNote();
 	}
 
 	public static <T extends org.openntf.domino.design.DesignBase> DesignCollection<T> search(final Database db, final Class<T> type,

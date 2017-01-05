@@ -45,7 +45,7 @@ public class OpenntfHttpService extends HttpService {
 				Factory.printer = new Factory.Printer() {
 					@Override
 					public void println(final String s) {
-						com.ibm.domino.xsp.bridge.http.engine.XspCmdEnvironment.console(s);
+						//						com.ibm.domino.xsp.bridge.http.engine.XspCmdEnvironment.console(s);
 					}
 				};
 			} catch (Exception e) {
@@ -107,8 +107,8 @@ public class OpenntfHttpService extends HttpService {
 	 */
 	@Override
 	public boolean doService(final String contextPath, final String path, final HttpSessionAdapter httpSession,
-			final HttpServletRequestAdapter httpRequest, final HttpServletResponseAdapter httpResponse) throws ServletException,
-			IOException {
+			final HttpServletRequestAdapter httpRequest, final HttpServletResponseAdapter httpResponse)
+			throws ServletException, IOException {
 		Factory.println(this, "DEBUG: The OpenntfHttpService has received an HttpRequest!");
 		return false;
 	}

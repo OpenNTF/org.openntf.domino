@@ -4,7 +4,6 @@ import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -15,7 +14,7 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public interface DElementStore extends Externalizable {
 
-	public interface CustomProxyResolver {
+	public static interface CustomProxyResolver {
 		public void setProxiedElementStore(DElementStore store);
 
 		public Map<String, Object> getOriginalDelegate(Serializable key);
@@ -63,27 +62,29 @@ public interface DElementStore extends Externalizable {
 
 	public Vertex addVertex(Object id);
 
-	public Vertex getVertex(Object id);
+	public Vertex addVertex(Object id, boolean temporary);
+
+	//	public Vertex getVertex(Object id);
 
 	public void removeVertex(Vertex vertex);
 
 	public Edge addEdge(Object id);
 
-	public Edge getEdge(Object id);
+	//	public Edge getEdge(Object id);
 
 	public void removeEdge(Edge edge);
 
 	public void removeEdge(final Edge edge, final Vertex removingVertex);
 
-	public Object findElementDelegate(Object delegateKey, Class<? extends Element> type);
+	public Object findElementDelegate(Object delegateKey/*, Class<? extends Element> type*/);
 
 	public void removeElementDelegate(Element element);
 
 	public Element getElement(final Object id) throws IllegalStateException;
 
-	public Set<Vertex> getCachedVertices();
-
-	public Set<Edge> getCachedEdges();
+	//	public Set<Vertex> getCachedVertices();
+	//
+	//	public Set<Edge> getCachedEdges();
 
 	public DVertexIterable getVertices();
 
@@ -106,5 +107,7 @@ public interface DElementStore extends Externalizable {
 	public boolean isProxied();
 
 	public void flushCache();
+
+	public CustomProxyResolver getCustomProxyResolver();
 
 }

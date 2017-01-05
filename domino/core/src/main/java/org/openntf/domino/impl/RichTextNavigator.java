@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -30,24 +30,19 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextNavigator.
  */
-public class RichTextNavigator extends
-		BaseNonThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
-		org.openntf.domino.RichTextNavigator {
+public class RichTextNavigator extends BaseThreadSafe<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem>
+		implements org.openntf.domino.RichTextNavigator {
 
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(RichTextNavigator.class.getName());
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final RichTextItem parent) {
 		super(delegate, parent, NOTES_RTNAVIGATOR);
@@ -55,7 +50,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#Clone()
 	 */
 	@Override
@@ -70,7 +65,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findFirstElement(int)
 	 */
 	@Override
@@ -85,7 +80,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findFirstString(java.lang.String)
 	 */
 	@Override
@@ -100,7 +95,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findFirstString(java.lang.String, int)
 	 */
 	@Override
@@ -115,7 +110,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findLastElement(int)
 	 */
 	@Override
@@ -130,7 +125,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement()
 	 */
 	@Override
@@ -145,7 +140,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement(int)
 	 */
 	@Override
@@ -160,7 +155,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement(int, int)
 	 */
 	@Override
@@ -175,7 +170,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findNextString(java.lang.String)
 	 */
 	@Override
@@ -190,7 +185,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findNextString(java.lang.String, int)
 	 */
 	@Override
@@ -205,7 +200,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#findNthElement(int, int)
 	 */
 	@Override
@@ -220,7 +215,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getElement()
 	 */
 	@Override
@@ -235,7 +230,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getFirstElement(int)
 	 */
 	@Override
@@ -250,7 +245,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getLastElement(int)
 	 */
 	@Override
@@ -265,7 +260,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement()
 	 */
 	@Override
@@ -280,7 +275,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement(int)
 	 */
 	@Override
@@ -295,7 +290,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement(int, int)
 	 */
 	@Override
@@ -310,7 +305,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#getNthElement(int, int)
 	 */
 	@Override
@@ -325,7 +320,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#setCharOffset(int)
 	 */
 	@Override
@@ -339,7 +334,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#setPosition(lotus.domino.Base)
 	 */
 	@Override
@@ -353,7 +348,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.RichTextNavigator#setPositionAtEnd(lotus.domino.Base)
 	 */
 	@Override
@@ -371,7 +366,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
@@ -381,7 +376,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -391,7 +386,7 @@ public class RichTextNavigator extends
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

@@ -32,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ACLEntry.
  */
-public class ACLEntry extends BaseNonThreadSafe<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry, org.openntf.domino.ACL> implements
+public class ACLEntry extends BaseThreadSafe<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry, org.openntf.domino.ACL> implements
 		org.openntf.domino.ACLEntry {
 
 	/**

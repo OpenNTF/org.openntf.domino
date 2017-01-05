@@ -13,14 +13,38 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openntf.domino.types.CaseInsensitiveString;
 
 public class JsonGraphFactory extends JsonJavaFactory {
 	public static final JsonGraphFactory instance = new JsonGraphFactory();
 
+	public static interface IJsonWriterAdapter {
+		public Object toJson(Object obj);
+
+		public Collection<Class<?>> getAdapterClassList();
+	}
+
+	protected Map<Class<?>, IJsonWriterAdapter> adapterMap_ = new ConcurrentHashMap<Class<?>, IJsonWriterAdapter>();
+
 	public JsonGraphFactory() {
 
+	}
+
+	public void addJsonWriterAdapter(IJsonWriterAdapter adapter) {
+		for (Class<?> klazz : adapter.getAdapterClassList()) {
+			adapterMap_.put(klazz, adapter);
+		}
+	}
+
+	public IJsonWriterAdapter getJsonWriterAdapter(Class<?> objClass) {
+		for (Class<?> klazz : adapterMap_.keySet()) {
+			if (klazz.isAssignableFrom(objClass)) {
+				return adapterMap_.get(klazz);
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -79,6 +103,10 @@ public class JsonGraphFactory extends JsonJavaFactory {
 	public Iterator<Object> iterateArrayValues(Object paramObject) throws JsonException {
 		// System.out.println("TEMP DEBUG iterating array values from a " +
 		// paramObject.getClass().getName());
+		// if (paramObject.getClass().isArray()) {
+		// Object[] a = ((Object[]) paramObject);
+		// System.out.println("TEMP DEBUG array is length: " + a.length);
+		// }
 		if (paramObject instanceof List) {
 			return super.iterateArrayValues(paramObject);
 		} else if (paramObject instanceof Collection) {
@@ -87,6 +115,7 @@ public class JsonGraphFactory extends JsonJavaFactory {
 		return super.iterateArrayValues(paramObject);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterator<String> iterateObjectProperties(Object object) throws JsonException {
 		Iterator it = super.iterateObjectProperties(object);

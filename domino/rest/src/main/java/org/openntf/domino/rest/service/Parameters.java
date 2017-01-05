@@ -11,7 +11,7 @@ import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
 public enum Parameters {
-	ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE;
+	ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, COMMAND, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS;
 
 	public static ParamMap toParamMap(UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
@@ -61,6 +61,10 @@ public enum Parameters {
 
 		public List<CharSequence> getProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.PROPS));
+		}
+
+		public List<CharSequence> getHideProperties() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.HIDEPROPS));
 		}
 
 		public List<CharSequence> getFilterKeys() {
@@ -125,12 +129,20 @@ public enum Parameters {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.LABEL));
 		}
 
+		public List<CharSequence> getActions() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.ACTION));
+		}
+
 		public boolean getIncludeVertices() {
 			return get(Parameters.VERTICES) != null;
 		}
 
 		public boolean getIncludeEdges() {
 			return get(Parameters.EDGES) != null;
+		}
+
+		public boolean getIncludeActions() {
+			return get(Parameters.ACTIONS) != null;
 		}
 
 		public boolean getIncludeCounts() {

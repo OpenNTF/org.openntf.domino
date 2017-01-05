@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -25,20 +25,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DxlImporter.
  */
-public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
-		org.openntf.domino.DxlImporter {
+public class DxlImporter extends BaseThreadSafe<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
+org.openntf.domino.DxlImporter {
 
 	/**
 	 * Instantiates a new DxlImporter.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DxlImporter(final lotus.domino.DxlImporter delegate, final Session parent) {
 		super(delegate, parent, NOTES_DXLIMPORTER);
@@ -46,7 +42,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getAclImportOption()
 	 */
 	@Override
@@ -61,7 +57,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getCompileLotusScript()
 	 */
 	@Override
@@ -76,7 +72,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getCreateFTIndex()
 	 */
 	@Override
@@ -91,7 +87,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getDesignImportOption()
 	 */
 	@Override
@@ -106,7 +102,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getDocumentImportOption()
 	 */
 	@Override
@@ -121,7 +117,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getExitOnFirstFatalError()
 	 */
 	@Override
@@ -136,7 +132,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getFirstImportedNoteID()
 	 */
 	@Override
@@ -151,7 +147,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getImportedNoteCount()
 	 */
 	@Override
@@ -166,7 +162,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getInputValidationOption()
 	 */
 	@Override
@@ -181,7 +177,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getLog()
 	 */
 	@Override
@@ -196,7 +192,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getLogComment()
 	 */
 	@Override
@@ -211,7 +207,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getNextImportedNoteID(java.lang.String)
 	 */
 	@Override
@@ -226,7 +222,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getReplaceDbProperties()
 	 */
 	@Override
@@ -241,7 +237,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getReplicaRequiredForReplaceOrUpdate()
 	 */
 	@Override
@@ -256,7 +252,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#getUnknownTokenLogOption()
 	 */
 	@Override
@@ -271,7 +267,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#importDxl(lotus.domino.RichTextItem, lotus.domino.Database)
 	 */
 	@Override
@@ -286,7 +282,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#importDxl(lotus.domino.Stream, lotus.domino.Database)
 	 */
 	@Override
@@ -301,7 +297,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#importDxl(java.lang.String, lotus.domino.Database)
 	 */
 	@Override
@@ -316,7 +312,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setAclImportOption(int)
 	 */
 	@Override
@@ -330,7 +326,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setCompileLotusScript(boolean)
 	 */
 	@Override
@@ -344,7 +340,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setCreateFTIndex(boolean)
 	 */
 	@Override
@@ -358,7 +354,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setDesignImportOption(int)
 	 */
 	@Override
@@ -372,7 +368,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setDocumentImportOption(int)
 	 */
 	@Override
@@ -386,7 +382,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
@@ -400,7 +396,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setInputValidationOption(int)
 	 */
 	@Override
@@ -414,7 +410,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setLogComment(java.lang.String)
 	 */
 	@Override
@@ -428,7 +424,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setReplaceDbProperties(boolean)
 	 */
 	@Override
@@ -442,7 +438,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setReplicaRequiredForReplaceOrUpdate(boolean)
 	 */
 	@Override
@@ -456,7 +452,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlImporter#setUnknownTokenLogOption(int)
 	 */
 	@Override
@@ -470,7 +466,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -480,7 +476,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DxlImporter#setAclImportOption(org.openntf.domino.DxlImporter.AclImportOption)
 	 */
 	@Override
@@ -490,7 +486,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DxlImporter#setDesignImportOption(org.openntf.domino.DxlImporter.DesignImportOption)
 	 */
 	@Override
@@ -500,7 +496,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DxlImporter#setDocumentImportOption(org.openntf.domino.DxlImporter.DocumentImportOption)
 	 */
 	@Override
@@ -510,7 +506,7 @@ public class DxlImporter extends BaseNonThreadSafe<org.openntf.domino.DxlImporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.DxlImporter#setInputValidationOption(org.openntf.domino.DxlImporter.InputValidationOption)
 	 */
 	@Override

@@ -53,6 +53,8 @@ public enum ODAPlatform {
 	 * on the server console.
 	 */
 	public synchronized static void start() {
+		System.out.println("Starting OpenNTF Domino API");
+		try {
 		if (!isStarted()) {
 			isStarted_ = true;
 			// Here is all the init/term stuff done
@@ -60,19 +62,18 @@ public enum ODAPlatform {
 			Factory.startup();
 			// Setup the named factories 4 XPages
 			Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
-			verifyIGetEntryByKey();
+				//			verifyIGetEntryByKey();
 			ServerConfiguration cfg = Configuration.getServerConfiguration();
 			int xotsTasks = cfg.getXotsTasks();
 			// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
 			xotsStopDelay = cfg.getXotsStopDelay();
 			if (xotsTasks > 0) {
+					//					System.out.println("Starting XOTS with " + xotsTasks + " threads");
 				DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
 				try {
 					Xots.start(executor);
-				} catch (IllegalStateException e) {
-					if (isDebug()) {
-						throw e;
-					}
+					} catch (Throwable e) {
+						e.printStackTrace();
 				}
 				List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
 
@@ -90,8 +91,12 @@ public enum ODAPlatform {
 						}
 					}
 				}
-
 			}
+			} else {
+				System.out.println("OpenNTF Domino API Platform is already started.");
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 

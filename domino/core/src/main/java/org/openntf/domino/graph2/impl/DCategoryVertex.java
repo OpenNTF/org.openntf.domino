@@ -15,6 +15,7 @@ public class DCategoryVertex extends DVertex {
 	DCategoryVertex(final DGraph parent, final Map<String, Object> delegate, final View sourceView) {
 		super(parent, delegate);
 		view_ = sourceView;
+		//		System.out.println("TEMP DEBUG Created a new DCategoryVertex");
 	}
 
 	@Override

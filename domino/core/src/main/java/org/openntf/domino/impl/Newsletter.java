@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -26,20 +26,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Newsletter.
  */
-public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
-		org.openntf.domino.Newsletter {
+public class Newsletter extends BaseThreadSafe<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
+org.openntf.domino.Newsletter {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Newsletter(final lotus.domino.Newsletter delegate, final Session parent) {
 		super(delegate, parent, NOTES_SESSION);
@@ -47,7 +43,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#formatDocument(lotus.domino.Database, int)
 	 */
 	@Override
@@ -62,7 +58,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#formatMsgWithDoclinks(lotus.domino.Database)
 	 */
 	@Override
@@ -77,7 +73,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -87,7 +83,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#getSubjectItemName()
 	 */
 	@Override
@@ -102,7 +98,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#isDoScore()
 	 */
 	@Override
@@ -117,7 +113,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#isDoSubject()
 	 */
 	@Override
@@ -132,7 +128,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#setDoScore(boolean)
 	 */
 	@Override
@@ -146,7 +142,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#setDoSubject(boolean)
 	 */
 	@Override
@@ -160,7 +156,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Newsletter#setSubjectItemName(java.lang.String)
 	 */
 	@Override
@@ -174,7 +170,7 @@ public class Newsletter extends BaseNonThreadSafe<org.openntf.domino.Newsletter,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

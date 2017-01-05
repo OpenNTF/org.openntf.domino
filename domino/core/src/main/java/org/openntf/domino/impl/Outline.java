@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -29,20 +29,16 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Outline.
  */
-public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus.domino.Outline, Database> implements
-		org.openntf.domino.Outline {
+public class Outline extends BaseThreadSafe<org.openntf.domino.Outline, lotus.domino.Outline, Database> implements
+org.openntf.domino.Outline {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Outline(final lotus.domino.Outline delegate, final Database parent) {
 		super(delegate, parent, NOTES_OUTLINE);
@@ -50,7 +46,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -64,7 +60,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -78,7 +74,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -93,7 +89,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -108,7 +104,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -123,7 +119,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -139,7 +135,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -156,7 +152,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String)
 	 */
 	@Override
@@ -171,7 +167,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -186,7 +182,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -201,7 +197,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -217,7 +213,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getAlias()
 	 */
 	@Override
@@ -232,7 +228,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getChild(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -247,7 +243,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getComment()
 	 */
 	@Override
@@ -270,7 +266,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getFirst()
 	 */
 	@Override
@@ -285,7 +281,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getLast()
 	 */
 	@Override
@@ -300,7 +296,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getName()
 	 */
 	@Override
@@ -315,7 +311,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getNext(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -330,7 +326,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getNextSibling(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -357,7 +353,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getParent(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -372,7 +368,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getParentDatabase()
 	 */
 	@Override
@@ -382,7 +378,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getPrev(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -397,7 +393,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#getPrevSibling(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -424,7 +420,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -438,7 +434,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -452,7 +448,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -467,7 +463,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#removeEntry(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -481,7 +477,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#save()
 	 */
 	@Override
@@ -496,7 +492,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#setAlias(java.lang.String)
 	 */
 	@Override
@@ -510,7 +506,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#setComment(java.lang.String)
 	 */
 	@Override
@@ -524,7 +520,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Outline#setName(java.lang.String)
 	 */
 	@Override
@@ -538,7 +534,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -548,7 +544,7 @@ public class Outline extends BaseNonThreadSafe<org.openntf.domino.Outline, lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

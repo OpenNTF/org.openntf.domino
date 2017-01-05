@@ -15,7 +15,8 @@ public class TypedPropertyHandler extends AbstractPropertyHandler implements Met
 	@Override
 	public Object processElement(final Object frame, final Method method, final Object[] arguments, final TypedProperty annotation,
 			final FramedGraph<?> framedGraph, final Element element) {
-		return processElementProperty(frame, method, arguments, annotation, framedGraph, element);
+		Object result = processElementProperty(frame, method, arguments, annotation, framedGraph, element);
+		return result;
 	}
 
 }

@@ -54,7 +54,6 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.logging.Logging;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.session.ISessionFactory;
@@ -1106,8 +1105,8 @@ public enum Factory {
 			tv.serviceLocator = ServiceLocatorFinder.findServiceLocator();
 		}
 		if (tv.serviceLocator == null) {
-			throw new IllegalStateException("No service locator available so we cannot find the application services for "
-					+ serviceClazz.getName());
+			throw new IllegalStateException(
+					"No service locator available so we cannot find the application services for " + serviceClazz.getName());
 		}
 
 		return tv.serviceLocator.findApplicationServices(serviceClazz);
@@ -1157,16 +1156,11 @@ public enum Factory {
 		if (!started) {
 			throw new IllegalStateException("Factory is not yet started");
 		}
-		if (log_.isLoggable(Level.FINER)) {
-			log_.log(Level.FINER, "Factory.initThread()", new Throwable());
-		}
 		if (threadVariables_.get() != null) {
-			log_.log(Level.SEVERE, "WARNING - Thread " + Thread.currentThread().getName()
-					+ " was not correctly terminated or initialized twice", new Throwable());
+			log_.log(Level.SEVERE,
+					"WARNING - Thread " + Thread.currentThread().getName() + " was not correctly terminated or initialized twice",
+					new Throwable());
 		}
-		//		System.out.println("TEMP DEBUG: Factory thread initializing.");
-		//		Throwable t = new Throwable();
-		//		t.printStackTrace();
 		threadVariables_.set(new ThreadVariables(tc));
 	}
 
@@ -1179,8 +1173,9 @@ public enum Factory {
 		}
 		ThreadVariables tv = threadVariables_.get();
 		if (tv == null) {
-			log_.log(Level.SEVERE, "WARNING - Thread " + Thread.currentThread().getName()
-					+ " was not correctly initalized or terminated twice", new Throwable());
+			log_.log(Level.SEVERE,
+					"WARNING - Thread " + Thread.currentThread().getName() + " was not correctly initalized or terminated twice",
+					new Throwable());
 			return;
 		}
 		//		System.out.println("TEMP DEBUG: Factory thread terminating.");
@@ -1197,7 +1192,6 @@ public enum Factory {
 			}
 			//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 			DominoUtils.setBubbleExceptions(null);
-			DominoGraph.clearDocumentCache();
 			// The last step is to recycle ALL own sessions
 			for (Session sess : tv.ownSessions.values()) {
 				if (sess != null) {
@@ -1228,8 +1222,8 @@ public enum Factory {
 			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
 			progpath = System.getProperty("java.home");
 			if (progpath.endsWith("jvm")) {
-				iniFile = new File(progpath + System.getProperty("file.separator") + ".." + System.getProperty("file.separator")
-						+ "notes.ini");
+				iniFile = new File(
+						progpath + System.getProperty("file.separator") + ".." + System.getProperty("file.separator") + "notes.ini");
 			} else {
 				iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 

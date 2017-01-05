@@ -4,18 +4,38 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Vector;
 
+import org.openntf.domino.View;
+import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.big.impl.ViewEntryList;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.graph2.DEdgeList;
+import org.openntf.domino.utils.Strings;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DEdgeEntryList implements DEdgeList {
+	@SuppressWarnings("serial")
+	public static class KeyNotFoundException extends RuntimeException {
+		private List<CharSequence> keyList_;
+
+		public KeyNotFoundException(final List<CharSequence> list) {
+			super("Key not found in view: " + Strings.getString(list, ","));
+			keyList_ = list;
+		}
+
+		public List<CharSequence> getKeyList() {
+			return keyList_;
+		}
+
+	}
+
 	public static class DEdgeEntryListIterator implements ListIterator<Edge> {
 		private ListIterator<ViewEntryCoordinate> delegate_;
 		private DVertex source_;
@@ -39,15 +59,25 @@ public class DEdgeEntryList implements DEdgeList {
 		public Edge next() {
 			DEntryEdge result = null;
 			ViewEntryCoordinate vec = delegate_.next();
-			Edge edge = store_.getEdge(vec);
-			if (edge instanceof DEntryEdge) {
-				result = (DEntryEdge) edge;
-				result.setInVertex(source_);
-				//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
-				return result;
-			} else {
-				throw new IllegalStateException("ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+			if (vec != null) {
+				Element raw = store_.getElement(vec);
+				if (raw instanceof Edge) {
+					Edge edge = (Edge) raw;
+					if (edge instanceof DEntryEdge) {
+						result = (DEntryEdge) edge;
+						result.setInVertex(source_);
+						//				System.out.println("TEMP DEBUG edge " + result.getDelegate().getClass().getName());
+						return result;
+					} else {
+						throw new IllegalStateException(
+								"ElementStore did not return a DEntryEdge. It returned a " + edge.getClass().getName());
+					}
+				} else {
+					//					System.out.println("Next entry is not an edge. It's a " + raw.getClass().getName() + " id: " + raw.getId());
+					//					System.out.println("VEC is " + vec.getPosition() + ": " + vec.getUNID());
+				}
 			}
+			return null;
 		}
 
 		@Override
@@ -72,7 +102,7 @@ public class DEdgeEntryList implements DEdgeList {
 
 		@Override
 		public Edge previous() {
-			DEntryEdge result = (DEntryEdge) store_.getEdge(delegate_.previous());
+			DEntryEdge result = (DEntryEdge) store_.getElement(delegate_.previous());
 			result.setInVertex(source_);
 			return result;
 		}
@@ -107,9 +137,15 @@ public class DEdgeEntryList implements DEdgeList {
 		initEntryList();
 	}
 
+	//	public DEdgeEntryList(final DVertex source, final DElementStore store, final List<CharSequence> startkeys) {
+	//		source_ = source;
+	//		store_ = store;
+	//		initEntryList(startkeys);
+	//	}
+
 	protected void initEntryList() {
 		ViewNavigator nav = null;
-		if (source_.getDelegateType().equals(org.openntf.domino.View.class)) {
+		if (org.openntf.domino.View.class.equals(source_.getDelegateType())) {
 			nav = source_.getView().createViewNavMaxLevel(0);
 		} else if (source_ instanceof DCategoryVertex) {
 			nav = ((DCategoryVertex) source_).getSubNavigator();
@@ -118,6 +154,24 @@ public class DEdgeEntryList implements DEdgeList {
 		}
 		//		System.out.println("TEMP DEBUG EntryList navigator from ViewVertex has " + nav.getCount() + " entries");
 		entryList_ = new ViewEntryList(nav);
+	}
+
+	public void initEntryList(final List<CharSequence> list) {
+		ViewNavigator nav = null;
+		if (org.openntf.domino.View.class.equals(source_.getDelegateType())) {
+			View view = source_.getView();
+			Vector<Object> repeatKeys = new Vector<Object>();
+			repeatKeys.addAll(list);
+			ViewEntry entry = view.getFirstEntryByKey(repeatKeys, false);
+			if (entry != null) {
+				nav = view.createViewNavFrom(entry);
+				entryList_ = new ViewEntryList(nav);
+			} else {
+				throw new KeyNotFoundException(list);
+			}
+		} else {
+			throw new IllegalArgumentException("Cannot use start keys on anything except a view root.");
+		}
 	}
 
 	@Override
@@ -162,7 +216,7 @@ public class DEdgeEntryList implements DEdgeList {
 
 	@Override
 	public DEdge get(final int arg0) {
-		DEntryEdge result = (DEntryEdge) store_.getEdge(entryList_.get(arg0));
+		DEntryEdge result = (DEntryEdge) store_.getElement(entryList_.get(arg0));
 		result.setInVertex(source_);
 		return result;
 	}

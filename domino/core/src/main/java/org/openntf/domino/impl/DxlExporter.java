@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -29,22 +29,18 @@ import org.openntf.domino.utils.DominoUtils;
  */
 /**
  * @author Roland Praml, Foconis AG
- * 
+ *
  */
-public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter, Session> implements
-		org.openntf.domino.DxlExporter {
+public class DxlExporter extends BaseThreadSafe<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter, Session> implements
+org.openntf.domino.DxlExporter {
 
 	/**
 	 * Instantiates a new DxlExporter.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DxlExporter(final lotus.domino.DxlExporter delegate, final Session parent) {
 		super(delegate, parent, NOTES_DXLEXPORTER);
@@ -52,7 +48,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.Document)
 	 */
 	@Override
@@ -67,7 +63,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.Database)
 	 */
 	@Override
@@ -82,7 +78,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.DocumentCollection)
 	 */
 	@Override
@@ -97,7 +93,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.NoteCollection)
 	 */
 	@Override
@@ -112,7 +108,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getAttachmentOmittedText()
 	 */
 	@Override
@@ -127,7 +123,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getConvertNotesBitmapsToGIF()
 	 */
 	@Override
@@ -142,7 +138,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getDoctypeSYSTEM()
 	 */
 	@Override
@@ -157,7 +153,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getExitOnFirstFatalError()
 	 */
 	@Override
@@ -172,7 +168,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getForceNoteFormat()
 	 */
 	@Override
@@ -187,7 +183,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getLog()
 	 */
 	@Override
@@ -202,7 +198,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getLogComment()
 	 */
 	@Override
@@ -217,7 +213,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getMIMEOption()
 	 */
 	@Override
@@ -232,7 +228,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOLEObjectOmittedText()
 	 */
 	@Override
@@ -247,7 +243,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOmitItemNames()
 	 */
 	@SuppressWarnings("unchecked")
@@ -263,7 +259,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOmitMiscFileObjects()
 	 */
 	@Override
@@ -278,7 +274,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOmitOLEObjects()
 	 */
 	@Override
@@ -293,7 +289,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOmitRichtextAttachments()
 	 */
 	@Override
@@ -308,7 +304,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOmitRichtextPictures()
 	 */
 	@Override
@@ -323,7 +319,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getOutputDOCTYPE()
 	 */
 	@Override
@@ -338,7 +334,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getPictureOmittedText()
 	 */
 	@Override
@@ -353,7 +349,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getRestrictToItemNames()
 	 */
 	@SuppressWarnings("unchecked")
@@ -369,7 +365,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getRichTextOption()
 	 */
 	@Override
@@ -384,7 +380,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#getUncompressAttachments()
 	 */
 	@Override
@@ -399,7 +395,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setAttachmentOmittedText(java.lang.String)
 	 */
 	@Override
@@ -413,7 +409,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setConvertNotesBitmapsToGIF(boolean)
 	 */
 	@Override
@@ -427,7 +423,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setDoctypeSYSTEM(java.lang.String)
 	 */
 	@Override
@@ -441,7 +437,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
@@ -455,7 +451,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setForceNoteFormat(boolean)
 	 */
 	@Override
@@ -469,7 +465,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setLogComment(java.lang.String)
 	 */
 	@Override
@@ -483,7 +479,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setMIMEOption(int)
 	 */
 	@Override
@@ -510,7 +506,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOLEObjectOmittedText(java.lang.String)
 	 */
 	@Override
@@ -524,7 +520,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOmitItemNames(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -539,7 +535,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOmitMiscFileObjects(boolean)
 	 */
 	@Override
@@ -553,7 +549,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOmitOLEObjects(boolean)
 	 */
 	@Override
@@ -567,7 +563,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOmitRichtextAttachments(boolean)
 	 */
 	@Override
@@ -581,7 +577,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOmitRichtextPictures(boolean)
 	 */
 	@Override
@@ -595,7 +591,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setOutputDOCTYPE(boolean)
 	 */
 	@Override
@@ -609,7 +605,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setPictureOmittedText(java.lang.String)
 	 */
 	@Override
@@ -623,7 +619,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setRestrictToItemNames(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -638,7 +634,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setRichTextOption(int)
 	 */
 	@Override
@@ -665,7 +661,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DxlExporter#setUncompressAttachments(boolean)
 	 */
 	@Override
@@ -679,7 +675,7 @@ public class DxlExporter extends BaseNonThreadSafe<org.openntf.domino.DxlExporte
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

@@ -11,6 +11,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 
 public interface DConfiguration extends Externalizable {
 
+	public static interface IExtConfiguration {
+		public void extendConfiguration(DConfiguration config);
+	}
+
 	public Map<Class<?>, Long> getTypeMap();
 
 	public Map<Long, DElementStore> getElementStores();
@@ -36,5 +40,11 @@ public interface DConfiguration extends Externalizable {
 	public void setDefaultElementStore(Long key);
 
 	public void setDefaultElementStore(DElementStore store);
+
+	public DElementStore getDefaultProxyStore();
+
+	public void setDefaultProxyStore(Long key);
+
+	public void setDefaultProxyStore(DElementStore store);
 
 }

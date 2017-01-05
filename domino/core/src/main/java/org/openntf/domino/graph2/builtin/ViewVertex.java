@@ -17,6 +17,7 @@ import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -24,6 +25,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @Shardable
 @TypeField("$FormulaClass")
 @TypeValue("1")
+@JavaHandlerClass(ViewVertex.ViewVertexImpl.class)
 public interface ViewVertex extends VertexFrame {
 
 	@JavaHandler

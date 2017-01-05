@@ -137,7 +137,7 @@ public enum Documents {
 		ObjectInputStream objectStream;
 
 		if (allHeaders == null) {
-			System.out.println("No headers available. Testing gzip by experimentation...");
+			//			System.out.println("No headers available. Testing gzip by experimentation...");
 			try {
 				GZIPInputStream zipStream = new GZIPInputStream(is);
 				objectStream = new LoaderObjectInputStream(zipStream);

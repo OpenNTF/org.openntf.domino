@@ -14,6 +14,10 @@ import com.google.common.primitives.UnsignedLongs;
 public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinate> {
 	public static enum Utils {
 		;
+		public static boolean isNoteCoordinate(final CharSequence chars) {
+			return chars.length() == 48 && DominoUtils.isHex(chars);
+		}
+
 		public static String getUnidFromBytes(final byte[] bytes) {
 			if (bytes.length >= 16) {
 				long first = Longs.fromBytes(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
@@ -123,7 +127,11 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 		}
 
 		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final CharSequence metaversalid) {
-			return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
+			if (metaversalid.length() == 48) {
+				return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
+			} else {
+				return null;
+			}
 		}
 
 		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final byte[] bytes) {
@@ -139,6 +147,10 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 
 	public Long getReplicaLong();
 
+	public long getX();
+
+	public long getY();
+
 	public String getUNID();
 
 	public Document getDocument();
@@ -148,6 +160,8 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 	public Object get(final String key);
 
 	public boolean isView();
+
+	public boolean isIcon();
 
 	public int insertToByteArray(final byte[] bytes, final int pos);
 

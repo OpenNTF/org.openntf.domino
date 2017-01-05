@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -39,8 +39,8 @@ import org.xml.sax.InputSource;
 /**
  * The Class MIMEEntity.
  */
-public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
-		org.openntf.domino.MIMEEntity {
+public class MIMEEntity extends BaseThreadSafe<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
+org.openntf.domino.MIMEEntity {
 
 	/**
 	 * we have to track every child element that was queried from this entity.rec
@@ -50,15 +50,11 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected MIMEEntity(final lotus.domino.MIMEEntity delegate, final Document parent) {
 		super(delegate, parent, NOTES_MIMEENTITY);
@@ -66,7 +62,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/**
 	 * This method initializes the name of this MimeEntity, so that the entity knwos it's field name. Should NOT be called in your code!
-	 * 
+	 *
 	 * @param itemName
 	 *            the itemName
 	 */
@@ -80,15 +76,17 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	}
 
 	protected MIMEHeader track(final MIMEHeader what) {
-		if (what == null)
+		if (what == null) {
 			return null;
+		}
 		trackedHeaders_.add(what);
 		return what;
 	}
 
 	protected Vector<MIMEHeader> track(final Vector<MIMEHeader> what) {
-		if (what == null)
+		if (what == null) {
 			return null;
+		}
 		for (MIMEHeader el : what) {
 			track(el);
 		}
@@ -98,15 +96,19 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	public void closeMIMEEntity() {
 		Iterator<MIMEHeader> hdrIter = trackedHeaders_.iterator();
 		while (hdrIter.hasNext()) {
-			((org.openntf.domino.impl.MIMEHeader) hdrIter.next()).recycle();
+			org.openntf.domino.impl.MIMEHeader header = (org.openntf.domino.impl.MIMEHeader) hdrIter.next();
+			if (!header.isDead()) {
+				header.recycle();
+			}
 			hdrIter.remove();
 		}
-		recycle();
+		if (!isDead())
+			recycle();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#createChildEntity()
 	 */
 	@Override
@@ -122,7 +124,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#createChildEntity(lotus.domino.MIMEEntity)
 	 */
 	@Override
@@ -138,7 +140,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#createHeader(java.lang.String)
 	 */
 	@Override
@@ -154,7 +156,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#createParentEntity()
 	 */
 	@Override
@@ -170,7 +172,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#decodeContent()
 	 */
 	@Override
@@ -185,7 +187,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#encodeContent(int)
 	 */
 	@Override
@@ -200,7 +202,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getBoundaryEnd()
 	 */
 	@Override
@@ -215,7 +217,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getBoundaryStart()
 	 */
 	@Override
@@ -230,7 +232,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getCharset()
 	 */
 	@Override
@@ -245,7 +247,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentAsBytes(lotus.domino.Stream)
 	 */
 	@Override
@@ -259,7 +261,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentAsBytes(lotus.domino.Stream, boolean)
 	 */
 	@Override
@@ -273,7 +275,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentAsText()
 	 */
 	@Override
@@ -288,7 +290,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentAsText(lotus.domino.Stream)
 	 */
 	@Override
@@ -302,7 +304,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentAsText(lotus.domino.Stream, boolean)
 	 */
 	@Override
@@ -316,7 +318,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentSubType()
 	 */
 	@Override
@@ -331,7 +333,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getContentType()
 	 */
 	@Override
@@ -346,7 +348,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getEncoding()
 	 */
 	@Override
@@ -361,7 +363,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream)
 	 */
 	@Override
@@ -375,7 +377,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -390,7 +392,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -405,7 +407,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getFirstChildEntity()
 	 */
 	@Override
@@ -420,7 +422,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getHeaderObjects()
 	 */
 	@Override
@@ -435,7 +437,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getHeaders()
 	 */
 	@Override
@@ -450,7 +452,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getInputSource()
 	 */
 	@Override
@@ -465,7 +467,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getInputStream()
 	 */
 	@Override
@@ -480,7 +482,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getNextEntity()
 	 */
 	@Override
@@ -495,7 +497,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getNextEntity(int)
 	 */
 	@Override
@@ -510,7 +512,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getNextSibling()
 	 */
 	@Override
@@ -525,7 +527,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getNthHeader(java.lang.String)
 	 */
 	@Override
@@ -540,7 +542,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getNthHeader(java.lang.String, int)
 	 */
 	@Override
@@ -563,7 +565,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getParentEntity()
 	 */
 	@Override
@@ -578,7 +580,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getPreamble()
 	 */
 	@Override
@@ -593,7 +595,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getPrevEntity()
 	 */
 	@Override
@@ -608,7 +610,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getPrevEntity(int)
 	 */
 	@Override
@@ -623,7 +625,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getPrevSibling()
 	 */
 	@Override
@@ -638,7 +640,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getReader()
 	 */
 	@Override
@@ -653,7 +655,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getSomeHeaders()
 	 */
 	@Override
@@ -668,7 +670,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getSomeHeaders(java.util.Vector)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -690,7 +692,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#getSomeHeaders(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -711,7 +713,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#parseXML(boolean)
 	 */
 	@Override
@@ -726,7 +728,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#remove()
 	 */
 	@Override
@@ -747,7 +749,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#setContentFromBytes(lotus.domino.Stream, java.lang.String, int)
 	 */
 	@Override
@@ -762,7 +764,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#setContentFromText(lotus.domino.Stream, java.lang.String, int)
 	 */
 	@Override
@@ -777,7 +779,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#setPreamble(java.lang.String)
 	 */
 	@Override
@@ -792,7 +794,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.MIMEEntity#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
@@ -811,7 +813,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
@@ -821,7 +823,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -831,7 +833,7 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -844,8 +846,9 @@ public class MIMEEntity extends BaseNonThreadSafe<org.openntf.domino.MIMEEntity,
 	 */
 	@Override
 	public String getItemName() {
-		if (itemName_ != null)
+		if (itemName_ != null) {
 			return itemName_;
+		}
 
 		return getParentEntity().getItemName();
 	}

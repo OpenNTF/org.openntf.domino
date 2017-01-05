@@ -14,6 +14,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -28,8 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javolution.util.FastMap;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
@@ -73,7 +72,7 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 	private static final Logger log_ = Logger.getLogger(AbstractDominoExecutor.class.getName());
 
 	/** This list contains ALL tasks */
-	protected Map<Long, DominoFutureTask<?>> tasks = new FastMap<Long, DominoFutureTask<?>>().atomic();
+	protected Map<Long, DominoFutureTask<?>> tasks = new ConcurrentHashMap<Long, DominoFutureTask<?>>();
 
 	@SuppressWarnings("unused")
 	private Set<IDominoListener> listeners_;
@@ -116,7 +115,8 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 		} catch (Throwable t) {
 			log_.log(Level.WARNING,
 					"cannot create a privilegedThreadFactory - this is the case if you run as java app or in an unsupported operation: "
-							+ t.toString(), t);
+							+ t.toString(),
+					t);
 			return Executors.defaultThreadFactory();
 		}
 	}
@@ -456,7 +456,8 @@ public abstract class AbstractDominoExecutor extends ScheduledThreadPoolExecutor
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public ScheduledFuture<?> scheduleWithFixedDelay(final Runnable runnable, final long delay, final long period, final TimeUnit timeUnit) {
+	public ScheduledFuture<?> scheduleWithFixedDelay(final Runnable runnable, final long delay, final long period,
+			final TimeUnit timeUnit) {
 		if (period <= 0) {
 			throw new IllegalStateException("period must be > 0");
 		}

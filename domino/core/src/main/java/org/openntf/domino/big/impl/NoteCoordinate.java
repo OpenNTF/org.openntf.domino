@@ -11,19 +11,20 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Map;
 
-import javolution.util.FastMap;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.primitives.Longs;
+
+import javolution.util.FastMap;
 
 /*
  * NTF This class stores information on where to find a note in a simple 3-long address
@@ -43,9 +44,11 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	long x;
 	long y;
 	transient Boolean isView_;
+	transient Boolean isIcon_;
 	transient private Map<String, Object> propertyCache;
-	transient private Database database_;
-	transient private Document document_;
+
+	//	transient private Database database_;
+	//	transient private Document document_;
 
 	//TODO NTF we should probably have a factory that creates these instead of instantiating them directly
 
@@ -73,6 +76,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			this.y = unids[1];
 		} catch (Throwable t) {
 			System.err.println("Unable to create a NoteCoordinate from character sequence: " + metaversalid);
+			t.printStackTrace();
 			throw new RuntimeException(t);
 		}
 	}
@@ -105,6 +109,16 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	@Override
 	public Long getReplicaLong() {
 		return db;
+	}
+
+	@Override
+	public long getX() {
+		return x;
+	}
+
+	@Override
+	public long getY() {
+		return y;
 	}
 
 	protected long getDbid() {
@@ -171,7 +185,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			Document doc = getDocument();
 			if (!doc.isNewNote()) {
 				try {
-					isView_ = doc.hasItem("$Index");
+					isView_ = DesignFactory.isView(doc);
 				} catch (Exception e) {
 					isView_ = false;
 					//					System.err.println("Exception thrown while checking isView for a document: " + e.getMessage() + " on notecoordinate "
@@ -182,6 +196,24 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 			}
 		}
 		return isView_;
+	}
+
+	@Override
+	public boolean isIcon() {
+		if (isIcon_ == null) {
+			if (x == 0l && y == 0l) {
+				isIcon_ = true;
+			} else {
+				Document doc = getDocument();
+				if (!doc.isNewNote()) {
+					//					System.out.println("TEMP DEBUG Icon checking noteid " + String.valueOf(doc.getNoteID()));
+					//					String fields = Strings.join(doc.keySet(), ",");
+					//					System.out.println("TEMP DEBUG fields: " + fields);
+					isIcon_ = DesignFactory.isIcon(doc);
+				}
+			}
+		}
+		return isIcon_;
 	}
 
 	@Override

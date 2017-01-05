@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -45,8 +45,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends BaseNonThreadSafe<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-org.openntf.domino.DbDirectory, Encapsulated {
+public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
+		org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	/* the MetaData contains s small subset of information of a (closed) Database */
@@ -63,15 +63,11 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/**
 	 * Instantiates a new DbDirectory.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent) {
 		super(delegate, parent, NOTES_SERVER);
@@ -123,14 +119,15 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/**
 	 * Convert the lotus int-Type to org.openntf.domino.DbDirectory.Type
-	 * 
+	 *
 	 * @param iType
 	 * @return
 	 */
 	protected Type convertType(final int iType) {
 		for (Type t : Type.values()) {
-			if (t.getValue() == iType)
+			if (t.getValue() == iType) {
 				return t;
+			}
 		}
 		throw new IllegalArgumentException("The type " + iType + " is not a valid DbDirectory type");
 	}
@@ -150,8 +147,8 @@ org.openntf.domino.DbDirectory, Encapsulated {
 				int type = type_.getValue();
 				rawdb = delegate.getFirstDatabase(type);
 			} catch (NotesException ne) {
-				log_.log(Level.WARNING, "For some reason getting the first database reported an exception: " + ne.text
-						+ "  Attempting to move along...");
+				log_.log(Level.WARNING,
+						"For some reason getting the first database reported an exception: " + ne.text + "  Attempting to move along...");
 				rawdb = delegate.getNextDatabase();
 			}
 
@@ -186,7 +183,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		//		try {
 		//
 		//			delegate.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
-		//			
+		//
 		//
 		//			// Trying to iterate multiple times over the DbDirectory
 		//			for (int i = 0; i < 16; i++) {
@@ -227,7 +224,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		//				// the db while you are iterating, this will invalidate the db that was somewhere else opened!
 		//
 		//				// TODO RPr: Should we do that with factory
-		//				// YES, we MUST do this in the factory, otherwise we will get errors like: PANIC! Why are we recaching a lotus object" because there are 
+		//				// YES, we MUST do this in the factory, otherwise we will get errors like: PANIC! Why are we recaching a lotus object" because there are
 		//				// two openntf.domino instances for the same cpp id
 		//				db = getFactory().fromLotus(rawdb, Database.SCHEMA, null);
 		//
@@ -262,7 +259,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#createDatabase(java.lang.String)
 	 */
 	@Override
@@ -277,7 +274,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#createDatabase(java.lang.String, boolean)
 	 */
 	@Override
@@ -286,8 +283,9 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		try {
 			if (getAncestorSession().isFixEnabled(Fixes.CREATE_DB)) {
 				result = openDatabase(dbFile, false);
-				if (result != null)
+				if (result != null) {
 					return result;
+				}
 			}
 			lotus.domino.Database delDb = getDelegate().createDatabase(dbFile, open);
 			result = fromLotus(delDb, Database.SCHEMA, getAncestorSession());
@@ -306,7 +304,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#getClusterName()
 	 */
 	@Override
@@ -316,7 +314,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#getClusterName(java.lang.String)
 	 */
 	@Override
@@ -331,7 +329,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#getFirstDatabase(int)
 	 */
 	@Override
@@ -362,7 +360,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#getName()
 	 */
 	@Override
@@ -372,7 +370,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#getNextDatabase()
 	 */
 	@Override
@@ -384,7 +382,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 			return getFactory().create(Database.SCHEMA, getAncestorSession(), dbIter.next());
 		}
 		return null;
-		// This will never work, as the DBs in the getDbHolderSet() are in a complete different order 
+		// This will never work, as the DBs in the getDbHolderSet() are in a complete different order
 		//		try {
 		//			return fromLotus(getDelegate().getNextDatabase(), Database.SCHEMA, getAncestorSession());
 		//		} catch (NotesException e) {
@@ -395,7 +393,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -405,7 +403,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#isHonorShowInOpenDatabaseDialog()
 	 */
 	@Override
@@ -426,7 +424,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -454,7 +452,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#openDatabase(java.lang.String)
 	 */
 	@Override
@@ -464,7 +462,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#openDatabase(java.lang.String, boolean)
 	 */
 	@Override
@@ -478,7 +476,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
 	@Override
@@ -488,7 +486,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#openDatabaseIfModified(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
@@ -503,7 +501,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#openMailDatabase()
 	 */
 	@Override
@@ -513,7 +511,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DbDirectory#setHonorShowInOpenDatabaseDialog(boolean)
 	 */
 	@Override
@@ -526,7 +524,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -562,7 +560,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		type_ = Type.valueOf(in.readInt());
 		name_ = in.readUTF();
 		clusterName_ = in.readUTF();
-		// CHECKME should we really 
+		// CHECKME should we really
 		dbMetaDataSet_ = (SortedSet<DatabaseMetaData>) in.readObject();
 	}
 
@@ -719,8 +717,9 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	@Override
 	public DbDirectoryTree getTree() {
-		if (dbDirectoryTree_ == null)
+		if (dbDirectoryTree_ == null) {
 			dbDirectoryTree_ = new DbDirectoryTree(getMetaDataSet(), getAncestorSession());
+		}
 		return dbDirectoryTree_;
 	}
 

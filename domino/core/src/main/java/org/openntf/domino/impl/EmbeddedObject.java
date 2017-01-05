@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -39,22 +39,19 @@ import org.xml.sax.InputSource;
 /**
  * The Class EmbeddedObject.
  */
-public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
+public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
 		org.openntf.domino.EmbeddedObject {
 
 	protected AtomicInteger referenceCounter = new AtomicInteger();
+	protected RichTextItem parent_;
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final Document parent) {
 		super(delegate, parent, NOTES_EMBEDOBJ);
@@ -217,17 +214,19 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 */
 	@Override
 	public final RichTextItem getParent() {
-		try {
-			return fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, parent);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
+		if (parent_ == null) {
+			try {
+				parent_ = fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, parent);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
 		}
+		return parent_;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#activate(boolean)
 	 */
 	@Override
@@ -237,17 +236,16 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
-
 		} finally {
-			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
-				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
+			if (_delegateLocal.get() instanceof lotus.domino.local.EmbeddedObject) {
+				((lotus.domino.local.EmbeddedObject) _delegateLocal.get()).markInvalid();
 			}
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#doVerb(java.lang.String)
 	 */
 	@Override
@@ -262,7 +260,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#extractFile(java.lang.String)
 	 */
 	@Override
@@ -277,7 +275,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getClassName()
 	 */
 	@Override
@@ -293,7 +291,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getFileSize()
 	 */
 	@Override
@@ -309,7 +307,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getName()
 	 */
 	@Override
@@ -325,7 +323,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getObject()
 	 */
 	@Override
@@ -349,7 +347,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getSource()
 	 */
 	@Override
@@ -365,7 +363,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getType()
 	 */
 	@Override
@@ -381,7 +379,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getVerbs()
 	 */
 	@Override
@@ -398,7 +396,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#remove()
 	 */
 	@Override
@@ -414,7 +412,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getReader()
 	 */
 	@Override
@@ -429,7 +427,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getInputSource()
 	 */
 	@Override
@@ -439,7 +437,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#getInputStream()
 	 */
 	@Override
@@ -457,12 +455,12 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 	 */
 	@Override
 	public void markInvalid() {
-		((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
+		((lotus.domino.local.EmbeddedObject) _delegateLocal.get()).markInvalid();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#parseXML(boolean)
 	 */
 	@Override
@@ -477,7 +475,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.EmbeddedObject#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
@@ -496,7 +494,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
 	 */
 	@Override
@@ -506,7 +504,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -516,7 +514,7 @@ public class EmbeddedObject extends BaseNonThreadSafe<org.openntf.domino.Embedde
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

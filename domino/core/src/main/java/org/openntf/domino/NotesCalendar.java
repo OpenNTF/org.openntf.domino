@@ -23,10 +23,10 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface NotesCalendar.
  */
-public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.domino.NotesCalendar, org.openntf.domino.ext.NotesCalendar,
-		SessionDescendant {
+public interface NotesCalendar
+		extends Base<lotus.domino.NotesCalendar>, lotus.domino.NotesCalendar, org.openntf.domino.ext.NotesCalendar, SessionDescendant {
 
-	public static class Schema extends FactorySchema<NotesCalendar, lotus.domino.NotesCalendar, Database> {
+	public static class Schema extends FactorySchema<NotesCalendar, lotus.domino.NotesCalendar, Session> {
 		@Override
 		public Class<NotesCalendar> typeClass() {
 			return NotesCalendar.class;
@@ -38,8 +38,8 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 		}
 
 		@Override
-		public Class<Database> parentClass() {
-			return Database.class;
+		public Class<Session> parentClass() {
+			return Session.class;
 		}
 	};
 

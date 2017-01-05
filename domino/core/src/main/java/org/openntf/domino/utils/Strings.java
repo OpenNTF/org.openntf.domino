@@ -989,30 +989,6 @@ public enum Strings {
 		return result;
 	}
 
-	/**
-	 * Gets the String of an object WITHOUT THROWING AN EXCEPTION.
-	 *
-	 * Handles null and enum instances.
-	 *
-	 * Null is returned as an empty string "", Enum instances return the name of the enum. If the object is an instance of String, it will
-	 * be cast as a String and returned. Otherwise, the result of the object's toString() method will be returned.
-	 *
-	 * @param obj
-	 *            object for which to return the String.
-	 *
-	 * @return String representation the object. Empty string "" on exception.
-	 */
-	public static String getString(final Object obj) {
-		try {
-			return (null == obj) ? "" : (obj instanceof Enum<?>) ? ((Enum<?>) obj).name() : obj.toString();
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e, "obj: " + obj);
-		}
-
-		return "";
-	}
-
 	/*
 	 * ************************************************************************
 	 * ************************************************************************
@@ -1146,19 +1122,91 @@ public enum Strings {
 	public static String[] asStringArray(final boolean allowBlanks, final String... args) {
 		String[] result = new String[args.length];
 		int nbCount = 0;
-		for (int i = 0; i < args.length; i++) {
-			if (args[i] != null) {
+		for (String arg : args) {
+			if (arg != null) {
 				if (allowBlanks) {
-					result[nbCount++] = args[i];
+					result[nbCount++] = arg;
 				} else {
-					if (args[i].length() > 0)
-						result[nbCount++] = args[i];
+					if (arg.length() > 0) {
+						result[nbCount++] = arg;
+					}
 				}
 			}
 		}
 		String[] returning = new String[nbCount];
 		System.arraycopy(result, 0, returning, 0, nbCount);
 		return returning;
+	}
+
+	/**
+	 * Gets the String of an object WITHOUT THROWING AN EXCEPTION.
+	 *
+	 * Handles null and enum instances.
+	 *
+	 * Null is returned as an empty string "", Enum instances return the name of the enum. If the object is an instance of String, it will
+	 * be cast as a String and returned. Otherwise, the result of the object's toString() method will be returned.
+	 *
+	 * @param source
+	 *            object for which to return the String.
+	 *
+	 * @return String representation the object. Empty string "" on exception.
+	 */
+	public static String getString(final Object source) {
+		return getString(source, "");
+	}
+
+	/**
+	 * Gets the String of an object WITHOUT THROWING AN EXCEPTION.
+	 *
+	 * Handles null and enum instances.
+	 *
+	 * Null is returned as an empty string "", Enum instances return the name of the enum. If the object is an instance of String, it will
+	 * be cast as a String and returned. Otherwise, the result of the object's toString() method will be returned.
+	 *
+	 * @param source
+	 *            object for which to return the String.
+	 *
+	 * @param delimiter
+	 *            Delimiter to use between collection members.
+	 *
+	 *
+	 * @return String representation the object. Empty string "" on exception.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static String getString(final Object source, final String delimiter) {
+		if (null == source) {
+			return "";
+		}
+
+		try {
+			// Enums
+			if (source instanceof Enum<?>) {
+				return ((Enum<?>) source).name();
+			}
+
+			// Collections
+			if (source instanceof Collection) {
+				final Object[] array = ((Collection) source).toArray();
+				if (array.length < 1) {
+					return "";
+				}
+
+				final Collection<String> list = new ArrayList<String>();
+				for (final Object element : array) {
+					list.add(asString(element, ""));
+				}
+
+				return Strings.join(list, (Strings.isBlankString(delimiter)) ? "" : delimiter);
+			}
+
+			// everything else
+			return (source instanceof String) ? (String) source : String.valueOf(source);
+
+		} catch (final Exception e) {
+			// do nothing
+		}
+
+		return "";
 	}
 
 }

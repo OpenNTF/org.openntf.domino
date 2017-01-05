@@ -11,7 +11,7 @@
 	<!-- Local files -->
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources</directory>
+			<directory>src/main/resources/full</directory>
 			<includes>
 				<include>**/*</include>
 			</includes>
@@ -22,7 +22,6 @@
 			<includes>
 				<include>LICENSE</include>
 				<include>NOTICE.md</include>
-				<include>README.md</include>
 			</includes>
 		</fileSet>
 	</fileSets>

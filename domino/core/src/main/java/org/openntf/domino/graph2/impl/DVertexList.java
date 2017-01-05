@@ -1,14 +1,8 @@
 package org.openntf.domino.graph2.impl;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
-import javolution.lang.Immutable;
-import javolution.util.FastTable;
-import javolution.util.internal.table.AtomicTableImpl;
-import javolution.util.internal.table.UnmodifiableTableImpl;
-import javolution.util.service.TableService;
-
-public class DVertexList extends FastTable<DVertex> {
+public class DVertexList extends ArrayList<DVertex> {
 	private static final long serialVersionUID = 1L;
 	protected final DVertex sourceVertex_;
 
@@ -16,12 +10,12 @@ public class DVertexList extends FastTable<DVertex> {
 		sourceVertex_ = source;
 	}
 
-	public DVertexList(final DVertex source, final TableService<DVertex> service) {
+	/*public DVertexList(final DVertex source, final TableService<DVertex> service) {
 		super(service);
 		sourceVertex_ = source;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public DVertexList atomic() {
 		return new DVertexList(sourceVertex_, new AtomicTableImpl<DVertex>(service()));
 	}
@@ -34,7 +28,7 @@ public class DVertexList extends FastTable<DVertex> {
 	@Override
 	public <T extends Collection<DVertex>> Immutable<T> immutable() {
 		return super.immutable();
-	}
+	}*/
 
 	public DVertexList applyFilter(final String key, final Object value) {
 		DVertexList result = new DVertexList(sourceVertex_);

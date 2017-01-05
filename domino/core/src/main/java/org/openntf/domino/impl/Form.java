@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -34,19 +34,15 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Form.
  */
-public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
+public class Form extends BaseThreadSafe<org.openntf.domino.Form, lotus.domino.Form, Database> implements org.openntf.domino.Form {
 
 	/**
 	 * Instantiates a new form.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Form(final lotus.domino.Form delegate, final Database parent) {
 		super(delegate, parent, NOTES_FORM);
@@ -54,7 +50,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getAliases()
 	 */
 	@Override
@@ -72,7 +68,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getDocument()
 	 */
 	@Override
@@ -82,7 +78,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getFieldType(java.lang.String)
 	 */
 	@Override
@@ -98,7 +94,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getFields()
 	 */
 	@Override
@@ -116,7 +112,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getFormUsers()
 	 */
 	@Override
@@ -134,7 +130,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getHttpURL()
 	 */
 	@Override
@@ -150,7 +146,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getLockHolders()
 	 */
 	@Override
@@ -168,7 +164,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getName()
 	 */
 	@Override
@@ -184,7 +180,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getNoteID()
 	 */
 	@Override
@@ -196,7 +192,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getNotesURL()
 	 */
 	@Override
@@ -212,7 +208,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -222,7 +218,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getReaders()
 	 */
 	@Override
@@ -240,7 +236,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getUniversalID()
 	 */
 	@Override
@@ -252,7 +248,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#getURL()
 	 */
 	@Override
@@ -294,7 +290,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#isProtectReaders()
 	 */
 	@Override
@@ -310,7 +306,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#isProtectUsers()
 	 */
 	@Override
@@ -326,7 +322,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#isSubForm()
 	 */
 	@Override
@@ -342,7 +338,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lock()
 	 */
 	@Override
@@ -358,7 +354,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lock(boolean)
 	 */
 	@Override
@@ -374,7 +370,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lock(java.lang.String, boolean)
 	 */
 	@Override
@@ -390,7 +386,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lock(java.lang.String)
 	 */
 	@Override
@@ -406,7 +402,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lock(java.util.Vector, boolean)
 	 */
 	@Override
@@ -423,7 +419,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lock(java.util.Vector)
 	 */
 	@Override
@@ -440,7 +436,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lockProvisional()
 	 */
 	@Override
@@ -456,7 +452,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lockProvisional(java.lang.String)
 	 */
 	@Override
@@ -472,7 +468,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#lockProvisional(java.util.Vector)
 	 */
 	@Override
@@ -489,7 +485,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#remove()
 	 */
 	@Override
@@ -504,7 +500,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#setFormUsers(java.util.Vector)
 	 */
 	@Override
@@ -520,7 +516,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#setProtectReaders(boolean)
 	 */
 	@Override
@@ -535,7 +531,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#setProtectUsers(boolean)
 	 */
 	@Override
@@ -550,7 +546,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#setReaders(java.util.Vector)
 	 */
 	@Override
@@ -566,7 +562,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Form#unlock()
 	 */
 	@Override
@@ -581,7 +577,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -591,7 +587,7 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -601,13 +597,14 @@ public class Form extends BaseNonThreadSafe<org.openntf.domino.Form, lotus.domin
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Form#getModifiedNoteCount(java.util.Date)
 	 */
 	@Override
 	public int getModifiedNoteCount(final Date since) {
-		if (since.after(getAncestorDatabase().getLastModified().toJavaDate()))
+		if (since.after(getAncestorDatabase().getLastModified().toJavaDate())) {
 			return 0;
+		}
 		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
 		nc.setSinceTime(since);
 		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();

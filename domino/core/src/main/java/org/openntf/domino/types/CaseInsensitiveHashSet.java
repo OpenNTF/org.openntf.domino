@@ -1,13 +1,12 @@
 package org.openntf.domino.types;
 
 import java.util.AbstractSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javolution.util.FastMap;
-
 public class CaseInsensitiveHashSet extends AbstractSet<String> {
-	private Map<String, String> delegate = new FastMap<String, String>();
+	private Map<String, String> delegate = new HashMap<String, String>();
 
 	@Override
 	public boolean add(final String e) {
