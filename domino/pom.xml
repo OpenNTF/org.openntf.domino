@@ -292,19 +292,17 @@
 			</modules>
 			
 			<build>
-				<pluginManagement>
-					<plugins>
-						<plugin>
-							<!-- javadoc configuration -->
-							<groupId>org.apache.maven.plugins</groupId>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>2.9</version>
-							<configuration>
-								<skip>false</skip>
-							</configuration>
-						</plugin>
-					</plugins>
-				</pluginManagement>
+				<plugins>
+					<plugin>
+						<!-- javadoc configuration -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9</version>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	</profiles>

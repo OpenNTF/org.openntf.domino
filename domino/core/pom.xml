@@ -19,6 +19,7 @@
 				<executions>
 					<execution>
 						<id>generate-javadoc</id>
+						<phase>package</phase>
 						<goals>
 							<goal>jar</goal>
 						</goals>
