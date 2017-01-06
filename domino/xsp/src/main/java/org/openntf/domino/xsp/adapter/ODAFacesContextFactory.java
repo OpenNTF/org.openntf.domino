@@ -16,6 +16,7 @@ import org.openntf.domino.xsp.session.XPageSignerSessionFactory;
 import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.FacesContextFactoryImpl;
+import com.ibm.xsp.domino.context.DominoFacesContext;
 import com.ibm.xsp.domino.context.DominoFacesContextFactoryImpl;
 import com.ibm.xsp.event.FacesContextListener;
 
@@ -85,8 +86,13 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 			attachListener(localContext);
 			return localContext;
 		} else {
-			attachListener((FacesContextEx) ctx);
-			return ctx;
+			if (ctx instanceof FacesContextEx) {
+				attachListener((FacesContextEx) ctx);
+				return ctx;
+			} else {
+				DominoFacesContext localContext = new DominoFacesContext(ctx);
+				return localContext;
+			}
 		}
 	}
 
