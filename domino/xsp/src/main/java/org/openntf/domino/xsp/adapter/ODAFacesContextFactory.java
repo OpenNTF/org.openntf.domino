@@ -91,6 +91,7 @@ public class ODAFacesContextFactory extends FacesContextFactory {
 				return ctx;
 			} else {
 				DominoFacesContext localContext = new DominoFacesContext(ctx);
+				attachListener(localContext);
 				return localContext;
 			}
 		}
