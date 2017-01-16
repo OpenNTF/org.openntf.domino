@@ -334,51 +334,91 @@ public class DocumentSyncHelper {
 			txn = targetDb.startTransaction();
 		}
 		for (Document source : coll) {
-			if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE) {
-				txn = targetDb.startTransaction();
-			}
-			DateTime sourceLastMod = source.getLastModified();
-			// Object lookupKey = Factory.wrappedEvaluate(session, getSourceKeyFormula(), source);
-			Object lookupKey = getSourceKeyFormula().getValue(source);
-			DocumentCollection targetColl = targetView.getAllDocumentsByKey(lookupKey, true);
-			for (Document target : targetColl) {
-				// boolean targetDirty = false;
-				for (Map.Entry<Formula, String> entry : getSyncMap().entrySet()) {
-					String targetItemName = entry.getValue();
-					java.util.Vector<?> sourceValue = entry.getKey().getValue(source);
-					// Factory.wrappedEvaluate(session, entry.getKey(), source);
-					if (strategy == Strategy.CREATE_AND_REPLACE) {
-						target.replaceItemValue(targetItemName, sourceValue);
-						// targetDirty = true;
-					} else {
-						Item targetItem = target.getFirstItem(targetItemName);
-						if (strategy == Strategy.REPLACE_IF_NEWER) {
-							DateTime itemLastMod = targetItem.getLastModified();
-							if (sourceLastMod.isAfter(itemLastMod)) {
-								targetItem.setValues(sourceValue);
-								// targetDirty = true;
-							}
-						} else if (strategy == Strategy.REPLACE_ONLY) {
-							if (targetItem != null) {
-								targetItem.setValues(sourceValue);
-								// targetDirty = true;
-							}
-						}
-					}
-				}
-				if (getTransactionRule() == TransactionRule.NO_TRANSACTION || txn == null) {
-					target.save();
-				}
-			}
-			if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE && txn != null) {
-				txn.commit();
-				txn = null;
-			}
+			txn = processDocument(targetDb, targetView, strategy, txn, source);
 		}
 		if (getTransactionRule() == TransactionRule.COMMIT_AT_END && txn != null) {
 			txn.commit();
 			txn = null;
 		}
+	}
+
+	/**
+	 * Process a specific document
+	 *
+	 * WARNING: Does not currently check that all properties of the SyncHelper have been set up
+	 *
+	 * @param doc
+	 *            Document to process
+	 * @since ODA 3.2.0
+	 */
+	public void process(final Document doc) {
+		// TODO Check to make sure properties are all set up before running
+		Session session = doc.getAncestorSession();
+		Database targetDb = session.getDatabase(getTargetServer(), getTargetFilepath());
+		View targetView = targetDb.getView(getTargetLookupView());
+		Strategy strategy = getStrategy();
+		setTransactionRule(TransactionRule.NO_TRANSACTION);
+		processDocument(targetDb, targetView, strategy, null, doc);
+	}
+
+	/**
+	 * Process a specific Document
+	 *
+	 * @param targetDb
+	 *            Database to retrieve documents to sync to
+	 * @param targetView
+	 *            View to retrieve documents to sync to
+	 * @param strategy
+	 *            Strategy to sync Items
+	 * @param txn
+	 *            DatabaseTransaction to run under
+	 * @param source
+	 *            Document to sync from
+	 * @return DatabaseTransaction to run under
+	 */
+	private DatabaseTransaction processDocument(final Database targetDb, final View targetView, final Strategy strategy,
+			DatabaseTransaction txn, final Document source) {
+		if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE) {
+			txn = targetDb.startTransaction();
+		}
+		DateTime sourceLastMod = source.getLastModified();
+		// Object lookupKey = Factory.wrappedEvaluate(session, getSourceKeyFormula(), source);
+		Object lookupKey = getSourceKeyFormula().getValue(source);
+		DocumentCollection targetColl = targetView.getAllDocumentsByKey(lookupKey, true);
+		for (Document target : targetColl) {
+			// boolean targetDirty = false;
+			for (Map.Entry<Formula, String> entry : getSyncMap().entrySet()) {
+				String targetItemName = entry.getValue();
+				java.util.Vector<?> sourceValue = entry.getKey().getValue(source);
+				// Factory.wrappedEvaluate(session, entry.getKey(), source);
+				if (strategy == Strategy.CREATE_AND_REPLACE) {
+					target.replaceItemValue(targetItemName, sourceValue);
+					// targetDirty = true;
+				} else {
+					Item targetItem = target.getFirstItem(targetItemName);
+					if (strategy == Strategy.REPLACE_IF_NEWER) {
+						DateTime itemLastMod = targetItem.getLastModified();
+						if (sourceLastMod.isAfter(itemLastMod)) {
+							targetItem.setValues(sourceValue);
+							// targetDirty = true;
+						}
+					} else if (strategy == Strategy.REPLACE_ONLY) {
+						if (targetItem != null) {
+							targetItem.setValues(sourceValue);
+							// targetDirty = true;
+						}
+					}
+				}
+			}
+			if (getTransactionRule() == TransactionRule.NO_TRANSACTION || txn == null) {
+				target.save();
+			}
+		}
+		if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE && txn != null) {
+			txn.commit();
+			txn = null;
+		}
+		return txn;
 	}
 
 	/**
