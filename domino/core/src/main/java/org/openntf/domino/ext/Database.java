@@ -595,6 +595,18 @@ public interface Database extends Base {
 	public Document getDocumentByID(int noteid, boolean deferDelegate);
 
 	/**
+	 * NoteCollections and Event MessageQueue returns ID as int, not hex string. This method converts the int to hex and gets the document
+	 * based on that
+	 *
+	 * @param noteid
+	 *            int decimal note ID
+	 * @return Document matching the note ID
+	 *
+	 * @since ODA 3.2.0
+	 */
+	public Document getDocumentByID(int noteid);
+
+	/**
 	 * Single method to get a document regardless of whether it's being passed a note ID or UNID
 	 *
 	 * @param id
@@ -753,6 +765,7 @@ public interface Database extends Base {
 	 * @return a <code>Set</code> of the user's privileges
 	 */
 	public Set<DBPrivilege> queryAccessPrivilegesEx(String user);
+
 	public Set<String> getCurrentRoles();
 
 	public EnumSet<ACL.Privilege> getCurrentPrivileges();

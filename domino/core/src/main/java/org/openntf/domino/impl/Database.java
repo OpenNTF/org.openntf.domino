@@ -3764,6 +3764,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
+	public Document getDocumentByID(final int noteid) {
+		return getDocumentByID(noteid, false);
+	}
+
+	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		parent.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
