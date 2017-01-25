@@ -2,7 +2,7 @@ package org.openntf.domino.xots;
 
 import java.util.concurrent.Callable;
 
-public abstract class AbstractXotsCallable implements Callable<Object> {
+public abstract class AbstractXotsCallable<Object> implements Callable<Object> {
 
 	private XotsContext context_;
 
