@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.extmgr;
 
@@ -25,7 +25,7 @@ import org.openntf.domino.extmgr.events.TerminateNSFEvent;
 
 /**
  * @author nfreeman
- * 
+ *
  */
 public enum EMBridgeEventFactory {
 	INSTANCE;
@@ -39,7 +39,16 @@ public enum EMBridgeEventFactory {
 
 	public static IEMBridgeEvent parseEventBuffer(final String eventBuffer, final IEMBridgeEvent event) {
 		EMBridgeEventParams[] params = event.getParams();
-
+		String tmpBuffer = eventBuffer.substring(eventBuffer.indexOf(";") + 1);
+		String[] vals = tmpBuffer.split(",");
+		if (vals.length == params.length) {
+			for (int i = 0; i < params.length; i++) {
+				event.setEventValue(params[i], vals[i]);
+			}
+		} else {
+			System.out.println("Incorrect elements in eventBuffer for " + event.getClass().getName() + ", expected " + params.length
+					+ ", found " + vals.length);
+		}
 		return event;
 	}
 

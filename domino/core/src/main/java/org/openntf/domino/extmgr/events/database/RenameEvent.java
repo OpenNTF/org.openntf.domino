@@ -1,10 +1,10 @@
 package org.openntf.domino.extmgr.events.database;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
-import org.openntf.domino.extmgr.events.AbstractEMBridgeEvent;
+import org.openntf.domino.extmgr.events.AbstractDatabaseEvent;
 import org.openntf.domino.extmgr.events.EMEventIds;
 
-public class RenameEvent extends AbstractEMBridgeEvent {
+public class RenameEvent extends AbstractDatabaseEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.FromName, EMBridgeEventParams.ToName, EMBridgeEventParams.Username };
 
 	@Override

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import lotus.notes.internal.MessageQueue;
 
@@ -18,6 +19,7 @@ public enum EMBridgeMessageQueue {
 	INSTANCE;
 
 	public static final String QUEUE_NAME = "MQ$DOTS";
+	private static AtomicBoolean isStarted = new AtomicBoolean(false);
 	public static final int MQ_TIMEOUT = 1119;
 	public static final int MESSAGE_SIZE = 256;
 	public static final int MESSAGE_WAIT_TIME = 1000;
@@ -89,8 +91,9 @@ public enum EMBridgeMessageQueue {
 			long eventCount = 0;
 			try {
 				while (getStatus == 0) {
-					if (Thread.interrupted())
+					if (Thread.interrupted()) {
 						break;
+					}
 					getStatus = bridge_.getQueue().get(sb, MESSAGE_SIZE, 1, MESSAGE_WAIT_TIME);
 					if (getStatus == 0) {
 						dispatch.queueEvent(sb.toString());
@@ -141,10 +144,13 @@ public enum EMBridgeMessageQueue {
 	}
 
 	public static void start() {
-		INSTANCE.dispatcher_ = new QueueDispatcher(INSTANCE);
-		Xots.getService().execute(INSTANCE.dispatcher_);
-		INSTANCE.listener_ = new QueueListener(INSTANCE);
-		Xots.getService().execute(INSTANCE.listener_);
+		if (!isStarted.get()) {
+			INSTANCE.dispatcher_ = new QueueDispatcher(INSTANCE);
+			Xots.getService().execute(INSTANCE.dispatcher_);
+			INSTANCE.listener_ = new QueueListener(INSTANCE);
+			Xots.getService().execute(INSTANCE.listener_);
+			isStarted = new AtomicBoolean(true);
+		}
 	}
 
 	public static void stop() {

@@ -6,7 +6,7 @@ import org.openntf.domino.extmgr.events.EMEventIds;
 
 /**
  * @author dtaieb
- * 
+ *
  */
 public class CopyToDatabaseEvent extends AbstractDocumentEvent {
 	private static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid,
