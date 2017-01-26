@@ -34,6 +34,10 @@ public class Connect17Documents implements Runnable {
 		String prevDocAsJson = doc.toJson(true);
 		doc.appendItemValue("State", "AZ");
 		doc.replaceItemValue("DateTimeField", new Date());
+		doc.replaceItemValue("DateOnlyField", new java.sql.Date(System.currentTimeMillis()));
+		doc.replaceItemValue("EmptyDate", "");
+		Date blankDate = doc.getItemValue("EmptyDate", Date.class);
+		System.out.println(blankDate);
 		ArrayList<String> list = new ArrayList<String>();
 		list.add("Value 1");
 		list.add("Value 2");
