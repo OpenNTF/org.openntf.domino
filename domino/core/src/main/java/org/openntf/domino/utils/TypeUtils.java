@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.utils;
 
@@ -52,7 +52,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * @author nfreeman
- * 
+ *
  */
 public enum TypeUtils {
 	;
@@ -130,26 +130,34 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getDefaultInstance(final Class<T> type) {
-		if (type.isArray())
+		if (type.isArray()) {
 			if (type.getComponentType() == String.class) {
 				return (T) DEFAULT_STR_ARRAY.clone();
 			} else {
 				return (T) Array.newInstance(type.getComponentType(), 0);
 			}
-		if (Boolean.class.equals(type) || Boolean.TYPE.equals(type))
+		}
+		if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
 			return (T) Boolean.FALSE;
-		if (Integer.class.equals(type) || Integer.TYPE.equals(type))
+		}
+		if (Integer.class.equals(type) || Integer.TYPE.equals(type)) {
 			return (T) Integer.valueOf(0);
-		if (Long.class.equals(type) || Long.TYPE.equals(type))
+		}
+		if (Long.class.equals(type) || Long.TYPE.equals(type)) {
 			return (T) Long.valueOf(0l);
-		if (Short.class.equals(type) || Short.TYPE.equals(type))
+		}
+		if (Short.class.equals(type) || Short.TYPE.equals(type)) {
 			return (T) Short.valueOf("0");
-		if (Double.class.equals(type) || Double.TYPE.equals(type))
+		}
+		if (Double.class.equals(type) || Double.TYPE.equals(type)) {
 			return (T) Double.valueOf(0d);
-		if (Float.class.equals(type) || Float.TYPE.equals(type))
+		}
+		if (Float.class.equals(type) || Float.TYPE.equals(type)) {
 			return (T) Float.valueOf(0f);
-		if (String.class.equals(type))
+		}
+		if (String.class.equals(type)) {
 			return (T) "";
+		}
 		try {
 			return type.newInstance();
 		} catch (Exception e) {
@@ -256,8 +264,9 @@ public enum TypeUtils {
 
 	public static boolean isNumerical(final Object rawObject) {
 		boolean result = true;
-		if (rawObject == null || rawObject instanceof String)
+		if (rawObject == null || rawObject instanceof String) {
 			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
+		}
 		if (rawObject instanceof Collection) {
 			for (Object obj : (Collection<?>) rawObject) {
 				if (!isNumerical(obj)) {
@@ -278,8 +287,9 @@ public enum TypeUtils {
 
 	public static boolean isCalendrical(final Object rawObject) {
 		boolean result = true;
-		if (rawObject == null || rawObject instanceof String)
+		if (rawObject == null || rawObject instanceof String) {
 			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
+		}
 		if (rawObject instanceof Collection) {
 			for (Object obj : (Collection<?>) rawObject) {
 				if (!isCalendrical(obj)) {
@@ -298,8 +308,9 @@ public enum TypeUtils {
 
 	public static boolean isNameish(final Object rawObject) {
 		boolean result = true;
-		if (rawObject == null)
+		if (rawObject == null) {
 			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
+		}
 		if (rawObject instanceof Collection) {
 			for (Object obj : (Collection<?>) rawObject) {
 				if (!isNameish(obj)) {
@@ -493,8 +504,9 @@ public enum TypeUtils {
 	}
 
 	public static Serializable toSerializable(final Object value) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		Serializable result = null;
 		if (value instanceof org.openntf.domino.DateTime) {
 			Date date = null;
@@ -511,8 +523,9 @@ public enum TypeUtils {
 	}
 
 	public static Collection<Serializable> toSerializables(final Object value) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return DominoUtils.toSerializable((Collection<?>) value);
 		} else if (value.getClass().isArray()) {
@@ -708,8 +721,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T toNumberArray(final Object value, final Class<T> type) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToNumberArray((Collection<Object>) value, type);
 		} else if (value.getClass().isArray()) {
@@ -741,10 +755,12 @@ public enum TypeUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T toNumber(final Object value, final Class<T> type) throws DataNotCompatibleException {
 		// System.out.println("Starting toNumber to get type " + T.getName() + " from a value of type " + value.getClass().getName());
-		if (value == null)
+		if (value == null) {
 			return null;
-		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
+		}
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty())) {
 			return null;
+		}
 		T result = null;
 		Object localValue = value;
 		if (value instanceof Collection) {
@@ -846,8 +862,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Boolean[] toBooleans(final Object value) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToBooleans((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -860,8 +877,9 @@ public enum TypeUtils {
 	}
 
 	public static Boolean[] collectionToBooleans(final Collection<Object> vector) {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Boolean[0];
+		}
 		Boolean[] bools = new Boolean[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
@@ -965,24 +983,33 @@ public enum TypeUtils {
 		if (value instanceof Collection) {
 			return toPrimitive((Collection<Object>) value, ctype);
 		} else {
-			if (ctype == Boolean.TYPE)
+			if (ctype == Boolean.TYPE) {
 				return toBoolean(value);
-			if (ctype == Integer.TYPE)
+			}
+			if (ctype == Integer.TYPE) {
 				return toInt(value);
-			if (ctype == Short.TYPE)
+			}
+			if (ctype == Short.TYPE) {
 				return toShort(value);
-			if (ctype == Long.TYPE)
+			}
+			if (ctype == Long.TYPE) {
 				return toLong(value);
-			if (ctype == Float.TYPE)
+			}
+			if (ctype == Float.TYPE) {
 				return toFloat(value);
-			if (ctype == Double.TYPE)
+			}
+			if (ctype == Double.TYPE) {
 				return toDouble(value);
-			if (ctype == Byte.TYPE)
+			}
+			if (ctype == Byte.TYPE) {
 				throw new UnimplementedException("Primitive conversion for byte not yet defined");
-			if (ctype == Character.TYPE)
+			}
+			if (ctype == Character.TYPE) {
 				throw new UnimplementedException("Primitive conversion for char not yet defined");
-			if (ctype == com.ibm.icu.lang.UCharacter.class)
+			}
+			if (ctype == com.ibm.icu.lang.UCharacter.class) {
 				throw new UnimplementedException("Primitive conversion for char not yet defined");
+			}
 			throw new DataNotCompatibleException("");
 
 		}
@@ -999,30 +1026,40 @@ public enum TypeUtils {
 			throw new DataNotCompatibleException("Cannot create a primitive " + ctype + " from data because we don't have any values.");
 		}
 		Iterator<Object> it = values.iterator();
-		if (ctype == Boolean.TYPE)
+		if (ctype == Boolean.TYPE) {
 			return toBoolean(it.next());
-		if (ctype == Integer.TYPE)
+		}
+		if (ctype == Integer.TYPE) {
 			return toInt(it.next());
-		if (ctype == Short.TYPE)
+		}
+		if (ctype == Short.TYPE) {
 			return toShort(it.next());
-		if (ctype == Long.TYPE)
+		}
+		if (ctype == Long.TYPE) {
 			return toLong(it.next());
-		if (ctype == Float.TYPE)
+		}
+		if (ctype == Float.TYPE) {
 			return toFloat(it.next());
-		if (ctype == Double.TYPE)
+		}
+		if (ctype == Double.TYPE) {
 			return toDouble(it.next());
-		if (ctype == Byte.TYPE)
+		}
+		if (ctype == Byte.TYPE) {
 			throw new UnimplementedException("Primitive conversion for byte not yet defined");
-		if (ctype == Character.TYPE)
+		}
+		if (ctype == Character.TYPE) {
 			throw new UnimplementedException("Primitive conversion for char not yet defined");
-		if (ctype == com.ibm.icu.lang.UCharacter.class)
+		}
+		if (ctype == com.ibm.icu.lang.UCharacter.class) {
 			throw new UnimplementedException("Primitive conversion for char not yet defined");
+		}
 		throw new DataNotCompatibleException("");
 	}
 
 	public static String join(final Object[] values, final String separator) {
-		if (values == null || values.length == 0)
+		if (values == null || values.length == 0) {
 			return "";
+		}
 		StringBuilder sb = new StringBuilder();
 		boolean isFirst = true;
 		for (Object val : values) {
@@ -1036,14 +1073,16 @@ public enum TypeUtils {
 	}
 
 	public static String join(final Collection<?> values, final String separator) {
-		if (values == null || values.isEmpty())
+		if (values == null || values.isEmpty()) {
 			return "";
+		}
 		StringBuilder sb = new StringBuilder();
 		Iterator<?> it = values.iterator();
 		while (it.hasNext()) {
 			sb.append(String.valueOf(it.next()));
-			if (it.hasNext())
+			if (it.hasNext()) {
 				sb.append(separator);
+			}
 		}
 		return sb.toString();
 	}
@@ -1058,8 +1097,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Object toPrimitiveArray(final Object value, final Class<?> ctype) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToPrimitiveArray((Collection<Object>) value, ctype);
 		} else if (value.getClass().isArray()) {
@@ -1161,12 +1201,15 @@ public enum TypeUtils {
 	}
 
 	public static Date toDate(Object value) throws DataNotCompatibleException {
-		if (value instanceof Date)
+		if (value instanceof Date) {
 			return (Date) value;
-		if (value == null)
+		}
+		if (value == null) {
 			return null;
-		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
+		}
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty())) {
 			return null;
+		}
 		if (value instanceof Vector) {
 			value = ((Vector<?>) value).get(0);
 		}
@@ -1176,8 +1219,9 @@ public enum TypeUtils {
 			// TODO finish
 			DateFormat df = DEFAULT_FORMAT.get();
 			String str = (String) value;
-			if (str.length() < 1)
+			if (str.length() < 1) {
 				return null;
+			}
 			try {
 				synchronized (DEFAULT_FORMAT) {
 					return df.parse(str);
@@ -1196,8 +1240,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Date[] toDates(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToDates((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1224,8 +1269,9 @@ public enum TypeUtils {
 	}
 
 	public static Date[] collectionToDates(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Date[0];
+		}
 
 		Date[] result = new Date[vector.size()];
 		int i = 0;
@@ -1238,8 +1284,9 @@ public enum TypeUtils {
 	@SuppressWarnings("unchecked")
 	public static org.openntf.domino.DateTime[] toDateTimes(final Object value, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToDateTimes((Collection<Object>) value, session);
 		} else if (value.getClass().isArray()) {
@@ -1255,8 +1302,9 @@ public enum TypeUtils {
 	@SuppressWarnings("unchecked")
 	public static org.openntf.domino.DateRange[] toDateRanges(final Object value, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToDateRanges((Collection<Object>) value, session);
 		} else if (value.getClass().isArray()) {
@@ -1271,8 +1319,9 @@ public enum TypeUtils {
 
 	public static org.openntf.domino.DateTime[] collectionToDateTimes(final Collection<Object> vector,
 			final org.openntf.domino.Session session) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new org.openntf.domino.DateTime[0];
+		}
 
 		org.openntf.domino.DateTime[] result = new org.openntf.domino.DateTime[vector.size()];
 		if (session != null) {
@@ -1328,8 +1377,9 @@ public enum TypeUtils {
 
 	public static org.openntf.domino.DateRange[] collectionToDateRanges(final Collection<Object> vector,
 			final org.openntf.domino.Session session) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new org.openntf.domino.DateRange[0];
+		}
 
 		org.openntf.domino.DateRange[] result = new org.openntf.domino.DateRange[vector.size()];
 		if (session != null) {
@@ -1347,8 +1397,9 @@ public enum TypeUtils {
 	@SuppressWarnings("unchecked")
 	public static org.openntf.domino.Name[] toNames(final Object value, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToNames((Collection<Object>) value, session);
 		} else if (value.getClass().isArray()) {
@@ -1362,8 +1413,9 @@ public enum TypeUtils {
 
 	public static org.openntf.domino.Name[] collectionToNames(final Collection<Object> vector, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new org.openntf.domino.Name[0];
+		}
 
 		org.openntf.domino.Name[] result = new org.openntf.domino.Name[vector.size()];
 		if (session != null) {
@@ -1379,8 +1431,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static String[] toStrings(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToStrings((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1399,8 +1452,9 @@ public enum TypeUtils {
 	}
 
 	public static String[] collectionToStrings(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new String[0];
+		}
 
 		String[] strings = new String[vector.size()];
 		int i = 0;
@@ -1435,8 +1489,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Pattern[] toPatterns(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToPatterns((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1449,8 +1504,9 @@ public enum TypeUtils {
 	}
 
 	public static Pattern[] collectionToPatterns(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Pattern[0];
+		}
 
 		Pattern[] patterns = new Pattern[vector.size()];
 		int i = 0;
@@ -1462,8 +1518,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static java.lang.Object[] toObjects(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToObjects((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1476,8 +1533,9 @@ public enum TypeUtils {
 	}
 
 	public static java.lang.Object[] collectionToObjects(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Object[0];
+		}
 
 		Object[] patterns = new Object[vector.size()];
 		int i = 0;
@@ -1489,8 +1547,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Class<?>[] toClasses(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToClasses((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1505,8 +1564,9 @@ public enum TypeUtils {
 	}
 
 	public static Class<?>[] collectionToClasses(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Class[0];
+		}
 
 		@SuppressWarnings("unused")
 		ClassLoader cl = Factory.getClassLoader();
@@ -1522,8 +1582,9 @@ public enum TypeUtils {
 	}
 
 	public static NoteCoordinate[] collectionToNoteCoordinates(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new NoteCoordinate[0];
+		}
 
 		NoteCoordinate[] results = new NoteCoordinate[vector.size()];
 		int i = 0;
@@ -1540,12 +1601,15 @@ public enum TypeUtils {
 	}
 
 	public static Enum<?> toEnum(final Object value, final Class<?> enumClass) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
-		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
+		}
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty())) {
 			return null;
-		if (enumClass == null)
+		}
+		if (enumClass == null) {
 			return null;
+		}
 		Enum<?> result = null;
 		String ename = String.valueOf(value);
 		if (ename.contains(" ")) {
@@ -1571,8 +1635,9 @@ public enum TypeUtils {
 	}
 
 	public static NoteCoordinate toNoteCoordinate(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof CharSequence) {
 			return NoteCoordinate.Utils.getNoteCoordinate((CharSequence) value);
 		} else if (value instanceof NoteCoordinate) {
@@ -1583,8 +1648,9 @@ public enum TypeUtils {
 	}
 
 	public static NoteCoordinate[] toNoteCoordinates(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToNoteCoordinates((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1597,10 +1663,12 @@ public enum TypeUtils {
 	}
 
 	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
-		if (value instanceof Vector && (((Vector<?>) value).isEmpty()))
+		}
+		if (value instanceof Vector && (((Vector<?>) value).isEmpty())) {
 			return null;
+		}
 		Enum<?> result = null;
 		String en = String.valueOf(value);
 		String ename = null;
@@ -1628,8 +1696,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Enum<?>[] toEnums(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToEnums((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1642,8 +1711,9 @@ public enum TypeUtils {
 	}
 
 	public static Enum<?>[] collectionToEnums(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Enum[0];
+		}
 		ClassLoader cl = Factory.getClassLoader();
 		Enum<?>[] classes = new Enum[vector.size()];
 		int i = 0;
@@ -1676,8 +1746,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Formula[] toFormulas(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToFormulas((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1690,8 +1761,9 @@ public enum TypeUtils {
 	}
 
 	public static Formula[] collectionToFormulas(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new Formula[0];
+		}
 		Formula[] formulas = new Formula[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
@@ -1703,8 +1775,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static BigString[] toBigStrings(final Object value) throws DataNotCompatibleException {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToBigStrings((Collection<Object>) value);
 		} else if (value.getClass().isArray()) {
@@ -1717,8 +1790,9 @@ public enum TypeUtils {
 	}
 
 	public static BigString[] collectionToBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null || vector.isEmpty())
+		if (vector == null || vector.isEmpty()) {
 			return new BigString[0];
+		}
 		BigString[] strings = new BigString[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
@@ -1733,8 +1807,9 @@ public enum TypeUtils {
 
 	@SuppressWarnings("unchecked")
 	public static int[] toIntArray(final Object value) {
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		if (value instanceof Collection) {
 			return collectionToIntArray((Collection<Integer>) value);
 		} else if (value.getClass().isArray()) {
@@ -1787,8 +1862,9 @@ public enum TypeUtils {
 	}
 
 	public static boolean isFriendlyVector(final Object value) {
-		if (!(value instanceof Vector))
+		if (!(value instanceof Vector)) {
 			return false;
+		}
 		for (Object v : (Vector<?>) value) {
 			if (v instanceof String || v instanceof Integer || v instanceof Double) {
 				// ok
@@ -1801,7 +1877,7 @@ public enum TypeUtils {
 
 	/**
 	 * returns the payload that the Object o needs when it is written into an item
-	 * 
+	 *
 	 * @param o
 	 * @param c
 	 * @return
@@ -1915,10 +1991,11 @@ public enum TypeUtils {
 
 			if (dominoFriendlyVec != null && dominoFriendlyVec.size() > 1) {	// compute overhead first for multi values
 				// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
-				if (firstElement instanceof String)
+				if (firstElement instanceof String) {
 					payloadOverhead = 2 + 2 * dominoFriendlyVec.size();
-				else
+				} else {
 					payloadOverhead = 4;
+				}
 			}
 
 			// Next step: Type checking + length computation
@@ -1930,18 +2007,19 @@ public enum TypeUtils {
 
 			int payload = payloadOverhead;
 			Class<?> firstElementClass;
-			if (firstElement instanceof String)
+			if (firstElement instanceof String) {
 				firstElementClass = String.class;
-			else if (firstElement instanceof Number)
+			} else if (firstElement instanceof Number) {
 				firstElementClass = Number.class;
-			else if (firstElement instanceof lotus.domino.DateTime)
+			} else if (firstElement instanceof lotus.domino.DateTime) {
 				firstElementClass = lotus.domino.DateTime.class;
-			else if (firstElement instanceof lotus.domino.DateRange)
+			} else if (firstElement instanceof lotus.domino.DateRange) {
 				firstElementClass = lotus.domino.DateRange.class;
-			// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
-			// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
-			else
+				// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
+				// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled).
+			} else {
 				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
+			}
 
 			if (dominoFriendlyVec != null) {
 				for (Object o : dominoFriendlyVec) {
@@ -1964,8 +2042,9 @@ public enum TypeUtils {
 					} else {
 						payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
 					}
-					if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE)
+					if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
 						throw new Domino32KLimitException();
+					}
 				}
 			}
 			if (payload > org.openntf.domino.Document.MAX_NATIVE_FIELD_SIZE) {
@@ -2013,7 +2092,7 @@ public enum TypeUtils {
 
 	/**
 	 * toItemFriendly: special case for "toDominoFriendly" that handles "DateTime" / "DateRange" correctly
-	 * 
+	 *
 	 * @param value
 	 *            The Object value to coerce into an Item-friendly type.
 	 * @param context
@@ -2053,11 +2132,11 @@ public enum TypeUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param values
 	 *            the values
 	 * @param context
-	 * 
+	 *
 	 * @param recycleThis
 	 * @return
 	 * @throws IllegalArgumentException
@@ -2072,12 +2151,12 @@ public enum TypeUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>
 	 * Attempts to convert a provided scalar value to a "Domino-friendly" data type like DateTime, String, etc. Currently, the data types
 	 * supported are the already-Domino-friendly ones, Number, Date, Calendar, and CharSequence.
 	 * </p>
-	 * 
+	 *
 	 * @param value
 	 *            The incoming non-collection value
 	 * @param context
@@ -2127,7 +2206,7 @@ public enum TypeUtils {
 
 	/**
 	 * converts a lot of java types to domino-friendly types
-	 * 
+	 *
 	 * @param value
 	 * @param context
 	 * @param recycleThis
@@ -2165,22 +2244,27 @@ public enum TypeUtils {
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 
-		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar
+		} else if (value instanceof java.util.Date || value instanceof java.sql.Date || value instanceof java.util.Calendar
 				|| value instanceof org.openntf.formula.DateTime) {
 
 			lotus.domino.Session lsess = toLotus(session);
 			try {
 
 				lotus.domino.DateTime dt = null;
-				if (value instanceof java.util.Date) {
+				if (value instanceof java.sql.Date) {
+					dt = lsess.createDateTime((java.sql.Date) value);
+					dt.setAnyTime();
+				} else if (value instanceof java.util.Date) {
 					dt = lsess.createDateTime((java.util.Date) value);
 				} else if (value instanceof org.openntf.formula.DateTime) {
 					org.openntf.formula.DateTime fdt = (org.openntf.formula.DateTime) value;
 					dt = lsess.createDateTime(fdt.toJavaDate());
-					if (fdt.isAnyDate())
+					if (fdt.isAnyDate()) {
 						dt.setAnyDate();
-					if (fdt.isAnyTime())
+					}
+					if (fdt.isAnyTime()) {
 						dt.setAnyTime();
+					}
 				} else {
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					java.util.Calendar intermediate = (java.util.Calendar) value;
@@ -2213,7 +2297,7 @@ public enum TypeUtils {
 
 	/**
 	 * gets the delegate
-	 * 
+	 *
 	 * @param wrapper
 	 *            the wrapper
 	 * @param recycleThis
@@ -2234,7 +2318,7 @@ public enum TypeUtils {
 
 	/**
 	 * Gets the delegate.
-	 * 
+	 *
 	 * @param wrapper
 	 *            the wrapper
 	 * @return the delegate
@@ -2250,7 +2334,7 @@ public enum TypeUtils {
 
 	/**
 	 * To lotus.
-	 * 
+	 *
 	 * @param values
 	 *            the values
 	 * @return the java.util. vector
