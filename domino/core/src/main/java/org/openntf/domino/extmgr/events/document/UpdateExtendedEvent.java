@@ -1,10 +1,10 @@
 package org.openntf.domino.extmgr.events.document;
 
 import org.openntf.domino.extmgr.EMBridgeEventParams;
-import org.openntf.domino.extmgr.events.AbstractEMBridgeEvent;
+import org.openntf.domino.extmgr.events.AbstractDocumentEvent;
 import org.openntf.domino.extmgr.events.EMEventIds;
 
-public class UpdateExtendedEvent extends AbstractEMBridgeEvent {
+public class UpdateExtendedEvent extends AbstractDocumentEvent {
 	public static EMBridgeEventParams[] params = { EMBridgeEventParams.SourceDbpath, EMBridgeEventParams.Noteid, EMBridgeEventParams.Flag,
 			EMBridgeEventParams.Username };
 
