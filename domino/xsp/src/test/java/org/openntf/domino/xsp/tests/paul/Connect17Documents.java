@@ -35,6 +35,9 @@ public class Connect17Documents implements Runnable {
 		doc.appendItemValue("State", "AZ");
 		doc.replaceItemValue("DateTimeField", new Date());
 		doc.replaceItemValue("DateOnlyField", new java.sql.Date(System.currentTimeMillis()));
+		System.out.println(doc.getFirstItem("DateOnlyField").getValues());
+		doc.replaceItemValue("TimeOnlyField", new java.sql.Time(System.currentTimeMillis()));
+		System.out.println(doc.getFirstItem("TimeOnlyField").getValues());
 		doc.replaceItemValue("EmptyDate", "");
 		Date blankDate = doc.getItemValue("EmptyDate", Date.class);
 		System.out.println(blankDate);

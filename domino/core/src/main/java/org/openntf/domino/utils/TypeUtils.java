@@ -2251,7 +2251,10 @@ public enum TypeUtils {
 			try {
 
 				lotus.domino.DateTime dt = null;
-				if (value instanceof java.sql.Date) {
+				if (value instanceof java.sql.Time) {
+					dt = lsess.createDateTime((java.sql.Time) value);
+					dt.setAnyDate();
+				} else if (value instanceof java.sql.Date) {
 					dt = lsess.createDateTime((java.sql.Date) value);
 					dt.setAnyTime();
 				} else if (value instanceof java.util.Date) {
