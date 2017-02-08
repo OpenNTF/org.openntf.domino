@@ -54,8 +54,7 @@ import javolution.util.FastMap;
  *            the generic type
  * @param <D>
  *            the delegate type
- * @param
- * 			<P>
+ * @param <P>
  *            the parent type
  *
  */
@@ -712,7 +711,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			Collection<?> c = (Collection<?>) o;
 			if (!c.isEmpty()) {
 				for (Object io : c) {
-					s_recycle((lotus.domino.Base) io);
+					if (io.getClass().getName().contains("domino")) {
+						s_recycle((lotus.domino.Base) io);
+					}
 				}
 			}
 		} else if (o instanceof lotus.domino.Base) {
