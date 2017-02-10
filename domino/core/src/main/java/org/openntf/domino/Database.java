@@ -19,8 +19,6 @@ import java.io.Externalizable;
 import java.util.Comparator;
 import java.util.Vector;
 
-import lotus.domino.UserID;
-
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
@@ -1895,9 +1893,17 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void updateFTIndex(final boolean create);
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#setUserIDForDecrypt(lotus.domino.UserID)
+	 * @since Domino 9.0.1 FP8
+	 */
 	@Override
-	public void setUserIDForDecrypt(UserID arg0);
+	public void setUserIDForDecrypt(lotus.domino.UserID arg0);
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#setUserIDFileForDecrypt(java.lang.String, java.lang.String)
+	 * @since Domino 9.0.1 FP8
+	 */
 	@Override
 	public void setUserIDFileForDecrypt(String arg0, String arg1);
 

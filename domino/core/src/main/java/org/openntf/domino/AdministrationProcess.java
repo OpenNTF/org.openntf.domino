@@ -574,6 +574,9 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	public String upgradeUserToHierarchical(final String userName, final String orgUnit, final String altCommonName,
 			final String altOrgUnit, final String altLanguage);
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String, boolean, int)
+	 */
 	@Override
 	public String deleteUser(String arg0, boolean arg1, int arg2, String arg3, boolean arg4, int arg5);
 

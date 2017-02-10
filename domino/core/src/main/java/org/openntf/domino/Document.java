@@ -1045,9 +1045,15 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public void unlock();
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.Document#encrypt(lotus.domino.UserID)
+	 */
 	@Override
 	public void encrypt(UserID arg0);
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.Document#encrypt(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void encrypt(String arg0, String arg1);
 

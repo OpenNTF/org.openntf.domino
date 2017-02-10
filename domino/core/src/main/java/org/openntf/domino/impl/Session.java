@@ -2135,7 +2135,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public IDVault getIDVault() {
 		try {
-			return (IDVault) getDelegate().getIDVault();
+			return fromLotus(getDelegate().getIDVault(), IDVault.SCHEMA, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -2145,7 +2145,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public IDVault getIDVault(final String arg0) {
 		try {
-			return (IDVault) getDelegate().getIDVault(arg0);
+			return fromLotus(getDelegate().getIDVault(arg0), IDVault.SCHEMA, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
