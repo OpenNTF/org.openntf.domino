@@ -4,6 +4,7 @@ import lotus.domino.UserID;
 
 import org.openntf.domino.impl.Session;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.SessionDescendant;
 
 /**
  * @author Paul Withers
@@ -11,7 +12,7 @@ import org.openntf.domino.types.FactorySchema;
  * @since ODA 3.2.0
  *
  */
-public interface IDVault extends lotus.domino.IDVault, org.openntf.domino.ext.IDVault, Base<lotus.domino.IDVault> {
+public interface IDVault extends lotus.domino.IDVault, org.openntf.domino.ext.IDVault, Base<lotus.domino.IDVault>, SessionDescendant {
 
 	public static class Schema extends FactorySchema<IDVault, lotus.domino.IDVault, Session> {
 

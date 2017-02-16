@@ -2,13 +2,14 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
+import org.openntf.domino.IDVault;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 public class UserID extends BaseThreadSafe<org.openntf.domino.UserID, lotus.domino.UserID, IDVault> implements org.openntf.domino.UserID {
 
-	protected UserID(final lotus.domino.UserID delegate, final IDVault parent, final int classId) {
-		super(delegate, parent, classId);
+	protected UserID(final lotus.domino.UserID delegate, final IDVault parent) {
+		super(delegate, parent, NOTES_USERID);
 	}
 
 	@Override
@@ -33,7 +34,7 @@ public class UserID extends BaseThreadSafe<org.openntf.domino.UserID, lotus.domi
 
 	@Override
 	protected WrapperFactory getFactory() {
-		return parent.getFactory();
+		return parent.getAncestorSession().getFactory();
 	}
 
 }

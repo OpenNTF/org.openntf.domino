@@ -1,5 +1,6 @@
 package org.openntf.domino.impl;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.UserID;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
@@ -7,8 +8,8 @@ import org.openntf.domino.utils.DominoUtils;
 public class IDVault extends BaseThreadSafe<org.openntf.domino.IDVault, lotus.domino.IDVault, Session>
 		implements org.openntf.domino.IDVault {
 
-	protected IDVault(final lotus.domino.local.IDVault delegate, final Session parent, final int classId) {
-		super(delegate, parent, classId);
+	protected IDVault(final lotus.domino.IDVault delegate, final Session parent) {
+		super(delegate, parent, NOTES_IDVAULT);
 	}
 
 	@Override
@@ -138,6 +139,16 @@ public class IDVault extends BaseThreadSafe<org.openntf.domino.IDVault, lotus.do
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public final Session getAncestorSession() {
+		return parent;
 	}
 
 }

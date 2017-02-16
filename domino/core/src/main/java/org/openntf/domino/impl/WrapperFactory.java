@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -73,9 +73,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 
 	/**
 	 * Tracks the document for logging
-	 * 
+	 *
 	 * @param string
-	 * 
+	 *
 	 * @param lotusDoc
 	 * @param parent
 	 */
@@ -129,7 +129,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	//	/**
 	//	 * This function enqueus the reference and lotus, so that it will get recycled. This works by observing the life time of "reference" and
 	//	 * calling recycle it neccessary
-	//	 * 
+	//	 *
 	//	 * @param reference
 	//	 * @param lotus
 	//	 * @return
@@ -159,8 +159,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			return null;
 		}
 		if (lotus instanceof Base) {
-			if (log_.isLoggable(Level.FINE))
+			if (log_.isLoggable(Level.FINE)) {
 				log_.log(Level.FINE, "Returning an already OpenNTF object...");
+			}
 			return (T) lotus;
 		}
 
@@ -176,8 +177,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 				DominoUtils.handleException(e);
 			}
 		}
-		if (parent == null)
+		if (parent == null) {
 			throw new UndefinedDelegateTypeException("Cannot find parent for a " + lotus.getClass().getName());
+		}
 		// 1) These objects are not cached and returned immediately. Recycle is done inside
 		if (lotus instanceof lotus.domino.Name 					// These objects are encapsulated
 				|| lotus instanceof lotus.domino.DateRange 		// 
@@ -228,15 +230,16 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 
 	/**
 	 * Returns a collection that contains all lotus objects that should be wrapped in this task
-	 * 
+	 *
 	 * @param objects
 	 * @param obj
 	 * @return
 	 */
 	private List<lotus.domino.Base> getContainingNotesObjects(List<lotus.domino.Base> objects, final Object obj) {
 		if (obj instanceof lotus.domino.Base) {
-			if (objects == null)
+			if (objects == null) {
 				objects = new ArrayList<lotus.domino.Base>();
+			}
 			objects.add((lotus.domino.Base) obj);
 		} else if (obj instanceof Iterable) {
 			for (Object o : (Iterable<?>) obj) {
@@ -249,7 +252,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	// --- others
 	/**
 	 * Wraps & caches all lotus object except Names, DateTimes, Sessions, Documents
-	 * 
+	 *
 	 * @param lotus
 	 * @param prevent_recycling
 	 *            the cpp_ids that must not get recycled during this task. Attention. For performance reasons you should not use slot 0 and
@@ -275,8 +278,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			if (result == null && lotus != null) {
 				throw new IllegalStateException("Could not wrap an object of type" + lotus.getClass().getName());
 			}
-			if (result instanceof Document)
+			if (result instanceof Document) {
 				trackDoc((Document) result, "");
+			}
 
 			cache.processQueue(lotus, prevent_recycling); // recycle all elements but not the current ones
 
@@ -294,15 +298,16 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 
 	@Override
 	public void recacheLotusObject(final lotus.domino.Base newLotus, final Base<?> wrapper, final Base<?> parent) {
-		if (wrapper instanceof Document)
+		if (wrapper instanceof Document) {
 			trackDoc((Document) wrapper, "/recache");
+		}
 		DominoReferenceCache rc = referenceCache.get();
 		rc.processQueue(newLotus, null); // recycle all elements but not the current ones
 
 		// RPr: What happens here:
 		// You recace the same lotus objects for different wrappers
 		// This is something that should not happen unless you use deferred objects. Assume you are retrieving
-		// 
+		//
 		// Document doc1 = db.getDocumentByID(0xF376, true);
 		// Document doc2 = db.getDocumentByID(0xF376, true);
 		// so doc1 != doc2, but both are refering to the same delegate.
@@ -328,7 +333,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 
 	/**
 	 * Helper for fromLotusObject, so you can overwrite this
-	 * 
+	 *
 	 * @param lotus
 	 * @param parent
 	 *            can be null, except for {@link DirectoryNavigator}, {@link MIMEEntity}, {@link MIMEHeader}, {@link NotesCalendarEntry},
@@ -343,8 +348,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		long cpp = 0;
 		// most frequently used objects
 		if (lotus instanceof lotus.domino.Name) {
-			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES))
+			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES)) {
 				return new org.openntf.domino.impl.NameODA((lotus.domino.Name) lotus, (Session) parent);
+			}
 			return new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, (Session) parent);
 		}
 
@@ -525,12 +531,21 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		if (lotus instanceof lotus.domino.Session) {
 			return new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, this);
 		}
+
+		if (lotus instanceof lotus.domino.UserID) {
+			return new org.openntf.domino.impl.UserID((lotus.domino.UserID) lotus, (org.openntf.domino.IDVault) parent);
+		}
+
+		if (lotus instanceof lotus.domino.IDVault) {
+			return new org.openntf.domino.impl.IDVault((lotus.domino.IDVault) lotus, (org.openntf.domino.Session) parent);
+		}
+
 		throw new UndefinedDelegateTypeException(lotus == null ? "null" : lotus.getClass().getName());
 	}
 
 	/**
 	 * Find the parent object for the given lotus
-	 * 
+	 *
 	 * @param lotus
 	 * @return
 	 * @throws NotesException
@@ -713,8 +728,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
-		if (values == null)
+		if (values == null) {
 			return null;
+		}
 		if (values instanceof Vector) {
 			for (Object val : values) {
 				if (!(val instanceof Number) && !(val instanceof String) && !(val instanceof Date)) {
@@ -728,7 +744,7 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 
 	/**
 	 * Internal method
-	 * 
+	 *
 	 * @param values
 	 * @param session
 	 * @param prevent_recycling
@@ -755,8 +771,8 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 				} catch (Throwable t) {
 					if (t instanceof NotesException) {
 						String text = ((NotesException) t).text;
-						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
-								+ text);
+						System.out.println(
+								"Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because " + text);
 						try {
 							lotus.domino.DateTime dt = (lotus.domino.DateTime) value;
 							String gmttime = dt.getGMTTime();
@@ -808,15 +824,16 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 		if (schema == Name.SCHEMA) {
 			String name = null;
 			String lang = null;
-			if (metaData instanceof String)
+			if (metaData instanceof String) {
 				name = (String) metaData;
-			else {
+			} else {
 				String[] sArr = (String[]) metaData;
 				name = sArr[0];
 				lang = sArr[1];
 			}
-			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES))
+			if (((Session) parent).isFixEnabled(Fixes.ODA_NAMES)) {
 				return (T) new org.openntf.domino.impl.NameODA((Session) parent, name, lang);
+			}
 			return (T) ((Session) parent).createNameNonODA(name);
 		}
 
