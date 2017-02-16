@@ -222,6 +222,14 @@ public enum TypeUtils {
 					return (T) result;
 				}
 			} else {
+				if (java.sql.Date.class.equals(type) && result instanceof Date) {
+					Date dt = (Date) result;
+					return (T) new java.sql.Date(dt.getTime());
+				}
+				if (java.sql.Time.class.equals(type) && result instanceof Date) {
+					Date dt = (Date) result;
+					return (T) new java.sql.Time(dt.getTime());
+				}
 				log_.log(Level.WARNING, "Auto-boxing requested a " + type.getName() + " but is returning a " + result.getClass().getName()
 						+ " in item " + itemName + " for document id " + noteid);
 			}
@@ -648,6 +656,17 @@ public enum TypeUtils {
 				} catch (InstantiationException e) {
 					DominoUtils.handleException(e);
 				}
+			} else if (java.sql.Date.class.isAssignableFrom(type) || java.sql.Time.class.isAssignableFrom(type)) {
+				Date tmpDate = toDate(v);
+				if (null == tmpDate) {
+					result = null;
+				} else {
+					if (java.sql.Date.class.isAssignableFrom(type)) {
+						result = new java.sql.Date(tmpDate.getTime());
+					} else {
+						result = new java.sql.Time(tmpDate.getTime());
+					}
+				}
 			} else if (Date.class.isAssignableFrom(type)) {
 				result = toDate(v);
 			} else if (java.util.Calendar.class.isAssignableFrom(type)) {
@@ -823,6 +842,13 @@ public enum TypeUtils {
 				result = (T) Float.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Float.valueOf(((Double) localValue).floatValue());
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (type == java.math.BigDecimal.class) {
+			// Creating a BigDecimal from a Double is not recommended
+			if (localValue instanceof Double || localValue instanceof String) {
+				result = (T) new java.math.BigDecimal(localValue.toString());
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
