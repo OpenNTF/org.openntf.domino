@@ -1914,7 +1914,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		} else {
 			id = metaversalID;
 		}
-		return getDocumentByMetaversalID(id, serverName);
+		return getDocumentByMetaversalID(serverName, id);
 	}
 
 	/* (non-Javadoc)

@@ -430,14 +430,14 @@ public interface Session {
 	/**
 	 * Gets a document by its {@link org.openntf.domino.Document#getMetaversalID(String)} property
 	 *
-	 * @param metaversalID
-	 *            String comprising replicaid + UNID
 	 * @param serverName
 	 *            String server name
+	 * @param metaversalID
+	 *            String comprising replicaid + UNID
 	 * @return Document
 	 * @since org.openntf.domino 5.0.0
 	 */
-	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
+	public org.openntf.domino.Document getDocumentByMetaversalID(String serverName, String metaversalID);
 
 	/**
 	 * Checks the Session's mechanism for converting mime, using {@link org.openntf.domino.AutoMime}
