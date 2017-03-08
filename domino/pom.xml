@@ -23,6 +23,13 @@
 			<layout>p2</layout>
 			<url>${notes-platform}</url>
 		</repository>
+		
+		<!-- Used for JUnit -->
+		<repository>
+			<id>eclipse-platform</id>
+			<url>http://download.eclipse.org/releases/neon/</url>
+			<layout>p2</layout>
+		</repository>
 	</repositories>
 
 	<!-- See also profile-triggered module sets below -->
@@ -33,7 +40,7 @@
 		<module>xsp</module>
 		<module>rest</module>
 		<module>junit4xpages</module>
-		<!--<module>tests</module>-->
+		<module>tests</module>
 		<module>org.openntf.domino.feature</module>
 		<module>org.openntf.domino.nonxsp.feature</module>
 		<module>org.openntf.domino.updatesite</module>
@@ -160,13 +167,6 @@
 				<artifactId>tycho-versions-plugin</artifactId>
 				<version>${tycho-version}</version>
 			</plugin>
-			<!-- <plugin> <groupId>org.eclipse.tycho.extras</groupId> <artifactId>tycho-p2-extras-plugin</artifactId> 
-				<version>${tycho-version}</version> <configuration> <source> source repositories 
-				to mirror from <repository> <url>http://download.eclipse.org/releases/juno/</url> 
-				<layout>p2</layout> </repository> </source> </configuration> </plugin> -->
-			<!-- <plugin> <groupId>org.eclipse.tycho</groupId> <artifactId>tycho-p2-repository-plugin</artifactId> 
-				<version>${tycho-version}</version> <configuration> <includeAllDependencies>true</includeAllDependencies> 
-				</configuration> </plugin> -->
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -208,6 +208,32 @@
 						<archive>
 							<manifestFile>${manifest-location}/MANIFEST.MF</manifestFile>
 						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.18.1</version>
+					<configuration>
+						<encoding>UTF-8</encoding>
+						<inputEncoding>UTF-8</inputEncoding>
+						<outputEncoding>UTF-8</outputEncoding>
+						<argLine>-ea -Dfile.encoding=UTF-8</argLine>
+					</configuration>
+				</plugin>
+				<!-- This is to enable test execution only on supported platforms below -->
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<version>${tycho-version}</version>
+					
+					<configuration>
+						<skip>true</skip>
+						<encoding>UTF-8</encoding>
+						<inputEncoding>UTF-8</inputEncoding>
+						<outputEncoding>UTF-8</outputEncoding>
+						<argLine>-Dfile.encoding=UTF-8</argLine>
+						<providerHint>junit4</providerHint>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -285,7 +311,6 @@
 				<module>xsp</module>
 				<module>rest</module>
 				<module>junit4xpages</module>
-				<!--<module>tests</module>-->
 				<module>org.openntf.domino.feature</module>
 				<module>org.openntf.domino.updatesite</module>
 				<module>oda-dist</module>
@@ -300,6 +325,143 @@
 						<version>2.9</version>
 						<configuration>
 							<skip>false</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+
+		<!-- These profiles add support for specific platforms for tests -->
+		<profile>
+			<id>tests-windows</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+				</os>
+				<property>
+					<name>notes-program</name>
+				</property>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<version>${tycho-version}</version>
+				
+						<configuration>
+							<skip>false</skip>
+					
+							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
+							<environmentVariables>
+								<PATH>${notes-program}${path.separator}${env.PATH}</PATH>
+							</environmentVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Windows sometimes refers to itself as "dos" -->
+		<profile>
+			<id>tests-dos</id>
+			<activation>
+				<os>
+					<family>dos</family>
+				</os>
+				<property>
+					<name>notes-program</name>
+				</property>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<version>${tycho-version}</version>
+				
+						<configuration>
+							<skip>false</skip>
+					
+							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
+							<environmentVariables>
+								<PATH>${notes-program}${path.separator}${env.PATH}</PATH>
+							</environmentVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>mac</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+				<property>
+					<name>notes-program</name>
+				</property>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+				
+						<configuration>
+							<skip>false</skip>
+					
+							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
+							<environmentVariables>
+								<PATH>${notes-program}${path.separator}${env.PATH}</PATH>
+								<LD_LIBRARY_PATH>${notes-program}${path.separator}${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
+								<DYLD_LIBRARY_PATH>${notes-program}${path.separator}${env.DYLD_LIBRARY_PATH}</DYLD_LIBRARY_PATH>
+								<Notes_ExecDirectory>${notes-program}</Notes_ExecDirectory>
+							</environmentVariables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>linux</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<name>linux</name>
+				</os>
+				<property>
+					<name>notes-program</name>
+				</property>
+			</activation>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-surefire-plugin</artifactId>
+						<version>${tycho-version}</version>
+				
+						<configuration>
+							<skip>false</skip>
+					
+							<argLine>-Dfile.encoding=UTF-8 -Djava.library.path="${notes-program}"</argLine>
+							<environmentVariables>
+								<!-- The res/C path entry is important for loading formula language properly -->
+								<PATH>${notes-program}${path.separator}${notes-program}/res/C${path.separator}${notes-data}${path.separator}${env.PATH}</PATH>
+								<LD_LIBRARY_PATH>${notes-program}${path.separator}${env.LD_LIBRARY_PATH}</LD_LIBRARY_PATH>
+						
+								<!-- Notes-standard environment variable to specify the program directory -->
+								<Notes_ExecDirectory>${notes-program}</Notes_ExecDirectory>
+								<Directory>${notes-data}</Directory>
+						
+								<!-- Linux generally requires that the notes.ini path be specified manually, since it's difficult to determine automatically -->
+								<!-- This variable is a convention used in the NAPI test classes, not Notes-standard -->
+								<NotesINI>${notes-ini}</NotesINI>
+							</environmentVariables>
 						</configuration>
 					</plugin>
 				</plugins>
