@@ -29,6 +29,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
@@ -39,11 +40,6 @@ import org.openntf.domino.utils.TypeUtils;
  */
 public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
 		implements org.openntf.domino.DocumentCollection {
-
-	/** The block nth. */
-	private static boolean BLOCK_NTH = true;// TODO replace with some static determination from a policy or permissions rule or
-
-	// something...
 
 	/**
 	 * The Class NthDocumentMethodNotPermittedException.
@@ -198,7 +194,7 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 	 */
 	@Override
 	public org.openntf.domino.Document getNthDocument(final int n) {
-		if (BLOCK_NTH) {
+		if (getAncestorSession().isFixEnabled(Fixes.BLOCK_NTH_DOCUMENT)) {
 			throw new NthDocumentMethodNotPermittedException();
 		}
 		try {

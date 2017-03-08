@@ -80,7 +80,14 @@ public interface Session {
 		 * Hex values such as replicaid, unid and noteid are forced to lower case before being returned
 		 *
 		 */
-		FORCE_HEX_LOWER_CASE;
+		FORCE_HEX_LOWER_CASE,
+
+		/**
+		 *
+		 * Prevent use of getNthDocument. False by default because repeat controls etc need to use getNthDocument to get starting point
+		 *
+		 */
+		BLOCK_NTH_DOCUMENT(false);
 
 		private final boolean khan_;
 
