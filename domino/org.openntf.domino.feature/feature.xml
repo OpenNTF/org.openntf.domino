@@ -163,20 +163,6 @@
          unpack="false"/>
 
    <plugin
-         id="rx"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="rx.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openntf.junit4xpages"
          download-size="0"
          install-size="0"

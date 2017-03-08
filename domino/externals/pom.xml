@@ -17,7 +17,6 @@
 		<module>jsr305</module>
 		<module>javassist</module>
 		<module>guava</module>
-		<module>rxjava</module>
 		<module>javolution</module>
 		<module>tinkerpop</module>
 	</modules>
