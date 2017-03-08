@@ -20,7 +20,7 @@
         <repository>
             <id>extlib</id>
             <layout>p2</layout>
-            <url>${project.baseUri}/../../ExtLib-9.0.1_17</url>
+            <url>${project.baseUri}/../../dependencies/ExtLib-9.0.1_17</url>
         </repository>
 	</repositories>
 	

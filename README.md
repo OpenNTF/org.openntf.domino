@@ -43,6 +43,8 @@ ODA is organized as a Tycho-based Maven tree and depends on the [Update Site for
         </activeProfiles>
     </settings>
 
+To develop in Eclipse, your Target Platform will need to include this directory, and should also include directory entries for the two directories in "dependencies" in the repository.
+
 ### Running Automated Tests
 
 Running the compile-time tests requires either Notes or Domino installed locally with a bitness that matches the Java runtime used to execute the Maven build. Additionally, that installation should either have an ID with no password or should be configured in User Security to allow external Notes-based applications to run without a password prompt. In the latter case, Notes must be open during the test.
