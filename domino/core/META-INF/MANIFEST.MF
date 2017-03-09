@@ -57,6 +57,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.transactions,
  org.openntf.domino.types,
  org.openntf.domino.utils,
+ org.openntf.domino.utils.enums,
  org.openntf.domino.utils.xml,
  org.openntf.domino.xots,
  org.openntf.domino.xots.events

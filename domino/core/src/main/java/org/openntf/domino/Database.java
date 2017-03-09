@@ -231,15 +231,24 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public static enum SignDocType implements INumberEnum<Integer> {
 
 		/** The acl. */
-		ACL(Database.DBSIGN_DOC_ACL), /** The agent. */
-		AGENT(Database.DBSIGN_DOC_AGENT), /** The all. */
-		ALL(Database.DBSIGN_DOC_ALL), /** The data. */
-		DATA(Database.DBSIGN_DOC_DATA), /** The form. */
-		FORM(Database.DBSIGN_DOC_FORM), /** The help. */
-		HELP(Database.DBSIGN_DOC_HELP), /** The icon. */
-		ICON(Database.DBSIGN_DOC_ICON), /** The replformula. */
-		REPLFORMULA(Database.DBSIGN_DOC_REPLFORMULA), /** The sharedfield. */
-		SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD), /** The view. */
+		ACL(Database.DBSIGN_DOC_ACL),
+		/** The agent. */
+		AGENT(Database.DBSIGN_DOC_AGENT),
+		/** The all. */
+		ALL(Database.DBSIGN_DOC_ALL),
+		/** The data. */
+		DATA(Database.DBSIGN_DOC_DATA),
+		/** The form. */
+		FORM(Database.DBSIGN_DOC_FORM),
+		/** The help. */
+		HELP(Database.DBSIGN_DOC_HELP),
+		/** The icon. */
+		ICON(Database.DBSIGN_DOC_ICON),
+		/** The replformula. */
+		REPLFORMULA(Database.DBSIGN_DOC_REPLFORMULA),
+		/** The sharedfield. */
+		SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD),
+		/** The view. */
 		VIEW(Database.DBSIGN_DOC_VIEW);
 
 		/** The value_. */
@@ -1883,5 +1892,19 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public void updateFTIndex(final boolean create);
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#setUserIDForDecrypt(lotus.domino.UserID)
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public void setUserIDForDecrypt(lotus.domino.UserID arg0);
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#setUserIDFileForDecrypt(java.lang.String, java.lang.String)
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public void setUserIDFileForDecrypt(String arg0, String arg1);
 
 }

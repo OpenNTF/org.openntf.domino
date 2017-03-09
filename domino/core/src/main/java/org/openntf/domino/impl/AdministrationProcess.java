@@ -1057,4 +1057,14 @@ public class AdministrationProcess
 		return null;
 	}
 
+	@Override
+	public String deleteUser(final String arg0, final boolean arg1, final int arg2, final String arg3, final boolean arg4, final int arg5) {
+		try {
+			return getDelegate().deleteUser(arg0, arg1, arg2, arg3, arg4, arg5);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
 }

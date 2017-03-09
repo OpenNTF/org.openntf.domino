@@ -46,6 +46,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.ExceptionDetails;
+import org.openntf.domino.IDVault;
 import org.openntf.domino.International;
 import org.openntf.domino.Log;
 import org.openntf.domino.Name;
@@ -2119,5 +2120,35 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public final WrapperFactory getFactory() {
 		return parent;
+	}
+
+	@Override
+	public boolean changePassword(final String arg0, final String arg1, final String arg2) {
+		try {
+			return getDelegate().changePassword(arg0, arg1, arg2);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
+
+	@Override
+	public IDVault getIDVault() {
+		try {
+			return fromLotus(getDelegate().getIDVault(), IDVault.SCHEMA, this);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public IDVault getIDVault(final String arg0) {
+		try {
+			return fromLotus(getDelegate().getIDVault(arg0), IDVault.SCHEMA, this);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 }

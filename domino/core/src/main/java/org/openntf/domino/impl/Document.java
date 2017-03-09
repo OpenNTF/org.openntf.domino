@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
+import lotus.domino.UserID;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database;
@@ -1273,7 +1274,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1309,7 +1310,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -1356,7 +1357,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					} else {
 						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
 								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
-								//						new Throwable().printStackTrace();
+						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 						Vector<Object> result = new Vector<Object>(1);
@@ -4287,4 +4288,22 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	//	protected boolean allowAccessAcrossThreads() {
 	//		return !isDirty();
 	//	}
+
+	@Override
+	public void encrypt(final UserID arg0) {
+		try {
+			getDelegate().encrypt(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void encrypt(final String arg0, final String arg1) {
+		try {
+			getDelegate().encrypt(arg0, arg1);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
 }

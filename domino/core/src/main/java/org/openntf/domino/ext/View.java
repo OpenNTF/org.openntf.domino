@@ -87,7 +87,7 @@ public interface View {
 	 * Get the number of additional indexes, stored as $Collation1, $Collation2 etc on View design note
 	 *
 	 * @return int count of additional sort indexes
-	 * @since ODA 3.5.0
+	 * @since ODA 3.1.0
 	 */
 	public int getIndexCount();
 
@@ -158,7 +158,7 @@ public interface View {
 	 * as $Collation1, $Collation2 etc
 	 *
 	 * @return whether the view has resorts
-	 * @since ODA 3.5.0
+	 * @since ODA 3.1.0
 	 */
 	public boolean isResortable();
 
@@ -271,7 +271,7 @@ public interface View {
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 * The original method is poorly named, as it doesn't indicate what happens when more than one
 	 * ViewEntry matches the key.
-	
+
 	 */
 	@SuppressWarnings("rawtypes")
 	@Legacy(Legacy.GENERICS_WARNING)

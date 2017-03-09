@@ -121,6 +121,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public static final int NOTES_CALENDAR = 96;
 	public static final int NOTES_CALENDARENTRY = 97;
 	public static final int NOTES_CALENDARNOTICE = 98;
+	public static final int NOTES_IDVAULT = 99;
+	public static final int NOTES_USERID = 100;
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());

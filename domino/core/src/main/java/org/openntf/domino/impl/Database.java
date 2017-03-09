@@ -3851,4 +3851,22 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return ACL.Privilege.getPrivileges(privs);
 	}
 
+	@Override
+	public void setUserIDForDecrypt(final lotus.domino.UserID arg0) {
+		try {
+			getDelegate().setUserIDForDecrypt(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
+		try {
+			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
 }
