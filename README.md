@@ -55,7 +55,7 @@ Maven-run tests are configured by the presence of a `notes-program` property in 
 
 For Windows it would be e.g.:
 
-	<notes-program>file:///E:\Programs\IBM\Domino</notes-program>
+	<notes-program>E:\Programs\IBM\Domino</notes-program>
 
 You will also need to amend your Target Platform in Eclipse to add the directory location from the repository "dependencies\Misc". That folder includes junit, which it's looking for. By telling the Target Platform where to find that, the project will no longer throw an error.
 
