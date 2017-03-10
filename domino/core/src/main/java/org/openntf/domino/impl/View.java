@@ -371,10 +371,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.View#clear()
+	/**
+	 * Clears the full-text search filtering on a view.
 	 */
 	@Override
 	public void clear() {
@@ -3018,11 +3016,28 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return parent.getAncestorSession().getFactory();
 	}
 
+	/**
+	 * Checks if there is a column with given programmatic name in the view.
+	 *
+	 * @param arg0
+	 *            programmatic name of a column to search for as a String
+	 * @return true, if a column with given programmatic name exists in the view
+	 */
 	@Override
 	public boolean containsKey(final Object arg0) {
 		return getColumnInfoMap().containsKey(arg0);
 	}
 
+	/**
+	 * When given a {@link org.openntf.domino.Document} or a {@link org.openntf.domino.ViewEntry} as an argument, it checks if the
+	 * respective document or view entry is contained in a view, otherwise checks if there is a column with such a
+	 * {@link org.openntf.domino.impl.View.DominoColumnInfo} column description.
+	 *
+	 * @param arg0
+	 *            value to search for (either an instance of {@link org.openntf.domino.Document}, {@link org.openntf.domino.ViewEntry} or a
+	 *            {@link org.openntf.domino.impl.View.DominoColumnInfo}
+	 * @return true if the given object exists in the view
+	 */
 	@Override
 	public boolean containsValue(final Object arg0) {
 		if (arg0 instanceof Document) {
@@ -3033,6 +3048,10 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return getColumnInfoMap().containsValue(arg0);
 	}
 
+	/**
+	 * Returns columns in the view as instances of {@link org.openntf.domino.impl.View.DominoColumnInfo} class keyed by programmatic column
+	 * name.
+	 */
 	@Override
 	public Set<Entry<String, Object>> entrySet() {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
@@ -3042,41 +3061,82 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return result.entrySet();
 	}
 
+	/**
+	 * Returns column information as a {@link org.openntf.domino.impl.View.DominoColumnInfo} instance.
+	 *
+	 * @param key
+	 *            Programmatic column name as a String
+	 * @return Instance of {@link org.openntf.domino.impl.View.DominoColumnInfo} describing the column or null if the column does not exist
+	 */
 	@Override
 	public Object get(final Object key) {
 		return getColumnInfoMap().get(key);
 	}
 
+	/**
+	 * Checks if the view contains any column
+	 *
+	 * @return true if the view contains no columns, false if there is at least one column
+	 */
 	@Override
 	public boolean isEmpty() {
 		return getColumnInfoMap().isEmpty();
 	}
 
+	/**
+	 * Returns programmatic names of columns in the view
+	 */
 	@Override
 	public Set<String> keySet() {
 		return getColumnInfoMap().keySet();
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public Object put(final String key, final Object value) {
 		throw new UnsupportedOperationException("View Map may not be modified");
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public void putAll(final Map<? extends String, ? extends Object> m) {
 		throw new UnsupportedOperationException("View Map may not be modified");
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public Object remove(final Object key) {
 		throw new UnsupportedOperationException("View Map may not be modified");
 	}
 
+	/**
+	 * Returns number of columns in the view
+	 */
 	@Override
 	public int size() {
 		return getColumnInfoMap().size();
 	}
 
+	/**
+	 * Returns columns in the view as instances of the {@link org.openntf.domino.impl.View.DominoColumnInfo} class.
+	 *
+	 * @return Collection of {@link org.openntf.domino.impl.View.DominoColumnInfo} instances, one for every column or empty collection when there are no columns
+	 */
 	@Override
 	public Collection<Object> values() {
 		Collection<Object> result = new ArrayList<Object>();

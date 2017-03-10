@@ -29,15 +29,14 @@ import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.commons.util.StringUtil;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ViewColumn.
  */
-public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements
-		org.openntf.domino.ViewColumn {
+public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View>
+		implements org.openntf.domino.ViewColumn {
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new view column.
 	 *
 	 * @param delegate
 	 *            the delegate
@@ -117,8 +116,11 @@ public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lo
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.types.Design#getDocument()
+	/**
+	 * Does not make sense in this context (ViewColumn is not stored as a Note).
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
 	 */
 	@Override
 	public Document getDocument() {
@@ -305,8 +307,11 @@ public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lo
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.types.Design#getNoteID()
+	/**
+	 * Does not make sense in this context (ViewColumn is not stored as a Note).
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
 	 */
 	@Override
 	public String getNoteID() {
@@ -473,8 +478,11 @@ public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lo
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.types.Design#getUniversalID()
+	/**
+	 * Does not make sense in this context (ViewColumn is not stored as a Note).
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
 	 */
 	@Override
 	public String getUniversalID() {

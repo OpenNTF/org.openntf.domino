@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extension to ViewNavigator
  * 
- *         OpenNTF extension to ViewNavigator
+ * @author withersp
+ *
  */
 public interface ViewNavigator {
 

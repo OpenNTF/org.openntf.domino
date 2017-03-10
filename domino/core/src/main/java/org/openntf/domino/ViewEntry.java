@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -22,10 +22,24 @@ import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 
 /**
- * The Interface ViewEntry.
+ * A row in a view (a document, a category or a total).
+ * <p>
+ * <h3>Notable enhancements</h3>
+ * <ul>
+ * <li>Use {@link org.openntf.domino.ext.ViewEntry#getColumnValue(String)} to get directly the column value without going through a Vector
+ * first</li>
+ * <li>Use {@link org.openntf.domino.ext.ViewEntry#getColumnValue(String, Class)} to get a column value directly cast to a required object
+ * type</li>
+ * <li>Use {@link org.openntf.domino.ext.ViewEntry#getColumnValuesMap()} to get a map of all column values keyed by column name</li>
+ * </ul>
+ * </p>
+ * <p>
+ * See the implementation class {@link org.openntf.domino.impl.ViewEntry} for details on how the {@link java.util.Map} interface is
+ * implemented.
+ * </p>
  */
 public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ext.ViewEntry, Base<lotus.domino.ViewEntry>,
-DatabaseDescendant, Map<String, Object> {
+		DatabaseDescendant, Map<String, Object> {
 
 	public static class Schema extends FactorySchema<ViewEntry, lotus.domino.ViewEntry, View> {
 		@Override
@@ -48,7 +62,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getChildCount()
 	 */
 	@Override
@@ -56,7 +70,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getColumnIndentLevel()
 	 */
 	@Override
@@ -64,7 +78,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getColumnValues()
 	 */
 	@Override
@@ -72,7 +86,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getDescendantCount()
 	 */
 	@Override
@@ -80,7 +94,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getDocument()
 	 */
 	@Override
@@ -88,7 +102,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getFTSearchScore()
 	 */
 	@Override
@@ -96,7 +110,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getIndentLevel()
 	 */
 	@Override
@@ -104,7 +118,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getNoteID()
 	 */
 	@Override
@@ -112,7 +126,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getNoteIDAsInt()
 	 */
 	@Override
@@ -120,7 +134,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getParent()
 	 */
 	@Override
@@ -128,7 +142,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getPosition(char)
 	 */
 	@Override
@@ -136,7 +150,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getRead()
 	 */
 	@Override
@@ -144,7 +158,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getRead(java.lang.String)
 	 */
 	@Override
@@ -152,7 +166,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getSiblingCount()
 	 */
 	@Override
@@ -160,7 +174,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#getUniversalID()
 	 */
 	@Override
@@ -168,7 +182,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#isCategory()
 	 */
 	@Override
@@ -176,7 +190,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#isConflict()
 	 */
 	@Override
@@ -184,7 +198,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#isDocument()
 	 */
 	@Override
@@ -192,7 +206,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#isPreferJavaDates()
 	 */
 	@Override
@@ -200,7 +214,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#isTotal()
 	 */
 	@Override
@@ -208,7 +222,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#isValid()
 	 */
 	@Override
@@ -216,7 +230,7 @@ DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewEntry#setPreferJavaDates(boolean)
 	 */
 	@Override

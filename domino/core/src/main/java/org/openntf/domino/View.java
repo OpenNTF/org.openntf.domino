@@ -25,9 +25,25 @@ import org.openntf.domino.types.Design;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface View.
+ * A view in a Notes application.
+ * <p>
+ * <h3>Notable enhancements and changes</h3>
+ * <ul>
+ * <li>When returned by {@link org.openntf.domino.Database#getView(String)}, the {@link #isAutoUpdate() autoUpdate} property is set to false
+ * when Khan mode is enabled.</li>
+ * <li>Use {@link org.openntf.domino.ext.View#checkUnique(Object, Document)} to check if there is only one document in the view with the
+ * given key</li>
+ * <li>Use {@link org.openntf.domino.ext.View#containsDocument(Document)} and {@link org.openntf.domino.ext.View#containsEntry(ViewEntry)}
+ * to check if a document or view entry are displayed in view.</li>
+ * <li>Use {@link org.openntf.domino.ext.View#getFirstDocumentByKey(Object, boolean)} instead of
+ * {@link org.openntf.domino.View#getDocumentByKey(Object, boolean)}</li>
+ * <li>Check if the view contains formulas based on current time using {@link org.openntf.domino.ext.View#isTimeSensitive()}</li>
+ * </ul>
+ * </p>
+ * <p>
+ * See the implementation class {@link org.openntf.domino.impl.View} for details on how the {@link java.util.Map} interface is implemented.
+ * </p>
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
 		DatabaseDescendant, Externalizable, Map<String, Object> {
