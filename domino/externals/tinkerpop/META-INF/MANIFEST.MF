@@ -35,6 +35,4 @@ Export-Package: com.tinkerpop.blueprints,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  lib/collections-generic-4.01.jar
-Require-Bundle: com.google.guava;bundle-version="18.0.0",
- javassist;bundle-version="3.18.2"
 

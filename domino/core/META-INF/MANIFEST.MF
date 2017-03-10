@@ -73,5 +73,4 @@ Bundle-ClassPath: .,
  lib/javassist_3.18.2.jar,
  lib/javolution_6.1.1.jar
 Bundle-ActivationPolicy: lazy
-Import-Package: javassist.util.proxy,
- lotus.domino
+Import-Package: lotus.domino
