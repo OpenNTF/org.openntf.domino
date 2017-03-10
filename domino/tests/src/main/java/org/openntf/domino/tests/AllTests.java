@@ -48,7 +48,7 @@ public class AllTests {
 	public static void term() throws Exception {
 		Factory.termThread();
 		Factory.shutdown();
-		session.recycle();
+		lotusSession.recycle();
 		NotesThread.stermThread();
 		
 		deleteDb(EMPTY_DB);
