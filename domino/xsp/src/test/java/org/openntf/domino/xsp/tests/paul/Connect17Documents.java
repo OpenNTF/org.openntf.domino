@@ -78,6 +78,10 @@ public class Connect17Documents implements Runnable {
 		java.sql.Time sqlTime = doc.getItemValue("DateTimeField", java.sql.Time.class);
 		System.out.println(sqlTime);
 		System.out.println(doc.getItemValues("BigDecimalField", BigDecimal.class));
+		System.out.println(doc.getFirstItem("MVField").getTypeEx());
+		ArrayList<String> blank = new ArrayList<String>();
+		doc.replaceItemValue("MVField", blank);
+		System.out.println(doc.hasItem("MVField"));
 
 		NamesList<String> names = new NamesList<String>();
 		names.add("CN=Paul Withers/O=Intec");
