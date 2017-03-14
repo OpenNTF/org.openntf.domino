@@ -27,7 +27,26 @@ import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 
 /**
- * The Interface Document.
+ * Document in a Notes application. It contains practical enhancements for daily use, check the {@link org.openntf.domino.ext.Document}
+ * interface in the org.openntf.domino.ext package for documentation and examples.
+ *
+ * <h3>Notable enhancements</h3>
+ * <p>
+ * <ul>
+ * <li>Use {@link org.openntf.domino.ext.Document#appendItemValue(String, Object, boolean)} to add a value to an item only if the value
+ * doesn't exist in the item already</li>
+ * <li>Use {@link org.openntf.domino.ext.Document#toJson(boolean)} to retrieve a JSON representation of the document</li>
+ * <li>Use {@link org.openntf.domino.ext.Document#getItemValue(String, Class)} to retrieve an item's value casted directly to a specific
+ * object type</li>
+ * <li>Use {@link org.openntf.domino.ext.Document#getItemValues(String, Class)} to retrieve multivalue item as a List of specific object
+ * types</li>
+ * <li>Use {@link org.openntf.domino.ext.Document#containsValue(Object, String[])} to check if document contains a value in one of the
+ * specified items</li>
+ * <li>Use {@link org.openntf.domino.ext.Document#getItemTable(CharSequence...)} and
+ * {@link org.openntf.domino.ext.Document#getItemTablePivot(CharSequence...)} to conveniently work with multiple items which logically form
+ * a table.</li>
+ * </ul>
+ * </p>
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
 		DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
