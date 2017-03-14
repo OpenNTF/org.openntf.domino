@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>externals</artifactId>
-		<version>3.2.0</version>
+		<version>3.2.1</version>
 	</parent>
 	<artifactId>javassist</artifactId>
 	<version>3.18.2-SNAPSHOT</version>
