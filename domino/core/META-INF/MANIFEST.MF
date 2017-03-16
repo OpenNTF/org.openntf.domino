@@ -4,7 +4,6 @@ Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
 Bundle-Version: 4.1.0.qualifier
 Bundle-Vendor: OpenNTF
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
  org.openntf.conference.graph,
