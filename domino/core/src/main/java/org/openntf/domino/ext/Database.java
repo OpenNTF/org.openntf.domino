@@ -39,32 +39,34 @@ import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
+ * OpenNTF Domino extensions to Database class
+ *
  * @author withersp
  *
- *         OpenNTF Domino extensions to Database class
  *
  */
 public interface Database extends Base {
 	/**
+	 *
+	 * Enum for Database-level events, triggered by listeners.
+	 *
+	 * <p>
+	 * Options are:
+	 * <ul>
+	 * <li>BEFORE_CREATE_DOCUMENT / AFTER_CREATE_DOCUMENT: triggered at the start / end of the Database.createDocument method, source and
+	 * target will be Database (newly-created Document has no properties or Items set, so no point passing that</li>
+	 * <li>BEFORE_DELETE_DOCUMENT / AFTER_DELETE_DOCUMENT: triggered at the start / end of the Document.remove or Document.removePermanently
+	 * methods, source will be Document and target will be Database</li>
+	 * <li>BEFORE_UPDATE_DOCUMENT / AFTER_UPDATE_DOCUMENT: triggered at the start / end of the Document.save methods (and its variants),
+	 * source will be Document and target will be Database</li>
+	 * <li>BEFORE_REPLICATION / AFTER_REPLICATION: triggered at the start / end of the Database.replicate method, source will be Database
+	 * and target will be the server the replication is to be performed with</li>
+	 * <li>BEFORE_RUN_AGENT / AFTER_RUN_AGENT: triggered at the start / end of the Agent.run method and its variants, source will be Agent,
+	 * target will be Datatbase</li>
+	 * </ul>
+	 * </p>
+	 *
 	 * @author Nathan T Freeman
-	 *
-	 *         Enum for Database-level events, triggered by listeners.
-	 *
-	 *         <p>
-	 *         Options are:
-	 *         <ul>
-	 *         <li>BEFORE_CREATE_DOCUMENT / AFTER_CREATE_DOCUMENT: triggered at the start / end of the Database.createDocument method,
-	 *         source and target will be Database (newly-created Document has no properties or Items set, so no point passing that</li>
-	 *         <li>BEFORE_DELETE_DOCUMENT / AFTER_DELETE_DOCUMENT: triggered at the start / end of the Document.remove or
-	 *         Document.removePermanently methods, source will be Document and target will be Database</li>
-	 *         <li>BEFORE_UPDATE_DOCUMENT / AFTER_UPDATE_DOCUMENT: triggered at the start / end of the Document.save methods (and its
-	 *         variants), source will be Document and target will be Database</li>
-	 *         <li>BEFORE_REPLICATION / AFTER_REPLICATION: triggered at the start / end of the Database.replicate method, source will be
-	 *         Database and target will be the server the replication is to be performed with</li>
-	 *         <li>BEFORE_RUN_AGENT / AFTER_RUN_AGENT: triggered at the start / end of the Agent.run method and its variants, source will be
-	 *         Agent, target will be Datatbase</li>
-	 *         </ul>
-	 *         </p>
 	 * @since org.openntf.domino 3.0.0
 	 *
 	 */
@@ -160,9 +162,35 @@ public interface Database extends Base {
 	public int compactWithOptions(final Set<CompactOption> options, final String spaceThreshold);
 
 	/**
+	 * Create a document and directly set item values. Parameter KeyValuePairs is a variable arguments consisting of arbitrary number of
+	 * pairs of item name and the value like createDocument(item1, value1, item2, value2, ..., itemN, valueN).
+	 * <p>
+	 * The parameter can also be a single Map instance. Keys will be used for item names, values for item values.
+	 * </p>
+	 * <h5>Examples:</h5>
+	 *
+	 * <pre>
+	 * Document doc = database.createDocument("Form", "Order", "CustomerID", customer.getID(), "OrderDate",
+	 * 		Calendar.getInstance().getTime(), "Items", items);
+	 * doc.save(true, false);
+	 * </pre>
+	 *
+	 * or
+	 *
+	 * <pre>
+	 * Map<String, Object> params = new HashMap<String, Object>();
+	 * params.put("Form", "Order");
+	 * params.put("CustomerID", customer.getID());
+	 * params.put("OrderDate", Calendar.getInstance().getTime());
+	 * params.put("Items", items);
+	 *
+	 * doc = db.createDocument(params);
+	 * doc.save(true, false);
+	 * </pre>
+	 *
 	 * @param keyValuePairs
-	 *            an object of key value pairs with which to initialize a document or<br/>
-	 *            Map of fields and values with which to initialize a document
+	 *            Series of item names and their values with which to initialize the document or<br/>
+	 *            Map of item names and values with which to initialize the document
 	 * @return the newly created document
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -351,9 +379,15 @@ public interface Database extends Base {
 	 */
 	public Document getDocumentWithKey(final Serializable key);
 
+	/**
+	 * @deprecated use {@link #getDocumentWithKey(Serializable)} instead
+	 */
 	@Deprecated
 	public Document getDocumentByKey(Serializable key);
 
+	/**
+	 * @deprecated use {@link #getDocumentWithKey(Serializable, boolean)} instead.
+	 */
 	@Deprecated
 	public Document getDocumentByKey(Serializable key, boolean createOnFail);
 
@@ -432,6 +466,10 @@ public interface Database extends Base {
 	 */
 	public int getModifiedNoteCount(final java.util.Date since);
 
+	/**
+	 * Returns a number of documents in this database.
+	 *
+	 */
 	public int getNoteCount();
 
 	/**
@@ -473,10 +511,12 @@ public interface Database extends Base {
 	public boolean getOption(final DBOption optionName);
 
 	/**
+	 * Modify ACL of this database to set/change the ACL level for the given entry.
+	 *
 	 * @param name
-	 *            name of a user to grant access to
+	 *            name of a user to grant or modify access to
 	 * @param level
-	 *            ACL.Level for access
+	 *            ACL.Level to set/change for give name
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public void grantAccess(final String name, final ACL.Level level);
@@ -558,45 +598,97 @@ public interface Database extends Base {
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
 	/**
-	 * Creates and initiates a transaction on a given database
+	 * Creates and initiates a transaction on this database
 	 *
-	 * @return DatabaseTransaction initiated on the relevant Database object
+	 * @return DatabaseTransaction initiated on this Database object
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public DatabaseTransaction startTransaction();
 
 	/**
-	 * Closes the transaction on a given database
+	 * Closes the transaction on this database
 	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public void closeTransaction();
 
 	/**
-	 * Gets an already initiated transaction for a database
+	 * Gets an already initiated transaction for this database
 	 *
 	 * @return DatabaseTransaction or null
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public DatabaseTransaction getTransaction();
 
+	/**
+	 * Returns Universal ID of a note identified by noteid
+	 *
+	 * @param noteid
+	 *            Note ID to use to locate a note
+	 * @return Universal ID of a note identified by noteid
+	 */
 	public String getUNID(String noteid);
 
+	/**
+	 * Returns Universal ID of a note identified by noteid
+	 *
+	 * @param noteid
+	 *            Note ID to use to locate a note
+	 * @return Universal ID of a note identified by noteid
+	 */
 	public String getUNID(int noteid);
 
+	/**
+	 * Returns a document representing the Icon Note
+	 *
+	 */
 	public Document getIconNote();
 
+	/**
+	 * Returns a document representing the ACL Note
+	 */
 	public Document getACLNote();
 
+	/**
+	 * Get a document by its Universal ID. If deferDelegate is true, the mechanism does not actually load the document from the database.
+	 * The document is loaded later when needed (when accessing an item's value for example).
+	 *
+	 * @param unid
+	 *            Universal ID of the document
+	 * @param deferDelegate
+	 *            specify true to defer the loading until later
+	 * @return Document with the given unid
+	 */
 	public Document getDocumentByUNID(String unid, boolean deferDelegate);
 
+	/**
+	 * Get a document by its Note ID. If deferDelegate is true, the mechanism does not actually load the document from the database. The
+	 * document is loaded later when needed (when accessing an item's value for example).
+	 *
+	 * @param noteid
+	 *            Note ID of the document
+	 * @param deferDelegate
+	 *            specify true to defer the loading until later
+	 * @return Document with the given noteid
+	 */
 	public Document getDocumentByID(String noteid, boolean deferDelegate);
 
+	/**
+	 * Get a document by its Note ID specified as an integer (NoteCollections and Event MessageQueue returns ID as int). If deferDelegate is
+	 * true, the mechanism does not actually load the document from the database. The document is loaded later when needed (when accessing
+	 * an item's value for example).
+	 *
+	 * @param noteid
+	 *            Note ID of the document as a number
+	 * @param deferDelegate
+	 *            specify true to defer the loading until later
+	 * @return Document with the given noteid
+	 */
 	public Document getDocumentByID(int noteid, boolean deferDelegate);
 
 	/**
 	 * NoteCollections and Event MessageQueue returns ID as int, not hex string. This method converts the int to hex and gets the document
-	 * based on that
+	 * based on that.
 	 *
 	 * @param noteid
 	 *            int decimal note ID
@@ -621,7 +713,7 @@ public interface Database extends Base {
 	 * databases
 	 *
 	 * @param txn
-	 *            DatabaseTransaction to be passed to a relevant database
+	 *            DatabaseTransaction to be passed to this database
 	 * @since org.openntf.domino 4.5.0
 	 *
 	 */
@@ -636,7 +728,7 @@ public interface Database extends Base {
 	public lotus.notes.addins.DominoServer getDominoServer();
 
 	/**
-	 * Refreshes the design of the relevant database
+	 * Refreshes the design of this database. The template must be available on the same server.
 	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
@@ -692,10 +784,12 @@ public interface Database extends Base {
 	public boolean isReplicationDisabled();
 
 	/**
-	 * Gets the web URL for the relevant database, specifying whether or not to include the path
+	 * Gets the web URL for this database, specifying whether or not to include the path. If the path is not to be included, the replica ID
+	 * will be used in the URL instead. Works only if the HTTP protocol is in effect.
 	 *
 	 * @param usePath
-	 *            boolean
+	 *            boolean specify false to return URL like http://server/__replica.nsf?OpenDatabase or specify true to return URL in the
+	 *            form http://server/path/to/file.nsf?OpenDatabase
 	 * @return String url for the database
 	 * @since org.openntf.domino 5.0.0
 	 */
@@ -766,8 +860,30 @@ public interface Database extends Base {
 	 */
 	public Set<DBPrivilege> queryAccessPrivilegesEx(String user);
 
+	/**
+	 * Returns a set of roles assigned to the effective User Name in the ACL of this database.
+	 *
+	 * @return Set of role names (with brackets)
+	 */
 	public Set<String> getCurrentRoles();
 
+	/**
+	 * Returns privileges assigned to the effective User Name for this database. Privileges are specified in the ACL and define what the
+	 * person can do - create and delete documents, create agents and views and so on.
+	 * <p>
+	 * <h5>Example</h5> The following example can be used in an XPage page controller to decide whether to render a button which creates a
+	 * new document:
+	 *
+	 * <pre>
+	 * public boolean canCreateDocumens() {
+	 * 	EnumSet<Privilege> privileges = Factory.getSession().getCurrentDatabase().getCurrentPrivileges();
+	 * 	return privileges.contains(Privilege.CREATE_DOCS);
+	 * }
+	 * </pre>
+	 * </p>
+	 *
+	 * @return ACL privileges for the effective user
+	 */
 	public EnumSet<ACL.Privilege> getCurrentPrivileges();
 
 }

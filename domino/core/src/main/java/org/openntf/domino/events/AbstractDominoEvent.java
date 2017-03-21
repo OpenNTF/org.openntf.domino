@@ -1,15 +1,16 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.events;
 
 import java.util.logging.Logger;
 
 /**
+ * Abstract implementation of an IDominoEvent used by Listeners within the API
+ * 
  * @author nfreeman
- * 
- *         Abstract implementation of an IDominoEvent used by Listeners within the API
- * 
+ *
+ *
  */
 public abstract class AbstractDominoEvent implements IDominoEvent {
 	@SuppressWarnings("unused")
@@ -23,7 +24,7 @@ public abstract class AbstractDominoEvent implements IDominoEvent {
 
 	/**
 	 * Constructor passing all the variables used by the AbstractDominoEvent
-	 * 
+	 *
 	 * @param event
 	 *            EnumEvent this AbstractDominoEvent triggers
 	 * @param source
@@ -32,7 +33,7 @@ public abstract class AbstractDominoEvent implements IDominoEvent {
 	 *            Base Domino object that is the target of the event
 	 * @param payload
 	 *            Object being passed as the payload for the event
-	 * 
+	 *
 	 * @since openntf.domino 3.0.0
 	 */
 	public AbstractDominoEvent(final EnumEvent event, final org.openntf.domino.Base<?> source, final org.openntf.domino.Base<?> target,
