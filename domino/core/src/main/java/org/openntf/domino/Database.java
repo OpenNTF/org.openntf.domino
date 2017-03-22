@@ -52,10 +52,13 @@ import org.openntf.domino.utils.enums.INumberEnum;
  * includes field changes as well as document deletions.</li>
  *
  * <li>{@link org.openntf.domino.transactions.DatabaseTransaction#commit()} - calls .save() and .remove() on all transaction-cached
- * Documents in the current database</li>
+ * Documents in the current database. The transaction is closed in this process so you have to start a new one after a call to
+ * commit().</li>
  *
  * <li>{@link org.openntf.domino.transactions.DatabaseTransaction#rollback()} - reverts all changes to Documents within the
  * transaction.</li>
+ * <li>{@link org.openntf.domino.Database#closeTransaction()} - erases the cache with Document updates. The Documents will still have the
+ * changes but you have to save them yourself.</li>
  * </ul>
  * </p>
  * <h5>Note</h5>

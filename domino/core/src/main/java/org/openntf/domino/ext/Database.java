@@ -35,6 +35,7 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
@@ -606,7 +607,8 @@ public interface Database extends Base {
 	public DatabaseTransaction startTransaction();
 
 	/**
-	 * Closes the transaction on this database
+	 * Closes the transaction on this database. If you have made any changes to documents in this database since the transaction started,
+	 * you have to save the documents yourself. Use {@link DatabaseTransaction#commit()} instead to save all changed documents.
 	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
@@ -709,12 +711,15 @@ public interface Database extends Base {
 	public Document getDocumentByID_Or_UNID(String id);
 
 	/**
-	 * Passes a DatabaseTransaction to a Database object. This allows a single Transaction to be used to process activity across multiple
-	 * databases
+	 * Passes a DatabaseTransaction to this Database. This allows a single Transaction to be used to process activity across multiple
+	 * databases. You can't set a transaction if a transaction was already started for this database. In that case use
+	 * {@link #closeTransaction()} or {@link DatabaseTransaction#commit()} first.
 	 *
 	 * @param txn
 	 *            DatabaseTransaction to be passed to this database
 	 * @since org.openntf.domino 4.5.0
+	 * @throws TransactionAlreadySetException
+	 *             if a transaction was started already
 	 *
 	 */
 	public void setTransaction(DatabaseTransaction txn);
