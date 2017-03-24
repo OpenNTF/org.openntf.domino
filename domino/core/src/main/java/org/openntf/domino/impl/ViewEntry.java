@@ -40,13 +40,11 @@ import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * The Class ViewEntry.
  */
-public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements
-org.openntf.domino.ViewEntry {
+public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View>
+		implements org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
@@ -72,7 +70,7 @@ org.openntf.domino.ViewEntry {
 	}
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new view entry.
 	 *
 	 * @param delegate
 	 *            the delegate
@@ -571,64 +569,124 @@ org.openntf.domino.ViewEntry {
 		}
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
 	}
 
+	/**
+	 * Checks if there is a column with given programmatic name in the view.
+	 *
+	 * @param key
+	 *            Programmatic name of a column as a String
+	 * @return true, if a column with given programmatic name exists in the view
+	 */
 	@Override
 	public boolean containsKey(final Object key) {
 		return getColumnValuesMap().containsKey(key);
 	}
 
+	/**
+	 * Checks if there is a column containing given value
+	 *
+	 * @param value
+	 *            Value to be searched for in all columns
+	 * @return true if the value exists in any column
+	 */
 	@Override
 	public boolean containsValue(final Object value) {
 		return getColumnValuesMap().containsValue(value);
 	}
 
+	/**
+	 * A set of programmatic column names and column values
+	 */
 	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
 		return getColumnValuesMap().entrySet();
 	}
 
+	/**
+	 * Get a column value by a programmatic column name
+	 *
+	 * @param key
+	 *            Programmatic column name as a String
+	 * @return Value in the column specified by <code>key</code>
+	 */
 	@Override
 	public Object get(final Object key) {
 		return getColumnValuesMap().get(key);
 	}
 
+	/**
+	 * Returns true if there is no value in any of the columns for this view entry
+	 */
 	@Override
 	public boolean isEmpty() {
 		return getColumnValuesMap().isEmpty();
 	}
 
+	/**
+	 * Returns a set of programmatic column names
+	 */
 	@Override
 	public Set<String> keySet() {
 		return getColumnValuesMap().keySet();
 	}
 
+	/**
+	 * Not implemented.
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public Object put(final String key, final Object value) {
 		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
 
 	}
 
+	/**
+	 * Not implemented.
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public void putAll(final Map<? extends String, ? extends Object> m) {
 		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
 
 	}
 
+	/**
+	 * Not implemented.
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public Object remove(final Object key) {
 		throw new UnsupportedOperationException("ViewEntry Map is unmodifiable.");
 
 	}
 
+	/**
+	 * Returns a number of column values for this entry
+	 */
 	@Override
 	public int size() {
 		return getColumnValuesMap().size();
 	}
 
+	/**
+	 * Returns a collection of column values for this entry
+	 */
 	@Override
 	public Collection<Object> values() {
 		return getColumnValuesMap().values();

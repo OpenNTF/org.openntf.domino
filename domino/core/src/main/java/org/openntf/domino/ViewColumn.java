@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -20,10 +20,15 @@ import org.openntf.domino.types.Design;
 import org.openntf.domino.types.FactorySchema;
 
 /**
- * The Interface ViewColumn.
+ * A column in a view or folder. Methods inherited from {@link org.openntf.domino.types.Design} interface throw
+ * {@link UnsupportedOperationException}.
+ * <h3>Notable enhancements</h3>
+ * <ul>
+ * <li>Has an {@link org.openntf.domino.ext.ViewColumn#getIndex() index} property fixing the native columns index numbers</li>
+ * </ul>
  */
-public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.ViewColumn, org.openntf.domino.ext.ViewColumn, Design,
-		DatabaseDescendant {
+public interface ViewColumn
+		extends Base<lotus.domino.ViewColumn>, lotus.domino.ViewColumn, org.openntf.domino.ext.ViewColumn, Design, DatabaseDescendant {
 
 	public static class Schema extends FactorySchema<ViewColumn, lotus.domino.ViewColumn, View> {
 		@Override
@@ -46,7 +51,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getAlignment()
 	 */
 	@Override
@@ -54,7 +59,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getColumnValuesIndex()
 	 */
 	@Override
@@ -62,7 +67,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getDateFmt()
 	 */
 	@Override
@@ -70,7 +75,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getFontColor()
 	 */
 	@Override
@@ -78,7 +83,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getFontFace()
 	 */
 	@Override
@@ -86,7 +91,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getFontPointSize()
 	 */
 	@Override
@@ -94,7 +99,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getFontStyle()
 	 */
 	@Override
@@ -102,7 +107,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getFormula()
 	 */
 	@Override
@@ -110,7 +115,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getHeaderAlignment()
 	 */
 	@Override
@@ -118,7 +123,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getHeaderFontColor()
 	 */
 	@Override
@@ -126,7 +131,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getHeaderFontFace()
 	 */
 	@Override
@@ -134,7 +139,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getHeaderFontPointSize()
 	 */
 	@Override
@@ -142,7 +147,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getHeaderFontStyle()
 	 */
 	@Override
@@ -150,7 +155,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getItemName()
 	 */
 	@Override
@@ -158,7 +163,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getListSep()
 	 */
 	@Override
@@ -166,7 +171,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getNumberAttrib()
 	 */
 	@Override
@@ -174,7 +179,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getNumberDigits()
 	 */
 	@Override
@@ -182,7 +187,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getNumberFormat()
 	 */
 	@Override
@@ -190,7 +195,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getParent()
 	 */
 	@Override
@@ -198,7 +203,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getPosition()
 	 */
 	@Override
@@ -206,7 +211,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getResortToViewName()
 	 */
 	@Override
@@ -214,7 +219,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getSecondaryResortColumnIndex()
 	 */
 	@Override
@@ -222,7 +227,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getTimeDateFmt()
 	 */
 	@Override
@@ -230,7 +235,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getTimeFmt()
 	 */
 	@Override
@@ -238,7 +243,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getTimeZoneFmt()
 	 */
 	@Override
@@ -246,7 +251,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getTitle()
 	 */
 	@Override
@@ -254,7 +259,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#getWidth()
 	 */
 	@Override
@@ -262,7 +267,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isAccentSensitiveSort()
 	 */
 	@Override
@@ -270,7 +275,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isCaseSensitiveSort()
 	 */
 	@Override
@@ -278,7 +283,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isCategory()
 	 */
 	@Override
@@ -286,7 +291,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isConstant()
 	 */
 	@Override
@@ -294,7 +299,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isField()
 	 */
 	@Override
@@ -302,7 +307,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isFontBold()
 	 */
 	@Override
@@ -310,7 +315,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isFontItalic()
 	 */
 	@Override
@@ -318,7 +323,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isFontStrikethrough()
 	 */
 	@Override
@@ -326,7 +331,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isFontUnderline()
 	 */
 	@Override
@@ -334,7 +339,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isFormula()
 	 */
 	@Override
@@ -342,7 +347,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHeaderFontBold()
 	 */
 	@Override
@@ -350,7 +355,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHeaderFontItalic()
 	 */
 	@Override
@@ -358,7 +363,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHeaderFontStrikethrough()
 	 */
 	@Override
@@ -366,7 +371,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHeaderFontUnderline()
 	 */
 	@Override
@@ -374,7 +379,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHidden()
 	 */
 	@Override
@@ -382,7 +387,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHideDetail()
 	 */
 	@Override
@@ -390,7 +395,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isHideFormula()
 	 */
 	@Override
@@ -398,7 +403,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isIcon()
 	 */
 	@Override
@@ -406,7 +411,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isNumberAttribParens()
 	 */
 	@Override
@@ -414,7 +419,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isNumberAttribPercent()
 	 */
 	@Override
@@ -422,7 +427,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isNumberAttribPunctuated()
 	 */
 	@Override
@@ -430,7 +435,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isResize()
 	 */
 	@Override
@@ -438,7 +443,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isResortAscending()
 	 */
 	@Override
@@ -446,7 +451,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isResortDescending()
 	 */
 	@Override
@@ -454,7 +459,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isResortToView()
 	 */
 	@Override
@@ -462,7 +467,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isResponse()
 	 */
 	@Override
@@ -470,7 +475,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isSecondaryResort()
 	 */
 	@Override
@@ -478,7 +483,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isSecondaryResortDescending()
 	 */
 	@Override
@@ -486,7 +491,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isShowTwistie()
 	 */
 	@Override
@@ -494,7 +499,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isSortDescending()
 	 */
 	@Override
@@ -502,7 +507,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#isSorted()
 	 */
 	@Override
@@ -510,7 +515,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setAccentSensitiveSort(boolean)
 	 */
 	@Override
@@ -518,7 +523,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setAlignment(int)
 	 */
 	@Override
@@ -526,7 +531,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setCaseSensitiveSort(boolean)
 	 */
 	@Override
@@ -534,7 +539,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setDateFmt(int)
 	 */
 	@Override
@@ -542,7 +547,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontBold(boolean)
 	 */
 	@Override
@@ -550,7 +555,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontColor(int)
 	 */
 	@Override
@@ -558,7 +563,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontFace(java.lang.String)
 	 */
 	@Override
@@ -566,7 +571,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontItalic(boolean)
 	 */
 	@Override
@@ -574,7 +579,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontPointSize(int)
 	 */
 	@Override
@@ -582,7 +587,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontStrikethrough(boolean)
 	 */
 	@Override
@@ -590,7 +595,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontStyle(int)
 	 */
 	@Override
@@ -598,7 +603,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFontUnderline(boolean)
 	 */
 	@Override
@@ -606,7 +611,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setFormula(java.lang.String)
 	 */
 	@Override
@@ -614,7 +619,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderAlignment(int)
 	 */
 	@Override
@@ -622,7 +627,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontBold(boolean)
 	 */
 	@Override
@@ -630,7 +635,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontColor(int)
 	 */
 	@Override
@@ -638,7 +643,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontFace(java.lang.String)
 	 */
 	@Override
@@ -646,7 +651,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontItalic(boolean)
 	 */
 	@Override
@@ -654,7 +659,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontPointSize(int)
 	 */
 	@Override
@@ -662,7 +667,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontStrikethrough(boolean)
 	 */
 	@Override
@@ -670,7 +675,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontStyle(int)
 	 */
 	@Override
@@ -678,7 +683,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHeaderFontUnderline(boolean)
 	 */
 	@Override
@@ -686,7 +691,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHidden(boolean)
 	 */
 	@Override
@@ -694,7 +699,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHideDetail(boolean)
 	 */
 	@Override
@@ -702,7 +707,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setHideFormula(boolean)
 	 */
 	@Override
@@ -710,7 +715,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setListSep(int)
 	 */
 	@Override
@@ -718,7 +723,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setNumberAttrib(int)
 	 */
 	@Override
@@ -726,7 +731,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setNumberAttribParens(boolean)
 	 */
 	@Override
@@ -734,7 +739,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setNumberAttribPercent(boolean)
 	 */
 	@Override
@@ -742,7 +747,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setNumberAttribPunctuated(boolean)
 	 */
 	@Override
@@ -750,7 +755,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setNumberDigits(int)
 	 */
 	@Override
@@ -758,7 +763,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setNumberFormat(int)
 	 */
 	@Override
@@ -766,7 +771,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setPosition(int)
 	 */
 	@Override
@@ -774,7 +779,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setResize(boolean)
 	 */
 	@Override
@@ -782,7 +787,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setResortAscending(boolean)
 	 */
 	@Override
@@ -790,7 +795,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setResortDescending(boolean)
 	 */
 	@Override
@@ -798,7 +803,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setResortToView(boolean)
 	 */
 	@Override
@@ -806,7 +811,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setResortToViewName(java.lang.String)
 	 */
 	@Override
@@ -814,7 +819,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setSecondaryResort(boolean)
 	 */
 	@Override
@@ -822,7 +827,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setSecondaryResortColumnIndex(int)
 	 */
 	@Override
@@ -830,7 +835,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setSecondaryResortDescending(boolean)
 	 */
 	@Override
@@ -838,7 +843,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setShowTwistie(boolean)
 	 */
 	@Override
@@ -846,7 +851,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setSortDescending(boolean)
 	 */
 	@Override
@@ -854,7 +859,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setSorted(boolean)
 	 */
 	@Override
@@ -862,7 +867,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setTimeDateFmt(int)
 	 */
 	@Override
@@ -870,7 +875,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setTimeFmt(int)
 	 */
 	@Override
@@ -878,7 +883,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setTimeZoneFmt(int)
 	 */
 	@Override
@@ -886,7 +891,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setTitle(java.lang.String)
 	 */
 	@Override
@@ -894,7 +899,7 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewColumn#setWidth(int)
 	 */
 	@Override

@@ -39,7 +39,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 		implements org.openntf.domino.ViewEntryCollection {
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new collection.
 	 *
 	 * @param delegate
 	 *            the delegate

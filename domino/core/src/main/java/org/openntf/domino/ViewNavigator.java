@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -19,7 +19,30 @@ import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 
 /**
- * The Interface ViewNavigator.
+ * Provides access to all or a subset of the entries in a view.
+ *
+ * <h3>Notable enhancements</h3>
+ * <ul>
+ * <li>Supports the foreach construct to iterate over the entries</li>
+ * </ul>
+ *
+ * <h3>Snippets</h3>
+ * <dl>
+ * <dt>Iterating over all entries</dt>
+ * <dd>
+ *
+ * <pre>
+ * View view = database.getView("view_name");
+ * ViewNavigator navigator = view.createViewNav();
+ *
+ * for (ViewEntry entry : navigator) {
+ * 	//process the entry in a separate method
+ * }
+ * </pre>
+ *
+ * </dd>
+ * </dl>
+ * </p>
  */
 public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, org.openntf.domino.ext.ViewNavigator,
 		Iterable<ViewEntry>, DatabaseDescendant {
@@ -50,7 +73,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getBufferMaxEntries()
 	 */
 	@Override
@@ -58,7 +81,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getCacheSize()
 	 */
 	@Override
@@ -66,7 +89,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getChild()
 	 */
 	@Override
@@ -74,7 +97,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getChild(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -82,7 +105,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getCount()
 	 */
 	@Override
@@ -90,7 +113,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getCurrent()
 	 */
 	@Override
@@ -98,7 +121,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getEntryOptions()
 	 */
 	@Override
@@ -106,7 +129,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getFirst()
 	 */
 	@Override
@@ -114,7 +137,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getFirstDocument()
 	 */
 	@Override
@@ -122,7 +145,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getLast()
 	 */
 	@Override
@@ -130,7 +153,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getLastDocument()
 	 */
 	@Override
@@ -138,7 +161,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getMaxLevel()
 	 */
 	@Override
@@ -146,7 +169,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNext()
 	 */
 	@Override
@@ -154,7 +177,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNext(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -162,7 +185,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNextCategory()
 	 */
 	@Override
@@ -170,7 +193,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNextDocument()
 	 */
 	@Override
@@ -178,7 +201,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNextSibling()
 	 */
 	@Override
@@ -186,7 +209,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNextSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -194,7 +217,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getNth(int)
 	 */
 	@Override
@@ -202,7 +225,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getParent()
 	 */
 	@Override
@@ -210,7 +233,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getParent(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -218,7 +241,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getParentView()
 	 */
 	@Override
@@ -226,7 +249,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPos(java.lang.String, char)
 	 */
 	@Override
@@ -234,7 +257,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPrev()
 	 */
 	@Override
@@ -242,7 +265,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPrev(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -250,7 +273,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPrevCategory()
 	 */
 	@Override
@@ -258,7 +281,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPrevDocument()
 	 */
 	@Override
@@ -266,7 +289,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPrevSibling()
 	 */
 	@Override
@@ -274,7 +297,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#getPrevSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -282,7 +305,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoChild()
 	 */
 	@Override
@@ -290,7 +313,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoChild(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -298,7 +321,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
 	 */
 	@Override
@@ -306,12 +329,12 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
 	 */
 	/**
 	 * Goto entry.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 * @return true, if successful
@@ -320,12 +343,12 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
 	 */
 	/**
 	 * Goto entry.
-	 * 
+	 *
 	 * @param entry
 	 *            the entry
 	 * @return true, if successful
@@ -334,7 +357,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoFirst()
 	 */
 	@Override
@@ -342,7 +365,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoFirstDocument()
 	 */
 	@Override
@@ -350,7 +373,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoLast()
 	 */
 	@Override
@@ -358,7 +381,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoLastDocument()
 	 */
 	@Override
@@ -366,7 +389,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoNext()
 	 */
 	@Override
@@ -374,7 +397,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoNext(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -382,7 +405,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoNextCategory()
 	 */
 	@Override
@@ -390,7 +413,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoNextDocument()
 	 */
 	@Override
@@ -398,7 +421,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoNextSibling()
 	 */
 	@Override
@@ -406,7 +429,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoNextSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -414,7 +437,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoParent()
 	 */
 	@Override
@@ -422,7 +445,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoParent(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -430,7 +453,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPos(java.lang.String, char)
 	 */
 	@Override
@@ -438,7 +461,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPrev()
 	 */
 	@Override
@@ -446,7 +469,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPrev(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -454,7 +477,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPrevCategory()
 	 */
 	@Override
@@ -462,7 +485,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPrevDocument()
 	 */
 	@Override
@@ -470,7 +493,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPrevSibling()
 	 */
 	@Override
@@ -478,7 +501,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#gotoPrevSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -486,7 +509,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#markAllRead()
 	 */
 	@Override
@@ -494,7 +517,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -502,7 +525,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#markAllUnread()
 	 */
 	@Override
@@ -510,7 +533,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -518,7 +541,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, int[], int[])
 	 */
 	@Override
@@ -526,46 +549,60 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, lotus.domino.NoteCollection, lotus.domino.NoteCollection)
 	 */
 	@Override
 	public void setAutoExpandGuidance(final int maxEntries, final lotus.domino.NoteCollection collapsedNoteIds,
 			final lotus.domino.NoteCollection expandedNoteIds);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see lotus.domino.ViewNavigator#setBufferMaxEntries(int)
-	 * @deprecated
-	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
+	 * @deprecated use {@link org.openntf.domino.ViewNavigator#setCacheGuidance(int)} instead
 	 */
 	@Override
 	@Deprecated
 	public void setBufferMaxEntries(final int entryCount);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.ViewNavigator#setCacheGuidance(int)
+	/**
+	 * Enable the cache to speed up traversing the view.
+	 *
+	 * <p>
+	 * Enable the backend ViewNavigator cache to reduce the number of server transactions and associated network overhead when navigating
+	 * and reading ColumnValues information from the Documents and Entries in a View. Performance gains are most profound when accessing a
+	 * View residing on a server from a client, however retrieval from local Views will also be greatly improved.
+	 * </p>
+	 *
+	 * @param maxEntries
+	 *            value between 2 and 400. This is the number of entries that will be retrieved whenever the cache is populated. If you
+	 *            intend to read out all ViewEntries in the View, use the maximum of 400.
+	 * @see <a href="https://www.mindoo.com/web/blog.nsf/dx/17.01.2013085308KLEB9S.htm">Fast Notes view reading via Java API:New
+	 *      ViewNavigator cache methods in 8.5.3</a>
+	 * @see <a href="https://www-10.lotus.com/ldd/ddwiki.nsf/dx/Fast_Retrieval_of_View_Data_Using_the_ViewNavigator_Cache">Fast Retrieval of
+	 *      View Data Using the ViewNavigator Cache</a>
 	 */
 	@Override
 	public void setCacheGuidance(final int maxEntries);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.ViewNavigator#setCacheGuidance(int, int)
+	/**
+	 * Enable the cache to speed up traversing the view.
+	 *
+	 * @param maxEntries
+	 *            value between 2 and 400. This is the number of entries that will be retrieved whenever the cache is populated. If you
+	 *            intend to read out all ViewEntries in the View, use the maximum of 400.
+	 * @param readMode
+	 *            One of ViewNavigator.VN_CACHEGUIDANCE_READALL or ViewNavigator.VN_CACHEGUIDANCE_READSELECTIVE. VN_CACHEGUIDANCE_READALL
+	 *            preloads the next maxEntries entries of the view as if a categorized view would be totally expanded.
+	 *            VN_CACHEGUIDANCE_READSELECTIVE fills the cache with entries based on the getter method that you call next
+	 * @see #setCacheGuidance(int) setCacheGuidance method for details and external links
 	 */
 	@Override
 	public void setCacheGuidance(final int maxEntries, final int readMode);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 *
 	 * @see lotus.domino.ViewNavigator#setCacheSize(int)
-	 * @deprecated
-	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
+	 * @deprecated use {@link #setCacheGuidance(int)} instead
 	 */
 	@Override
 	@Deprecated
@@ -573,7 +610,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#setEntryOptions(int)
 	 */
 	@Override
@@ -581,7 +618,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#setMaxLevel(int)
 	 */
 	@Override
@@ -589,7 +626,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ViewNavigator#skip(int)
 	 */
 	@Override

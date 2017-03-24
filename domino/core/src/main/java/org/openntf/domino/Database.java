@@ -28,7 +28,102 @@ import org.openntf.domino.utils.enums.DominoEnumUtil;
 import org.openntf.domino.utils.enums.INumberEnum;
 
 /**
- * The Interface Database.
+ * Represents a Notes database.
+ * <h3>Notable enhancements and changes</h3>
+ * <ul>
+ * <li>Create a document and set its values in one call using {@link org.openntf.domino.ext.Database#createDocument(Object...)} method</li>
+ * <li>Use {@link org.openntf.domino.ext.Database#getDocumentWithKey(java.io.Serializable, boolean)} to create/access a document with your
+ * own UNID</li>
+ * <li>Contains support for transactions - changes to Notes documents in a single transaction are either written to all documents or none at
+ * all</li>
+ * <li>Database generates events in various situations - before and after a document is created, updated or deleted and so on.</li>
+ * </ul>
+ * <h3>Transactions</h3>
+ * <p>
+ * Use transactions to cache changes to multiple documents. When an error occurs within your block of code, changes to those documents can
+ * be rolled back. You control when a transaction starts and when the changes are written to all modified documents or when the changes
+ * should be rolled back. The ODA Platform keeps track of documents modified within a single transaction.
+ * </p>
+ * <h5>Usage</h5>
+ * <p>
+ * <ul>
+ * <li>{@link org.openntf.domino.Database#startTransaction()} - returns {@link org.openntf.domino.transactions.DatabaseTransaction}.
+ * Indicates to the database that Document updates should be cached until the transaction is explicitly committed or rollbacked. This
+ * includes field changes as well as document deletions.</li>
+ *
+ * <li>{@link org.openntf.domino.transactions.DatabaseTransaction#commit()} - calls .save() and .remove() on all transaction-cached
+ * Documents in the current database. The transaction is closed in this process so you have to start a new one after a call to
+ * commit().</li>
+ *
+ * <li>{@link org.openntf.domino.transactions.DatabaseTransaction#rollback()} - reverts all changes to Documents within the
+ * transaction.</li>
+ * <li>{@link org.openntf.domino.Database#closeTransaction()} - erases the cache with Document updates. The Documents will still have the
+ * changes but you have to save them yourself.</li>
+ * </ul>
+ * </p>
+ * <h5>Note</h5>
+ * <p>
+ * The mechanism can't roll back changes to documents already saved within the commit() operation. If an error occurs while saving a
+ * document, other documents will still be saved.
+ * </p>
+ * <p>
+ * <h5>Example</h5>
+ *
+ * <pre>
+ * private void processOrder(String line) {
+ *  Order order = parseInput(line);
+ *  if (order != null) {
+ *    DatabaseTransaction transaction = database.startTransaction();
+ *
+ *    try {
+ *      Document docCustomer = getCustomer(order.getCustomerID())
+ *      Document docOrder = database.createDocument("Form", "Order", "CustomerID", order.getCustomerID());
+ *
+ *      //update both the docCustomer and docOrder
+ *      .....
+ *      //if no exception or error condition occurs, save all changed documents
+ *      transaction.commit();
+ *    } catch (Throwable t) {
+ *       //error occurred, roll the changes back
+ *       transaction.rollback();
+ *
+ *       //and log the error
+ *    }
+ *  }
+ * }
+ * </pre>
+ * </p>
+ * <h3>Events</h3>
+ * <p>
+ * The Database class publishes events in certain situations. You can subscribe to these events and react to them. Events are published
+ * before and after a certain situation happens. An event listener can prevent the situation to happen if it returns false when reacting to
+ * the "before" event.
+ * </p>
+ * <h5>Note</h5>
+ * <p>
+ * An event listener must return event types it wants to subscribe to.<br/>
+ * Database class fires events when one of its method is called. For example when a replicate() method is called, then a BEFORE_REPLICATION
+ * and AFTER_REPLICATION events are fired. Database class can't fire events when a scheduled replication occurs on the server.
+ * </p>
+ * <h5>Available events</h5>
+ * <p>
+ * Events are described in {@link org.openntf.domino.ext.Database.Events}.
+ * </p>
+ * <h5>Usage</h5>
+ * <p>
+ * <ul>
+ * <li>Implement the {@link org.openntf.domino.events.IDominoListener} interface.
+ * <li>Attach the listener using {@link #addListener(org.openntf.domino.events.IDominoListener)} method.
+ * </ul>
+ * </p>
+ * <h5>Example</h5>
+ * <p>
+ * See the examples in the {@link org.openntf.domino.events.IDominoListener} interface.
+ * </p>
+ *
+ *
+ * @see org.openntf.domino.events.IDominoListener
+ * @see org.openntf.domino.ext.Database.Events
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
@@ -589,19 +684,19 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public int compact();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Compacts a local database with given options.
 	 *
-	 * @see lotus.domino.Database#compactWithOptions(int)
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#compactWithOptions(java.util.Set)}
 	 */
 	@Override
 	@Deprecated
 	public int compactWithOptions(final int options);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Compacts a local database with given options if specified amount of percent or unused space exceeds given spaceThreshold.
 	 *
-	 * @see lotus.domino.Database#compactWithOptions(int, java.lang.String)
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#compactWithOptions(java.util.Set, String)}
 	 */
 	@Override
 	@Deprecated
@@ -622,10 +717,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Database createCopy(final String server, final String dbFile);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String, int)
+	/**
+	 * @deprecated Applies to a Release 4 server only, use {@link #createCopy(String, String)}
 	 */
 	@Override
 	@Deprecated
@@ -639,13 +732,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document createDocument();
 
-	/**
-	 * Creates the document.
-	 *
-	 * @param keyValuePairs
-	 *            the key value pairs
-	 * @return the document
-	 */
 	@Override
 	public Document createDocument(final Object... keyValuePairs);
 
@@ -673,10 +759,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#createFTIndex(int, boolean)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#createFTIndex(java.util.Set, boolean)} method.
 	 */
 	@Override
 	@Deprecated
@@ -796,19 +880,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void fixup();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#fixup(int)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#fixup(java.util.Set)} method.
 	 */
 	@Override
 	@Deprecated
 	public void fixup(final int options);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
+	/**
+	 * @deprecated replaced by {@link Database#FTDomainSearch(String, int, FTDomainSortOption, java.util.Set, int, int, String)} method.
 	 */
 	@Override
 	@Deprecated
@@ -831,10 +911,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection FTSearch(final String query, final int maxDocs);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#FTSearch(java.lang.String, int, int, int)
+	/**
+	 * @deprecated replaced by {@link #FTSearch(String, int, FTSortOption, java.util.Set)} method.
 	 */
 	@Override
 	@Deprecated
@@ -855,10 +933,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#FTSearchRange(java.lang.String, int, int, int, int)
+	/**
+	 * @deprecated replaced by {@link Database#FTSearchRange(String, int, FTSortOption, java.util.Set, int)} method
 	 */
 	@Override
 	@Deprecated
@@ -1169,10 +1245,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getModifiedDocuments(lotus.domino.DateTime, int)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getModifiedDocuments(java.util.Date, ModifiedDocClass)} method.
 	 */
 	@Override
 	@Deprecated
@@ -1186,10 +1260,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public String getNotesURL();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getOption(int)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getOption(DBOption)} method.
 	 */
 	@Override
 	@Deprecated
@@ -1299,11 +1371,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public String getTitle();
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 *
 	 * @see lotus.domino.Database#getType()
-	 * @Deprecated, better use getTypeEx
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getTypeEx()}
 	 */
 	@Override
 	@Deprecated
@@ -1352,23 +1423,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<View> getViews();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#grantAccess(java.lang.String, int)
+	/**
+	 * @deprecated replaced by {@link #grantAccess(String, org.openntf.domino.ACL.Level)}
 	 */
 	@Override
 	@Deprecated
 	public void grantAccess(final String name, final int level);
 
-	/**
-	 * Grant access.
-	 *
-	 * @param name
-	 *            the name
-	 * @param level
-	 *            the level
-	 */
 	@Override
 	public void grantAccess(final String name, final ACL.Level level);
 
@@ -1693,10 +1754,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setFolderReferencesEnabled(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#setFTIndexFrequency(int)
+	/**
+	 * @deprecated replaced by {@link Database#setFTIndexFrequency(FTIndexFrequency)} method.
 	 */
 	@Override
 	@Deprecated
@@ -1742,23 +1801,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setListInDbCatalog(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#setOption(int, boolean)
+	/**
+	 * @deprecated replaced by {@link Database#setOption(DBOption, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void setOption(final int optionName, final boolean flag);
 
-	/**
-	 * Sets the option.
-	 *
-	 * @param optionName
-	 *            the option name
-	 * @param flag
-	 *            the flag
-	 */
 	@Override
 	public void setOption(final DBOption optionName, final boolean flag);
 
@@ -1819,69 +1868,33 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(final SignDocType documentType);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#sign(int, boolean)
+	/**
+	 * @deprecated replaced by {@link #sign(SignDocType, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly);
 
-	/**
-	 * Sign.
-	 *
-	 * @param documentType
-	 *            the document type
-	 * @param existingSigsOnly
-	 *            the existing sigs only
-	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String)
+	/**
+	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly, final String name);
 
-	/**
-	 * Sign.
-	 *
-	 * @param documentType
-	 *            the document type
-	 * @param existingSigsOnly
-	 *            the existing sigs only
-	 * @param name
-	 *            the name
-	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String, boolean)
+	/**
+	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
-	/**
-	 * Sign.
-	 *
-	 * @param documentType
-	 *            the document type
-	 * @param existingSigsOnly
-	 *            the existing sigs only
-	 * @param name
-	 *            the name
-	 * @param nameIsNoteid
-	 *            the name is noteid
-	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 

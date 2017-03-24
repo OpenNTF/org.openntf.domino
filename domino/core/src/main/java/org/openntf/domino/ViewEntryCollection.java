@@ -20,7 +20,30 @@ import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 
 /**
- * The Interface ViewEntryCollection.
+ * Collection of View Entries.
+ *
+ * <p>
+ * <h3>Notable enhancements</h3>
+ * <ul>
+ * <li>Supports the foreach construct to iterate over the entries</li>
+ * <li>Use the {@link org.openntf.domino.ext.ViewEntryCollection#stampAll(java.util.Map)} to change multiple items at once in all entries in
+ * the collection (see the method for a sample)</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * <h3>Snippets</h3>
+ * <dl>
+ * <dt>Processing entries in the collection:</dt>
+ * <dd>
+ *
+ * <pre>
+ * ViewEntryCollection entries = view.getAllEntriesByKey(key, true);
+ * for (ViewEntry entry : entries) {
+ * 	//process the entry in a separate method
+ * }
+ * </pre>
+ * </p>
  */
 public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection,
 		org.openntf.domino.ext.ViewEntryCollection, Iterable<ViewEntry>, DatabaseDescendant {

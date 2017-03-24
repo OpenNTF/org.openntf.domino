@@ -1274,7 +1274,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1310,7 +1310,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -3632,17 +3632,37 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * Map methods
 	 */
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Tests if the document contains an item with the given name.
+	 *
+	 * @param key
+	 *            Name of the item to check
+	 * @return true, if the document contains an item with the name given in key parameter
+	 */
 	@Override
 	public boolean containsKey(final Object key) {
 		// TODO: use keySet()?
 		return this.hasItem(key == null ? null : String.valueOf(key));
 	}
 
+	/**
+	 * Checks if the document contains the given value in any of its items.
+	 *
+	 * @param value
+	 *            Value to search for
+	 * @return true if any of the items contains the value
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean containsValue(final Object value) {
@@ -3715,6 +3735,27 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return new DocumentEntrySet(this);
 	}
 
+	/**
+	 * Gets a value depending on the parameter 'key'. Key can either be a &#64;Formula, a special value or an item name.
+	 * <p>
+	 * Possible values for the 'key' parameter:
+	 * <dl>
+	 * <dt>parentdocument</dt>
+	 * <dd>Returns the parent document if this document is a response</dd>
+	 * <dt>@accesseddate</dt>
+	 * <dd>Indicates the time and date when the document was last accessed by a Notes client, whether for reading or editing as a
+	 * java.util.Date.</dd>
+	 * <dt>@modifieddate</dt>
+	 * <dd>Returns a time-date value indicating when the document was modified initially as a java.util.Date</dd>
+	 * <dt>@createddate</dt>
+	 * <dd>Returns the time-date when the document was created as a java.util.Date</dd>
+	 * </dl>
+	 * </p>
+	 *
+	 * @param key
+	 *            &#64;formula, item name or a special value from a list above
+	 * @return value corresponding to the given 'key'
+	 */
 	@Override
 	public Object get(final Object key) {
 		//TODO NTF: Back this with a caching Map so repeated calls don't bounce down to the delegate unless needed
@@ -3836,6 +3877,11 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		//return null;
 	}
 
+	/**
+	 * Returns false.
+	 *
+	 * @return false
+	 */
 	@Override
 	public boolean isEmpty() {
 		return false;
@@ -3877,11 +3923,25 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return fieldNames_;
 	}
 
+	/**
+	 * Returns a set of names of items in this document.
+	 *
+	 * @return item names sorted in an alphabetical order
+	 */
 	@Override
 	public Set<String> keySet() {
 		return Collections.unmodifiableSet(keySetInt());
 	}
 
+	/**
+	 * Replaces an item's value with a new one.
+	 *
+	 * @param key
+	 *            name of the item to change
+	 * @param value
+	 *            new value for the item
+	 * @return item's old value
+	 */
 	@Override
 	public Object put(final String key, final Object value) {
 		if (key != null) {
@@ -3895,6 +3955,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return null;
 	}
 
+	/**
+	 * Replaces items specified in the map with new values.
+	 *
+	 * @param m
+	 *            map with item names to change as keys and new values as values
+	 */
 	@Override
 	public void putAll(final Map<? extends String, ? extends Object> m) {
 		for (Map.Entry<? extends String, ? extends Object> entry : m.entrySet()) {
@@ -3904,6 +3970,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// this.save();
 	}
 
+	/**
+	 * Removes an item from this document.
+	 *
+	 * @param key
+	 *            Name of the item to remove
+	 * @return Value of the removed item
+	 */
 	@Override
 	public Object remove(final Object key) {
 		if (key != null) {
@@ -3915,11 +3988,19 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return null;
 	}
 
+	/**
+	 * Returns number of items in this document
+	 */
 	@Override
 	public int size() {
 		return this.getItems().size();
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @returns null
+	 */
 	@Override
 	public Collection<Object> values() {
 		// TODO Implement a "viewing" collection for this or throw an UnsupportedOperationException
@@ -4300,14 +4381,32 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return extendedNoteInfos_.isDefault;
 	}
 
+	/**
+	 * Not implemented
+	 * 
+	 * @param richTextName
+	 * @param attachmentName
+	 * @param file
+	 */
 	public void replaceAttachment(final String richTextName, final String attachmentName, final String file) {
 
 	}
 
+	/**
+	 * Not implemented
+	 * 
+	 * @param richTextName
+	 * @param attachmentName
+	 */
 	public void removeAttachment(final String richTextName, final String attachmentName) {
 
 	}
 
+	/**
+	 * Not implemented
+	 * 
+	 * @return an empty collection
+	 */
 	public Collection<EmbeddedObject> getAllAttachments() {
 		Collection<EmbeddedObject> result = new ArrayList<EmbeddedObject>();
 		return result;

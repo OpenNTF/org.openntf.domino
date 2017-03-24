@@ -13,9 +13,10 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.annotations.Legacy;
 
 /**
+ * OpenNTF extensions to View class
+ *
  * @author withersp
  *
- *         OpenNTF extensions to View class
  */
 public interface View {
 
@@ -271,7 +272,6 @@ public interface View {
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 * The original method is poorly named, as it doesn't indicate what happens when more than one
 	 * ViewEntry matches the key.
-
 	 */
 	@SuppressWarnings("rawtypes")
 	@Legacy(Legacy.GENERICS_WARNING)
@@ -281,8 +281,22 @@ public interface View {
 
 	public ViewEntry getEntryAtPosition(final String position);
 
+	/**
+	 * Checks if a document is present in this view.
+	 *
+	 * @param doc
+	 *            Document to be checked
+	 * @return true if the document is contained in this view
+	 */
 	public boolean containsDocument(Document doc);
 
+	/**
+	 * Checks if a view entry is present in this view.
+	 *
+	 * @param entry
+	 *            ViewEntry to be checked
+	 * @return true if the view entry is contained in this view
+	 */
 	public boolean containsEntry(ViewEntry entry);
 
 	public String getMetaversalID();

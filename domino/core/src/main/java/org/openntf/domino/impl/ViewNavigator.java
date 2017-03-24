@@ -29,12 +29,11 @@ import org.openntf.domino.iterators.ViewNavigatorEntryIterator;
 import org.openntf.domino.iterators.ViewNavigatorSiblingIterator;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-		org.openntf.domino.ViewNavigator {
+public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View>
+		implements org.openntf.domino.ViewNavigator {
 
 	private boolean forceJavaDates_ = false;
 	private int cacheSize_ = -1;
@@ -53,7 +52,7 @@ public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavi
 	private Types navType_;
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new view navigator.
 	 *
 	 * @param delegate
 	 *            the delegate
@@ -1370,12 +1369,8 @@ public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavi
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
+	/* (non-Javadoc)
 	 * @see org.openntf.domino.ViewNavigator#setBufferMaxEntries(int)
-	 * @deprecated
-	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
 	 */
 	@Override
 	@Deprecated
@@ -1421,12 +1416,10 @@ public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavi
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
 	 *
 	 * @see org.openntf.domino.ViewNavigator#setCacheSize(int)
-	 * @deprecated
-	 * @use org.openntf.domino.ViewNavigator#setCacheGuidance(int) instead
+	 * @deprecated use {@link org.openntf.domino.ViewNavigator#setCacheGuidance(int)} instead
 	 */
 	@Override
 	@Deprecated
