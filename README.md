@@ -1,6 +1,8 @@
 org.openntf.domino
 ==================
 
+[![Join the chat at https://gitter.im/OpenNTF/org.openntf.domino](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/OpenNTF/org.openntf.domino?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Open replacement for lotus.domino package in IBM Domino
 
 Project goals:
