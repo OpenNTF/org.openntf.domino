@@ -12,6 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import lotus.notes.internal.MessageQueue;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.openntf.domino.extmgr.events.EMEventIds;
 import org.openntf.domino.xots.Xots;
 
@@ -19,6 +22,7 @@ public enum EMBridgeMessageQueue {
 	INSTANCE;
 
 	public static final String QUEUE_NAME = "MQ$DOTS";
+	public static final String EXTPOINT_SUBSCRIBERPROVIDER = "org.openntf.domino.extmgr.subscriberProvider";
 	private static AtomicBoolean isStarted = new AtomicBoolean(false);
 	public static final int MQ_TIMEOUT = 1119;
 	public static final int MESSAGE_SIZE = 256;
@@ -150,6 +154,7 @@ public enum EMBridgeMessageQueue {
 			INSTANCE.listener_ = new QueueListener(INSTANCE);
 			Xots.getService().execute(INSTANCE.listener_);
 			isStarted = new AtomicBoolean(true);
+			loadSubscribersFromExtensionPoint();
 		}
 	}
 
@@ -195,6 +200,38 @@ public enum EMBridgeMessageQueue {
 
 	protected List<IEMBridgeSubscriber> getSubscriberList(final EMEventIds eventid) {
 		return subscribers_.get(eventid);
+	}
+
+	protected static void loadSubscribersFromExtensionPoint() {
+
+		try {
+
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+
+			IConfigurationElement[] config = registry.getConfigurationElementsFor(EXTPOINT_SUBSCRIBERPROVIDER);
+
+			for (IConfigurationElement e : config) {
+
+				final Object o = e.createExecutableExtension("class");
+
+				if (o instanceof IEMBridgeSubscriberProvider) {
+
+					IEMBridgeSubscriberProvider provider = (IEMBridgeSubscriberProvider) o;
+
+					String className = e.getAttribute("class");
+
+					System.out.println("EM is Loading Subscribers from SubscriberProvider: " + className);
+
+					for (IEMBridgeSubscriber entry : provider.getSubscribers()) {
+						addSubscriber(entry);
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

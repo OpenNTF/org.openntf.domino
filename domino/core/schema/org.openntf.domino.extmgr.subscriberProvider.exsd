@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.openntf.domino" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.openntf.domino" id="org.openntf.domino.extmgr.subscriberProvider" name="OpenNTF Domino Api ExtMgr Subscriber Provider"/>
+      </appinfo>
+      <documentation>
+         This extension point is used to register a &apos;Subscriber Provider&apos; for the EMBridgeMessageQueue.
+
+When the EMBridgeMessageQueue starts, it will retrieve the extensions of this extension point and instantiate each class specified by the extension point which is expected to Implement the IEMBridgeSubscriberProvider Interface.
+
+The getSubscribers() method is called to get a list of IEMBridgeSubscribers, and each of this is added as a subscriber to the EMBridgeMessageQueue
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="subscriberProvider"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="subscriberProvider">
+      <annotation>
+         <documentation>
+            This should specify the class of an EMSubscriberProvider
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class name of your Subscriber Provider e.g. com.example.MySubscriberProvider
+
+Make sure you have exported this package from your plugin
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.openntf.domino.extmgr.IEMBridgeSubscriberProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique id for this SubscriberProvider. This is currently not used for anything but in the future may be used to &apos;reload&apos; &apos;remove&apos; a SubscriberProvider at runtime.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         March 2017
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         An Example would be if you would like to provide a Subscriber called &apos;MyEventSubcsriber&apos; then the following would be an example of your extension class.
+
+&lt;pre&gt;
+public class MySubscriberProvider implements IEMBridgeSubscriberProvider {
+
+ @Override
+ public List&lt;IEMBridgeSubscriber&gt; getSubscribers() {
+
+  MySubscriber subscriber = new MySubscriber();
+  
+  List&lt;IEMBridgeSubscriber&gt; subcribers = new ArrayList&lt;IEMBridgeSubscriber&gt;();
+  
+  subscribers.add(subscriber);
+  
+  return subscribers;
+
+ }
+
+}
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         See Notice in OpenNTF Domino API Project
+      </documentation>
+   </annotation>
+
+</schema>
