@@ -29,6 +29,9 @@ public interface IndexDatabase extends IScannerStateManager {
 	public static final String VALUE_KEY_NAME = "ValueKey";
 	public static final String VALUE_MAP_PREFIX = "_ODA_ValueMap_";
 
+	public static final String RICH_TEXT_FORM_NAME = "$RichTextReference";
+	public static final String RICH_TEXT_ID_PREFIX = "_ODA_RichText_";
+
 	public static final String DBID_NAME = "DbidList";
 	public static final String DB_VIEW_NAME = "$DbIndex";
 	public static final String DB_FORM_NAME = "$DbDoc";

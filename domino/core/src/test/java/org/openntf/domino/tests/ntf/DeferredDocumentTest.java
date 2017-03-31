@@ -105,7 +105,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 		assertNotNull(session);
 		List<Future<?>> tasks = new ArrayList<Future<?>>();
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			tasks.add(Xots.getService().submit(new DeferredDocumentTest()));
+			tasks.add(Xots.submit(new DeferredDocumentTest()));
 		}
 		for (Future<?> f : tasks) {
 			f.get(); // to catch the exceptions!
@@ -154,8 +154,8 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 		documentPageNS = System.nanoTime() - documentTime;
 
 		System.out.println("Done with document details for " + pageSize + " out of " + collectionSize + " (" + dbDocs
-				+ " total in db.) NC build took " + (collectionBuildNS / 1000000) + "ms, Document build took "
-				+ (documentBuildNS / 1000000) + "ms, Document page took " + (documentPageNS / 1000000) + "ms");
+				+ " total in db.) NC build took " + (collectionBuildNS / 1000000) + "ms, Document build took " + (documentBuildNS / 1000000)
+				+ "ms, Document page took " + (documentPageNS / 1000000) + "ms");
 
 		@SuppressWarnings("unused")
 		long testEndTime = System.nanoTime();

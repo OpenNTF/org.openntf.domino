@@ -47,4 +47,6 @@ public interface DElement extends com.tinkerpop.blueprints.Element {
 
 	public Document asDocument();
 
+	public void uncache();
+
 }

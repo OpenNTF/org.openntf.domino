@@ -47,4 +47,8 @@ public interface DConfiguration extends Externalizable {
 
 	public void setDefaultProxyStore(DElementStore store);
 
+	public boolean isSuppressSingleValueCategories();
+
+	public void setSuppressSingleValueCategories(boolean value);
+
 }

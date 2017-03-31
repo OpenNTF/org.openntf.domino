@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,8 +25,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -35,6 +38,8 @@ import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
+import org.openntf.domino.graph2.builtin.DEdgeFrame;
+import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.impl.DEdgeEntryList.KeyNotFoundException;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory;
@@ -46,6 +51,7 @@ import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.service.Routes;
 import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
@@ -70,24 +76,23 @@ public class FramedResource extends AbstractResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace)
-			throws JsonException, IOException {
+	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace,
+			@Context Request request) throws JsonException, IOException {
 		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
-
-		String jsonEntity = null;
-		ResponseBuilder builder = null;
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
 
+		Date lastModified = new Date();
+		boolean getLastMod = false;
 		try {
 			if (pm.get(Parameters.ID) != null) {
 				List<String> ids = pm.get(Parameters.ID);
 				if (ids.size() == 0) {
 					writer.outNull();
 				} else if (ids.size() == 1) {
-					String id = ids.get(0);
+					String id = ids.get(0).trim();
 					NoteCoordinate nc = null;
 					if (id.startsWith("E")) {
 						nc = ViewEntryCoordinate.Utils.getViewEntryCoordinate(id);
@@ -95,6 +100,7 @@ public class FramedResource extends AbstractResource {
 						nc = ViewEntryCoordinate.Utils.getViewEntryCoordinate(id);
 					} else {
 						nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+						getLastMod = true;
 						// System.out.println("TEMP DEBUG isIcon: " +
 						// String.valueOf(nc.isIcon()));
 					}
@@ -112,20 +118,26 @@ public class FramedResource extends AbstractResource {
 						// writer.outStringProperty("currentUsername",
 						// Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
 						// throw new IllegalStateException();
-						throw new WebApplicationException(ErrorHelper
-								.createErrorResponse("Graph element is null for id " + id, Response.Status.NOT_FOUND)); // $NLX-AbstractDasResource.DatabasenotallowedforWebAccess-1$
+						throw new WebApplicationException(ErrorHelper.createErrorResponse(
+								"Graph element not found for id " + id, Response.Status.NOT_FOUND));
 
+					}
+					if (elem instanceof DVertexFrame && getLastMod) {
+						lastModified = ((DVertexFrame) elem).getModified();
+					}
+					if (elem instanceof DEdgeFrame && getLastMod) {
+						lastModified = ((DEdgeFrame) elem).getModified();
 					}
 					writer.outObject(elem);
 				} else {
 					List<Object> maps = new ArrayList<Object>();
 					for (String id : ids) {
-						NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+						NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id.trim());
 						maps.add(graph.getElement(nc, null));
 					}
 					writer.outArrayLiteral(maps);
 				}
-				jsonEntity = sw.toString();
+
 			} else if (pm.getKeys() != null) {
 				Class<?> type = null;
 				if (pm.getTypes() != null) {
@@ -148,18 +160,25 @@ public class FramedResource extends AbstractResource {
 					if (elem == null) {
 						elem = resolver.handleMissingKey(type, id);
 						if (elem == null) {
-							throw new WebApplicationException(ErrorHelper.createErrorResponse(
-									"Graph element is null for id " + id, Response.Status.NOT_FOUND)); // $NLX-AbstractDasResource.DatabasenotallowedforWebAccess-1$
+							Response response = ErrorHelper.createErrorResponse("Graph element not found for key " + id,
+									Response.Status.NOT_FOUND);
+							throw new WebApplicationException(response);
 						}
 					}
 					if (elem instanceof Vertex) {
 						// System.out.println("TEMP DEBUG Framing a vertex of
 						// type "
 						// + elem.getClass().getName());
-						Object vf = graph.frame((Vertex) elem, type);
+						VertexFrame vf = (VertexFrame) graph.frame((Vertex) elem, type);
+						if (vf instanceof DVertexFrame) {
+							lastModified = ((DVertexFrame) vf).getModified();
+						}
 						writer.outObject(vf);
 					} else if (elem instanceof Edge) {
-						Object ef = graph.frame((Edge) elem, type);
+						EdgeFrame ef = (EdgeFrame) graph.frame((Edge) elem, type);
+						if (ef instanceof DEdgeFrame) {
+							lastModified = ((DEdgeFrame) ef).getModified();
+						}
 						writer.outObject(ef);
 					}
 				} else {
@@ -170,7 +189,7 @@ public class FramedResource extends AbstractResource {
 					}
 					writer.outArrayLiteral(maps);
 				}
-				jsonEntity = sw.toString();
+
 				graph.rollback();
 			} else {
 				MultivaluedMap<String, String> mvm = uriInfo.getQueryParameters();
@@ -183,27 +202,49 @@ public class FramedResource extends AbstractResource {
 				jsonMap.put("status", "active");
 				writer.outObject(jsonMap);
 			}
-			if (null == builder)
-				builder = Response.ok();
+
 		} catch (UserAccessException uae) {
-			throw new WebApplicationException(ErrorHelper
+			return ErrorHelper
 					.createErrorResponse("User " + Factory.getSession(SessionType.CURRENT).getEffectiveUserName()
-							+ " is not authorized to access this resource", Response.Status.UNAUTHORIZED));
+							+ " is not authorized to access this resource", Response.Status.UNAUTHORIZED);
 		} catch (KeyNotFoundException knfe) {
-			throw new WebApplicationException(Response.Status.NO_CONTENT);
+			ResponseBuilder rb = Response.noContent();
+			return rb.build();
 		} catch (Exception e) {
 			throw new WebApplicationException(
 					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 
-		jsonEntity = sw.toString();
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(jsonEntity);
-		CacheControl cc = new CacheControl();
-		cc.setPrivate(true);
-		cc.setMaxAge(60);
-		builder.cacheControl(cc);
-		Response response = builder.build();
+		String jsonEntity = sw.toString();
+		ResponseBuilder berg = getBuilder(jsonEntity, lastModified, true, request);
+		Response response = berg.build();
 		return response;
+	}
+
+	private ResponseBuilder getBuilder(String jsonEntity, Date lastMod, boolean includeEtag, Request request) {
+		String etagSource = DominoUtils.md5(jsonEntity);
+		EntityTag etag = new EntityTag(etagSource);
+		ResponseBuilder berg = null;
+		if (request != null) {
+			berg = request.evaluatePreconditions(etag);
+		}
+		if (berg == null) {
+			// System.out.println("TEMP DEBUG creating a new builder");
+			berg = Response.ok();
+			if (includeEtag) {
+				berg.tag(etag);
+			}
+			berg.type(MediaType.APPLICATION_JSON_TYPE);
+			berg.entity(jsonEntity);
+			berg.lastModified(lastMod);
+			CacheControl cc = new CacheControl();
+			cc.setMustRevalidate(true);
+			cc.setPrivate(true);
+			cc.setMaxAge(86400);
+			cc.setNoTransform(true);
+			berg.cacheControl(cc);
+		}
+		return berg;
 	}
 
 	@PUT
@@ -211,10 +252,10 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response putDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince)
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince, @Context Request request)
 			throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
-		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, true);
+		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, true, request);
 
 		return response;
 	}
@@ -225,20 +266,20 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response patchDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince)
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince, @Context Request request)
 			throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
-		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false);
+		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false, request);
 		return response;
 	}
 
 	protected Response updateFrameByMetaid(String requestEntity, String namespace, String ifUnmodifiedSince,
-			ParamMap pm, boolean isPut) throws JsonException, IOException {
+			ParamMap pm, boolean isPut, Request request) throws JsonException, IOException {
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
 		List<Object> jsonArray = null;
-		ResponseBuilder builder = null;
+		// ResponseBuilder builder = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
@@ -252,7 +293,7 @@ public class FramedResource extends AbstractResource {
 				} else if (jsonRaw instanceof List) {
 					jsonArray = (List) jsonRaw;
 				}
-				builder = Response.ok();
+
 			} catch (UserAccessException uae) {
 				throw new WebApplicationException(ErrorHelper
 						.createErrorResponse("User " + Factory.getSession(SessionType.CURRENT).getEffectiveUserName()
@@ -283,14 +324,10 @@ public class FramedResource extends AbstractResource {
 			processJsonUpdate(jsonItems, graph, writer, pm, isPut);
 		}
 
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
-		CacheControl cc = new CacheControl();
-		cc.setPrivate(true);
-		cc.setMaxAge(1);
-		builder.cacheControl(cc);
-		result = builder.build();
-
-		return result;
+		String jsonEntity = sw.toString();
+		ResponseBuilder berg = getBuilder(jsonEntity, new Date(), false, request);
+		Response response = berg.build();
+		return response;
 	}
 
 	private void processJsonUpdate(JsonJavaObject jsonItems, DFramedTransactionalGraph graph, JsonGraphWriter writer,
@@ -301,57 +338,71 @@ public class FramedResource extends AbstractResource {
 			cisMap.put(cis, jsonItems.get(jsonKey));
 		}
 		List<String> ids = pm.get(Parameters.ID);
+		boolean commit = true;
 		if (ids.size() == 0) {
 			// TODO no id
 		} else {
 			JsonFrameAdapter adapter = null;
 			for (String id : ids) {
-				NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+				NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id.trim());
 				Object element = graph.getElement(nc, null);
 				if (element instanceof EdgeFrame) {
 					adapter = new JsonFrameAdapter(graph, (EdgeFrame) element, null, false);
 				} else if (element instanceof VertexFrame) {
 					adapter = new JsonFrameAdapter(graph, (VertexFrame) element, null, false);
 				} else if (element == null) {
-					throw new RuntimeException("Cannot force a metaversalid through REST API: " + id);
+					throw new RuntimeException("Cannot force a metaversalid through REST API. Requested URL: "
+							+ ODAGraphService.getCurrentRequest().getRequestURI());
 				} else {
-					throw new RuntimeException("TODO"); // TODO
+					throw new RuntimeException(
+							"TODO. Requested URL: " + ODAGraphService.getCurrentRequest().getRequestURI()); // TODO
 				}
 				Iterator<String> frameProperties = adapter.getJsonProperties();
 				CaseInsensitiveString actionName = null;
-				while (frameProperties.hasNext()) {
-					CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
-					if (!key.startsWith("@")) {
-						Object value = cisMap.get(key);
-						if (value != null) {
-							// if ("fullname".equals(key)) {
-							// System.out.println("TEMP DEBUG fullname: " +
-							// value);
-							// }
-							adapter.putJsonProperty(key.toString(), value);
-							cisMap.remove(key);
-						} else if (isPut) {
-							adapter.putJsonProperty(key.toString(), value);
-						}
-					}
-				}
+				CaseInsensitiveString preactionName = null;
 				for (CaseInsensitiveString cis : cisMap.keySet()) {
-					if (cis.equals("%action")) {
-						actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
-					} else if (!cis.startsWith("@")) {
-						Object value = cisMap.get(cis);
-						if (value != null) {
-							adapter.putJsonProperty(cis.toString(), value);
-						}
+					if (cis.equals("%preaction")) {
+						preactionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
 					}
 				}
-				adapter.updateReadOnlyProperties();
-				if (actionName != null) {
-					adapter.runAction(actionName);
+				if (preactionName != null) {
+					commit = adapter.runAction(preactionName);
+				}
+				if (commit) {
+					while (frameProperties.hasNext()) {
+						CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
+						if (!key.startsWith("@")) {
+							Object value = cisMap.get(key);
+							if (value != null) {
+								adapter.putJsonProperty(key.toString(), value);
+								cisMap.remove(key);
+							} else if (isPut) {
+								adapter.putJsonProperty(key.toString(), value);
+							}
+						}
+					}
+					for (CaseInsensitiveString cis : cisMap.keySet()) {
+						if (cis.equals("%action")) {
+							actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+						} else if (!cis.startsWith("@")) {
+							Object value = cisMap.get(cis);
+							if (value != null) {
+								adapter.putJsonProperty(cis.toString(), value);
+							}
+						}
+					}
+					adapter.updateReadOnlyProperties();
+					if (actionName != null) {
+						commit = adapter.runAction(actionName);
+					}
 				}
 				writer.outObject(element);
 			}
-			graph.commit();
+			if (commit) {
+				graph.commit();
+			} else {
+				graph.rollback();
+			}
 		}
 	}
 
@@ -360,10 +411,10 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("rawtypes")
 	public Response deleteFramedObject(String requestEntity, @Context final UriInfo uriInfo,
-			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
+			@PathParam(Routes.NAMESPACE) final String namespace, @Context Request request)
+			throws JsonException, IOException {
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		String jsonEntity = null;
-		ResponseBuilder builder = null;
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
@@ -378,7 +429,7 @@ public class FramedResource extends AbstractResource {
 		} else {
 			for (String id : ids) {
 				try {
-					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id.trim());
 					Object element = graph.getElement(nc, null);
 					if (element instanceof Element) {
 						((Element) element).remove();
@@ -388,7 +439,6 @@ public class FramedResource extends AbstractResource {
 						((EdgeFrame) element).asEdge().remove();
 					}
 					report.put(id, "deleted");
-					builder = Response.ok();
 				} catch (Exception e) {
 					throw new WebApplicationException(
 							ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
@@ -399,7 +449,6 @@ public class FramedResource extends AbstractResource {
 		}
 		try {
 			writer.outObject(report);
-			builder = Response.ok();
 		} catch (JsonException e) {
 			throw new WebApplicationException(
 					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
@@ -409,12 +458,16 @@ public class FramedResource extends AbstractResource {
 					ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 		}
 
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
-		CacheControl cc = new CacheControl();
-		cc.setPrivate(true);
-		cc.setMaxAge(1);
-		builder.cacheControl(cc);
-		Response response = builder.build();
+		jsonEntity = sw.toString();
+		ResponseBuilder berg = getBuilder(jsonEntity, new Date(), false, null);
+		Response response = berg.build();
+		// Object entity = response.getEntity();
+		// if (entity instanceof String) {
+		// System.out.println((String) entity);
+		// } else {
+		// System.out.println("Entity is a " + entity == null ? "null" :
+		// entity.getClass().getName());
+		// }
 		return response;
 	}
 
@@ -423,11 +476,10 @@ public class FramedResource extends AbstractResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("rawtypes")
 	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
-			@PathParam(Routes.NAMESPACE) final String namespace) throws JsonException, IOException {
+			@PathParam(Routes.NAMESPACE) final String namespace, @Context Request request)
+			throws JsonException, IOException {
 		// Factory.println("Processing a POST for " + namespace);
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
-		String jsonEntity = null;
-		ResponseBuilder builder = null;
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
@@ -444,7 +496,6 @@ public class FramedResource extends AbstractResource {
 				} else if (jsonRaw instanceof List) {
 					jsonArray = (List) jsonRaw;
 				}
-				builder = Response.ok();
 			} catch (Exception e) {
 				throw new WebApplicationException(
 						ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
@@ -473,12 +524,9 @@ public class FramedResource extends AbstractResource {
 			// found.");
 		}
 
-		builder.type(MediaType.APPLICATION_JSON_TYPE).entity(sw.toString());
-		CacheControl cc = new CacheControl();
-		cc.setPrivate(true);
-		cc.setMaxAge(1);
-		builder.cacheControl(cc);
-		Response response = builder.build();
+		String jsonEntity = sw.toString();
+		ResponseBuilder berg = getBuilder(jsonEntity, new Date(), false, null);
+		Response response = berg.build();
 		return response;
 	}
 
@@ -490,6 +538,7 @@ public class FramedResource extends AbstractResource {
 			cisMap.put(cis, jsonItems.get(jsonKey));
 		}
 		List<String> ids = pm.get(Parameters.ID);
+		boolean commit = true;
 		if (ids == null) {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("error", "Cannot POST to frame without an id parameter");
@@ -508,7 +557,7 @@ public class FramedResource extends AbstractResource {
 			} else {
 				for (String id : ids) {
 					// System.out.println("TEMP DEBUG POSTing to " + id);
-					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+					NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id.trim());
 					Object element = graph.getElement(nc, null);
 					if (element instanceof VertexFrame) {
 						VertexFrame parVertex = (VertexFrame) element;
@@ -537,29 +586,41 @@ public class FramedResource extends AbstractResource {
 											false);
 									Iterator<String> frameProperties = adapter.getJsonProperties();
 									CaseInsensitiveString actionName = null;
-									while (frameProperties.hasNext()) {
-										CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
-										if (!key.startsWith("@")) {
-											Object value = cisMap.get(key);
-											if (value != null) {
-												adapter.putJsonProperty(key.toString(), value);
-												cisMap.remove(key);
-											}
-										}
-									}
+									CaseInsensitiveString preactionName = null;
 									for (CaseInsensitiveString cis : cisMap.keySet()) {
-										if (cis.equals("%action")) {
-											actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
-										} else if (!cis.startsWith("@")) {
-											Object value = cisMap.get(cis);
-											if (value != null) {
-												adapter.putJsonProperty(cis.toString(), value);
-											}
+										if (cis.equals("%preaction")) {
+											preactionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
 										}
 									}
-									adapter.updateReadOnlyProperties();
-									if (actionName != null) {
-										adapter.runAction(actionName);
+									if (preactionName != null) {
+										commit = adapter.runAction(preactionName);
+									}
+									if (commit) {
+										while (frameProperties.hasNext()) {
+											CaseInsensitiveString key = new CaseInsensitiveString(
+													frameProperties.next());
+											if (!key.startsWith("@")) {
+												Object value = cisMap.get(key);
+												if (value != null) {
+													adapter.putJsonProperty(key.toString(), value);
+													cisMap.remove(key);
+												}
+											}
+										}
+										for (CaseInsensitiveString cis : cisMap.keySet()) {
+											if (cis.equals("%action")) {
+												actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
+											} else if (!cis.startsWith("@")) {
+												Object value = cisMap.get(cis);
+												if (value != null) {
+													adapter.putJsonProperty(cis.toString(), value);
+												}
+											}
+										}
+										adapter.updateReadOnlyProperties();
+										if (actionName != null) {
+											commit = adapter.runAction(actionName);
+										}
 									}
 									writer.outObject(result);
 								} catch (Exception e) {
@@ -589,7 +650,11 @@ public class FramedResource extends AbstractResource {
 					}
 				}
 			}
-			graph.commit();
+			if (commit) {
+				graph.commit();
+			} else {
+				graph.rollback();
+			}
 		}
 	}
 }

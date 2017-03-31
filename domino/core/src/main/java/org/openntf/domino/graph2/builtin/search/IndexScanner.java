@@ -2,6 +2,7 @@ package org.openntf.domino.graph2.builtin.search;
 
 import java.util.Set;
 
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.types.CaseInsensitiveString;
@@ -13,6 +14,7 @@ public class IndexScanner extends DocumentScanner {
 		setTrackValueLocation(true);
 		setTrackTokenLocation(true);
 		setTrackNameLocation(true);
+		setTrackRichTextLocation(true);
 	}
 
 	public IndexScanner(final Set<CharSequence> stopTokenList) {
@@ -21,6 +23,7 @@ public class IndexScanner extends DocumentScanner {
 		setTrackValueLocation(true);
 		setTrackTokenLocation(true);
 		setTrackNameLocation(true);
+		setTrackRichTextLocation(true);
 	}
 
 	@Override
@@ -41,6 +44,11 @@ public class IndexScanner extends DocumentScanner {
 	@Override
 	public void processValue(final CaseInsensitiveString name, final Object value, final String address) {
 		super.processValue(name, value, address);
+	}
+
+	@Override
+	public void processNoteCollection(final NoteCollection collection) {
+		super.processNoteCollection(collection);
 	}
 
 }

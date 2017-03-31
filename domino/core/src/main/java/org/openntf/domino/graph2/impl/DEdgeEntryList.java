@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.big.impl.ViewEntryList;
@@ -123,6 +124,7 @@ public class DEdgeEntryList implements DEdgeList {
 	private DVertex source_;
 	private DElementStore store_;
 	protected boolean isUnique_;
+	protected boolean isFlat_;
 	protected String label_;
 
 	private DEdgeEntryList(final DVertex source, final DElementStore store, final ViewEntryList entryList) {
@@ -134,6 +136,14 @@ public class DEdgeEntryList implements DEdgeList {
 	public DEdgeEntryList(final DVertex source, final DElementStore store) {
 		source_ = source;
 		store_ = store;
+		isFlat_ = false;
+		initEntryList();
+	}
+
+	public DEdgeEntryList(final DVertex source, final DElementStore store, final boolean isFlat) {
+		source_ = source;
+		store_ = store;
+		isFlat_ = isFlat;
 		initEntryList();
 	}
 
@@ -146,14 +156,19 @@ public class DEdgeEntryList implements DEdgeList {
 	protected void initEntryList() {
 		ViewNavigator nav = null;
 		if (org.openntf.domino.View.class.equals(source_.getDelegateType())) {
-			nav = source_.getView().createViewNavMaxLevel(0);
+			nav = source_.getView().createViewNav();
+			if (source_.getParent().getConfiguration().isSuppressSingleValueCategories()) {
+				while (DCategoryVertex.checkSkipCategory(nav)) {
+					//				System.out.println("TEMP DEBUG SubNavigator skipping category level...");
+					nav = DCategoryVertex.dropSingleValueCategory(source_.getView(), nav);
+				}
+			}
 		} else if (source_ instanceof DCategoryVertex) {
 			nav = ((DCategoryVertex) source_).getSubNavigator();
 		} else {
 			throw new IllegalStateException("Cannot create a DEdgeEntryList from a Vertex backed by a " + source_.getClass().getName());
 		}
-		//		System.out.println("TEMP DEBUG EntryList navigator from ViewVertex has " + nav.getCount() + " entries");
-		entryList_ = new ViewEntryList(nav);
+		entryList_ = new ViewEntryList(nav, isFlat_);
 	}
 
 	public void initEntryList(final List<CharSequence> list) {
@@ -171,6 +186,22 @@ public class DEdgeEntryList implements DEdgeList {
 			}
 		} else {
 			throw new IllegalArgumentException("Cannot use start keys on anything except a view root.");
+		}
+	}
+
+	public void filterEntryList(final List<CharSequence> list) {
+		ViewEntryCollection coll = null;
+		if (org.openntf.domino.View.class.equals(source_.getDelegateType())) {
+			View view = source_.getView();
+			Vector<Object> repeatKeys = new Vector<Object>();
+			repeatKeys.addAll(list);
+			coll = view.getAllEntriesByKey(repeatKeys, false);
+			if (coll.getCount() == 0) {
+				throw new KeyNotFoundException(list);
+			}
+			entryList_ = new ViewEntryList(coll);
+		} else {
+			throw new IllegalArgumentException("Cannot use filter keys on anything except a view root.");
 		}
 	}
 
@@ -293,6 +324,7 @@ public class DEdgeEntryList implements DEdgeList {
 
 	@Override
 	public List<Edge> subList(final int arg0, final int arg1) {
+		//		System.out.println("TEMP DEBUG DEdgeEntryList sublisting a " + entryList_.getClass().getName() + " from " + arg0 + " to " + arg1);
 		ViewEntryList sublist = (ViewEntryList) entryList_.subList(arg0, arg1);
 		return new DEdgeEntryList(source_, store_, sublist);
 	}

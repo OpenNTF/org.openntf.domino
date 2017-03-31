@@ -22,7 +22,7 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 
 	public void addOutEdge(final Edge edge);
 
-	public String validateEdges();
+	public boolean validateEdges();
 
 	public int getInEdgeCount(String label);
 

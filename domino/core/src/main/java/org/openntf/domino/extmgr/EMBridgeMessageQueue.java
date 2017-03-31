@@ -45,7 +45,7 @@ public enum EMBridgeMessageQueue {
 			try {
 				while (!bridge_.isStopOrdered()) {
 					if (Thread.interrupted()) {
-						Thread.currentThread().interrupt();
+						//						Thread.currentThread().interrupt();
 						break;
 					}
 					String event = queue_.poll(500, TimeUnit.MILLISECONDS);
@@ -63,7 +63,7 @@ public enum EMBridgeMessageQueue {
 					}
 				}
 			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+				//				Thread.currentThread().interrupt();
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
@@ -89,8 +89,9 @@ public enum EMBridgeMessageQueue {
 			long eventCount = 0;
 			try {
 				while (getStatus == 0) {
-					if (Thread.interrupted())
+					if (Thread.interrupted()) {
 						break;
+					}
 					getStatus = bridge_.getQueue().get(sb, MESSAGE_SIZE, 1, MESSAGE_WAIT_TIME);
 					if (getStatus == 0) {
 						dispatch.queueEvent(sb.toString());
@@ -106,7 +107,7 @@ public enum EMBridgeMessageQueue {
 					}
 				}
 			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+				//				Thread.currentThread().interrupt();
 			} catch (Throwable t) {
 				t.printStackTrace();
 			} finally {
@@ -142,9 +143,9 @@ public enum EMBridgeMessageQueue {
 
 	public static void start() {
 		INSTANCE.dispatcher_ = new QueueDispatcher(INSTANCE);
-		Xots.getService().execute(INSTANCE.dispatcher_);
+		Xots.execute(INSTANCE.dispatcher_);
 		INSTANCE.listener_ = new QueueListener(INSTANCE);
-		Xots.getService().execute(INSTANCE.listener_);
+		Xots.execute(INSTANCE.listener_);
 	}
 
 	public static void stop() {

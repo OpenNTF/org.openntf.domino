@@ -28,11 +28,14 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 		private ListIterator<NoteCoordinate> delegate_;
 		private DVertex source_;
 		private DGraph parent_;
+		private DFastEdgeList parentList_;
 
-		public DFastEdgeIterator(final DVertex source, final DGraph parent, final ListIterator<NoteCoordinate> delegate) {
+		public DFastEdgeIterator(final DVertex source, final DGraph parent, final ListIterator<NoteCoordinate> delegate,
+				final DFastEdgeList parentList) {
 			source_ = source;
 			parent_ = parent;
 			delegate_ = delegate;
+			parentList_ = parentList;
 		}
 
 		@Override
@@ -54,13 +57,15 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 		public Edge next() {
 			Edge result = null;
 			try {
-				result = parent_.getEdge(delegate_.next());
+				NoteCoordinate nc = delegate_.next();
+				//				System.out.println("TEMP DEBUG iterating to NoteCoordinate " + nc);
+				result = parent_.getEdge(nc);
+				//								System.out.println("TEMP DEBUG found an edge for " + result.getLabel() + " " + result.getId());
 			} catch (Throwable t) {
-				System.err.println(
-						"Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
-				if (hasNext()) {
-					result = next();
-				}
+				t.printStackTrace();
+				//				if (hasNext()) {
+				//					result = next();
+				//				}
 			}
 			return result;
 		}
@@ -76,11 +81,12 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 			try {
 				result = parent_.getEdge(delegate_.previous());
 			} catch (Throwable t) {
-				System.err.println(
-						"Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
-				if (hasPrevious()) {
-					result = previous();
-				}
+				t.printStackTrace();
+				//				System.err.println(
+				//						"Exception caught iterating an edge list. This is most likely caused by data corruption, typically because a replicaid changed. Bypassing for now...");
+				//				if (hasPrevious()) {
+				//					result = previous();
+				//				}
 			}
 			return result;
 		}
@@ -269,7 +275,7 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public Iterator<Edge> iterator() {
-		return new DFastEdgeIterator(sourceVertex_, parentGraph_, delegate_.listIterator());
+		return new DFastEdgeIterator(sourceVertex_, parentGraph_, delegate_.listIterator(), this);
 	}
 
 	@Override
@@ -291,12 +297,12 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public ListIterator<Edge> listIterator() {
-		return new DFastEdgeIterator(sourceVertex_, parentGraph_, delegate_.listIterator());
+		return new DFastEdgeIterator(sourceVertex_, parentGraph_, delegate_.listIterator(), this);
 	}
 
 	@Override
 	public ListIterator<Edge> listIterator(final int arg0) {
-		return new DFastEdgeIterator(sourceVertex_, parentGraph_, delegate_.listIterator(arg0));
+		return new DFastEdgeIterator(sourceVertex_, parentGraph_, delegate_.listIterator(arg0), this);
 	}
 
 	@Override
@@ -489,6 +495,25 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	public void setLabel(final String label) {
 		label_ = label;
 		//		Factory.println("Setting label to " + label);
+	}
+
+	boolean repairInvalidEdges() {
+		boolean result = false;
+		Iterator<NoteCoordinate> it = delegate_.iterator();
+		while (it.hasNext()) {
+			NoteCoordinate nc = it.next();
+			try {
+				Edge edge = parentGraph_.getEdge(nc);
+				if (edge == null) {
+					it.remove();
+					result = true;
+				}
+			} catch (Throwable t) {
+				it.remove();
+				result = true;
+			}
+		}
+		return result;
 	}
 
 }

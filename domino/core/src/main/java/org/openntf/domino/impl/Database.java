@@ -425,6 +425,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			try {
 				open();
 				result = fromLotus(getDelegate().createDocument(), Document.SCHEMA, this);
+				((org.openntf.domino.impl.Document) result).isNew_ = true;
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}
@@ -1131,7 +1132,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		nc.setSelectAcl(true);
 		nc.buildCollection();
 		String nid = nc.getFirstNoteID();
-		System.out.println("TEMP DEBUG getting ACL from noteid " + nid + " in a note collection with " + nc.getCount() + " entries");
+		//		System.out.println("TEMP DEBUG getting ACL from noteid " + nid + " in a note collection with " + nc.getCount() + " entries");
 		return getDocumentByID(nid);
 	}
 
@@ -1172,7 +1173,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				//NTF No, its exactly what we meant to do in the case of graph elements
 				Document doc = this.createDocument();
 				doc.replaceItemValue("$Created", new Date());
-				doc.replaceItemValue("$$Key", "");
+				//				doc.replaceItemValue("$$Key", "");
 				return doc;
 			}
 		} catch (Exception e) {
@@ -2026,7 +2027,19 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				System.out.println("TEMP DEBUG Unable to find view object from document " + unid);
 			}
 		} else {
-			System.out.println("TEMP DEBUG Document does not have a $Index item!");
+			Throwable t = new Throwable();
+			StackTraceElement[] ste = t.getStackTrace();
+			StackTraceElement elem = ste[0];
+			String calledFrom1 = elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + elem.getLineNumber()
+					+ ")";
+			elem = ste[1];
+			String calledFrom2 = elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + elem.getLineNumber()
+					+ ")";
+			elem = ste[2];
+			String calledFrom3 = elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + elem.getLineNumber()
+					+ ")";
+			System.err.println("TEMP DEBUG View Document " + viewDocument.getMetaversalID() + " does not have a $Index item!  "
+					+ viewDocument.getItemValueString("$Title") + " called from " + calledFrom1 + ", " + calledFrom2 + ", " + calledFrom3);
 		}
 		return result;
 	}
@@ -3597,6 +3610,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 */
 	@Override
 	public String getApiPath() {
+		String localPath = path_;
+		localPath = localPath.replace('\\', '/');
 		if (apiPath_ == null) {
 			if (server_.length() > 0) {
 				apiPath_ = server_ + "!!" + path_;
@@ -3604,6 +3619,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				apiPath_ = path_;
 			}
 		}
+
 		return apiPath_;
 	}
 

@@ -77,7 +77,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		public Element handleMissingKey(final Class<?> type, final Object key) {
 			//			System.out.println("TEMP DEBUG default resolver handling missing key");
 			if (String.valueOf(key).equals("NEW")) {
-				//				System.out.println("TEMP DEBUG handling NEW case");
+				//				System.out.println("TEMP DEBUG handling NEW case for type " + type.getName());
 				Object rawFrame = dgraph_.addVertex(null, type, true);
 				//				System.out.println("TEMP DEBUG added a " + rawFrame.getClass().getName());
 				if (rawFrame instanceof VertexFrame) {
@@ -276,6 +276,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			store = base.findElementStore(kind);
 		}
 		if (store == null) {
+			//			System.out.println("TEMP DEBUG store was null for type " + kind.getName());
 			if (id instanceof NoteCoordinate) {
 				store = base.findElementStore(id);
 			} else {
@@ -286,8 +287,14 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 					store = base.findElementStore(typeid);
 				}
 			}
+		} else {
+			//			System.out.println("TEMP DEBUG adding to store " + ((Database) store.getStoreDelegate()).getApiPath());
 		}
+
 		Vertex vertex = store.addVertex(id, temporary);
+		String typeValue = ((DConfiguration) this.getConfig()).getTypeValue(kind);
+		//		System.out.println("TEMP DEBUG Creating new instance of " + kind.getName() + " with typeValue of " + typeValue);
+		vertex.setProperty("form", typeValue);
 		F result = frame(vertex, kind, temporary);
 		if (result instanceof Eventable) {
 
@@ -665,7 +672,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				kind = (Class<F>) ViewVertex.class;
 			}
 			if (DesignFactory.isIcon((Document) map) || DesignFactory.isACL((Document) map)) {
-				System.out.println("TEMP DEBUG framing an icon note");
+				//				System.out.println("TEMP DEBUG framing an icon note");
 				kind = (Class<F>) DbInfoVertex.class;
 			}
 		}

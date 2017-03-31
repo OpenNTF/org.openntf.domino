@@ -398,7 +398,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return true, if is recycled
 	 */
 	protected static boolean isDead(final lotus.domino.Base base) {
-
 		if (base == null)
 			return true;
 		try {

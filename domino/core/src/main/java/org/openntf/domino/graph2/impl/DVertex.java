@@ -2,6 +2,8 @@ package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,8 +40,8 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	protected FastMap<String, NoteList> inEdgesMapCompressed_;
 	//	private FastMap<String, FastSet<String>> outEdgesMap_;
 	protected FastMap<String, NoteList> outEdgesMapCompressed_;
-	protected transient FastMap<String, DEdgeList> inEdgeCache_;
-	protected transient FastMap<String, DEdgeList> outEdgeCache_;
+	protected Map<String, DEdgeList> inEdgeCache_;
+	protected Map<String, DEdgeList> outEdgeCache_;
 
 	public DVertex(final org.openntf.domino.graph2.DGraph parent) {
 		super(parent);
@@ -112,62 +114,52 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public void addInEdge(final Edge edge) {
-		//		boolean adding = false;
 		String label = edge.getLabel();
-		//		NoteList ins = getInEdgesSet(label);
-		//		Object eid = edge.getId();
-		//		if (eid instanceof NoteCoordinate) {
-		//			// NOP
-		//		} else if (eid instanceof CharSequence) {
-		//			eid = new org.openntf.domino.big.impl.NoteCoordinate((CharSequence) eid);
-		//		} else {
-		//			log_.log(Level.WARNING, "Edge ids of type " + eid.getClass().getName() + " not yet supported");
-		//		}
-		//		if (!ins.contains(eid)) {
-		//			adding = true;
-		//			//			ins.add((NoteCoordinate) eid);
-		//		} else {
-		//			//			System.out.println("TEMP DEBUG: Not adding an in edge on " + label + " because it's already in the list");
-		//		}
-		//		if (adding) {
 		getParent().startTransaction(this);
 		getInDirtyKeySet().add(label);
-		List<Edge> inLabelObjs = getInEdgeCache(label);
+		List<Edge> inLabelObjs = getInEdgeObjects(label);
 		inLabelObjs.add(edge);
-		//		}
 	}
 
 	@Override
 	public void addOutEdge(final Edge edge) {
-		//		boolean adding = false;
 		String label = edge.getLabel();
-		//		NoteList outs = getOutEdgesSet(label);
-		//		Object eid = edge.getId();
-		//		if (eid instanceof NoteCoordinate) {
-		//			// NOP
-		//		} else if (eid instanceof CharSequence) {
-		//			eid = new org.openntf.domino.big.impl.NoteCoordinate((CharSequence) eid);
-		//		} else {
-		//			log_.log(Level.WARNING, "Edge ids of type " + eid.getClass().getName() + " not yet supported");
-		//		}
-		//		if (!outs.contains(eid)) {
-		//			adding = true;
-		//			//			outs.add((NoteCoordinate) eid);
-		//		} else {
-		//			//			System.out.println("TEMP DEBUG: Not adding an out edge on " + label + " because it's already in the list");
-		//		}
-		//		if (adding) {
 		getParent().startTransaction(this);
 		getOutDirtyKeySet().add(label);
-		List<Edge> outLabelObjs = getOutEdgeCache(label);
+		List<Edge> outLabelObjs = getOutEdgeObjects(label);
 		outLabelObjs.add(edge);
-		//		}
 	}
 
 	@Override
-	public String validateEdges() {
-		// TODO Implement this or remove comment
-		return null;
+	public boolean validateEdges() {
+		boolean result = true;
+
+		Set<String> inLabels = getInEdgeLabels();
+		for (String label : inLabels) {
+			List<Edge> curEdges = getInEdgeObjects(label);
+			if (curEdges instanceof DFastEdgeList) {
+				DFastEdgeList curList = (DFastEdgeList) curEdges;
+				boolean dirty = curList.repairInvalidEdges();
+				if (dirty) {
+					result = false;
+					getInDirtyKeySet().add(label);
+				}
+			}
+		}
+
+		Set<String> outLabels = getOutEdgeLabels();
+		for (String label : outLabels) {
+			List<Edge> curEdges = getOutEdgeObjects(label);
+			if (curEdges instanceof DFastEdgeList) {
+				DFastEdgeList curList = (DFastEdgeList) curEdges;
+				boolean dirty = curList.repairInvalidEdges();
+				if (dirty) {
+					result = false;
+					getOutDirtyKeySet().add(label);
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -236,18 +228,15 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	protected void removeEdge(final Edge edge) {
 		getParent().startTransaction(this);
 		String label = edge.getLabel();
-
+		//		System.out.println("Removing an edge of type " + label + " from vertex " + getId());
 		Object inId = ((DEdge) edge).getVertexId(Direction.IN);
 		if (inId.equals(this.getId())) {
+			//			System.out.println("Removing from IN");
 			boolean inChanged = false;
 			try {
-				NoteList ins = getInEdgesSet(label);
-				if (ins != null) {
-					inChanged = ins.remove(edge.getId());
-				}
+				List<Edge> inObjs = getInEdgeObjects(label);
+				inChanged = inObjs.remove(edge);
 				if (inChanged) {
-					List<Edge> inObjs = getInEdgeCache(label);
-					inObjs.remove(edge);
 					getInDirtyKeySet().add(label);
 				}
 			} catch (Throwable t) {
@@ -259,15 +248,12 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 		Object outId = ((DEdge) edge).getVertexId(Direction.OUT);
 		if (outId.equals(this.getId())) {
+			//			System.out.println("Removing from OUT");
 			boolean outChanged = false;
 			try {
-				NoteList outs = getOutEdgesSet(label);
-				if (outs != null) {
-					outChanged = outs.remove(edge.getId());
-				}
+				List<Edge> outObjs = getOutEdgeObjects(label);
+				outChanged = outObjs.remove(edge);
 				if (outChanged) {
-					List<Edge> outObjs = getOutEdgeCache(label);
-					outObjs.remove(edge);
 					getOutDirtyKeySet().add(label);
 				}
 			} catch (Throwable t) {
@@ -280,7 +266,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	protected Map<String, DEdgeList> getInEdgeCache() {
 		if (inEdgeCache_ == null) {
-			inEdgeCache_ = new FastMap<String, DEdgeList>().atomic();
+			inEdgeCache_ = Collections.synchronizedMap(new HashMap<String, DEdgeList>());
 		}
 		return inEdgeCache_;
 	}
@@ -291,13 +277,20 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		result = inCache.get(label);
 		if (result == null) {
 			NoteList list = getInEdgesSet(label);
-			//			if (list.size() > 0) {
-			//				Factory.println("Got a " + label + " list with " + list.size() + " entries for Vertex " + getId());
-			//			}
-			//			result = getParent().getEdgesFromIds(this, list);
+			int count = getInEdgeCount(label);
+			if (count != list.size()) {
+				setProperty("_COUNT" + DVertex.IN_PREFIX + label, list.size());
+				applyChanges();
+			}
 			result = new DFastEdgeList(this, getParent(), list, label);
-			//			result.setLabel(label);
 			inCache.put(label, result);
+			//			System.out.println("TEMP DEBUG Cache MISS for edge list " + label + " size " + result.size() + " for "
+			//					+ result.getClass().getSimpleName() + ": " + System.identityHashCode(result) + " into inCache: "
+			//					+ System.identityHashCode(inCache) + " from Vertex: " + System.identityHashCode(this));
+		} else {
+			//			System.out.println("TEMP DEBUG Cache hit for edge list " + label + " size " + result.size() + " for "
+			//					+ result.getClass().getSimpleName() + ": " + System.identityHashCode(result) + " from inCache: "
+			//					+ System.identityHashCode(inCache) + " from Vertex: " + System.identityHashCode(this));
 		}
 		return result.atomic();
 	}
@@ -308,15 +301,20 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 		result = outCache.get(label);
 		if (result == null) {
 			NoteList list = getOutEdgesSet(label);
+			int count = getOutEdgeCount(label);
+			if (count != list.size()) {
+				setProperty("_COUNT" + DVertex.OUT_PREFIX + label, list.size());
+				applyChanges();
+			}
 			result = new DFastEdgeList(this, getParent(), list, label);
 			outCache.put(label, result);
 		}
 		return result.atomic();
 	}
 
-	protected FastMap<String, DEdgeList> getOutEdgeCache() {
+	protected Map<String, DEdgeList> getOutEdgeCache() {
 		if (outEdgeCache_ == null) {
-			outEdgeCache_ = new FastMap<String, DEdgeList>().atomic();
+			outEdgeCache_ = Collections.synchronizedMap(new HashMap<String, DEdgeList>());
 		}
 		return outEdgeCache_;
 	}
@@ -476,9 +474,17 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					//					if ("foundin".equalsIgnoreCase(key)) {
 					//						System.out.println("Writing a FoundIn IN list with " + edgeIds.size() + " elements.");
 					//					}
-					setProperty(DVertex.IN_PREFIX + key, edgeIds);
-					setProperty("_COUNT" + DVertex.IN_PREFIX + key, edgeIds.size());
-					result = true;
+					if (edgeIds.size() == 0) {
+						removeProperty(DVertex.IN_PREFIX + key);
+						removeProperty("_COUNT" + DVertex.IN_PREFIX + key);
+						result = true;
+					} else {
+						setProperty(DVertex.IN_PREFIX + key, edgeIds);
+						setProperty("_COUNT" + DVertex.IN_PREFIX + key, edgeIds.size());
+						result = true;
+					}
+					//					getInEdgeCache().remove(key);
+					//					inMap.remove(key);
 				}
 			}
 			inDirtySet.clear();
@@ -493,9 +499,17 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					//					if ("foundin".equalsIgnoreCase(key)) {
 					//						System.out.println("Writing a FoundIn OUT list with " + edgeIds.size() + " elements.");
 					//					}
-					setProperty(DVertex.OUT_PREFIX + key, edgeIds);
-					setProperty("_COUNT" + DVertex.OUT_PREFIX + key, edgeIds.size());
-					result = true;
+					if (edgeIds.size() == 0) {
+						removeProperty(DVertex.OUT_PREFIX + key);
+						removeProperty("_COUNT" + DVertex.OUT_PREFIX + key);
+						result = true;
+					} else {
+						setProperty(DVertex.OUT_PREFIX + key, edgeIds);
+						setProperty("_COUNT" + DVertex.OUT_PREFIX + key, edgeIds.size());
+						result = true;
+					}
+					//					getOutEdgeCache().remove(key);
+					//					outMap.remove(key);
 				}
 			}
 			outDirtySet.clear();
@@ -505,7 +519,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	}
 
 	protected DEdgeList getInEdgeObjects(final String... labels) {
-		Map<String, DEdgeList> inCache = getInEdgeCache();
+		//		Map<String, DEdgeList> inCache = getInEdgeCache();
 		DEdgeList result = null;
 		if (labels == null || labels.length == 0) {
 			Set<String> labelSet = getInEdgeLabels();
@@ -518,18 +532,7 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			}
 		} else if (labels.length == 1) {
 			String label = labels[0];
-			//			System.out.println("TEMP DEBUG Getting in edge objects for label " + label);
-			result = inCache.get(label);
-			if (result == null) {
-				NoteList edgeIds = getInEdgesSet(label);
-				//				DEdgeList edges = getParent().getEdgesFromIds(this, edgeIds);
-				DEdgeList edges = new DFastEdgeList(this, getParent(), edgeIds, label);
-				//				edges.setLabel(label);
-				if (edges != null) {
-					result = edges.atomic();
-				}
-				inCache.put(label, result);
-			}
+			result = getInEdgeCache(label);
 		} else {
 			result = new org.openntf.domino.graph2.impl.DEdgeList(this);
 			for (String label : labels) {
@@ -540,7 +543,6 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	}
 
 	protected DEdgeList getOutEdgeObjects(final String... labels) {
-		FastMap<String, DEdgeList> outCache = getOutEdgeCache();
 		DEdgeList result = null;
 		if (labels == null || labels.length == 0) {
 			Set<String> labelSet = getOutEdgeLabels();
@@ -553,19 +555,16 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 			}
 		} else if (labels.length == 1) {
 			String label = labels[0];
-			if (label == null) {
-				return getOutEdgeObjects().unmodifiable();
-			}
-			result = outCache.get(label);
+			//			if (label == null) {
+			//				return getOutEdgeObjects().unmodifiable();
+			//			}
+			result = getOutEdgeCache(label);
 			if ((result == null || result.isEmpty()) && label.equalsIgnoreCase("contents")) {
-				//				System.out.println("TEMP DEBUG getting 'contents' label for a vertex with delegate " + getDelegateType().getName());
 				if (getDelegateType().equals(View.class)) {
-					//					System.out.println("TEMP DEBUG getting contents from ViewVertex");
 					DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 					edges.setLabel(label);
 					result = edges.unmodifiable();
 				} else if (this instanceof DCategoryVertex || String.valueOf(getId()).startsWith("VC")) {
-					//					System.out.println("TEMP DEBUG getting contents from a DCategoryVertex");
 					DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore());
 					edges.setLabel(label);
 					result = edges.unmodifiable();
@@ -574,23 +573,19 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 					//							+ String.valueOf(this.getId()));
 				}
 			}
-			//			if ((result == null || result.isEmpty()) && label.equalsIgnoreCase("hasview")) {
-			//				if (getDelegateType().equals(Document.class)) {
-			//					
-			//				}
-			//			}
-			if (result == null) {
-				//				System.out.println("TEMP DEBUG Getting out edge objects for label " + label);
-				NoteList edgeIds = getOutEdgesSet(label);
-				DEdgeList edges = new DFastEdgeList(this, getParent(), edgeIds, label);
-				//						getParent().getEdgesFromIds(this, edgeIds);
-				//				edges.setLabel(label);
-				if (edges != null) {
-					result = edges.atomic();
+			if ((result == null || result.isEmpty()) && label.equalsIgnoreCase("doccontents")) {
+				if (getDelegateType().equals(View.class)) {
+					DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore(), true);
+					edges.setLabel(label);
+					result = edges.unmodifiable();
+				} else if (this instanceof DCategoryVertex || String.valueOf(getId()).startsWith("VC")) {
+					DEdgeList edges = new DEdgeEntryList(this, (org.openntf.domino.graph2.impl.DElementStore) getStore(), true);
+					edges.setLabel(label);
+					result = edges.unmodifiable();
+				} else {
+					//					System.out.println("TEMP DEBUG unable to get contents edgelist from a " + this.getClass().getName() + " with id "
+					//							+ String.valueOf(this.getId()));
 				}
-			}
-			if (result != null) {
-				outCache.put(label, result);
 			}
 		} else {
 			result = new org.openntf.domino.graph2.impl.DEdgeList(this);

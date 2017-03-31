@@ -127,7 +127,7 @@ public interface NoteCoordinate extends Externalizable, Comparable<NoteCoordinat
 		}
 
 		public static org.openntf.domino.big.impl.NoteCoordinate getNoteCoordinate(final CharSequence metaversalid) {
-			if (metaversalid.length() == 48) {
+			if (DominoUtils.isMetaversalId(metaversalid)) {
 				return new org.openntf.domino.big.impl.NoteCoordinate(metaversalid);
 			} else {
 				return null;

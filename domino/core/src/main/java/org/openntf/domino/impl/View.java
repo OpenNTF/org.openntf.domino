@@ -3134,4 +3134,40 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return null;
 	}
+
+	public Map<Object, Object> getCategoryTree() {
+		if (!isCategorized())
+			return null;
+		Map<Object, Object> result = new LinkedHashMap<Object, Object>();
+		Vector<ViewColumn> columns = getColumns();
+		int categoryCount = 0;
+		for (ViewColumn column : columns) {
+			if (column.isCategory()) {
+				categoryCount++;
+			}
+		}
+		//		for ()
+		return result;
+	}
+
+	int[] categoryColumnPositions_ = null;
+
+	int[] getCategoryColumnPositions() {
+		if (categoryColumnPositions_ == null) {
+			List<Integer> numList = new ArrayList<Integer>();
+			int i = 0;
+			for (ViewColumn column : getColumns()) {
+				if (column.isCategory()) {
+					numList.add(i);
+				}
+				i++;
+			}
+			i = 0;
+			categoryColumnPositions_ = new int[numList.size()];
+			for (int j = 0; j < numList.size(); j++) {
+				categoryColumnPositions_[j] = numList.get(j);
+			}
+		}
+		return categoryColumnPositions_;
+	}
 }

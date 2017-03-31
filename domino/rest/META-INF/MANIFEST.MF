@@ -33,6 +33,7 @@ Export-Package: org.openntf.domino.rest,
  org.openntf.domino.rest.resources.data,
  org.openntf.domino.rest.resources.frames,
  org.openntf.domino.rest.resources.graph,
+ org.openntf.domino.rest.resources.info,
  org.openntf.domino.rest.service,
  org.openntf.domino.rest.servlet,
  org.openntf.domino.rest.utils

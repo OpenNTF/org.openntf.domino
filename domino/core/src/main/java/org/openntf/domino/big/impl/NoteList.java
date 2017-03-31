@@ -156,7 +156,12 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public boolean remove(final Object o) {
-		return delegate_.remove(o);
+		//		System.out.println("TEMP DEBUG NoteList removing a " + o.getClass().getName() + " " + String.valueOf(o));
+		boolean result = delegate_.remove(o);
+		if (!result) {
+			//			System.out.println("TEMP DEBUG Unable to remove element from NoteList!");
+		}
+		return result;
 	}
 
 	@Override

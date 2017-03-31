@@ -37,11 +37,18 @@ public interface ViewVertex extends VertexFrame {
 	@JavaHandler
 	public View asView();
 
+	@JavaHandler
+	@TypedProperty("entrycount")
+	public int getDocCount();
+
 	@TypedProperty("$Title")
 	public String getTitle();
 
 	@Incidence(label = "contents", direction = Direction.OUT)
 	public Iterable<Contains> getContents();
+
+	@Incidence(label = "doccontents", direction = Direction.OUT)
+	public Iterable<Contains> getDocContents();
 
 	public abstract static class ViewVertexImpl implements ViewVertex, JavaHandlerContext<Vertex> {
 		@Override
@@ -66,6 +73,11 @@ public interface ViewVertex extends VertexFrame {
 			return db.getView(doc);
 		}
 
+		@Override
+		public int getDocCount() {
+			return asView().getAllEntries().getCount();
+		}
+
 		@SuppressWarnings("unchecked")
 		@Override
 		public Map<CharSequence, Object> asMap() {
@@ -75,8 +87,8 @@ public interface ViewVertex extends VertexFrame {
 				if (delegate instanceof Map) {
 					return (Map<CharSequence, Object>) delegate;
 				}
-				throw new RuntimeException("VertexFrame not backed by a Map. Instead it's a "
-						+ (delegate == null ? "null" : delegate.getClass().getName()));
+				throw new RuntimeException(
+						"VertexFrame not backed by a Map. Instead it's a " + (delegate == null ? "null" : delegate.getClass().getName()));
 			}
 			throw new RuntimeException("VertexFrame not backed by org.openntf.domino.graph2.DVertex. Instead it's a "
 					+ (raw == null ? "null" : raw.getClass().getName()));

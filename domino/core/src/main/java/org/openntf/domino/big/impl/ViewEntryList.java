@@ -18,7 +18,16 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 	private ViewEntryCollection collection_;
 	protected ViewEntry startEntry_;
 	protected ViewEntry stopEntry_;
+	protected Integer start_ = null;
+	protected Integer count_ = null;
 	protected boolean emptyIterator_ = false;
+	protected final boolean flatIterator_;
+
+	public static void debug(final String... messages) {
+		for (String message : messages) {
+			System.out.println("TEMP DEBUG " + message);
+		}
+	}
 
 	public static class ViewEntryCollectionIterator implements ListIterator<ViewEntryCoordinate> {
 		private ViewEntryList parentList_;
@@ -35,6 +44,8 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			collection_ = collection;
 			parentList_ = parent;
 			if (parentList_.startEntry_ != null) {
+				next_ = parentList_.startEntry_;
+				hasNextCache_ = true;
 				parentList_.startEntry_ = null;
 			}
 			if (parentList_.stopEntry_ != null) {
@@ -142,6 +153,161 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 			index_--;
 			ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
 			vec.setSourceColl(collection_);
+			return vec;
+		}
+
+		@Override
+		public int previousIndex() {
+			if (hasPrevious()) {
+				return index_ - 1;
+			}
+			return index_;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("ViewEntryListIterator is not modifiable");
+		}
+
+		@Override
+		public void set(final ViewEntryCoordinate arg0) {
+			throw new UnsupportedOperationException("ViewEntryListIterator is not modifiable");
+		}
+	}
+
+	public static class ViewEntryFlatListIterator implements ListIterator<ViewEntryCoordinate> {
+		private ViewEntryList parentList_;
+		private ViewNavigator navigator_;
+		private ViewEntry cur_;
+		private Boolean hasNextCache_;
+		private ViewEntry next_;
+		private Boolean hasPrevCache_;
+		private ViewEntry prev_;
+		private int index_;
+		private String stopPosition_;
+		private int count_;
+
+		ViewEntryFlatListIterator(final ViewNavigator navigator, final ViewEntryList parent) {
+			navigator_ = navigator;
+			parentList_ = parent;
+			Integer start = parentList_.getStart();
+
+			if (start != null) {
+				if (start == 0) {
+					start = 1;
+				}
+				next_ = navigator_.getNthDocument(start);
+				//				debug("Starting flat navigation at entry " + start + " entry " + next_.getPosition());
+				hasNextCache_ = (next_ != null);
+				//				navigator_.gotoEntry(parentList_.startEntry_);				
+				parentList_.start_ = null;
+			}
+			if (parentList_.getCount() != null) {
+				count_ = parentList_.getCount();
+				//				debug("Flat navigating until " + count_);
+				parentList_.count_ = null;
+			}
+		}
+
+		@Override
+		public void add(final ViewEntryCoordinate arg0) {
+			throw new UnsupportedOperationException("ViewEntryListIterator is not modifiable");
+		}
+
+		@Override
+		public boolean hasNext() {
+			if (parentList_.emptyIterator_) {
+				parentList_.emptyIterator_ = false;
+				return false;
+			}
+			if (index_ >= count_) {
+				return false;
+			}
+			if (hasNextCache_ == null) {
+				if (cur_ == null) {
+					if (navigator_.getCount() == 0) {
+						hasNextCache_ = false;
+					} else {
+						hasNextCache_ = true;
+					}
+				} else {
+					next_ = navigator_.getNextDocument();
+					hasNextCache_ = (next_ != null);
+				}
+			}
+			return hasNextCache_;
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			if (hasPrevCache_ == null) {
+				if (cur_ == null) {
+					if (navigator_.getCount() == 0) {
+						hasPrevCache_ = false;
+					} else {
+						hasPrevCache_ = true;
+					}
+				} else {
+					prev_ = navigator_.getPrevDocument();
+					hasPrevCache_ = prev_ != null;
+				}
+			}
+			return hasPrevCache_;
+		}
+
+		@Override
+		public ViewEntryCoordinate next() {
+			hasPrevCache_ = null;
+			hasNextCache_ = null;
+			prev_ = cur_;
+			if (cur_ == null && next_ != null) {
+				cur_ = next_;
+			}
+			if (cur_ == null) {
+				//				debug("getting first document");
+				ViewEntry newEntry = navigator_.getFirstDocument();
+				cur_ = newEntry;
+			} else if (next_ == null) {
+				//				debug("getting next document");
+				ViewEntry newEntry = navigator_.getNextDocument();
+				cur_ = newEntry;
+			} else {
+				cur_ = next_;
+			}
+			next_ = null;
+			index_++;
+			if (cur_ != null) {
+				ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+				vec.setSourceNav(navigator_);
+				return vec;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public int nextIndex() {
+			if (hasNext()) {
+				return index_ + 1;
+			}
+			return index_;
+		}
+
+		@Override
+		public ViewEntryCoordinate previous() {
+			hasPrevCache_ = null;
+			hasNextCache_ = null;
+			next_ = cur_;
+			if (prev_ == null) {
+				ViewEntry newEntry = navigator_.getPrevDocument();
+				cur_ = newEntry;
+			} else {
+				cur_ = prev_;
+			}
+			prev_ = null;
+			index_--;
+			ViewEntryCoordinate vec = new org.openntf.domino.big.impl.ViewEntryCoordinate(cur_);
+			vec.setSourceNav(navigator_);
 			return vec;
 		}
 
@@ -316,11 +482,22 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 	public ViewEntryList(final ViewNavigator navigator) {
 		navigator_ = navigator;
 		parentView_ = navigator.getParentView();
+		flatIterator_ = false;
+	}
+
+	public ViewEntryList(final ViewNavigator navigator, final boolean isFlat) {
+		navigator_ = navigator;
+		parentView_ = navigator.getParentView();
+		flatIterator_ = isFlat;
+		if (isFlat) {
+			//			System.out.println("TEMP DEBUG constructing a flat ViewEntryList");
+		}
 	}
 
 	public ViewEntryList(final ViewEntryCollection collection) {
 		collection_ = collection;
 		parentView_ = collection.getParent();
+		flatIterator_ = false;
 	}
 
 	public ViewNavigator getNavigator() {
@@ -427,7 +604,11 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 	@Override
 	public Iterator<org.openntf.domino.big.ViewEntryCoordinate> iterator() {
 		if (navigator_ != null) {
-			return new ViewEntryListIterator(getNavigator(), this);
+			if (flatIterator_) {
+				return new ViewEntryFlatListIterator(getNavigator(), this);
+			} else {
+				return new ViewEntryListIterator(getNavigator(), this);
+			}
 		} else {
 			return new ViewEntryCollectionIterator(getCollection(), this);
 		}
@@ -441,7 +622,11 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 	@Override
 	public ListIterator<org.openntf.domino.big.ViewEntryCoordinate> listIterator() {
 		if (navigator_ != null) {
-			return new ViewEntryListIterator(getNavigator(), this);
+			if (flatIterator_) {
+				return new ViewEntryFlatListIterator(getNavigator(), this);
+			} else {
+				return new ViewEntryListIterator(getNavigator(), this);
+			}
 		} else {
 			return new ViewEntryCollectionIterator(getCollection(), this);
 		}
@@ -449,8 +634,7 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 
 	@Override
 	public ListIterator<org.openntf.domino.big.ViewEntryCoordinate> listIterator(final int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnimplementedException("ViewEntryList.listIterator with an index is not yet implemented");
 	}
 
 	@Override
@@ -487,31 +671,42 @@ public class ViewEntryList implements List<org.openntf.domino.big.ViewEntryCoord
 		}
 	}
 
+	Integer getStart() {
+		return start_;
+	}
+
+	Integer getCount() {
+		return count_;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public List<ViewEntryCoordinate> subList(final int arg0, final int arg1) {
 		//		System.out.println("Getting entry from " + arg0 + " position");
+		//		System.out.println("TEMP DEBUG sublisting a ViewEntryList from " + arg0 + " to " + arg1);
+		start_ = arg0;
+		count_ = arg1;
 		if (arg0 >= size()) {
 			emptyIterator_ = true;
 		} else {
 			if (navigator_ != null) {
-				startEntry_ = getNavigator().getNth(arg0);
+				startEntry_ = getNavigator().getNth(arg0 + 1);
 			} else {
-				startEntry_ = getCollection().getNthEntry(arg0);
+				startEntry_ = getCollection().getNthEntry(arg0 + 1);
 			}
 		}
 		if (arg1 > 0) {
-			if (arg1 > size()) {
+			if (arg0 + arg1 > size()) {
 				if (navigator_ != null) {
-					stopEntry_ = getNavigator().getNth(size());
+					stopEntry_ = getNavigator().getLast();
 				} else {
-					stopEntry_ = getCollection().getNthEntry(size());
+					stopEntry_ = getCollection().getLastEntry();
 				}
 			} else {
 				if (navigator_ != null) {
-					stopEntry_ = getNavigator().getNth(arg1);
+					stopEntry_ = getNavigator().getNth(arg0 + arg1);
 				} else {
-					stopEntry_ = getCollection().getNthEntry(arg1);
+					stopEntry_ = getCollection().getNthEntry(arg0 + arg1);
 				}
 			}
 		}

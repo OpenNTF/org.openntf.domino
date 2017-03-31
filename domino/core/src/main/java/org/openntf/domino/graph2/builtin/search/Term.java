@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openntf.domino.big.IndexDatabase;
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
@@ -12,6 +13,7 @@ import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
 import org.openntf.domino.graph2.builtin.identity.Name;
 import org.openntf.domino.graph2.builtin.identity.Name.ContainsPart;
+import org.openntf.domino.graph2.builtin.search.RichTextReference.RichTextContainsTerm;
 import org.openntf.domino.graph2.builtin.search.Value.ContainsTerm;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -53,6 +55,12 @@ public interface Term extends DVertexFrame {
 	public Map getHits();
 
 	@JavaHandler
+	public void setHits(Map<CharSequence, Set<CharSequence>> hitsMap, String replicaid);
+
+	@JavaHandler
+	public Map<CharSequence, Set<CharSequence>> getHits(String replicaid);
+
+	@JavaHandler
 	@TypedProperty("HitRepls")
 	public List<CharSequence> getHitRepls();
 
@@ -73,6 +81,24 @@ public interface Term extends DVertexFrame {
 
 	@IncidenceUnique(label = ContainsTerm.LABEL)
 	public void removeContainsTerm(ContainsTerm containsTerm);
+
+	@AdjacencyUnique(label = RichTextContainsTerm.LABEL)
+	public Iterable<RichTextReference> getRichTextReferences();
+
+	@AdjacencyUnique(label = RichTextContainsTerm.LABEL)
+	public RichTextContainsTerm addRichTextReference(RichTextReference reference);
+
+	@AdjacencyUnique(label = RichTextContainsTerm.LABEL)
+	public void removeRichTextReference(RichTextReference reference);
+
+	@IncidenceUnique(label = RichTextContainsTerm.LABEL)
+	public Iterable<RichTextContainsTerm> getRichTextContainsTerms();
+
+	@IncidenceUnique(label = RichTextContainsTerm.LABEL)
+	public int countRichTextContainsTerms();
+
+	@IncidenceUnique(label = RichTextContainsTerm.LABEL)
+	public void removeRichTextContainsTerm(RichTextContainsTerm containsTerm);
 
 	@AdjacencyUnique(label = ContainsPart.LABEL)
 	public Iterable<Name> getNames();
@@ -102,6 +128,18 @@ public interface Term extends DVertexFrame {
 				result.put(replid, this.asVertex().getProperty(itemname));
 			}
 			return result;
+		}
+
+		@Override
+		public void setHits(final Map<CharSequence, Set<CharSequence>> hitsMap, final String replicaid) {
+			String itemname = IndexDatabase.TERM_MAP_PREFIX + replicaid;
+			this.asVertex().setProperty(itemname, hitsMap);
+		}
+
+		@Override
+		public Map<CharSequence, Set<CharSequence>> getHits(final String replicaid) {
+			String itemname = IndexDatabase.TERM_MAP_PREFIX + replicaid;
+			return this.asVertex().getProperty(itemname);
 		}
 
 		@Override

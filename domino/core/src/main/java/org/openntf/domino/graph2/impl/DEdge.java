@@ -45,6 +45,7 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	@Override
 	public void remove() {
 		if (beforeRemove()) {
+			//			System.out.println("Removing an edge with id " + getId());
 			getParent().removeEdge(this);
 		}
 	}

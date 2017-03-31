@@ -1,17 +1,17 @@
 package com.tinkerpop.frames.modules.typedgraph;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.util.Validate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A TypeRegistry for a {@link FramedGraph}. With a {@link TypeRegistry} the
- * {@link FramedGraph} is able to store type-information on edges,
- * and use stored type-information to construct vertices/edges based on
- * type-information stored in the graph (runtime).
+ * {@link FramedGraph} is able to store type-information on edges, and use
+ * stored type-information to construct vertices/edges based on type-information
+ * stored in the graph (runtime).
  * 
  * @see TypeField
  * @see TypeValue
@@ -44,7 +44,21 @@ public class TypeRegistry {
 	 *         registered class that matches the input values.
 	 */
 	public Class<?> getType(Class<?> typeHoldingTypeField, String typeValue) {
+		// System.out.println("TEMP DEBUG SUPER attempting to resolve type " +
+		// typeHoldingTypeField.getName() + " value "
+		// + typeValue + " in registry " + System.identityHashCode(this));
 		Class<?> result = typeDiscriminators.get(new TypeDiscriminator(typeHoldingTypeField, typeValue));
+		// if (result == null) {
+		// System.out.println("Unable to locate type " +
+		// typeHoldingTypeField.getName() + " value " + typeValue
+		// + " in registry " + System.identityHashCode(this));
+		// for (Map.Entry<TypeDiscriminator, Class<?>> entry :
+		// typeDiscriminators.entrySet()) {
+		// System.out.println("TEMP DEBUG Have a type for " +
+		// entry.getKey().typeHoldingTypeField.getName()
+		// + " value " + entry.getKey().value);
+		// }
+		// }
 		return result;
 	}
 
@@ -78,8 +92,7 @@ public class TypeRegistry {
 	 * @param Add
 	 *            the interface to the registry. The interface should have a
 	 *            {@link TypeValue} annotation, and there should be a
-	 *            {@link TypeField} annotation
-	 *            on the interface or its parents.
+	 *            {@link TypeField} annotation on the interface or its parents.
 	 */
 	public TypeRegistry add(Class<?> type) {
 		Validate.assertArgument(type.isInterface(), "Not an interface: %s", type.getName());
@@ -97,8 +110,9 @@ public class TypeRegistry {
 		Class<?> typeHoldingTypeField = type.getAnnotation(TypeField.class) == null ? null : type;
 		for (Class<?> parentType : type.getInterfaces()) {
 			Class<?> parentTypeHoldingTypeField = findTypeHoldingTypeField(parentType);
-			Validate.assertArgument(parentTypeHoldingTypeField == null || typeHoldingTypeField == null
-					|| parentTypeHoldingTypeField == typeHoldingTypeField,
+			Validate.assertArgument(
+					parentTypeHoldingTypeField == null || typeHoldingTypeField == null
+							|| parentTypeHoldingTypeField == typeHoldingTypeField,
 					"You have multiple TypeField annotations in your class-hierarchy for %s", type.getName());
 			if (typeHoldingTypeField == null)
 				typeHoldingTypeField = parentTypeHoldingTypeField;
@@ -108,7 +122,8 @@ public class TypeRegistry {
 
 	protected void registerTypeValue(Class<?> type, Class<?> typeHoldingTypeField) {
 		TypeValue typeValue = type.getAnnotation(TypeValue.class);
-		Validate.assertArgument(typeValue != null, "The type does not have a @TypeValue annotation: %s", type.getName());
+		Validate.assertArgument(typeValue != null, "The type does not have a @TypeValue annotation: %s",
+				type.getName());
 		typeDiscriminators.put(new TypeRegistry.TypeDiscriminator(typeHoldingTypeField, typeValue.value()), type);
 	}
 }

@@ -5,7 +5,6 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -105,15 +104,24 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 	public static class DTypeRegistry extends TypeRegistry {
 		private static class InternalTypeRegistry extends TypeRegistry {
+
 			@Override
 			protected void registerTypeValue(final Class<?> type, final Class<?> typeHoldingTypeField) {
 				TypeValue typeValue = type.getAnnotation(TypeValue.class);
-				if (Modifier.isAbstract(type.getModifiers())) {
+				if (typeValue == null) {
 					typeDiscriminators.put(new TypeRegistry.TypeDiscriminator(typeHoldingTypeField, type.getCanonicalName()), type);
 				} else {
-					Validate.assertArgument(typeValue != null, "The type does not have a @TypeValue annotation: %s", type.getName());
 					typeDiscriminators.put(new TypeRegistry.TypeDiscriminator(typeHoldingTypeField, typeValue.value()), type);
 				}
+				//				System.out.println("TEMP DEBUG Registering internal registry " + typeHoldingTypeField.getName() + " value "
+				//						+ typeValue.value() + " in registry " + System.identityHashCode(this) + " to type " + type.getName());
+			}
+
+			@Override
+			public Class<?> getType(final Class<?> typeHoldingTypeField, final String typeValue) {
+				//				System.out.println("TEMP DEBUG Checking internal registry for " + typeHoldingTypeField.getName() + " value " + typeValue
+				//						+ " in registry " + System.identityHashCode(this));
+				return super.getType(typeHoldingTypeField, typeValue);
 			}
 		}
 
@@ -128,8 +136,9 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		private Map<Class<?>, Map<CaseInsensitiveString, Method>> computedMap_ = new LinkedHashMap<Class<?>, Map<CaseInsensitiveString, Method>>();
 		private Map<Class<?>, Method> inMap_ = new LinkedHashMap<Class<?>, Method>();
 		private Map<Class<?>, Method> outMap_ = new LinkedHashMap<Class<?>, Method>();
-		private Map<String, String> simpleNameMap_ = new HashMap<String, String>();
+		//		private Map<String, String> simpleNameMap_ = new HashMap<String, String>();
 		private Map<String, Class<?>> localTypeMap_ = new HashMap<String, Class<?>>();
+		private Map<Class<?>, String> typeValueMap_ = new HashMap<Class<?>, String>();
 		private Map<DElementStore, InternalTypeRegistry> storeTypeMap_ = new HashMap<DElementStore, InternalTypeRegistry>();
 		private DConfiguration config_;
 
@@ -139,7 +148,11 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 		@Override
 		public Class<?> getType(final Class<?> typeHoldingTypeField, final String typeValue) {
-			//			System.out.println("TEMP DEBUG Attempting to resolve type name " + typeValue);
+			//			if (typeValue == null || typeValue.length() == 0) {
+			//				Throwable t = new RuntimeException();
+			//				t.printStackTrace();
+			//			} else {
+			//			}
 			Class<?> result = super.getType(typeHoldingTypeField, typeValue);
 			if (result == null) {
 				result = findClassByName(typeValue);
@@ -158,8 +171,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			if (reg == null) {
 				result = getType(typeHoldingTypeField, typeValue);
 			} else {
-				//				System.out.println("TEMP DEBUG Using local element store registry " + reg.toString());
 				result = reg.getType(typeHoldingTypeField, typeValue);
+				//				System.out.println("TEMP DEBUG Used local element store for " + typeHoldingTypeField.getName() + " value " + typeValue
+				//						+ " in registry " + System.identityHashCode(reg) + " resulting in type "
+				//						+ (result == null ? "null" : result.getName()));
 			}
 			if (result == null) {
 				result = findClassByName(typeValue);
@@ -223,6 +238,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 			return typeHoldingTypeField;
 		}
 
+		public String getTypeValue(final Class<?> type) {
+			return typeValueMap_.get(type);
+		}
+
 		@Override
 		public TypeRegistry add(final Class<?> type) {
 			Validate.assertArgument(type.isInterface(), "Not an interface: %s", type.getName());
@@ -238,6 +257,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				if (valChk != null) {
 					String value = ((TypeValue) valChk).value();
 					localTypeMap_.put(value, type);
+					//					System.out.println("TEMP DEBUG Registering " + type.getName() + " to a value of " + value);
+					typeValueMap_.put(type, value);
 				}
 				addProperties(type);
 				//				System.out.println("TEMP DEBUG Adding type " + type.getName() + " to registry");
@@ -274,6 +295,8 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 				if (valChk != null) {
 					String value = ((TypeValue) valChk).value();
 					localTypeMap_.put(value, type);
+					//					System.out.println("TEMP DEBUG Registering " + type.getName() + " to a value of " + value);
+					typeValueMap_.put(type, value);
 				}
 				addProperties(type);
 				//				System.out.println("TEMP DEBUG Adding type " + type.getName() + " to registry");
@@ -588,7 +611,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						return ViewVertex.class;
 					}
 					if (DesignFactory.isIcon((Document) map) || DesignFactory.isACL((Document) map)) {
-						System.out.println("TEMP DEBUG returning a DbInfoVertex");
+						//						System.out.println("TEMP DEBUG returning a DbInfoVertex");
 						return DbInfoVertex.class;
 					}
 				}
@@ -770,6 +793,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 
 	}
 
+	private boolean surpressSingleValueCategories_ = true;
 	private Long defaultElementStoreKey_ = null;
 	private DElementStore defaultElementStore_;
 	private Long defaultProxyStoreKey_ = null;
@@ -918,6 +942,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 		return getTypedBuilder().getTypeRegistry();
 	}
 
+	public String getTypeValue(final Class<?> type) {
+		return getTypeRegistry().getTypeValue(type);
+	}
+
 	@Override
 	public DTypeManager getTypeManager() {
 		return getTypedBuilder().getTypeManager();
@@ -963,6 +991,16 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	@Override
 	public DKeyResolver getKeyResolver(final Class<?> type) {
 		return getResolverMap().get(type);
+	}
+
+	@Override
+	public boolean isSuppressSingleValueCategories() {
+		return surpressSingleValueCategories_;
+	}
+
+	@Override
+	public void setSuppressSingleValueCategories(final boolean value) {
+		surpressSingleValueCategories_ = value;
 	}
 
 }

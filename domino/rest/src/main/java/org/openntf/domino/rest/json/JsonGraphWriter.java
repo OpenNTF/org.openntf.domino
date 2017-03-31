@@ -82,6 +82,10 @@ public class JsonGraphWriter extends JsonWriter {
 		outStringLiteral(str);
 	}
 
+	public void outNoteCoordinate(NoteCoordinate nc) throws IOException {
+		outStringLiteral(nc.toString());
+	}
+
 	public void outDateLiteral(DateTime paramDateTime) throws IOException {
 		String str = dateToString(paramDateTime, true);
 		out(str);
@@ -164,11 +168,11 @@ public class JsonGraphWriter extends JsonWriter {
 			// System.out.println("TEMP DEBUG outObject received a Set");
 			outArrayLiteral(((Set) paramObject).toArray());
 		} else if (paramObject instanceof DateTime) {
-			// System.out.println("TEMP DEBUG outObject received a Set");
 			outDateLiteral((DateTime) paramObject);
 		} else if (paramObject instanceof DateRange) {
-			// System.out.println("TEMP DEBUG outObject received a Set");
 			outDateRangeLiteral((DateRange) paramObject);
+		} else if (paramObject instanceof NoteCoordinate) {
+			outNoteCoordinate((NoteCoordinate) paramObject);
 		} else if (paramObject instanceof Throwable) {
 			outException((Throwable) paramObject);
 		} else {
@@ -342,6 +346,8 @@ public class JsonGraphWriter extends JsonWriter {
 		} else if (paramObject instanceof DateRange) {
 			DateRange dt = (DateRange) paramObject;
 			outDateRangeLiteral(dt);
+		} else if (paramObject instanceof NoteCoordinate) {
+			outNoteCoordinate((NoteCoordinate) paramObject);
 		} else if (paramObject instanceof Date) {
 			outDateLiteral_((Date) paramObject);
 		} else {

@@ -64,7 +64,7 @@ public class XOTSTest {
 	@Test
 	public void testCallable() throws InterruptedException, ExecutionException {
 
-		Future<String> future = Xots.getService().submit(new Concater("SUC", "CESS"));
+		Future<String> future = Xots.submit(new Concater("SUC", "CESS"));
 		assertEquals("SUCCESS", future.get());
 
 		ArrayList<Callable<String>> concats = new ArrayList<Callable<String>>();
@@ -72,7 +72,7 @@ public class XOTSTest {
 			concats.add(new Concater("TEST", String.valueOf(i)));
 		}
 
-		List<Future<String>> results = Xots.getService().invokeAll(concats);
+		List<Future<String>> results = Xots.invokeAll(concats);
 		for (int i = 0; i < 100; i++) {
 			assertEquals("TEST" + i, results.get(i).get());
 		}
@@ -81,7 +81,7 @@ public class XOTSTest {
 	@Test
 	public void testModule() throws InterruptedException, ExecutionException {
 
-		Future<NSFComponentModule> future = Xots.getService().submit(new Callable<NSFComponentModule>() {
+		Future<NSFComponentModule> future = Xots.submit(new Callable<NSFComponentModule>() {
 			@Override
 			public NSFComponentModule call() throws Exception {
 				return NotesContext.getCurrent().getModule();
@@ -109,14 +109,14 @@ public class XOTSTest {
 	public void testSessionPassing() throws InterruptedException, ExecutionException, NotesException {
 
 		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
-		Future<String> future = Xots.getService().submit(new SessionPassingCallable());
+		Future<String> future = Xots.submit(new SessionPassingCallable());
 
 		assertEquals("CN=Roland Praml/OU=01/OU=int/O=FOCONIS", future.get());
 	}
 
 	@Test
 	public void testLongRunningRunnable() throws InterruptedException {
-		Xots.getService().submit(new Callable<String>() {
+		Xots.submit(new Callable<String>() {
 
 			@Override
 			public String call() {
@@ -132,7 +132,7 @@ public class XOTSTest {
 			}
 		});
 
-		Xots.getService().submit(new Runnable() {
+		Xots.submit(new Runnable() {
 
 			@Override
 			public void run() {
@@ -162,7 +162,7 @@ public class XOTSTest {
 	@Test
 	public void testHighLoad() throws InterruptedException {
 		for (int i = 0; i < 1000; i++) {
-			Xots.getService().submit(new Concater("A", "B"));
+			Xots.submit(new Concater("A", "B"));
 		}
 		Collection<DominoFutureTask<?>> lst1 = null;
 		do {
@@ -176,7 +176,7 @@ public class XOTSTest {
 	@Test
 	public void testDelayed() throws InterruptedException {
 		for (int i = 1; i <= 5; i++) {
-			Xots.getService().schedule(new Concater("A", "B"), 2 * i, TimeUnit.SECONDS);
+			Xots.schedule(new Concater("A", "B"), 2 * i, TimeUnit.SECONDS);
 		}
 
 		Collection<DominoFutureTask<?>> lst1 = null;
@@ -199,9 +199,8 @@ public class XOTSTest {
 
 	@Test
 	public void testTasklet() {
-
-		Xots.getService().runTasklet("entwicklung/jfof4/proglibjfof.nsf", "de.foconis.lib.app.xots.TestRunner_1");
-		Xots.getService().runTasklet("bundle:org.openntf.domino.xsp", XotsNsfScanner.class.getName());
+		Xots.runTasklet("entwicklung/jfof4/proglibjfof.nsf", "de.foconis.lib.app.xots.TestRunner_1");
+		Xots.runTasklet("bundle:org.openntf.domino.xsp", XotsNsfScanner.class.getName());
 	}
 
 	public static class EndlessTest extends AbstractDominoRunnable {
@@ -226,7 +225,7 @@ public class XOTSTest {
 
 	//@Test
 	public void testEndless() throws InterruptedException {
-		Xots.getService().submit(new EndlessTest());
+		Xots.submit(new EndlessTest());
 		Thread.sleep(1000);
 		ODAPlatform.stop();
 		ODAPlatform.start();

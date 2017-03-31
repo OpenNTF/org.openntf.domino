@@ -26,4 +26,7 @@ public interface CategoryVertex extends VertexFrame {
 	@IncidenceUnique(label = "contents", direction = Direction.OUT)
 	public Iterable<Contains> getContents();
 
+	@IncidenceUnique(label = "doccontents", direction = Direction.OUT)
+	public Iterable<Contains> getDocContents();
+
 }

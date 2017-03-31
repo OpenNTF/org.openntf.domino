@@ -1,13 +1,18 @@
 package org.openntf.domino.xots;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.openntf.domino.extmgr.EMBridgeMessageQueue;
 import org.openntf.domino.thread.AbstractDominoExecutor;
 import org.openntf.domino.thread.AbstractDominoExecutor.DominoFutureTask;
+import org.openntf.domino.thread.Scheduler;
 import org.openntf.domino.thread.XotsExecutorService;
 import org.openntf.domino.utils.Factory;
 
@@ -17,9 +22,7 @@ import org.openntf.domino.utils.Factory;
  * written in Java 1.1
  */
 public class Xots {
-
 	;
-
 	public static Comparator<DominoFutureTask<?>> TASKS_BY_ID = new Comparator<DominoFutureTask<?>>() {
 		@Override
 		public int compare(final DominoFutureTask<?> o1, final DominoFutureTask<?> o2) {
@@ -46,19 +49,72 @@ public class Xots {
 	//	}
 
 	private Xots() {
-		super();
+
 	}
 
-	public static XotsExecutorService getService() {
+	private static XotsExecutorService getService() {
 		if (!isStarted()) {
 			throw new IllegalStateException("Xots is not started");
 		}
 		return executor_;
 	}
 
+	public static void execute(final Runnable r) {
+		getService().execute(r);
+	}
+
+	public static int getActiveThreadCount() {
+		return executor_.getActiveCount();
+	}
+
+	public static BlockingQueue<Runnable> getQueue() {
+		return executor_.getQueue();
+	}
+
+	public static void remove(final Runnable task) {
+		executor_.remove(task);
+	}
+
+	public static <T> Future<T> schedule(final Callable<T> task, final Scheduler scheduler) {
+		return executor_.schedule(task, scheduler);
+	}
+
+	public static Future schedule(final Runnable task, final Scheduler scheduler) {
+		return executor_.schedule(task, scheduler);
+	}
+
+	public static <T> Future<T> schedule(final Callable<T> task, final long delay, final TimeUnit unit) {
+		return getService().schedule(task, delay, unit);
+	}
+
+	public static Future schedule(final Runnable task, final long delay, final TimeUnit unit) {
+		return getService().schedule(task, delay, unit);
+	}
+
+	public static Future submit(final Runnable task) {
+		return getService().submit(task);
+	}
+
+	public static <T> Future<T> submit(final Callable<T> task) {
+		return getService().submit(task);
+	}
+
+	public static <T> Future<T> submit(final Runnable task, final T result) {
+		return getService().submit(task, result);
+	}
+
+	public static <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks) throws InterruptedException {
+		return getService().invokeAll(tasks);
+	}
+
+	public static void runTasklet(final String moduleName, final String className, final Object... ctorArgs) {
+		getService().runTasklet(moduleName, className, ctorArgs);
+	}
+
 	public static List<DominoFutureTask<?>> getTasks(final Comparator<DominoFutureTask<?>> comparator) {
-		if (!isStarted())
+		if (!isStarted()) {
 			return Collections.emptyList();
+		}
 		return executor_.getTasks(comparator);
 	}
 
@@ -69,12 +125,9 @@ public class Xots {
 		if (isStarted()) {
 			throw new IllegalStateException("XotsDaemon is already started");
 		}
-		//		System.out.println("Starting XPages OSGi Tasklet Service with " + executor.getCorePoolSize() + " core threads.");
 		try {
 			executor_ = executor;
-			//TODO Re-enable when it's closer to release.
 			EMBridgeMessageQueue.start();
-
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

@@ -2,9 +2,12 @@ package org.openntf.domino.graph2.builtin;
 
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.exceptions.UserAccessException;
+import org.openntf.domino.graph2.annotations.Action;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DVertex;
@@ -43,13 +46,32 @@ public interface DVertexFrame extends Editable {
 	@JavaHandler
 	public void updateReadOnlyProperties(DVertexFrame frame);
 
+	@JavaHandler
+	@Action(name = "cleanEdges")
+	public Boolean cleanEdges();
+
 	//TODO NTF Future
 	//	public String[] getOwners();
 
 	//TODO NTF Future
 	//	public String[] getReaders();
 
+	@JavaHandler
+	public Map<String, Object> getMetadata();
+
 	public abstract static class DVertexFrameImpl implements DVertexFrame, JavaHandlerContext<Vertex> {
+
+		@Override
+		public Boolean cleanEdges() {
+			Vertex raw = asVertex();
+			if (raw instanceof DVertex) {
+				boolean isValid = ((DVertex) raw).validateEdges();
+				if (!isValid) {
+					((DVertex) raw).applyChanges();
+				}
+			}
+			return true;
+		}
 
 		@Override
 		public Document asDocument() {
@@ -59,11 +81,12 @@ public interface DVertexFrame extends Editable {
 				if (delegate instanceof Document) {
 					return (Document) delegate;
 				}
-				throw new RuntimeException("VertexFrame not backed by org.openntf.domino.Document. Instead it's a "
-						+ (delegate == null ? "null" : delegate.getClass().getName()));
+				throw new RuntimeException(
+						"VertexFrame " + ((DVertex) raw).getId() + " not backed by org.openntf.domino.Document. Instead it's a "
+								+ (delegate == null ? "null" : delegate.getClass().getName()));
 			}
-			throw new RuntimeException("VertexFrame not backed by org.openntf.domino.graph2.DVertex. Instead it's a "
-					+ (raw == null ? "null" : raw.getClass().getName()));
+			throw new IllegalStateException(
+					"DVertexFrame is not backed by a DVertex. It's backed by a " + (raw == null ? "null" : raw.getClass().getName()));
 		}
 
 		@SuppressWarnings("unchecked")
@@ -80,6 +103,24 @@ public interface DVertexFrame extends Editable {
 			}
 			throw new RuntimeException("VertexFrame not backed by org.openntf.domino.graph2.DVertex. Instead it's a "
 					+ (raw == null ? "null" : raw.getClass().getName()));
+		}
+
+		@Override
+		public Map<String, Object> getMetadata() throws UserAccessException {
+			Map<String, Object> result = new LinkedHashMap<String, Object>();
+			try {
+				result.put("createdDate", getCreated());
+				result.put("modifiedDate", getModified());
+				String[] editors = getEditors();
+				if (editors != null && editors.length > 0) {
+					result.put("lastEditor", getEditors()[0]);
+				}
+			} catch (UserAccessException uae) {
+				throw uae;
+			} catch (Throwable t1) {
+				t1.printStackTrace();
+			}
+			return result;
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })

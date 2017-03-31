@@ -860,7 +860,6 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
 		if (doc.hasItem(itemName)) {
 			result = doc.getItemValue(itemName, Map.class);
-			//			System.out.println("Found existing term match for: " + token.toString() + " with " + result.size() + " items");
 		} else {
 			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>(8, 0.9f, 1);
 		}
@@ -869,6 +868,19 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 
 	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreValueLocationMap(final CharSequence token, final Object mapKey) {
+		Map result = null;
+		Document doc = getValueDocument(token.toString());
+		String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
+		if (doc.hasItem(itemName)) {
+			result = doc.getItemValue(itemName, Map.class);
+		} else {
+			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>(8, 0.9f, 1);
+		}
+		return result;
+	}
+
+	@Override
+	public Map<CharSequence, CharSequence> restoreRichTextLocationMap(final CharSequence token, final Object mapKey) {
 		Map result = null;
 		Document doc = getValueDocument(token.toString());
 		String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
@@ -1109,6 +1121,29 @@ public class IndexDatabase implements IScannerStateManager, org.openntf.domino.b
 		if (keySet.size() > 0) {
 			for (CharSequence cis : keySet) {
 				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
+				String term = cis.toString();
+				Document termDoc = getValueDocument(term);
+				String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
+				termDoc.replaceItemValue(itemName, tlValue);
+				if (termDoc.save()) {
+					//					System.out.println("DEBUG: Saved term doc for " + term);
+				} else {
+					System.out.println("DEBUG: Did not save term doc for " + term);
+				}
+			}
+		} else {
+			//			System.out.println("DEBUG: keyset was empty for index tokens");
+		}
+	}
+
+	@Override
+	public void saveRichTextLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, CharSequence>> fullMap,
+			final DocumentScanner scanner) {
+		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+		Set<CharSequence> keySet = fullMap.keySet();
+		if (keySet.size() > 0) {
+			for (CharSequence cis : keySet) {
+				Map<CharSequence, CharSequence> tlValue = fullMap.get(cis);
 				String term = cis.toString();
 				Document termDoc = getValueDocument(term);
 				String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);

@@ -33,8 +33,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
-		org.openntf.domino.ViewNavigator {
+public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View>
+		implements org.openntf.domino.ViewNavigator {
 
 	private boolean forceJavaDates_ = false;
 	private int cacheSize_ = -1;
@@ -1492,6 +1492,24 @@ public class ViewNavigator extends BaseResurrectable<org.openntf.domino.ViewNavi
 
 	void setUnreadUser(final String username) {
 		unreadUsername_ = username;
+	}
+
+	@Override
+	public ViewEntry getNthDocument(final int nth) {
+		//		System.out.println("TEMP DEBUG getting document " + nth + " from a navigator with " + getCount() + " entries");
+		if (nth > getCount()) {
+			return null;
+		}
+		ViewEntry next = getFirstDocument();
+		int i = 1;
+		while (i < nth) {
+			next = getNextDocument();
+			if (next == null) {
+				return null;
+			}
+			i++;
+		}
+		return next;
 	}
 
 }

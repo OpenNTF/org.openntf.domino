@@ -18,13 +18,13 @@
 		</servlet>
 	</extension> -->
 	<extension-point id="org.openntf.domino.rest.graph" name="org.openntf.domino.rest.graph" schema="schema/org.openntf.domino.rest.graph.exsd"/>
-   
+
 	<extension point="com.ibm.domino.das.service">
         <serviceResources
             class="org.openntf.domino.rest.service.ODAGraphService"
             name="ODAGraph"
-            path="oda"
-            version="9.0.1">
+            path="oda">
         </serviceResources>         
    </extension>
+
 </plugin>

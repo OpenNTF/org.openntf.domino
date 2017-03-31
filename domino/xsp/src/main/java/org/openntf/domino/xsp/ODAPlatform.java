@@ -85,13 +85,14 @@ public enum ODAPlatform {
 							Factory.println("XOTS", "Registering tasklet " + tasklet);
 
 							if (tasklet instanceof Callable<?>) {
-								Xots.getService().submit((Callable<?>) tasklet);
+								Xots.submit((Callable<?>) tasklet);
 							} else {
-								Xots.getService().submit((Runnable) tasklet);
+								Xots.submit((Runnable) tasklet);
 							}
 						}
 					}
 				}
+				System.out.println("OpenNTF Domino API is fully operational.");
 			} else {
 				System.out.println("OpenNTF Domino API Platform is already started.");
 			}

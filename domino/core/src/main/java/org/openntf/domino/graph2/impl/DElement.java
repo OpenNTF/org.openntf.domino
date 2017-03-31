@@ -122,6 +122,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 							}
 						}
 					}
+					doc.closeMIMEEntities(false);
 					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
 							Object raw = doc.get(propertyName);
@@ -179,6 +180,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						} else {
 							result = doc.getItemValue(propertyName, type);
 						}
+						((Document) delegate).closeMIMEEntities(false);
 					} else if (delegate instanceof SessionDescendant) {
 						Session s = ((SessionDescendant) delegate).getAncestorSession();
 						result = TypeUtils.convertToTarget(delegate.get(propertyName), type, s);
@@ -247,18 +249,18 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Map<String, Object> props = getProps();
 		if (props != null) {
 			if (key != null) {
-				Object rawDelegate = this.getDelegate();
-				if (rawDelegate instanceof Document) {
-					if ("names.nsf".equalsIgnoreCase(((Document) rawDelegate).getAncestorDatabase().getFileName())) {
-						if (this instanceof DProxyVertex) {
-							System.out.println("TEMP DEBUG Setting a property called " + key
-									+ " on a directory element even though it's supposed to be proxied!");
-						} else {
-							System.out.println(
-									"TEMP DEBUG Setting a property called " + key + " on a directory element because it's not proxied!");
-						}
-					}
-				}
+				//				Object rawDelegate = this.getDelegate();
+				//				if (rawDelegate instanceof Document) {
+				//					if ("names.nsf".equalsIgnoreCase(((Document) rawDelegate).getAncestorDatabase().getFileName())) {
+				//						if (this instanceof DProxyVertex) {
+				//							System.out.println("TEMP DEBUG Setting a property called " + key
+				//									+ " on a directory element even though it's supposed to be proxied!");
+				//						} else {
+				//							System.out.println(
+				//									"TEMP DEBUG Setting a property called " + key + " on a directory element because it's not proxied!");
+				//						}
+				//					}
+				//				}
 				Object current = null;
 				if (value != null) {
 					try {
@@ -350,7 +352,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		Map<String, Object> props = getProps();
 		props.remove(key);
 		Map<String, Object> source = getDelegate();
-		source.remove(key);
+		if (source != null) {
+			source.remove(key);
+		} else {
+			//			System.out.println("TEMP DEBUG delegate is null for a " + this.getClass().getName() + "  " + delegateKey_);
+		}
 		getRemovedPropertiesInt().add(key);
 		return result;
 	}
@@ -561,6 +567,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 								//									+ " to a Document in " + s);
 							} else {
 								((Document) delegate).replaceItemValue(s, v, false);
+								((Document) delegate).closeMIMEEntities(true);
 							}
 						} else {
 							try {
@@ -711,6 +718,11 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			return this.getId().equals(((DElement) obj).getId());
 		}
 		return false;
+	}
+
+	@Override
+	public void uncache() {
+		parent_.findElementStore(this).uncache(this);
 	}
 
 }

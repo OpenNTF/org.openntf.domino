@@ -220,7 +220,7 @@ public class OsgiCommandProvider implements CommandProvider {
 		while ((arg = ci.nextArgument()) != null) {
 			args.add(arg);
 		}
-		Xots.getService().runTasklet(moduleName, className, args.toArray());
+		Xots.runTasklet(moduleName, className, args.toArray());
 
 	}
 

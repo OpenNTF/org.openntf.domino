@@ -55,8 +55,11 @@ public abstract class AbstractPropertyHandler {
 		} else if (annotation instanceof TypedProperty) {
 			value = ((TypedProperty) annotation).value();
 			isDerived = ((TypedProperty) annotation).derived();
-			converter = ((TypedProperty) annotation).converter();
+			//			converter = ((TypedProperty) annotation).converter();
 			defaultValue = ((TypedProperty) annotation).defaultValue();
+			//			if (defaultValue != null) {
+			//				System.out.println("TEMP DEBUG defaultValue found of " + defaultValue + " on method " + method.getName());
+			//			}
 		} else if (annotation instanceof ComputedProperty) {
 			//			System.out.println("TEMP DEBUG handling a computed property");
 			value = ((ComputedProperty) annotation).value();
@@ -86,6 +89,7 @@ public abstract class AbstractPropertyHandler {
 			if (defaultValue != null && defaultValue.length() > 0) {
 				Formula formula = new Formula(defaultValue);
 				raw = processFormula(formula, element);
+				//				System.out.println("TEMP DEBUG defaultValue of " + String.valueOf(raw) + " calculated for " + value);
 			} else if (computation != null && computation.length() > 0) {
 				//				System.out.println("TEMP DEBUG Running a computed property: " + value);
 				Formula formula = new Formula(computation);

@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.openntf.domino.ACL;
+import org.openntf.domino.ACL.Level;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
@@ -232,6 +234,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 					DElement delem = (DElement) elem;
 					try {
 						delem.applyChanges();
+						//						delem.uncache();
 					} catch (DocumentWriteAccessException t) {
 						System.err.println(t.getMessage());
 					} catch (Throwable t) {
@@ -250,6 +253,26 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public void rollback() {
+		GraphTransaction txn = localTxn.get();
+		if (txn != null) {
+			Iterator<Element> it = txn.iterator();
+			int count = 0;
+			while (it.hasNext()) {
+				Element elem = it.next();
+				if (elem instanceof DElement) {
+					DElement delem = (DElement) elem;
+					try {
+						delem.uncache();
+					} catch (DocumentWriteAccessException t) {
+						System.err.println(t.getMessage());
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+					count++;
+				}
+				it.remove();
+			}
+		}
 		localTxn.set(null);
 	}
 
@@ -507,10 +530,12 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 					newDb.setFolderReferencesEnabled(false);
 					newDb.setTitle("Auto-generated for " + key);
 					//					System.out.println("Configuring view...");
-					for (org.openntf.domino.View v : newDb.getViews()) {
-						v.setName("NONE");
-						v.setSelectionFormula("SELECT @False");
-					}
+					ACL acl = newDb.getACL();
+					acl.addRole("Admin");
+					acl.createACLEntry("Anonymous", Level.NOACCESS);
+					acl.save();
+					org.openntf.domino.View v = newDb.createView("NONE");
+					v.setSelectionFormula("SELECT @False");
 				} else {
 					System.out.println("Database is not open");
 				}

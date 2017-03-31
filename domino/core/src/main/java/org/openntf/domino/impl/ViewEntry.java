@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import lotus.domino.NotesException;
 
@@ -45,8 +46,8 @@ import org.openntf.domino.utils.TypeUtils;
 /**
  * The Class ViewEntry.
  */
-public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements
-org.openntf.domino.ViewEntry {
+public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View>
+		implements org.openntf.domino.ViewEntry {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
@@ -650,16 +651,27 @@ org.openntf.domino.ViewEntry {
 		return metaversalid_;
 	}
 
+	private static Pattern posSplit = Pattern.compile("\\.");
+
 	@Override
 	public Object getCategoryValue() {
 		if (isCategory()) {
-			Vector<Object> values = getColumnValues();
-			for (Object value : values) {
-				if (!(value == null || String.valueOf(value).length() == 0)) {
-					return value;
-				}
+			Object result = null;
+			try {
+				Vector<Object> values = getColumnValues(true);
+				//				String position = getPosition();
+				//				String[] posArray = posSplit.split(position);
+				int level = getIndentLevel();
+				org.openntf.domino.impl.View parent = (org.openntf.domino.impl.View) getParentView();
+				int[] catColumns = parent.getCategoryColumnPositions();
+				int catColumn = catColumns[level];
+				result = values.get(catColumn);
+			} catch (Throwable t) {
+				t.printStackTrace();
+				DominoUtils.handleException(t);
+				throw new RuntimeException(t);
 			}
-			return null;
+			return result;
 		} else {
 			return null;
 		}

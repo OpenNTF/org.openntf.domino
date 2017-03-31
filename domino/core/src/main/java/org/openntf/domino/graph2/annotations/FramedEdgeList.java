@@ -173,6 +173,10 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 			((DEdgeEntryList) list_).initEntryList((List<CharSequence>) value);
 			return this;
 		}
+		if ("filter".equals(key) && list_ instanceof DEdgeEntryList && value instanceof List) {
+			((DEdgeEntryList) list_).filterEntryList((List<CharSequence>) value);
+			return this;
+		}
 		DEdgeList edgeList = new DEdgeList((DVertex) sourceVertex_);
 		if (this.size() > 0) {
 			for (EdgeFrame edge : this) {
@@ -405,6 +409,7 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		if (arg1 > list_.size()) {
 			arg1 = list_.size();
 		}
+		//		System.out.println("TEMP DEBUG Sublisting a " + list_.getClass().getName() + " from " + arg0 + " to " + arg1);
 		List<Edge> sublist = list_.subList(arg0, arg1);
 		return new FramedEdgeList<T>(framedGraph, sourceVertex_, sublist, kind);
 	}

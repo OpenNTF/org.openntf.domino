@@ -201,14 +201,12 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	@Override
 	public boolean isIcon() {
 		if (isIcon_ == null) {
+			isIcon_ = false;
 			if (x == 0l && y == 0l) {
 				isIcon_ = true;
 			} else {
 				Document doc = getDocument();
-				if (!doc.isNewNote()) {
-					//					System.out.println("TEMP DEBUG Icon checking noteid " + String.valueOf(doc.getNoteID()));
-					//					String fields = Strings.join(doc.keySet(), ",");
-					//					System.out.println("TEMP DEBUG fields: " + fields);
+				if (doc != null && !doc.isNewNote()) {
 					isIcon_ = DesignFactory.isIcon(doc);
 				}
 			}

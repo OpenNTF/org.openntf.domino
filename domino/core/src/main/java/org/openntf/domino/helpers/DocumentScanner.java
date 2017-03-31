@@ -13,7 +13,6 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,160 +31,6 @@ import org.openntf.domino.utils.TypeUtils;
 public class DocumentScanner extends Observable {
 	private static final Logger log_ = Logger.getLogger(DocumentScanner.class.getName());
 
-	@SuppressWarnings("rawtypes")
-	public static boolean validateFieldTokenMap(final Object obj) {
-		boolean result = false;
-		if (obj == null)
-			return result;
-		Class<?> clazz = obj.getClass();
-		//Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>>
-		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
-				return false;
-			Set keys = ((Map) obj).keySet();
-			Object keyObj = keys.iterator().next();
-			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
-				Object valObj = ((Map) obj).get(keyObj);
-				if (NavigableSet.class.isAssignableFrom(valObj.getClass())) {
-					if (((NavigableSet) valObj).isEmpty())
-						return false;
-					Object tokenObj = ((NavigableSet) valObj).iterator().next();
-					if (CaseInsensitiveString.class.isAssignableFrom(tokenObj.getClass())) {
-						result = true;
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static boolean validateFieldValueMap(final Object obj) {
-		boolean result = false;
-		if (obj == null)
-			return result;
-		Class<?> clazz = obj.getClass();
-		//Map<CaseInsensitiveString, NavigableSet<Comparable>>
-		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
-				return false;
-			Set keys = ((Map) obj).keySet();
-			Object keyObj = keys.iterator().next();
-			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
-				Object valObj = ((Map) obj).get(keyObj);
-				if (NavigableSet.class.isAssignableFrom(valObj.getClass())) {
-					if (((NavigableSet) valObj).isEmpty())
-						return false;
-					Object tokenObj = ((NavigableSet) valObj).iterator().next();
-					if (Comparable.class.isAssignableFrom(tokenObj.getClass())) {
-						result = true;
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static boolean validateFieldTypeMap(final Object obj) {
-		boolean result = false;
-		if (obj == null)
-			return result;
-		Class<?> clazz = obj.getClass();
-		//Map<CaseInsensitiveString, Integer>
-		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
-				return false;
-			Set keys = ((Map) obj).keySet();
-			Object keyObj = keys.iterator().next();
-			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
-				Object valObj = ((Map) obj).get(keyObj);
-				if (Integer.class.isAssignableFrom(valObj.getClass())) {
-					result = true;
-				}
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static boolean validateTokenFreqMap(final Object obj) {
-		boolean result = false;
-		if (obj == null)
-			return result;
-		Class<?> clazz = obj.getClass();
-		//NavigableMap<CaseInsensitiveString, Integer>
-		if (NavigableMap.class.isAssignableFrom(clazz)) {
-			if (((NavigableMap) obj).isEmpty())
-				return false;
-			Set keys = ((NavigableMap) obj).keySet();
-			Object keyObj = keys.iterator().next();
-			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
-				Object valObj = ((NavigableMap) obj).get(keyObj);
-				if (Integer.class.isAssignableFrom(valObj.getClass())) {
-					result = true;
-				}
-			}
-		}
-		return result;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public static boolean validateTokenLocationMap(final Object obj) {
-		boolean result = false;
-		if (obj == null)
-			return result;
-		Class<?> clazz = obj.getClass();
-		//Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>
-		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty()) {
-				System.out.println("Map is empty so not valid TokenLocationMap");
-				return false;
-			}
-			Set keys = ((Map) obj).keySet();
-			Object keyObj = keys.iterator().next();
-			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
-				Object valObj = ((Map) obj).get(keyObj);
-				if (Map.class.isAssignableFrom(valObj.getClass())) {
-					if (((Map) valObj).isEmpty()) {
-						System.out.println("Submap is empty so not valid TokenLocationMap");
-						return false;
-					}
-					Set subkeys = ((Map) valObj).keySet();
-					for (Object subkeyObj : subkeys) {
-						if (CaseInsensitiveString.class.isAssignableFrom(subkeyObj.getClass())) {
-							Object subvalObj = ((Map) valObj).get(subkeyObj);
-							if (subvalObj != null) {
-								if (Set.class.isAssignableFrom(subvalObj.getClass())) {
-									for (Object unidObj : (Set) subvalObj) {
-										if (unidObj != null) {
-											if (String.class.isAssignableFrom(unidObj.getClass())) {
-												result = true;
-												break;
-											} else {
-												System.out.println("Unid is a " + unidObj.getClass().getName()
-														+ " so not valid TokenLocationMap");
-											}
-										}
-									}
-								} else {
-									System.out.println("Subval is a " + subvalObj.getClass().getName() + " so not valid TokenLocationMap");
-								}
-							}
-						} else {
-							System.out.println("Subkey is a " + subkeyObj.getClass().getName() + " empty so not valid TokenLocationMap");
-						}
-					}
-				} else {
-					System.out.println("Value is a " + valObj.getClass().getName() + " so not valid TokenLocationMap");
-				}
-			} else {
-				System.out.println("Key object is a " + keyObj.getClass().getName() + " so not valid TokenLocationMap");
-			}
-		}
-		return result;
-	}
-
 	protected boolean trackFieldTokens_ = true;
 	protected Map<CharSequence, NavigableSet<CharSequence>> fieldTokenMap_;
 	//Map<FIELDNAME, Set<TOKEN>>
@@ -199,6 +44,9 @@ public class DocumentScanner extends Observable {
 
 	protected boolean trackValueLocation_ = true;
 	protected Map<CharSequence, Map<CharSequence, Set<CharSequence>>> valueLocationMap_;
+
+	protected boolean trackRichTextLocation_ = true;
+	protected Map<CharSequence, Map<CharSequence, CharSequence>> richTextLocationMap_;
 
 	protected boolean trackFieldValues_ = true;
 	@SuppressWarnings("rawtypes")
@@ -229,6 +77,7 @@ public class DocumentScanner extends Observable {
 	protected int errCount_ = 0;
 	protected long itemCount_ = 0l;
 	protected long tokenCount_ = 0l;
+	protected int reportDocCount_ = 100;
 
 	public void setCaseSensitive(final boolean value) {
 		caseSensitive_ = value;
@@ -236,6 +85,21 @@ public class DocumentScanner extends Observable {
 
 	public boolean isCaseSensitive() {
 		return caseSensitive_;
+	}
+
+	/**
+	 * @return the reportDocCount
+	 */
+	public int getReportDocCount() {
+		return reportDocCount_;
+	}
+
+	/**
+	 * @param reportDocCount
+	 *            the reportDocCount to set
+	 */
+	public void setReportDocCount(final int reportDocCount) {
+		reportDocCount_ = reportDocCount;
 	}
 
 	/**
@@ -376,6 +240,34 @@ public class DocumentScanner extends Observable {
 		return valueLocationMap_;
 	}
 
+	public Map<CharSequence, Map<CharSequence, CharSequence>> getRichTextLocationMap() {
+		if (richTextLocationMap_ == null) {
+			richTextLocationMap_ = new ConcurrentSkipListMap<CharSequence, Map<CharSequence, CharSequence>>();
+		}
+		return richTextLocationMap_;
+	}
+
+	public Map<CharSequence, CharSequence> getRichTextLocationMap(final CharSequence value) {
+		Map<CharSequence, CharSequence> result = null;
+		Map<CharSequence, Map<CharSequence, CharSequence>> localMap = getRichTextLocationMap();
+		result = localMap.get(value);
+		if (result == null) {
+			if (getStateManager() == null) {
+				result = new ConcurrentHashMap<CharSequence, CharSequence>();
+			} else {
+				result = getStateManager().restoreRichTextLocationMap(value, getStateManagerKey());
+				if (result == null) {
+					errCount_++;
+					result = new ConcurrentHashMap<CharSequence, CharSequence>();
+				}
+			}
+			synchronized (localMap) {
+				localMap.put(value, result);
+			}
+		}
+		return result;
+	}
+
 	public Map<CharSequence, Set<CharSequence>> getTokenLocationMap(final CharSequence token) {
 		Map<CharSequence, Set<CharSequence>> result = null;
 		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> localMap = getTokenLocationMap();
@@ -387,6 +279,8 @@ public class DocumentScanner extends Observable {
 				result = getStateManager().restoreTokenLocationMap(token, getStateManagerKey());
 				if (result == null) {
 					errCount_++;
+					System.out.println(
+							"Error attempting to restore tokenLocationMap for token " + token + ". This is the " + errCount_ + " error.");
 					result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
 				}
 			}
@@ -480,10 +374,11 @@ public class DocumentScanner extends Observable {
 		result = sMatch.replaceAll("");
 
 		result = result.trim();
-		if (DominoUtils.isHex(result))
+		if (DominoUtils.isHex(result)) {
 			return null;
+		}
 
-		return caseSensitive ? result : new CaseInsensitiveString(result);
+		return caseSensitive ? result : new CaseInsensitiveString(result.toLowerCase());
 	}
 
 	public boolean isStopped(final CharSequence token) {
@@ -520,6 +415,9 @@ public class DocumentScanner extends Observable {
 			if (docCount_ < docLimit_) {
 				if (!Thread.interrupted()) {
 					processDocument(doc);
+					if (docCount_ % getReportDocCount() == 0) {
+						System.out.println("Document scanner has indexed " + docCount_ + " documents so far.");
+					}
 				}
 			} else {
 				break;
@@ -533,12 +431,40 @@ public class DocumentScanner extends Observable {
 		processCollection();
 	}
 
+	private org.openntf.domino.NoteCollection noteCollection_;
+
+	public void processNoteCollection(final org.openntf.domino.NoteCollection collection) {
+		setNoteCollection(collection);
+		processNoteCollection();
+	}
+
+	public void processNoteCollection() {
+		//		System.out.println("DEBUG: Scanning a collection of " + collection_.getCount());
+		for (String nid : noteCollection_) {
+			if (docCount_ < docLimit_) {
+				if (!Thread.interrupted()) {
+					processDocument(noteCollection_.getAncestorDatabase().getDocumentByID(nid));
+					if (docCount_ % getReportDocCount() == 0) {
+						System.out.println("Document scanner has indexed " + docCount_ + " documents so far.");
+					}
+				}
+			} else {
+				break;
+			}
+		}
+		complete();
+	}
+
 	public org.openntf.domino.DocumentCollection getCollection() {
 		return collection_;
 	}
 
 	public void setCollection(final org.openntf.domino.DocumentCollection collection) {
 		collection_ = collection;
+	}
+
+	public void setNoteCollection(final org.openntf.domino.NoteCollection collection) {
+		noteCollection_ = collection;
 	}
 
 	public void processSorter(final org.openntf.domino.helpers.DocumentSorter sorter) {
@@ -566,19 +492,25 @@ public class DocumentScanner extends Observable {
 
 	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
-		if (doc != null) {
+		if (doc != null && !doc.isDeleted()) {
 			docCount_++;
 			Map<CharSequence, Item.Type> typeMap = getFieldTypeMap();
 			Vector<Item> items = doc.getItems();
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
+			//			System.out.println("TEMP DEBUG processing document " + doc.getMetaversalID() + " with " + items.size() + " items.");
 			for (Item item : items) {
 				if (item != null) {
 					CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-					if (/*lastMod.after(getLastScanDate()) && */!(name.startsWith("$") && getIgnoreDollar())) {
+					if (!(name.startsWith("$") && getIgnoreDollar())) {
+						//						if ("Body".equalsIgnoreCase(name.toString())) {
+						//							System.out.println("TEMP DEBUG Processing a Body item");
+						//						}
 						try {
+							boolean isRT = false;
 							String value = null;
 							Vector<Object> values = null;
+							RichTextItem rti = null;
 
 							switch (item.getTypeEx()) {
 							case AUTHORS:
@@ -589,7 +521,8 @@ public class DocumentScanner extends Observable {
 								values = item.getValues();
 								break;
 							case RICHTEXT:
-								value = ((RichTextItem) item).getUnformattedText();
+								rti = (RichTextItem) item;
+								isRT = true;
 								break;
 							default:
 							}
@@ -615,6 +548,12 @@ public class DocumentScanner extends Observable {
 								}
 							}
 
+							if (isTrackRichTextLocation() && isRT) {
+								processRichText(name, rti);
+							} else {
+								//								System.out.println("TEMP DEBUG Not processing item " + name);
+							}
+
 							if (isTrackFieldTypes()) {
 								if (!typeMap.containsKey(name)) {
 									typeMap.put(name, item.getTypeEx());
@@ -622,8 +561,10 @@ public class DocumentScanner extends Observable {
 							}
 						} catch (Exception e) {
 							Database db = doc.getAncestorDatabase();
-							log_.log(Level.WARNING, "Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database "
-									+ db.getFilePath(), e);
+							System.err.println("Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database "
+									+ db.getApiPath() + " due to an " + e.getClass().getName() + " with message " + e.getMessage());
+							e.printStackTrace();
+
 						}
 					}
 				}
@@ -632,6 +573,18 @@ public class DocumentScanner extends Observable {
 			setLastDocModDate(doc.getLastModifiedDate());
 			setChanged();
 			notifyObservers(ScanStatus.RUNNING);
+		}
+	}
+
+	public void processRichText(final CaseInsensitiveString name, final RichTextItem rtitem) {
+		if (isTrackRichTextLocation()) {
+			//			System.out.println("TEMP DEBUG PROCESSING rich text item " + name);
+			String mid = rtitem.getAncestorDocument().getMetaversalID();
+			String text = rtitem.getUnformattedText();
+			if (text.length() > 2) {
+				Map<CharSequence, CharSequence> tlval = getRichTextLocationMap(mid);
+				tlval.put(name, text);
+			}
 		}
 	}
 
@@ -644,8 +597,8 @@ public class DocumentScanner extends Observable {
 				return;
 			}
 		}
-		if (value instanceof String) {
-			String val = (String) value;
+		if (value instanceof CharSequence) {
+			String val = ((CharSequence) value).toString();
 			Scanner s = new Scanner(val);
 			s.useDelimiter(REGEX_NONALPHANUMERIC);
 			while (s.hasNext()) {
@@ -654,6 +607,18 @@ public class DocumentScanner extends Observable {
 					tokenCount_++;
 					processToken(token, name, address);
 				}
+			}
+			s.close();
+		}
+		if (isTrackValueLocation()) {
+			Map<CharSequence, Set<CharSequence>> tlval = getValueLocationMap(String.valueOf(value));
+			if (tlval.containsKey(name)) {
+				Set<CharSequence> tllist = tlval.get(name);
+				tllist.add(address);
+			} else {
+				Set<CharSequence> tllist = new ConcurrentSkipListSet<CharSequence>();
+				tllist.add(address);
+				tlval.put(name, tllist);
 			}
 		}
 	}
@@ -678,6 +643,7 @@ public class DocumentScanner extends Observable {
 					processToken(token, name, address);
 				}
 			}
+			s.close();
 		}
 		if (isTrackFieldValues()) {
 			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
@@ -730,8 +696,8 @@ public class DocumentScanner extends Observable {
 		}
 		tokenSet.add(name);
 		if (DominoUtils.isHierarchicalName(name.toString())) {
-			CharSequence cn = caseSensitive_ ? DominoUtils.toCommonName(name.toString()) : new CaseInsensitiveString(
-					DominoUtils.toCommonName(name.toString()));
+			CharSequence cn = caseSensitive_ ? DominoUtils.toCommonName(name.toString())
+					: new CaseInsensitiveString(DominoUtils.toCommonName(name.toString()));
 			tokenSet.add(cn);
 			if (tfmap.containsKey(cn)) {
 				tfmap.put(cn, tfmap.get(cn) + 1);
@@ -783,6 +749,8 @@ public class DocumentScanner extends Observable {
 
 	}
 
+	private int TEMP_COMPUTER_TRACKING = 0;
+
 	protected void processToken(final CharSequence token, final CharSequence itemName, final String address/*, final Document doc*/) {
 		if (isTrackFieldTokens()) {
 			Map<CharSequence, NavigableSet<CharSequence>> tmap = getFieldTokenMap();
@@ -804,6 +772,10 @@ public class DocumentScanner extends Observable {
 			}
 		}
 		if (isTrackTokenLocation()) {
+			if ("computer".equalsIgnoreCase(token.toString()) && "body".equalsIgnoreCase(itemName.toString())) {
+				System.out.println("TEMP DEBUG Found term 'Computer' in a Body field in document " + address + " This is the "
+						+ ++TEMP_COMPUTER_TRACKING + " time this has happened.");
+			}
 			Map<CharSequence, Set<CharSequence>> tlval = getTokenLocationMap(token);
 			if (tlval.containsKey(itemName)) {
 				Set<CharSequence> tllist = tlval.get(itemName);
@@ -910,6 +882,10 @@ public class DocumentScanner extends Observable {
 		return trackValueLocation_;
 	}
 
+	public boolean isTrackRichTextLocation() {
+		return trackRichTextLocation_;
+	}
+
 	/**
 	 * @return the trackNameLocation
 	 */
@@ -927,6 +903,10 @@ public class DocumentScanner extends Observable {
 
 	public void setTrackValueLocation(final boolean trackValueLocation) {
 		trackValueLocation_ = trackValueLocation;
+	}
+
+	public void setTrackRichTextLocation(final boolean trackRichTextLocation) {
+		trackRichTextLocation_ = trackRichTextLocation;
 	}
 
 	/**
@@ -998,4 +978,159 @@ public class DocumentScanner extends Observable {
 			}
 		}
 	}
+
+	@SuppressWarnings("rawtypes")
+	public static boolean validateFieldTokenMap(final Object obj) {
+		boolean result = false;
+		if (obj == null)
+			return result;
+		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>>
+		if (Map.class.isAssignableFrom(clazz)) {
+			if (((Map) obj).isEmpty())
+				return false;
+			Set keys = ((Map) obj).keySet();
+			Object keyObj = keys.iterator().next();
+			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
+				Object valObj = ((Map) obj).get(keyObj);
+				if (NavigableSet.class.isAssignableFrom(valObj.getClass())) {
+					if (((NavigableSet) valObj).isEmpty())
+						return false;
+					Object tokenObj = ((NavigableSet) valObj).iterator().next();
+					if (CaseInsensitiveString.class.isAssignableFrom(tokenObj.getClass())) {
+						result = true;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static boolean validateFieldValueMap(final Object obj) {
+		boolean result = false;
+		if (obj == null)
+			return result;
+		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, NavigableSet<Comparable>>
+		if (Map.class.isAssignableFrom(clazz)) {
+			if (((Map) obj).isEmpty())
+				return false;
+			Set keys = ((Map) obj).keySet();
+			Object keyObj = keys.iterator().next();
+			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
+				Object valObj = ((Map) obj).get(keyObj);
+				if (NavigableSet.class.isAssignableFrom(valObj.getClass())) {
+					if (((NavigableSet) valObj).isEmpty())
+						return false;
+					Object tokenObj = ((NavigableSet) valObj).iterator().next();
+					if (Comparable.class.isAssignableFrom(tokenObj.getClass())) {
+						result = true;
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static boolean validateFieldTypeMap(final Object obj) {
+		boolean result = false;
+		if (obj == null)
+			return result;
+		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, Integer>
+		if (Map.class.isAssignableFrom(clazz)) {
+			if (((Map) obj).isEmpty())
+				return false;
+			Set keys = ((Map) obj).keySet();
+			Object keyObj = keys.iterator().next();
+			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
+				Object valObj = ((Map) obj).get(keyObj);
+				if (Integer.class.isAssignableFrom(valObj.getClass())) {
+					result = true;
+				}
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static boolean validateTokenFreqMap(final Object obj) {
+		boolean result = false;
+		if (obj == null)
+			return result;
+		Class<?> clazz = obj.getClass();
+		//NavigableMap<CaseInsensitiveString, Integer>
+		if (NavigableMap.class.isAssignableFrom(clazz)) {
+			if (((NavigableMap) obj).isEmpty())
+				return false;
+			Set keys = ((NavigableMap) obj).keySet();
+			Object keyObj = keys.iterator().next();
+			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
+				Object valObj = ((NavigableMap) obj).get(keyObj);
+				if (Integer.class.isAssignableFrom(valObj.getClass())) {
+					result = true;
+				}
+			}
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static boolean validateTokenLocationMap(final Object obj) {
+		boolean result = false;
+		if (obj == null)
+			return result;
+		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>
+		if (Map.class.isAssignableFrom(clazz)) {
+			if (((Map) obj).isEmpty()) {
+				System.out.println("Map is empty so not valid TokenLocationMap");
+				return false;
+			}
+			Set keys = ((Map) obj).keySet();
+			Object keyObj = keys.iterator().next();
+			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
+				Object valObj = ((Map) obj).get(keyObj);
+				if (Map.class.isAssignableFrom(valObj.getClass())) {
+					if (((Map) valObj).isEmpty()) {
+						System.out.println("Submap is empty so not valid TokenLocationMap");
+						return false;
+					}
+					Set subkeys = ((Map) valObj).keySet();
+					for (Object subkeyObj : subkeys) {
+						if (CaseInsensitiveString.class.isAssignableFrom(subkeyObj.getClass())) {
+							Object subvalObj = ((Map) valObj).get(subkeyObj);
+							if (subvalObj != null) {
+								if (Set.class.isAssignableFrom(subvalObj.getClass())) {
+									for (Object unidObj : (Set) subvalObj) {
+										if (unidObj != null) {
+											if (String.class.isAssignableFrom(unidObj.getClass())) {
+												result = true;
+												break;
+											} else {
+												System.out.println(
+														"Unid is a " + unidObj.getClass().getName() + " so not valid TokenLocationMap");
+											}
+										}
+									}
+								} else {
+									System.out.println("Subval is a " + subvalObj.getClass().getName() + " so not valid TokenLocationMap");
+								}
+							}
+						} else {
+							System.out.println("Subkey is a " + subkeyObj.getClass().getName() + " empty so not valid TokenLocationMap");
+						}
+					}
+				} else {
+					System.out.println("Value is a " + valObj.getClass().getName() + " so not valid TokenLocationMap");
+				}
+			} else {
+				System.out.println("Key object is a " + keyObj.getClass().getName() + " so not valid TokenLocationMap");
+			}
+		}
+		return result;
+	}
+
 }

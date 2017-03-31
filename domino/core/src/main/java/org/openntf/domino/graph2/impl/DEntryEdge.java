@@ -22,6 +22,10 @@ public class DEntryEdge extends DEdge {
 		store_ = store;
 	}
 
+	public ViewEntry asEntry() {
+		return (ViewEntry) getDelegate();
+	}
+
 	@Override
 	public Object getVertexId(final Direction direction) {
 		if (Direction.OUT.equals(direction)) {
@@ -71,6 +75,7 @@ public class DEntryEdge extends DEdge {
 			delegateMap.put("value", entry.getCategoryValue());
 			delegateMap.put("position", entry.getPosition());
 			delegateMap.put("noteid", entry.getNoteID());
+			delegateMap.put("childcount", entry.getChildCount());
 			DCategoryVertex result = new DCategoryVertex(getParent(), delegateMap, entry.getParentView());
 			result.delegateKey_ = getVertexId(Direction.OUT);
 			result.setView(entry.getParentView());

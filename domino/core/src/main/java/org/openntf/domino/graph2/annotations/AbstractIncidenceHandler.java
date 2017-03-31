@@ -3,6 +3,7 @@ package org.openntf.domino.graph2.annotations;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.DEdgeList;
@@ -56,10 +57,20 @@ public abstract class AbstractIncidenceHandler {
 				edgeList.setUnique(unique);
 				return new FramedEdgeList(framedGraph, vertex, edgeList, ClassUtilities.getGenericClass(method));
 			} else if (Edge.class.isAssignableFrom(returnType)) {
-				return vertex.getEdges(dir, label).iterator().next();
+				Iterator<Edge> it = vertex.getEdges(dir, label).iterator();
+				if (it.hasNext()) {
+					return it.next();
+				} else {
+					return null;
+				}
 			} else {
-				Edge e = vertex.getEdges(dir, label).iterator().next();
-				return framedGraph.frame(e, returnType);
+				Iterator<Edge> it = vertex.getEdges(dir, label).iterator();
+				if (it.hasNext()) {
+					Edge e = it.next();
+					return framedGraph.frame(e, returnType);
+				} else {
+					return null;
+				}
 			}
 		} else if (AnnotationUtilities.isFindMethod(method)) {
 			Vertex newVertex;

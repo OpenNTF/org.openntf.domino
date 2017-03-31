@@ -153,6 +153,9 @@ public enum DGraphUtils {
 		@Override
 		public int compare(final EdgeFrame e1, final EdgeFrame e2) {
 			int result = 0;
+			if (e1 == null || e2 == null) {
+				return 0;
+			}
 			ListIterator<CharSequence> li = keys_.listIterator(keys_.size());
 			while (li.hasPrevious()) {
 				CharSequence key = li.previous();

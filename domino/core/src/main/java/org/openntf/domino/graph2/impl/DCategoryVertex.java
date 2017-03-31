@@ -34,15 +34,37 @@ public class DCategoryVertex extends DVertex {
 
 	public ViewNavigator getSubNavigator() {
 		View view = getView();
-		//		System.out.println("Getting subnavigator from view " + view.getName());
 		ViewEntry entry = view.getEntryAtPosition(getProperty("position", String.class));
-		if (entry != null) {
-			//			System.out.println("Found entry at " + entry.getPosition());
-		} else {
-			//			System.out.println("Entry is null!");
+		ViewNavigator result = view.createViewNavFromDescendants(entry, 100);
+		if (getParent().getConfiguration().isSuppressSingleValueCategories()) {
+			while (checkSkipCategory(result)) {
+				//			System.out.println("TEMP DEBUG SubNavigator skipping category level...");
+				result = dropSingleValueCategory(view, result);
+			}
 		}
-		ViewNavigator result = view.createViewNavFromChildren(entry, 100);
-		//		System.out.println("Subnavigator has " + result.getCount() + " entries");
+		return result;
+	}
+
+	public static boolean checkSkipCategory(final ViewNavigator nav) {
+		//		System.out.println("TEMP DEBUG Checking Skip Category...");
+		boolean result = false;
+		ViewEntry first = nav.getFirst();
+		if (first == null) {
+			return false;
+		}
+		if (first.isCategory()) {
+			ViewEntry second = nav.getNextSibling(first);
+			if (second == null) {
+				result = true;
+			}
+		}
+		nav.gotoFirst();
+		return result;
+	}
+
+	public static ViewNavigator dropSingleValueCategory(final View view, final ViewNavigator nav) {
+		ViewEntry first = nav.getFirst();
+		ViewNavigator result = view.createViewNavFromDescendants(first);
 		return result;
 	}
 

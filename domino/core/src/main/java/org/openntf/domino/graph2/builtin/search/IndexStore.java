@@ -180,16 +180,14 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreTokenLocationMap(final CharSequence token, final Object mapKey) {
 		Map result = null;
-		Term tokenV = (Term) getGraph().addVertex(token.toString(), Term.class);
+		Term tokenV = (Term) getGraph().getVertex(token.toString(), Term.class);
+		if (tokenV == null) {
+			tokenV = (Term) getGraph().addVertex(token.toString(), Term.class);
+		}
 		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
-		DVertex dv = (DVertex) tokenV.asVertex();
-		if (dv.hasProperty(itemName)) {
-			Object raw = dv.getProperty(itemName);
-			if (raw instanceof Map) {
-				result = (Map) raw;
-			} else {
-				result = new HashMap<CaseInsensitiveString, Set<String>>();
-			}
+		Document doc = tokenV.asDocument();
+		if (doc.hasItem(itemName)) {
+			result = doc.getItemValue(itemName, Map.class);
 		} else {
 			result = new HashMap<CaseInsensitiveString, Set<String>>();
 		}
@@ -199,20 +197,23 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreValueLocationMap(final CharSequence value, final Object mapKey) {
 		Map result = null;
-		Value valueV = (Value) getGraph().addVertex(value.toString(), Value.class);
+		Value valueV = (Value) getGraph().getVertex(value.toString(), Value.class);
+		if (valueV == null) {
+			valueV = (Value) getGraph().addVertex(value.toString(), Value.class);
+		}
 		String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
-		DVertex dv = (DVertex) valueV.asVertex();
-		if (dv.hasProperty(itemName)) {
-			Object raw = dv.getProperty(itemName);
-			if (raw instanceof Map) {
-				result = (Map) raw;
-			} else {
-				result = new HashMap<CaseInsensitiveString, Set<String>>();
-			}
+		Document doc = valueV.asDocument();
+		if (doc.hasItem(itemName)) {
+			result = doc.getItemValue(itemName, Map.class);
 		} else {
 			result = new HashMap<CaseInsensitiveString, Set<String>>();
 		}
 		return result;
+	}
+
+	@Override
+	public Map<CharSequence, CharSequence> restoreRichTextLocationMap(final CharSequence value, final Object mapKey) {
+		return new HashMap<CharSequence, CharSequence>();
 	}
 
 	protected DFramedTransactionalGraph getGraph() {
@@ -245,7 +246,10 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 			for (CharSequence cis : keySet) {
 				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
 				String strValue = cis.toString();
-				Term tokenV = (Term) getGraph().addVertex(strValue.toLowerCase(), Term.class);
+				Term tokenV = (Term) getGraph().getVertex(strValue.toLowerCase(), Term.class);
+				if (tokenV == null) {
+					tokenV = (Term) getGraph().addVertex(strValue.toLowerCase(), Term.class);
+				}
 				DVertex dv = (DVertex) tokenV.asVertex();
 				String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
 				dv.setProperty(itemName, tlValue);
@@ -292,7 +296,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 						if (scanner.isTrackTokenLocation()) {
 							Map tokenLocationMap = scanner.getTokenLocationMap();
 							int tlsize = tokenLocationMap.size();
-							if (tlsize >= 1024) {
+							if (tlsize >= 256) {
 								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
 								//										+ " items and " + scanner.getTokenCount());
 								synchronized (tokenLocationMap) {
@@ -316,12 +320,24 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 						if (scanner.isTrackValueLocation()) {
 							Map valueLocationMap = scanner.getValueLocationMap();
 							int tlsize = valueLocationMap.size();
-							if (tlsize >= 1024) {
+							if (tlsize >= 512) {
 								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
 								//										+ " items and " + scanner.getTokenCount());
 								synchronized (valueLocationMap) {
 									saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner);
 									valueLocationMap.clear();
+								}
+							}
+						}
+						if (scanner.isTrackRichTextLocation()) {
+							Map richTextLocationMap = scanner.getRichTextLocationMap();
+							int tlsize = richTextLocationMap.size();
+							if (tlsize >= 16) {
+								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
+								//										+ " items and " + scanner.getTokenCount());
+								synchronized (richTextLocationMap) {
+									saveRichTextLocationMap(scanner.getStateManagerKey(), richTextLocationMap, scanner);
+									richTextLocationMap.clear();
 								}
 							}
 						}
@@ -355,6 +371,14 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 							synchronized (valueLocationMap) {
 								saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner);
 								valueLocationMap.clear();
+							}
+						}
+						if (scanner.isTrackRichTextLocation()) {
+							System.out.println("TEMP DEBUG finalizing Rich Text Location map");
+							Map richTextLocationMap = scanner.getRichTextLocationMap();
+							synchronized (richTextLocationMap) {
+								saveRichTextLocationMap(scanner.getStateManagerKey(), richTextLocationMap, scanner);
+								richTextLocationMap.clear();
 							}
 						}
 					} else {
@@ -425,12 +449,42 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 			for (CharSequence cis : keySet) {
 				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
 				String strValue = cis.toString();
-				Value valueV = (Value) getGraph().addVertex(strValue.toLowerCase(), Value.class);
+				Value valueV = (Value) getGraph().getVertex(strValue.toLowerCase(), Value.class);
+				if (valueV == null) {
+					valueV = (Value) getGraph().addVertex(strValue.toLowerCase(), Value.class);
+				}
 				DVertex dv = (DVertex) valueV.asVertex();
 				String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
 				dv.setProperty(itemName, tlValue);
 				valueV.setValue(strValue);
 				Value.Utils.processValue(valueV, getGraph(), scanner.isCaseSensitive(), false);
+			}
+		} else {
+			//			System.out.println("DEBUG: keyset was empty for index tokens");
+		}
+	}
+
+	@Override
+	public void saveRichTextLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, CharSequence>> fullMap,
+			final DocumentScanner scanner) {
+		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+		Set<CharSequence> keySet = fullMap.keySet();
+		if (keySet.size() > 0) {
+			//			System.out.println("TEMP DEBUG saving an RT location map of size " + keySet.size());
+			for (CharSequence cis : keySet) {
+				Map<CharSequence, CharSequence> tlValue = fullMap.get(cis);
+				for (CharSequence itemName : tlValue.keySet()) {
+					String key = RICH_TEXT_ID_PREFIX + cis.toString() + "$" + itemName.toString();
+					//					System.out.println("TEMP DEBUG RT Location Map processing key " + key);
+					RichTextReference rtV = (RichTextReference) getGraph().getVertex(key.toLowerCase(), RichTextReference.class);
+					if (rtV == null) {
+						rtV = (RichTextReference) getGraph().addVertex(key.toLowerCase(), RichTextReference.class);
+					}
+					rtV.setItemName(itemName.toString());
+					rtV.setSourceMetaid(cis.toString());
+					rtV.setTokenProcessed(false);
+					RichTextReference.Utils.processContent(rtV, getGraph(), scanner.isCaseSensitive(), false);
+				}
 			}
 		} else {
 			//			System.out.println("DEBUG: keyset was empty for index tokens");

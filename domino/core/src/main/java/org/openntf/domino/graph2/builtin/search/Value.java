@@ -46,6 +46,7 @@ public interface Value extends DVertexFrame {
 						value.addTerm(tokenV);
 					}
 				}
+				s.close();
 				value.setTokenProcessed(true);
 				if (commit) {
 					graph.commit();
