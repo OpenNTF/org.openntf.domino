@@ -3,12 +3,17 @@ package org.openntf.domino.xsp;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.View;
 import org.openntf.domino.config.Configuration;
 import org.openntf.domino.config.ServerConfiguration;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.extmgr.EMBridgeMessageQueue;
+import org.openntf.domino.extmgr.IEMBridgeSubscriber;
+import org.openntf.domino.extmgr.IEMBridgeSubscriberProvider;
 import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
@@ -32,6 +37,7 @@ public enum ODAPlatform {
 	public static final boolean debugAll = false;
 	public static boolean isStarted_ = false;
 	private static int xotsStopDelay;
+	public static final String EXTPOINT_SUBSCRIBERPROVIDER = "org.openntf.domino.extmgr.subscriberProvider";
 
 	public synchronized static boolean isStarted() {
 		return isStarted_;
@@ -55,48 +61,84 @@ public enum ODAPlatform {
 	public synchronized static void start() {
 		System.out.println("Starting OpenNTF Domino API");
 		try {
-		if (!isStarted()) {
-			isStarted_ = true;
-			// Here is all the init/term stuff done
-			ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
-			Factory.startup();
-			// Setup the named factories 4 XPages
-			Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
+			if (!isStarted()) {
+				isStarted_ = true;
+				// Here is all the init/term stuff done
+				ServiceLocatorFinder.setServiceLocatorFactory(new OsgiServiceLocatorFactory());
+				Factory.startup();
+				// Setup the named factories 4 XPages
+				Factory.setNamedFactories4XPages(new XPageNamedSessionFactory(false), new XPageNamedSessionFactory(true));
 				//			verifyIGetEntryByKey();
-			ServerConfiguration cfg = Configuration.getServerConfiguration();
-			int xotsTasks = cfg.getXotsTasks();
-			// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
-			xotsStopDelay = cfg.getXotsStopDelay();
-			if (xotsTasks > 0) {
+				ServerConfiguration cfg = Configuration.getServerConfiguration();
+				int xotsTasks = cfg.getXotsTasks();
+				// We must read the value here, because in the ShutDown, it is not possible to navigate through views and the code will fail.
+				xotsStopDelay = cfg.getXotsStopDelay();
+				if (xotsTasks > 0) {
 					//					System.out.println("Starting XOTS with " + xotsTasks + " threads");
-				DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
-				try {
-					Xots.start(executor);
+					DominoExecutor executor = new XotsDominoExecutor(xotsTasks);
+					try {
+						Xots.start(executor);
 					} catch (Throwable e) {
 						e.printStackTrace();
-				}
-				List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
-
-				for (Object tasklet : tasklets) {
-					if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
-						@SuppressWarnings("unused")
-						ClassLoader cl = tasklet.getClass().getClassLoader();
-
-						Factory.println("XOTS", "Registering tasklet " + tasklet);
-
-						if (tasklet instanceof Callable<?>) {
-							Xots.getService().submit((Callable<?>) tasklet);
-						} else {
-							Xots.getService().submit((Runnable) tasklet);
-						}
 					}
+					loadXotsTasklets();
+					loadEMSubscribersFromExtensionPoint();
 				}
-			}
 			} else {
 				System.out.println("OpenNTF Domino API Platform is already started.");
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
+		}
+	}
+
+	private static void loadXotsTasklets() {
+		List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
+
+		for (Object tasklet : tasklets) {
+			if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {
+				@SuppressWarnings("unused")
+				ClassLoader cl = tasklet.getClass().getClassLoader();
+
+				Factory.println("XOTS", "Registering tasklet " + tasklet);
+
+				if (tasklet instanceof Callable<?>) {
+					Xots.getService().submit((Callable<?>) tasklet);
+				} else {
+					Xots.getService().submit((Runnable) tasklet);
+				}
+			}
+		}
+	}
+
+	protected static void loadEMSubscribersFromExtensionPoint() {
+		try {
+
+			IExtensionRegistry registry = org.eclipse.core.runtime.Platform.getExtensionRegistry();
+
+			IConfigurationElement[] config = registry.getConfigurationElementsFor(EXTPOINT_SUBSCRIBERPROVIDER);
+
+			for (IConfigurationElement e : config) {
+
+				final Object o = e.createExecutableExtension("class");
+
+				if (o instanceof IEMBridgeSubscriberProvider) {
+
+					IEMBridgeSubscriberProvider provider = (IEMBridgeSubscriberProvider) o;
+
+					String className = e.getAttribute("class");
+
+					System.out.println("EM is Loading Subscribers from SubscriberProvider: " + className);
+
+					for (IEMBridgeSubscriber entry : provider.getSubscribers()) {
+						EMBridgeMessageQueue.addSubscriber(entry);
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

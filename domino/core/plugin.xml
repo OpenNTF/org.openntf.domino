@@ -18,4 +18,3 @@
 
    </extension>
 </plugin>
-   <extension-point id="org.openntf.domino.extmgr.subscriberProvider" name="OpenNTF Domino Api ExtMgr Subcriber Provider" schema="schema/org.openntf.domino.extmgr.subscriberProvider.exsd"/>
