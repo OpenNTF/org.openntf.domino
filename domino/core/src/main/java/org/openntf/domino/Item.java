@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -22,13 +22,22 @@ import java.util.Vector;
 
 import lotus.domino.XSLTResultTarget;
 
+import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 import org.xml.sax.InputSource;
 
 /**
- * The Interface Item.
+ * An Item in a Notes document holds the actual data.
+ * <p>
+ * <h3>Notable enhancements and changes</h3>
+ * <ul>
+ * <li>Use {@link org.openntf.domino.ext.Item#getValues(Class)} to get values of the item directly cast to a required class</li>
+ * <li>Use {@link org.openntf.domino.ext.Item#isReadersNamesAuthors()} to check if the item is either a Names, Authors or Readers type</li>
+ * </ul>
+ * </p>
+ *
  */
 public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant,
 		ExceptionDetails {
@@ -46,20 +55,27 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 		public static int getFlags(final Item item) {
 			int result = 0;
-			if (item.isSummary())
+			if (item.isSummary()) {
 				result = result | SUMMARY.getValue();
-			if (item.isNames())
+			}
+			if (item.isNames()) {
 				result = result | NAMES.getValue();
-			if (item.isAuthors())
+			}
+			if (item.isAuthors()) {
 				result = result | AUTHORS.getValue();
-			if (item.isReaders())
+			}
+			if (item.isReaders()) {
 				result = result | READERS.getValue();
-			if (item.isProtected())
+			}
+			if (item.isProtected()) {
 				result = result | PROTECTED.getValue();
-			if (item.isSigned())
+			}
+			if (item.isSigned()) {
 				result = result | SIGNED.getValue();
-			if (item.isEncrypted())
+			}
+			if (item.isEncrypted()) {
 				result = result | ENCRYPTED.getValue();
+			}
 
 			return result;
 		}
@@ -88,7 +104,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 		RICHTEXT(lotus.domino.Item.RICHTEXT), SIGNATURE(lotus.domino.Item.SIGNATURE), TEXT(lotus.domino.Item.TEXT),
 		UNAVAILABLE(lotus.domino.Item.UNAVAILABLE), UNKNOWN(lotus.domino.Item.UNKNOWN), USERDATA(lotus.domino.Item.USERDATA),
 		USERID(lotus.domino.Item.USERID), VIEWMAPDATA(lotus.domino.Item.VIEWMAPDATA), VIEWMAPLAYOUT(lotus.domino.Item.VIEWMAPLAYOUT),
-		// Unfortunately, the XPage DominoDocument cannot handle serialized MIME beans correctly, so we will return a custom datatype of 10001 
+		// Unfortunately, the XPage DominoDocument cannot handle serialized MIME beans correctly, so we will return a custom datatype of 10001
 		MIME_BEAN(10001);
 
 		/**
@@ -101,7 +117,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 		/**
 		 * Return the {@link Item.Type} of a numeric value
-		 * 
+		 *
 		 * @param value
 		 *            the numeric value
 		 * @return a {@link Item.Type} Object
@@ -147,7 +163,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#abstractText(int, boolean, boolean)
 	 */
 	@Override
@@ -155,7 +171,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#appendToTextList(java.lang.String)
 	 */
 	@Override
@@ -163,7 +179,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#appendToTextList(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -172,31 +188,29 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#containsValue(java.lang.Object)
 	 */
 	@Override
 	public boolean containsValue(final Object value);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Item#copyItemToDocument(lotus.domino.Document)
+	/**
+	 * @throws IllegalArgumentException
+	 *             when the doc parameter is null
 	 */
 	@Override
 	public Item copyItemToDocument(final lotus.domino.Document doc);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
+	/**
+	 * @throws IllegalArgumentException
+	 *             when the doc parameter is null
 	 */
 	@Override
 	public Item copyItemToDocument(final lotus.domino.Document doc, final String newName);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getDateTimeValue()
 	 */
 	@Override
@@ -204,7 +218,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getInputSource()
 	 */
 	@Override
@@ -212,7 +226,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getInputStream()
 	 */
 	@Override
@@ -220,7 +234,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getLastModified()
 	 */
 	@Override
@@ -228,7 +242,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getMIMEEntity()
 	 */
 	@Override
@@ -236,7 +250,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getName()
 	 */
 	@Override
@@ -244,7 +258,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getParent()
 	 */
 	@Override
@@ -252,7 +266,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getReader()
 	 */
 	@Override
@@ -260,7 +274,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getText()
 	 */
 	@Override
@@ -268,17 +282,15 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getText(int)
 	 */
 	@Override
 	public String getText(final int maxLen);
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see lotus.domino.Item#getType()
-	 * @Deprecated, better use getTypeEx
+	 * @deprecated use {@link org.openntf.domino.ext.Item#getTypeEx()} instead
 	 */
 	@Override
 	@Deprecated
@@ -286,7 +298,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueCustomData()
 	 */
 	@Override
@@ -294,7 +306,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueCustomData(java.lang.String)
 	 */
 	@Override
@@ -302,7 +314,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueCustomDataBytes(java.lang.String)
 	 */
 	@Override
@@ -310,7 +322,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueDateTimeArray()
 	 */
 	@Override
@@ -318,7 +330,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueDouble()
 	 */
 	@Override
@@ -326,7 +338,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueInteger()
 	 */
 	@Override
@@ -334,7 +346,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueLength()
 	 */
 	@Override
@@ -342,7 +354,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValues()
 	 */
 	@Override
@@ -350,7 +362,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#getValueString()
 	 */
 	@Override
@@ -358,7 +370,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isAuthors()
 	 */
 	@Override
@@ -366,7 +378,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isEncrypted()
 	 */
 	@Override
@@ -374,7 +386,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isNames()
 	 */
 	@Override
@@ -382,7 +394,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isProtected()
 	 */
 	@Override
@@ -390,7 +402,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isReaders()
 	 */
 	@Override
@@ -398,7 +410,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isSaveToDisk()
 	 */
 	@Override
@@ -406,7 +418,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isSigned()
 	 */
 	@Override
@@ -414,7 +426,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#isSummary()
 	 */
 	@Override
@@ -422,7 +434,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#parseXML(boolean)
 	 */
 	@Override
@@ -430,23 +442,24 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#remove()
 	 */
 	@Override
 	public void remove();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Item#setAuthors(boolean)
+	/**
+	 * Marks this item as Authors type
+	 *
+	 * @throws DataNotCompatibleException
+	 *             when this Item is not a text item.
 	 */
 	@Override
 	public void setAuthors(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setDateTimeValue(lotus.domino.DateTime)
 	 */
 	@Override
@@ -454,39 +467,41 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setEncrypted(boolean)
 	 */
 	@Override
 	public void setEncrypted(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Item#setNames(boolean)
+	/**
+	 * Marks this item as Names type containing list of user names.
+	 *
+	 * @throws DataNotCompatibleException
+	 *             it this Item is not a Text type
 	 */
 	@Override
 	public void setNames(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setProtected(boolean)
 	 */
 	@Override
 	public void setProtected(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Item#setReaders(boolean)
+	/**
+	 * Marks this item as Readers type.
+	 *
+	 * @throws DataNotCompatibleException
+	 *             if this Item is not a text item
 	 */
 	@Override
 	public void setReaders(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setSaveToDisk(boolean)
 	 */
 	@Override
@@ -494,7 +509,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setSigned(boolean)
 	 */
 	@Override
@@ -502,7 +517,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setSummary(boolean)
 	 */
 	@Override
@@ -510,7 +525,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValueCustomData(java.lang.Object)
 	 */
 	@Override
@@ -518,7 +533,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -526,7 +541,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValueCustomDataBytes(java.lang.String, byte[])
 	 */
 	@Override
@@ -534,7 +549,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValueDouble(double)
 	 */
 	@Override
@@ -542,7 +557,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValueInteger(int)
 	 */
 	@Override
@@ -550,7 +565,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValues(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -559,7 +574,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#setValueString(java.lang.String)
 	 */
 	@Override
@@ -567,7 +582,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Item#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override

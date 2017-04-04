@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -21,7 +21,7 @@ import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 
 /**
- * The Interface ACLEntry.
+ * Represents an entry in the Access Control List (ACL) of a Notes database.
  */
 public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry, org.openntf.domino.ext.ACLEntry, DatabaseDescendant {
 
@@ -46,7 +46,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#disableRole(java.lang.String)
 	 */
 	@Override
@@ -54,7 +54,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#enableRole(java.lang.String)
 	 */
 	@Override
@@ -62,7 +62,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#getLevel()
 	 */
 	@Override
@@ -70,7 +70,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#getName()
 	 */
 	@Override
@@ -78,7 +78,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#getNameObject()
 	 */
 	@Override
@@ -86,7 +86,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#getParent()
 	 */
 	@Override
@@ -94,7 +94,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#getRoles()
 	 */
 	@Override
@@ -102,7 +102,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#getUserType()
 	 */
 	@Override
@@ -110,7 +110,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isAdminReaderAuthor()
 	 */
 	@Override
@@ -118,7 +118,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isAdminServer()
 	 */
 	@Override
@@ -126,7 +126,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanCreateDocuments()
 	 */
 	@Override
@@ -134,7 +134,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanCreateLSOrJavaAgent()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanCreatePersonalAgent()
 	 */
 	@Override
@@ -150,7 +150,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanCreatePersonalFolder()
 	 */
 	@Override
@@ -158,7 +158,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanCreateSharedFolder()
 	 */
 	@Override
@@ -166,7 +166,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanDeleteDocuments()
 	 */
 	@Override
@@ -174,7 +174,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isCanReplicateOrCopyDocuments()
 	 */
 	@Override
@@ -182,7 +182,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isGroup()
 	 */
 	@Override
@@ -190,7 +190,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isPerson()
 	 */
 	@Override
@@ -198,7 +198,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isPublicReader()
 	 */
 	@Override
@@ -206,7 +206,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isPublicWriter()
 	 */
 	@Override
@@ -214,7 +214,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isRoleEnabled(java.lang.String)
 	 */
 	@Override
@@ -222,7 +222,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#isServer()
 	 */
 	@Override
@@ -230,7 +230,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#remove()
 	 */
 	@Override
@@ -238,7 +238,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setAdminReaderAuthor(boolean)
 	 */
 	@Override
@@ -246,7 +246,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setAdminServer(boolean)
 	 */
 	@Override
@@ -254,7 +254,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanCreateDocuments(boolean)
 	 */
 	@Override
@@ -262,7 +262,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanCreateLSOrJavaAgent(boolean)
 	 */
 	@Override
@@ -270,7 +270,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanCreatePersonalAgent(boolean)
 	 */
 	@Override
@@ -278,7 +278,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanCreatePersonalFolder(boolean)
 	 */
 	@Override
@@ -286,7 +286,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanCreateSharedFolder(boolean)
 	 */
 	@Override
@@ -294,7 +294,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanDeleteDocuments(boolean)
 	 */
 	@Override
@@ -302,7 +302,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setCanReplicateOrCopyDocuments(boolean)
 	 */
 	@Override
@@ -310,7 +310,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setGroup(boolean)
 	 */
 	@Override
@@ -318,7 +318,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setLevel(int)
 	 */
 	@Override
@@ -326,7 +326,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/**
 	 * Sets the level.
-	 * 
+	 *
 	 * @param level
 	 *            the new level
 	 */
@@ -335,7 +335,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setName(lotus.domino.Name)
 	 */
 	@Override
@@ -343,7 +343,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setName(java.lang.String)
 	 */
 	@Override
@@ -351,7 +351,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setPerson(boolean)
 	 */
 	@Override
@@ -359,7 +359,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setPublicReader(boolean)
 	 */
 	@Override
@@ -367,7 +367,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setPublicWriter(boolean)
 	 */
 	@Override
@@ -375,7 +375,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setServer(boolean)
 	 */
 	@Override
@@ -383,7 +383,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.ACLEntry#setUserType(int)
 	 */
 	@Override
