@@ -7,8 +7,8 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 /**
- * JSONFormatter class for outputting logs as JSON objects. Not used currently and should probably be replaced with Java classes better
- * designed to write JSON rather than building content up with a StringBuilder
+ * Formats log messages as JSON objects. Not used currently and should probably be replaced with Java classes better designed to write JSON
+ * rather than building content up with a StringBuilder
  */
 public class JSONFormatter extends Formatter {
 
@@ -40,7 +40,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Checks if is uT c_ format.
-	 * 
+	 *
 	 * @return true, if is uT c_ format
 	 */
 	public boolean isUTC_Format() {
@@ -49,7 +49,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Sets the uT c_ format.
-	 * 
+	 *
 	 * @param uTC_Format
 	 *            the new uT c_ format
 	 */
@@ -59,7 +59,7 @@ public class JSONFormatter extends Formatter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Format throwable.
-	 * 
+	 *
 	 * @param record
 	 *            the record
 	 */
@@ -136,7 +136,7 @@ public class JSONFormatter extends Formatter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Formatter#getHead(java.util.logging.Handler)
 	 */
 	@Override
@@ -147,7 +147,7 @@ public class JSONFormatter extends Formatter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Formatter#getTail(java.util.logging.Handler)
 	 */
 	@Override
@@ -157,7 +157,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Start object.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -171,7 +171,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * End object.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -185,7 +185,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Start array.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -199,7 +199,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * End array.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -213,7 +213,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Start array item.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -225,7 +225,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * End array item.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -235,7 +235,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Start property.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the property name
 	 * @throws IOException
@@ -256,7 +256,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * End property.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -266,7 +266,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Out.
-	 * 
+	 *
 	 * @param paramChar
 	 *            the param char
 	 * @throws IOException
@@ -278,7 +278,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Out.
-	 * 
+	 *
 	 * @param paramString
 	 *            the param string
 	 * @throws IOException
@@ -290,7 +290,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Out.
-	 * 
+	 *
 	 * @param paramint
 	 *            the paramint
 	 * @throws IOException
@@ -302,7 +302,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Out.
-	 * 
+	 *
 	 * @param paramlong
 	 *            the paramlong
 	 * @throws IOException
@@ -314,7 +314,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Gets the indent level.
-	 * 
+	 *
 	 * @return the indent level
 	 */
 	public int getIndentLevel() {
@@ -323,7 +323,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Sets the indent level.
-	 * 
+	 *
 	 * @param paramInt
 	 *            the new indent level
 	 */
@@ -347,7 +347,7 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Checks if is compact.
-	 * 
+	 *
 	 * @return true, if is compact
 	 */
 	public boolean isCompact() {
@@ -356,25 +356,28 @@ public class JSONFormatter extends Formatter {
 
 	/**
 	 * Indent.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void indent() throws IOException {
-		if ((!(this.compact)) && (this.indentLevel > 0))
-			for (int i = 0; i < this.indentLevel; ++i)
+		if ((!(this.compact)) && (this.indentLevel > 0)) {
+			for (int i = 0; i < this.indentLevel; ++i) {
 				out("  ");
+			}
+		}
 	}
 
 	/**
 	 * Nl.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void nl() throws IOException {
-		if (!(this.compact))
+		if (!(this.compact)) {
 			out('\n');
+		}
 	}
 
 }

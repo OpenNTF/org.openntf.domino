@@ -18,6 +18,9 @@ import org.openntf.formula.FormulaParseException;
 import org.openntf.formula.FormulaParser;
 import org.openntf.formula.Formulas;
 
+/**
+ * Representation of the logging configuration file.
+ */
 public class LogConfig {
 
 	public static final String cUserName = "$USER$";
@@ -253,6 +256,13 @@ public class LogConfig {
 	Map<String, L_LogHandler> _logHandlers = new HashMap<String, L_LogHandler>();
 	Map<String, L_LogFilterHandler> _logFilterHandlers = new HashMap<String, L_LogFilterHandler>();
 
+	/**
+	 * Initializes this configuration from given properties
+	 *
+	 * @param props
+	 *            Properties with logging configuration
+	 * @return Instance of LogConfig with configuration properties or null if there was an error loading the properties.
+	 */
 	public static LogConfig fromProperties(final Properties props) {
 		LogConfig ret = new LogConfig();
 		if (!ret.initFromProperties(props)) {
