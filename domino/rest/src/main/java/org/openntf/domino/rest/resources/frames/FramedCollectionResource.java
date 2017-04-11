@@ -286,6 +286,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					jsonItems = (JsonJavaObject) jsonRaw;
 				} else if (jsonRaw instanceof List) {
 					jsonArray = (List) jsonRaw;
+					// System.out.println("TEMP DEBUG processing a POST with an
+					// array of size " + jsonArray.size());
 				} else {
 					// System.out.println("TEMP DEBUG Got an unexpected object
 					// from parser "
@@ -311,6 +313,9 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					writer.startArrayItem();
 					committed = processJsonObject((JsonJavaObject) raw, graph, writer, results);
 					writer.endArrayItem();
+				} else {
+					System.err.println("Raw array member isn't a JsonJavaObject. It's a "
+							+ (raw == null ? "null" : raw.getClass().getName()));
 				}
 			}
 			writer.endArray();
@@ -354,18 +359,29 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						Iterator<String> frameProperties = adapter.getJsonProperties();
 						CaseInsensitiveString actionName = null;
 						CaseInsensitiveString preactionName = null;
+						List<Object> actionArguments = null;
 						for (CaseInsensitiveString cis : cisMap.keySet()) {
 							if (cis.equals("%preaction")) {
 								preactionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
 							}
+							if (cis.equals("%args")) {
+								Object result = cisMap.get(cis);
+								if (result instanceof List) {
+									actionArguments = (List) result;
+								}
+							}
 						}
 						if (preactionName != null) {
-							commit = adapter.runAction(preactionName);
+							if (actionArguments != null) {
+								commit = adapter.runAction(preactionName, actionArguments);
+							} else {
+								commit = adapter.runAction(preactionName);
+							}
 						}
 						if (commit) {
 							while (frameProperties.hasNext()) {
 								CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
-								if (!key.startsWith("@")) {
+								if (!key.startsWith("@") && !key.startsWith("%")) {
 									Object value = cisMap.get(key);
 									if (value != null) {
 										adapter.putJsonProperty(key.toString(), value);
@@ -377,7 +393,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 								for (CaseInsensitiveString cis : cisMap.keySet()) {
 									if (cis.equals("%action")) {
 										actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
-									} else if (!cis.startsWith("@")) {
+									} else if (!cis.startsWith("@") && !cis.startsWith("%")) {
 										Object value = cisMap.get(cis);
 										if (value != null) {
 											adapter.putJsonProperty(cis.toString(), value);
@@ -386,7 +402,11 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 								}
 								adapter.updateReadOnlyProperties();
 								if (actionName != null) {
-									commit = adapter.runAction(actionName);
+									if (actionArguments != null) {
+										commit = adapter.runAction(actionName, actionArguments);
+									} else {
+										commit = adapter.runAction(actionName);
+									}
 								}
 							}
 						}
@@ -408,12 +428,14 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				Object rawinid = in.get("@id");
 				if (rawinid instanceof Double) {
 					inid = String.valueOf(results.get(rawinid)).trim();
-					System.out.println("in id is an integer. It resolves to " + inid);
+					// System.out.println("in id is an integer. It resolves to "
+					// + inid);
 					in.put("@id", inid);
 				} else {
 					inid = String.valueOf(rawinid).trim();
-					System.out.println("in id is not an integer. It's a " + rawinid.getClass().getName() + ": "
-							+ String.valueOf(rawinid));
+					// System.out.println("in id is not an integer. It's a " +
+					// rawinid.getClass().getName() + ": "
+					// + String.valueOf(rawinid));
 				}
 			}
 			JsonJavaObject out = jsonItems.getAsObject("@out");
@@ -426,8 +448,9 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 					out.put("@id", outid);
 				} else {
 					outid = String.valueOf(rawoutid).trim();
-					System.out.println("out id is not an integer. It's a " + rawoutid.getClass().getName() + ": "
-							+ String.valueOf(rawoutid));
+					// System.out.println("out id is not an integer. It's a " +
+					// rawoutid.getClass().getName() + ": "
+					// + String.valueOf(rawoutid));
 				}
 			}
 			NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(inid);

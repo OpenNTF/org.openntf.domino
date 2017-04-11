@@ -2,6 +2,7 @@ package org.openntf.domino.rest.service;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.graph2.impl.DGraph;
+import org.openntf.domino.rest.resources.AbstractResource;
 import org.openntf.domino.rest.resources.ReferenceResource;
 import org.openntf.domino.rest.resources.command.CommandResource;
 import org.openntf.domino.rest.resources.frames.FramedCollectionResource;
@@ -41,6 +43,9 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 
 	private Map<String, FramedGraph<?>> graphMap_;
 	private Map<String, IGraphFactory> factoryMap_;
+	private List<IResourceProvider> resourceProviders_;
+	private Set<AbstractResource> externalSingletons_ = new HashSet<AbstractResource>();
+	private Set<Class<?>> externalClasses_ = new HashSet<Class<?>>();
 	public static final String PREFIX = "ODA Graph Service: ";
 
 	static void report(String message) {
@@ -77,32 +82,42 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 			}
 
 			for (final IConfigurationElement configElement : configElements) {
-				try {
-					beforeDoService(null);
-					// We only handle serviceResources elements for now
-					if (!("serviceResources".equalsIgnoreCase(configElement.getName()))) { // $NON-NLS-1$
-						continue;
+				if ("graphFactory".equalsIgnoreCase(configElement.getName())) {
+					try {
+						beforeDoService(null);
+						final Object object = configElement.createExecutableExtension("class"); // $NON-NLS-1$
+						report("Found a Graph Factory extension point: " + object.getClass().getName());
+						if (object instanceof IGraphFactory) {
+							IGraphFactory factory = (IGraphFactory) object;
+							Map<String, FramedGraph<?>> registry = factory.getRegisteredGraphs();
+							for (String key : registry.keySet()) {
+								FramedGraph<?> graph = registry.get(key);
+								report("Adding graph called: " + key);
+								addGraph(key, graph);
+								addFactory(key, factory);
+							}
+						}
+					} catch (final CoreException e) {
+						e.printStackTrace();
+					} finally {
+						afterDoService(null);
 					}
-
-					final Object object = configElement.createExecutableExtension("class"); // $NON-NLS-1$
-					if (!(object instanceof IGraphFactory)) {
-						// Class was constructed but it is the wrong type
-						continue;
+				} else if ("resourceProvider".equalsIgnoreCase(configElement.getName())) {
+					try {
+						beforeDoService(null);
+						final Object object = configElement.createExecutableExtension("class"); // $NON-NLS-1$
+						report("Found a Resource Provider extension point: " + object.getClass().getName());
+						if (object instanceof IResourceProvider) {
+							IResourceProvider provider = (IResourceProvider) object;
+							report("Adding a Resource Provider: " + provider.getClass().getName());
+							externalClasses_.addAll(provider.getClasses());
+							externalSingletons_.addAll(provider.getSingletons(this));
+						}
+					} catch (final CoreException e) {
+						e.printStackTrace();
+					} finally {
+						afterDoService(null);
 					}
-
-					report("Found an extension point instance: " + object.getClass().getName());
-					IGraphFactory factory = (IGraphFactory) object;
-					Map<String, FramedGraph<?>> registry = factory.getRegisteredGraphs();
-					for (String key : registry.keySet()) {
-						FramedGraph<?> graph = registry.get(key);
-						report("Adding graph called " + key);
-						addGraph(key, graph);
-						addFactory(key, factory);
-					}
-				} catch (final CoreException e) {
-					e.printStackTrace();
-				} finally {
-					afterDoService(null);
 				}
 			}
 		}
@@ -111,15 +126,17 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 
 	@Override
 	public Set<Class<?>> getClasses() {
-		Set<Class<?>> supers = super.getClasses();
-		Set<Class<?>> result = new HashSet<Class<?>>(supers);
+		Set<Class<?>> result = new HashSet<Class<?>>();
+		result.addAll(super.getClasses());
+		result.addAll(externalClasses_);
 		return result;
 	}
 
 	@Override
 	public Set<Object> getSingletons() {
-		Set<Object> supers = super.getSingletons();
-		Set<Object> result = new HashSet<Object>(supers);
+		Set<Object> result = new HashSet<Object>();
+		result.addAll(super.getSingletons());
+		result.addAll(externalSingletons_);
 		// TODO NTF commented out resources are ones that aren't yet
 		// implemented.
 		// existing classes are just stubs to be filled out later.

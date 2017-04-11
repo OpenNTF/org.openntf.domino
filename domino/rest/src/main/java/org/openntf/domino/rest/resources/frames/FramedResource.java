@@ -360,18 +360,29 @@ public class FramedResource extends AbstractResource {
 				Iterator<String> frameProperties = adapter.getJsonProperties();
 				CaseInsensitiveString actionName = null;
 				CaseInsensitiveString preactionName = null;
+				List<Object> actionArguments = null;
 				for (CaseInsensitiveString cis : cisMap.keySet()) {
 					if (cis.equals("%preaction")) {
 						preactionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
 					}
+					if (cis.equals("%args")) {
+						Object result = cisMap.get(cis);
+						if (result instanceof List) {
+							actionArguments = (List) result;
+						}
+					}
 				}
 				if (preactionName != null) {
-					commit = adapter.runAction(preactionName);
+					if (actionArguments != null) {
+						commit = adapter.runAction(preactionName, actionArguments);
+					} else {
+						commit = adapter.runAction(preactionName);
+					}
 				}
 				if (commit) {
 					while (frameProperties.hasNext()) {
 						CaseInsensitiveString key = new CaseInsensitiveString(frameProperties.next());
-						if (!key.startsWith("@")) {
+						if (!key.startsWith("@") && !key.startsWith("%")) {
 							Object value = cisMap.get(key);
 							if (value != null) {
 								adapter.putJsonProperty(key.toString(), value);
@@ -384,7 +395,7 @@ public class FramedResource extends AbstractResource {
 					for (CaseInsensitiveString cis : cisMap.keySet()) {
 						if (cis.equals("%action")) {
 							actionName = new CaseInsensitiveString(String.valueOf(cisMap.get(cis)));
-						} else if (!cis.startsWith("@")) {
+						} else if (!cis.startsWith("@") && !cis.startsWith("%")) {
 							Object value = cisMap.get(cis);
 							if (value != null) {
 								adapter.putJsonProperty(cis.toString(), value);
@@ -393,7 +404,11 @@ public class FramedResource extends AbstractResource {
 					}
 					adapter.updateReadOnlyProperties();
 					if (actionName != null) {
-						commit = adapter.runAction(actionName);
+						if (actionArguments != null) {
+							commit = adapter.runAction(actionName, actionArguments);
+						} else {
+							commit = adapter.runAction(actionName);
+						}
 					}
 				}
 				writer.outObject(element);
@@ -407,7 +422,6 @@ public class FramedResource extends AbstractResource {
 	}
 
 	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@SuppressWarnings("rawtypes")
 	public Response deleteFramedObject(String requestEntity, @Context final UriInfo uriInfo,
@@ -425,7 +439,8 @@ public class FramedResource extends AbstractResource {
 
 		List<String> ids = pm.get(Parameters.ID);
 		if (ids.size() == 0) {
-			// TODO no id
+			throw new WebApplicationException(ErrorHelper.createErrorResponse("No id specified for DELETE",
+					Response.Status.INTERNAL_SERVER_ERROR));
 		} else {
 			for (String id : ids) {
 				try {
@@ -434,9 +449,15 @@ public class FramedResource extends AbstractResource {
 					if (element instanceof Element) {
 						((Element) element).remove();
 					} else if (element instanceof VertexFrame) {
-						((VertexFrame) element).asVertex().remove();
+						graph.removeVertexFrame((VertexFrame) element);
 					} else if (element instanceof EdgeFrame) {
-						((EdgeFrame) element).asEdge().remove();
+						graph.removeEdgeFrame((EdgeFrame) element);
+					} else {
+						if (element != null) {
+							throw new WebApplicationException(ErrorHelper.createErrorResponse(
+									"Graph returned unexpected object type " + element.getClass().getName(),
+									Response.Status.INTERNAL_SERVER_ERROR));
+						}
 					}
 					report.put(id, "deleted");
 				} catch (Exception e) {
@@ -459,15 +480,8 @@ public class FramedResource extends AbstractResource {
 		}
 
 		jsonEntity = sw.toString();
-		ResponseBuilder berg = getBuilder(jsonEntity, new Date(), false, null);
-		Response response = berg.build();
-		// Object entity = response.getEntity();
-		// if (entity instanceof String) {
-		// System.out.println((String) entity);
-		// } else {
-		// System.out.println("Entity is a " + entity == null ? "null" :
-		// entity.getClass().getName());
-		// }
+		ResponseBuilder bob = getBuilder(jsonEntity, new Date(), false, null);
+		Response response = bob.build();
 		return response;
 	}
 

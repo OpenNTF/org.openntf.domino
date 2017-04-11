@@ -169,9 +169,33 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	//		return null;
 	//	}
 
-	private void removeCache(final Object object) {
+	@Override
+	public void removeEdge(final Edge edge) {
+		removeCache(edge);
+		((DGraph) getBaseGraph()).removeEdge(edge);
+	}
+
+	@Override
+	public void removeVertex(final Vertex vertex) {
+		removeCache(vertex);
+		((DGraph) getBaseGraph()).removeVertex(vertex);
+	}
+
+	public void removeEdgeFrame(final EdgeFrame edge) {
+		removeEdge(edge.asEdge());
+	}
+
+	public void removeVertexFrame(final VertexFrame removingVertex) {
+		removeVertex(removingVertex.asVertex());
+	}
+
+	void removeCache(final Object object) {
 		Object key = null;
-		if (object instanceof EdgeFrame) {
+		if (object instanceof Edge) {
+			key = ((Edge) object).getId();
+		} else if (object instanceof Vertex) {
+			key = ((Vertex) object).getId();
+		} else if (object instanceof EdgeFrame) {
 			key = ((EdgeFrame) object).asEdge().getId();
 		} else if (object instanceof VertexFrame) {
 			key = ((VertexFrame) object).asVertex().getId();

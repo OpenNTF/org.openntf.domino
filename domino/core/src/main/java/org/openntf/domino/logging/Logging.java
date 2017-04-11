@@ -51,7 +51,7 @@ public class Logging {
 
 	public void startUp() throws IOException {
 		if (!activateCfgFromPropFile()) {
-			System.err.println("Logging: Couldn't initialize from PropertyFile; activating fallback ...");
+			//			System.err.println("Logging: Couldn't initialize from PropertyFile; activating fallback ...");
 			startUpFallback();
 			return;
 		}
@@ -118,7 +118,7 @@ public class Logging {
 			errMsg = "isn't a normal file";
 		if (errMsg == null)
 			return ret;
-		System.err.println("Logging.logCfgFilePrecheck: File '" + _logConfigPropFile + "' " + errMsg);
+		//		System.err.println("Logging.logCfgFilePrecheck: File '" + _logConfigPropFile + "' " + errMsg);
 		return null;
 	}
 

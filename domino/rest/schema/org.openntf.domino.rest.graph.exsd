@@ -1,12 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Schema file written by PDE -->
 <schema targetNamespace="org.openntf.domino.rest" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
          <meta.schema plugin="org.openntf.domino.rest" id="org.openntf.domino.rest.graph" name="org.openntf.domino.rest.graph"/>
       </appinfo>
       <documentation>
-         This extension point can be used to add new graphs to the OpenNTF Domino REST service.
+         This extension point can be used to add new graphs to the OpenNTF Domino REST service or add additional Resource classes to handle extended Routes and Methods
       </documentation>
    </annotation>
 
@@ -18,7 +17,10 @@
       </annotation>
       <complexType>
          <choice>
-            <element ref="serviceResources"/>
+            <element ref="graphFactory"/>
+         </choice>
+         <choice>
+            <element ref="resourceProvider"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -44,7 +46,7 @@
       </complexType>
    </element>
 
-   <element name="serviceResources">
+   <element name="graphFactory">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -58,10 +60,19 @@
          </attribute>
       </complexType>
    </element>
-
-
-
-
-
-
+   
+   <element name="resourceProvider">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.openntf.domino.rest.service.IResourceProvider"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
 </schema>

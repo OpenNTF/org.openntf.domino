@@ -876,4 +876,21 @@ public class JsonFrameAdapter implements JsonObject {
 		return (Boolean) result;
 	}
 
+	public boolean runAction(CharSequence key, List<Object> arguments) {
+		Object result = Boolean.FALSE;
+		CharSequence name = key/* .subSequence(1, key.length()) */;
+		Method crystal = getActions().get(name);
+		if (crystal != null) {
+			try {
+				Object[] args = arguments.toArray();
+				result = crystal.invoke(getFrame(), args);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			System.err.println("No action method found for name: " + name);
+		}
+		return (Boolean) result;
+	}
+
 }
