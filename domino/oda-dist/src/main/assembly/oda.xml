@@ -11,11 +11,18 @@
 	<!-- Local files -->
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources</directory>
+			<directory>src/main/resources/full</directory>
 			<includes>
 				<include>**/*</include>
 			</includes>
 			<outputDirectory>.</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/../..</directory>
+			<includes>
+				<include>LICENSE</include>
+				<include>NOTICE.md</include>
+			</includes>
 		</fileSet>
 	</fileSets>
 	
@@ -24,10 +31,10 @@
 		<moduleSet>
 			<useAllReactorProjects>true</useAllReactorProjects>
 			<includes>
-				<include>org.openntf.domino:org.openntf.domino:eclipse-plugin:1.5.0-SNAPSHOT</include>
-				<include>org.openntf.domino:org.openntf.domino.xsp:eclipse-plugin:1.5.0-SNAPSHOT</include>
-				<include>org.openntf.domino:org.openntf.formula:eclipse-plugin:1.5.0-SNAPSHOT</include>
-				<include>org.openntf.domino:org.openntf.domino.rest:eclipse-plugin:1.5.0-SNAPSHOT</include>
+				<include>org.openntf.domino:org.openntf.domino:eclipse-plugin</include>
+				<include>org.openntf.domino:org.openntf.domino.xsp:eclipse-plugin</include>
+				<include>org.openntf.domino:org.openntf.formula:eclipse-plugin</include>
+				<include>org.openntf.domino:org.openntf.domino.rest:eclipse-plugin</include>
 			</includes>
 			
 			<binaries>
@@ -52,15 +59,6 @@
 				<includeDependencies>false</includeDependencies>
 				<outputFileNameMapping>UpdateSite.zip</outputFileNameMapping>
 			</binaries>
-			
-			<sources>
-				<outputDirectory>.</outputDirectory>
-				<includeModuleDirectory>false</includeModuleDirectory>
-				<includes>
-					<include>LICENSE</include>
-					<include>NOTICE</include>
-				</includes>
-			</sources>
 		</moduleSet>
 		
 		

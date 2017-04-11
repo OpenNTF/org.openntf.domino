@@ -45,6 +45,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoViewEntry;
  * 
  *         OpenntfNABNamePickerData, for use with the NamePicker control
  */
+// TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
 @SuppressWarnings("javadoc")
 public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
@@ -128,7 +129,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	 * 
 	 *         NabDb class for access to a specific database
 	 */
-	private static class NABDb implements Serializable { // Serializable because it goes to a scope
+	private static class NABDb implements Serializable {// Serializable because it goes to a scope
 		private static final long serialVersionUID = 1L;
 		String name;
 		@SuppressWarnings("unused")
@@ -203,12 +204,12 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 			// Find the database
 			Database nabDb = findNAB();
 			if (nabDb == null) {
-				throw new FacesExceptionEx(null, "Not able to find a valid address book for the name picker"); // $NLX-DominoNABNamePickerData.Notabletofindavalidaddressbookfor-1$
+				throw new FacesExceptionEx(null, "Not able to find a valid address book for the name picker");// $NLX-DominoNABNamePickerData.Notabletofindavalidaddressbookfor-1$
 			}
 			// Find the view
 			String viewName = getViewName();
 			if (StringUtil.isEmpty(viewName)) {
-				throw new FacesExceptionEx(null, "Not able to find a view in the address book that matches the selection criterias"); // $NLX-DominoNABNamePickerData.Notabletofindaviewintheaddressboo-1$
+				throw new FacesExceptionEx(null, "Not able to find a view in the address book that matches the selection criterias");// $NLX-DominoNABNamePickerData.Notabletofindaviewintheaddressboo-1$
 			}
 
 			View view = nabDb.getView(viewName);
@@ -263,7 +264,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 				} else if (sel.equals(NAB_DATABASENAME)) {
 					return DominoUtils.openDatabaseByName(getAddressBookDb());
 				} else {
-					throw new FacesExceptionEx(null, "Unknown address book selection type {0}", sel); // $NLX-DominoNABNamePickerData.Unknownaddressbookselectiontype0.1-1$
+					throw new FacesExceptionEx(null, "Unknown address book selection type {0}", sel);// $NLX-DominoNABNamePickerData.Unknownaddressbookselectiontype0.1-1$
 				}
 			} else {
 				// If no NAB is avail, request authentication
@@ -361,7 +362,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	 * @throws NotesException
 	 */
 	private static NABDb[] getSessionAddressBooks(final Session session) throws NotesException {
-		if (session != null) { // Unit tests
+		if (session != null) {// Unit tests
 			ArrayList<NABDb> nabs = new ArrayList<NABDb>();
 			Vector<?> vc = session.getAddressBooks();
 			if (vc != null) {
@@ -725,7 +726,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public String getViewName() {
-			return "($VIMPeople)"; // $NON-NLS-1$
+			return "($VIMPeople)";// $NON-NLS-1$
 		}
 
 		/*
@@ -833,7 +834,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public String getViewName() {
-			return "($VIMPeopleByLastName)"; // $NON-NLS-1$
+			return "($VIMPeopleByLastName)";// $NON-NLS-1$
 		}
 
 		/*
@@ -942,7 +943,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public String getViewName() {
-			return "($VIMGroups)"; // $NON-NLS-1$
+			return "($VIMGroups)";// $NON-NLS-1$
 		}
 
 		/*
@@ -1026,7 +1027,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		 */
 		@Override
 		public String getViewName() {
-			return "($VIMPeopleAndGroups)"; // $NON-NLS-1$
+			return "($VIMPeopleAndGroups)";// $NON-NLS-1$
 		}
 
 		/*
@@ -1126,21 +1127,21 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 			boolean people = isPeople();
 			boolean groups = isGroups();
 			if (people && groups) {
-				list = "peopleAndGroups"; // $NON-NLS-1$
+				list = "peopleAndGroups";// $NON-NLS-1$
 			} else if (people) {
-				list = "people"; // $NON-NLS-1$
+				list = "people";// $NON-NLS-1$
 			} else if (groups) {
-				list = "groups"; // $NON-NLS-1$
+				list = "groups";// $NON-NLS-1$
 			}
 		}
 		if (StringUtil.isNotEmpty(list)) {
-			if (list.equals("peopleAndGroups")) { // $NON-NLS-1$
+			if (list.equals("peopleAndGroups")) {// $NON-NLS-1$
 				return new _EntryMetaDataPeopleAndGroup(options);
-			} else if (list.equals("peopleByLastName")) { // $NON-NLS-1$
+			} else if (list.equals("peopleByLastName")) {// $NON-NLS-1$
 				return new _EntryMetaDataPeopleByLastName(options);
-			} else if (list.equals("people")) { // $NON-NLS-1$
+			} else if (list.equals("people")) {// $NON-NLS-1$
 				return new _EntryMetaDataPeople(options);
-			} else if (list.equals("groups")) { // $NON-NLS-1$
+			} else if (list.equals("groups")) {// $NON-NLS-1$
 				return new _EntryMetaDataGroup(options);
 			}
 		}

@@ -250,17 +250,11 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public Database getLogDb() {
 		if (_logDb == null) {
 			try {
-				_logDb = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), getLogDbName(), false);
+				_logDb = Factory.getSession(SessionType.NATIVE).getDatabase(getLogDbName());
 			} catch (Exception e) {
 				debugPrint(e);
 			}
 		}
-		// RPr: Locking is no longer supported
-		//		} else {
-		//			if (Base.isLocked(_logDb)) {
-		//				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
-		//			}
-		//		}
 		return _logDb;
 	}
 
@@ -757,7 +751,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	@Override
 	public boolean writeToLog() {
-		if (!StringUtil.equals(getCurrentDatabasePath(), Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
+		Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
+		// Current database may be null from Xots
+		if (null != currDb && !StringUtil.equals(getCurrentDatabasePath(), currDb.getFilePath())) {
 			reinitialiseSettings();
 		}
 

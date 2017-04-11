@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -59,7 +59,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	//	/**
 	//	 * Optional Constructor
-	//	 * 
+	//	 *
 	//	 * @param session
 	//	 *            Session used for Name processing
 	//	 */
@@ -70,7 +70,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	//	/**
 	//	 * Optional Constructor to clone a name
-	//	 * 
+	//	 *
 	//	 * @param name
 	//	 *            the name to clone
 	//	 */
@@ -81,10 +81,10 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	//	/**
 	//	 * Optional Constructor
-	//	 * 
+	//	 *
 	//	 * @param session
 	//	 *            Session used for Name processing
-	//	 * 
+	//	 *
 	//	 * @param name
 	//	 *            String used to construct the Name object
 	//	 */
@@ -95,7 +95,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	//	/**
 	//	 * Optional Constructor
-	//	 * 
+	//	 *
 	//	 * @param name
 	//	 *            String used to construct the Name object
 	//	 */
@@ -106,15 +106,11 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Instantiates a new name.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	public Name(final lotus.domino.Name delegate, final Session parent) {
 		super(delegate, parent, NOTES_NAME);
@@ -158,15 +154,15 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * private methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 	//	/**
 	//	 * Flag indicating if the object is Hierarchical
-	//	 * 
+	//	 *
 	//	 * @param arg0
 	//	 *            Hierarchical indicator flag
 	//	 */
@@ -176,7 +172,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the NamePartsMap for the object.
-	 * 
+	 *
 	 * @return NamePartsMap for the object.
 	 */
 	private NamePartsMap getNamePartsMap() {
@@ -188,7 +184,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Sets the NamePartsMap for the object.
-	 * 
+	 *
 	 * @param namePartsMap
 	 *            NamePartsMap for the object.
 	 */
@@ -244,9 +240,9 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * protected methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
@@ -271,15 +267,15 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * Other public methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 	/**
 	 * Flag indicating if the object is Hierarchical
-	 * 
+	 *
 	 * @return Hierarchical indicator flag
 	 */
 	@Override
@@ -306,7 +302,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Parses the source string and sets the appropriate RFC822 values.
-	 * 
+	 *
 	 * @param string
 	 *            RFC822 source string from which to set the appropriate RFC822 values.
 	 */
@@ -316,7 +312,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Indicates whether the object has RFC82xContent
-	 * 
+	 *
 	 * @return Flag indicating if the object has RFC82xContent
 	 */
 	public boolean isHasRFC82xContent() {
@@ -337,7 +333,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Sets the Name for the object.
-	 * 
+	 *
 	 * @param name
 	 *            Name for the object.
 	 */
@@ -408,7 +404,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Sets the Name for the object.
-	 * 
+	 *
 	 * @param name
 	 *            Name for the object.
 	 */
@@ -428,12 +424,12 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Name Part for the specified key.
-	 * 
+	 *
 	 * @param key
 	 *            Key identifying the specific mapped Name Part string to return.
-	 * 
+	 *
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
-	 * 
+	 *
 	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.domino.ext.Name.NamePartKey)
 	 * @see java.util.HashMap#get(Object)
 	 */
@@ -456,7 +452,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Source String used to construct this object.
-	 * 
+	 *
 	 * @return the sourceString used to construct this object
 	 */
 	public String getSourceString() {
@@ -465,7 +461,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Abbreviated form of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getAbbreviated()
 	 */
 	@Override
@@ -476,7 +472,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr821 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr821()
 	 */
 	@Override
@@ -488,7 +484,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822Comment1 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment1()
 	 */
 	@Override
@@ -499,7 +495,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822Comment2 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment2()
 	 */
 	@Override
@@ -510,7 +506,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822Comment3 portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Comment3()
 	 */
 	@Override
@@ -521,7 +517,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822LocalPart portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822LocalPart()
 	 */
 	@Override
@@ -532,7 +528,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822Phrase portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Phrase()
 	 */
 	@Override
@@ -543,7 +539,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822Full portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
 	public String getAddr822Full() {
@@ -553,7 +549,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Addr822FullFirstLast portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.RFC822name#getAddr822FullFirstLast()
 	 */
 	public String getAddr822FullFirstLast() {
@@ -563,7 +559,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Administration Management Domain Name portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getADMD()
 	 */
 	@Override
@@ -574,7 +570,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Canonical form of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getCanonical()
 	 */
 	@Override
@@ -585,7 +581,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Common portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getCommon()
 	 */
 	@Override
@@ -596,7 +592,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Country portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getCountry()
 	 */
 	@Override
@@ -607,7 +603,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Generation portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getGeneration()
 	 */
 	@Override
@@ -618,7 +614,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Given portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getGiven()
 	 */
 	@Override
@@ -629,7 +625,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Initials portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getInitials()
 	 */
 	@Override
@@ -640,7 +636,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Keyword portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getKeyword()
 	 */
 	@Override
@@ -651,7 +647,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Language portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getLanguage()
 	 */
 	@Override
@@ -662,7 +658,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Organization portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrganization()
 	 */
 	@Override
@@ -673,7 +669,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the OrgUnit1 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit1()
 	 */
 	@Override
@@ -684,7 +680,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the OrgUnit2 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit2()
 	 */
 	@Override
@@ -695,7 +691,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the OrgUnit3 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit3()
 	 */
 	@Override
@@ -706,7 +702,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the OrgUnit4 portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getOrgUnit4()
 	 */
 	@Override
@@ -717,7 +713,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Private Management Domain Name portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getPRMD()
 	 */
 	@Override
@@ -728,7 +724,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the NameType (Hierarchical/Flat/RFC8229)
-	 * 
+	 *
 	 */
 	@Override
 	public NameFormat getNameFormat() {
@@ -738,17 +734,17 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the RFC821 or RFC822 internet address
-	 * 
+	 *
 	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
 	 * <ul>
 	 * <li>jbg@us.acme.com
 	 * <li>"John B Goode" <jbg@us.acme.com>
 	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
 	 * </ul>
-	 * 
+	 *
 	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
 	 *         returned.
-	 * 
+	 *
 	 * @see Name#getAddr821()
 	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
@@ -760,7 +756,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the Surname portion of the name.
-	 * 
+	 *
 	 * @see lotus.domino.Name#getSurname()
 	 */
 	@Override
@@ -771,7 +767,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Gets the IDprefix portion of the name.
-	 * 
+	 *
 	 * @see org.openntf.arpa.NamePartsMap#getIDprefix()
 	 */
 	@Override
@@ -783,10 +779,10 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 	/**
 	 * Determines if any portion or form of the name object's internal NamePartsMap values are equal to the passed in string. Performs a
 	 * case-insensitive check.
-	 * 
+	 *
 	 * @param string
 	 *            String tom compare values against
-	 * 
+	 *
 	 * @return Flag indicating if any of the values are equal to the string.
 	 */
 	public boolean equalsIgnoreCase(final String compString) {
@@ -795,19 +791,19 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Determines if one of the Name's properties begins with the prefix.
-	 * 
+	 *
 	 * Checks the following properties, in order:
 	 * <ul>
 	 * <li>Abbreviated</li>
 	 * <li>Canonical</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param prefix
 	 *            Value to compare to the properties of the Name
-	 * 
+	 *
 	 * @param casesensitive
 	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
-	 * 
+	 *
 	 * @return Flag indicating if any of the mapped values begin with the prefix.
 	 */
 	public boolean startsWith(final String prefix, final boolean casesensitive) {
@@ -829,16 +825,16 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Determines if the name is a member of the passed in set of name strings.
-	 * 
+	 *
 	 * Conditionally expands the names list prior to checking.
-	 * 
+	 *
 	 * @param session
 	 *            Session used for generating Name objects
 	 * @param names
 	 *            String name values to check against
 	 * @param expandNames
 	 *            Flag indicating if the set of name strings should be expanded.
-	 * 
+	 *
 	 * @return Flag indicating if the Name is a member of the set of strings.
 	 */
 	public boolean isMemberOfNames(final Session session, final TreeSet<String> names, final boolean expandNames) {
@@ -878,7 +874,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -888,7 +884,7 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -899,9 +895,9 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * hashcode, equals, and comparison methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
@@ -948,13 +944,13 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Compares this object with another Name
-	 * 
+	 *
 	 * @param arg0
 	 *            Name object to be compared.
-	 * 
+	 *
 	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
-	 * 
-	 * 
+	 *
+	 *
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -967,20 +963,20 @@ public class Name extends BaseThreadSafe<org.openntf.domino.Name, lotus.domino.N
 
 	/**
 	 * Default Comparable implementation. (Natural Comparison Method)
-	 * 
+	 *
 	 * <ol>
 	 * <li>Equality using .equals() method</li>
 	 * <li>Abbreviated Name</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param arg0
 	 *            First Name object for comparison.
 	 * @param arg1
 	 *            Second Name object for comparison.
-	 * 
+	 *
 	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
-	 * 
-	 * 
+	 *
+	 *
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL

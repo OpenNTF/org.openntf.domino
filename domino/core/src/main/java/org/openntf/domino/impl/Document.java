@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -97,7 +97,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Enum to allow easy access to deletion types
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5
 	 */
 	protected static enum RemoveType {
@@ -111,7 +111,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 		protected ExtendedNoteInfos() {
 			long start = System.nanoTime();
-			if (Document.this.hasItem("$ACLDigest")) { // the DXL of an ACL is empty
+			if (Document.this.hasItem("$ACLDigest")) {// the DXL of an ACL is empty
 				noteClass = NoteClass.ACL;
 				isDefault = true;
 			} else {
@@ -133,8 +133,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					e.printStackTrace();
 				}
 			}
-			if (noteClass == null)
+			if (noteClass == null) {
 				noteClass = NoteClass.UNKNOWN;
+			}
 		}
 	}
 
@@ -144,12 +145,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	private String noteid_;
 	private String unid_;
 	private long threadid_;
-	protected Boolean isNew_ = null;
+	private boolean isNew_;
 	private boolean isDeferred_ = false;
 
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
-	private boolean shouldWriteItemMeta_ = false; // TODO NTF create rules for making this true
+	private boolean shouldWriteItemMeta_ = false;// TODO NTF create rules for making this true
 
 	private boolean shouldResurrect_ = false;
 	private Boolean containMimes_ = null;
@@ -178,14 +179,14 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * This variable tracks the current MIME entity. There are some important rules when working with MIME items:
-	 * 
+	 *
 	 * 1) you have to disable MIME-conversion in session<br>
 	 * 2) you must not access the document with the Item interface (otherwise the server may crash)<br>
 	 * 3) you should not access more than one MIME entity at once (otherwise the server may crash)<br>
 	 * 4) you MUST call closeMIMEEntities() after a MIME operation (otherwise the server may crash)<br>
-	 * 
+	 *
 	 * this means: if you have opened a MIME item do NOTHING with this document until you call closeMimeEntities()
-	 * 
+	 *
 	 */
 	protected transient Map<String, Set<MIMEEntity>> openMIMEEntities_;
 
@@ -194,41 +195,30 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	//http://www-10.lotus.com/ldd/nd8forum.nsf/5f27803bba85d8e285256bf10054620d/cd146d4165336a5e852576b600114830?OpenDocument
 	private boolean mimeWarned_ = false;
 
-	protected boolean checkMimeOpen(final String requestedItem) {
+	protected boolean checkMimeOpen() {
 		if (getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE) && mimeWarned_ == false) {
 			if (openMIMEEntities_ != null && !openMIMEEntities_.isEmpty()) {
-				boolean sameEntity = false;
-				if (requestedItem != null && openMIMEEntities_.size() == 1) {
-					for (String name : openMIMEEntities_.keySet()) {
-						if (requestedItem.equalsIgnoreCase(name)) {
-							sameEntity = true;
+				Set<String> MIMEkeys = openMIMEEntities_.keySet();
+				if (getAncestorSession().isOnServer() && MIMEkeys.size() > 0) {
+					System.out.println("******** WARNING ********");
+					System.out.println("Document Items were accessed in a document while MIMEEntities are still open.");
+					System.out.println("This can cause errors leading to JRE crashes.");
+					System.out.println("Document: " + this.noteid_ + " in " + getAncestorDatabase().getApiPath());
+					System.out.println("MIMEEntities: " + Strings.join(MIMEkeys, ", "));
+					Throwable t = new Throwable();
+					StackTraceElement[] elements = t.getStackTrace();
+					for (int i = 0; i < 10; i++) {
+						if (elements.length > i) {
+							StackTraceElement element = elements[i];
+							System.out.println("at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName()
+									+ ":" + element.getLineNumber() + ")");
 						}
 					}
-				}
-				if (!sameEntity) {
-					Set<String> MIMEkeys = openMIMEEntities_.keySet();
-					if (getAncestorSession().isOnServer() && MIMEkeys.size() > 0) {
-						System.out.println("******** WARNING ********");
-						System.out.println("Document Items were accessed in a document while MIMEEntities are still open.");
-						System.out.println("This can cause errors leading to JRE crashes.");
-						System.out.println("Document: " + this.noteid_ + " in " + getAncestorDatabase().getApiPath());
-						System.out.println("Open MIMEEntities: " + Strings.join(MIMEkeys, ", "));
-						System.out.println("Requested Item: " + (requestedItem == null ? "null" : requestedItem));
-						Throwable t = new Throwable();
-						StackTraceElement[] elements = t.getStackTrace();
-						for (int i = 0; i < 10; i++) {
-							if (elements.length > i) {
-								StackTraceElement element = elements[i];
-								System.out.println("at " + element.getClassName() + "." + element.getMethodName() + "("
-										+ element.getFileName() + ":" + element.getLineNumber() + ")");
-							}
-						}
-						System.out.println("******** END WARNING ********");
-						mimeWarned_ = true;
-						return true;
-					} else {
-						throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
-					}
+					System.out.println("******** END WARNING ********");
+					mimeWarned_ = true;
+					return true;
+				} else {
+					throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
 				}
 			}
 		}
@@ -237,15 +227,11 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Instantiates a new Document.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Document(final lotus.domino.Document delegate, final Database parent) {
 		super(delegate, parent, NOTES_NOTE);
@@ -268,8 +254,8 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		} else {
 			noteid_ = id;
 			unid_ = parent.getUNID(id);
-			isNew_ = false;
 		}
+		isNew_ = false;
 		isDeferred_ = true;
 	}
 
@@ -279,7 +265,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Initialize.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 */
@@ -311,16 +297,16 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getCreated()
 	 */
 	@Override
 	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getCreated() {
-		//		checkMimeOpen(null); // RPr: needed? 
+		checkMimeOpen();// RPr: needed?
 		try {
-			return fromLotus(getDelegate().getCreated(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
+			return fromLotus(getDelegate().getCreated(), DateTime.SCHEMA, getAncestorSession());// TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -329,12 +315,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getCreatedDate()
 	 */
 	@Override
 	public Date getCreatedDate() {
-		//		checkMimeOpen(); // RPr: needed? 
+		checkMimeOpen();// RPr: needed?
 		if (created_ == null) {
 			try {
 				created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
@@ -347,16 +333,16 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getInitiallyModified()
 	 */
 	@Override
 	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getInitiallyModified() {
-		//		checkMimeOpen(); // RPr: needed?
+		checkMimeOpen();// RPr: needed?
 		try {
-			return fromLotus(getDelegate().getInitiallyModified(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
+			return fromLotus(getDelegate().getInitiallyModified(), DateTime.SCHEMA, getAncestorSession());// TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -365,12 +351,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getInitiallyModifiedDate()
 	 */
 	@Override
 	public Date getInitiallyModifiedDate() {
-		//		checkMimeOpen(); // RPr: needed?
+		checkMimeOpen();// RPr: needed?
 		if (initiallyModified_ == null) {
 			try {
 				initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
@@ -384,19 +370,20 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getLastAccessed()
 	 */
 	@Override
 	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastAccessed() {
-		//		checkMimeOpen(); // RPr: needed?
+		checkMimeOpen();// RPr: needed?
 		try {
 			lotus.domino.DateTime lotusDate = getDelegate().getLastAccessed();
-			if (lotusDate == null)
+			if (lotusDate == null) {
 				return null;
-			return fromLotus(lotusDate, DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
+			}
+			return fromLotus(lotusDate, DateTime.SCHEMA, getAncestorSession());// TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -405,12 +392,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getLastAccessedDate()
 	 */
 	@Override
 	public Date getLastAccessedDate() {
-		//		checkMimeOpen(); // RPr: needed?
+		checkMimeOpen();// RPr: needed?
 		if (lastAccessed_ == null) {
 			try {
 				lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
@@ -423,19 +410,20 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getLastModified()
 	 */
 	@Override
 	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastModified() {
-		//		checkMimeOpen(); // RPr: needed?
+		checkMimeOpen();// RPr: needed?
 		try {
 			lotus.domino.DateTime lotusDate = getDelegate().getLastModified();
-			if (lotusDate == null)
+			if (lotusDate == null) {
 				return null;
-			return fromLotus(lotusDate, DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
+			}
+			return fromLotus(lotusDate, DateTime.SCHEMA, getAncestorSession());// TODO NTF - maybe ditch the parent?
 
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -445,12 +433,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getLastModifiedDate()
 	 */
 	@Override
 	public Date getLastModifiedDate() {
-		//		checkMimeOpen(); // RPr: needed?
+		checkMimeOpen();// RPr: needed?
 		if (lastModified_ == null) {
 			try {
 				lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
@@ -463,7 +451,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#appendItemValue(java.lang.String)
 	 */
 	@Override
@@ -473,7 +461,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#appendItemValue(java.lang.String, double)
 	 */
 	@Override
@@ -483,7 +471,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#appendItemValue(java.lang.String, int)
 	 */
 	@Override
@@ -501,19 +489,19 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#appendItemValue(java.lang.String, java.lang.Object)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Item appendItemValue(final String name, final Object value, final boolean unique) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		Item result = null;
 		if (unique && hasItem(name)) {
 			// TODO RPr This function is not yet 100% mime compatible
 			// Once mime compatible, remove the reference in org.openntf.domino.ext.Document Javadoc
 			result = getFirstItem(name);
-			if (result.containsValue(value)) { // this does not work when it is not dominoFriendly
+			if (result.containsValue(value)) {// this does not work when it is not dominoFriendly
 				return result;
 			}
 		}
@@ -555,7 +543,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#attachVCard(lotus.domino.Base)
 	 */
 	@Override
@@ -565,12 +553,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#attachVCard(lotus.domino.Base, java.lang.String)
 	 */
 	@Override
 	public void attachVCard(final lotus.domino.Base document, final String charset) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().attachVCard(toLotus(document), charset);
@@ -590,7 +578,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#closeMIMEEntities()
 	 */
 	@Override
@@ -600,7 +588,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#closeMIMEEntities(boolean)
 	 */
 	@Override
@@ -622,16 +610,18 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#closeMIMEEntities(boolean, java.lang.String)
 	 */
 	@Override
 	public boolean closeMIMEEntities(final boolean saveChanges, final String entityItemName) {
 		// checkMimeOpen(); RPr: This is not needed here (just to tweak my grep command)
-		if (isDeferred_)
+		if (isDeferred_) {
 			return true;
-		if (isDead())
+		}
+		if (isDead()) {
 			return true;
+		}
 		try {
 			// TODO: $Mime-xxx Fields to fieldNames_ List
 			if (saveChanges) {
@@ -724,12 +714,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#computeWithForm(boolean, boolean)
 	 */
 	@Override
 	public boolean computeWithForm(final boolean doDataTypes, final boolean raiseError) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			boolean ret = getDelegate().computeWithForm(doDataTypes, raiseError);
@@ -743,7 +733,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#convertToMIME()
 	 */
 	@Override
@@ -753,7 +743,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#convertToMIME(int)
 	 */
 	@Override
@@ -763,12 +753,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#convertToMIME(int, int)
 	 */
 	@Override
 	public void convertToMIME(final int conversionType, final int options) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().convertToMIME(conversionType, options);
@@ -780,12 +770,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#copyAllItems(lotus.domino.Document, boolean)
 	 */
 	@Override
 	public void copyAllItems(final lotus.domino.Document doc, final boolean replace) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		if (doc instanceof Document) {
 			((Document) doc).beginEdit();
 		}
@@ -801,7 +791,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#copyItem(lotus.domino.Item)
 	 */
 	@Override
@@ -811,20 +801,14 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#copyItem(lotus.domino.Item, java.lang.String)
 	 */
 	@Override
 	public Item copyItem(final lotus.domino.Item item, final String newName) {
 		// TODO - NTF markDirty()? Yes. It's necessary.
 		// TODO RPr: ConvertMime?
-		String sourceItemName = null;
-		try {
-			sourceItemName = item.getName();
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne, this);
-		}
-		checkMimeOpen(sourceItemName);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			Item ret = fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
@@ -838,12 +822,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#copyToDatabase(lotus.domino.Database)
 	 */
 	@Override
 	public org.openntf.domino.Document copyToDatabase(final lotus.domino.Database db) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		// DONE - NTF markDirty() - RPr: no does not make the document dirty?
 		try {
 			return fromLotus(getDelegate().copyToDatabase(toLotus(db)), Document.SCHEMA, getParentDatabase());
@@ -855,7 +839,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#createMIMEEntity()
 	 */
 	@Override
@@ -868,7 +852,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * This is used to track all MIMEEntities in this document. EVERY MIME-Item should be routed over this method!
-	 * 
+	 *
 	 * @param lotus
 	 *            the lotus name
 	 * @param itemName
@@ -876,8 +860,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * @return the wrapped and tracked {@link MIMEEntity}
 	 */
 	protected MIMEEntity fromLotusMimeEntity(final lotus.domino.MIMEEntity lotus, final String itemName) {
-		if (lotus == null)
+		if (lotus == null) {
 			return null;
+		}
 		MIMEEntity wrapped = fromLotus(lotus, MIMEEntity.SCHEMA, this);
 		if (wrapped != null) {
 			((org.openntf.domino.impl.MIMEEntity) wrapped).init(itemName);
@@ -898,7 +883,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#createMIMEEntity(java.lang.String)
 	 */
 	@Override
@@ -935,13 +920,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#createReplyMessage(boolean)
 	 */
 	@Override
 	public org.openntf.domino.Document createReplyMessage(final boolean toAll) {
 		// DONE - NTF markDirty()? CHa: Does not make the current document dirty
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			return fromLotus(getDelegate().createReplyMessage(toAll), Document.SCHEMA, getParentDatabase());
@@ -953,12 +938,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#createRichTextItem(java.lang.String)
 	 */
 	@Override
 	public RichTextItem createRichTextItem(final String name) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		beginEdit();
 		RichTextItem ret = null;
 		try {
@@ -972,12 +957,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#encrypt()
 	 */
 	@Override
 	public void encrypt() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().encrypt();
@@ -989,12 +974,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#generateXML()
 	 */
 	@Override
 	public String generateXML() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().generateXML();
 		} catch (NotesException e) {
@@ -1005,12 +990,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#generateXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
 	public void generateXML(final Object style, final lotus.domino.XSLTResultTarget result) throws IOException {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			getDelegate().generateXML(style, result);
 		} catch (NotesException e) {
@@ -1020,12 +1005,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#generateXML(java.io.Writer)
 	 */
 	@Override
 	public void generateXML(final Writer w) throws IOException {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			getDelegate().generateXML(w);
 		} catch (NotesException e) {
@@ -1035,12 +1020,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getAttachment(java.lang.String)
 	 */
 	@Override
 	public EmbeddedObject getAttachment(final String fileName) {
-		//		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return fromLotus(getDelegate().getAttachment(fileName), EmbeddedObject.SCHEMA, this);
 		} catch (NotesException e) {
@@ -1051,13 +1036,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getAuthors()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getAuthors() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().getAuthors();
 		} catch (NotesException e) {
@@ -1068,12 +1053,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getColumnValues()
 	 */
 	@Override
 	public Vector<Object> getColumnValues() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			Vector<?> values = getDelegate().getColumnValues();
 			if (values != null) {
@@ -1089,12 +1074,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getEmbeddedObjects()
 	 */
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return fromLotusAsVector(getDelegate().getEmbeddedObjects(), EmbeddedObject.SCHEMA, this);
 		} catch (NotesException e) {
@@ -1134,13 +1119,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getEncryptionKeys()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getEncryptionKeys() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().getEncryptionKeys();
 		} catch (NotesException e) {
@@ -1151,12 +1136,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getFTSearchScore()
 	 */
 	@Override
 	public int getFTSearchScore() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().getFTSearchScore();
 		} catch (NotesException e) {
@@ -1167,7 +1152,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getFirstItem(java.lang.String)
 	 */
 	@Override
@@ -1187,7 +1172,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	@Override
 	public Item getFirstItem(final String name, final boolean returnMime) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		boolean convertMime = false;
 		try {
 			if (returnMime) {
@@ -1209,13 +1194,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getFolderReferences()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getFolderReferences() {
-		//		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().getFolderReferences();
 		} catch (NotesException e) {
@@ -1226,7 +1211,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getHttpURL()
 	 */
 	@Override
@@ -1278,7 +1263,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * Behavior: If the document does not have the item, then we look at the requested class. If it's a primitive or an array of primitives,
 	 * we cannot return a null value that can be assigned to that type, so therefore we throw an Exception. If what was request is an
 	 * object, we return null.
-	 * 
+	 *
 	 * If the item does exist, then we get it's value and attempt a conversion. If the data cannot be converted, we throw an Exception
 	 */
 
@@ -1330,13 +1315,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValue(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getItemValue(final String name) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		Vector<?> vals = null;
 
 		try {
@@ -1355,19 +1340,19 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						}
 						if (mimeValue.getClass().isArray()) {
 							Vector<Object> ret;
-							if (mimeValue.getClass().getName().length() != 2) // In case of on array of primitives the cast to Object[] obviously doesn't work
+							if (mimeValue.getClass().getName().length() != 2) {
 								ret = (Vector<Object>) Arrays.asList((Object[]) mimeValue);
-							else {
+							} else {
 								int lh = Array.getLength(mimeValue);
 								ret = new Vector<Object>(lh);
-								for (int i = 0; i < lh; i++)
+								for (int i = 0; i < lh; i++) {
 									ret.add(Array.get(mimeValue, i));
+								}
 							}
 							return ret;
 						}
 						Vector<Object> result = new Vector<Object>(1);
 						result.add(mimeValue);
-
 						return result;
 					} else {
 						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
@@ -1376,7 +1361,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 						Vector<Object> result = new Vector<Object>(1);
-						result.add(entity.getContentAsText()); // TODO: not sure if that is correct
+						result.add(entity.getContentAsText());// TODO: not sure if that is correct
 						return result;
 					}
 				} finally {
@@ -1401,7 +1386,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueCustomData(java.lang.String)
 	 */
 	@Override
@@ -1411,12 +1396,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueCustomData(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Object getItemValueCustomData(final String itemName, final String dataTypeName) throws IOException, ClassNotFoundException {
-		checkMimeOpen(itemName);
+		checkMimeOpen();
 		if (dataTypeName == null || "mime-bean".equals(dataTypeName)) {
 			MIMEEntity entity = this.getMIMEEntity(itemName);
 			if (entity != null) {
@@ -1437,27 +1422,30 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueCustomDataBytes(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public byte[] getItemValueCustomDataBytes(final String itemName, final String dataTypeName) throws IOException {
-		checkMimeOpen(itemName);
+		checkMimeOpen();
 		try {
 			byte[] ret = getDelegate().getItemValueCustomDataBytes(itemName, dataTypeName);
-			if (ret != null && ret.length != 0)
+			if (ret != null && ret.length != 0) {
 				return ret;
+			}
 			MIMEEntity entity;
-			if ((entity = getMIMEEntity(itemName)) == null)
+			if ((entity = getMIMEEntity(itemName)) == null) {
 				return ret;
+			}
 			Object o = null;
 			try {
 				o = Documents.getItemValueMIME(this, itemName, entity);
 			} finally {
 				closeMIMEEntities(false, itemName);
 			}
-			if (o != null && o.getClass().getName().equals("[B"))
+			if (o != null && o.getClass().getName().equals("[B")) {
 				ret = (byte[]) o;
+			}
 			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "Item=" + itemName);
@@ -1467,39 +1455,47 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
-		checkMimeOpen(name);
+	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {// cf. DateRange.java
+		checkMimeOpen();
 		boolean mayBeMime = true;
-		Vector<org.openntf.domino.Base<?>> vGIV = null;	// see below
+		Vector<org.openntf.domino.Base<?>> vGIV = null;// see below
 		try {
 			Vector<?> v = getDelegate().getItemValueDateTimeArray(name);
 			mayBeMime = false;
-			if (v == null || v.size() == 0)
+			if (v == null || v.size() == 0) {
 				return (Vector<org.openntf.domino.Base<?>>) v;
+			}
 			FactorySchema<?, ?, Session> schema = DateTime.SCHEMA;
-			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
+			if (v.elementAt(0) instanceof lotus.domino.DateRange) {
 				schema = DateRange.SCHEMA;
-			else {	// Workaround for Vector of DateRange-s
-				while (true) { // no real while!
+			} else {// Workaround for Vector of DateRange-s
+				while (true) {// no real while!
 					int sz = v.size(), i;
-					for (i = 0; i < sz; i++)
-						if (v.elementAt(i) != null)
+					for (i = 0; i < sz; i++) {
+						if (v.elementAt(i) != null) {
 							break;
-					if (i < sz)
+						}
+					}
+					if (i < sz) {
 						break;
+					}
 					vGIV = getDelegate().getItemValue(name);
-					if (vGIV.size() != sz * 2)
+					if (vGIV.size() != sz * 2) {
 						break;
-					for (i = 0; i < sz * 2; i++)
-						if (!(vGIV.elementAt(i) instanceof lotus.domino.DateTime))
+					}
+					for (i = 0; i < sz * 2; i++) {
+						if (!(vGIV.elementAt(i) instanceof lotus.domino.DateTime)) {
 							break;
-					if (i < sz * 2)
+						}
+					}
+					if (i < sz * 2) {
 						break;
+					}
 					Vector<lotus.domino.DateRange> aux = new Vector<lotus.domino.DateRange>(sz);
 					lotus.domino.Session rawsession = toLotus(getAncestorSession());
 					for (i = 0; i < sz; i++) {
@@ -1515,55 +1511,62 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 			return (Vector<org.openntf.domino.Base<?>>) fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
-			while (mayBeMime) { // no real while!
+			while (mayBeMime) {// no real while!
 				MIMEEntity entity = this.getMIMEEntity(name);
-				if (entity == null)
+				if (entity == null) {
 					break;
+				}
 				Object mim = null;
 				try {
 					mim = Documents.getItemValueMIME(this, name, entity);
 				} finally {
 					closeMIMEEntities(false, name);
 				}
-				if (mim == null)
+				if (mim == null) {
 					break;
+				}
 				Vector<?> v;
-				if (mim instanceof Vector)
+				if (mim instanceof Vector) {
 					v = (Vector<Object>) mim;
-				else if (mim instanceof Collection)
+				} else if (mim instanceof Collection) {
 					v = new Vector<Object>((Collection<Object>) mim);
-				else if (mim.getClass().isArray())
+				} else if (mim.getClass().isArray()) {
 					v = (Vector<Object>) Arrays.asList((Object[]) mim);
-				else
+				} else {
 					break;
+				}
 				int sz = v.size(), i;
 				for (i = 0; i < sz; i++) {
 					Object o = v.elementAt(i);
-					if (o == null)
+					if (o == null) {
 						break;
-					if ((!(o instanceof DateTime)) && (!(o instanceof DateRange)))
+					}
+					if ((!(o instanceof DateTime)) && (!(o instanceof DateRange))) {
 						break;
+					}
 				}
-				if (i < sz)
+				if (i < sz) {
 					break;
+				}
 				return (Vector<org.openntf.domino.Base<?>>) v;
 			}
 			DominoUtils.handleException(e, this, "Item=" + name);
 			return null;
 		} finally {
-			if (vGIV != null)
+			if (vGIV != null) {
 				Base.s_recycle(vGIV);
+			}
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueDouble(java.lang.String)
 	 */
 	@Override
 	public double getItemValueDouble(final String name) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		try {
 			return getDelegate().getItemValueDouble(name);
 		} catch (NotesException e) {
@@ -1574,12 +1577,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueInteger(java.lang.String)
 	 */
 	@Override
 	public int getItemValueInteger(final String name) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		try {
 			return getDelegate().getItemValueInteger(name);
 		} catch (NotesException e) {
@@ -1590,25 +1593,28 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItemValueString(java.lang.String)
 	 */
 	@Override
 	public String getItemValueString(final String name) {
-		checkMimeOpen(name);
+		checkMimeOpen();
 		// TODO RPr: is this mime-safe?
 		try {
 			String ret = getDelegate().getItemValueString(name);
-			if (ret != null && ret.length() != 0)
+			if (ret != null && ret.length() != 0) {
 				return ret;
+			}
 			MIMEEntity me = getMIMEEntity(name);
-			if (me == null)
+			if (me == null) {
 				return "";
+			}
 			closeMIMEEntities(false, name);
 			Vector<?> v = getItemValue(name);
 			ret = "";
-			if (v.size() > 0 && v.elementAt(0) instanceof String)
+			if (v.size() > 0 && v.elementAt(0) instanceof String) {
 				ret = (String) v.elementAt(0);
+			}
 			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "Item=" + name);
@@ -1618,7 +1624,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getItems()
 	 */
 	@Override
@@ -1630,12 +1636,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getKey()
 	 */
 	@Override
 	public String getKey() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().getKey();
 		} catch (NotesException e) {
@@ -1646,13 +1652,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getLockHolders() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().getLockHolders();
 		} catch (NotesException e) {
@@ -1663,7 +1669,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getMIMEEntity()
 	 */
 	@Override
@@ -1673,7 +1679,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getMIMEEntity(java.lang.String)
 	 */
 	@Override
@@ -1706,12 +1712,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getNameOfProfile()
 	 */
 	@Override
 	public String getNameOfProfile() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().getNameOfProfile();
 		} catch (NotesException e) {
@@ -1722,7 +1728,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getNoteID()
 	 */
 	@Override
@@ -1739,7 +1745,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getNotesURL()
 	 */
 	@Override
@@ -1755,7 +1761,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getParentDatabase()
 	 */
 	@Override
@@ -1770,12 +1776,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getParentDocumentUNID()
 	 */
 	@Override
 	public String getParentDocumentUNID() {
-		// checkMimeOpen(); RPr: I don't think it is neccessary here		
+		// checkMimeOpen(); RPr: I don't think it is neccessary here
 		try {
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
 				return getDelegate().getParentDocumentUNID().toLowerCase();
@@ -1790,12 +1796,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getParentView()
 	 */
 	@Override
 	public View getParentView() {
-		// checkMimeOpen(); RPr: I don't think it is neccessary here		
+		// checkMimeOpen(); RPr: I don't think it is neccessary here
 		try {
 			return fromLotus(getDelegate().getParentView(), View.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
@@ -1806,7 +1812,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getRead()
 	 */
 	@Override
@@ -1816,7 +1822,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getRead(java.lang.String)
 	 */
 	@Override
@@ -1832,13 +1838,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getReceivedItemText()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getReceivedItemText() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().getReceivedItemText();
 		} catch (NotesException e) {
@@ -1849,7 +1855,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getResponses()
 	 */
 	@Override
@@ -1865,12 +1871,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getSigner()
 	 */
 	@Override
 	public String getSigner() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().getSigner();
 		} catch (NotesException e) {
@@ -1881,12 +1887,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getSize()
 	 */
 	@Override
 	public int getSize() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().getSize();
 		} catch (NotesException e) {
@@ -1897,12 +1903,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getURL()
 	 */
 	@Override
 	public String getURL() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().getURL();
 		} catch (NotesException e) {
@@ -1913,29 +1919,29 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getUniversalID()
 	 */
 	@Override
 	public String getUniversalID() {
-		if (unid_ == null || unid_.length() < 32) {
-			try {
-				unid_ = getDelegate().getUniversalID();
-			} catch (NotesException e) {
-				DominoUtils.handleException(e, this);
-			}
-		}
 		return unid_;
+		//		// checkMimeOpen(); RPr: I think we do not need it here
+		//		try {
+		//			return getDelegate().getUniversalID();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e, this);
+		//		}
+		//		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#getVerifier()
 	 */
 	@Override
 	public String getVerifier() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().getVerifier();
 		} catch (NotesException e) {
@@ -1946,12 +1952,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#hasEmbedded()
 	 */
 	@Override
 	public boolean hasEmbedded() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().hasEmbedded();
 		} catch (NotesException e) {
@@ -1976,7 +1982,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#hasItem(java.lang.String)
 	 */
 	@Override
@@ -1984,10 +1990,10 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		//		if (checkMimeOpen()) {
 		//			System.out.println("DEBUG: MimeEntity found open while checking for item name " + name);
 		//		}
-		//		if (this.fieldNames_ != null) {
-		//			return fieldNames_.contains(name);
-		//		}
-		lotus.domino.Document delegate = getDelegate();	//NTF outside the try/catch so the exception will bubble
+		if (this.fieldNames_ != null) {
+			return fieldNames_.contains(name);
+		}
+		lotus.domino.Document delegate = getDelegate();//NTF outside the try/catch so the exception will bubble
 		try {
 			if (name == null || delegate == null) {
 				return false;
@@ -2008,16 +2014,17 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isDeleted()
 	 */
 	@Override
 	public boolean isDeleted() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			lotus.domino.Document delegate = getDelegate();
-			if (delegate == null)
+			if (delegate == null) {
 				return false;
+			}
 			return delegate.isDeleted();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -2027,12 +2034,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isEncryptOnSend()
 	 */
 	@Override
 	public boolean isEncryptOnSend() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isEncryptOnSend();
 		} catch (NotesException e) {
@@ -2043,12 +2050,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isEncrypted()
 	 */
 	@Override
 	public boolean isEncrypted() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isEncrypted();
 		} catch (NotesException e) {
@@ -2059,17 +2066,17 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isNewNote()
 	 */
 	@Override
 	public boolean isNewNote() {
-		if (isNew_ == null) {
+		if (!isDead()) {
 			try {
-				isNew_ = getDelegate().isNewNote();
+				return getDelegate().isNewNote();
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
-				isNew_ = noteid_ == null || noteid_.equals("0") || noteid_.isEmpty();
+				return isNew_;
 			}
 		}
 		return isNew_;
@@ -2077,12 +2084,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isPreferJavaDates()
 	 */
 	@Override
 	public boolean isPreferJavaDates() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().isPreferJavaDates();
 		} catch (NotesException e) {
@@ -2093,12 +2100,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isProfile()
 	 */
 	@Override
 	public boolean isProfile() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isProfile();
 		} catch (NotesException e) {
@@ -2109,12 +2116,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isResponse()
 	 */
 	@Override
 	public boolean isResponse() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isResponse();
 		} catch (NotesException e) {
@@ -2125,12 +2132,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isSaveMessageOnSend()
 	 */
 	@Override
 	public boolean isSaveMessageOnSend() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isSaveMessageOnSend();
 		} catch (NotesException e) {
@@ -2141,12 +2148,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isSentByAgent()
 	 */
 	@Override
 	public boolean isSentByAgent() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isSentByAgent();
 		} catch (NotesException e) {
@@ -2157,12 +2164,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isSignOnSend()
 	 */
 	@Override
 	public boolean isSignOnSend() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isSignOnSend();
 		} catch (NotesException e) {
@@ -2173,12 +2180,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isSigned()
 	 */
 	@Override
 	public boolean isSigned() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().isSigned();
 		} catch (NotesException e) {
@@ -2189,12 +2196,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#isValid()
 	 */
 	@Override
 	public boolean isValid() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			return getDelegate().isValid();
 		} catch (NotesException e) {
@@ -2205,7 +2212,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lock()
 	 */
 	@Override
@@ -2215,7 +2222,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lock(boolean)
 	 */
 	@Override
@@ -2225,7 +2232,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lock(java.lang.String)
 	 */
 	@Override
@@ -2235,12 +2242,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lock(java.lang.String, boolean)
 	 */
 	@Override
 	public boolean lock(final String name, final boolean provisionalOk) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().lock(name, provisionalOk);
 		} catch (NotesException e) {
@@ -2251,7 +2258,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -2262,13 +2269,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names, final boolean provisionalOk) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().lock(names, provisionalOk);
 		} catch (NotesException e) {
@@ -2279,7 +2286,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lockProvisional()
 	 */
 	@Override
@@ -2289,12 +2296,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lockProvisional(java.lang.String)
 	 */
 	@Override
 	public boolean lockProvisional(final String name) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().lockProvisional(name);
 		} catch (NotesException e) {
@@ -2305,13 +2312,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lockProvisional(final Vector names) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			return getDelegate().lockProvisional(names);
 		} catch (NotesException e) {
@@ -2322,12 +2329,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#makeResponse(lotus.domino.Document)
 	 */
 	@Override
 	public void makeResponse(final lotus.domino.Document doc) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().makeResponse(toLotus(doc));
@@ -2342,7 +2349,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		if (itemName == null || itemName.equalsIgnoreCase("$ref")) {
 			makeResponse(doc);
 		} else {
-			checkMimeOpen(null);
+			checkMimeOpen();
 			beginEdit();
 			try {
 				// making a response field with different name is a litte bit difficult.
@@ -2350,12 +2357,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				// but I did not want to add that overhead here.
 				lotus.domino.Document lotusTmpDoc = getDelegate().getParentDatabase().createDocument();
 				try {
-					lotusTmpDoc.makeResponse(toLotus(doc)); // first: make the temp doc to a response document
+					lotusTmpDoc.makeResponse(toLotus(doc));// first: make the temp doc to a response document
 					lotus.domino.Item lotusRefItem = lotusTmpDoc.getFirstItem("$REF");
 					try {
-						lotusRefItem.copyItemToDocument(getDelegate(), itemName); // next: copy the $REF item back to the delegate
+						lotusRefItem.copyItemToDocument(getDelegate(), itemName);// next: copy the $REF item back to the delegate
 					} finally {
-						lotusRefItem.recycle(); // finally: recycle the whole things 
+						lotusRefItem.recycle();// finally: recycle the whole things
 					}
 				} finally {
 					lotusTmpDoc.recycle();
@@ -2370,7 +2377,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#markRead()
 	 */
 	@Override
@@ -2380,12 +2387,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#markRead(java.lang.String)
 	 */
 	@Override
 	public void markRead(final String userName) {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		// TODO - NTF transaction context?
 		try {
 			getDelegate().markRead(userName);
@@ -2396,7 +2403,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#markUnread()
 	 */
 	@Override
@@ -2406,12 +2413,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#markUnread(java.lang.String)
 	 */
 	@Override
 	public void markUnread(final String userName) {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		// TODO - NTF transaction context?
 		try {
 			getDelegate().markUnread(userName);
@@ -2422,7 +2429,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#putInFolder(java.lang.String)
 	 */
 	@Override
@@ -2432,13 +2439,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#putInFolder(java.lang.String, boolean)
 	 */
 	@Override
 	public void putInFolder(final String name, final boolean createOnFail) {
 		// TODO - NTF handle transaction context
-		//		checkMimeOpen();
+		checkMimeOpen();
 		if (getAncestorDatabase().getFolderReferencesEnabled()) {
 			beginEdit();
 		}
@@ -2456,7 +2463,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#remove(boolean)
 	 */
 	@Override
@@ -2488,12 +2495,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#removeFromFolder(java.lang.String)
 	 */
 	@Override
 	public void removeFromFolder(final String name) {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		// TODO - NTF handle transaction context
 		try {
 			// This method will modify the fields $FolderInfo and $FolderRefInfo if FolderReferences are enabled in the database.
@@ -2509,14 +2516,15 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#removeItem(java.lang.String)
 	 */
 	@Override
 	public void removeItem(final String name) {
-		if (name == null)
-			return;	//TODO NTF There's nothing to do here. Maybe we should throw an exception?
-		checkMimeOpen(name);
+		if (name == null) {
+			return;//TODO NTF There's nothing to do here. Maybe we should throw an exception?
+		}
+		checkMimeOpen();
 		beginEdit();
 		try {
 			// RPr: it is important to check if this is a MIME entity and remove that this way.
@@ -2534,8 +2542,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					getDelegate().removeItem(name);
 				}
 			} else {
-				if (getDelegate().hasItem(name))
+				if (getDelegate().hasItem(name)) {
 					getDelegate().removeItem(name);
+				}
 			}
 			markDirty(name, false);
 		} catch (NotesException e) {
@@ -2545,7 +2554,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#removePermanently(boolean)
 	 */
 	@Override
@@ -2571,12 +2580,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#renderToRTItem(lotus.domino.RichTextItem)
 	 */
 	@Override
 	public boolean renderToRTItem(final lotus.domino.RichTextItem rtitem) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().renderToRTItem(toLotus(rtitem));
@@ -2591,7 +2600,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -2601,7 +2610,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -2619,7 +2628,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * otherwise, data is serialized by lotus.domino.Docmuemt.replaceItemValueCustomData
 	 */
 	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object value, final boolean returnItem) {
-		checkMimeOpen(itemName);
+		checkMimeOpen();
 		lotus.domino.Item result = null;
 		try {
 			if (!"mime-bean".equalsIgnoreCase(dataTypeName)) {
@@ -2688,7 +2697,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 			if (returnItem) {
 				if (result == null) {
-					return getFirstItem(itemName, true);	// MSt: This is safe now. (Was tested.)
+					return getFirstItem(itemName, true);// MSt: This is safe now. (Was tested.)
 				}
 				//NTF if we do a .getFirstItem here and return an item that we MIMEBeaned, it will invalidate the MIME and
 				//convert back to a RichTextItem before the document is saved.
@@ -2706,22 +2715,23 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
 	public Item replaceItemValueCustomDataBytes(final String itemName, String dataTypeName, final byte[] byteArray) throws IOException {
-		checkMimeOpen(itemName);
-		if (dataTypeName == null)
-			dataTypeName = "";	// Passing null as par 2 to Lotus method crashes the Domino server
+		checkMimeOpen();
+		if (dataTypeName == null) {
+			dataTypeName = "";// Passing null as par 2 to Lotus method crashes the Domino server
+		}
 
 		// Again, the Notes API documentation is not very exact: It is stated there that "custom data cannot exceed 64k".
 		// That's correct. But it doesn't mean that 64k custom data are really accepted. More precisely:
-		int maxCDSBytes = 64000 - 1 - dataTypeName.length();	// custom data are stored as <lh(dataType)><dataType><byteArray>
+		int maxCDSBytes = 64000 - 1 - dataTypeName.length();// custom data are stored as <lh(dataType)><dataType><byteArray>
 		try {
 			if (byteArray.length > maxCDSBytes && getAutoMime() != AutoMime.WRAP_NONE) {
 				// Then fall back to the normal method, which will MIMEBean it
-				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
+				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true);// TODO: What about dataTypeName?
 			} else {
 				beginEdit();
 				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
@@ -2737,7 +2747,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -2747,7 +2757,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Document#replaceItemValue(java.lang.String, java.lang.Object, java.lang.Boolean)
 	 */
 	@Override
@@ -2757,21 +2767,48 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * replaceItemValue writes itemFriendly values or a Collection of itemFriendly values.
-	 * 
+	 *
 	 * if "autoSerialisation" is enabled. Data exceeding 32k is serialized with replaceItemValueCustomData. If MIME_BEAN_SUFFIX is set, the
 	 * original item contains the String $ObjectData (=MIME_BEAN_SUFFIX). This is important, if you display data in a view, so that you see
 	 * immediately, that only serialized content is available
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public Item replaceItemValue(final String itemName, final Object value, final Boolean isSummary, final boolean boxCompatibleOnly,
 			final boolean returnItem) {
 		Item result = null;
-		checkMimeOpen(itemName);
 		try {
 
 			try {
+				// Special case. If the argument is an Item, just copy it.
+				if (value instanceof Item) {
+					List<lotus.domino.Base> recycleThis = null;
+					lotus.domino.Item tmpResult;
+					recycleThis = new ArrayList<lotus.domino.Base>();
+					// remove the mime item first, so that it will not collide with MIME etc.
+					MIMEEntity mimeChk = getMIMEEntity(itemName);
+					if (mimeChk != null) {
+						try {
+							mimeChk.remove();
+						} finally {
+							closeMIMEEntities(true, itemName);
+						}
+					}
+					beginEdit();
+					tmpResult = getDelegate().replaceItemValue(itemName,
+							TypeUtils.toDominoFriendly(value, getAncestorSession(), recycleThis));
+					markDirty(itemName, true);
+
+					s_recycle(tmpResult);
+
+					if (returnItem) {
+						return getFactory().create(Item.SCHEMA, this, itemName);
+					} else {
+						return null;
+					}
+				}
+
 				result = replaceItemValueLotus(itemName, value, isSummary, returnItem);
 			} catch (Exception ex2) {
 				if (this.getAutoMime() == AutoMime.WRAP_NONE) {
@@ -2811,7 +2848,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					infoNode = new HashMap<String, Serializable>();
 				}
 				infoNode.put("valueClass", valueClass.getName());
-				infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
+				infoNode.put("updated", new Date());// For sanity checking if the value was changed outside of Java
 				itemInfo.put(itemName, infoNode);
 			}
 
@@ -2823,7 +2860,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * returns the real LMBCS payload for a Vector of Strings
-	 * 
+	 *
 	 * @param strVect
 	 *            The vector of Strings.
 	 * @return LMBCS payload
@@ -2840,16 +2877,16 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	/**
 	 * replaceItemValueLotus writes itemFriendly values or a Collection of itemFriendly values. it throws a Domino32KLimitException if the
 	 * data does not fit into the fied. The caller can decide what to do, if this exception is thrown.
-	 * 
+	 *
 	 * It throws a DataNotCompatibleException, if the data is not domino compatible
-	 * 
+	 *
 	 * @throws Domino32KLimitException
 	 *             if the item does not fit in a field
 	 */
 	@SuppressWarnings("unchecked")
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
 			throws Domino32KLimitException {
-		checkMimeOpen(itemName);
+		checkMimeOpen();
 		// writing a value of "Null" leads to a remove of the item if configured in SESSION
 		if (value == null || value instanceof Null) {
 			if (hasItem(itemName)) {
@@ -2870,216 +2907,6 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		} else {
 			return null;
 		}
-
-		/*
-				Vector<Object> dominoFriendlyVec = null;
-				Object dominoFriendlyObj = null;
-				List<lotus.domino.Base> recycleThis = null;
-		
-				boolean isNonSummary = false;
-				boolean isNames = false;
-				
-				try {
-					// Special case. If the argument is an Item, just copy it.
-					if (value instanceof Item) {
-						recycleThis = new ArrayList<lotus.domino.Base>();
-						// remove the mime item first, so that it will not collide with MIME etc.
-						MIMEEntity mimeChk = getMIMEEntity(itemName);
-						if (mimeChk != null) {
-							try {
-								mimeChk.remove();
-							} finally {
-								closeMIMEEntities(true, itemName);
-							}
-						}
-						beginEdit();
-						result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, getAncestorSession(), recycleThis));
-						markDirty(itemName, true);
-		
-						s_recycle(result);
-		
-						if (returnItem) {
-							return getFactory().create(Item.SCHEMA, this, itemName);
-						} else {
-							return null;
-						}
-					}
-		
-					//TODO Replace with TypeUtils calls to allow for extensibility
-		
-					// first step: Make it domino friendly and put all converted objects into "dominoFriendly"
-					if (value instanceof String || value instanceof Integer || value instanceof Double) {
-						dominoFriendlyObj = value;
-					} else if (value instanceof Collection) {
-						if (TypeUtils.isFriendlyVector(value)) {
-							recycleThis = null;
-							dominoFriendlyVec = (Vector<Object>) value;
-						} else {
-							recycleThis = new ArrayList<lotus.domino.Base>();
-							Collection<?> coll = (Collection<?>) value;
-							dominoFriendlyVec = new Vector<Object>(coll.size());
-							for (Object valNode : coll) {
-								if (valNode != null) { // CHECKME: Should NULL values discarded?
-									if (valNode instanceof BigString) {
-										isNonSummary = true;
-									}
-									if (valNode instanceof Name) {
-										isNames = true;
-									}
-									dominoFriendlyVec.add(toItemFriendly(valNode, getAncestorSession(), recycleThis));
-								}
-							}
-						}
-					} else if (value.getClass().isArray()) {
-						recycleThis = new ArrayList<lotus.domino.Base>();
-						int lh = Array.getLength(value);
-						if (lh > MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
-							String cn = value.getClass().getName();
-							if (cn.length() == 2)						// It is primitive
-								throw new Domino32KLimitException();
-						}
-						dominoFriendlyVec = new Vector<Object>(lh);
-						for (int i = 0; i < lh; i++) {
-							Object o = Array.get(value, i);
-							if (o != null) { // CHECKME: Should NULL values be discarded?
-								if (o instanceof BigString) {
-									isNonSummary = true;
-								}
-								if (o instanceof Name) {
-									isNames = true;
-								}
-								dominoFriendlyVec.add(toItemFriendly(o, getAncestorSession(), recycleThis));
-							}
-						}
-					} else { // Scalar
-						recycleThis = new ArrayList<lotus.domino.Base>();
-						if (value instanceof BigString) {
-							isNonSummary = true;
-						}
-						if (value instanceof Name) {
-							isNames = true;
-						}
-						dominoFriendlyObj = toItemFriendly(value, getAncestorSession(), recycleThis);
-					}
-					Object firstElement = null;
-		
-					// empty vectors are treated as "null"
-					if (dominoFriendlyObj == null) {
-						if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
-							return replaceItemValueLotus(itemName, null, isSummary, returnItem);
-						} else {
-							firstElement = dominoFriendlyVec.get(0);
-						}
-					} else {
-						firstElement = dominoFriendlyObj;
-					}
-		
-					int payloadOverhead = 0;
-		
-					if (dominoFriendlyVec != null && dominoFriendlyVec.size() > 1) {	// compute overhead first for multi values
-						// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
-						if (firstElement instanceof String)
-							payloadOverhead = 2 + 2 * dominoFriendlyVec.size();
-						else
-							payloadOverhead = 4;
-					}
-		
-					// Next step: Type checking + length computation
-					//
-					// Remark: The special case of a String consisting of only ONE @NewLine (i.e.
-					// 		if (s.equals("\n") || s.equals("\r") || s.equals("\r\n"))
-					// where Domino is a bit ailing) won't be extra considered any longer.
-					// Neither serialization nor throwing an exception would be reasonable here.
-		
-					int payload = payloadOverhead;
-					Class<?> firstElementClass;
-					if (firstElement instanceof String)
-						firstElementClass = String.class;
-					else if (firstElement instanceof Number)
-						firstElementClass = Number.class;
-					else if (firstElement instanceof lotus.domino.DateTime)
-						firstElementClass = lotus.domino.DateTime.class;
-					else if (firstElement instanceof lotus.domino.DateRange)
-						firstElementClass = lotus.domino.DateRange.class;
-					// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
-					// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
-					else
-						throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
-		
-					if (dominoFriendlyVec != null) {
-						for (Object o : dominoFriendlyVec) {
-							payload += TypeUtils.getLotusPayload(o, firstElementClass);
-						}
-					} else {
-						payload += TypeUtils.getLotusPayload(dominoFriendlyObj, firstElementClass);
-					}
-		
-					if (payload > MAX_NATIVE_FIELD_SIZE) {
-						// the datatype is OK, but there's no way to store the data in the Document
-						throw new Domino32KLimitException();
-					}
-					if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
-						// each sign may demand up to 3 bytes in LMBCS
-						int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
-						if (calc >= MAX_NATIVE_FIELD_SIZE) {
-							if (dominoFriendlyVec != null) {
-								payload = payloadOverhead + LMBCSUtils.getPayload(dominoFriendlyVec);
-							} else {
-								payload = payloadOverhead + LMBCSUtils.getPayload((String) dominoFriendlyObj);
-							}
-							if (payload > MAX_NATIVE_FIELD_SIZE)
-								throw new Domino32KLimitException();
-						}
-					}
-					if (payload > MAX_SUMMARY_FIELD_SIZE) {
-						isNonSummary = true;
-					}
-		
-					MIMEEntity mimeChk = getMIMEEntity(itemName);
-					if (mimeChk != null) {
-						try {
-							mimeChk.remove();
-						} finally {
-							closeMIMEEntities(true, itemName);
-						}
-					}
-					beginEdit();
-					if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 1) {
-						result = getDelegate().replaceItemValue(itemName, firstElement);
-					} else {
-						result = getDelegate().replaceItemValue(itemName, dominoFriendlyVec);
-					}
-					markDirty(itemName, true);
-					if (isSummary == null) {
-						// Auto detect
-						if (isNonSummary) {
-							result.setSummary(false);
-						}
-					} else {
-						result.setSummary(isSummary.booleanValue());
-					}
-					if (value instanceof ReadersList) {
-						result.setReaders(true);
-					} else if (value instanceof AuthorsList) {
-						result.setAuthors(true);
-					} else if (value instanceof NamesList || isNames) {
-						result.setNames(true);
-					}
-		
-					s_recycle(result);
-					if (returnItem) {
-						// to keep compatibility and speed, return a blank item, that will resurrect on demand
-						return getFactory().create(Item.SCHEMA, this, itemName);
-						//return fromLotus(result, Item.SCHEMA, this);
-					}
-		
-				} catch (NotesException ex) {
-					DominoUtils.handleException(ex, this, "Item=" + itemName);
-				} finally {
-					s_recycle(recycleThis);
-				}
-		
-				return null;*/
 	}
 
 	private AutoMime autoMime_ = null;
@@ -3141,7 +2968,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#save()
 	 */
 	@Override
@@ -3153,7 +2980,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#save(boolean)
 	 */
 	@Override
@@ -3165,7 +2992,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#save(boolean, boolean)
 	 */
 	@Override
@@ -3177,7 +3004,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#save(boolean, boolean, boolean)
 	 */
 	@Override
@@ -3187,7 +3014,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		//			Throwable t = new Throwable();
 		//			t.printStackTrace();
 
-		checkMimeOpen(null);
+		checkMimeOpen();
 		// System.out.println("Starting save operation...");
 		boolean result = false;
 		if (removeType_ != null) {
@@ -3201,6 +3028,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			if (go) {
 				writeItemInfo();
 				fieldNames_ = null;
+				isNew_ = false;
 				try {
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
@@ -3217,8 +3045,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						// so we can do that in every case
 						noteid_ = del.getNoteID();
 						unid_ = del.getUniversalID();
-						isDeferred_ = false;
-						isNew_ = noteid_.equals("0") || noteid_.isEmpty(); // don't set to true, save may fail!
+						isNew_ = noteid_.equals("0") || noteid_.isEmpty();// don't set to true, save may fail!
 						invalidateCaches();
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
@@ -3239,7 +3066,6 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 							getDelegate().save(force, makeResponse, markRead);
 							noteid_ = getDelegate().getNoteID();
 							isNew_ = noteid_.equals("0") || noteid_.isEmpty();
-							isDeferred_ = false;
 							System.out.println(message);
 							log_.log(Level.WARNING, message/* , t */);
 						} catch (NotesException ne) {
@@ -3269,7 +3095,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			if (log_.isLoggable(Level.FINE)) {
 				log_.log(Level.FINE, "Document " + getNoteID() + " was not saved because nothing on it was changed.");
 			}
-			result = true; // because nothing changed, we don't want to activate any potential failure behavior in the caller
+			result = true;// because nothing changed, we don't want to activate any potential failure behavior in the caller
 		}
 		// System.out.println("Save completed returning " + String.valueOf(result));
 		return result;
@@ -3283,7 +3109,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#send()
 	 */
 	@Override
@@ -3293,12 +3119,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#send(boolean)
 	 */
 	@Override
 	public void send(final boolean attachForm) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().send(false);
@@ -3310,7 +3136,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#send(boolean, java.lang.String)
 	 */
 	@Override
@@ -3322,14 +3148,14 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#send(boolean, java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void send(final boolean attachForm, final Vector recipients) {
 		// TODO - NTF handle transaction context
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().send(attachForm, recipients);
@@ -3341,7 +3167,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#send(java.lang.String)
 	 */
 	@Override
@@ -3351,13 +3177,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#send(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void send(final Vector recipients) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		// TODO - NTF handle transaction context
 		try {
@@ -3370,12 +3196,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#setEncryptOnSend(boolean)
 	 */
 	@Override
 	public void setEncryptOnSend(final boolean flag) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().setEncryptOnSend(flag);
@@ -3387,13 +3213,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#setEncryptionKeys(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void setEncryptionKeys(final Vector keys) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		try {
 			getDelegate().setEncryptionKeys(keys);
@@ -3405,12 +3231,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#setPreferJavaDates(boolean)
 	 */
 	@Override
 	public void setPreferJavaDates(final boolean flag) {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		try {
 			getDelegate().setPreferJavaDates(flag);
 		} catch (NotesException e) {
@@ -3420,12 +3246,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#setSaveMessageOnSend(boolean)
 	 */
 	@Override
 	public void setSaveMessageOnSend(final boolean flag) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		// TODO NTF - mark dirty?
 		try {
 			getDelegate().setSaveMessageOnSend(flag);
@@ -3436,12 +3262,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#setSignOnSend(boolean)
 	 */
 	@Override
 	public void setSignOnSend(final boolean flag) {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		// TODO NTF - mark dirty?
 		try {
 			getDelegate().setSignOnSend(flag);
@@ -3452,22 +3278,22 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#setUniversalID(java.lang.String)
 	 */
 	@Override
 	public void setUniversalID(final String unid) {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		beginEdit();
 		try {
 			try {
 				lotus.domino.Document del = getDelegate().getParentDatabase().getDocumentByUNID(unid);
-				if (del != null) { // this is surprising. Why didn't we already get it?
+				if (del != null) {// this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
 									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
 									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
-					if (isDirty()) { // we've already made other changes that we should tuck away...
+					if (isDirty()) {// we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						org.openntf.domino.Document stashDoc = copyToDatabase(getParentDatabase());
@@ -3512,12 +3338,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#sign()
 	 */
 	@Override
 	public void sign() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		beginEdit();
 		// TODO RPr: is it enough if we add $Signatue?
 		try {
@@ -3530,12 +3356,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Document#unlock()
 	 */
 	@Override
 	public void unlock() {
-		checkMimeOpen(null);
+		checkMimeOpen();
 		try {
 			getDelegate().unlock();
 		} catch (NotesException e) {
@@ -3563,7 +3389,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * This method marks a certain field dirty. Use this with care. So this method should not be part of an interface!
-	 * 
+	 *
 	 * @param fieldName
 	 *            the fieldName of the item you currently modify
 	 * @param itemWritten
@@ -3586,11 +3412,11 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				//				System.out.println("DEBUG: Found a transaction: " + txn + " from parent Database " + getParentDatabase().getApiPath());
 				txn.queueRemove(this);
 				isRemoveQueued_ = true;
-				return true; // we queued this, so whoever asked shouldn't do it yet.
+				return true;// we queued this, so whoever asked shouldn't do it yet.
 			} else {
-				return false; // calling function should just go ahead and execute
+				return false;// calling function should just go ahead and execute
 			}
-		} else { // we already queued this for removal.
+		} else {// we already queued this for removal.
 			return false;
 		}
 	}
@@ -3602,9 +3428,10 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	@Override
 	public void rollback() {
-		//		checkMimeOpen();
-		if (removeType_ != null)
+		checkMimeOpen();
+		if (removeType_ != null) {
 			removeType_ = null;
+		}
 		if (isDirty()) {
 			//			String nid = getNoteID();
 			try {
@@ -3632,7 +3459,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	@Override
 	public boolean forceDelegateRemove() {
-		//		checkMimeOpen();
+		checkMimeOpen();
 		boolean result = false;
 		RemoveType type = removeType_;
 		//		System.out.println("DEBUG: Forcing delegate removal of type " + (type == null ? "null!" : type.name()));
@@ -3682,7 +3509,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				lotus.domino.Database db = toLotus(getParentDatabase());
 				if (db != null) {
 					if (noteid_.length() == 0 || Integer.valueOf(noteid_, 16) == 0) {
-						if (isNew_ != null && isNew_) {
+						if (isNewNote()) {//NTF this is redundant... not sure what the best move here is...
 							d = db.createDocument();
 							d.setUniversalID(unid_);
 							if (log_.isLoggable(Level.FINE)) {
@@ -3719,6 +3546,19 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 								+ " had been recycled and was auto-restored. Changes may have been lost.", t);
 					}
+					//					StackTraceElement[] elements = t.getStackTrace();
+					//					log_.log(Level.FINER,
+					//							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+					//							+ ")");
+					//					log_.log(Level.FINER,
+					//								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+					//										+ ")");
+					//						log_.log(Level.FINER,
+					//								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+					//										+ ")");
+					//					}
+					//					log_.log(Level.FINE,
+					//							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
@@ -3743,17 +3583,19 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 								DominoUtils.handleException(ne1);
 							}
 						} else {
-							if (log_.isLoggable(Level.WARNING))
+							if (log_.isLoggable(Level.WARNING)) {
 								log_.log(Level.WARNING,
 										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
 												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
 												+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+							}
 						}
 					}
 				} else {
-					if (log_.isLoggable(Level.WARNING))
+					if (log_.isLoggable(Level.WARNING)) {
 						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
 								+ ", but the parent database object is null!");
+					}
 				}
 				setDelegate(d, true);
 				shouldResurrect_ = false;
@@ -3790,17 +3632,37 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * Map methods
 	 */
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public void clear() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Tests if the document contains an item with the given name.
+	 *
+	 * @param key
+	 *            Name of the item to check
+	 * @return true, if the document contains an item with the name given in key parameter
+	 */
 	@Override
 	public boolean containsKey(final Object key) {
 		// TODO: use keySet()?
 		return this.hasItem(key == null ? null : String.valueOf(key));
 	}
 
+	/**
+	 * Checks if the document contains the given value in any of its items.
+	 *
+	 * @param value
+	 *            Value to search for
+	 * @return true if any of the items contains the value
+	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean containsValue(final Object value) {
@@ -3859,8 +3721,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			String[] args = new String[1];
 			args[0] = key;
 			result = containsValue(filterMap.get(key), args);
-			if (!result)
+			if (!result) {
 				break;
+			}
 		}
 
 		return result;
@@ -3872,6 +3735,27 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return new DocumentEntrySet(this);
 	}
 
+	/**
+	 * Gets a value depending on the parameter 'key'. Key can either be a &#64;Formula, a special value or an item name.
+	 * <p>
+	 * Possible values for the 'key' parameter:
+	 * <dl>
+	 * <dt>parentdocument</dt>
+	 * <dd>Returns the parent document if this document is a response</dd>
+	 * <dt>@accesseddate</dt>
+	 * <dd>Indicates the time and date when the document was last accessed by a Notes client, whether for reading or editing as a
+	 * java.util.Date.</dd>
+	 * <dt>@modifieddate</dt>
+	 * <dd>Returns a time-date value indicating when the document was modified initially as a java.util.Date</dd>
+	 * <dt>@createddate</dt>
+	 * <dd>Returns the time-date when the document was created as a java.util.Date</dd>
+	 * </dl>
+	 * </p>
+	 *
+	 * @param key
+	 *            &#64;formula, item name or a special value from a list above
+	 * @return value corresponding to the given 'key'
+	 */
 	@Override
 	public Object get(final Object key) {
 		//TODO NTF: Back this with a caching Map so repeated calls don't bounce down to the delegate unless needed
@@ -3889,7 +3773,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			if ("form".equalsIgnoreCase(skey)) {
 				return this.getFormName();
 			}
-			if (skey.indexOf("@") != -1) { // TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
+			if (skey.indexOf("@") != -1) {// TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
 				//TODO NTF: If so, we should change to looking for valid item names first, then trying to treat as formula
 				int pos = skey.indexOf('(');
 				if (pos != -1) {
@@ -3930,8 +3814,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				}
 				if ("@responses".equals(skey)) {
 					DocumentCollection resp = this.getResponses();
-					if (resp == null)
+					if (resp == null) {
 						return 0;
+					}
 					return resp.getCount();
 				}
 				if ("@isnewdoc".equals(skey)) {
@@ -3939,8 +3824,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				}
 				if ("@inheriteddocumentuniqueid".equals(skey)) {
 					org.openntf.domino.Document parent = this.getParentDocument();
-					if (parent == null)
+					if (parent == null) {
 						return "";
+					}
 					return parent.getUniversalID();
 				}
 
@@ -3964,10 +3850,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		try {
 			value = this.getItemValue(keyS, Object.class);
 		} catch (OpenNTFNotesException e) {
-			if (e.getCause() instanceof NotesException || (e.getCause() != null && e.getCause().getCause() instanceof NotesException))
+			if (e.getCause() instanceof NotesException || (e.getCause() != null && e.getCause().getCause() instanceof NotesException)) {
 				value = getFirstItem(keyS, true);
-			if (value == null)
+			}
+			if (value == null) {
 				throw e;
+			}
 		}
 		if (value instanceof Vector) {
 			Vector<?> v = (Vector<?>) value;
@@ -3989,6 +3877,11 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		//return null;
 	}
 
+	/**
+	 * Returns false.
+	 *
+	 * @return false
+	 */
 	@Override
 	public boolean isEmpty() {
 		return false;
@@ -4030,11 +3923,25 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return fieldNames_;
 	}
 
+	/**
+	 * Returns a set of names of items in this document.
+	 *
+	 * @return item names sorted in an alphabetical order
+	 */
 	@Override
 	public Set<String> keySet() {
 		return Collections.unmodifiableSet(keySetInt());
 	}
 
+	/**
+	 * Replaces an item's value with a new one.
+	 *
+	 * @param key
+	 *            name of the item to change
+	 * @param value
+	 *            new value for the item
+	 * @return item's old value
+	 */
 	@Override
 	public Object put(final String key, final Object value) {
 		if (key != null) {
@@ -4048,6 +3955,12 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return null;
 	}
 
+	/**
+	 * Replaces items specified in the map with new values.
+	 *
+	 * @param m
+	 *            map with item names to change as keys and new values as values
+	 */
 	@Override
 	public void putAll(final Map<? extends String, ? extends Object> m) {
 		for (Map.Entry<? extends String, ? extends Object> entry : m.entrySet()) {
@@ -4057,6 +3970,13 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// this.save();
 	}
 
+	/**
+	 * Removes an item from this document.
+	 *
+	 * @param key
+	 *            Name of the item to remove
+	 * @return Value of the removed item
+	 */
 	@Override
 	public Object remove(final Object key) {
 		if (key != null) {
@@ -4068,11 +3988,19 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return null;
 	}
 
+	/**
+	 * Returns number of items in this document
+	 */
 	@Override
 	public int size() {
 		return this.getItems().size();
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @returns null
+	 */
 	@Override
 	public Collection<Object> values() {
 		// TODO Implement a "viewing" collection for this or throw an UnsupportedOperationException
@@ -4081,7 +4009,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -4091,7 +4019,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -4101,7 +4029,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Document#getFormName()
 	 */
 	@Override
@@ -4115,7 +4043,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Document#getForm()
 	 */
 	@Override
@@ -4222,8 +4150,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 		try {
 			String myForm = getDelegate().getItemValueString("form");
-			if (myForm != null && !myForm.isEmpty())
+			if (myForm != null && !myForm.isEmpty()) {
 				myDetail += ", Form:" + myForm;
+			}
 		} catch (NotesException e) {
 		}
 		result.add(new ExceptionDetails.Entry(this, myDetail));
@@ -4452,12 +4381,47 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return extendedNoteInfos_.isDefault;
 	}
 
+	/**
+	 * Not implemented
+	 * 
+	 * @param richTextName
+	 * @param attachmentName
+	 * @param file
+	 */
+	public void replaceAttachment(final String richTextName, final String attachmentName, final String file) {
+
+	}
+
+	/**
+	 * Not implemented
+	 * 
+	 * @param richTextName
+	 * @param attachmentName
+	 */
+	public void removeAttachment(final String richTextName, final String attachmentName) {
+
+	}
+
+	/**
+	 * Not implemented
+	 * 
+	 * @return an empty collection
+	 */
+	public Collection<EmbeddedObject> getAllAttachments() {
+		Collection<EmbeddedObject> result = new ArrayList<EmbeddedObject>();
+		return result;
+	}
+	//	@Override
+	//	protected boolean allowAccessAcrossThreads() {
+	//		return !isDirty();
+	//	}
+
 	@Override
 	public void encrypt(final UserID arg0) {
 		try {
 			getDelegate().encrypt(arg0);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
 
@@ -4466,34 +4430,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		try {
 			getDelegate().encrypt(arg0, arg1);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
-
-	public void replaceAttachment(final String richTextName, final String attachmentName, final String file) {
-
-	}
-
-	public void removeAttachment(final String richTextName, final String attachmentName) {
-
-	}
-
-	public Collection<EmbeddedObject> getAllAttachments() {
-		Collection<EmbeddedObject> result = new ArrayList<EmbeddedObject>();
-		return result;
-	}
-
-	@Override
-	protected lotus.domino.Document getDelegate() {
-		if (isDeferred_) {
-			resurrect();
-			return super.getDelegate();
-		} else {
-			return super.getDelegate();
-		}
-	}
-	//	@Override
-	//	protected boolean allowAccessAcrossThreads() {
-	//		return !isDirty();
-	//	}
 }

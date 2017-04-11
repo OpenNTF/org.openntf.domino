@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -28,9 +28,9 @@ import org.openntf.domino.utils.Factory;
 
 /**
  * @author praml
- * 
+ *
  *         DominoReference tracks the lifetime of reference object and recycles delegate if reference object is GCed
- * 
+ *
  */
 public class DominoReference extends WeakReference<Base<?>> {
 	/** The Constant log_. */
@@ -40,12 +40,13 @@ public class DominoReference extends WeakReference<Base<?>> {
 	private lotus.domino.Base delegate_;
 
 	private transient int hashcode_;
+	private final long cppId_;
 
 	private boolean noRecycle = false;
 
 	/**
 	 * Instantiates a new domino reference.
-	 * 
+	 *
 	 * @param reference
 	 *            the wrapper to track
 	 * @param q
@@ -53,12 +54,14 @@ public class DominoReference extends WeakReference<Base<?>> {
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(final Base<?> reference, final ReferenceQueue<Object> q, final lotus.domino.Base delegate) {
+	public DominoReference(final Base<?> reference, final ReferenceQueue<Object> q, final lotus.domino.Base delegate, final long cppId) {
 		super(reference, q);
 
 		// Because the reference separately contains a pointer to the delegate object, it's still available even
 		// though the wrapper is null
 		this.delegate_ = delegate;
+
+		this.cppId_ = cppId;
 	}
 
 	//void clearLotusReference() {
@@ -103,9 +106,9 @@ public class DominoReference extends WeakReference<Base<?>> {
 			}
 
 			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
-				// if the wrapper is out of scope and the element was an EmbeddedObject, we call markInvalid 
+				// if the wrapper is out of scope and the element was an EmbeddedObject, we call markInvalid
 				// It does not matter if the object was already recycled/dead. MarkInvalid will internally just
-				// call "cleanupTempFile" (cannot throw an exception) 
+				// call "cleanupTempFile" (cannot throw an exception)
 				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
 			}
 
@@ -116,7 +119,7 @@ public class DominoReference extends WeakReference<Base<?>> {
 	/**
 	 * Prevents that the delegate object will be really recycled. Autorecycle counting is done. - So you must ensure that you recycle the
 	 * document yourself or wrap it again
-	 * 
+	 *
 	 * @param what
 	 *            The object to set to not recycle.
 	 */
@@ -138,20 +141,24 @@ public class DominoReference extends WeakReference<Base<?>> {
 	 */
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
+		}
 
-		if (!(obj instanceof DominoReference))
+		if (!(obj instanceof DominoReference)) {
 			return false;
+		}
 
 		Object ref1 = this.get();
 		Object ref2 = ((DominoReference) obj).get();
 
-		if (ref1 == ref2)
+		if (ref1 == ref2) {
 			return true;
+		}
 
-		if ((ref1 == null) || (ref2 == null))
+		if ((ref1 == null) || (ref2 == null)) {
 			return false;
+		}
 
 		return ref1.equals(ref2);
 	}
@@ -170,6 +177,10 @@ public class DominoReference extends WeakReference<Base<?>> {
 
 	lotus.domino.Base getDelegate() {
 		return delegate_;
+	}
+
+	long getCppId() {
+		return cppId_;
 	}
 
 }

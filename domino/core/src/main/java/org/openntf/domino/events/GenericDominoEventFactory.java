@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.events;
 
@@ -8,8 +8,10 @@ import java.util.logging.Logger;
 import org.openntf.domino.Base;
 
 /**
- * @author nfreeman
+ * Used internally when generating events.
  * 
+ * @author nfreeman
+ *
  */
 public class GenericDominoEventFactory implements IDominoEventFactory {
 	private static final long serialVersionUID = 1L;
@@ -17,17 +19,18 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 	private static final Logger log_ = Logger.getLogger(GenericDominoEventFactory.class.getName());
 
 	/**
+	 * Extension of AbstractDominoObject being used by the GenericDominoEventFactory. No additional code currently
+	 *
 	 * @author withersp
-	 * 
-	 *         Extension of AbstractDominoObject being used by the GenericDominoEventFactory. No additional code currently
-	 * 
+	 *
+	 *
 	 * @since openntf.domino 3.0.0
 	 */
 	public static class GenericDominoEvent extends AbstractDominoEvent {
 
 		/**
 		 * Constructor passing all variables used by the GenericDominoEvent
-		 * 
+		 *
 		 * @param event
 		 *            EnumEvent this GenericDominoEvent triggers
 		 * @param source
@@ -36,7 +39,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 		 *            Base Domino object that is the target of the event
 		 * @param payload
 		 *            Object being passed as the payload for the event
-		 * 
+		 *
 		 * @since openntf.domino 3.0.0
 		 */
 		public GenericDominoEvent(final EnumEvent event, final Base<?> source, final Base<?> target, final Object payload) {
@@ -53,7 +56,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.events.IDominoEventFactory#wrap(org.openntf.domino.events.IDominoEvent)
 	 */
 	@Override
@@ -63,7 +66,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.events.IDominoEventFactory#generate(java.lang.Object[])
 	 */
 	@Override
@@ -74,7 +77,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.events.IDominoEventFactory#initialize()
 	 */
 	@Override
@@ -85,7 +88,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.events.IDominoEventFactory#terminate()
 	 */
 	@Override

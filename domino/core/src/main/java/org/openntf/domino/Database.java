@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -24,16 +24,113 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.enums.DominoEnumUtil;
+import org.openntf.domino.utils.enums.INumberEnum;
 
 /**
- * The Interface Database.
+ * Represents a Notes database.
+ * <h3>Notable enhancements and changes</h3>
+ * <ul>
+ * <li>Create a document and set its values in one call using {@link org.openntf.domino.ext.Database#createDocument(Object...)} method</li>
+ * <li>Use {@link org.openntf.domino.ext.Database#getDocumentWithKey(java.io.Serializable, boolean)} to create/access a document with your
+ * own UNID</li>
+ * <li>Contains support for transactions - changes to Notes documents in a single transaction are either written to all documents or none at
+ * all</li>
+ * <li>Database generates events in various situations - before and after a document is created, updated or deleted and so on.</li>
+ * </ul>
+ * <h3>Transactions</h3>
+ * <p>
+ * Use transactions to cache changes to multiple documents. When an error occurs within your block of code, changes to those documents can
+ * be rolled back. You control when a transaction starts and when the changes are written to all modified documents or when the changes
+ * should be rolled back. The ODA Platform keeps track of documents modified within a single transaction.
+ * </p>
+ * <h5>Usage</h5>
+ * <p>
+ * <ul>
+ * <li>{@link org.openntf.domino.Database#startTransaction()} - returns {@link org.openntf.domino.transactions.DatabaseTransaction}.
+ * Indicates to the database that Document updates should be cached until the transaction is explicitly committed or rollbacked. This
+ * includes field changes as well as document deletions.</li>
+ *
+ * <li>{@link org.openntf.domino.transactions.DatabaseTransaction#commit()} - calls .save() and .remove() on all transaction-cached
+ * Documents in the current database. The transaction is closed in this process so you have to start a new one after a call to
+ * commit().</li>
+ *
+ * <li>{@link org.openntf.domino.transactions.DatabaseTransaction#rollback()} - reverts all changes to Documents within the
+ * transaction.</li>
+ * <li>{@link org.openntf.domino.Database#closeTransaction()} - erases the cache with Document updates. The Documents will still have the
+ * changes but you have to save them yourself.</li>
+ * </ul>
+ * </p>
+ * <h5>Note</h5>
+ * <p>
+ * The mechanism can't roll back changes to documents already saved within the commit() operation. If an error occurs while saving a
+ * document, other documents will still be saved.
+ * </p>
+ * <p>
+ * <h5>Example</h5>
+ *
+ * <pre>
+ * private void processOrder(String line) {
+ *  Order order = parseInput(line);
+ *  if (order != null) {
+ *    DatabaseTransaction transaction = database.startTransaction();
+ *
+ *    try {
+ *      Document docCustomer = getCustomer(order.getCustomerID())
+ *      Document docOrder = database.createDocument("Form", "Order", "CustomerID", order.getCustomerID());
+ *
+ *      //update both the docCustomer and docOrder
+ *      .....
+ *      //if no exception or error condition occurs, save all changed documents
+ *      transaction.commit();
+ *    } catch (Throwable t) {
+ *       //error occurred, roll the changes back
+ *       transaction.rollback();
+ *
+ *       //and log the error
+ *    }
+ *  }
+ * }
+ * </pre>
+ * </p>
+ * <h3>Events</h3>
+ * <p>
+ * The Database class publishes events in certain situations. You can subscribe to these events and react to them. Events are published
+ * before and after a certain situation happens. An event listener can prevent the situation to happen if it returns false when reacting to
+ * the "before" event.
+ * </p>
+ * <h5>Note</h5>
+ * <p>
+ * An event listener must return event types it wants to subscribe to.<br/>
+ * Database class fires events when one of its method is called. For example when a replicate() method is called, then a BEFORE_REPLICATION
+ * and AFTER_REPLICATION events are fired. Database class can't fire events when a scheduled replication occurs on the server.
+ * </p>
+ * <h5>Available events</h5>
+ * <p>
+ * Events are described in {@link org.openntf.domino.ext.Database.Events}.
+ * </p>
+ * <h5>Usage</h5>
+ * <p>
+ * <ul>
+ * <li>Implement the {@link org.openntf.domino.events.IDominoListener} interface.
+ * <li>Attach the listener using {@link #addListener(org.openntf.domino.events.IDominoListener)} method.
+ * </ul>
+ * </p>
+ * <h5>Example</h5>
+ * <p>
+ * See the examples in the {@link org.openntf.domino.events.IDominoListener} interface.
+ * </p>
+ *
+ *
+ * @see org.openntf.domino.events.IDominoListener
+ * @see org.openntf.domino.ext.Database.Events
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 
 	/**
 	 * Enum to allow easy access to Schema
-	 * 
+	 *
 	 * @since 5.0.0
 	 */
 	public static class Schema extends FactorySchema<Database, lotus.domino.Database, Session> {
@@ -57,7 +154,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Generic database utilities
-	 * 
+	 *
 	 * @deprecated RPr: As far as I know, this was only used in the DbDirectory
 	 */
 	@Deprecated
@@ -65,7 +162,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		;
 		/**
 		 * Checks whether the database is a template with .ntf (Notes Template Facility) file type
-		 * 
+		 *
 		 * @param db
 		 *            Database to check
 		 * @return boolean whether the database has a .ntf suffix or not
@@ -77,7 +174,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Checks whether the database is a database with .nsf-style (Notes Storage Facility) file type
-		 * 
+		 *
 		 * @param db
 		 *            Database to check
 		 * @return boolean whether the database has a .nsf, .nsh or .nsg suffix or not
@@ -90,7 +187,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Checks whether replication is disabled for the specified Database
-		 * 
+		 *
 		 * @param db
 		 *            Database to check
 		 * @return boolean whether {@link org.openntf.domino.Database#isReplicationDisabled()} is true
@@ -104,7 +201,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Not currently implemented, just returns true
-		 * 
+		 *
 		 * @param db
 		 *            Database to check
 		 * @return boolean, currently always returns true
@@ -120,7 +217,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Comparator to allow easy checking whether two databases have the same filepath (e.g. on different servers)
-	 * 
+	 *
 	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -134,7 +231,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Comparator to alow easy checking whether database A was modified before/after database B
-	 * 
+	 *
 	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -148,7 +245,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Comparator to allow easy checking whether two databases have the same title
-	 * 
+	 *
 	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -162,7 +259,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Comparator to allow easy checking whether two databases have the same API path (server!!filepath)
-	 * 
+	 *
 	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -176,15 +273,17 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Enum to allow easy access to database options for use with {@link org.openntf.domino.Database#getOption(DBOption)} method
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public static enum DBOption {
+	// TODO: Remove OPTIMIZAION for 3.0
+	public static enum DBOption implements INumberEnum<Integer> {
 		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED),
 		MOREFIELDS(Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS),
 		NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(Database.DBOPT_NORESPONSEINFO),
 		NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), NOUNREAD(Database.DBOPT_NOUNREAD),
-		OPTIMIZAION(Database.DBOPT_OPTIMIZATION), REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY),
+		OPTIMIZAION(Database.DBOPT_OPTIMIZATION), OPTIMIZATION(Database.DBOPT_OPTIMIZATION),
+		REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY),
 		REPLICATEUNREADMARKSTOCLUSTER(Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER),
 		REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), SOFTDELETE(Database.DBOPT_SOFTDELETE),
 		COMPRESSDESIGN(Database.DBOPT_COMPRESSDESIGN), COMPRESSDOCUMENTS(Database.DBOPT_COMPRESSDOCUMENTS),
@@ -196,7 +295,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Instantiates a new dB option.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -206,29 +305,25 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Gets the value.
-		 * 
+		 *
 		 * @return the value
 		 */
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static DBOption valueOf(final int value) {
-			for (DBOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(DBOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to database signing options for use with {@link org.openntf.domino.Database} sign methods
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public static enum SignDocType {
+	public static enum SignDocType implements INumberEnum<Integer> {
 
 		/** The acl. */
 		ACL(Database.DBSIGN_DOC_ACL),
@@ -256,7 +351,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Instantiates a new sign doc type.
-		 * 
+		 *
 		 * @param value
 		 *            the value
 		 */
@@ -266,29 +361,25 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		/**
 		 * Gets the value.
-		 * 
+		 *
 		 * @return the value
 		 */
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static SignDocType valueOf(final int value) {
-			for (SignDocType opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(SignDocType.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to options for {@link org.openntf.domino.Database} compact methods
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public static enum CompactOption {
+	public static enum CompactOption implements INumberEnum<Integer> {
 		ARCHIVE_DELETE_COMPACT(Database.CMPC_ARCHIVE_DELETE_COMPACT), ARCHIVE_DELETE_ONLY(Database.CMPC_ARCHIVE_DELETE_ONLY),
 		CHK_OVERLAP(Database.CMPC_CHK_OVERLAP), COPYSTYLE(Database.CMPC_COPYSTYLE),
 		DISABLE_DOCTBLBIT_OPTMZN(Database.CMPC_DISABLE_DOCTBLBIT_OPTMZN), DISABLE_LARGE_UNKTBL(Database.CMPC_DISABLE_LARGE_UNKTBL),
@@ -306,26 +397,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static CompactOption valueOf(final int value) {
-			for (CompactOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(CompactOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to FTIndex options for {@link org.openntf.domino.Database#createFTIndex(java.util.Set, boolean)} method
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FTIndexOption {
+	public static enum FTIndexOption implements INumberEnum<Integer> {
 		ALL_BREAKS(Database.FTINDEX_ALL_BREAKS), ATTACHED_BIN_FILES(Database.FTINDEX_ATTACHED_BIN_FILES),
 		ATTACHED_FILES(Database.FTINDEX_ATTACHED_FILES), CASE_SENSITIVE(Database.FTINDEX_CASE_SENSITIVE),
 		ENCRYPTED_FIELDS(Database.FTINDEX_ENCRYPTED_FIELDS);
@@ -336,26 +423,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FTIndexOption valueOf(final int value) {
-			for (FTIndexOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FTIndexOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to fixup options for {@link org.openntf.domino.Database#fixup(java.util.Set)} method
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FixupOption {
+	public static enum FixupOption implements INumberEnum<Integer> {
 		INCREMENTAL(Database.FIXUP_INCREMENTAL), NODELETE(Database.FIXUP_NODELETE), NOVIEWS(Database.FIXUP_NOVIEWS),
 		QUICK(Database.FIXUP_QUICK), REVERT(Database.FIXUP_REVERT), TXLOGGED(Database.FIXUP_TXLOGGED), VERIFY(Database.FIXUP_VERIFY);
 
@@ -365,27 +448,23 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FixupOption valueOf(final int value) {
-			for (FixupOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FixupOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to FTIndex frequency options for {@link org.openntf.domino.Database#setFTIndexFrequency(FTIndexFrequency)}
 	 * method
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FTIndexFrequency {
+	public static enum FTIndexFrequency implements INumberEnum<Integer> {
 		DAILY(Database.FTINDEX_DAILY), HOURLY(Database.FTINDEX_HOURLY), IMMEDIATE(Database.FTINDEX_IMMEDIATE),
 		SCHEDULED(Database.FTINDEX_SCHEDULED);
 
@@ -395,26 +474,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FTIndexFrequency valueOf(final int value) {
-			for (FTIndexFrequency opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FTIndexFrequency.class, value);
 		}
 	}
 
 	/**
 	 * Enum to provide easy access to FTDomain sort options, used by {@link org.openntf.domino.Database} FTDomainSearch methods
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FTDomainSortOption {
+	public static enum FTDomainSortOption implements INumberEnum<Integer> {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
 
 		private final int value_;
@@ -423,27 +498,23 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FTDomainSortOption valueOf(final int value) {
-			for (FTDomainSortOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FTDomainSortOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to FTDomain search option, used by
 	 * {@link org.openntf.domino.Database#FTDomainSearch(String, int, FTDomainSortOption, java.util.Set, int, int, String)}
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FTDomainSearchOption {
+	public static enum FTDomainSearchOption implements INumberEnum<Integer> {
 		DATABASE(Database.FT_DATABASE), FILESYSTEM(Database.FT_FILESYSTEM), FUZZY(Database.FT_FUZZY), STEMS(Database.FT_STEMS);
 
 		private final int value_;
@@ -452,26 +523,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FTDomainSearchOption valueOf(final int value) {
-			for (FTDomainSearchOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FTDomainSearchOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to FTSearch sort options for use by {@link org.openntf.domino.Database} FTSearch methods
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FTSortOption {
+	public static enum FTSortOption implements INumberEnum<Integer> {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC),
 		DATECREATED_DES(Database.FT_DATECREATED_DES), DATECREATED_ASC(Database.FT_DATECREATED_ASC);
 
@@ -481,26 +548,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FTSortOption valueOf(final int value) {
-			for (FTSortOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FTSortOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to FTSearch options for use by {@link org.openntf.domino.Database} FTSearch methods
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum FTSearchOption {
+	public static enum FTSearchOption implements INumberEnum<Integer> {
 		FUZZY(Database.FT_FUZZY), STEMS(Database.FT_STEMS);
 
 		private final int value_;
@@ -509,27 +572,23 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static FTSearchOption valueOf(final int value) {
-			for (FTSearchOption opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(FTSearchOption.class, value);
 		}
 	}
 
 	/**
 	 * Enum to provide easy access to modified documents class, for use with {@link org.openntf.domino.Database} getModifiedDocuments
 	 * methods
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum ModifiedDocClass {
+	public static enum ModifiedDocClass implements INumberEnum<Integer> {
 		ACL(Database.DBMOD_DOC_ACL), AGENT(Database.DBMOD_DOC_AGENT), ALL(Database.DBMOD_DOC_ALL), DATA(Database.DBMOD_DOC_DATA),
 		FORM(Database.DBMOD_DOC_FORM), HELP(Database.DBMOD_DOC_HELP), ICON(Database.DBMOD_DOC_ICON),
 		REPLFORMULA(Database.DBMOD_DOC_REPLFORMULA), SHAREDFIELD(Database.DBMOD_DOC_SHAREDFIELD), VIEW(Database.DBMOD_DOC_VIEW);
@@ -540,26 +599,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		public static ModifiedDocClass valueOf(final int value) {
-			for (ModifiedDocClass opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(ModifiedDocClass.class, value);
 		}
 	}
 
 	/**
 	 * Enum to allow easy access to database types for use with {@link org.openntf.domino.Database#getType()} method
-	 * 
+	 *
 	 * @since org.openntf.domino 2.5.0
 	 */
-	public static enum Type {
+	public static enum Type implements INumberEnum<Integer> {
 		ADDR_BOOK(Database.DBTYPE_ADDR_BOOK), IMAP_SVR_PROXY(Database.DBTYPE_IMAP_SVR_PROXY), LIBRARY(Database.DBTYPE_LIBRARY),
 		LIGHT_ADDR_BOOK(Database.DBTYPE_LIGHT_ADDR_BOOK), MAILBOX(Database.DBTYPE_MAILBOX), MAILFILE(Database.DBTYPE_MAILFILE),
 		MULTIDB_SRCH(Database.DBTYPE_MULTIDB_SRCH), NEWS_SVR_PROXY(Database.DBTYPE_NEWS_SVR_PROXY),
@@ -572,30 +627,48 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			value_ = value;
 		}
 
-		public int getValue() {
+		@Override
+		public Integer getValue() {
 			return value_;
 		}
 
 		/**
 		 * Return the {@link Database.Type} of a numeric value
-		 * 
+		 *
 		 * @param value
 		 *            the numeric value
 		 * @return a {@link Database.Type} Object
 		 */
 		public static Type valueOf(final int value) {
-			for (Type opt : values()) {
-				if (opt.getValue() == value) {
-					return opt;
-				}
-			}
-			return null;
+			return DominoEnumUtil.valueOf(Type.class, value);
+		}
+	}
+
+	public static enum DBPrivilege implements INumberEnum<Integer> {
+		CREATE_DOCS(DBACL_CREATE_DOCS), DELETE_DOCS(DBACL_DELETE_DOCS), CREATE_PRIV_AGENTS(DBACL_CREATE_PRIV_AGENTS),
+		CREATE_PRIV_FOLDERS_VIEWS(DBACL_CREATE_PRIV_FOLDERS_VIEWS), CREATE_SHARED_FOLDERS_VIEWS(DBACL_CREATE_SHARED_FOLDERS_VIEWS),
+		CREATE_SCRIPT_AGENTS(DBACL_CREATE_SCRIPT_AGENTS), READ_PUBLIC_DOCS(DBACL_READ_PUBLIC_DOCS),
+		WRITE_PUBLIC_DOCS(DBACL_WRITE_PUBLIC_DOCS), REPLICATE_COPY_DOCS(DBACL_REPLICATE_COPY_DOCS);
+
+		private final int value_;
+
+		private DBPrivilege(final int value) {
+			value_ = value;
+		}
+
+		@Override
+		public Integer getValue() {
+			return value_;
+		}
+
+		public static DBPrivilege valueOf(final int value) {
+			return DominoEnumUtil.valueOf(DBPrivilege.class, value);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getACLActivityLog()
 	 */
 	@Override
@@ -605,25 +678,25 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#compact()
 	 */
 	@Override
 	public int compact();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#compactWithOptions(int)
+	/**
+	 * Compacts a local database with given options.
+	 *
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#compactWithOptions(java.util.Set)}
 	 */
 	@Override
 	@Deprecated
 	public int compactWithOptions(final int options);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#compactWithOptions(int, java.lang.String)
+	/**
+	 * Compacts a local database with given options if specified amount of percent or unused space exceeds given spaceThreshold.
+	 *
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#compactWithOptions(java.util.Set, String)}
 	 */
 	@Override
 	@Deprecated
@@ -631,23 +704,21 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#compactWithOptions(java.lang.String)
 	 */
 	@Override
 	public int compactWithOptions(final String options);
 
 	/*
-	 * 
+	 *
 	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Database createCopy(final String server, final String dbFile);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String, int)
+	/**
+	 * @deprecated Applies to a Release 4 server only, use {@link #createCopy(String, String)}
 	 */
 	@Override
 	@Deprecated
@@ -655,25 +726,18 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createDocument()
 	 */
 	@Override
 	public Document createDocument();
 
-	/**
-	 * Creates the document.
-	 * 
-	 * @param keyValuePairs
-	 *            the key value pairs
-	 * @return the document
-	 */
 	@Override
 	public Document createDocument(final Object... keyValuePairs);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createDocumentCollection()
 	 */
 	@Override
@@ -681,7 +745,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -689,16 +753,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
 	@Override
 	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#createFTIndex(int, boolean)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#createFTIndex(java.util.Set, boolean)} method.
 	 */
 	@Override
 	@Deprecated
@@ -706,7 +768,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createNoteCollection(boolean)
 	 */
 	@Override
@@ -714,7 +776,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createOutline(java.lang.String)
 	 */
 	@Override
@@ -722,7 +784,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createOutline(java.lang.String, boolean)
 	 */
 	@Override
@@ -730,7 +792,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -738,7 +800,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
 	@Override
@@ -746,7 +808,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	@Override
@@ -755,7 +817,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createReplica(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -763,7 +825,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createView()
 	 */
 	@Override
@@ -771,7 +833,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createView(java.lang.String)
 	 */
 	@Override
@@ -779,7 +841,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -787,7 +849,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
 	@Override
@@ -795,7 +857,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	@Override
@@ -804,7 +866,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#enableFolder(java.lang.String)
 	 */
 	@Override
@@ -812,56 +874,30 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#fixup()
 	 */
 	@Override
 	public void fixup();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#fixup(int)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#fixup(java.util.Set)} method.
 	 */
 	@Override
 	@Deprecated
 	public void fixup(final int options);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
+	/**
+	 * @deprecated replaced by {@link Database#FTDomainSearch(String, int, FTDomainSortOption, java.util.Set, int, int, String)} method.
 	 */
 	@Override
 	@Deprecated
 	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start,
 			final int count, final String entryForm);
 
-	/**
-	 * FT domain search.
-	 * 
-	 * @param query
-	 *            the query
-	 * @param maxDocs
-	 *            the max docs
-	 * @param sortOpt
-	 *            the sort opt
-	 * @param otherOpt
-	 *            the other opt
-	 * @param start
-	 *            the start
-	 * @param count
-	 *            the count
-	 * @param entryForm
-	 *            the entry form
-	 * @return the document
-	 */
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start,
-			final int count, final String entryForm);
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -869,16 +905,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#FTSearch(java.lang.String, int)
 	 */
 	@Override
 	public DocumentCollection FTSearch(final String query, final int maxDocs);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#FTSearch(java.lang.String, int, int, int)
+	/**
+	 * @deprecated replaced by {@link #FTSearch(String, int, FTSortOption, java.util.Set)} method.
 	 */
 	@Override
 	@Deprecated
@@ -886,7 +920,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * FT search.
-	 * 
+	 *
 	 * @param query
 	 *            the query
 	 * @param maxDocs
@@ -899,10 +933,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#FTSearchRange(java.lang.String, int, int, int, int)
+	/**
+	 * @deprecated replaced by {@link Database#FTSearchRange(String, int, FTSortOption, java.util.Set, int)} method
 	 */
 	@Override
 	@Deprecated
@@ -910,7 +942,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * FT search range.
-	 * 
+	 *
 	 * @param query
 	 *            the query
 	 * @param maxDocs
@@ -928,8 +960,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * 
+	 *
+	 *
 	 * @see lotus.domino.Database#getACL()
 	 */
 	@Override
@@ -937,7 +969,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAgent(java.lang.String)
 	 */
 	@Override
@@ -945,7 +977,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAgents()
 	 */
 	@Override
@@ -954,7 +986,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAllDocuments()
 	 */
 	@Override
@@ -962,7 +994,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAllReadDocuments()
 	 */
 	@Override
@@ -970,7 +1002,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAllReadDocuments(java.lang.String)
 	 */
 	@Override
@@ -978,7 +1010,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAllUnreadDocuments()
 	 */
 	@Override
@@ -986,7 +1018,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getAllUnreadDocuments(java.lang.String)
 	 */
 	@Override
@@ -994,7 +1026,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getCategories()
 	 */
 	@Override
@@ -1002,7 +1034,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getCreated()
 	 */
 	@Override
@@ -1010,7 +1042,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getCurrentAccessLevel()
 	 */
 	@Override
@@ -1018,7 +1050,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getDB2Schema()
 	 */
 	@Override
@@ -1026,7 +1058,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getDesignTemplateName()
 	 */
 	@Override
@@ -1034,7 +1066,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getDocumentByID(java.lang.String)
 	 */
 	@Override
@@ -1042,7 +1074,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getDocumentByUNID(java.lang.String)
 	 */
 	@Override
@@ -1050,7 +1082,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getDocumentByURL(java.lang.String, boolean)
 	 */
 	@Override
@@ -1058,7 +1090,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
@@ -1069,7 +1101,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getFileFormat()
 	 */
 	@Override
@@ -1077,7 +1109,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getFileName()
 	 */
 	@Override
@@ -1085,7 +1117,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getFilePath()
 	 */
 	@Override
@@ -1093,7 +1125,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getFolderReferencesEnabled()
 	 */
 	@Override
@@ -1101,7 +1133,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getForm(java.lang.String)
 	 */
 	@Override
@@ -1109,7 +1141,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getForms()
 	 */
 	@Override
@@ -1118,7 +1150,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getFTIndexFrequency()
 	 */
 	@Override
@@ -1126,7 +1158,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getHttpURL()
 	 */
 	@Override
@@ -1134,7 +1166,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getLastFixup()
 	 */
 	@Override
@@ -1142,7 +1174,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getLastFTIndexed()
 	 */
 	@Override
@@ -1150,7 +1182,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getLastModified()
 	 */
 	@Override
@@ -1158,7 +1190,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getLimitRevisions()
 	 */
 	@Override
@@ -1166,7 +1198,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getLimitUpdatedBy()
 	 */
 	@Override
@@ -1174,7 +1206,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getListInDbCatalog()
 	 */
 	@Override
@@ -1182,7 +1214,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getManagers()
 	 */
 	@Override
@@ -1191,7 +1223,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getMaxSize()
 	 */
 	@Override
@@ -1199,7 +1231,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getModifiedDocuments()
 	 */
 	@Override
@@ -1207,16 +1239,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getModifiedDocuments(lotus.domino.DateTime)
 	 */
 	@Override
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#getModifiedDocuments(lotus.domino.DateTime, int)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getModifiedDocuments(java.util.Date, ModifiedDocClass)} method.
 	 */
 	@Override
 	@Deprecated
@@ -1224,16 +1254,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getNotesURL()
 	 */
 	@Override
 	public String getNotesURL();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#getOption(int)
+	/**
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getOption(DBOption)} method.
 	 */
 	@Override
 	@Deprecated
@@ -1241,7 +1269,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getOutline(java.lang.String)
 	 */
 	@Override
@@ -1249,7 +1277,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getParent()
 	 */
 	@Override
@@ -1257,7 +1285,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getPercentUsed()
 	 */
 	@Override
@@ -1265,7 +1293,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getProfileDocCollection(java.lang.String)
 	 */
 	@Override
@@ -1273,7 +1301,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getProfileDocument(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1281,7 +1309,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getReplicaID()
 	 */
 	@Override
@@ -1289,7 +1317,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getReplicationInfo()
 	 */
 	@Override
@@ -1297,7 +1325,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getServer()
 	 */
 	@Override
@@ -1305,7 +1333,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getSize()
 	 */
 	@Override
@@ -1313,7 +1341,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getSizeQuota()
 	 */
 	@Override
@@ -1321,7 +1349,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getSizeWarning()
 	 */
 	@Override
@@ -1329,7 +1357,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getTemplateName()
 	 */
 	@Override
@@ -1337,17 +1365,16 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getTitle()
 	 */
 	@Override
 	public String getTitle();
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 *
 	 * @see lotus.domino.Database#getType()
-	 * @Deprecated, better use getTypeEx
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getTypeEx()}
 	 */
 	@Override
 	@Deprecated
@@ -1355,7 +1382,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getUndeleteExpireTime()
 	 */
 	@Override
@@ -1363,7 +1390,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getURL()
 	 */
 	@Override
@@ -1371,7 +1398,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String)
 	 */
@@ -1381,7 +1408,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getView(java.lang.String)
 	 */
 	@Override
@@ -1389,36 +1416,26 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#getViews()
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<View> getViews();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#grantAccess(java.lang.String, int)
+	/**
+	 * @deprecated replaced by {@link #grantAccess(String, org.openntf.domino.ACL.Level)}
 	 */
 	@Override
 	@Deprecated
 	public void grantAccess(final String name, final int level);
 
-	/**
-	 * Grant access.
-	 * 
-	 * @param name
-	 *            the name
-	 * @param level
-	 *            the level
-	 */
 	@Override
 	public void grantAccess(final String name, final ACL.Level level);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isAllowOpenSoftDeleted()
 	 */
 	@Override
@@ -1426,7 +1443,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isClusterReplication()
 	 */
 	@Override
@@ -1434,7 +1451,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isConfigurationDirectory()
 	 */
 	@Override
@@ -1442,7 +1459,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isCurrentAccessPublicReader()
 	 */
 	@Override
@@ -1450,7 +1467,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isCurrentAccessPublicWriter()
 	 */
 	@Override
@@ -1458,7 +1475,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isDB2()
 	 */
 	@Override
@@ -1467,7 +1484,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isDelayUpdates()
 	 */
 	@Override
@@ -1475,7 +1492,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isDesignLockingEnabled()
 	 */
 	@Override
@@ -1483,7 +1500,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isDirectoryCatalog()
 	 */
 	@Override
@@ -1491,7 +1508,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isDocumentLockingEnabled()
 	 */
 	@Override
@@ -1499,7 +1516,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isFTIndexed()
 	 */
 	@Override
@@ -1507,7 +1524,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isInMultiDbIndexing()
 	 */
 	@Override
@@ -1515,7 +1532,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isInService()
 	 */
 	@Override
@@ -1523,7 +1540,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isLink()
 	 */
 	@Override
@@ -1531,7 +1548,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isMultiDbSearch()
 	 */
 	@Override
@@ -1539,7 +1556,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isOpen()
 	 */
 	@Override
@@ -1547,7 +1564,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isPendingDelete()
 	 */
 	@Override
@@ -1555,7 +1572,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isPrivateAddressBook()
 	 */
 	@Override
@@ -1563,7 +1580,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#isPublicAddressBook()
 	 */
 	@Override
@@ -1571,7 +1588,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#markForDelete()
 	 */
 	@Override
@@ -1579,7 +1596,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#open()
 	 */
 	@Override
@@ -1587,7 +1604,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#openByReplicaID(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1595,7 +1612,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#openIfModified(java.lang.String, java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
@@ -1603,7 +1620,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#openWithFailover(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1611,7 +1628,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#queryAccess(java.lang.String)
 	 */
 	@Override
@@ -1619,7 +1636,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#queryAccessPrivileges(java.lang.String)
 	 */
 	@Override
@@ -1627,7 +1644,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#queryAccessRoles(java.lang.String)
 	 */
 	@Override
@@ -1635,7 +1652,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#remove()
 	 */
 	@Override
@@ -1643,7 +1660,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#removeFTIndex()
 	 */
 	@Override
@@ -1651,7 +1668,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#replicate(java.lang.String)
 	 */
 	@Override
@@ -1659,7 +1676,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#revokeAccess(java.lang.String)
 	 */
 	@Override
@@ -1667,7 +1684,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#search(java.lang.String)
 	 */
 	@Override
@@ -1675,7 +1692,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#search(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
@@ -1683,7 +1700,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#search(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	@Override
@@ -1691,7 +1708,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setAllowOpenSoftDeleted(boolean)
 	 */
 	@Override
@@ -1699,7 +1716,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setCategories(java.lang.String)
 	 */
 	@Override
@@ -1707,7 +1724,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setDelayUpdates(boolean)
 	 */
 	@Override
@@ -1715,7 +1732,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setDesignLockingEnabled(boolean)
 	 */
 	@Override
@@ -1723,7 +1740,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setDocumentLockingEnabled(boolean)
 	 */
 	@Override
@@ -1731,16 +1748,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setFolderReferencesEnabled(boolean)
 	 */
 	@Override
 	public void setFolderReferencesEnabled(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#setFTIndexFrequency(int)
+	/**
+	 * @deprecated replaced by {@link Database#setFTIndexFrequency(FTIndexFrequency)} method.
 	 */
 	@Override
 	@Deprecated
@@ -1748,7 +1763,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setInMultiDbIndexing(boolean)
 	 */
 	@Override
@@ -1756,7 +1771,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setInService(boolean)
 	 */
 	@Override
@@ -1764,7 +1779,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setLimitRevisions(double)
 	 */
 	@Override
@@ -1772,7 +1787,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setLimitUpdatedBy(double)
 	 */
 	@Override
@@ -1780,35 +1795,25 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setListInDbCatalog(boolean)
 	 */
 	@Override
 	public void setListInDbCatalog(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#setOption(int, boolean)
+	/**
+	 * @deprecated replaced by {@link Database#setOption(DBOption, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void setOption(final int optionName, final boolean flag);
 
-	/**
-	 * Sets the option.
-	 * 
-	 * @param optionName
-	 *            the option name
-	 * @param flag
-	 *            the flag
-	 */
 	@Override
 	public void setOption(final DBOption optionName, final boolean flag);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setSizeQuota(int)
 	 */
 	@Override
@@ -1816,7 +1821,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setSizeWarning(int)
 	 */
 	@Override
@@ -1824,7 +1829,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setTitle(java.lang.String)
 	 */
 	@Override
@@ -1832,7 +1837,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#setUndeleteExpireTime(int)
 	 */
 	@Override
@@ -1840,7 +1845,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#sign()
 	 */
 	@Override
@@ -1848,7 +1853,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#sign(int)
 	 */
 	@Override
@@ -1856,85 +1861,63 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Sign.
-	 * 
+	 *
 	 * @param documentType
 	 *            the document type
 	 */
 	@Override
 	public void sign(final SignDocType documentType);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#sign(int, boolean)
+	/**
+	 * @deprecated replaced by {@link #sign(SignDocType, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly);
 
-	/**
-	 * Sign.
-	 * 
-	 * @param documentType
-	 *            the document type
-	 * @param existingSigsOnly
-	 *            the existing sigs only
-	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String)
+	/**
+	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly, final String name);
 
-	/**
-	 * Sign.
-	 * 
-	 * @param documentType
-	 *            the document type
-	 * @param existingSigsOnly
-	 *            the existing sigs only
-	 * @param name
-	 *            the name
-	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String, boolean)
+	/**
+	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
-	/**
-	 * Sign.
-	 * 
-	 * @param documentType
-	 *            the document type
-	 * @param existingSigsOnly
-	 *            the existing sigs only
-	 * @param name
-	 *            the name
-	 * @param nameIsNoteid
-	 *            the name is noteid
-	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Database#updateFTIndex(boolean)
 	 */
 	@Override
 	public void updateFTIndex(final boolean create);
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#setUserIDForDecrypt(lotus.domino.UserID)
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public void setUserIDForDecrypt(lotus.domino.UserID arg0);
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#setUserIDFileForDecrypt(java.lang.String, java.lang.String)
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public void setUserIDFileForDecrypt(String arg0, String arg1);
 
 }

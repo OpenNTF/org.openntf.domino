@@ -16,6 +16,7 @@ import com.ibm.xsp.extlib.component.picker.data.IPickerResult;
  * 
  *         SimpleNamePickerData, for use with the NamePicker control
  */
+// TODO: Remove before 3.0 - all functionality introduced in ExtLib 14
 public class SimpleNamePickerData implements INamePickerData {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(SimpleNamePickerData.class.getName());

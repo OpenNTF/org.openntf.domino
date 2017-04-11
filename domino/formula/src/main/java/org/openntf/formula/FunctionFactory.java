@@ -69,17 +69,18 @@ public class FunctionFactory {
 		//		} else {
 		//			// case if serviceLoader does not work (notesAgent)
 		//			System.out.println("FunctionSet Service not found. Using defaults");
-		//			loaderList.add(new org.openntf.formula.function.Operators.Functions());
-		//			loaderList.add(new org.openntf.formula.function.OperatorsBool.Functions());
-		//			loaderList.add(new org.openntf.formula.function.Negators.Functions());
-		//			loaderList.add(new org.openntf.formula.function.Comparators.Functions());
-		//			loaderList.add(new org.openntf.formula.function.Constants.Functions());
-		//			loaderList.add(new org.openntf.formula.function.MathFunctions.Functions());
-		//			loaderList.add(new org.openntf.formula.function.DateTimeFunctions.Functions());
-		//			loaderList.add(new org.openntf.formula.function.TextFunctions.Functions());
+		//		loaderList.add(new org.openntf.formula.function.Operators.Functions());
+		//		loaderList.add(new org.openntf.formula.function.OperatorsBool.Functions());
+		//		loaderList.add(new org.openntf.formula.function.Negators.Functions());
+		//		loaderList.add(new org.openntf.formula.function.Comparators.Functions());
+		//		loaderList.add(new org.openntf.formula.function.Constants.Functions());
+		//		loaderList.add(new org.openntf.formula.function.MathFunctions.Functions());
+		//		loaderList.add(new org.openntf.formula.function.DateTimeFunctions.Functions());
+		//		loaderList.add(new org.openntf.formula.function.TextFunctions.Functions());
 		//		}
 		//
 		Collections.sort(loaderList, new Comparator<FunctionSet>() {
+			@Override
 			public int compare(final FunctionSet paramT1, final FunctionSet paramT2) {
 				return paramT2.getPriority() - paramT1.getPriority();
 			}
@@ -188,8 +189,14 @@ public class FunctionFactory {
 		fsl.add(new org.openntf.formula.function.MathFunctions.Functions());
 		fsl.add(new org.openntf.formula.function.DateTimeFunctions.Functions());
 		fsl.add(new org.openntf.formula.function.TextFunctions.Functions());
-		for (FunctionSet fact : fsl)
-			minimalFF.functions.putAll(fact.getFunctions());
+		for (FunctionSet fact : fsl) {
+			if (fact != null) {
+				Map<String, Function> functions = fact.getFunctions();
+				if (functions != null) {
+					minimalFF.functions.putAll(functions);
+				}
+			}
+		}
 		minimalFF.setImmutable();
 	}
 }

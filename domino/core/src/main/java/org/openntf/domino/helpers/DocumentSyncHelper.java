@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.helpers;
@@ -32,10 +32,10 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
  * DocumentSyncHelper class
- * 
+ *
  * This class provides a quick and easy way to sync fields or formulas from a DocumentCollection to related documents, e.g. from Companies
  * to Contacts for those companies, or States to Contacts for those states.
- * 
+ *
  * <ol>
  * <li>Create a map of updates to make to related documents
  * <ul>
@@ -55,7 +55,7 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  * <li>Get a DocumentCollection of source document(s)</li>
  * <li>Pass to DocumentSyncHelper.process method</li>
  * </ol>
- * 
+ *
  * Example:<br/>
  * <code>
  * Database currDb = XSPUtil.getCurrentDatabase();
@@ -69,10 +69,10 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  * DocumentCollection sourceCollection = states.getAllDocuments();
  * helper.process(sourceCollection);
  * </code>
- * 
+ *
  * Alternatively, sync settings can be held in a control document. Use a Map<Controls, String> to map DocumentSyncHelper properties to Item
  * names on the control document, e.g.
- * 
+ *
  * Map has key Controls.TARGET_SERVER=ServerName will look for an Item called ServerName on the control document to retrieve the server name
  * to use in the DocumentSyncHelper
  */
@@ -84,9 +84,9 @@ public class DocumentSyncHelper {
 
 	/**
 	 * The Enum Strategy.
-	 * 
+	 *
 	 * Strategy to apply when updating target documents
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum Strategy {
@@ -101,9 +101,9 @@ public class DocumentSyncHelper {
 
 	/**
 	 * The TransactionRule enum.
-	 * 
+	 *
 	 * The strategy to apply transactions
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum TransactionRule {
@@ -112,9 +112,9 @@ public class DocumentSyncHelper {
 
 	/**
 	 * The Enum Controls.
-	 * 
+	 *
 	 * Provides standard access to map properties of the DocumentSyncHelper to Item names in a control document from the control Map
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum Controls {
@@ -159,7 +159,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Instantiates a new document sync helper.
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public DocumentSyncHelper() {
@@ -172,7 +172,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Instantiates a new DocumentSyncHelper with a Document of sync settings and a Map of field names for each setting in the control doc
-	 * 
+	 *
 	 * @param controlDoc
 	 *            Document with Items for relevant settings for the DocumentSyncHelper
 	 * @param controlMap
@@ -180,8 +180,9 @@ public class DocumentSyncHelper {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public DocumentSyncHelper(final Document controlDoc, Map<Controls, String> controlMap) {
-		if (controlMap == null)
+		if (controlMap == null) {
 			controlMap = new HashMap<Controls, String>();
+		}
 		if (controlMap.containsKey(Controls.TARGET_SERVER)) {
 			setTargetServer(controlDoc.getItemValueString(controlMap.get(Controls.TARGET_SERVER)));
 		} else if (controlDoc.hasItem(Controls.TARGET_SERVER.toString())) {
@@ -246,7 +247,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Instantiates a new document sync helper passing in a sync map
-	 * 
+	 *
 	 * @param strategy
 	 *            the strategy
 	 * @param syncMap
@@ -282,7 +283,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Extended method to process, allowing the developer to define to only process source documents modified since a given Java date
-	 * 
+	 *
 	 * @param sourceDb
 	 *            Database source documents are in
 	 * @param sinceDate
@@ -297,7 +298,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Extended method to process, allowing the developer to define to only process source documents modified since a given Java date
-	 * 
+	 *
 	 * @param sourceDb
 	 *            Database source documents are in
 	 * @param sinceDate
@@ -315,9 +316,9 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Process a specific DocumentCollection.
-	 * 
+	 *
 	 * WARNING: Does not currently check that all properties of the SyncHelper have been set up
-	 * 
+	 *
 	 * @param coll
 	 *            DocumentCollection of source documents
 	 * @since org.openntf.domino 1.0.0
@@ -333,46 +334,7 @@ public class DocumentSyncHelper {
 			txn = targetDb.startTransaction();
 		}
 		for (Document source : coll) {
-			if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE) {
-				txn = targetDb.startTransaction();
-			}
-			DateTime sourceLastMod = source.getLastModified();
-			// Object lookupKey = Factory.wrappedEvaluate(session, getSourceKeyFormula(), source);
-			Object lookupKey = getSourceKeyFormula().getValue(source);
-			DocumentCollection targetColl = targetView.getAllDocumentsByKey(lookupKey, true);
-			for (Document target : targetColl) {
-				// boolean targetDirty = false;
-				for (Map.Entry<Formula, String> entry : getSyncMap().entrySet()) {
-					String targetItemName = entry.getValue();
-					java.util.Vector<?> sourceValue = entry.getKey().getValue(source);
-					// Factory.wrappedEvaluate(session, entry.getKey(), source);
-					if (strategy == Strategy.CREATE_AND_REPLACE) {
-						target.replaceItemValue(targetItemName, sourceValue);
-						// targetDirty = true;
-					} else {
-						Item targetItem = target.getFirstItem(targetItemName);
-						if (strategy == Strategy.REPLACE_IF_NEWER) {
-							DateTime itemLastMod = targetItem.getLastModified();
-							if (sourceLastMod.isAfter(itemLastMod)) {
-								targetItem.setValues(sourceValue);
-								// targetDirty = true;
-							}
-						} else if (strategy == Strategy.REPLACE_ONLY) {
-							if (targetItem != null) {
-								targetItem.setValues(sourceValue);
-								// targetDirty = true;
-							}
-						}
-					}
-				}
-				if (getTransactionRule() == TransactionRule.NO_TRANSACTION || txn == null) {
-					target.save();
-				}
-			}
-			if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE && txn != null) {
-				txn.commit();
-				txn = null;
-			}
+			txn = processDocument(targetDb, targetView, strategy, txn, source);
 		}
 		if (getTransactionRule() == TransactionRule.COMMIT_AT_END && txn != null) {
 			txn.commit();
@@ -381,8 +343,87 @@ public class DocumentSyncHelper {
 	}
 
 	/**
+	 * Process a specific document
+	 *
+	 * WARNING: Does not currently check that all properties of the SyncHelper have been set up
+	 *
+	 * @param doc
+	 *            Document to process
+	 * @since ODA 3.2.0
+	 */
+	public void process(final Document doc) {
+		// TODO Check to make sure properties are all set up before running
+		Session session = doc.getAncestorSession();
+		Database targetDb = session.getDatabase(getTargetServer(), getTargetFilepath());
+		View targetView = targetDb.getView(getTargetLookupView());
+		Strategy strategy = getStrategy();
+		setTransactionRule(TransactionRule.NO_TRANSACTION);
+		processDocument(targetDb, targetView, strategy, null, doc);
+	}
+
+	/**
+	 * Process a specific Document
+	 *
+	 * @param targetDb
+	 *            Database to retrieve documents to sync to
+	 * @param targetView
+	 *            View to retrieve documents to sync to
+	 * @param strategy
+	 *            Strategy to sync Items
+	 * @param txn
+	 *            DatabaseTransaction to run under
+	 * @param source
+	 *            Document to sync from
+	 * @return DatabaseTransaction to run under
+	 */
+	private DatabaseTransaction processDocument(final Database targetDb, final View targetView, final Strategy strategy,
+			DatabaseTransaction txn, final Document source) {
+		if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE) {
+			txn = targetDb.startTransaction();
+		}
+		DateTime sourceLastMod = source.getLastModified();
+		// Object lookupKey = Factory.wrappedEvaluate(session, getSourceKeyFormula(), source);
+		Object lookupKey = getSourceKeyFormula().getValue(source);
+		DocumentCollection targetColl = targetView.getAllDocumentsByKey(lookupKey, true);
+		for (Document target : targetColl) {
+			// boolean targetDirty = false;
+			for (Map.Entry<Formula, String> entry : getSyncMap().entrySet()) {
+				String targetItemName = entry.getValue();
+				java.util.Vector<?> sourceValue = entry.getKey().getValue(source);
+				// Factory.wrappedEvaluate(session, entry.getKey(), source);
+				if (strategy == Strategy.CREATE_AND_REPLACE) {
+					target.replaceItemValue(targetItemName, sourceValue);
+					// targetDirty = true;
+				} else {
+					Item targetItem = target.getFirstItem(targetItemName);
+					if (strategy == Strategy.REPLACE_IF_NEWER) {
+						DateTime itemLastMod = targetItem.getLastModified();
+						if (sourceLastMod.isAfter(itemLastMod)) {
+							targetItem.setValues(sourceValue);
+							// targetDirty = true;
+						}
+					} else if (strategy == Strategy.REPLACE_ONLY) {
+						if (targetItem != null) {
+							targetItem.setValues(sourceValue);
+							// targetDirty = true;
+						}
+					}
+				}
+			}
+			if (getTransactionRule() == TransactionRule.NO_TRANSACTION || txn == null) {
+				target.save();
+			}
+		}
+		if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE && txn != null) {
+			txn.commit();
+			txn = null;
+		}
+		return txn;
+	}
+
+	/**
 	 * Sets the target View (and so also Database and Server) from which to retrieve documents
-	 * 
+	 *
 	 * @param view
 	 *            View to find documents to update
 	 * @since org.openntf.domino 1.0.0
@@ -394,7 +435,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the target Database (and so also Server) from which to retrieve documents
-	 * 
+	 *
 	 * @param db
 	 *            Database to find documents to update
 	 * @since org.openntf.domino 1.0.0
@@ -406,7 +447,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the target Database (and so also Server) and View from which to retrieve documents
-	 * 
+	 *
 	 * @param db
 	 *            Database to find documents to update
 	 * @param viewName
@@ -421,7 +462,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Gets the target server.
-	 * 
+	 *
 	 * @return String the target server
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -431,7 +472,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the target server.
-	 * 
+	 *
 	 * @param targetServer
 	 *            String the new target server
 	 * @since org.openntf.domino 1.0.0
@@ -442,7 +483,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Gets the target filepath.
-	 * 
+	 *
 	 * @return String the target filepath
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -452,7 +493,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the target filepath.
-	 * 
+	 *
 	 * @param targetFilepath
 	 *            String the new target filepath
 	 * @since org.openntf.domino 1.0.0
@@ -463,7 +504,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Gets the target lookup view.
-	 * 
+	 *
 	 * @return String the target lookup view name
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -473,7 +514,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the target lookup view.
-	 * 
+	 *
 	 * @param targetLookupView
 	 *            String the new target lookup view name
 	 * @since org.openntf.domino 1.0.0
@@ -484,7 +525,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Gets the source key using an Item name or Formula.
-	 * 
+	 *
 	 * @return String the source key formula
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -497,7 +538,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the source key using an Item name of Formula.
-	 * 
+	 *
 	 * @param sourceKeyFormula
 	 *            String the new source key formula
 	 * @since org.openntf.domino 1.0.0
@@ -511,7 +552,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Gets the strategy.
-	 * 
+	 *
 	 * @return Strategy to apply
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -521,7 +562,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Gets the transaction rule.
-	 * 
+	 *
 	 * @return TransactionRule to apply
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -534,7 +575,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the strategy.
-	 * 
+	 *
 	 * @param strategy
 	 *            Strategy to apply
 	 * @since org.openntf.domino 1.0.0
@@ -545,7 +586,7 @@ public class DocumentSyncHelper {
 
 	/**
 	 * Sets the transaction rule.
-	 * 
+	 *
 	 * @param rule
 	 *            TransactionRule to apply
 	 * @since org.openntf.domino 1.0.0
@@ -557,7 +598,7 @@ public class DocumentSyncHelper {
 	/**
 	 * Gets the sync map of Item names or Formulas to apply to the source document and Item names on the target documents into which to
 	 * store the result
-	 * 
+	 *
 	 * @return Map<Formula, String> the sync map
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -568,7 +609,7 @@ public class DocumentSyncHelper {
 	/**
 	 * Sets the sync mapof Item names or Formulas to apply to the source document and Item names on the target documents into which to store
 	 * the result
-	 * 
+	 *
 	 * @param syncMap
 	 *            Map<Formula, String> the sync map
 	 * @since org.openntf.domino 1.0.0

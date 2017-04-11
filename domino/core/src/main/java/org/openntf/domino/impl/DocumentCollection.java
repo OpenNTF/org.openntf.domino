@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -29,6 +29,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
@@ -38,12 +39,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class DocumentCollection.
  */
 public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database>
-implements org.openntf.domino.DocumentCollection {
-
-	/** The block nth. */
-	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
-
-	// something...
+		implements org.openntf.domino.DocumentCollection {
 
 	/**
 	 * The Class NthDocumentMethodNotPermittedException.
@@ -63,15 +59,11 @@ implements org.openntf.domino.DocumentCollection {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent) {
 		super(delegate, parent, NOTES_DOCCOLL);
@@ -91,7 +83,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getCount()
 	 */
 	@Override
@@ -107,7 +99,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getQuery()
 	 */
 	@Override
@@ -123,7 +115,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -133,7 +125,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getFirstDocument()
 	 */
 	@Override
@@ -149,7 +141,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getLastDocument()
 	 */
 	@Override
@@ -165,7 +157,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getNextDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -181,7 +173,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getPrevDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -197,12 +189,12 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getNthDocument(int)
 	 */
 	@Override
 	public org.openntf.domino.Document getNthDocument(final int n) {
-		if (BLOCK_NTH) {
+		if (getAncestorSession().isFixEnabled(Fixes.BLOCK_NTH_DOCUMENT)) {
 			throw new NthDocumentMethodNotPermittedException();
 		}
 		try {
@@ -216,7 +208,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getNextDocument()
 	 */
 	@Override
@@ -232,7 +224,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getPrevDocument()
 	 */
 	@Override
@@ -248,7 +240,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -264,7 +256,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#addDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -279,7 +271,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#addDocument(lotus.domino.Document, boolean)
 	 */
 	@Override
@@ -294,7 +286,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#deleteDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -309,7 +301,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -324,7 +316,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -341,7 +333,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#isSorted()
 	 */
 	@Override
@@ -364,7 +356,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
@@ -379,7 +371,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -394,7 +386,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#removeAll(boolean)
 	 */
 	@Override
@@ -409,7 +401,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
@@ -424,14 +416,21 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void stampAll(final String itemName, final Object value) {
 		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().stampAll(itemName, TypeUtils.toItemFriendly(value, getAncestorSession(), recycleThis));
+			Object val = null;
+			if (value instanceof lotus.domino.Item) {
+				// Special support for items
+				val = value;
+			} else {
+				val = TypeUtils.toItemFriendly(value, getAncestorSession(), recycleThis);
+			}
+			getDelegate().stampAll(itemName, val);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -445,8 +444,14 @@ implements org.openntf.domino.DocumentCollection {
 		try {
 			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
 			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				//NTF - go directly to delegate because we already know the entries are Domino friendly.
-				getDelegate().stampAll(entry.getKey(), TypeUtils.toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis));
+				Object val = null;
+				if (entry.getValue() instanceof lotus.domino.Item) {
+					// Special support for items
+					val = entry.getValue();
+				} else {
+					val = TypeUtils.toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
+				}
+				getDelegate().stampAll(entry.getKey(), val);
 			}
 		} catch (IllegalArgumentException iae) {
 			for (org.openntf.domino.Document doc : this) {
@@ -462,7 +467,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#updateAll()
 	 */
 	@Override
@@ -477,7 +482,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#getUntilTime()
 	 */
 	@Override
@@ -493,7 +498,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -508,7 +513,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -523,7 +528,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllRead()
 	 */
 	@Override
@@ -538,7 +543,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#markAllUnread()
 	 */
 	@Override
@@ -553,7 +558,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#intersect(int)
 	 */
 	@Override
@@ -568,7 +573,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#intersect(java.lang.String)
 	 */
 	@Override
@@ -583,7 +588,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
@@ -598,7 +603,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#merge(int)
 	 */
 	@Override
@@ -613,7 +618,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#merge(java.lang.String)
 	 */
 	@Override
@@ -628,7 +633,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#merge(lotus.domino.Base)
 	 */
 	@Override
@@ -643,7 +648,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#subtract(int)
 	 */
 	@Override
@@ -658,7 +663,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#subtract(java.lang.String)
 	 */
 	@Override
@@ -673,7 +678,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
@@ -688,7 +693,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#contains(int)
 	 */
 	@Override
@@ -704,7 +709,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#contains(java.lang.String)
 	 */
 	@Override
@@ -719,7 +724,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#contains(lotus.domino.Base)
 	 */
 	@Override
@@ -734,7 +739,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.DocumentCollection#cloneCollection()
 	 */
 	@Override
@@ -749,7 +754,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -862,7 +867,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -872,7 +877,7 @@ implements org.openntf.domino.DocumentCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

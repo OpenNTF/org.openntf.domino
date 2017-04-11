@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -39,15 +39,11 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent) {
 		super(delegate, parent, NOTES_OUTLINE);
@@ -379,7 +375,7 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -433,6 +429,26 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 	}
 
 	@Override
+	public boolean getActAsDbOwner() {
+		try {
+			return getDelegate().getActAsDbOwner();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean getAutoRemoveProcessedNotices() {
+		try {
+			return getDelegate().getAutoRemoveProcessedNotices();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
+
+	@Override
 	public String getRecurrenceID(final lotus.domino.DateTime arg0) {
 		try {
 			return getDelegate().getRecurrenceID(arg0);
@@ -440,6 +456,24 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	@Override
+	public void setActAsDbOwner(final boolean arg0) {
+		try {
+			getDelegate().setActAsDbOwner(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setAutoRemoveProcessedNotices(final boolean arg0) {
+		try {
+			getDelegate().setAutoRemoveProcessedNotices(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>1.5.0-SNAPSHOT</version>
+		<version>4.1.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>oda-dist</artifactId>
 	
@@ -18,17 +18,35 @@
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino</artifactId>
+			<version>${project.version}</version>
+			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.formula</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.formula</artifactId>
+			<version>${project.version}</version>
+			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.xsp</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.xsp</artifactId>
+			<version>${project.version}</version>
+			<classifier>javadoc</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
@@ -37,14 +55,26 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
-			<artifactId>org.openntf.domino.updatesite</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
-			<type>eclipse-update-site</type>
+			<artifactId>org.openntf.domino.rest</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.rest</artifactId>
-			<version>1.5.0-SNAPSHOT</version>
+			<version>${project.version}</version>
+			<classifier>javadoc</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.updatesite</artifactId>
+			<version>${project.version}</version>
+			<type>eclipse-update-site</type>
+		</dependency>
+		<dependency>
+			<groupId>org.openntf.domino</groupId>
+			<artifactId>org.openntf.domino.nonxsp.updatesite</artifactId>
+			<version>${project.version}</version>
+			<type>eclipse-update-site</type>
 		</dependency>
 	</dependencies>
 	
@@ -54,13 +84,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.5.3</version>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/oda.xml</descriptor>
-					</descriptors>
-					<finalName>OpenNTF-Domino-API-${project.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
 				<executions>
 					<execution>
 						<id>make-assembly</id>
@@ -68,6 +91,27 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/oda.xml</descriptor>
+							</descriptors>
+							<finalName>OpenNTF-Domino-API-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
+					</execution>
+					<execution>
+						<id>make-nonxsp</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/nonxsp.xml</descriptor>
+							</descriptors>
+							<finalName>OpenNTF-Domino-API-NonXSP-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

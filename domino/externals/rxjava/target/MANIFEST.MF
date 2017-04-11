@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Export-Package: rx,rx.exceptions,rx.functions,rx.internal.operators,rx
+ .internal.schedulers,rx.internal.util,rx.internal.util.unsafe,rx.obse
+ rvables,rx.observers,rx.plugins,rx.schedulers,rx.subjects,rx.subscrip
+ tions
+Bundle-Vendor: Netflix
+Bundle-ClassPath: .
+Bundle-Version: 1.0.0
+Bundle-Name: rxjava
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: rx
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

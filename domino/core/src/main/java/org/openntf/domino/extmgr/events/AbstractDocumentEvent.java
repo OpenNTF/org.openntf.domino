@@ -12,7 +12,16 @@ public abstract class AbstractDocumentEvent extends AbstractDatabaseEvent {
 	}
 
 	public String getNoteId() {
-		return (String) getEventValuesMap().get(EMBridgeEventParams.Noteid);
+		try {
+			Integer noteIdInt = Integer.valueOf((String) getEventValuesMap().get(EMBridgeEventParams.Noteid));
+			return Integer.toHexString(noteIdInt);
+		} catch (Exception e) {
+			return (String) getEventValuesMap().get(EMBridgeEventParams.Noteid);
+		}
+	}
+
+	public int getNoteIdAsInt() {
+		return Integer.valueOf((String) getEventValuesMap().get(EMBridgeEventParams.Noteid));
 	}
 
 	public Document getDocument(final Session session, final String serverName) {

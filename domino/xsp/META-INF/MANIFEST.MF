@@ -2,10 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF XSP Wrapper for org.openntf.domino API
 Bundle-SymbolicName: org.openntf.domino.xsp;singleton:=true
-Bundle-Version: 3.0.1.qualifier
+Bundle-Version: 4.1.0.qualifier
 Bundle-Activator: org.openntf.domino.xsp.Activator
 Bundle-Vendor: OpenNTF.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xsp,
@@ -22,7 +21,9 @@ Export-Package: org.openntf.domino.xsp,
  org.openntf.domino.xsp.script,
  org.openntf.domino.xsp.session,
  org.openntf.domino.xsp.xots
-Require-Bundle: org.openntf.domino;bundle-version="1.5.0";visibility:=reexport,
+Require-Bundle: org.eclipse.osgi;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.0.0,4.0.0)",
+ org.openntf.domino;visibility:=reexport,
  com.ibm.xsp.domino;bundle-version="9.0.1",
  com.ibm.xsp.extlib;bundle-version="9.0.1",
  com.ibm.xsp.extsn;bundle-version="9.0.1",
@@ -30,14 +31,11 @@ Require-Bundle: org.openntf.domino;bundle-version="1.5.0";visibility:=reexport,
  com.ibm.domino.xsp.bootstrap;bundle-version="9.0.1",
  com.ibm.xsp.designer;bundle-version="9.0.1",
  com.ibm.domino.napi;bundle-version="9.0.1",
- org.eclipse.osgi;bundle-version="[3.4.3,3.5.0)",
  com.ibm.icu;bundle-version="3.8.1",
- org.eclipse.core.runtime;bundle-version="3.4.0",
  com.ibm.designer.lib.jsf,
  org.openntf.formula,
  org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
- com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional,
- com.ibm.domino.das;bundle-version="9.0.1"
+ com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional
 Import-Package: com.ibm.domino.commons.json,
  com.ibm.domino.commons.util,
  com.ibm.domino.osgi.core.context,
@@ -46,4 +44,5 @@ Import-Package: com.ibm.domino.commons.json,
  javax.ws.rs.ext,
  lotus.domino,
  org.apache.wink.common.internal.utils,
- org.apache.wink.server.internal.servlet
+ org.apache.wink.server.internal.servlet,
+ org.eclipse.osgi.baseadaptor

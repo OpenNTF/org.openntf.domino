@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Export-Package: javax.annotation,javax.annotation.concurrent,javax.ann
+ otation.meta
+Bundle-ClassPath: .
+Bundle-Version: 1.0.1
+Bundle-Name: jsr305
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: jsr305
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

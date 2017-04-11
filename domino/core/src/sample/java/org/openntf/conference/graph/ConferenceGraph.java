@@ -78,8 +78,8 @@ public class ConferenceGraph {
 		config.addElementStore(defaultStore);
 		config.setDefaultElementStore(defaultStore.getStoreKey());
 
-		//		JavaHandlerModule jhm = new JavaHandlerModule();
-		//		Module module = config.getModule();
+		//JavaHandlerModule jhm = new JavaHandlerModule();
+		//Module module = config.getModule();
 		DFramedGraphFactory factory = new DFramedGraphFactory(config);
 		framedGraph_ = (DFramedTransactionalGraph) factory.create(graph);
 	}

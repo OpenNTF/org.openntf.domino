@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -47,7 +47,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#addGroupMembers(java.lang.String, java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -56,7 +56,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#addInternetCertificateToUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -64,7 +64,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#addInternetCertificateToUser(java.lang.String, java.lang.String, java.lang.String,
 	 * lotus.domino.DateTime)
 	 */
@@ -74,7 +74,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#addServerToCluster(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -82,7 +82,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveDeletePersonInDirectory(java.lang.String)
 	 */
 	@Override
@@ -90,7 +90,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveDeleteServerInDirectory(java.lang.String)
 	 */
 	@Override
@@ -98,7 +98,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveDesignElementDeletion(java.lang.String)
 	 */
 	@Override
@@ -106,7 +106,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveHostedOrgStorageDeletion(java.lang.String)
 	 */
 	@Override
@@ -114,7 +114,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveMailFileDeletion(java.lang.String)
 	 */
 	@Override
@@ -122,7 +122,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveMovedReplicaDeletion(java.lang.String)
 	 */
 	@Override
@@ -130,7 +130,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveNameChangeRetraction(java.lang.String)
 	 */
 	@Override
@@ -138,7 +138,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveRenamePersonInDirectory(java.lang.String)
 	 */
 	@Override
@@ -146,7 +146,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveRenameServerInDirectory(java.lang.String)
 	 */
 	@Override
@@ -154,7 +154,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveReplicaDeletion(java.lang.String)
 	 */
 	@Override
@@ -162,7 +162,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#approveResourceDeletion(java.lang.String)
 	 */
 	@Override
@@ -170,7 +170,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#changeHTTPPassword(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -178,7 +178,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#configureMailAgent(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -186,7 +186,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#configureMailAgent(java.lang.String, java.lang.String, boolean, boolean)
 	 */
 	@Override
@@ -194,7 +194,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#createReplica(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -202,7 +202,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#createReplica(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * boolean, boolean)
 	 */
@@ -212,7 +212,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#deleteGroup(java.lang.String, boolean)
 	 */
 	@Override
@@ -220,7 +220,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#deleteGroup(java.lang.String, boolean, boolean)
 	 */
 	@Override
@@ -228,7 +228,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#deleteReplicas(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -236,7 +236,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#deleteServer(java.lang.String, boolean)
 	 */
 	@Override
@@ -244,7 +244,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
@@ -252,7 +252,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String, boolean)
 	 */
 	@Override
@@ -261,7 +261,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#findGroupInDomain(java.lang.String)
 	 */
 	@Override
@@ -269,7 +269,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#findServerInDomain(java.lang.String)
 	 */
 	@Override
@@ -277,7 +277,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#findUserInDomain(java.lang.String)
 	 */
 	@Override
@@ -285,7 +285,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#getCertificateAuthorityOrg()
 	 */
 	@Override
@@ -293,7 +293,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#getCertificateExpiration()
 	 */
 	@Override
@@ -301,7 +301,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#getCertifierFile()
 	 */
 	@Override
@@ -309,7 +309,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#getCertifierPassword()
 	 */
 	@Override
@@ -317,7 +317,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#getParent()
 	 */
 	@Override
@@ -325,7 +325,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#isCertificateAuthorityAvailable()
 	 */
 	@Override
@@ -333,7 +333,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#isUseCertificateAuthority()
 	 */
 	@Override
@@ -341,7 +341,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -349,18 +349,18 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String, boolean, java.util.Vector,
 	 * boolean)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath,
-			final boolean useSCOS, final Vector newClusterReplicas, final boolean deleteOldClusterReplicas);
+	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath, final boolean useSCOS,
+			final Vector newClusterReplicas, final boolean deleteOldClusterReplicas);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveReplica(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -368,7 +368,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveReplica(java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean,
 	 * boolean)
 	 */
@@ -378,7 +378,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveRoamingUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -386,7 +386,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveUserInHierarchyComplete(java.lang.String)
 	 */
 	@Override
@@ -394,18 +394,18 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveUserInHierarchyComplete(java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
 	public String moveUserInHierarchyComplete(final String requestNoteid, final String lastName, final String firstName,
-			final String middleInitial, final String orgUnit, final String altCommonName, final String altOrgUnit,
-			final String altLanguage, final boolean renameWindowsUser);
+			final String middleInitial, final String orgUnit, final String altCommonName, final String altOrgUnit, final String altLanguage,
+			final boolean renameWindowsUser);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveUserInHierarchyRequest(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -413,7 +413,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#moveUserInHierarchyRequest(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -421,7 +421,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#recertifyServer(java.lang.String)
 	 */
 	@Override
@@ -429,7 +429,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#recertifyUser(java.lang.String)
 	 */
 	@Override
@@ -437,7 +437,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#removeServerFromCluster(java.lang.String)
 	 */
 	@Override
@@ -445,7 +445,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#renameGroup(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -453,7 +453,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#renameNotesUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String)
 	 */
@@ -463,7 +463,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#renameNotesUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
@@ -474,7 +474,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#renameWebUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -484,7 +484,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setCertificateAuthorityOrg(java.lang.String)
 	 */
 	@Override
@@ -492,7 +492,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setCertificateExpiration(lotus.domino.DateTime)
 	 */
 	@Override
@@ -500,7 +500,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setCertifierFile(java.lang.String)
 	 */
 	@Override
@@ -508,7 +508,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setCertifierPassword(java.lang.String)
 	 */
 	@Override
@@ -516,7 +516,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setServerDirectoryAssistanceSettings(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -524,7 +524,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setUseCertificateAuthority(boolean)
 	 */
 	@Override
@@ -532,7 +532,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#setUserPasswordSettings(java.lang.String, java.lang.Integer, java.lang.Integer,
 	 * java.lang.Integer, java.lang.Boolean)
 	 */
@@ -542,7 +542,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#signDatabaseWithServerID(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -550,7 +550,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#signDatabaseWithServerID(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -558,7 +558,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#upgradeUserToHierarchical(java.lang.String)
 	 */
 	@Override
@@ -566,12 +566,18 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.AdministrationProcess#upgradeUserToHierarchical(java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
 	public String upgradeUserToHierarchical(final String userName, final String orgUnit, final String altCommonName,
 			final String altOrgUnit, final String altLanguage);
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String, boolean, int)
+	 */
+	@Override
+	public String deleteUser(String arg0, boolean arg1, int arg2, String arg3, boolean arg4, int arg5);
 
 }

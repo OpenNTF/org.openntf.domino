@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='2'>
+  <unit id='javassist' version='3.18.2' singleton='false'>
+    <update id='javassist' range='[0.0.0,3.18.2)' severity='0'/>
+    <properties size='4'>
+      <property name='org.eclipse.equinox.p2.name' value='javassist'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='javassist'/>
+      <property name='maven-version' value='3.18.2-SNAPSHOT'/>
+    </properties>
+    <provides size='20'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='javassist' version='3.18.2'/>
+      <provided namespace='osgi.bundle' name='javassist' version='3.18.2'/>
+      <provided namespace='java.package' name='javassist' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode.analysis' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode.annotation' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.bytecode.stackmap' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.compiler' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.compiler.ast' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.convert' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.expr' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.runtime' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.scopedpool' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools.reflect' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools.rmi' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.tools.web' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.util' version='0.0.0'/>
+      <provided namespace='java.package' name='javassist.util.proxy' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='javassist' version='3.18.2'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: javassist&#xA;Bundle-Version: 3.18.2&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+  <unit id='javassist.source' version='3.18.2' singleton='false'>
+    <update id='javassist.source' range='[0.0.0,3.18.2)' severity='0'/>
+    <properties size='9'>
+      <property name='df_LT.bundleVendor' value='unknown'/>
+      <property name='df_LT.bundleName' value='javassist Source'/>
+      <property name='org.eclipse.equinox.p2.name' value='%bundleName'/>
+      <property name='org.eclipse.equinox.p2.provider' value='%bundleVendor'/>
+      <property name='org.eclipse.equinox.p2.bundle.localization' value='OSGI-INF/l10n/bundle-src'/>
+      <property name='maven-groupId' value='org.openntf.domino'/>
+      <property name='maven-artifactId' value='javassist'/>
+      <property name='maven-version' value='3.18.2-SNAPSHOT'/>
+      <property name='maven-classifier' value='sources'/>
+    </properties>
+    <provides size='4'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='javassist.source' version='3.18.2'/>
+      <provided namespace='osgi.bundle' name='javassist.source' version='3.18.2'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='source' version='1.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+    </provides>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='javassist.source' version='3.18.2'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: javassist.source&#xA;Bundle-Version: 3.18.2&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

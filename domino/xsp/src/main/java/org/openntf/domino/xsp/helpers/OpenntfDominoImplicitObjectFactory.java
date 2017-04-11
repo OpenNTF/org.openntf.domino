@@ -29,16 +29,16 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	public boolean implicitsDone_ = false;
 
 	private final String[][] implicitObjectList//
-	= { { "openDatabase", Database.class.getName() }, //
-			{ "openSession", Session.class.getName() }, //
-			{ "openSessionAsSigner", Session.class.getName() }, //
-			{ "openSessionAsSignerWithFullAccess", Session.class.getName() }, //
-			{ "openLogBean", XspOpenLogErrorHolder.class.getName() }, //
-			{ "serverScope", Map.class.getName() }, // a scope server wide
-			{ "identiyScope", Map.class.getName() }, // a scope per user (server wide)
-			{ "userScope", Map.class.getName() }, // a scope per user (application wide)
+			= { { "openDatabase", Database.class.getName() }, //
+					{ "openSession", Session.class.getName() }, //
+					{ "openSessionAsSigner", Session.class.getName() }, //
+					{ "openSessionAsSignerWithFullAccess", Session.class.getName() }, //
+					{ "openLogBean", XspOpenLogErrorHolder.class.getName() }, //
+					{ "serverScope", Map.class.getName() }, // a scope server wide
+					{ "identityScope", Map.class.getName() }, // a scope per user (server wide)
+					{ "userScope", Map.class.getName() }, // a scope per user (application wide)
 
-	};
+			};
 
 	private XspOpenLogErrorHolder openLogBean_;
 
@@ -47,7 +47,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	 */
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		if (implicitsDone_) {
+		if (!implicitsDone_) {
 			implicitsDone_ = true;
 			if (!ODAPlatform.isAPIEnabled(null))
 				return;
@@ -89,7 +89,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 				break;
 
 			case 'i':
-				if ("identyScope".equals(objectName))
+				if ("identityScope".equals(objectName))
 					return getUserScopeFrom(getServerMap(ctx));
 				break;
 			case 'u':

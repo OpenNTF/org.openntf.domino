@@ -2,11 +2,11 @@
 <feature
       id="org.openntf.domino.feature"
       label="OpenNTF Domino API"
-      version="3.0.1.qualifier"
+      version="4.1.0.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      An open replacement for the legacy lotus.domino API.
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -27,9 +27,6 @@
    </license>
 
    <requires>
-      <import plugin="jsr305" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.guava" version="18.0.0" match="greaterOrEqual"/>
-      <import plugin="javassist" version="3.18.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="com.ibm.icu.base"/>
@@ -51,20 +48,6 @@
    </requires>
 
    <plugin
-         id="com.google.guava"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.google.guava.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.tinkerpop"
          download-size="0"
          install-size="0"
@@ -73,48 +56,6 @@
 
    <plugin
          id="com.tinkerpop.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="javassist"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="javassist.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="javolution"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="javolution.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="jsr305"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="jsr305.source"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -157,20 +98,6 @@
 
    <plugin
          id="org.openntf.formula.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="rx"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="rx.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

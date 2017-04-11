@@ -591,7 +591,7 @@ public enum Documents {
 					curList = new ArrayList<Object>(pivot.size());
 					unpivot.put(key, curList);
 				}
-				curList.set(i, curMap.get(key));
+				curList.add(curMap.get(key));
 			}
 		}
 		setItemTable(doc, unpivot);
@@ -613,7 +613,7 @@ public enum Documents {
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>(maxSize);
 		for (int i = 0; i < maxSize; i++) {
 			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			result.set(i, map);
+			result.add(map);
 			for (String key : keys) {
 				List<Object> curValue = table.get(key);
 				if (curValue.size() > i) {

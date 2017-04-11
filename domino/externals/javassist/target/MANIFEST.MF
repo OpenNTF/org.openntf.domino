@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Export-Package: javassist,javassist.bytecode,javassist.bytecode.analys
+ is,javassist.bytecode.annotation,javassist.bytecode.stackmap,javassis
+ t.compiler,javassist.compiler.ast,javassist.convert,javassist.expr,ja
+ vassist.runtime,javassist.scopedpool,javassist.tools,javassist.tools.
+ reflect,javassist.tools.rmi,javassist.tools.web,javassist.util,javass
+ ist.util.proxy
+Bundle-ClassPath: .
+Bundle-Version: 3.18.2
+Bundle-Name: javassist
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: javassist
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

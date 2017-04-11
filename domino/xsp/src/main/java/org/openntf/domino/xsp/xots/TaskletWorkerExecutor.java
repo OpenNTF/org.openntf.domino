@@ -48,7 +48,7 @@ public class TaskletWorkerExecutor<T> extends XotsModuleTasklet implements Worke
 					return;
 				if (i == NOT_RUNNING) {
 					if (compareAndSetState(i, RUNNING)) {
-						Xots.submit(TaskletWorkerExecutor.this);
+						Xots.getService().submit(TaskletWorkerExecutor.this);
 						return;
 					}
 				}

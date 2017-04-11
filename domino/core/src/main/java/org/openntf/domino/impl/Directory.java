@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -33,15 +33,11 @@ org.openntf.domino.Directory {
 
 	/**
 	 * Instantiates a new outline.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Directory(final lotus.domino.Directory delegate, final Session parent) {
 		super(delegate, parent, NOTES_DIRECTORY);
@@ -49,7 +45,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#createNavigator()
 	 */
 	@Override
@@ -64,7 +60,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#freeLookupBuffer()
 	 */
 	@Override
@@ -78,7 +74,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#getAvailableItems()
 	 */
 	@SuppressWarnings("unchecked")
@@ -94,7 +90,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#getAvailableNames()
 	 */
 	@SuppressWarnings("unchecked")
@@ -110,7 +106,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#getAvailableView()
 	 */
 	@Override
@@ -125,7 +121,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#getMailInfo(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -141,7 +137,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#getMailInfo(java.lang.String, boolean, boolean)
 	 */
 	@SuppressWarnings("unchecked")
@@ -165,7 +161,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#getServer()
 	 */
 	@Override
@@ -180,7 +176,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#isGroupAuthorizationOnly()
 	 */
 	@Override
@@ -195,7 +191,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#isLimitMatches()
 	 */
 	@Override
@@ -210,7 +206,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#isPartialMatches()
 	 */
 	@Override
@@ -225,7 +221,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#isSearchAllDirectories()
 	 */
 	@Override
@@ -240,7 +236,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#isTrustedOnly()
 	 */
 	@Override
@@ -255,7 +251,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#isUseContextServer()
 	 */
 	@Override
@@ -270,7 +266,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#lookupAllNames(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -285,7 +281,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#lookupAllNames(java.lang.String, java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -301,7 +297,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#lookupNames(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -316,7 +312,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#lookupNames(java.lang.String, java.util.Vector, java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -332,7 +328,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#setGroupAuthorizationOnly(boolean)
 	 */
 	@Override
@@ -346,7 +342,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#setLimitMatches(boolean)
 	 */
 	@Override
@@ -360,7 +356,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#setSearchAllDirectories(boolean)
 	 */
 	@Override
@@ -374,7 +370,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#setTrustedOnly(boolean)
 	 */
 	@Override
@@ -388,7 +384,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Directory#setUseContextServer(boolean)
 	 */
 	@Override
@@ -402,7 +398,7 @@ org.openntf.domino.Directory {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

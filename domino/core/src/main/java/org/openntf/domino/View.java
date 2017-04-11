@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -25,9 +25,25 @@ import org.openntf.domino.types.Design;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface View.
+ * A view in a Notes application.
+ * <p>
+ * <h3>Notable enhancements and changes</h3>
+ * <ul>
+ * <li>When returned by {@link org.openntf.domino.Database#getView(String)}, the {@link #isAutoUpdate() autoUpdate} property is set to false
+ * when Khan mode is enabled.</li>
+ * <li>Use {@link org.openntf.domino.ext.View#checkUnique(Object, Document)} to check if there is only one document in the view with the
+ * given key</li>
+ * <li>Use {@link org.openntf.domino.ext.View#containsDocument(Document)} and {@link org.openntf.domino.ext.View#containsEntry(ViewEntry)}
+ * to check if a document or view entry are displayed in view.</li>
+ * <li>Use {@link org.openntf.domino.ext.View#getFirstDocumentByKey(Object, boolean)} instead of
+ * {@link org.openntf.domino.View#getDocumentByKey(Object, boolean)}</li>
+ * <li>Check if the view contains formulas based on current time using {@link org.openntf.domino.ext.View#isTimeSensitive()}</li>
+ * </ul>
+ * </p>
+ * <p>
+ * See the implementation class {@link org.openntf.domino.impl.View} for details on how the {@link java.util.Map} interface is implemented.
+ * </p>
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
 		DatabaseDescendant, Externalizable, Map<String, Object> {
@@ -57,7 +73,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#clear()
 	 */
 	@Override
@@ -65,7 +81,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#copyColumn(int)
 	 */
 	@Override
@@ -73,7 +89,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#copyColumn(int, int)
 	 */
 	@Override
@@ -81,7 +97,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#copyColumn(java.lang.String)
 	 */
 	@Override
@@ -89,7 +105,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#copyColumn(java.lang.String, int)
 	 */
 	@Override
@@ -97,7 +113,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#copyColumn(lotus.domino.ViewColumn)
 	 */
 	@Override
@@ -105,7 +121,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#copyColumn(lotus.domino.ViewColumn, int)
 	 */
 	@Override
@@ -113,7 +129,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createColumn()
 	 */
 	@Override
@@ -121,7 +137,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createColumn(int)
 	 */
 	@Override
@@ -129,7 +145,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createColumn(int, java.lang.String)
 	 */
 	@Override
@@ -137,7 +153,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createColumn(int, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -145,7 +161,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewEntryCollection()
 	 */
 	@Override
@@ -153,7 +169,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNav()
 	 */
 	@Override
@@ -161,7 +177,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNav(int)
 	 */
 	@Override
@@ -169,7 +185,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFrom(java.lang.Object)
 	 */
 	@Override
@@ -177,7 +193,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFrom(java.lang.Object, int)
 	 */
 	@Override
@@ -185,7 +201,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromAllUnread()
 	 */
 	@Override
@@ -193,7 +209,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromAllUnread(java.lang.String)
 	 */
 	@Override
@@ -201,7 +217,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromCategory(java.lang.String)
 	 */
 	@Override
@@ -209,7 +225,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromCategory(java.lang.String, int)
 	 */
 	@Override
@@ -217,7 +233,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromChildren(java.lang.Object)
 	 */
 	@Override
@@ -225,7 +241,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromChildren(java.lang.Object, int)
 	 */
 	@Override
@@ -233,7 +249,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromDescendants(java.lang.Object)
 	 */
 	@Override
@@ -241,7 +257,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavFromDescendants(java.lang.Object, int)
 	 */
 	@Override
@@ -249,7 +265,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavMaxLevel(int)
 	 */
 	@Override
@@ -257,7 +273,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#createViewNavMaxLevel(int, int)
 	 */
 	@Override
@@ -265,7 +281,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -273,7 +289,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -281,7 +297,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String)
 	 */
 	@Override
@@ -289,7 +305,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int)
 	 */
 	@Override
@@ -297,7 +313,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, int)
 	 */
 	@Override
@@ -305,7 +321,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, int, boolean, boolean, boolean, boolean)
 	 */
 	@Override
@@ -314,7 +330,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String)
 	 */
 	@Override
@@ -322,7 +338,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@Override
@@ -331,7 +347,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -342,7 +358,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -353,7 +369,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, int)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -364,7 +380,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -376,7 +392,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -387,7 +403,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -399,7 +415,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAliases()
 	 */
 	@Override
@@ -408,7 +424,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.lang.Object)
 	 */
 	@Override
@@ -416,7 +432,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.lang.Object, boolean)
 	 */
 	@Override
@@ -424,7 +440,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
 	/**
@@ -438,7 +454,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
 	 */
 	/**
@@ -452,7 +468,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllEntries()
 	 */
 	@Override
@@ -460,7 +476,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllEntriesByKey(java.lang.Object)
 	 */
 	@Override
@@ -468,7 +484,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllEntriesByKey(java.lang.Object, boolean)
 	 */
 	@Override
@@ -476,7 +492,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllEntriesByKey(java.util.Vector)
 	 */
 	/**
@@ -490,7 +506,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
 	 */
 	/**
@@ -504,7 +520,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllReadEntries()
 	 */
 	@Override
@@ -512,7 +528,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllReadEntries(java.lang.String)
 	 */
 	@Override
@@ -520,7 +536,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllUnreadEntries()
 	 */
 	@Override
@@ -528,7 +544,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getAllUnreadEntries(java.lang.String)
 	 */
 	@Override
@@ -536,7 +552,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getBackgroundColor()
 	 */
 	@Override
@@ -544,7 +560,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getChild(lotus.domino.Document)
 	 */
 	@Override
@@ -552,7 +568,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getColumn(int)
 	 */
 	@Override
@@ -560,7 +576,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getColumnCount()
 	 */
 	@Override
@@ -568,7 +584,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getColumnNames()
 	 */
 	@Override
@@ -577,7 +593,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getColumns()
 	 */
 	@Override
@@ -586,7 +602,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getColumnValues(int)
 	 */
 	@Override
@@ -595,7 +611,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getCreated()
 	 */
 	@Override
@@ -603,7 +619,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object)
 	 */
 	/**
@@ -615,7 +631,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object, boolean)
 	 */
 	/**
@@ -627,7 +643,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector)
 	 */
 	/**
@@ -641,7 +657,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector, boolean)
 	 */
 	/**
@@ -655,7 +671,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object)
 	 */
 	/**
@@ -667,7 +683,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object, boolean)
 	 */
 	/**
@@ -679,7 +695,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector)
 	 */
 	/**
@@ -693,7 +709,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 */
 	/**
@@ -707,7 +723,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getEntryCount()
 	 */
 	@Override
@@ -715,7 +731,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getFirstDocument()
 	 */
 	@Override
@@ -723,7 +739,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getHeaderLines()
 	 */
 	@Override
@@ -731,7 +747,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getHttpURL()
 	 */
 	@Override
@@ -739,7 +755,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getLastDocument()
 	 */
 	@Override
@@ -747,7 +763,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getLastModified()
 	 */
 	@Override
@@ -755,7 +771,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getLockHolders()
 	 */
 	@Override
@@ -765,7 +781,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getName()
 	 */
 	@Override
@@ -773,7 +789,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getNextDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -781,7 +797,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getNextSibling(lotus.domino.Document)
 	 */
 	@Override
@@ -789,7 +805,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getNotesURL()
 	 */
 	@Override
@@ -797,7 +813,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getNthDocument(int)
 	 */
 	@Override
@@ -805,7 +821,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getParent()
 	 */
 	@Override
@@ -813,7 +829,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getParentDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -821,7 +837,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getPrevDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -829,7 +845,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getPrevSibling(lotus.domino.Document)
 	 */
 	@Override
@@ -837,7 +853,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getReaders()
 	 */
 	@Override
@@ -847,7 +863,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getRowLines()
 	 */
 	@Override
@@ -855,7 +871,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getSelectionFormula()
 	 */
 	@Override
@@ -863,7 +879,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getSelectionQuery()
 	 */
 	@Override
@@ -871,7 +887,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getSpacing()
 	 */
 	@Override
@@ -879,7 +895,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getTopLevelEntryCount()
 	 */
 	@Override
@@ -887,7 +903,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getUniversalID()
 	 */
 	@Override
@@ -895,7 +911,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getURL()
 	 */
 	@Override
@@ -903,7 +919,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#getViewInheritedName()
 	 */
 	@Override
@@ -911,7 +927,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isAutoUpdate()
 	 */
 	@Override
@@ -919,7 +935,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isCalendar()
 	 */
 	@Override
@@ -927,7 +943,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isCategorized()
 	 */
 	@Override
@@ -935,7 +951,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isConflict()
 	 */
 	@Override
@@ -943,7 +959,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isDefaultView()
 	 */
 	@Override
@@ -951,7 +967,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isEnableNoteIDsForCategories()
 	 */
 	@Override
@@ -959,7 +975,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isFolder()
 	 */
 	@Override
@@ -967,7 +983,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isHierarchical()
 	 */
 	@Override
@@ -975,7 +991,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isModified()
 	 */
 	@Override
@@ -983,7 +999,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isPrivate()
 	 */
 	@Override
@@ -991,7 +1007,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isProhibitDesignRefresh()
 	 */
 	@Override
@@ -999,7 +1015,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isProtectReaders()
 	 */
 	@Override
@@ -1007,7 +1023,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#isQueryView()
 	 */
 	@Override
@@ -1015,7 +1031,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lock()
 	 */
 	@Override
@@ -1023,7 +1039,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lock(boolean)
 	 */
 	@Override
@@ -1031,7 +1047,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lock(java.lang.String)
 	 */
 	@Override
@@ -1039,7 +1055,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lock(java.lang.String, boolean)
 	 */
 	@Override
@@ -1047,7 +1063,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1058,7 +1074,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1069,7 +1085,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lockProvisional()
 	 */
 	@Override
@@ -1077,7 +1093,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lockProvisional(java.lang.String)
 	 */
 	@Override
@@ -1085,7 +1101,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1096,7 +1112,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#markAllRead()
 	 */
 	@Override
@@ -1104,7 +1120,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -1112,7 +1128,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#markAllUnread()
 	 */
 	@Override
@@ -1120,7 +1136,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -1128,7 +1144,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#refresh()
 	 */
 	@Override
@@ -1136,7 +1152,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#remove()
 	 */
 	@Override
@@ -1144,7 +1160,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#removeColumn()
 	 */
 	@Override
@@ -1152,7 +1168,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#removeColumn(int)
 	 */
 	@Override
@@ -1160,7 +1176,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#removeColumn(java.lang.String)
 	 */
 	@Override
@@ -1168,7 +1184,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#resortView()
 	 */
 	@Override
@@ -1176,7 +1192,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#resortView(java.lang.String)
 	 */
 	@Override
@@ -1184,7 +1200,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#resortView(java.lang.String, boolean)
 	 */
 	@Override
@@ -1192,7 +1208,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setAliases(java.lang.String)
 	 */
 	@Override
@@ -1200,7 +1216,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setAliases(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1211,7 +1227,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setAutoUpdate(boolean)
 	 */
 	@Override
@@ -1219,7 +1235,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setBackgroundColor(int)
 	 */
 	@Override
@@ -1227,7 +1243,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setDefaultView(boolean)
 	 */
 	@Override
@@ -1235,7 +1251,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setEnableNoteIDsForCategories(boolean)
 	 */
 	@Override
@@ -1243,7 +1259,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setName(java.lang.String)
 	 */
 	@Override
@@ -1251,7 +1267,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setProhibitDesignRefresh(boolean)
 	 */
 	@Override
@@ -1259,7 +1275,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setProtectReaders(boolean)
 	 */
 	@Override
@@ -1267,7 +1283,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setReaders(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1278,7 +1294,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setSelectionFormula(java.lang.String)
 	 */
 	@Override
@@ -1286,7 +1302,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setSelectionQuery(java.lang.String)
 	 */
 	@Override
@@ -1294,7 +1310,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#setSpacing(int)
 	 */
 	@Override
@@ -1302,9 +1318,15 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.View#unlock()
 	 */
 	@Override
 	public void unlock();
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.View#createViewNavFromKey(java.util.Vector, boolean)
+	 */
+	@Override
+	public ViewNavigator createViewNavFromKey(Vector arg0, boolean arg1);
 }

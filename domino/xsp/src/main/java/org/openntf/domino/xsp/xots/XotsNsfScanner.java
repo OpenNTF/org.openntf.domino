@@ -32,11 +32,11 @@ import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFXspClassResource;
 // tell http osgi xots run bundle:org.openntf.domino.xsp org.openntf.domino.xsp.xots.XotsNsfScanner
 
 @Tasklet(session = Tasklet.Session.NATIVE, 	// use server's session
-		scope = Tasklet.Scope.SERVER, 				// one scan per server may run concurrent
-		context = Tasklet.Context.PLUGIN, 			// in the context of a plugn
-		schedule = { "startup", "periodic:90m" }, 	// on Startup and every 90 minutes
-		onAllServers = true,						// on all servers
-		threadConfig = Tasklet.ThreadConfig.STRICT  // and strict thread config. BubbleExceptions = TRUE
+scope = Tasklet.Scope.SERVER, 				// one scan per server may run concurrent
+context = Tasklet.Context.PLUGIN, 			// in the context of a plugn
+schedule = { "startup", "periodic:90m" }, 	// on Startup and every 90 minutes
+onAllServers = true,						// on all servers
+threadConfig = Tasklet.ThreadConfig.STRICT  // and strict thread config. BubbleExceptions = TRUE
 )
 /**
  * A Runnable that scans for tasklet classes on a specified server
@@ -204,8 +204,8 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 	 * @param session
 	 * @param db
 	 * @return true, if the database has XOTS-Classes
-	 * @throws @throws
-	 *             ServletException
+	 * @throws
+	 * @throws ServletException
 	 */
 	protected Future<List<ScheduleData>> scanDatabase(final Database db) {
 		//NTF Keeping JG's implementation since he made an enhancement to the IconNote class for it! :)
@@ -216,7 +216,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			DatabaseDesign design = template == null ? db.getDesign() : template.getDesign();
 			if (design.isAPIEnabled()) {
 				log_.info("ODA enabled database: " + db.getApiPath());
-				return Xots.submit(new XotsClassScanner(db.getApiPath()));
+				return Xots.getService().submit(new XotsClassScanner(db.getApiPath()));
 
 			}
 

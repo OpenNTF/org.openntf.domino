@@ -1,20 +1,22 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -27,25 +29,22 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.ViewEntryIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ViewEntryCollection.
  */
 public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection, View>
-implements org.openntf.domino.ViewEntryCollection {
+		implements org.openntf.domino.ViewEntryCollection {
 
 	/**
-	 * Instantiates a new outline.
-	 * 
+	 * Instantiates a new collection.
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final View parent) {
 		super(delegate, parent, NOTES_VECOLL);
@@ -55,7 +54,7 @@ implements org.openntf.domino.ViewEntryCollection {
 	// the defined behavior.
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object)
 	 */
 	@Override
@@ -69,7 +68,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object, boolean)
 	 */
 	@Override
@@ -83,7 +82,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#cloneCollection()
 	 */
 	@Override
@@ -98,7 +97,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -108,7 +107,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#contains(lotus.domino.Base)
 	 */
 	@Override
@@ -123,7 +122,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#contains(int)
 	 */
 	@Override
@@ -139,7 +138,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#contains(java.lang.String)
 	 */
 	@Override
@@ -155,7 +154,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#deleteEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -169,7 +168,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -183,7 +182,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -197,7 +196,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getCount()
 	 */
 	@Override
@@ -212,7 +211,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getEntry(java.lang.Object)
 	 */
 	@Override
@@ -227,7 +226,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getFirstEntry()
 	 */
 	@Override
@@ -242,7 +241,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getLastEntry()
 	 */
 	@Override
@@ -257,7 +256,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry()
 	 */
 	@Override
@@ -272,7 +271,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -289,7 +288,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getNthEntry(int)
 	 */
 	@Override
@@ -304,7 +303,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -314,7 +313,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry()
 	 */
 	@Override
@@ -329,7 +328,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
@@ -346,7 +345,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#getQuery()
 	 */
 	@Override
@@ -361,7 +360,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
@@ -375,7 +374,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(int)
 	 */
 	@Override
@@ -389,7 +388,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(java.lang.String)
 	 */
 	@Override
@@ -403,7 +402,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead()
 	 */
 	@Override
@@ -417,7 +416,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -431,7 +430,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread()
 	 */
 	@Override
@@ -445,7 +444,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -459,7 +458,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#merge(lotus.domino.Base)
 	 */
 	@Override
@@ -473,7 +472,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#merge(int)
 	 */
 	@Override
@@ -487,7 +486,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#merge(java.lang.String)
 	 */
 	@Override
@@ -501,7 +500,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
@@ -515,7 +514,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -529,7 +528,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#removeAll(boolean)
 	 */
 	@Override
@@ -543,7 +542,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
@@ -557,28 +556,58 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void stampAll(final String itemName, final Object value) {
+		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			getDelegate().stampAll(itemName, value);
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
+			Object val = null;
+			if (value instanceof lotus.domino.Item) {
+				// Special support for items
+				val = value;
+			} else {
+				val = TypeUtils.toItemFriendly(value, getAncestorSession(), recycleThis);
+			}
+			getDelegate().stampAll(itemName, val);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
 	@Override
 	public void stampAll(final Map<String, Object> map) {
-		for (org.openntf.domino.ViewEntry entry : this) {
-			entry.getDocument().putAll(map);
+		Collection<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			//Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				//NTF - go directly to delegate because we already know the entries are Domino friendly.
+				Object val = null;
+				if (entry.getValue() instanceof lotus.domino.Item) {
+					// Special support for items
+					val = entry.getValue();
+				} else {
+					val = TypeUtils.toItemFriendly(entry.getValue(), getAncestorSession(), recycleThis);
+				}
+				getDelegate().stampAll(entry.getKey(), val);
+			}
+		} catch (IllegalArgumentException iae) {
+			for (org.openntf.domino.ViewEntry entry : this) {
+				entry.getDocument().putAll(map);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
@@ -592,7 +621,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(int)
 	 */
 	@Override
@@ -606,7 +635,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(java.lang.String)
 	 */
 	@Override
@@ -620,7 +649,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ViewEntryCollection#updateAll()
 	 */
 	@Override
@@ -634,7 +663,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -644,7 +673,7 @@ implements org.openntf.domino.ViewEntryCollection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site pack200="true">
+  <feature id="org.openntf.extlib.apache.wink.feature" patch="false" url="features/org.openntf.extlib.apache.wink.feature_1.1.2.20160428-0214.jar" version="1.1.2.20160428-0214">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <feature id="org.openntf.extlib.domino.das.feature" patch="false" url="features/org.openntf.extlib.domino.das.feature_9.0.1.v00_17_20160428-0214.jar" version="9.0.1.v00_17_20160428-0214">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <feature id="org.openntf.extlib.feature" patch="false" url="features/org.openntf.extlib.feature_9.0.1.v00_17_20160428-0214.jar" version="9.0.1.v00_17_20160428-0214">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <feature id="org.openntf.extlib.relational.feature" patch="false" url="features/org.openntf.extlib.relational.feature_9.0.1.v00_17_20160428-0214.jar" version="9.0.1.v00_17_20160428-0214">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <feature id="org.openntf.extlib.wink.feature" patch="false" url="features/org.openntf.extlib.wink.feature_9.0.1.v00_17_20160428-0214.jar" version="9.0.1.v00_17_20160428-0214">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <feature id="org.openntf.extlibx.feature" patch="false" url="features/org.openntf.extlibx.feature_9.0.1.v00_16_20160119-2239.jar" version="9.0.1.v00_16_20160119-2239">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <feature id="org.openntf.services.feature" patch="false" url="features/org.openntf.services.feature_9.0.1.v00_17_20160428-0214.jar" version="9.0.1.v00_17_20160428-0214">
+    <category name="OpenNTF Builds" />
+  </feature>
+  <category-def label="OpenNTF Builds" name="OpenNTF Builds">
+    <description>Extension Library Update Site</description>
+  </category-def>
+</site>

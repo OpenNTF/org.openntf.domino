@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -35,15 +35,11 @@ org.openntf.domino.Registration {
 
 	/**
 	 * Instantiates a new registration.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
-	 * @param wf
-	 *            the wrapperfactory
-	 * @param cppId
-	 *            the cpp-id
 	 */
 	protected Registration(final lotus.domino.Registration delegate, final Session parent) {
 		super(delegate, parent, NOTES_VIEWCOLUMN);
@@ -51,7 +47,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addCertifierToAddressBook(java.lang.String)
 	 */
 	@Override
@@ -66,7 +62,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -81,7 +77,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String)
 	 */
@@ -97,7 +93,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -112,7 +108,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -127,7 +123,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -144,7 +140,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addUserProfile(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -158,7 +154,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -173,7 +169,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -188,7 +184,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -207,7 +203,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String)
 	 */
 	@Override
@@ -222,7 +218,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -237,7 +233,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -252,7 +248,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#deleteIDOnServer(java.lang.String, boolean)
 	 */
 	@Override
@@ -266,7 +262,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getAltOrgUnit()
 	 */
 	@SuppressWarnings("unchecked")
@@ -282,7 +278,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getAltOrgUnitLang()
 	 */
 	@SuppressWarnings("unchecked")
@@ -298,7 +294,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getCertifierIDFile()
 	 */
 	@Override
@@ -313,7 +309,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getCertifierName()
 	 */
 	@Override
@@ -328,7 +324,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getCreateMailDb()
 	 */
 	@Override
@@ -343,7 +339,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getExpiration()
 	 */
 	@Override
@@ -358,7 +354,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getForeignDN()
 	 */
 	@Override
@@ -373,7 +369,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getGroupList()
 	 */
 	@SuppressWarnings("unchecked")
@@ -389,7 +385,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getIDFromServer(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -403,7 +399,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getIDType()
 	 */
 	@Override
@@ -418,7 +414,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailACLManager()
 	 */
 	@Override
@@ -433,7 +429,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailInternetAddress()
 	 */
 	@Override
@@ -448,7 +444,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailOwnerAccess()
 	 */
 	@Override
@@ -463,7 +459,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailQuotaSizeLimit()
 	 */
 	@Override
@@ -478,7 +474,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailQuotaWarningThreshold()
 	 */
 	@Override
@@ -493,7 +489,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailReplicaServers()
 	 */
 	@SuppressWarnings("unchecked")
@@ -509,7 +505,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailSystem()
 	 */
 	@Override
@@ -524,7 +520,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMailTemplateName()
 	 */
 	@Override
@@ -539,7 +535,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getMinPasswordLength()
 	 */
 	@Override
@@ -554,7 +550,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getOrgUnit()
 	 */
 	@Override
@@ -569,7 +565,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -579,7 +575,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getPolicyName()
 	 */
 	@Override
@@ -594,7 +590,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getPublicKeySize()
 	 */
 	@Override
@@ -609,7 +605,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getRegistrationLog()
 	 */
 	@Override
@@ -624,7 +620,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getRegistrationServer()
 	 */
 	@Override
@@ -639,7 +635,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getRoamingCleanupPeriod()
 	 */
 	@Override
@@ -654,7 +650,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getRoamingCleanupSetting()
 	 */
 	@Override
@@ -669,7 +665,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getRoamingServer()
 	 */
 	@Override
@@ -684,7 +680,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getRoamingSubdir()
 	 */
 	@Override
@@ -699,7 +695,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getShortName()
 	 */
 	@Override
@@ -714,7 +710,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getStoreIDInAddressBook()
 	 */
 	@Override
@@ -729,7 +725,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getUpdateAddressBook()
 	 */
 	@Override
@@ -744,7 +740,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#getUserInfo(java.lang.String, java.lang.StringBuffer, java.lang.StringBuffer,
 	 * java.lang.StringBuffer, java.lang.StringBuffer, java.util.Vector)
 	 */
@@ -753,7 +749,7 @@ org.openntf.domino.Registration {
 	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile,
 			final StringBuffer mailDomain, final StringBuffer mailSystem, final Vector profile) {
 		try {
-			// Vector is a return parameter, do not make it dominofriendly		
+			// Vector is a return parameter, do not make it dominofriendly
 			getDelegate().getUserInfo(userName, mailServer, mailFile, mailDomain, mailSystem, profile);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -762,7 +758,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isEnforceUniqueShortName()
 	 */
 	@Override
@@ -777,7 +773,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isMailCreateFTIndex()
 	 */
 	@Override
@@ -792,7 +788,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isNoIDFile()
 	 */
 	@Override
@@ -807,7 +803,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isNorthAmerican()
 	 */
 	@Override
@@ -822,7 +818,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isRoamingUser()
 	 */
 	@Override
@@ -837,7 +833,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isStoreIDInMailfile()
 	 */
 	@Override
@@ -852,7 +848,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isSynchInternetPassword()
 	 */
 	@Override
@@ -867,7 +863,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#isUseCertificateAuthority()
 	 */
 	@Override
@@ -882,7 +878,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#recertify(java.lang.String)
 	 */
 	@Override
@@ -897,7 +893,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#recertify(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -912,7 +908,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#recertify(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -927,7 +923,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewCertifier(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -942,7 +938,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewCertifier(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -957,7 +953,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -972,7 +968,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String)
 	 */
@@ -989,7 +985,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -1008,7 +1004,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1023,7 +1019,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -1040,7 +1036,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -1059,7 +1055,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String)
@@ -1079,7 +1075,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setAltOrgUnit(java.util.Vector)
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -1094,7 +1090,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setAltOrgUnitLang(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1112,7 +1108,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setCertifierIDFile(java.lang.String)
 	 */
 	@Override
@@ -1126,7 +1122,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setCertifierName(java.lang.String)
 	 */
 	@Override
@@ -1140,7 +1136,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setCreateMailDb(boolean)
 	 */
 	@Override
@@ -1154,7 +1150,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setEnforceUniqueShortName(boolean)
 	 */
 	@Override
@@ -1168,7 +1164,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setExpiration(lotus.domino.DateTime)
 	 */
 	@Override
@@ -1186,7 +1182,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setForeignDN(java.lang.String)
 	 */
 	@Override
@@ -1200,7 +1196,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setGroupList(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1218,7 +1214,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setIDType(int)
 	 */
 	@Override
@@ -1232,7 +1228,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailACLManager(java.lang.String)
 	 */
 	@Override
@@ -1246,7 +1242,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailCreateFTIndex(boolean)
 	 */
 	@Override
@@ -1260,7 +1256,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailInternetAddress(java.lang.String)
 	 */
 	@Override
@@ -1274,7 +1270,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailOwnerAccess(int)
 	 */
 	@Override
@@ -1288,7 +1284,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailQuotaSizeLimit(int)
 	 */
 	@Override
@@ -1302,7 +1298,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailQuotaWarningThreshold(int)
 	 */
 	@Override
@@ -1316,7 +1312,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailReplicaServers(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -1334,7 +1330,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailSystem(int)
 	 */
 	@Override
@@ -1348,7 +1344,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMailTemplateName(java.lang.String)
 	 */
 	@Override
@@ -1362,7 +1358,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setMinPasswordLength(int)
 	 */
 	@Override
@@ -1376,7 +1372,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setNoIDFile(boolean)
 	 */
 	@Override
@@ -1390,7 +1386,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setNorthAmerican(boolean)
 	 */
 	@Override
@@ -1404,7 +1400,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setOrgUnit(java.lang.String)
 	 */
 	@Override
@@ -1418,7 +1414,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setPolicyName(java.lang.String)
 	 */
 	@Override
@@ -1432,7 +1428,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setPublicKeySize(int)
 	 */
 	@Override
@@ -1446,7 +1442,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRegistrationLog(java.lang.String)
 	 */
 	@Override
@@ -1460,7 +1456,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRegistrationServer(java.lang.String)
 	 */
 	@Override
@@ -1474,7 +1470,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRoamingCleanupPeriod(int)
 	 */
 	@Override
@@ -1488,7 +1484,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRoamingCleanupSetting(int)
 	 */
 	@Override
@@ -1502,7 +1498,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRoamingServer(java.lang.String)
 	 */
 	@Override
@@ -1516,7 +1512,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRoamingSubdir(java.lang.String)
 	 */
 	@Override
@@ -1530,7 +1526,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setRoamingUser(boolean)
 	 */
 	@Override
@@ -1544,7 +1540,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setShortName(java.lang.String)
 	 */
 	@Override
@@ -1558,7 +1554,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setStoreIDInAddressBook(boolean)
 	 */
 	@Override
@@ -1572,7 +1568,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setStoreIDInMailfile(boolean)
 	 */
 	@Override
@@ -1586,7 +1582,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setSynchInternetPassword(boolean)
 	 */
 	@Override
@@ -1600,7 +1596,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setUpdateAddressBook(boolean)
 	 */
 	@Override
@@ -1614,7 +1610,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#setUseCertificateAuthority(boolean)
 	 */
 	@Override
@@ -1628,7 +1624,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Registration#switchToID(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1643,7 +1639,7 @@ org.openntf.domino.Registration {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
