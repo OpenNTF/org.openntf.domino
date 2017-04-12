@@ -536,9 +536,9 @@ public class WrapperFactory extends BaseImpl<lotus.domino.Base> implements org.o
 			return new org.openntf.domino.impl.UserID((lotus.domino.UserID) lotus, (org.openntf.domino.IDVault) parent);
 		}
 
-		if (lotus instanceof lotus.domino.IDVault) {
-			return new org.openntf.domino.impl.IDVault((lotus.domino.IDVault) lotus, (org.openntf.domino.Session) parent);
-		}
+		//		if (lotus instanceof lotus.domino.IDVault) {
+		//			return new org.openntf.domino.impl.IDVault((lotus.domino.IDVault) lotus, (org.openntf.domino.Session) parent);
+		//		}
 
 		throw new UndefinedDelegateTypeException(lotus == null ? "null" : lotus.getClass().getName());
 	}

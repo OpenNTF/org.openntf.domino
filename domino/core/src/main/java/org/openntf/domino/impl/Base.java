@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -48,14 +48,14 @@ import org.openntf.domino.utils.TypeUtils;
 
 /**
  * A common Base class for almost all org.openntf.domino types.
- * 
+ *
  * @param <T>
  *            the generic type
  * @param <D>
  *            the delegate type
  * @param <P>
  *            the parent type
- * 
+ *
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base, P extends org.openntf.domino.Base<?>>
 		implements org.openntf.domino.Base<D> {
@@ -120,6 +120,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public static final int NOTES_CALENDAR = 96;
 	public static final int NOTES_CALENDARENTRY = 97;
 	public static final int NOTES_CALENDARNOTICE = 98;
+	public static final int NOTES_IDVAULT = 99;
+	public static final int NOTES_USERID = 100;
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
@@ -193,7 +195,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
-	 * 
+	 *
 	 * @return the cpp_id
 	 */
 	public final long GetCppObj() {
@@ -205,9 +207,22 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		}
 	}
 
+	protected static final long GetCppObj(final lotus.domino.Base obj) {
+		try {
+			if (obj instanceof Base) {
+				return ((Long) getCppObjMethod.invoke(toLotus(obj), EMPTY_ARRAY)).longValue();
+			} else {
+				return ((Long) getCppObjMethod.invoke(obj, EMPTY_ARRAY)).longValue();
+			}
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return 0L;
+		}
+	}
+
 	/**
 	 * returns the cpp-session id. Needed for some BackendBridge functions
-	 * 
+	 *
 	 * @return the cpp_id of the session
 	 */
 	public final long GetCppSession() {
@@ -221,10 +236,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/** The parent/ancestor. */
 	protected P parent;
+	public long parentCppId;
 
 	/**
 	 * Find the parent if no one was specified
-	 * 
+	 *
 	 * @param delegate
 	 * @return
 	 */
@@ -234,7 +250,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Returns the class-id. Currently not used
-	 * 
+	 *
 	 * @return
 	 */
 	int GetClassID() {
@@ -292,7 +308,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	//	/**
 	//	 * Gets the parent.
-	//	 * 
+	//	 *
 	//	 * @return the parent
 	//	 */
 	//	protected final P getAncestor(final int deprecated) {
@@ -305,7 +321,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Instantiates a new base.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -318,8 +334,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the class id
 	 */
 	protected Base(final D delegate, final P parent, final int classId) {
-		if (parent == null)
+		if (parent == null) {
 			throw new NullPointerException("parent must not be null");
+		}
 		this.parent = parent;
 		clsid = classId;
 
@@ -340,7 +357,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Sets the delegate on init or if resurrect occurred
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param cppId
@@ -350,7 +367,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	//	/**
 	//	 * Gets the lotus id.
-	//	 * 
+	//	 *
 	//	 * @param base
 	//	 *            the base
 	//	 * @return the lotus id
@@ -370,16 +387,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Checks if the lotus object is invalid. A object is invalid if it is recycled by the java side.
-	 * 
+	 *
 	 * i.E.: Some Java code has called base.recycle();
-	 * 
+	 *
 	 * @param base
 	 *            the base
 	 * @return true, if is recycled
 	 */
 	protected static boolean isInvalid(final lotus.domino.Base base) {
-		if (base == null)
+		if (base == null) {
 			return true;
+		}
 		try {
 			return ((Boolean) isInvalidMethod.invoke(base, EMPTY_ARRAY)).booleanValue();
 		} catch (Exception e) {
@@ -390,16 +408,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Checks if is dead. A object is dead if it is invalid (=recycled by java) or if it's cpp-object = 0.
-	 * 
+	 *
 	 * This happens if the parent was recycled.
-	 * 
+	 *
 	 * @param base
 	 *            the base
 	 * @return true, if is recycled
 	 */
 	protected static boolean isDead(final lotus.domino.Base base) {
-		if (base == null)
+		if (base == null) {
 			return true;
+		}
 		try {
 			return ((Boolean) isDeadMethod.invoke(base, EMPTY_ARRAY)).booleanValue();
 		} catch (Exception e) {
@@ -410,13 +429,14 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Returns the session for a certain base object
-	 * 
+	 *
 	 * @param base
 	 * @return
 	 */
 	protected static lotus.domino.Session getSession(final lotus.domino.Base base) {
-		if (base == null)
+		if (base == null) {
 			return null;
+		}
 		try {
 			return ((lotus.domino.Session) getSessionMethod.invoke(base, EMPTY_ARRAY));
 		} catch (Exception e) {
@@ -427,7 +447,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	//	/**
 	//	 * Gets the delegate.
-	//	 * 
+	//	 *
 	//	 * @param wrapper
 	//	 *            the wrapper
 	//	 * @return the delegate
@@ -442,18 +462,20 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Gets the delegate.
-	 * 
+	 *
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
 		D ret = getDelegate_unchecked();
 		if (this instanceof Resurrectable && isDead(ret)) {
-			if (log_.isLoggable(Level.FINE))
+			if (log_.isLoggable(Level.FINE)) {
 				log_.fine("[" + Thread.currentThread().getId() + "] Resurrecting " + getClass().getName() + " '" + super.hashCode() + "'");
+			}
 			resurrect();
-			if (log_.isLoggable(Level.FINE))
+			if (log_.isLoggable(Level.FINE)) {
 				log_.fine(
 						"[" + Thread.currentThread().getId() + "] Resurrect " + getClass().getName() + " '" + super.hashCode() + "' done");
+			}
 			ret = getDelegate_unchecked();
 		}
 		return ret;
@@ -470,7 +492,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	// wrap objects. Delegate this to the wrapperFactory
 	/**
 	 * Wraps objects. Delegate to WrapperFactory
-	 * 
+	 *
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, org.openntf.domino.Base)
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -481,7 +503,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Wraps a collection. Delegate to WrapperFactory
-	 * 
+	 *
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(Collection, FactorySchema, org.openntf.domino.Base)
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -492,7 +514,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Wraps a collection and returns it as vector. Delegate to WrapperFactory
-	 * 
+	 *
 	 * @see org.openntf.domino.WrapperFactory#fromLotusAsVector(Collection, FactorySchema, org.openntf.domino.Base)
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -503,7 +525,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Wraps column values
-	 * 
+	 *
 	 * @see org.openntf.domino.WrapperFactory#wrapColumnValues(Collection, org.openntf.domino.Session)
 	 */
 	protected Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
@@ -512,7 +534,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * returns the WrapperFactory
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract WrapperFactory getFactory();
@@ -520,15 +542,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/*
 	 * (non-Javadoc)
 	 * This method recycles the delegate (and counts it as manual recycle)
-	 * 
+	 *
 	 * @see lotus.domino.Base#recycle()
 	 * (it is NOT deprecated in the .impl. package as it is called in several places!)
 	 */
 	@Override
 	public void recycle() {
 		D delegate = getDelegate_unchecked(true);
-		if (isDead(delegate))
+		if (isDead(delegate)) {
 			return;
+		}
 		s_recycle(delegate); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
 		Factory.countManualRecycle(delegate.getClass());
 	}
@@ -537,7 +560,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * gets the delegate
-	 * 
+	 *
 	 * @param wrapper
 	 *            the wrapper
 	 * @param recycleThis
@@ -559,7 +582,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Gets the delegate.
-	 * 
+	 *
 	 * @param wrapper
 	 *            the wrapper
 	 * @return the delegate
@@ -576,7 +599,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * To lotus.
-	 * 
+	 *
 	 * @param baseObj
 	 *            the base obj
 	 * @return the lotus.domino. base version or the object itself, as appropriate
@@ -590,12 +613,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>
 	 * Attempts to convert a provided scalar value to a "Domino-friendly" data type like DateTime, String, etc. Currently, the data types
 	 * supported are the already-Domino-friendly ones, Number, Date, Calendar, and CharSequence.
 	 * </p>
-	 * 
+	 *
 	 * @param value
 	 *            The incoming non-collection value
 	 * @param context
@@ -612,7 +635,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * converts a lot of java types to domino-friendly types
-	 * 
+	 *
 	 * @param value
 	 * @param context
 	 * @param recycleThis
@@ -620,11 +643,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 
 	/**
-	 * 
+	 *
 	 * @param values
 	 *            the values
 	 * @param context
-	 * 
+	 *
 	 * @param recycleThis
 	 * @return
 	 * @throws IllegalArgumentException
@@ -641,7 +664,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Recycle.
-	 * 
+	 *
 	 * @param base
 	 *            the base
 	 * @return true, if successful
@@ -673,10 +696,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// shikata ga nai
 		} finally {
 			try {
-				if (sdtAux != null)
+				if (sdtAux != null) {
 					sdtAux.recycle();
-				if (edtAux != null)
+				}
+				if (edtAux != null) {
 					edtAux.recycle();
+				}
 			} catch (NotesException ne) {	// Now it's enough
 			}
 		}
@@ -688,7 +713,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * recycle ALL native objects
-	 * 
+	 *
 	 * @param o
 	 *            the object(s) to recycle
 	 */
@@ -710,7 +735,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
 	@Override
@@ -730,7 +755,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	private transient Map<EnumEvent, List<IDominoListener>> listenerCache_;
 
 	// these are important to link deferred against, so that they aren't recycled.
-	// defered objects that have the same delegate build a circle, so that they aren't gc-ed as 
+	// defered objects that have the same delegate build a circle, so that they aren't gc-ed as
 	// long as someone is holding a reference to at least one object of this circle.
 
 	protected Base<?, ?, ?> siblingWrapper_;
@@ -743,16 +768,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@Override
 	public final boolean hasListeners() {
-		if (originOfDeferred_ != null)
+		if (originOfDeferred_ != null) {
 			return originOfDeferred_.hasListeners();
+		}
 
 		return listeners_ != null && !listeners_.isEmpty();
 	}
 
 	@Override
 	public final List<IDominoListener> getListeners() {
-		if (originOfDeferred_ != null)
+		if (originOfDeferred_ != null) {
 			return originOfDeferred_.getListeners();
+		}
 
 		if (listeners_ == null) {
 			listeners_ = new ArrayList<IDominoListener>();
@@ -783,14 +810,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@Override
 	@SuppressWarnings("unchecked")
 	public final List<IDominoListener> getListeners(final EnumEvent event) {
-		if (originOfDeferred_ != null)
+		if (originOfDeferred_ != null) {
 			return originOfDeferred_.getListeners(event);
+		}
 
-		if (!hasListeners())
+		if (!hasListeners()) {
 			return Collections.EMPTY_LIST;
+		}
 
-		if (listenerCache_ == null)
+		if (listenerCache_ == null) {
 			listenerCache_ = new HashMap<EnumEvent, List<IDominoListener>>();
+		}
 
 		List<IDominoListener> result = listenerCache_.get(event);
 		if (result == null) {
@@ -810,15 +840,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@Override
 	public final boolean fireListener(final IDominoEvent event) {
-		if (originOfDeferred_ != null)
+		if (originOfDeferred_ != null) {
 			return originOfDeferred_.fireListener(event);
+		}
 
 		boolean result = true;
-		if (!hasListeners())
+		if (!hasListeners()) {
 			return true;
+		}
 		List<IDominoListener> listeners = getListeners(event.getEvent());
-		if (listeners == null || listeners.isEmpty())
+		if (listeners == null || listeners.isEmpty()) {
 			return true;
+		}
 		for (IDominoListener listener : listeners) {
 			try {
 				if (!listener.eventHappened(event)) {
@@ -834,7 +867,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -960,8 +993,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	protected void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		int version = in.readInt();
 
-		if (version != EXTERNALVERSIONUID)
+		if (version != EXTERNALVERSIONUID) {
 			throw new InvalidClassException("Cannot read dataversion " + version);
+		}
 		parent = (P) in.readObject();
 
 	}
@@ -1013,8 +1047,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@SuppressWarnings("unchecked")
 	protected void linkToExisting(final Base<?, ?, ?> oldWrapper) {
 		// link the implWrapper into the circle
-		if (oldWrapper.siblingWrapper_ == null)
+		if (oldWrapper.siblingWrapper_ == null) {
 			oldWrapper.siblingWrapper_ = oldWrapper;
+		}
 
 		siblingWrapper_ = oldWrapper.siblingWrapper_;
 		oldWrapper.siblingWrapper_ = this;
@@ -1023,8 +1058,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		originOfDeferred_ = (T) oldWrapper.originOfDeferred_;
 
 		// if the oldWrapper has no origin, it IS the origin
-		if (originOfDeferred_ == null)
+		if (originOfDeferred_ == null) {
 			originOfDeferred_ = (T) oldWrapper;
+		}
 
 	}
 

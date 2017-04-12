@@ -1093,10 +1093,10 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	public IDVault getIDVault();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Session#getIDVault(java.lang.String)
-	 */
-	@Override
-	public IDVault getIDVault(String arg0);
+	//	/* (non-Javadoc)
+	//	 * @see lotus.domino.Session#getIDVault(java.lang.String)
+	//	 */
+	//	@Override
+	//	public IDVault getIDVault(String arg0);
 
 }

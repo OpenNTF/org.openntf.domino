@@ -18,7 +18,7 @@ public abstract class ThreadedTest implements Callable<String> {
 		Future<String> futures[] = new Future[threadCount];
 		int i;
 		for (i = 0; i < threadCount; i++) {
-			futures[i] = Xots.getService().submit(this.getClass().newInstance());
+			futures[i] = Xots.submit(this.getClass().newInstance());
 		}
 		for (i = 0; i < threadCount; i++) {
 			assertEquals("SUCCESS", futures[i].get());
