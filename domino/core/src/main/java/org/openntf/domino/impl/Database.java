@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -76,6 +76,7 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.enums.DominoEnumUtil;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
@@ -116,8 +117,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/**
 	 * Instantiates a new database.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -157,7 +158,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/**
 	 * This constructor is used in the dbDirectory. The Delegate will get recycled!
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -182,9 +183,15 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	@Override
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final int otherOpt,
+			final int start, final int count, final String entryForm) {
+		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
 	 */
 	@Override
@@ -202,7 +209,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int, int, int,
 	 * java.lang.String)
 	 */
@@ -219,7 +226,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, int, int)
 	 */
 	@Override
@@ -234,7 +241,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int)
 	 */
 	@Override
@@ -249,7 +256,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -264,7 +271,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -280,7 +287,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
@@ -296,7 +303,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.SortOption, int, int)
 	 */
 	@Override
@@ -311,7 +318,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#compact()
 	 */
 	@Override
@@ -326,7 +333,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#compactWithOptions(int, java.lang.String)
 	 */
 	@Override
@@ -342,7 +349,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#compactWithOptions(int)
 	 */
 	@Override
@@ -358,7 +365,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#compactWithOptions(java.lang.String)
 	 */
 	@Override
@@ -374,7 +381,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String, int)
 	 */
 	@Override
@@ -390,7 +397,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -406,7 +413,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createDocument()
 	 */
 	@Override
@@ -429,8 +436,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}
-			if (hasListeners())
+			if (hasListeners()) {
 				fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
+			}
 		}
 		//		System.out.println("Returning a newly created document in " + this.getFilePath());
 		//		try {
@@ -444,7 +452,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createDocument(java.lang.Object[])
 	 */
 	@SuppressWarnings("unchecked")
@@ -468,7 +476,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createDocumentCollection()
 	 */
 	@Override
@@ -486,7 +494,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	@Override
 	@Incomplete
-	public DocumentCollection createMergableDocumentCollection() {
+	public DocumentCollection createMergeableDocumentCollection() {
 		try {
 			lotus.domino.Database db = getDelegate();
 			if (!db.isOpen()) {
@@ -510,7 +518,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createFTIndex(int, boolean)
 	 */
 	@Override
@@ -525,7 +533,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
 	@Override
@@ -542,7 +550,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -558,7 +566,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createNoteCollection(boolean)
 	 */
 	@Override
@@ -575,7 +583,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createOutline(java.lang.String, boolean)
 	 */
 	@Override
@@ -591,7 +599,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createOutline(java.lang.String)
 	 */
 	@Override
@@ -610,7 +618,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	@Override
@@ -631,7 +639,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
 	@Override
@@ -650,7 +658,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -669,7 +677,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createReplica(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -685,7 +693,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createView()
 	 */
 	@Override
@@ -702,7 +710,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	@Override
@@ -723,7 +731,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
 	@Override
@@ -733,7 +741,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -754,7 +762,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#createView(java.lang.String)
 	 */
 	@Override
@@ -764,7 +772,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#enableFolder(java.lang.String)
 	 */
 	@Override
@@ -779,7 +787,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#fixup()
 	 */
 	@Override
@@ -794,7 +802,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#fixup(int)
 	 */
 	@Override
@@ -809,7 +817,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getACL()
 	 */
 	@Override
@@ -828,7 +836,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getACLActivityLog()
 	 */
 	@Override
@@ -845,7 +853,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAgent(java.lang.String)
 	 */
 	@Override
@@ -864,7 +872,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAgents()
 	 */
 	@Override
@@ -883,7 +891,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAllDocuments()
 	 */
 	@Override
@@ -899,7 +907,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAllReadDocuments()
 	 */
 	@Override
@@ -915,7 +923,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAllReadDocuments(java.lang.String)
 	 */
 	@Override
@@ -931,7 +939,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAllUnreadDocuments()
 	 */
 	@Override
@@ -947,7 +955,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getAllUnreadDocuments(java.lang.String)
 	 */
 	@Override
@@ -963,13 +971,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getCategories()
 	 */
 	@Override
 	public String getCategories() {
-		if (shadowedMetaData_ != null)
+		if (shadowedMetaData_ != null) {
 			return shadowedMetaData_.getCategories();
+		}
 		try {
 			return getDelegate().getCategories();
 		} catch (NotesException e) {
@@ -981,7 +990,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getCreated()
 	 */
 	@Override
@@ -1000,7 +1009,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getCurrentAccessLevel()
 	 */
 	@Override
@@ -1016,7 +1025,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getDB2Schema()
 	 */
 	@Override
@@ -1067,8 +1076,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	public org.openntf.domino.Database getXPageSharedDesignTemplate() throws FileNotFoundException {
 		IconNote icon = getDesign().getIconNote();
-		if (icon == null)
+		if (icon == null) {
 			return null;
+		}
 		Document iconDoc = icon.getDocument();
 		if ("1".equals(iconDoc.getItemValueString("$XpageSharedDesign"))) {
 			String templatePath = iconDoc.getItemValueString("$XpageSharedDesignTemplate");
@@ -1083,13 +1093,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getDesignTemplateName()
 	 */
 	@Override
 	public String getDesignTemplateName() {
-		if (shadowedMetaData_ != null)
+		if (shadowedMetaData_ != null) {
 			return shadowedMetaData_.getDesignTemplateName();
+		}
 		try {
 			return getDelegate().getDesignTemplateName();
 		} catch (NotesException e) {
@@ -1101,7 +1112,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getDocumentByID(java.lang.String)
 	 */
 	@Override
@@ -1123,6 +1134,20 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	public Document getIconNote() {
 		return getDocumentByID(NOTEID_ICONNOTE);
+	}
+
+	@Override
+	public Document getDocumentByID_Or_UNID(final String id) {
+		Document doc;
+		doc = getDocumentByUNID(id);
+		if (doc == null) {
+			try {
+				doc = getDocumentByID(id);
+			} catch (Throwable te) {
+				// Just couldn't get doc
+			}
+		}
+		return doc;
 	}
 
 	@Override
@@ -1194,14 +1219,15 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getDocumentByUNID(java.lang.String)
 	 */
 	@Override
 	public Document getDocumentByUNID(final String unid) {
 		try {
-			if (unid == null || unid.isEmpty())
+			if (unid == null || unid.isEmpty()) {
 				return null;
+			}
 			if (!getDelegate().isOpen()) {
 				getDelegate().open();
 			}
@@ -1217,7 +1243,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
@@ -1240,8 +1266,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			} catch (IOException e) {
 				DominoUtils.handleException(e, this);
 			}
-			if (true)
+			if (true) {
 				return null;
+			}
 
 			return fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
 					proxyUser, proxyPassword, returnImmediately), Document.SCHEMA, this);
@@ -1254,7 +1281,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean)
 	 */
 	@Override
@@ -1271,7 +1298,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getFTIndexFrequency()
 	 */
 	@Override
@@ -1287,7 +1314,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getFileFormat()
 	 */
 	@Override
@@ -1303,7 +1330,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getFileName()
 	 */
 	@Override
@@ -1322,7 +1349,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getFilePath()
 	 */
 	@Override
@@ -1332,7 +1359,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getFolderReferencesEnabled()
 	 */
 	@Override
@@ -1348,7 +1375,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getForm(java.lang.String)
 	 */
 	@Override
@@ -1367,7 +1394,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getForms()
 	 */
 	@Override
@@ -1385,7 +1412,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getHttpURL()
 	 */
 	@Override
@@ -1423,7 +1450,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getLastFTIndexed()
 	 */
 	@Override
@@ -1453,7 +1480,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getLastFixup()
 	 */
 	@Override
@@ -1480,7 +1507,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getLastModified()
 	 */
 	@Override
@@ -1496,8 +1523,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	@Override
 	public Date getLastModifiedDate() {
-		if (shadowedMetaData_ != null)
+		if (shadowedMetaData_ != null) {
 			return shadowedMetaData_.getLastModifiedDate();
+		}
 		try {
 			return DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
 		} catch (NotesException e) {
@@ -1508,7 +1536,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getLimitRevisions()
 	 */
 	@Override
@@ -1524,7 +1552,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getLimitUpdatedBy()
 	 */
 	@Override
@@ -1540,7 +1568,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getListInDbCatalog()
 	 */
 	@Override
@@ -1556,7 +1584,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getManagers()
 	 */
 	@Override
@@ -1573,7 +1601,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getMaxSize()
 	 */
 	@Override
@@ -1589,7 +1617,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getModifiedDocuments()
 	 */
 	@Override
@@ -1636,7 +1664,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime, int)
 	 */
 	@Override
@@ -1657,7 +1685,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime)
 	 */
 	@Override
@@ -1667,7 +1695,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getNotesURL()
 	 */
 	@Override
@@ -1683,7 +1711,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getOption(int)
 	 */
 	@Override
@@ -1699,7 +1727,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getOutline(java.lang.String)
 	 */
 	@Override
@@ -1715,7 +1743,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -1725,7 +1753,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getPercentUsed()
 	 */
 	@Override
@@ -1741,7 +1769,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getProfileDocCollection(java.lang.String)
 	 */
 	@Override
@@ -1760,7 +1788,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getProfileDocument(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1779,7 +1807,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getReplicaID()
 	 */
 	@Override
@@ -1792,14 +1820,15 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 */
 	@Override
 	public String getMetaReplicaID() {
-		if (server_.length() > 0)
+		if (server_.length() > 0) {
 			return server_ + "!!" + replid_;
+		}
 		return replid_;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getReplicationInfo()
 	 */
 	@Override
@@ -1815,7 +1844,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getServer()
 	 */
 	@Override
@@ -1825,13 +1854,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getSize()
 	 */
 	@Override
 	public double getSize() {
-		if (shadowedMetaData_ != null)
+		if (shadowedMetaData_ != null) {
 			return shadowedMetaData_.getSize();
+		}
 		try {
 			return getDelegate().getSize();
 		} catch (NotesException e) {
@@ -1843,7 +1873,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getSizeQuota()
 	 */
 	@Override
@@ -1859,7 +1889,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getSizeWarning()
 	 */
 	@Override
@@ -1875,13 +1905,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getTemplateName()
 	 */
 	@Override
 	public String getTemplateName() {
-		if (shadowedMetaData_ != null)
+		if (shadowedMetaData_ != null) {
 			return shadowedMetaData_.getTemplateName();
+		}
 		try {
 			return getDelegate().getTemplateName();
 		} catch (NotesException e) {
@@ -1893,13 +1924,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getTitle()
 	 */
 	@Override
 	public String getTitle() {
-		if (shadowedMetaData_ != null)
+		if (shadowedMetaData_ != null) {
 			return shadowedMetaData_.getTitle();
+		}
 		try {
 			return getDelegate().getTitle();
 		} catch (NotesException e) {
@@ -1911,7 +1943,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getType()
 	 */
 	@Override
@@ -1933,7 +1965,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getURL()
 	 */
 	@Override
@@ -1949,7 +1981,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
@@ -1967,7 +1999,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getUndeleteExpireTime()
 	 */
 	@Override
@@ -1983,7 +2015,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getView(java.lang.String)
 	 */
 	@Override
@@ -2046,7 +2078,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#getViews()
 	 */
 	@Override
@@ -2065,7 +2097,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#grantAccess(java.lang.String, int)
 	 */
 	@Override
@@ -2080,7 +2112,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#grantAccess(java.lang.String, org.openntf.domino.ACL.Level)
 	 */
 	@Override
@@ -2090,7 +2122,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isAllowOpenSoftDeleted()
 	 */
 	@Override
@@ -2106,7 +2138,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isClusterReplication()
 	 */
 	@Override
@@ -2122,7 +2154,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isConfigurationDirectory()
 	 */
 	@Override
@@ -2138,7 +2170,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isCurrentAccessPublicReader()
 	 */
 	@Override
@@ -2154,7 +2186,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isCurrentAccessPublicWriter()
 	 */
 	@Override
@@ -2170,7 +2202,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isDB2()
 	 */
 	@Override
@@ -2186,7 +2218,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isDelayUpdates()
 	 */
 	@Override
@@ -2202,7 +2234,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isDesignLockingEnabled()
 	 */
 	@Override
@@ -2218,7 +2250,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isDirectoryCatalog()
 	 */
 	@Override
@@ -2234,7 +2266,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isDocumentLockingEnabled()
 	 */
 	@Override
@@ -2250,7 +2282,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isFTIndexed()
 	 */
 	@Override
@@ -2266,7 +2298,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isInMultiDbIndexing()
 	 */
 	@Override
@@ -2282,7 +2314,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isInService()
 	 */
 	@Override
@@ -2298,7 +2330,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isLink()
 	 */
 	@Override
@@ -2314,7 +2346,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isMultiDbSearch()
 	 */
 	@Override
@@ -2330,13 +2362,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isOpen()
 	 */
 	@Override
 	public boolean isOpen() {
-		if (getDelegate_unchecked() == null)
+		if (getDelegate_unchecked() == null) {
 			return false;
+		}
 		try {
 			return getDelegate().isOpen();
 		} catch (NotesException e) {
@@ -2347,7 +2380,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isPendingDelete()
 	 */
 	@Override
@@ -2363,7 +2396,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isPrivateAddressBook()
 	 */
 	@Override
@@ -2379,7 +2412,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#isPublicAddressBook()
 	 */
 	@Override
@@ -2395,7 +2428,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#markForDelete()
 	 */
 	@Override
@@ -2412,12 +2445,13 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 */
 	@Override
 	public boolean open() {
-		if (alreadyOpen_ && !isDead(getDelegate_unchecked()))
+		if (alreadyOpen_ && !isDead(getDelegate_unchecked())) {
 			return false;
+		}
 		try {
 			boolean result = false;
 			alreadyOpen_ = true;
@@ -2445,7 +2479,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#openByReplicaID(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -2465,7 +2499,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#openIfModified(java.lang.String, java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
@@ -2487,7 +2521,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#openWithFailover(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -2506,7 +2540,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#queryAccess(java.lang.String)
 	 */
 	@Override
@@ -2522,7 +2556,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#queryAccessPrivileges(java.lang.String)
 	 */
 	@Override
@@ -2536,9 +2570,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	@Override
+	public Set<DBPrivilege> queryAccessPrivilegesEx(final String name) {
+		return DominoEnumUtil.valuesOf(DBPrivilege.class, queryAccessPrivileges(name));
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#queryAccessRoles(java.lang.String)
 	 */
 	@Override
@@ -2554,7 +2593,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#remove()
 	 */
 	@Override
@@ -2569,7 +2608,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#removeFTIndex()
 	 */
 	@Override
@@ -2584,7 +2623,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#replicate(java.lang.String)
 	 */
 	@Override
@@ -2606,7 +2645,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#revokeAccess(java.lang.String)
 	 */
 	@Override
@@ -2621,7 +2660,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	@Override
@@ -2643,7 +2682,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
@@ -2653,7 +2692,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#search(java.lang.String)
 	 */
 	@Override
@@ -2669,7 +2708,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setAllowOpenSoftDeleted(boolean)
 	 */
 	@Override
@@ -2684,7 +2723,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setCategories(java.lang.String)
 	 */
 	@Override
@@ -2699,7 +2738,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setDelayUpdates(boolean)
 	 */
 	@Override
@@ -2714,7 +2753,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setDesignLockingEnabled(boolean)
 	 */
 	@Override
@@ -2729,7 +2768,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setDocumentLockingEnabled(boolean)
 	 */
 	@Override
@@ -2744,7 +2783,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setFTIndexFrequency(int)
 	 */
 	@Override
@@ -2759,7 +2798,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setFolderReferencesEnabled(boolean)
 	 */
 	@Override
@@ -2776,7 +2815,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setInMultiDbIndexing(boolean)
 	 */
 	@Override
@@ -2791,7 +2830,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setInService(boolean)
 	 */
 	@Override
@@ -2806,7 +2845,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setLimitRevisions(double)
 	 */
 	@Override
@@ -2821,7 +2860,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setLimitUpdatedBy(double)
 	 */
 	@Override
@@ -2836,7 +2875,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setListInDbCatalog(boolean)
 	 */
 	@Override
@@ -2851,7 +2890,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setOption(int, boolean)
 	 */
 	@Override
@@ -2866,7 +2905,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setOption(org.openntf.domino.Database.DBOption, boolean)
 	 */
 	@Override
@@ -2876,7 +2915,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setSizeQuota(int)
 	 */
 	@Override
@@ -2891,7 +2930,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setSizeWarning(int)
 	 */
 	@Override
@@ -2906,7 +2945,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setTitle(java.lang.String)
 	 */
 	@Override
@@ -2921,7 +2960,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#setUndeleteExpireTime(int)
 	 */
 	@Override
@@ -2936,7 +2975,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign()
 	 */
 	@Override
@@ -2951,7 +2990,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(int, boolean, java.lang.String, boolean)
 	 */
 	@Override
@@ -2965,7 +3004,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean, java.lang.String, boolean)
 	 */
 	@Override
@@ -2975,7 +3014,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(int, boolean, java.lang.String)
 	 */
 	@Override
@@ -2989,7 +3028,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean, java.lang.String)
 	 */
 	@Override
@@ -2999,7 +3038,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(int, boolean)
 	 */
 	@Override
@@ -3014,7 +3053,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean)
 	 */
 	@Override
@@ -3024,7 +3063,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(int)
 	 */
 	@Override
@@ -3039,7 +3078,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType)
 	 */
 	@Override
@@ -3049,7 +3088,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#updateFTIndex(boolean)
 	 */
 	@Override
@@ -3142,7 +3181,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -3152,7 +3191,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet)
 	 */
 	@Override
@@ -3166,7 +3205,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet, java.lang.String)
 	 */
 	@Override
@@ -3180,7 +3219,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#createFTIndex(java.util.EnumSet, boolean)
 	 */
 	@Override
@@ -3194,7 +3233,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#fixup(java.util.EnumSet)
 	 */
 	@Override
@@ -3208,7 +3247,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#getModifiedDocuments(lotus.domino.DateTime, org.openntf.domino.Database.ModifiedDocClass)
 	 */
 	@Override
@@ -3220,7 +3259,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#getOption(org.openntf.domino.Database.DBOption)
 	 */
 	@Override
@@ -3230,7 +3269,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#setFTIndexFrequency(org.openntf.domino.Database.FTIndexFrequency)
 	 */
 	@Override
@@ -3261,19 +3300,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int, int, int,
-	 * java.lang.String)
-	 */
-	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt,
-			final int start, final int count, final String entryForm) {
-		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int)
 	 */
 	@Override
@@ -3284,7 +3311,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int, int)
 	 */
 	@Override
@@ -3305,13 +3332,14 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.ext.Database#getModifiedNoteCount(lotus.domino.DateTime, org.openntf.domino.NoteCollection.SelectOption)
 	 */
 	@Override
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		if (since != null && since.after(this.getLastModifiedDate()))
+		if (since != null && since.after(this.getLastModifiedDate())) {
 			return 0;
+		}
 		NoteCollection nc = createNoteCollection(false);
 		if (since != null) {
 			nc.setSinceTime(since);
@@ -3368,8 +3396,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			return getModifiedNoteCount(since, noteClass);
 		} else {
 			java.util.Date last = this.getLastModifiedDate();
-			if (since.after(last))
+			if (since.after(last)) {
 				return 0;
+			}
 			Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
 			noteClass.add(SelectOption.DOCUMENTS);
 			return getModifiedNoteCount(since, noteClass);
@@ -3503,15 +3532,17 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 		@Override
 		public boolean containsKey(final Object key) {
-			if (!(key instanceof Serializable))
+			if (!(key instanceof Serializable)) {
 				throw new IllegalArgumentException();
+			}
 			return get(key) != null;
 		}
 
 		@Override
 		public org.openntf.domino.Document get(final Object key) {
-			if (!(key instanceof Serializable))
+			if (!(key instanceof Serializable)) {
 				throw new IllegalArgumentException();
+			}
 			return getDocumentWithKey((Serializable) key);
 		}
 
@@ -3683,16 +3714,19 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 */
 	@Override
 	public Locale getLocale() {
-		if (getLocaleCalled)
+		if (getLocaleCalled) {
 			return dbLocale;
+		}
 		getLocaleCalled = true;
 
 		Document doc = getDesign().getIconNote().getDocument();
-		if (doc == null)
+		if (doc == null) {
 			return null;
+		}
 		String lStr = doc.getItemValueString("$DefaultLanguage");
-		if (lStr == null || lStr.length() < 2)
+		if (lStr == null || lStr.length() < 2) {
 			return null;
+		}
 		String language = lStr.substring(0, 2).toLowerCase();
 		String country = (lStr.length() >= 5 && lStr.charAt(2) == '-') ? lStr.substring(3, 5).toUpperCase() : "";
 		return dbLocale = new Locale(language, country);
@@ -3752,6 +3786,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
+	public Document getDocumentByID(final int noteid) {
+		return getDocumentByID(noteid, false);
+	}
+
+	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		parent.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
@@ -3788,8 +3827,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		super.readExternal(in);
 
 		int version = in.readInt();
-		if (version != EXTERNALVERSIONUID)
+		if (version != EXTERNALVERSIONUID) {
 			throw new InvalidClassException("Cannot read dataversion " + version);
+		}
 
 		server_ = (String) in.readObject();
 		path_ = (String) in.readObject();
@@ -3810,28 +3850,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
-	}
-
-	@Override
-	public lotus.domino.Database createFromTemplate(final String arg0, final String arg1, final boolean arg2, final int arg3,
-			final boolean arg4) {
-		try {
-			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3, arg4);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
-	}
-
-	@Override
-	public lotus.domino.NoteCollection getModifiedDocumentsWithOptions(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1,
-			final int arg2) {
-		try {
-			return getDelegate().getModifiedDocumentsWithOptions(arg0, arg1, arg2);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
 	}
 
 	@Override

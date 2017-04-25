@@ -145,7 +145,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	private String noteid_;
 	private String unid_;
 	private long threadid_;
-	private boolean isNew_;
+	boolean isNew_;
 	private boolean isDeferred_ = false;
 
 	private boolean isQueued_ = false;
@@ -1274,7 +1274,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-	
+
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1310,7 +1310,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-	
+
 	}*/
 
 	/*
@@ -4383,7 +4383,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Not implemented
-	 * 
+	 *
 	 * @param richTextName
 	 * @param attachmentName
 	 * @param file
@@ -4394,7 +4394,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Not implemented
-	 * 
+	 *
 	 * @param richTextName
 	 * @param attachmentName
 	 */
@@ -4404,7 +4404,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Not implemented
-	 * 
+	 *
 	 * @return an empty collection
 	 */
 	public Collection<EmbeddedObject> getAllAttachments() {

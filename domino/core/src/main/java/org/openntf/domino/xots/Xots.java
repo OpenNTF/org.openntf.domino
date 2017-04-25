@@ -52,7 +52,7 @@ public class Xots {
 
 	}
 
-	private static XotsExecutorService getService() {
+	public static XotsExecutorService getService() {
 		if (!isStarted()) {
 			throw new IllegalStateException("Xots is not started");
 		}
@@ -136,7 +136,7 @@ public class Xots {
 
 	/**
 	 * Tests if the XotsDaemon is started
-	 * 
+	 *
 	 */
 	public static synchronized boolean isStarted() {
 		return executor_ != null;

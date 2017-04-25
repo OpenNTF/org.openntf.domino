@@ -48,7 +48,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	private Set<Class<?>> externalClasses_ = new HashSet<Class<?>>();
 	public static final String PREFIX = "ODA Graph Service: ";
 
-	static void report(String message) {
+	static void report(final String message) {
 		System.out.println(PREFIX + message);
 	}
 
@@ -178,24 +178,24 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return factoryMap_;
 	}
 
-	public void addFactory(String name, IGraphFactory factory) {
+	public void addFactory(final String name, final IGraphFactory factory) {
 		getFactoryMap().put(name, factory);
 	}
 
-	public IGraphFactory getFactory(String name) {
+	public IGraphFactory getFactory(final String name) {
 		return getFactoryMap().get(name);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public DFramedTransactionalGraph getGraph(String name) {
+	public DFramedTransactionalGraph getGraph(final String name) {
 		return (DFramedTransactionalGraph) getGraphMap().get(name);
 	}
 
-	public void addGraph(String name, FramedGraph<?> graph) {
+	public void addGraph(final String name, final FramedGraph<?> graph) {
 		getGraphMap().put(name, graph);
 	}
 
-	public FramedGraph<?> removeGraph(String name) {
+	public FramedGraph<?> removeGraph(final String name) {
 		return getGraphMap().remove(name);
 	}
 
@@ -221,7 +221,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public boolean beforeDoService(HttpServletRequest request) {
+	public boolean beforeDoService(final HttpServletRequest request) {
 		try {
 			Factory.initThread(getDataServiceConfig());
 			REQUEST_CTX.set(request);
@@ -233,7 +233,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public void afterDoService(HttpServletRequest request) {
+	public void afterDoService(final HttpServletRequest request) {
 		Map<String, FramedGraph<?>> graphs = getGraphMap();
 		for (FramedGraph graph : graphs.values()) {
 			if (graph instanceof DFramedTransactionalGraph) {
@@ -248,7 +248,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public void onError(HttpServletRequest request, Throwable t) {
+	public void onUnknownError(final HttpServletRequest request, final Throwable t) {
 		Factory.termThread();
 		t.printStackTrace();
 	}
