@@ -54,7 +54,7 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 	private EnumSet<Flags> flagSet_;
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new item.
 	 *
 	 * @param delegate
 	 *            the delegate
@@ -67,7 +67,7 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 	}
 
 	/**
-	 * Instatiates a new RichtextItem
+	 * Instantiates a new RichtextItem
 	 *
 	 * @param delegate
 	 * @param parent

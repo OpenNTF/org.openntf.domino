@@ -9,6 +9,10 @@ import java.util.logging.LogRecord;
 
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 
+/**
+ * Default formatter for writing log messages to a file when no formatter is specified in the configuration file. Writes every message on at
+ * least two lines (optionally with a stack trace). Date and time is written as 'yyyy-MM-dd HH:mm:ss'.
+ */
 public class LogFormatterFileDefault extends Formatter {
 
 	public static LogFormatterFileDefault getInstance() {
@@ -17,7 +21,7 @@ public class LogFormatterFileDefault extends Formatter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
 	 */
 	@Override
@@ -33,18 +37,21 @@ public class LogFormatterFileDefault extends Formatter {
 		StackTraceElement ste = null;
 		if (t != null) {
 			StackTraceElement[] stes = t.getStackTrace();
-			if (stes != null && stes.length > 0)
+			if (stes != null && stes.length > 0) {
 				ste = stes[0];
+			}
 		}
 		sb.append("      ");
 		sb.append(logRecord.getMessage());
 		boolean levelSevere = (logRecord.getLevel().intValue() >= Level.SEVERE.intValue());
-		if (ste != null || levelSevere)
+		if (ste != null || levelSevere) {
 			sb.append(" - ");
-		if (ste != null)
+		}
+		if (ste != null) {
 			sb.append(ste.getClassName() + "." + ste.getMethodName());
-		else if (levelSevere)
+		} else if (levelSevere) {
 			sb.append("***NO STACK TRACE***");
+		}
 		sb.append('\n');
 		if (logRecord.getThrown() instanceof OpenNTFNotesException) {
 			LogRecordAdditionalInfo lrai = new LogRecordAdditionalInfo(logRecord);

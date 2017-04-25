@@ -1,15 +1,16 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 import org.openntf.domino.ACL;
 
 /**
+ * OpenNTF Domino extensions to ACLEntry class
+ * 
  * @author withersp
- * 
- *         OpenNTF Domino extensions to ACLEntry class
- * 
+ *
+ *
  */
 public interface ACLEntry {
 
@@ -24,10 +25,10 @@ public interface ACLEntry {
 	 * <li>DESIGNER(ACL.LEVEL_DESIGNER)</li>
 	 * <li>MANAGER(ACL.LEVEL_MANAGER)</li>
 	 * </ol>
-	 * 
+	 *
 	 * @param level
 	 *            ACL.Level to set to
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public void setLevel(final ACL.Level level);

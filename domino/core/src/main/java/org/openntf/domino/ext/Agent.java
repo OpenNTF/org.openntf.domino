@@ -1,13 +1,14 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
+ * OpenNTF Domino extensions to Agent class
+ * 
  * @author withersp
- * 
- *         OpenNTF Domino extensions to Agent class
- * 
+ *
+ *
  */
 public interface Agent {
 	public String getMetaversalID();

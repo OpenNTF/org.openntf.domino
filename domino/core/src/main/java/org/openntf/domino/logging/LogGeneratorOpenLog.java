@@ -1,7 +1,3 @@
-/*
- * Considerably simplified version of BaseOpenLogItem for use in the new logging mechanism.
- */
-
 package org.openntf.domino.logging;
 
 import java.io.PrintWriter;
@@ -24,6 +20,11 @@ import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.Factory;
 
+/**
+ * Used by the LogHandlerOpenLog to write log messages to an OpenLog database. This is a considerably simplified version of BaseOpenLogItem
+ * for use in the new logging mechanism.
+ *
+ */
 public class LogGeneratorOpenLog {
 
 	/*-------------------------------------------------------------*/
@@ -118,50 +119,55 @@ public class LogGeneratorOpenLog {
 			String clVer = sess.getNotesVersion();
 			if (clVer != null) {
 				ollr._clientVersion = clVer.split("\\|");
-				for (int i = 0; i < ollr._clientVersion.length; i++)
+				for (int i = 0; i < ollr._clientVersion.length; i++) {
 					ollr._clientVersion[i] = ollr._clientVersion[i].trim();
+				}
 			}
 		} catch (Exception e) {
 			printException(e);
 			ollr._clientVersion = new String[] { "Exception while collecting logg data!", "See next LogEntry for details." };
 			localExc = e;
 		}
-		if (_olQueue != null)
+		if (_olQueue != null) {
 			_olQueue.add(new OL_EntryToWrite(this, ollr));
-		else
+		} else {
 			_olWriter.writeLogRecToDB(sess, ollr, _startTime);
-		if (localExc == null)
+		}
+		if (localExc == null) {
 			return;
+		}
 		logRec = new LogRecord(Level.SEVERE, "Exception in LogGenerator.log");
 		logRec.setThrown(localExc);
 		logRec.setMillis(System.currentTimeMillis());
 		ollr = new OL_LogRecord(logRec, null, null);
 		ollr._agentName = "LogGeneratorOpenLog";
 		ollr._dbPath = _logDBPath;
-		if (_olQueue != null)
+		if (_olQueue != null) {
 			_olQueue.add(new OL_EntryToWrite(this, ollr));
-		else
+		} else {
 			_olWriter.writeLogRecToDB(sess, ollr, _startTime);
+		}
 	}
 
 	/*-------------------------------------------------------------*/
 	private String getAccessLevel(final Database currDB) {
 		int acl = currDB.getCurrentAccessLevel();
 		String ret;
-		if (acl <= 0)
+		if (acl <= 0) {
 			ret = "0: No Access";
-		else if (acl == 1)
+		} else if (acl == 1) {
 			ret = "1: Depositor";
-		else if (acl == 2)
+		} else if (acl == 2) {
 			ret = "2: Reader";
-		else if (acl == 3)
+		} else if (acl == 3) {
 			ret = "3: Author";
-		else if (acl == 4)
+		} else if (acl == 4) {
 			ret = "4: Editor";
-		else if (acl == 5)
+		} else if (acl == 5) {
 			ret = "5: Designer";
-		else
+		} else {
 			ret = "6: Manager";
+		}
 		return ret;
 	}
 
@@ -184,25 +190,28 @@ public class LogGeneratorOpenLog {
 		private Document getEmptyDocument(final Session s) {
 			Document ret = null;
 			try {
-				if (_logDB != null)
+				if (_logDB != null) {
 					ret = _logDB.createDocument();
+				}
 			} catch (Throwable t) {
 			}
-			if (ret == null)
+			if (ret == null) {
 				try {
 					_logDB = s.getDatabase(_myDBPath);
 					ret = _logDB.createDocument();
 				} catch (Exception e) {
 					printException(e);
 				}
+			}
 			return ret;
 		}
 
 		/*-------------------------------------------------------------*/
 		public void writeLogRecToDB(final Session sess, final OL_LogRecord ollr, final Date logStartTime) {
 			Document olDoc = getEmptyDocument(sess);
-			if (olDoc == null)
+			if (olDoc == null) {
 				return;
+			}
 			try {
 				olDoc.replaceItemValue("Form", _logFormName);
 				Throwable t = ollr._logRec.getThrown();
@@ -210,9 +219,9 @@ public class LogGeneratorOpenLog {
 					StackTraceElement[] sttr = t.getStackTrace();
 					int interestingInd = (sttr.length == 0) ? -11 : 0;
 					NotesException ne = null;
-					if (t instanceof NotesException)
+					if (t instanceof NotesException) {
 						ne = (NotesException) t;
-					else if (t instanceof OpenNTFNotesException && t.getCause() instanceof NotesException) {
+					} else if (t instanceof OpenNTFNotesException && t.getCause() instanceof NotesException) {
 						ne = (NotesException) t.getCause();
 						interestingInd++;
 					}
@@ -220,8 +229,9 @@ public class LogGeneratorOpenLog {
 						olDoc.replaceItemValue("LogErrorNumber", ne.id);
 						olDoc.replaceItemValue("LogErrorMessage", ne.text);
 
-					} else
+					} else {
 						olDoc.replaceItemValue("LogErrorMessage", getMessage(ollr._logRec));
+					}
 					if (interestingInd >= 0) {
 						StackTraceElement ste = sttr[interestingInd];
 						olDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
@@ -230,8 +240,9 @@ public class LogGeneratorOpenLog {
 				}
 				olDoc.replaceItemValue("LogStackTrace", getStackTrace(t));
 				Level l = ollr._logRec.getLevel();
-				if (l == null)
+				if (l == null) {
 					l = Level.WARNING;
+				}
 				olDoc.replaceItemValue("LogSeverity", l.getName());
 				olDoc.replaceItemValue("LogEventTime", new Date(ollr._logRec.getMillis()));
 				olDoc.replaceItemValue("LogEventType", "Log");
@@ -246,19 +257,21 @@ public class LogGeneratorOpenLog {
 				olDoc.replaceItemValue("LogUserRoles", ollr._userRoles);
 				olDoc.replaceItemValue("LogClientVersion", ollr._clientVersion);
 				olDoc.replaceItemValue("LogAgentStartTime", logStartTime);
-				if (ollr._exceptionDetails == null)
+				if (ollr._exceptionDetails == null) {
 					olDoc.replaceItemValue("LogExceptionDetails", "* Not available *");
-				else {
+				} else {
 					int sz = ollr._exceptionDetails.size();
 					String[] excds = new String[sz];
-					for (int i = 0; i < sz; i++)
+					for (int i = 0; i < sz; i++) {
 						excds[i] = ollr._exceptionDetails.get(i).toString();
+					}
 					olDoc.replaceItemValue("LogExceptionDetails", excds);
 				}
-				if (ollr._lastWrappedDocs == null)
+				if (ollr._lastWrappedDocs == null) {
 					olDoc.replaceItemValue("LogLastWrappedDocuments", "* Not available *");
-				else
+				} else {
 					olDoc.replaceItemValue("LogLastWrappedDocuments", ollr._lastWrappedDocs);
+				}
 				olDoc.replaceItemValue("$PublicAccess", "1");
 				olDoc.save(true);
 			} catch (Exception e) {
@@ -268,24 +281,27 @@ public class LogGeneratorOpenLog {
 
 		String getMessage(final LogRecord logRec) {
 			String ret = logRec.getMessage();
-			if (ret != null && !ret.isEmpty())
+			if (ret != null && !ret.isEmpty()) {
 				return ret;
+			}
 			Throwable t = logRec.getThrown();
-			if (t != null)
+			if (t != null) {
 				ret = t.getMessage();
+			}
 			return (ret == null) ? "" : ret;
 		}
 
 		private ArrayList<String> getStackTrace(final Throwable t) {
 			ArrayList<String> v = new ArrayList<String>();
-			if (t == null)
+			if (t == null) {
 				v.add("***NO STACK TRACE***");
-			else {
+			} else {
 				StringWriter sw = new StringWriter();
 				t.printStackTrace(new PrintWriter(sw));
 				StringTokenizer st = new StringTokenizer(sw.toString(), "\n");
-				while (st.hasMoreTokens())
+				while (st.hasMoreTokens()) {
 					v.add(st.nextToken().trim());
+				}
 			}
 			return v;
 		}

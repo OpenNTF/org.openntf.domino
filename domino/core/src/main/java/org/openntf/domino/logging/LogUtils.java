@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.logging;
@@ -34,21 +34,17 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class LogUtils.
+ * Utility methods.
  * 
  * @author withersp
- */
-/**
- * @author withersp
- * 
+ *
  */
 public class LogUtils {
 
 	/**
 	 * Initializes a SimpleDateFormat for use if UTC is not enabled
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	private static ThreadLocal<SimpleDateFormat> ISO_LOCAL = new ThreadLocal<SimpleDateFormat>() {
@@ -60,7 +56,7 @@ public class LogUtils {
 
 	/**
 	 * Initializes a SimpleDateFormat for use if UTC is enabled
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	private static ThreadLocal<SimpleDateFormat> ISO_UTC_LOCAL = new ThreadLocal<SimpleDateFormat>() {
@@ -75,7 +71,7 @@ public class LogUtils {
 
 	/**
 	 * Instantiates a new log utils.
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public LogUtils() {
@@ -84,7 +80,7 @@ public class LogUtils {
 
 	/**
 	 * Parses logging.properties and replaces any instances of <notesdata> with the path for the domino\data folder
-	 * 
+	 *
 	 * @param is
 	 *            InputStream comprising logging.properties
 	 * @return InputStream replaced content from logging.properties
@@ -124,7 +120,7 @@ public class LogUtils {
 	/**
 	 * Retrieves default logging properties file from this package as InputStream. <br/>
 	 * Called by getLogConfigFile(int, String) if no file passed to it or file not found.
-	 * 
+	 *
 	 * @return InputStream of logging configuration using logging.properties in org.openntf.domino.logging
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -140,7 +136,7 @@ public class LogUtils {
 
 	/**
 	 * Retrieves a log file or, if that cannot be retrieved, the default log file.
-	 * 
+	 *
 	 * @param fileType
 	 *            int passed to switch statement in DominoUtils.getDominoProps. <br/>
 	 *            See DominoUtils.getDominoProps for options available.
@@ -169,7 +165,7 @@ public class LogUtils {
 
 	/**
 	 * Converts a date to an ISO8601 string.
-	 * 
+	 *
 	 * @param value
 	 *            The date.
 	 * @param utc
@@ -192,7 +188,7 @@ public class LogUtils {
 
 	/**
 	 * Initialise a logger based on a configuration file.
-	 * 
+	 *
 	 * @param relative
 	 *            boolean whether filepath is relative to <data> folder
 	 * @param filePath
@@ -235,7 +231,7 @@ public class LogUtils {
 	/**
 	 * Updates a specified Logger with settings passed in. Pass in an ArrayList of Handlers, whether or not to use the parent handler, and a
 	 * new security level. Options for security level are:
-	 * 
+	 *
 	 * <ul>
 	 * <li>Level.SEVERE</li>
 	 * <li>Level.WARNING</li>
@@ -245,7 +241,7 @@ public class LogUtils {
 	 * <li>Level.FINER</li>
 	 * <li>Level.FINEST</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param logName
 	 *            The name of the logger to modify
 	 * @param handlers
@@ -295,7 +291,7 @@ public class LogUtils {
 	 * <br/>
 	 * In case of failure, you can either use another, non-standard logging mechanism like OpenLog, or log using com.ibm.xsp.domino and
 	 * Level.SEVERE - that's the only level logged by that logger.
-	 * 
+	 *
 	 * @param log_
 	 *            Logger to try and change
 	 * @return success or failure.
@@ -314,7 +310,7 @@ public class LogUtils {
 
 	/**
 	 * Gets a logger from the LogManager.
-	 * 
+	 *
 	 * @param logName
 	 *            name of the logger
 	 * @return The Logger object

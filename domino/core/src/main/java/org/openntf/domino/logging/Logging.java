@@ -16,12 +16,15 @@ import java.util.zip.CRC32;
 import org.openntf.domino.utils.Factory;
 
 /**
- * Introduces a highly configurable new logging mechanism. (Details are to be found in logconfig.properties.) If no configuration property
- * file is found, logging is statically initialized as before (as a fallback solution ). If the configuration is changed, logging will
- * update itself within 1 minute.
- * 
+ * Initializes the OpenNTF Domino API logging mechanism. The mechanism is highly configurable (details are to be found in the package
+ * description) If no configuration property file is found, a default configuration is set. If the configuration file is changed, logging
+ * will update itself within 1 minute.
+ * <p>
+ * Logging is initialized during platform startup.
+ * </p>
+ *
  * @author steinsiek
- * 
+ *
  */
 public class Logging {
 
@@ -41,6 +44,9 @@ public class Logging {
 	private Logging() {
 	}
 
+	/**
+	 * Gets the single instance of this class.
+	 */
 	public static Logging getInstance() {
 		return _theLogger;
 	}
@@ -49,6 +55,12 @@ public class Logging {
 	private Timer _supervisor = null;
 	private static final long _supervisorInterval = 60000;	// 1 minute
 
+	/**
+	 * Loads the configuration file if it exists or sets default configuration if it does not and sets a timer to check the configuration
+	 * file for changes every minute. This method is called by the ODA platform when it starts.
+	 *
+	 * @throws IOException
+	 */
 	public void startUp() throws IOException {
 		if (!activateCfgFromPropFile()) {
 			System.err.println("Logging: Couldn't initialize from PropertyFile; activating fallback ...");
@@ -73,15 +85,24 @@ public class Logging {
 		}, _supervisorInterval, _supervisorInterval);
 	}
 
+	/**
+	 * Creates and activates Filter Handlers from the configuration
+	 *
+	 * @return true if everything was successfull
+	 */
 	private boolean activateCfgFromPropFile() {
 		LogConfig logCfg;
-		if ((logCfg = loadCfgFromPropFile()) == null)
+		if ((logCfg = loadCfgFromPropFile()) == null) {
 			return false;
-		if (!createFilterHandlers(logCfg))
+		}
+		if (!createFilterHandlers(logCfg)) {
 			return false;
-		if (_activeConfig == null)	// Necessary only if starting up
-			if (!getCfgPropFileNumbers())
+		}
+		if (_activeConfig == null) {
+			if (!getCfgPropFileNumbers()) {
 				return false;
+			}
+		}
 		activateFilterHandlers(logCfg);
 		_activeConfig = logCfg;
 		return true;
@@ -89,10 +110,16 @@ public class Logging {
 
 	static String _logConfigPropFile = null;
 
+	/**
+	 * Loads configuration from the configuration file in to an instance of LogConfig.
+	 *
+	 * @return LogConfig instance if the configuration file exists and has no syntax errors or null
+	 */
 	private LogConfig loadCfgFromPropFile() {
 		File logConfigFile = logCfgFilePrecheck();
-		if (logConfigFile == null)
+		if (logConfigFile == null) {
 			return null;
+		}
 		Properties props;
 		try {
 			FileInputStream fis = new FileInputStream(logConfigFile);
@@ -107,33 +134,48 @@ public class Logging {
 		return LogConfig.fromProperties(props);
 	}
 
+	/**
+	 * Checks the existence of the configuration file in IBM_TECHNICAL_SUPPORT/org.openntf.domino.logging.logconfig.properties in Domino
+	 * data directory.
+	 *
+	 * @return configuration file as an instance of a File or null if the file does not exist.
+	 */
 	private File logCfgFilePrecheck() {
-		if (_logConfigPropFile == null)
+		if (_logConfigPropFile == null) {
 			_logConfigPropFile = Factory.getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.domino.logging.logconfig.properties";
+		}
 		File ret = new File(_logConfigPropFile);
 		String errMsg = null;
-		if (!ret.exists())
+		if (!ret.exists()) {
 			errMsg = "not found";
-		else if (!ret.isFile())
+		} else if (!ret.isFile()) {
 			errMsg = "isn't a normal file";
-		if (errMsg == null)
+		}
+		if (errMsg == null) {
 			return ret;
+		}
 		System.err.println("Logging.logCfgFilePrecheck: File '" + _logConfigPropFile + "' " + errMsg);
 		return null;
 	}
 
+	/**
+	 * @param logCfg
+	 * @return
+	 */
 	private boolean createFilterHandlers(final LogConfig logCfg) {
 		try {
-			for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values())
+			for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values()) {
 				LogFilterHandler.getInitializedInstance(llfh, _activeConfig);
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values())
+			for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values()) {
 				if (llfh._myHandler != null) {
 					llfh._myHandler.finishUp();
 					llfh._myHandler = null;
 				}
+			}
 			return false;
 		}
 	}
@@ -143,13 +185,20 @@ public class Logging {
 		LogFilterHandler[] oldLFHs = new LogFilterHandler[sz];
 		if (_activeConfig != null) {
 			int i = 0;
-			for (LogConfig.L_LogFilterHandler llfh : _activeConfig._logFilterHandlers.values())
+			for (LogConfig.L_LogFilterHandler llfh : _activeConfig._logFilterHandlers.values()) {
 				oldLFHs[i++] = llfh._myHandler;
+			}
 		}
-		for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values())
+		for (LogConfig.L_LogFilterHandler llfh : logCfg._logFilterHandlers.values()) {
 			llfh._myHandler.activateYourself(oldLFHs);
+		}
 	}
 
+	/**
+	 * Activates default configuration when a configuration file is missing.
+	 *
+	 * @throws IOException
+	 */
 	private void startUpFallback() throws IOException {
 		String pattern = Factory.getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
 		Logger oodLogger = Logger.getLogger("org.openntf.domino");
@@ -176,12 +225,18 @@ public class Logging {
 	private long _propFileLh;
 	private long _propFileCRC;
 
+	/**
+	 * Computes configuration file CRC and size and stores them in member variables.
+	 *
+	 * @return true if the numbers were successfully computed.
+	 */
 	private boolean getCfgPropFileNumbers() {
 		long fileLh = 0;
 		long fileCRC = 0;
 		File f = logCfgFilePrecheck();
-		if (f == null)
+		if (f == null) {
 			return false;
+		}
 		try {
 			FileInputStream fis = new FileInputStream(f);
 			CRC32 crc = new CRC32();
@@ -206,13 +261,25 @@ public class Logging {
 		CFG_UNCHANGED, CFG_UPDATED, CFG_ERROR;
 	}
 
+	/**
+	 * Checks if the configuration file was updated and loads the changes if there were any. Returns one of these results:
+	 * <ul>
+	 * <li>ConfigChangeFlag.CFG_UNCHANGED when the file was not changed</li>
+	 * <li>ConfigChangeFlag.CFG_UPDATED when the file changed and was loaded</li>
+	 * <li>ConfigChangeFlag.CFG_ERROR when there was an error</li>
+	 * </ul>
+	 *
+	 * @return an indication of the result
+	 */
 	private ConfigChangeFlag lookForCfgChange() {
 		long oldFileLh = _propFileLh;
 		long oldFileCRC = _propFileCRC;
-		if (!getCfgPropFileNumbers())
+		if (!getCfgPropFileNumbers()) {
 			return ConfigChangeFlag.CFG_ERROR;
-		if (_propFileLh == oldFileLh && _propFileCRC == oldFileCRC)
+		}
+		if (_propFileLh == oldFileLh && _propFileCRC == oldFileCRC) {
 			return ConfigChangeFlag.CFG_UNCHANGED;
+		}
 		if (activateCfgFromPropFile()) {
 			System.out.println("Logging: Updated LogConfig from changed PropertyFile");
 			return ConfigChangeFlag.CFG_UPDATED;

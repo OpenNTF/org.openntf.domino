@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
@@ -9,16 +9,28 @@ import java.util.Map;
 import org.openntf.domino.View;
 
 /**
+ * OpenNTF extensions to DocumentCollection class
+ *
  * @author withersp
- * 
- *         OpenNTF extensions to DocumentCollection class
- * 
+ *
+ *
  */
 public interface DocumentCollection {
 	/**
 	 * Stamps documents in a DocumentCollection with multiple Items, where the Map's key is the Item name and the value is the value to set
 	 * the item to.
-	 * 
+	 *
+	 * <pre>
+	 * DocumentCollection docs = view.getAllDocumentsByKey("Done", true);
+	 * if (docs.getCount() > 0) {
+	 * 	HashMap&lt;String, Object&gt; itemValues = new HashMap&lt;String, Object&gt;();
+	 * 	itemValues.put("Status", "Archived");
+	 * 	itemValues.put("ArchivedDate", Calendar.getInstance().getTime());
+	 *
+	 * 	docs.stampAll(itemValues);
+	 * }
+	 * </pre>
+	 *
 	 * @param map
 	 *            Map<String, Object> of item names and values to stamp
 	 * @since org.openntf.domino 3.0.0
@@ -26,8 +38,9 @@ public interface DocumentCollection {
 	public void stampAll(final Map<String, Object> map);
 
 	/**
-	 * Where a DocumentCollection has a View associated to it, gets that parent View object. Use
-	 * 
+	 * Where a DocumentCollection has a View associated to it, gets that parent View object. The parent View is available when this
+	 * collection was built using {@link org.openntf.domino.View#getAllDocumentsByKey(Object)} and similar methods.
+	 *
 	 * @return View parent
 	 * @since org.openntf.domino 3.0.0
 	 */
@@ -35,7 +48,7 @@ public interface DocumentCollection {
 
 	/**
 	 * Sets a View as the parent of this DocumentCollection
-	 * 
+	 *
 	 * @param view
 	 *            View to use as the parent of this DocumentCollection
 	 * @since org.openntf.domino 3.0.0
@@ -43,8 +56,10 @@ public interface DocumentCollection {
 	public void setParentView(View view);
 
 	/**
-	 * Filters a DocumentCollection returning a collection of only those Documents that contain the specified value
-	 * 
+	 * Filters a DocumentCollection returning a collection of only those Documents that contain the specified value. This is an expensive
+	 * operation since it iterates over all items in documents to find the value. Consider using {@link #filter(Object, String[])} to narrow
+	 * down the search to a set of items.
+	 *
 	 * @param value
 	 *            Object to search for in the Documents using {@link java.util.Map#containsValue()}
 	 * @return DocumentCollection filtered on the value
@@ -55,7 +70,19 @@ public interface DocumentCollection {
 	/**
 	 * Filters a DocumentCollection returning a collection of only those Documents that contain the specified value in one of the specified
 	 * Item names
-	 * 
+	 * <p>
+	 * <h5>Example</h5>
+	 * </p>
+	 * The following example filters a collection of documents (possibly returned from a view categorized by status) and further filters
+	 * them to only include orders where the current user is either an author of the document or an Account Manager. This is handy if there
+	 * is not a view fit for that purpose.
+	 *
+	 * <pre>
+	 * DocumentCollection docs = getActiveOrders();
+	 * DocumentCollection filtered = docs.filter(userName, new String[] { "Author", "AccountManager" });
+	 * </pre>
+	 * </p>
+	 *
 	 * @param value
 	 *            Object to search for in the Documents using {@link java.util.Map#containsValue()}
 	 * @param itemnames
@@ -68,7 +95,7 @@ public interface DocumentCollection {
 	/**
 	 * Filters a DocumentCollection returning a collection of only those Documents that contain the specified value in one of the specified
 	 * Item names
-	 * 
+	 *
 	 * @param value
 	 *            Object to search for in the Documents using {@link java.util.Map#containsValue()}
 	 * @param itemnames
@@ -79,12 +106,13 @@ public interface DocumentCollection {
 	public org.openntf.domino.DocumentCollection filter(final Object value, Collection<String> itemnames);
 
 	/**
-	 * Filters a DocumentCollection returning a collection of only those Documents that contain one of the values in the Map.<br/>
-	 * 
+	 * Filters a DocumentCollection returning a collection of only those Documents that contain all of the values in the Map.
+	 *
 	 * @see org.openntf.domino.Document#containsValues(Map) for more information on how this Map filter works
-	 * 
+	 *
 	 * @param value
-	 *            Map<String, Object> of items and values to search for in the Documents using {@link java.util.Map#containsValues(Map)}
+	 *            Map<String, Object> of item names and values to search for in the Documents using
+	 *            {@link java.util.Map#containsValues(Map)}
 	 * @return DocumentCollection filtered on the value
 	 * @since org.openntf.domino 3.0.0
 	 */

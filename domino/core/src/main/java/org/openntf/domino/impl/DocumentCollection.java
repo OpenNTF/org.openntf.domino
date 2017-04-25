@@ -58,7 +58,7 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 	}
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new collection.
 	 *
 	 * @param delegate
 	 *            the delegate
@@ -767,12 +767,26 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		return parent;
 	}
 
+	/**
+	 * Adds a new document to the collection.
+	 *
+	 * @param doc
+	 *            Document to add
+	 * @return always returns true
+	 */
 	@Override
 	public boolean add(final org.openntf.domino.Document doc) {
 		this.addDocument(doc);
 		return true;
 	}
 
+	/**
+	 * Adds all documents from the collection to this collection
+	 *
+	 * @param docs
+	 *            Collection of Document instances to add
+	 * @return always returns true
+	 */
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.Document> docs) {
 		if (docs instanceof Base) {
@@ -785,6 +799,9 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		return true;
 	}
 
+	/**
+	 * Removes all documents from this collection
+	 */
 	@Override
 	public void clear() {
 		org.openntf.domino.Document iconNote = this.getParentDatabase().getDocumentByID("FFFF0010");
@@ -792,6 +809,18 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		this.remove(iconNote);
 	}
 
+	/**
+	 * Tests if a given value exists in this collection. Parameter <code>value</code> can be either an Integer, a
+	 * {@link lotus.domino.Document lotus.domino.Document} or a {@link lotus.domino.DocumentCollection lotus.domino.DocumentCollection}. If
+	 * the <code>value</code> is an Integer, it is treated as a NoteID and the collection tests if it contains a document with this NoteID.
+	 * If the <code>value</code> is a {@link lotus.domino.Document} or a {@link lotus.domino.DocumentCollection} then the document or all of
+	 * the documents in the given collection must be contained in this collection for the method to return true.
+	 *
+	 * @param value
+	 *            Integer specifying noteID, a lotus.domino.Document or a lotus.domino.DocumentCollection
+	 * @return true if the objet represented by value is contained in this collection
+	 *
+	 */
 	@Override
 	public boolean contains(final Object value) {
 		if (value instanceof Integer) {
@@ -804,6 +833,13 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		return false;
 	}
 
+	/**
+	 * Returns true if this collection contains all of the elements in the specified collection.
+	 *
+	 * @param docs
+	 *            Collection of documents or NoteIDs
+	 * @return true if this collection contains all of the elements in the specified collection.
+	 */
 	@Override
 	public boolean containsAll(final Collection<?> docs) {
 		if (docs == null) {
@@ -817,11 +853,21 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		return true;
 	}
 
+	/**
+	 * Returns true if this collections contains no elements.
+	 */
 	@Override
 	public boolean isEmpty() {
 		return this.size() > 0;
 	}
 
+	/**
+	 * Removes a document from this collection.
+	 *
+	 * @param doc
+	 *            instance of a Document class to be removed from the collection
+	 * @return true if the doc is an instance of lotus.domino.Document
+	 */
 	@Override
 	public boolean remove(final Object doc) {
 		if (doc instanceof lotus.domino.Document) {
@@ -831,6 +877,13 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		return false;
 	}
 
+	/**
+	 * Removes documents from this collection that are also contained in the specified collection.
+	 *
+	 * @param docs
+	 *            Collection containing documents to be removed from this collection
+	 * @return true if this collection changed as a result of the call
+	 */
 	@Override
 	public boolean removeAll(final Collection<?> docs) {
 		if (docs == null) {
@@ -845,21 +898,42 @@ public class DocumentCollection extends BaseThreadSafe<org.openntf.domino.Docume
 		return changed;
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public boolean retainAll(final Collection<?> docs) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Returns number of documents in this collection.
+	 */
 	@Override
 	public int size() {
 		return this.getCount();
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public Object[] toArray() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Not implemented
+	 *
+	 * @throws UnsupportedOperationException
+	 *             always
+	 */
 	@Override
 	public <T> T[] toArray(final T[] arg0) {
 		throw new UnsupportedOperationException();

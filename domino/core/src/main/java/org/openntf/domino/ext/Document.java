@@ -215,19 +215,19 @@ public interface Document {
 	public boolean containsValue(final Object value, final Collection<String> itemnames);
 
 	/**
-	 * Receives a Map where the key is an Item name and the value is a value to look for in the relevant Item. If one key/value pair matches
-	 * (so one of the Items contains the value to look for), the method returns true.
+	 * Receives a Map where the key is an Item name and the value is a value to look for in the relevant Item. If all key/value pairs match
+	 * (so all of the Items contain the value to look for), the method returns true.
 	 *
-	 * <code>
-	 * 	HashMap<String,Object> check = new Map<String,Object>();
-	 *  check.put("Form","Person");
-	 *  check.put("FirstName","Fred");
-	 *  return doc.containsValues(check);
-	 * </code>
+	 * <pre>
+	 * HashMap<String, Object> check = new Map<String, Object>();
+	 * check.put("Form", "Person");
+	 * check.put("FirstName", "Fred");
+	 * return doc.containsValues(check);
+	 * </pre>
 	 *
 	 * <p>
-	 * Returns true if the relevant Document's Form item contains "Person" or the Document's FirstName item contains "Fred".<br/>
-	 * Returns false if the relevant Document's Form does not contain "Person" and the Document's FirstName item does not contain "Fred".
+	 * Returns true if the relevant Document's Form item contains "Person" and the Document's FirstName item contains "Fred".<br/>
+	 * Returns false if the relevant Document's Form does not contain "Person" or the Document's FirstName item does not contain "Fred".
 	 * </p>
 	 *
 	 * @param filterMap
