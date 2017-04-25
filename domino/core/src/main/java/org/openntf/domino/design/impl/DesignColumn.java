@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -24,7 +24,7 @@ import com.ibm.commons.util.StringUtil;
 
 /**
  * @author jgallagher
- * 
+ *
  */
 public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 	@SuppressWarnings("unused")
@@ -163,5 +163,109 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 			formulaNode = code.addChildElement("formula");
 			formulaNode.setTextContent(formula);
 		}
+	}
+
+	@Override
+	public boolean isCategorized() {
+		return node_.getAttribute("categorized").equals("true");
+	}
+
+	@Override
+	public void setCategorized(final boolean isCategorized) {
+		node_.setAttribute("categorized", isCategorized ? "true" : "false");
+	}
+
+	@Override
+	public boolean isResortable() {
+		String resort = node_.getAttribute("resort");
+		if (resort == null || resort.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public ResortOrder getResortOrder() {
+		String resort = node_.getAttribute("resort");
+		if (resort == null || resort.isEmpty()) {
+			return ResortOrder.NONE;
+		}
+		return ResortOrder.valueOf(resort.toUpperCase());
+	}
+
+	@Override
+	public void setResortOrder(final ResortOrder type) {
+		if (ResortOrder.NONE.equals(type)) {
+			node_.removeAttribute("resort");
+		}
+		node_.setAttribute("resort", type.toString().toLowerCase());
+	}
+
+	@Override
+	public void removeResort() {
+		node_.removeAttribute("resort");
+	}
+
+	@Override
+	public boolean isDeferIndexCreation() {
+		String deferIndex = node_.getAttribute("deferindexcreation");
+		if (deferIndex == null || deferIndex.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void setDeferIndexCreation(final boolean deferIndex) {
+		if (!deferIndex) {
+			node_.removeAttribute("deferindexcreation");
+		} else {
+			node_.setAttribute("deferindexcreation", "true");
+		}
+	}
+
+	@Override
+	public boolean hasSecondarySortColumn() {
+		String resort2Column = node_.getAttribute("resort2column");
+		if (resort2Column == null || resort2Column.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void removeSecondarySortColumn() {
+		node_.removeAttribute("resort2column");
+		node_.removeAttribute("resort2");
+	}
+
+	@Override
+	public int getSecondarySortColumn() {
+		String resort2Column = node_.getAttribute("resort2column");
+		if (resort2Column == null || resort2Column.isEmpty()) {
+			return Integer.MIN_VALUE;
+		}
+		return Integer.valueOf(resort2Column);
+	}
+
+	@Override
+	public void setSecondarySortColumn(final int columnNo) {
+		node_.setAttribute("resort2column", Integer.toString(columnNo));
+		node_.setAttribute("resort2", SortOrder.ASCENDING.toString().toLowerCase());
+	}
+
+	@Override
+	public SortOrder getSecondaryResortOrder() {
+		String sort = node_.getAttribute("resort2");
+		if (sort == null || sort.isEmpty()) {
+			return SortOrder.NONE;
+		}
+		return SortOrder.valueOf(sort.toUpperCase());
+	}
+
+	@Override
+	public void setSecondaryResortOrder(final SortOrder resortOrder) {
+		node_.setAttribute("resort2", resortOrder.toString().toLowerCase());
+
 	}
 }
