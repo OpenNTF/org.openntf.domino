@@ -25,7 +25,7 @@ public class Engage17DesignView implements Runnable {
 	@Override
 	public void run() {
 		Session sess = Factory.getSession(SessionType.NATIVE);
-		Database extLib = sess.getDatabase("odademo/oda_1.nsf");
+		Database extLib = sess.getDatabase("oda_1.nsf");
 		View contacts = extLib.getView("AllContactsProgrammatic");
 		if (null != contacts) {
 			contacts.remove();

@@ -1,21 +1,22 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
 package org.openntf.domino.design.impl;
 
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -25,7 +26,7 @@ import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
- * 
+ *
  */
 @SuppressWarnings("serial")
 public abstract class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
@@ -40,12 +41,16 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 	}
 
 	protected AbstractFolder(final Database database) {
-		super(database);
+		super(database, AbstractFolder.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml"));
+	}
+
+	protected AbstractFolder(final Database database, final InputStream is) {
+		super(database, is);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.Folder#getColumns()
 	 */
 	@Override
@@ -55,7 +60,7 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignColumnList#addColumn()
 	 */
 	@Override

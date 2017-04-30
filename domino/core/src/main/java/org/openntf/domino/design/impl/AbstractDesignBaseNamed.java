@@ -1,21 +1,22 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
 package org.openntf.domino.design.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +31,9 @@ import com.ibm.commons.util.StringUtil;
 
 /**
  * A named DesignNote
- * 
+ *
  * @author jgallagher
- * 
+ *
  */
 @SuppressWarnings("serial")
 public abstract class AbstractDesignBaseNamed extends AbstractDesignBase implements DesignBaseNamed {
@@ -41,6 +42,10 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	public AbstractDesignBaseNamed(final Database database) {
 		super(database);
+	}
+
+	public AbstractDesignBaseNamed(final Database database, final InputStream is) {
+		super(database, is);
 	}
 
 	public AbstractDesignBaseNamed(final Document document) {
@@ -54,7 +59,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignBaseNamed#getAliases()
 	 */
 	@Override
@@ -81,7 +86,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignBaseNamed#getAlias()
 	 */
 	@Override
@@ -97,7 +102,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignBaseNamed#getName()
 	 */
 	@Override
@@ -108,15 +113,16 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 		default:
 			String title = getItemValueString(TITLE_ITEM);
 			int pos = title.indexOf('|');
-			if (pos < 0)
+			if (pos < 0) {
 				return title;
+			}
 			return title.substring(0, pos);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignBaseNamed#setAlias(java.lang.String)
 	 */
 	@Override
@@ -136,7 +142,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignBaseNamed#setAliases(java.lang.Iterable)
 	 */
 	@Override
@@ -145,8 +151,9 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 		case DXL:
 			StringBuilder sb = new StringBuilder();
 			for (String alias : aliases) {
-				if (sb.length() > 0)
+				if (sb.length() > 0) {
 					sb.append('|');
+				}
 				sb.append(alias);
 			}
 			getDocumentElement().setAttribute("alias", sb.toString());
@@ -165,7 +172,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DesignBaseNamed#setName(java.lang.String)
 	 */
 	@Override
