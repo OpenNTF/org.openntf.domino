@@ -25,14 +25,23 @@ import org.openntf.domino.types.Resurrectable;
 /**
  * The Interface that represents the access control list (ACL) of an IBM Domino database.
  * <p>
+ * Every Database object contains an <code>ACL</code> object representing the access control list of that database. To get it, use
+ * {@link Database#getACL()}.
+ * </p>
+ * <p>
  * The ACL class supports the foreach loop to iterate over the entries like in the example:
  *
  * <pre>
  * for (ACLEntry aclEntry : db.getACL()) {
  * 	// process the entry
- * } *
+ * }
  * </pre>
- *
+ * </p>
+ * <h3>Usage</h3>
+ * <p>
+ * The {@link Database} class has three methods you can use to access and modify an ACL without getting an ACL object:
+ * {@link Database#queryAccess(String)}, {@link Database#grantAccess(String, Level)}, and {@link Database#revokeAccess(String)}. However,
+ * using these methods at the same time that an ACL object is in use may produce inconsistent results.
  * </p>
  */
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openntf.domino.ext.ACL, Iterable<org.openntf.domino.ACLEntry>,
@@ -187,9 +196,13 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 
 	/**
 	 * Adds a role with the specified name to an ACL.
+	 * <p>
+	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
+	 * </p>
 	 *
 	 * @param name
-	 *            The name of the role to add
+	 *            The name of the role to add. Do not put brackets around the name.
+	 *
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -197,6 +210,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 
 	/**
 	 * Creates an entry in the ACL with the name and level that you specify.
+	 * <p>
+	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
+	 * </p>
 	 *
 	 * @param name
 	 *            The name of the person, group, or server for whom you want to create an entry in the ACL. You must supply the complete
@@ -225,9 +241,12 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 
 	/**
 	 * Deletes a role with the specified name from an ACL.
+	 * <p>
+	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
+	 * </p>
 	 *
 	 * @param name
-	 *            The name of the role to delete
+	 *            The name of the role to delete. Do not put brackets around the name.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -247,6 +266,10 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 
 	/**
 	 * Given a name, finds its entry in an ACL.
+	 * <p>
+	 * This method can find people, groups, or servers in an ACL. If a person is not listed explicitly in the ACL, but is a member of a
+	 * group listed in the ACL, <code>getEntry</code> does not find that person's name.
+	 * </p>
 	 *
 	 * @param name
 	 *            The name whose ACL Entry you want to find. You must supply the complete name, but hierarchical names can be in abbreviated
@@ -261,6 +284,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * Returns the first entry in an ACL.
 	 * <p>
 	 * The first entry is typically the -Default- entry.
+	 * </p>
 	 *
 	 * @return The first {@link ACLEntry} in the ACL.
 	 * @since lotus.domino 4.5.0
@@ -270,18 +294,17 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 
 	/**
 	 * The maximum Internet access level for this database.
-	 * <p>
-	 * <ul>
-	 * <li>ACL.LEVEL_NOACCESS (0)
-	 * <li>ACL.LEVEL_DEPOSITOR (1)
-	 * <li>ACL.LEVEL_READER (2)
-	 * <li>ACL.LEVEL_AUTHOR (3)
-	 * <li>ACL.LEVEL_EDITOR (4)
-	 * <li>ACL.LEVEL_DESIGNER (5)
-	 * <li>ACL.LEVEL_MANAGER (6)
-	 * </ul>
 	 *
 	 * @return The current maximum internet access level of the database. May be any of the following :
+	 *         <ul>
+	 *         <li>ACL.LEVEL_NOACCESS (0)
+	 *         <li>ACL.LEVEL_DEPOSITOR (1)
+	 *         <li>ACL.LEVEL_READER (2)
+	 *         <li>ACL.LEVEL_AUTHOR (3)
+	 *         <li>ACL.LEVEL_EDITOR (4)
+	 *         <li>ACL.LEVEL_DESIGNER (5)
+	 *         <li>ACL.LEVEL_MANAGER (6)
+	 *         </ul>
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -291,8 +314,10 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * Returns the ACL Entry following the last ACL Entry retrieved.
 	 * <p>
 	 * The no-parameter method improves performance for remote operations because ACL entries are cached locally.
+	 * </p>
 	 * <p>
 	 * The order of the ACL entries is unspecified. The order is not alphabetical and does not correspond to UI displays.
+	 * </p>
 	 *
 	 * @return The next {@link ACLEntry} in the ACL. Returns <code>null</code> if there are no more entries.
 	 * @since lotus.domino 4.5.0
@@ -304,6 +329,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * Returns the ACL entry following the entry specified as the parameter.
 	 * <p>
 	 * The order of the ACL entries is unspecified. The order is not alphabetical and does not correspond to UI displays.
+	 * </p>
 	 *
 	 * @param entry
 	 *            Any entry in the ACL. Cannot be <code>null</code>.
@@ -340,7 +366,12 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	/**
 	 * Indicates whether the administration server for the database can modify all Names fields in a database.
 	 * <p>
-	 * The database must have an administration server. See {@link #getAdministrationServer} in ACL and {@link ACLEntry#isAdminServer} in
+	 * The database must have an administration server. See {@link #getAdministrationServer} in ACL and {@link ACLEntry#isAdminServer} to
+	 * check for and set the administration server.
+	 * </p>
+	 * <p>
+	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
+	 * </p>
 	 *
 	 * @return Returns <code>true</code> if the administration server can modify all names fields, <code>false</code> if it cannot.
 	 *         {@link ACLEntry} to check for the administration server.
@@ -352,7 +383,12 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	/**
 	 * Indicates whether the administration server for the database can modify Readers and Authors fields in a database.
 	 * <p>
-	 * The database must have an administration server. See {@link #getAdministrationServer} in ACL and {@link ACLEntry#isAdminServer} in
+	 * The database must have an administration server. See {@link #getAdministrationServer} in ACL and {@link ACLEntry#isAdminServer} to
+	 * check for and set the administration server.
+	 * </p>
+	 * <p>
+	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
+	 * </p>
 	 *
 	 * @return Returns <code>true</code> if the administration server can modify Readers and Authors fields, <code>false</code> if it
 	 *         cannot. {@link ACLEntry} to check for the administration server.
