@@ -124,6 +124,9 @@ public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotu
 		}
 	}
 
+	/**
+	 * Returns End Date as <code>java.util.Date</code>
+	 */
 	public Date getEndDate() {
 		if (endDateTime_ == null) {
 			return null;
@@ -131,6 +134,9 @@ public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotu
 		return endDateTime_.toJavaDate();
 	}
 
+	/**
+	 * Returns Start Date as <code>java.util.Date</code>
+	 */
 	public Date getStartDate() {
 		if (startDateTime_ == null) {
 			return null;
@@ -182,10 +188,22 @@ public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotu
 		return startDateTime_.getLocalTime() + " - " + endDateTime_.getLocalTime();
 	}
 
+	/**
+	 * Sets the End Date using <code>java.util.Date</code>
+	 * 
+	 * @param date
+	 *            the End Date
+	 */
 	public void setEndDate(final java.util.Date date) {
 		endDateTime_ = getAncestorSession().createDateTime(date);
 	}
 
+	/**
+	 * Sets the Start Date using <code>java.util.Date</code>
+	 * 
+	 * @param date
+	 *            the Start Date
+	 */
 	public void setStartDate(final java.util.Date date) {
 		startDateTime_ = getAncestorSession().createDateTime(date);
 	}
@@ -360,6 +378,7 @@ public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotu
 		return parent.getFactory();
 	}
 
+	@Override
 	public List<Date> getDays() {
 		try {
 			final List<Date> dates = new ArrayList<Date>();
