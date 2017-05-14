@@ -1,10 +1,11 @@
 package org.openntf.domino.ext;
 
 /**
+ * OpenNTF extensions to EmbeddedObject class
+ * 
  * @author withersp
- * 
- *         OpenNTF extensions to EmbeddedObject class
- * 
+ *
+ *
  */
 public interface EmbeddedObject {
 

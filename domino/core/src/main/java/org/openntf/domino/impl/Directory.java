@@ -24,15 +24,14 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Directory.
  */
-public class Directory extends BaseThreadSafe<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements
-org.openntf.domino.Directory {
+public class Directory extends BaseThreadSafe<org.openntf.domino.Directory, lotus.domino.Directory, Session>
+		implements org.openntf.domino.Directory {
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new directory.
 	 *
 	 * @param delegate
 	 *            the delegate
