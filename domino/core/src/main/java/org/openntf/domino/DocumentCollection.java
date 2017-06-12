@@ -34,7 +34,6 @@ import org.openntf.domino.types.FactorySchema;
  * in the collection</li>
  * </ul>
  * </p>
- * <p>
  * <h3>Examples</h3>
  * <dl>
  * <dt>Processing documents in the collection:</dt>
@@ -46,6 +45,58 @@ import org.openntf.domino.types.FactorySchema;
  * 	//process the document in a separate method
  * }
  * </pre>
+ * </dl>
+ * <h3>Access</h3>
+ * <p>
+ * A <code>DocumentCollection</code> represents a subset of all the documents in a database. The documents in the subset are determined by
+ * the method or property you use to search the database, which can be any of the following:
+ * </p>
+ * <ul>
+ * <li>{@link Database#getAllDocuments()}</li>
+ * <li>{@link Database#FTSearch(String)}</li>
+ * <li>{@link Database#FTSearchRange(String, int, org.openntf.domino.Database.FTSortOption, int, int)}</li>
+ * <li>{@link Database#search(String)}</li>
+ * <li>{@link Database#getProfileDocCollection(String)}</li>
+ * <li>{@link Database#getModifiedDocuments()}</li>
+ * <li>{@link View#getAllDocumentsByKey(Object)}</li>
+ * <li>{@link AgentContext#getUnprocessedDocuments()}</li>
+ * <li>{@link AgentContext#unprocessedFTSearch(String, int)}</li>
+ * <li>{@link AgentContext#unprocessedFTSearchRange(String, int, int)}</li>
+ * <li>{@link AgentContext#unprocessedFTSearch(String, int)}</li>
+ * <li>{@link Document#getResponses()}</li>
+ * </ul>
+ * <h3>Usage</h3>
+ * <p>
+ * <code>DocumentCollection</code>, {@link ViewEntryCollection}, and {@link ViewNavigator} objects provide access to documents in a
+ * database. Use a <code>DocumentCollection</code> object if:
+ * </p>
+ * <ul>
+ * <li>You want to act on a specific set of documents that meet certain criteria.</li>
+ * <li>There is no view in the database that contains every document you need to search.</li>
+ * <li>You do not need to navigate the documents' response hierarchies.</li>
+ * </ul>
+ * <p>
+ * Views are a more efficient means of accessing documents because they are already indexed by the database itself. However, they do not
+ * necessarily provide access to the documents that you want. {@link ViewEntryCollection}, and {@link ViewNavigator} provide access to view
+ * entries, which contain {@link ViewEntry} as well as {@link Document} information. {@link ViewNavigator} provides access to categories and
+ * totals as well as documents.
+ * </p>
+ * <h3>Sorted collections</h3>
+ * <p>
+ * The documents in a collection are not sorted unless the collection results from a search. By contrast, documents accessed through
+ * {@link ViewEntryCollection} and {@link ViewNavigator} are in view order.
+ * </p>
+ * <h3>Current pointer</h3>
+ * <p>
+ * A current pointer is maintained for document collections. All navigation methods set the current pointer to the retrieved document with
+ * the following exceptions: add and delete methods do not move the current pointer. The following methods set the current pointer to the
+ * first document: {@link #FTSearch(String)}, {@link #removeAll(boolean)} (remote IIOP only), {@link #putAllInFolder(String)},
+ * {@link #removeAllFromFolder(String)}, and {@link #stampAll(String, Object)}.
+ * </p>
+ * <h3>Deletion stubs</h3>
+ * <p>
+ * A deletion stub is returned for a document deleted after creation of the collection or for a document to which you do not have Reader
+ * access. Use {@link Document#isValid()} to check whether a document is real (true) or a deletion stub (false).
  * </p>
  */
 public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.ext.DocumentCollection,
@@ -72,6 +123,13 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 
 	/**
 	 * Adds a document to a collection.
+	 * <p>
+	 * This method throws an exception if:
+	 * <ul>
+	 * <li>The document is a duplicate of one already in the collection.</li>
+	 * <li>The document collection is the result of a multi-database full-text search.</li>
+	 * </ul>
+	 * </p>
 	 *
 	 * @param doc
 	 *            The document to be added. Cannot be <code>null</code>.
@@ -79,6 +137,22 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	public abstract void addDocument(final lotus.domino.Document doc);
 
+	/**
+	 * Adds a document to a collection.
+	 * <p>
+	 * This method throws an exception if:
+	 * <ul>
+	 * <li>The document is a duplicate of one already in the collection.</li>
+	 * <li>The document collection is the result of a multi-database full-text search.</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param doc
+	 *            The document to be added. Cannot be <code>null</code>.
+	 * @param checkDups
+	 *            If true, forces a remote (IIOP) add to be made immediately rather than on the next navigation or other method (such as
+	 *            stampAll) that calls the server, so that a duplicate exception can be thrown immediately. Has no effect on local calls.
+	 */
 	@Override
 	public abstract void addDocument(final lotus.domino.Document doc, final boolean checkDups);
 
@@ -90,32 +164,73 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	public abstract DocumentCollection cloneCollection();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether or not a DocumentCollection contains the given Document.
+	 * <p>
+	 * The document whose containment this method determines must be in the same database as the original collection. Otherwise, the method
+	 * will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * If collection is an empty document collection, this method will return True.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#contains(int)
+	 * @param noteid
+	 *            A single noteID belonging to the DocumentCollection's database.
+	 * @return true if this DocumentCollection contains the document specified by the noteid
 	 */
 	@Override
 	public abstract boolean contains(final int noteid);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether or not a DocumentCollection contains the given Documents.
+	 * <p>
+	 * The document or documents whose containment this method determines must be in the same database as the original collection.
+	 * Otherwise, the method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to
+	 * the method that matches a noteID in the original collection's database, the method will use the unintended document.
 	 *
-	 * @see lotus.domino.DocumentCollection#contains(lotus.domino.Base)
+	 * </p>
+	 * <p>
+	 * If collection is an empty document collection, this method will return True.
+	 * </p>
+	 *
+	 * @param doc
+	 *            An object of type {@link Document}, {@link DocumentCollection}, {@link ViewEntry}, or {@link ViewEntryCollection}. View
+	 *            entries must point to documents.
+	 * @return true if this DocumentCollection contains the document specified by the noteid
 	 */
 	@Override
 	public abstract boolean contains(final lotus.domino.Base doc);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether or not a DocumentCollection contains the given Document.
+	 * <p>
+	 * The document whose containment this method determines must be in the same database as the original collection. Otherwise, the method
+	 * will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
 	 *
-	 * @see lotus.domino.DocumentCollection#contains(java.lang.String)
+	 * </p>
+	 * <p>
+	 * If collection is an empty document collection, this method will return True.
+	 * </p>
+	 *
+	 * @param noteid
+	 *            A single noteID belonging to the DocumentCollection's database.
+	 * @return true if this DocumentCollection contains the document specified by the noteid
 	 */
 	@Override
 	public abstract boolean contains(final String noteid);
 
 	/**
 	 * Deletes a document from a collection.
+	 * <p>
+	 * This method throws an exception if:
+	 * </p>
+	 * <ul>
+	 * <li>The document is already deleted.</li>
+	 * <li>The document cannot be retrieved from this collection.</li>
+	 * <li>The document collection is the result of a multi-database full-text search.</li>
+	 * </ul>
 	 *
 	 * @param doc
 	 *            The document to be deleted. Cannot be <code>null</code>.
@@ -485,26 +600,56 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	public abstract void markAllUnread(final String userName);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Adds to a document collection a document specified by its noteid.
+	 * <p>
+	 * The document being merged by this method must be in the same database as the original collection. Otherwise, the method will return
+	 * the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that matches a noteID
+	 * in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * This method performs a union of the two document collections.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#merge(int)
+	 * @param noteID
+	 *            A single noteID belonging to the DocumentCollection's database.
+	 *
 	 */
 	@Override
 	public abstract void merge(final int noteid);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Adds to a document collection any documents not already in the collection that are contained in a second collection.
+	 * <p>
+	 * The document or documents being merged by this method must be in the same database as the original collection. Otherwise, the method
+	 * will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * This method performs a union of the two document collections.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#merge(lotus.domino.Base)
+	 * @param doc
+	 *            A single document belonging to the DocumentCollection's database or a documentCollection, all documents of which must
+	 *            belong to the DocumentCollection's database.
+	 *
 	 */
 	@Override
 	public abstract void merge(final lotus.domino.Base doc);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Adds to a document collection a document specified by its noteid.
+	 * <p>
+	 * The document being merged by this method must be in the same database as the original collection. Otherwise, the method will return
+	 * the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that matches a noteID
+	 * in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * This method performs a union of the two document collections.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#merge(java.lang.String)
+	 * @param noteID
+	 *            A single noteID belonging to the DocumentCollection's database.
 	 */
 	@Override
 	public abstract void merge(final String noteid);
@@ -607,33 +752,70 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	public abstract void stampAll(final String itemName, final Object value);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Removes from a document collection document specified by its noteid
+	 * <p>
+	 * The document being subtracted by this method must be in the same database as the original collection. Otherwise, the method will
+	 * return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that matches a
+	 * noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
+	 * call which are not specified by the input argument.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#subtract(int)
+	 *
+	 * @param noteID
+	 *            A single noteID belonging to the DocumentCollection's database.
 	 */
 	@Override
 	public abstract void subtract(final int noteid);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Removes from a document collection any documents contained in a second collection.
+	 * <p>
+	 * The document or documents being subtracted by this method must be in the same database as the original collection. Otherwise, the
+	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
+	 * call which are not specified by the input argument.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#subtract(lotus.domino.Base)
+	 * @param document
+	 *            A single document belonging to the DocumentCollection's database or a documentCollection, all documents of which must
+	 *            belong to the DocumentCollection's database.
+	 *
+	 * @return
 	 */
 	@Override
 	public abstract void subtract(final lotus.domino.Base doc);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Removes from a document collection document specified by its noteid
+	 * <p>
+	 * The document being subtracted by this method must be in the same database as the original collection. Otherwise, the method will
+	 * return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that matches a
+	 * noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * <p>
+	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
+	 * call which are not specified by the input argument.
+	 * </p>
 	 *
-	 * @see lotus.domino.DocumentCollection#subtract(java.lang.String)
+	 *
+	 * @param noteID
+	 *            A single noteID belonging to the DocumentCollection's database.
 	 */
 	@Override
 	public abstract void subtract(final String noteid);
 
 	/**
 	 * Marks all documents in a collection as processed by an agent.
-	 *
+	 * <p>
+	 * See {@link AgentContext#updateProcessedDoc(lotus.domino.Document)} for a description of the update process.
+	 * </p>
 	 */
 	@Override
 	public abstract void updateAll();

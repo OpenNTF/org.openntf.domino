@@ -120,7 +120,42 @@ import org.openntf.domino.utils.enums.INumberEnum;
  * <p>
  * See the examples in the {@link org.openntf.domino.events.IDominoListener} interface.
  * </p>
- *
+ * <h3>Creation and access</h3>
+ * <p>
+ * There are several ways you can use the Database class to access existing databases and to create new ones.
+ * </p>
+ * <ul>
+ * <li>To access the current database if you are running as an agent, use {@link AgentContext#getCurrentDatabase()}</li>
+ * <li>To access an existing database when you know its server and file name, use {@link Session#getDatabase(String, String)}.</li>
+ * <li>To access an existing database when you know its server and replica ID, use {@link DbDirectory#openDatabaseByReplicaID(String)}.</li>
+ * <li>To locate an existing database when you know its server but not its file name, use the {@link DbDirectory} class.</li>
+ * <li>To access the current user's mail database, use {@link DbDirectory#openMailDatabase()}.</li>
+ * <li>To open the default Web Navigator database, use {@link Session#getURLDatabase()}.</li>
+ * <li>To access the available Domino Directories and Personal Address Books, use {@link Session#getAddressBooks()}.</li>
+ * <li>To test for the existence of a database with a specific server and file name before accessing it, use
+ * {@link DbDirectory#openDatabase(String)} or {@link DbDirectory#openDatabaseIfModified(String, java.util.Date)}.</li>
+ * <li>To create a new database from an existing database, use {@link #createCopy}, {@link #createFromTemplate}, or
+ * {@link #createReplica}.</li>
+ * <li>To create a new database from scratch, use {@link DbDirectory#createDatabase(String, boolean)}.</li>
+ * <li>To access a database when you have a contained object such as {@link View}, {@link Document}, {@link DocumentCollection},
+ * {@link ACL}, or {@link Agent}, use the appropriate <code>Parent</code> (or <code>ParentDatabase</code>) property.</li>
+ * </ul>
+ * <h3>Usage</h3>
+ * <p>
+ * A database must be open before you can use all the properties and methods in the corresponding Database object. In most cases, the class
+ * library automatically opens a database for you. But see {@link #isOpen()} for the exceptions.
+ * </p>
+ * <h3>Access levels</h3>
+ * <p>
+ * Notes throws an exception when you attempt to perform an operation for which the user does not have appropriate access. The properties
+ * and methods that you can successfully use on a <code>Database</code> object are determined by these factors:
+ * </p>
+ * <ul>
+ * <li>The user's access level to the database, as determined by the database access control list. The ACL determines if the user can open a
+ * database, add documents to it, remove documents from it, modify the ACL, and so on.</li>
+ * <li>The user's access level to the server on which the database resides, as determined by the Server document in the Domino
+ * Directory.</li>
+ * </ul>
  *
  * @see org.openntf.domino.events.IDominoListener
  * @see org.openntf.domino.ext.Database.Events
@@ -272,7 +307,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	};
 
 	/**
-	 * Enum to allow easy access to database options for use with {@link org.openntf.domino.Database#getOption(DBOption)} method
+	 * Enum to allow easy access to database options for use with {@link org.openntf.domino.ext.Database#getOption(DBOption)} method
 	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -666,20 +701,20 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The log from the access control list for a database. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#getACLActivityLog()
+	 * @return Vector with entries from the log
 	 */
 	@Override
 	@Deprecated
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<String> getACLActivityLog();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Compacts a local database.
 	 *
-	 * @see lotus.domino.Database#compact()
+	 * @return The difference in bytes between the size of the database before and after compacting.
 	 */
 	@Override
 	public int compact();
@@ -687,6 +722,32 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Compacts a local database with given options.
 	 *
+	 * @param options
+	 *            One or more of the following constants. Combine constants by adding.
+	 *            <ul>
+	 *            <li>Database.CMPC_ARCHIVE_DELETE_COMPACT (1) a (archive and delete, then compact)</li>
+	 *            <li>Database.CMPC_ARCHIVE_DELETE_ONLY (2) A (archive and delete with no compact; supersedes a)</li>
+	 *            <li>Database.CMPC_CHK_OVERLAP (32768) o and O (check overlap)</li>
+	 *            <li>Database.CMPC_COPYSTYLE (16) c and C (copy style; supersedes b and B)</li>
+	 *            <li>Database.CMPC_DISABLE_DOCTBLBIT_OPTMZN (128) f (disable document table bit map optimization)</li>
+	 *            <li>Database.CMPC_DISABLE_LARGE_UNKTBL (4096) k (disable large unknown table)</li>
+	 *            <li>Database.CMPC_DISABLE_RESPONSE_INFO (512) H (disable "Don't support specialized response hierarchy")</li>
+	 *            <li>Database.CMPC_DISABLE_TRANSACTIONLOGGING (262144) t (disable transaction logging)</li>
+	 *            <li>Database.CMPC_DISABLE_UNREAD_MARKS (1048576) U (disable "Don't maintain unread marks")</li>
+	 *            <li>Database.CMPC_DISCARD_VIEW_INDICES (32) d and D (discard view indexes)</li>
+	 *            <li>Database.CMPC_ENABLE_DOCTBLBIT_OPTMZN (64) F (enable document table bit map optimization; supersedes f)</li>
+	 *            <li>Database.CMPC_ENABLE_LARGE_UNKTBL (2048) K (enable large unknown table; supersedes k)</li>
+	 *            <li>Database.CMPC_ENABLE_RESPONSE_INFO (256) h (enable "Don't support specialized response hierarchy"; supersedes H)</li>
+	 *            <li>Database.CMPC_ENABLE_TRANSACTIONLOGGING (131072) T (enable transaction logging; supersedes t)</li>
+	 *            <li>Database.CMPC_ENABLE_UNREAD_MARKS (524288) u (enable "Don't maintain unread marks"; supersedes U)</li>
+	 *            <li>Database.CMPC_IGNORE_COPYSTYLE_ERRORS (1024) i (ignore copy-style errors)</li>
+	 *            <li>Database.CMPC_MAX_4GB (16384) m and M (set maximum database size at 4 gigabytes)</li>
+	 *            <li>Database.CMPC_NO_LOCKOUT (8192) l and L (do not lock out users)</li>
+	 *            <li>Database.CMPC_RECOVER_INPLACE (8) B (recover unused space in-place and reduce file size; supersedes b)</li>
+	 *            <li>Database.CMPC_RECOVER_REDUCE_INPLACE (4) b (recover unused space in-place without reducing file size)</li>
+	 *            <li>Database.CMPC_REVERT_FILEFORMAT (65536) r and R (do not convert old file format)</li>
+	 *            </ul>
+	 * @return The difference in bytes between the size of the database before and after compacting.
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#compactWithOptions(java.util.Set)}
 	 */
 	@Override
@@ -696,38 +757,63 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Compacts a local database with given options if specified amount of percent or unused space exceeds given spaceThreshold.
 	 *
+	 * @param options
+	 *            For a list of options see {@link org.openntf.domino.ext.Database#compactWithOptions(options)}
+	 * @param spaceThreshold
+	 *            The value of the S option (compact if specified percent or amount of unused space) without the S, for example, "10" for 10
+	 *            percent, "10K" for 10 kilobytes, or "10M" for 10 megabytes.
+	 * @return The difference in bytes between the size of the database before and after compacting.
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#compactWithOptions(java.util.Set, String)}
 	 */
 	@Override
 	@Deprecated
 	public int compactWithOptions(final int options, final String spaceThreshold);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Compacts a local database with given options.
 	 *
-	 * @see lotus.domino.Database#compactWithOptions(java.lang.String)
+	 * @param options
+	 *            One or more command-line options supported by the Compact server task without the minus signs. Spaces are insignificant
+	 *            except that a space cannot be placed in the S option between the number and the final K, k, M, or m. Options are processed
+	 *            in their order of specification.
+	 * @return The difference in bytes between the size of the database before and after compacting.
 	 */
 	@Override
 	public int compactWithOptions(final String options);
 
-	/*
+	/**
+	 * Creates an empty copy of the current database.
 	 *
-	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
+	 * @param server
+	 *            The name of the server where the new database resides. Specify null or an empty string ("") to create a local copy.
+	 * @param dbFile
+	 *            The file name of the new copy.
 	 */
 	@Override
 	public Database createCopy(final String server, final String dbFile);
 
 	/**
+	 * Creates an empty copy of the current database.
+	 *
+	 * @param server
+	 *            The name of the server where the new database resides. Specify null or an empty string ("") to create a local copy.
+	 * @param dbFile
+	 *            The file name of the new copy.
+	 * @param maxSize
+	 *            The maximum size (in gigabytes) that you would like to assign to the new database. This parameter applies only to Release
+	 *            4 databases or those created on a server that has not been upgraded to Release 5. Entering an integer greater than 4
+	 *            generates a run-time error.
+	 *
 	 * @deprecated Applies to a Release 4 server only, use {@link #createCopy(String, String)}
 	 */
 	@Override
 	@Deprecated
 	public Database createCopy(final String server, final String dbFile, final int maxSize);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a document in this database
 	 *
-	 * @see lotus.domino.Database#createDocument()
+	 * @return The new document.
 	 */
 	@Override
 	public Document createDocument();
@@ -735,152 +821,260 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document createDocument(final Object... keyValuePairs);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates an empty collection for documents
 	 *
-	 * @see lotus.domino.Database#createDocumentCollection()
+	 * @return The new collection.
 	 */
 	@Override
 	public DocumentCollection createDocumentCollection();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new database from an existing database.
 	 *
-	 * @see lotus.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean)
+	 * @param server
+	 *            The name of the server where the new database resides. Specify null or an empty string ("") to create a database on the
+	 *            current computer.
+	 * @param dbFile
+	 *            The file name of the new database.
+	 * @param inherit
+	 *            Specify true if you want the new database to inherit future design changes from the template; otherwise, specify false.
+	 * @return The new database, which contains the forms, subforms, fields, views, folders, navigators, agents, and documents of the
+	 *         template.
 	 */
 	@Override
 	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new database from an existing database.
 	 *
-	 * @see lotus.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
+	 * @param server
+	 *            The name of the server where the new database resides. Specify null or an empty string ("") to create a database on the
+	 *            current computer.
+	 * @param dbFile
+	 *            The file name of the new database.
+	 * @param inherit
+	 *            Specify true if you want the new database to inherit future design changes from the template; otherwise, specify false.
+	 * @param maxSize
+	 *            The maximum size (in gigabytes) that you would like to assign to the new database. This parameter applies only to Release
+	 *            4 databases or those created on a server that has not been upgraded to Release 5. Entering an integer greater than 4
+	 *            generates a run-time error.
+	 * @return The new database, which contains the forms, subforms, fields, views, folders, navigators, agents, and documents of the
+	 *         template.
 	 */
 	@Override
 	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize);
 
 	/**
+	 * Creates a full-text index for a database.
+	 *
+	 * @param options
+	 *            Combine options with addition.
+	 *            <ul>
+	 *            <li>Database.FTINDEX_ALL_BREAKS (4) to index sentence and paragraph breaks</li>
+	 *            <li>Database.FTINDEX_ATTACHED_BIN_FILES (16) to index attached files (binary)</li>
+	 *            <li>Database.FTINDEX_ATTACHED_FILES (1) to index attached files (raw text)</li>
+	 *            <li>Database.FTINDEX_CASE_SENSITIVE (8) to enable case-sensitive searches</li>
+	 *            <li>Database.FTINDEX_ENCRYPTED_FIELDS (2) to index encrypted fields</li>
+	 *            </ul>
+	 * @param recreate
+	 *            true removes any existing full-text index before creating one. If this parameter is false and an index exists, no action
+	 *            is taken.
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#createFTIndex(java.util.Set, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void createFTIndex(final int options, final boolean recreate);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a note collection based on the current database.
 	 *
-	 * @see lotus.domino.Database#createNoteCollection(boolean)
+	 * @param selectAllFlag
+	 *            Sets all the "Select" note collection properties true or false.
+	 * @return The new note collection.
+	 * @see NoteCollection
 	 */
 	@Override
 	public NoteCollection createNoteCollection(final boolean selectAllFlag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates an outline in the current database.
 	 *
-	 * @see lotus.domino.Database#createOutline(java.lang.String)
+	 * @param name
+	 *            A name for the outline.
+	 * @return The new outline.
 	 */
 	@Override
 	public Outline createOutline(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates an outline in the current database.
 	 *
-	 * @see lotus.domino.Database#createOutline(java.lang.String, boolean)
+	 * @param name
+	 *            A name for the outline.
+	 * @param defaultOutline
+	 *            specify false to create an empty outline
+	 * @return The new outline.
 	 */
 	@Override
 	public Outline createOutline(final String name, final boolean defaultOutline);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a DB2 query view. To use query views, the Domino server must be using DB2 as the back end, have the DB2 Access server
+	 * installed and have the database DB2 enabled.
 	 *
-	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String)
+	 * @param viewName
+	 *            Name of the view
+	 * @param query
+	 *            query for the view
+	 * @return The new view.
 	 */
 	@Override
 	public View createQueryView(final String viewName, final String query);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a DB2 query view. To use query views, the Domino server must be using DB2 as the back end, have the DB2 Access server
+	 * installed and have the database DB2 enabled.
 	 *
-	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View)
+	 * @param viewName
+	 *            Name of the view
+	 * @param query
+	 *            query for the view
+	 * @param templateView
+	 *            a View to use as a template
+	 * @return The new view.
 	 */
 	@Override
 	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a DB2 query view. To use query views, the Domino server must be using DB2 as the back end, have the DB2 Access server
+	 * installed and have the database DB2 enabled.
 	 *
-	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
+	 * @param viewName
+	 *            Name of the view
+	 * @param query
+	 *            query for the view
+	 * @param templateView
+	 *            a View to use as a template
+	 * @param prohibitDesignRefresh
+	 *            true if the Prohibit Design Refresh flag should be set on the new view
+	 * @return The new view.
 	 */
 	@Override
 	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView,
 			final boolean prohibitDesignRefresh);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a replica of the current database at a new location. If a database with the specified file name already exists, an exception
+	 * is thrown. The new replica has the same access control list as the current database.
 	 *
-	 * @see lotus.domino.Database#createReplica(java.lang.String, java.lang.String)
+	 * @param server
+	 *            Creates a replica of the current database at a new location.
+	 * @param dbFile
+	 *            The file name of the replica.
+	 * @return The new replica
 	 */
 	@Override
 	public Database createReplica(final String server, final String dbFile);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a view in this database. The new view is based on another view checked as "Default design for new folders and views". If no
+	 * such view exists, the new view is named "(untitled)", contains one column with "&commat;DocNumber" as its value and its selection
+	 * formula is set to "SELECT &commat;All".
 	 *
-	 * @see lotus.domino.Database#createView()
+	 * @return The new View
 	 */
 	@Override
 	public View createView();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a view in this database.
 	 *
-	 * @see lotus.domino.Database#createView(java.lang.String)
+	 * @param viewName
+	 *            A name for the view. Defaults to the "(untitled)" view. The view is created even if this name duplicates an existing view.
+	 * @return The new View
 	 */
 	@Override
 	public View createView(final String viewName);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a view in this database.
 	 *
-	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String)
+	 * @param viewName
+	 *            A name for the view. Defaults to the "(untitled)" view. The view is created even if this name duplicates an existing view.
+	 * @param selectionFormula
+	 *            A selection formula for the new view
+	 * @return The new View
 	 */
 	@Override
 	public View createView(final String viewName, final String selectionFormula);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a view in this database based on another view overriding its selection formula.
 	 *
-	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View)
+	 * @param viewName
+	 *            A name for the view. Defaults to the "(untitled)" view. The view is created even if this name duplicates an existing view.
+	 * @param selectionFormula
+	 *            A selection formula for the new view
+	 * @param templateView
+	 *            An existing view from which the new view is copied.
+	 * @return The new View
 	 */
 	@Override
 	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a view in this database based on another view overriding its selection formula.
 	 *
-	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
+	 * @param viewName
+	 *            A name for the view. Defaults to the "(untitled)" view. The view is created even if this name duplicates an existing view.
+	 * @param selectionFormula
+	 *            A selection formula for the new view
+	 * @param templateView
+	 *            An existing view from which the new view is copied.
+	 * @param prohibitDesignRefresh
+	 *            specify true to prohibit the view design from being refreshed
+	 * @return The new View
 	 */
 	@Override
 	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView,
 			final boolean prohibitDesignRefresh);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Ensures that a folder exists, creating it if necessary. If the folder exists, this method does nothing. If the folder does not exist,
+	 * this method creates it.
 	 *
-	 * @see lotus.domino.Database#enableFolder(java.lang.String)
+	 * @param folder
+	 *            The name of the folder
 	 */
 	@Override
 	public void enableFolder(final String folder);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Runs the Fixup task on a database. This method closes the target database, runs the Fixup task on it, waits for the Fixup task to
+	 * complete, and reopens the database for program use.
 	 *
-	 * @see lotus.domino.Database#fixup()
 	 */
 	@Override
 	public void fixup();
 
 	/**
+	 * Runs the Fixup task on a database. This method closes the target database, runs the Fixup task on it, waits for the Fixup task to
+	 * complete, and reopens the database for program use.
+	 *
+	 * @param options
+	 *            One or more of the following. Add options to combine them.
+	 *            <ul>
+	 *            <li>Database.FIXUP_INCREMENTAL (4) checks only documents since last Fixup</li>
+	 *            <li>Database.FIXUP_NODELETE (16) prevents Fixup from deleting corrupted documents</li>
+	 *            <li>Database.FIXUP_NOVIEWS (64) does not check views</li>
+	 *            <li>Database.FIXUP_QUICK (2) checks documents more quickly but less thoroughly</li>
+	 *            <li>Database.FIXUP_REVERT (32) reverts ID tables to the previous release format</li>
+	 *            <li>Database.FIXUP_TXLOGGED (8) includes databases enabled for transaction logging</li>
+	 *            <li>Database.FIXUP_VERIFY (1) makes no modifications</li>
+	 *            </ul>
+	 *
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#fixup(java.util.Set)} method.
 	 */
 	@Override
@@ -888,491 +1082,824 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public void fixup(final int options);
 
 	/**
-	 * @deprecated replaced by {@link Database#FTDomainSearch(String, int, FTDomainSortOption, java.util.Set, int, int, String)} method.
+	 * Conducts a Domain Search, that is, a full-text search of all databases listed in a Domain Catalog and marked as included for
+	 * multi-database indexing. The instance of this Database object must represent a Domain Catalog. The current Database object must
+	 * represent a Domain Catalog.
+	 * <h5>Query syntax</h5>
+	 * <p>
+	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
+	 * escape quotes if you are inside a literal. Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 * "Refining a search query using operators" in Notes Help. Search for "query syntax" in the Domino Designer Eclipse help system or
+	 * information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which include Notes.
+	 * </p>
+	 *
+	 *
+	 * @param query
+	 *            The full-text query
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
+	 *            documents.
+	 * @param sortOpt
+	 *            Use one of the following constants to specify a sorting option
+	 *            <ul>
+	 *            <li>Database.FT_SCORES (default) sorts by relevance score. When the collection is sorted by relevance, the highest
+	 *            relevance appears first. To access the relevance score of each document in the collection, use the FTSearchScore property
+	 *            in Document.</li>
+	 *            <li>Database.FT_DATE_DES sorts by document creation date in descending order.</li>
+	 *            <li>Database.FT_DATE_ASC sorts by document creation date in ascending order.</li>
+	 *
+	 * @param otherOpt
+	 *            Use the following constants to specify additional search options. To specify more than one option, use a logical or
+	 *            operation.
+	 *            <ul>
+	 *            <li>Database.FT_DATABASE includes Domino databases in the search scope.</li>
+	 *            <li>Database.FT_FILESYSTEM includes files other than Domino databases in the search scope.</li>
+	 *            <li>Database.FT_FUZZY specifies a fuzzy search.</li>
+	 *            <li>Database.FT_STEMS uses stem words as the basis of the search.</li>
+	 *            </ul>
+	 * @param start
+	 *            The starting page to return.
+	 * @param count
+	 *            The starting page to return.
+	 * @param entryForm
+	 *            The name of the search form in the domain catalog, for example, "Domain Search".
+	 * @return A document with a rich text field named "Body" that contains a table of matching document titles.
+	 * @deprecated replaced by
+	 *             {@link org.openntf.domino.ext.Database#FTDomainSearch(String, int, FTDomainSortOption, java.util.Set, int, int, String)}
+	 *             method.
 	 */
 	@Override
 	@Deprecated
 	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start,
 			final int count, final String entryForm);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Conducts a full-text search of all the documents in this database. If the database is not full-text indexed, this method works, but
+	 * less efficiently. To test for an index, use the {@link #isFTIndexed()} property. To create an index on a local database, use the
+	 * {@link #updateFTIndex()} method.
+	 * <p>
+	 * This method returns a maximum of 5,000 documents by default. The Notes.ini variable FT_MAX_SEARCH_RESULTS overrides this limit for
+	 * indexed databases or databases that are not indexed but that are running in an agent on the client. For a database that is not
+	 * indexed and is running in an agent on the server, you must set the TEMP_INDEX_MAX_DOC Notes.ini variable as well. The absolute
+	 * maximum is 2,147,483,647.
+	 * </p>
+	 * <p>
+	 * This method searches all documents in a database. To search only documents found in a particular view, use the FTSearch method in
+	 * View. To search only documents found in a particular document collection, use the FTSearch method in DocumentCollection.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#FTSearch(java.lang.String)
+	 * @param query
+	 *            The full-text query.
+	 * @return A collection of documents that match the full-text query, sorted by the selected option. If no matches are found, the
+	 *         collection has a count of 0.
 	 */
 	@Override
 	public DocumentCollection FTSearch(final String query);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Conducts a full-text search of all the documents in this database.
 	 *
-	 * @see lotus.domino.Database#FTSearch(java.lang.String, int)
+	 * @param query
+	 *            The full-text query.
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
+	 *            documents (up to 5,000).
+	 *
+	 * @return A collection of documents that match the full-text query, sorted by the selected option. If no matches are found, the
+	 *         collection has a count of 0.
+	 * @see Database#FTSearch(String)
 	 */
 	@Override
 	public DocumentCollection FTSearch(final String query, final int maxDocs);
 
 	/**
-	 * @deprecated replaced by {@link #FTSearch(String, int, FTSortOption, java.util.Set)} method.
+	 * Conducts a full-text search of all the documents in this database.
+	 *
+	 * @param query
+	 *            The full-text query.
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
+	 *            documents (up to 5,000).
+	 * @param sortOpt
+	 *            Use one of the following constants to specify a sorting option:
+	 *            <ul>
+	 *            <li>Database.FT_SCORES (default) sorts by relevance score. When the collection is sorted by relevance, the highest
+	 *            relevance appears first. To access the relevance score of each document in the collection, use the FTSearchScore property
+	 *            in Document.</li>
+	 *            <li>Database.FT_DATECREATED_DES sorts by document creation date in descending order.</li>
+	 *            <li>Database.FT_DATECREATED_ASC sorts by document creation date in ascending order.</li>
+	 *            <li>Database.FT_DATE_DES sorts by document date in descending order.</li>
+	 *            <li>Database.FT_DATE_ASC sorts by document date in ascending order.</li>
+	 *            </ul>
+	 * @param otherOpt
+	 *            Use the following constants to specify additional search options. To specify more than one option, use a logical or
+	 *            operation.
+	 *            <ul>
+	 *            <li>Database.FT_FUZZY specifies a fuzzy search.</li>
+	 *            <li>Database.FT_STEMS uses stem words as the basis of the search.</li>
+	 *            </ul>
+	 *
+	 * @return A collection of documents that match the full-text query, sorted by the selected option. If no matches are found, the
+	 *         collection has a count of 0.
+	 * @see Database#FTSearch(String)
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#FTSearch(String, int, FTSortOption, java.util.Set)} method.
 	 */
 	@Override
 	@Deprecated
 	public DocumentCollection FTSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt);
 
 	/**
-	 * FT search.
+	 * Conducts a full-text search of all the documents in this database. If the database is not full-text indexed, this method works, but
+	 * less efficiently. To test for an index, use the {@link #isFTIndexed()} property. To create an index on a local database, use the
+	 * {@link updateFTIndex()} method.
+	 * <p>
+	 * This method returns a maximum of 5,000 documents by default. The Notes.ini variable FT_MAX_SEARCH_RESULTS overrides this limit for
+	 * indexed databases or databases that are not indexed but that are running in an agent on the client. For a database that is not
+	 * indexed and is running in an agent on the server, you must set the TEMP_INDEX_MAX_DOC Notes.ini variable as well. The absolute
+	 * maximum is 2,147,483,647.
+	 * </p>
+	 * <p>
+	 * This method searches all documents in a database. To search only documents found in a particular view, use the FTSearch method in
+	 * View. To search only documents found in a particular document collection, use the FTSearch method in DocumentCollection.
+	 * </p>
 	 *
 	 * @param query
-	 *            the query
+	 *            The full-text query
 	 * @param maxDocs
-	 *            the max docs
+	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
+	 *            documents (up to 5,000).
 	 * @param sortOpt
-	 *            the sort opt
+	 *            Use one of the following constants to specify a sorting option:
+	 *            <ul>
+	 *            <li>{@link FTSortOption#SCORES} (default) sorts by relevance score. When the collection is sorted by relevance, the
+	 *            highest relevance appears first. To access the relevance score of each document in the collection, use the FTSearchScore
+	 *            property in Document.</li>
+	 *            <li>{@link FTSortOption#DATECREATED_DES} sorts by document creation date in descending order.</li>
+	 *            <li>{@link FTSortOption#DATECREATED_ASC} sorts by document creation date in ascending order.</li>
+	 *            <li>{@link FTSortOption#DATE_DES} sorts by document date in descending order.</li>
+	 *            <li>{@link FTSortOption#DATE_ASC} sorts by document date in ascending order.</li>
+	 *            </ul>
 	 * @param otherOpt
-	 *            the other opt
-	 * @return the document collection
+	 *            Use the following constants to specify additional search options. To specify more than one option, use a logical or
+	 *            operation.
+	 *            <ul>
+	 *            <li>Database.FT_FUZZY specifies a fuzzy search.</li>
+	 *            <li>Database.FT_STEMS uses stem words as the basis of the search.</li>
+	 *            </ul>
+	 * @return A collection of documents that match the full-text query, sorted by the selected option. If no matches are found, the
+	 *         collection has a count of 0.
 	 */
 	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt);
 
 	/**
-	 * @deprecated replaced by {@link Database#FTSearchRange(String, int, FTSortOption, java.util.Set, int)} method
+	 * Conducts a full-text search of all the documents in a database. This method is the same the same as {@link Database#FTSearch()} plus
+	 * the start parameter.
+	 *
+	 * @param query
+	 *            The full-text query
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
+	 *            documents.
+	 * @param sortOpt
+	 *            Use one of the following constants to specify a sorting option:
+	 *            <ul>
+	 *            <li>Database.FT_SCORES (default) sorts by relevance score. When the collection is sorted by relevance, the highest
+	 *            relevance appears first. To access the relevance score of each document in the collection, use the FTSearchScore property
+	 *            in Document.</li>
+	 *            <li>Database.FT_DATECREATED_DES sorts by document creation date in descending order.</li>
+	 *            <li>Database.FT_DATECREATED_ASC sorts by document creation date in ascending order.</li>
+	 *            <li>Database.FT_DATE_DES sorts by document date in descending order.</li>
+	 *            <li>Database.FT_DATE_ASC sorts by document date in ascending order.</li>
+	 *            </ul>
+	 * @param otherOpt
+	 *            Use the following constants to specify additional search options. To specify more than one option, use a logical or
+	 *            operation.
+	 *            <ul>
+	 *            <li>Database.FT_FUZZY specifies a fuzzy search.</li>
+	 *            <li>Database.FT_STEMS uses stem words as the basis of the search.</li>
+	 *            </ul>
+	 * @param start
+	 *            The starting document to return.
+	 * @return A collection of documents that match the full-text query, sorted by the selected option. If no matches are found, the
+	 *         collection has a count of 0.
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#FTSearchRange(String, int, FTSortOption, java.util.Set, int)} method
 	 */
 	@Override
 	@Deprecated
 	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start);
 
 	/**
-	 * FT search range.
+	 * Conducts a full-text search of all the documents in a database. This method is the same the same as {@link Database#FTSearch()} plus
+	 * the start parameter.
 	 *
 	 * @param query
-	 *            the query
+	 *            The full-text query
 	 * @param maxDocs
-	 *            the max docs
+	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
+	 *            documents.
 	 * @param sortOpt
-	 *            the sort opt
+	 *            Use one of the following constants to specify a sorting option:
+	 *            <ul>
+	 *            <li>{@link FTSortOption#SCORES} (default) sorts by relevance score. When the collection is sorted by relevance, the
+	 *            highest relevance appears first. To access the relevance score of each document in the collection, use the FTSearchScore
+	 *            property in Document.</li>
+	 *            <li>{@link FTSortOption#DATECREATED_DES} sorts by document creation date in descending order.</li>
+	 *            <li>{@link FTSortOption#DATECREATED_ASC} sorts by document creation date in ascending order.</li>
+	 *            <li>{@link FTSortOption#DATE_DES} sorts by document date in descending order.</li>
+	 *            <li>{@link FTSortOption#DATE_ASC} sorts by document date in ascending order.</li>
+	 *            </ul>
 	 * @param otherOpt
-	 *            the other opt
+	 *            Use the following constants to specify additional search options. To specify more than one option, use a logical or
+	 *            operation.
+	 *            <ul>
+	 *            <li>Database.FT_FUZZY specifies a fuzzy search.</li>
+	 *            <li>Database.FT_STEMS uses stem words as the basis of the search.</li>
+	 *            </ul>
 	 * @param start
-	 *            the start
-	 * @return the document collection
+	 *            The starting document to return.
+	 * @return A collection of documents that match the full-text query, sorted by the selected option. If no matches are found, the
+	 *         collection has a count of 0.
 	 */
 	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt,
 			final int start);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The access control list for a database. The database must be open to use this property.
 	 *
-	 *
-	 * @see lotus.domino.Database#getACL()
+	 * @return the Access control list
 	 */
 	@Override
 	public ACL getACL();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Finds an agent in this database, given the agent name. The return value is null if the current user (as obtained by
+	 * {@link Session#getUserName()} is not the owner of the private agent.
 	 *
-	 * @see lotus.domino.Database#getAgent(java.lang.String)
+	 * @param name
+	 *            The name of the agent.
+	 * @return The agent whose name matches the parameter
 	 */
 	@Override
 	public Agent getAgent(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * All of the agents in this database. If the program runs on a workstation or is remote (IIOP), the return vector includes shared
+	 * agents and private agents that belong to the current user. If the program runs on a server, the return vector includes only shared
+	 * agents.
 	 *
-	 * @see lotus.domino.Database#getAgents()
+	 * The database must be open to use this property.
+	 *
+	 * @return Collection of agents
+	 *
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<Agent> getAgents();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * An unsorted collection containing all the documents in a database. The FTSearch and search methods return smaller collections of
+	 * documents that meet specific criteria. Using the AllDocuments property is more efficient than using the search method with an
+	 * &commat;All formula. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#getAllDocuments()
+	 *
 	 */
 	@Override
 	public DocumentCollection getAllDocuments();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a document collection of all read documents in the database. If the database does not track unread marks, all documents are
+	 * considered read.
 	 *
-	 * @see lotus.domino.Database#getAllReadDocuments()
 	 */
 	@Override
 	public DocumentCollection getAllReadDocuments();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a document collection of all read documents in the database on behalf of the given name. If the database does not track
+	 * unread marks, all documents are considered read.
 	 *
-	 * @see lotus.domino.Database#getAllReadDocuments(java.lang.String)
+	 * @param userName
+	 *            Name of the user whose read documents to return.
 	 */
 	@Override
 	public DocumentCollection getAllReadDocuments(final String userName);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a document collection of all unread documents in the database. Creates a document collection of all unread documents in the
+	 * database.
 	 *
-	 * @see lotus.domino.Database#getAllUnreadDocuments()
 	 */
 	@Override
 	public DocumentCollection getAllUnreadDocuments();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a document collection of all unread documents in the database on behalf of the given name. Creates a document collection of
+	 * all unread documents in the database.
 	 *
-	 * @see lotus.domino.Database#getAllUnreadDocuments(java.lang.String)
+	 * @param userName
+	 *            Name of the user whose unread documents to return.
 	 */
 	@Override
 	public DocumentCollection getAllUnreadDocuments(final String userName);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getCategories()
+	/**
+	 * The categories under which a database appears in the Database Library. Multiple categories are separated by a comma or semicolon. A
+	 * database retrieved through {@link DbDirectory#getFirstDatabase(org.openntf.domino.DbDirectory.Type))} or
+	 * {@link DbDirectory#getNextDatabase()} in {@link DbDirectory} does not have to be open for getCategories. Otherwise, the database must
+	 * be open.
 	 */
 	@Override
 	public String getCategories();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getCreated()
+	/**
+	 * The date/time a database was created. The database must be open to use this property.
 	 */
 	@Override
 	public DateTime getCreated();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The current user's access level to this database. If a program runs on a workstation or is remote (IIOP), CurrentAccessLevel is
+	 * determined by the access level of the current user. If a program runs on a server, CurrentAccessLevel is determined by the access
+	 * level of the person who last saved the program (the owner). The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#getCurrentAccessLevel()
+	 * @return One of the values:
+	 *         <ul>
+	 *         <li>ACL.LEVEL_AUTHOR</li>
+	 *         <li>ACL.LEVEL_DEPOSITOR</li>
+	 *         <li>ACL.LEVEL_DESIGNER</li>
+	 *         <li>ACL.LEVEL_EDITOR</li>
+	 *         <li>ACL.LEVEL_MANAGER</li>
+	 *         <li>ACL.LEVEL_NOACCESS</li>
+	 *         <li>ACL.LEVEL_READER</li>
+	 *         </ul>
 	 */
 	@Override
 	public int getCurrentAccessLevel();
 
-	/*
-	 * (non-Javadoc)
-	 *
+	/* (non-Javadoc)
 	 * @see lotus.domino.Database#getDB2Schema()
 	 */
 	@Override
 	public String getDB2Schema();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getDesignTemplateName()
+	/**
+	 * The name of the design template from which a database inherits its design. If the database does not inherit its design from a design
+	 * template, returns an empty string. If a database inherits a specific design element (such as a form) but not its entire design from a
+	 * template, this property returns an empty string. A database does not need to be open to use this property.
 	 */
 	@Override
 	public String getDesignTemplateName();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Finds a document in this database, given the document note ID.
 	 *
-	 * @see lotus.domino.Database#getDocumentByID(java.lang.String)
+	 * @param noteid
+	 *            The note ID of a document to find. If you get a note ID from &commat;NoteID, delete the "NT" prefix.
+	 *
+	 * @return The document whose note ID matches the parameter.
 	 */
 	@Override
 	public Document getDocumentByID(final String noteid);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Finds a document in a database, given the document universal ID (UNID). Not matching the UNID to a document in the database throws
+	 * NotesError.NOTES_ERR_BAD_UNID (4091).
 	 *
-	 * @see lotus.domino.Database#getDocumentByUNID(java.lang.String)
+	 * @param unid
+	 *            The universal ID of a document.
+	 * @return The document whose universal ID matches the parameter.
 	 */
 	@Override
 	public Document getDocumentByUNID(final String unid);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Instantiates a document in this database and returns a Document object for it. This method is typically used for either the Server
+	 * Web Navigator or Personal Web Navigator database, but can be called on any Database object.
 	 *
-	 * @see lotus.domino.Database#getDocumentByURL(java.lang.String, boolean)
+	 * @param url
+	 *            The desired uniform resource locator (URL), for example, http://www.acme.com. Specify the entire URL starting with http.
+	 *            You can enter a maximum string length of 15K.
+	 * @param reload
+	 *            The desired uniform resource locator (URL), for example, http://www.acme.com. Specify the entire URL starting with http.
+	 *            You can enter a maximum string length of 15K.
+	 * @return The Notes document that represents the URL document you specified.
 	 */
 	@Override
 	public Document getDocumentByURL(final String url, final boolean reload);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Instantiates a document in this database and returns a Document object for it. This method is typically used for either the Server
+	 * Web Navigator or Personal Web Navigator database, but can be called on any Database object.
 	 *
-	 * @see lotus.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String, boolean)
+	 * @param url
+	 *            The desired uniform resource locator (URL), for example, http://www.acme.com. Specify the entire URL starting with http.
+	 *            You can enter a maximum string length of 15K.
+	 * @param reload
+	 *            The desired uniform resource locator (URL), for example, http://www.acme.com. Specify the entire URL starting with http.
+	 *            You can enter a maximum string length of 15K.
+	 * @param reloadIfModified
+	 *            Specify true to reload the page only if it has been modified on its Internet server, false to load the page from the
+	 *            Internet only if it is not already in the Web Navigator database.
+	 * @param urlList
+	 *            Web pages can contain URL links to other Web pages. You can specify whether to save the URLs in a field called URLLinksn
+	 *            in the Notes document. (The Web Navigator creates a new URLLinksn field each time the field size reaches 64K. For example,
+	 *            the first URLLinks field is URLLinks1, the second is URLLinks2, and so on.) Specify true if you want to save the URLs in
+	 *            the URLLinksn field(s). Specify false if you do not want to save the URLs in the URLLinksn field(s). If you save the URLs,
+	 *            you can use them in agents. For example, you can create an agent that opens Web pages in the Web Navigator database and
+	 *            then loads all the Web pages saved in each of the URLLinksn field(s). <br/>
+	 *            CAUTION: Saving URLs in the URLLinksn field(s) may affect performance.
+	 * @param charSet
+	 *            Enter the MIME character set (for example, ISO-2022-JP for Japanese or ISO-8859-1 for United States) that you want the Web
+	 *            Navigator to use when processing the Web page.
+	 * @param webUser
+	 *            Some Internet servers require you to obtain a username before you can access their pages. This parameter allows you to
+	 *            enter the username that you previously obtained from the Full-text server.
+	 * @param webPassword
+	 *            Some full-text servers require you to obtain a password before you can access their pages. This parameter allows you to
+	 *            enter the password that you previously obtained from the Internet server.
+	 * @param proxyUser
+	 *            Some proxy servers require that you specify a username in order to connect through them. This parameter allows you to
+	 *            enter the username for the proxy server. See your administrator for the username required by the proxy.
+	 * @param proxyPassword
+	 *            Some proxy servers require that you specify a password in order to connect through them. This parameter allows you to
+	 *            enter the password for the proxy server. See your administrator for the password required by the proxy.
+	 * @param returnImmediately
+	 *            Specify true to return immediately and not wait for completion of the retrieval. If you specify true, getDocumentByURL
+	 *            does not return the Document object representing the URL document. This parameter is useful for offline storage purposes;
+	 *            in this case, you do not need the Document object and do not have to wait for completion of the operation. This parameter
+	 *            is ignored and false is forced if the database being opened is not local to the execution context.
+	 * @return The Notes document that represents the URL document you specified.
 	 */
 	@Override
 	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList,
 			final String charSet, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword,
 			final boolean returnImmediately);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getFileFormat()
+	/**
+	 * The ODS (on-disk structure) version of a database. The database must be open to use this property.
 	 */
 	@Override
 	public int getFileFormat();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getFileName()
+	/**
+	 * The file name of this database, excluding the path. A database does not need to be open to use this property.
 	 */
 	@Override
 	public String getFileName();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The path and file name of this database. If the database is open and on the Notes workstation, FilePath returns the complete path
+	 * (for example, C:\Notes\data\sub\db.nsf).
 	 *
-	 * @see lotus.domino.Database#getFilePath()
+	 * If the database is on a Domino server, or closed on the Notes workstation, FilePath returns the path relative to the data directory
+	 * (for example, sub\db.nsf).
+	 *
+	 * If the database is accessed through a directory or database link, FilePath returns the link location if the code is running locally
+	 * (even if the database is on a server) so that the database appears to be where the link is. FilePath returns the actual database
+	 * location if the code is running on a server (for example, a scheduled agent).
 	 */
 	@Override
 	public String getFilePath();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getFolderReferencesEnabled()
+	/**
+	 * Indicates whether this database maintains folder references for documents.
 	 */
 	@Override
 	public boolean getFolderReferencesEnabled();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Finds a form in a database, given the form name.
 	 *
-	 * @see lotus.domino.Database#getForm(java.lang.String)
+	 * @param name
+	 *            The name or an alias of the form.
+	 * @return The form whose name or alias matches the parameter.
 	 */
 	@Override
 	public Form getForm(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * All the forms in this database. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#getForms()
+	 * @return Vector of instances of the Form class representing all the forms.
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<Form> getForms();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Update frequency of this database's full-text index.This property applies only to databases on servers. The database must have a
+	 * full-text index. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#getFTIndexFrequency()
+	 * @return The update frequency of the full-text index. One of:
+	 *         <ul>
+	 *         <li>Database.FTINDEX_DAILY (1)</li>
+	 *         <li>Database.FTINDEX_HOURLY (3)</li>
+	 *         <li>Database.FTINDEX_IMMEDIATE (4)</li>
+	 *         <li>Database.FTINDEX_SCHEDULED (2)</li>
+	 *         </ul>
 	 */
 	@Override
 	public int getFTIndexFrequency();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getHttpURL()
+	/**
+	 * The Domino URL of this database when HTTP protocols are in effect. If HTTP protocols are not available, this property returns an
+	 * empty string.
 	 */
 	@Override
 	public String getHttpURL();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getLastFixup()
+	/**
+	 * The date that a database was last checked by the Fixup task. The database must be open to use this property.
 	 */
 	@Override
 	public DateTime getLastFixup();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getLastFTIndexed()
+	/**
+	 * The date that the database's full-text index was last updated. If the database does not have a full-text index, returns null. The
+	 * database must be open to use this property.
 	 */
 	@Override
 	public DateTime getLastFTIndexed();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getLastModified()
+	/**
+	 * The date/time that the database was last modified. The database must be open to use this property.
 	 */
 	@Override
 	public DateTime getLastModified();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The maximum number of entries allowed in the $Revisions field. This property corresponds to "Limit entries in $Revisions fields" in
+	 * the database advanced properties of the UI.
 	 *
-	 * @see lotus.domino.Database#getLimitRevisions()
+	 * This property must be an integer in the range 0 - 2147483647. When setting it:
+	 * <ul>
+	 * <li>Any fraction is truncated.</li>
+	 * <li>A value less than 0 raises NotesError.NOTES_ERR_NEGATIVE_VALUE (4631) "Value can not be negative."</li>
+	 * <li>A value greater than 2147483647 throws NotesError.NOTES_ERR_LONG_OVERFLOW (4673) "Value must be positive and less than
+	 * 2147483648."</li>
+	 * </ul>
+	 * A value of 0 means no limit. When $Revisions reaches the limit, a new entry results in deletion of the oldest entry. <br/>
+	 * The database must be open to use this property.
+	 *
+	 * @return The maximum number of entries allowed in the $Revisions field.
 	 */
 	@Override
 	public double getLimitRevisions();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The maximum number of entries allowed in the $UpdatedBy field. This property corresponds to "Limit entries in $UpdatedBy fields" in
+	 * the database advanced properties of the UI.
 	 *
-	 * @see lotus.domino.Database#getLimitUpdatedBy()
+	 * This property must be an integer in the range 0 - 2147483647. When setting it:
+	 * <ul>
+	 * <li>Any fraction is truncated.</li>
+	 * <li>A value less than 0 throws NotesError.NOTES_ERR_NEGATIVE_VALUE (4631) "Value can not be negative."</li>
+	 * <li>A value greater than 2147483647 throws NotesError.NOTES_ERR_LONG_OVERFLOW (4673) "Value must be positive and less than
+	 * 2147483648."</li>
+	 * <ul>
+	 * A value of 0 means no limit. When $UpdatedBy reaches the limit, a new entry results in deletion of the oldest entry. <br/>
+	 * The database must be open to use this property.
+	 *
+	 * @return The maximum number of entries allowed in the $UpdatedBy field.
 	 */
 	@Override
 	public double getLimitUpdatedBy();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether a database appears in database catalogs. This property corresponds to "List in Database Catalog" in the database
+	 * design properties of the UI.
 	 *
-	 * @see lotus.domino.Database#getListInDbCatalog()
+	 * Categories determines the categories under which the database is listed.
+	 *
+	 * The database must be open to use this property.
+	 *
+	 * @return true, if the database appears in database catalogs or false if not
 	 */
 	@Override
 	public boolean getListInDbCatalog();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getManagers()
+	/**
+	 * People, servers, and groups that have Manager access to a database. The database must be open to use this property.
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<String> getManagers();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getMaxSize()
+	/**
+	 * The maximum size of a database in kilobytes. The database must be open to use this property.
 	 */
 	@Override
 	public long getMaxSize();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets all the documents in this database (because it defaults to the creation time of the database).
 	 *
-	 * @see lotus.domino.Database#getModifiedDocuments()
+	 * @return DocumentCollection. A collection containing the modified documents.
 	 */
 	@Override
 	public DocumentCollection getModifiedDocuments();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets all the documents in this database that are modified since the specified time.
 	 *
-	 * @see lotus.domino.Database#getModifiedDocuments(lotus.domino.DateTime)
+	 * @param since
+	 *            The start time for collecting the modified documents.
+	 * @return DocumentCollection. A collection containing the modified documents.
 	 */
 	@Override
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since);
 
 	/**
+	 * Gets all the documents of given type in this database that are modified since the specified time.
+	 *
+	 * @param since
+	 *            The start time for collecting the modified documents.
+	 * @param noteClass
+	 *            One of the following to specify the type or types of document collected. You can combine types with a logical or.
+	 *            <ul>
+	 *            <li>Database.DBMOD_DOC_ACL (64)</li>
+	 *            <li>Database.DBMOD_DOC_AGENT (512)</li>
+	 *            <li>Database.DBMOD_DOC_ALL (32767)</li>
+	 *            <li>Database.DBMOD_DOC_DATA (1)</li>
+	 *            <li>Database.DBMOD_DOC_FORM (4)</li>
+	 *            <li>Database.DBMOD_DOC_HELP (256)</li>
+	 *            <li>Database.DBMOD_DOC_ICON (16)</li>
+	 *            <li>Database.DBMOD_DOC_REPLFORMULA (2048)</li>
+	 *            <li>Database.DBMOD_DOC_SHAREDFIELD (1024)</li>
+	 *            <li>Database.DBMOD_DOC_VIEW (8)</li>
+	 *            <ul>
+	 *
+	 * @return DocumentCollection. A collection containing the modified documents.
+	 *
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getModifiedDocuments(java.util.Date, ModifiedDocClass)} method.
 	 */
 	@Override
 	@Deprecated
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final int noteClass);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getNotesURL()
+	/**
+	 * The Domino URL of this database when Notes protocols are in effect. If Notes protocols are not available, this property returns an
+	 * empty string.
 	 */
 	@Override
 	public String getNotesURL();
 
 	/**
+	 * Gets the value of a database option.
+	 *
+	 * @param optionname
+	 *            One of the following:
+	 *            <ul>
+	 *            <li>Database.DBOPT_LZ1 uses LZ1 compression for attachments</li>
+	 *            <li>Database.DBOPT_LZCOMPRESSION uses LZ1 compression for attachments</li>
+	 *            <li>Database.DBOPT_MAINTAINLASTACCESSED maintains LastAcessed property</li>
+	 *            <li>Database.DBOPT_MOREFIELDS allows more fields in database</li>
+	 *            <li>Database.DBOPT_NOHEADLINEMONITORS doesn't allow headline monitoring</li>
+	 *            <li>Database.DBOPT_NOOVERWRITE doesn't overwrite free space</li>
+	 *            <li>Database.DBOPT_NORESPONSEINFO doesn't support specialized response hierarchy</li>
+	 *            <li>Database.DBOPT_NOTRANSACTIONLOGGING disables transaction logging</li>
+	 *            <li>Database.DBOPT_NOUNREAD doesn't maintain unread marks</li>
+	 *            <li>Database.DBOPT_OPTIMIZATION enables document table bitmap optimization</li>
+	 *            <li>Database.DBOPT_REPLICATEUNREADMARKSTOANY replicates unread marks to all servers</li>
+	 *            <li>Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER replicates unread marks to clustered servers only</li>
+	 *            <li>Database.DBOPT_SOFTDELETE allows soft deletions</li>
+	 *            </ul>
+	 * @return true if the option is enabled or false if not
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getOption(DBOption)} method.
 	 */
 	@Override
 	@Deprecated
 	public boolean getOption(final int optionName);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets an outline in the current database.
 	 *
-	 * @see lotus.domino.Database#getOutline(java.lang.String)
+	 * @param outlineName
+	 *            The name of the outline.
+	 * @return The outline
 	 */
 	@Override
 	public Outline getOutline(final String outlineName);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getParent()
+	/**
+	 * The Notes session that contains this database.
 	 */
 	@Override
 	public Session getParent();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getPercentUsed()
+	/**
+	 * The percent of this database's total size that is occupied by real data (and not empty space).
 	 */
 	@Override
 	public double getPercentUsed();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Retrieves the profile documents associated with a profile form.
 	 *
-	 * @see lotus.domino.Database#getProfileDocCollection(java.lang.String)
+	 * @param profileName
+	 *            The name or an alias of the profile form.
+	 * @return The profile documents. No profile documents results in an empty collection.
 	 */
 	@Override
 	public DocumentCollection getProfileDocCollection(final String profileName);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Retrieves or creates a profile document.
 	 *
-	 * @see lotus.domino.Database#getProfileDocument(java.lang.String, java.lang.String)
+	 * @param profileName
+	 *            The name or an alias of the profile form.
+	 * @param profileKey
+	 *            The unique key associated with the profile document.
+	 * @return The profile document for the specified key, or a new profile document if the document with the key does not exist.
 	 */
 	@Override
 	public Document getProfileDocument(final String profileName, final String profileKey);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getReplicaID()
+	/**
+	 * A 16-digit hexadecimal number that represents the replica ID of a Notes database. Databases with the same replica ID are replicas of
+	 * one another.
 	 */
 	@Override
 	public String getReplicaID();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getReplicationInfo()
+	/**
+	 * The replication object associated with this database. Each Database instance contains one {@link Replication} object. The database
+	 * must be open to use this property.
 	 */
 	@Override
 	public Replication getReplicationInfo();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getServer()
+	/**
+	 * The name of the server where a database resides. If the database is on a workstation, the property returns an empty string.
 	 */
 	@Override
 	public String getServer();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getSize()
+	/**
+	 * The size of a database, in bytes.
 	 */
 	@Override
 	public double getSize();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The size quota of a database, in kilobytes. The size quota for a database specifies the amount of disk space that the server
+	 * administrator is willing to provide for the database. Therefore, the SizeQuota property can only be set by a program that has
+	 * administrator access to the server on which the database resides. The size quota is not the same as the size limit that a user
+	 * specifies when creating a new database.
 	 *
-	 * @see lotus.domino.Database#getSizeQuota()
+	 * <p>
+	 * If the database has no size quota, this property returns 0.
+	 * </p>
 	 */
 	@Override
 	public int getSizeQuota();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The size warning threshold of a database, in kilobytes. The size warning threshold for a database specifies the amount of disk space
+	 * that the server administrator is willing to provide for that database before displaying a warning; therefore, the SizeWarning
+	 * property can only be set by a script that has administrator access to the server on which the database resides.
 	 *
-	 * @see lotus.domino.Database#getSizeWarning()
+	 * <p>
+	 * If there is no size warning threshold for the database, this property returns 0.
+	 * </p>
+	 * <p>
+	 * In the Administration Client, use the "Set Quotas" tool to set the size warning.
+	 * </p>
 	 */
 	@Override
 	public long getSizeWarning();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getTemplateName()
+	/**
+	 * The template name, if this database is a template. If the database is not a template, returns an empty string.
 	 */
 	@Override
 	public String getTemplateName();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getTitle()
+	/**
+	 * The title of this database.
 	 */
 	@Override
 	public String getTitle();
 
 	/**
+	 * Database type.
 	 *
+	 * @return One of
+	 *         <ul>
+	 *         <li>Database.DBTYPE_ADDR_BOOK (10) - Domino Directory or Personal Address Book</li>
+	 *         <li>Database.DBTYPE_IMAP_SVR_PROXY (6) - IMAP server proxy</li>
+	 *         <li>Database.DBTYPE_LIBRARY (12) - database library</li>
+	 *         <li>Database.DBTYPE_LIGHT_ADDR_BOOK (9) - Directory Catalog</li>
+	 *         <li>Database.DBTYPE_MAILBOX (3) - mailbox</li>
+	 *         <li>Database.DBTYPE_MAILFILE (2) - mail file</li>
+	 *         <li>Database.DBTYPE_MULTIDB_SRCH (8) - Domain Catalog</li>
+	 *         <li>Database.DBTYPE_NEWS_SVR_PROXY (5) - news server proxy</li>
+	 *         <li>Database.DBTYPE_PERS_JOURNAL (11) - Personal Journal</li>
+	 *         <li>Database.DBTYPE_PORTFOLIO (7) - portfolio</li>
+	 *         <li>Database.DBTYPE_STANDARD (13) - standard</li>
+	 *         <li>Database.DBTYPE_SUBSCRIPTIONS (4) - subscriptions</li>
+	 *         <li>Database.DBTYPE_WEB_APP (1) - Web application</li>
+	 *         </ul>
 	 * @see lotus.domino.Database#getType()
 	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#getTypeEx()}
 	 */
@@ -1380,328 +1907,596 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Deprecated
 	public int getType();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getUndeleteExpireTime()
+	/**
+	 * The number of hours before soft deletions become hard deletions. This property corresponds to "Soft delete expire time in hours" in
+	 * the database advanced properties of the UI.
 	 */
 	@Override
 	public int getUndeleteExpireTime();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#getURL()
+	/**
+	 * Returns the Domino URL for its parent.
 	 */
 	@Override
 	public String getURL();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the specific Hypertext Transfer Protocol (HTTP) header information from the Uniform Resource Locator (URL). A URL is a text
+	 * string used for identifying and addressing a Web resource.
 	 *
-	 * @see lotus.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.String)
+	 * @param url
+	 *            The URL for the Web page you want information on, for example, http://www.acme.com/. Specify the entire URL starting with
+	 *            http. You can enter a maximum string length of 15K.
+	 * @param header
+	 *            Enter a header string of the URL header value you want returned. The acceptable header strings are documented in the HTTP
+	 *            specification (available at various locations on the Internet, such as http://www.w3.org/) and are subject to change based
+	 *            on updated versions of the specification.
+	 * @param webUser
+	 *            Some Internet servers require you to obtain a username before you can access their pages. This parameter allows you to
+	 *            enter the username that you previously obtained from the Internet server. Specify null if you don't need this parameter.
+	 * @param webPassword
+	 *            Some Internet servers require you to obtain a password before you can access their pages. This parameter allows you to
+	 *            enter the password that you previously obtained from the Internet server. Specify null if you don't need this parameter.
+	 * @param proxyUser
+	 *            Some proxy servers require that you specify a username in order to connect through them. This parameter allows you to
+	 *            enter the username for the proxy server. See your administrator for the username required by the proxy. Specify null if
+	 *            you don't need this parameter.
+	 * @param proxyPassword
+	 *            Some proxy servers require that you specify a password in order to connect through them. This parameter allows you to
+	 *            enter the password for the proxy server. See your administrator for the password required by the proxy. Specify null if
+	 *            you don't need this parameter.
+	 * @return The requested header, or null if the URL or the requested header value is not found. Any dashes are converted to underscores.
 	 */
 	@Override
 	public String getURLHeaderInfo(final String url, final String header, final String webUser, final String webPassword,
 			final String proxyUser, final String proxyPassword);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Finds a view or folder in this database, given the name or alias of the view or folder. Using getView returns public views and
+	 * folders and private views and folders that are owned by the effective id running the agent. Private views stored in the desktop are
+	 * not returned.
+	 * <p>
+	 * When specifying the parameter, do not combine the view name and an alias. For example, specifying "By Author|AuthorView" does not
+	 * work. Use either the view name ("By Author") or its alias ("AuthorView").
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#getView(java.lang.String)
+	 * <p>
+	 * When the view or folder name contains underscores to indicate menu accelerators, you have the option of including or excluding the
+	 * underscores. The method works more efficiently, however, if you include the underscores.
+	 * </p>
+	 *
+	 * @param name
+	 *            The case-insensitive name of a view or folder in a database. Use either the entire name of the view or folder (including
+	 *            backslashes for cascading views and folders), or an alias.
+	 * @return The view or folder whose name or alias matches the parameter.
 	 */
 	@Override
 	public View getView(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The views and folders in this database. Each element of the vector represents a public view or folder in the database, or a private
+	 * view or folder owned by the effective id running the code. Private views or folders stored in the desktop are not included.
 	 *
-	 * @see lotus.domino.Database#getViews()
+	 * <p>
+	 * The database must be open to use this property.
+	 * </p>
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<View> getViews();
 
 	/**
+	 * Modifies a database access control list to provide a specified level of access to a person, group, or server. If the name already
+	 * exists in the ACL, this method updates it with the access. Otherwise, the name is added to the ACL with the level.
+	 *
+	 * <p>
+	 * You can also use this method to deny access to a person, group, or server by assigning LEVEL_NOACCESS.
+	 * </p>
+	 *
+	 * <p>
+	 * This method sets ACL roles to their default values.
+	 * </p>
+	 *
+	 * @param name
+	 *            The name of the person, group, or server whose access level you want to provide or change. For a hierarchical name, the
+	 *            full name must be specified but can be in abbreviated format.
+	 * @param level
+	 *            The level of access you're granting. Specify one of the following constants:
+	 *            <ul>
+	 *            <li>ACL.LEVEL_AUTHOR</li>
+	 *            <li>ACL.LEVEL_DEPOSITOR</li>
+	 *            <li>ACL.LEVEL_DESIGNER</li>
+	 *            <li>ACL.LEVEL_EDITOR</li>
+	 *            <li>ACL.LEVEL_MANAGER</li>
+	 *            <li>ACL.LEVEL_NOACCESS</li>
+	 *            <li>ACL.LEVEL_READER</li>
+	 *            </ul>
 	 * @deprecated replaced by {@link #grantAccess(String, org.openntf.domino.ACL.Level)}
 	 */
 	@Override
 	@Deprecated
 	public void grantAccess(final String name, final int level);
 
+	/**
+	 * Modifies a database access control list to provide a specified level of access to a person, group, or server. If the name already
+	 * exists in the ACL, this method updates it with the access. Otherwise, the name is added to the ACL with the level.
+	 *
+	 * <p>
+	 * You can also use this method to deny access to a person, group, or server by assigning LEVEL_NOACCESS.
+	 * </p>
+	 *
+	 * <p>
+	 * This method sets ACL roles to their default values.
+	 * </p>
+	 *
+	 * @param name
+	 *            The name of the person, group, or server whose access level you want to provide or change. For a hierarchical name, the
+	 *            full name must be specified but can be in abbreviated format.
+	 * @param level
+	 *            The level of access you're granting.
+	 */
 	@Override
 	public void grantAccess(final String name, final ACL.Level level);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether documents that are soft deleted can be opened.
 	 *
-	 * @see lotus.domino.Database#isAllowOpenSoftDeleted()
+	 * @return true if soft deleted documents can be opened or false if not
 	 */
 	@Override
 	public boolean isAllowOpenSoftDeleted();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether cluster replication is in effect for a database on a server in a cluster. The database must be open to use this
+	 * property.
 	 *
-	 * @see lotus.domino.Database#isClusterReplication()
+	 * @return true, if cluster replication is in effect
 	 */
 	@Override
 	public boolean isClusterReplication();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether a database is a Configuration Directory database. This property is available for Database objects retrieved from
+	 * the AddressBooks property in Session. For other Database objects, this property has no value, and therefore evaluates to false when
+	 * used in conditional statements.
 	 *
-	 * @see lotus.domino.Database#isConfigurationDirectory()
+	 * The database must be open to use this property.
+	 *
+	 * @return true if the database is a Configuration Directory, false if not
 	 */
 	@Override
 	public boolean isConfigurationDirectory();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether the current user has public reader access in a database. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#isCurrentAccessPublicReader()
+	 * @return true if the user has public reader access, false if not
 	 */
 	@Override
 	public boolean isCurrentAccessPublicReader();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether the current user has public writer access in a database. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#isCurrentAccessPublicWriter()
+	 * @return true if the user has public writer access, false if not
 	 */
 	@Override
 	public boolean isCurrentAccessPublicWriter();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether the current database is backed by DB2.
 	 *
-	 * @see lotus.domino.Database#isDB2()
+	 * @return true, if the current database is backed by DB2, false if not.
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public boolean isDB2();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether updates to a server are delayed (batched) for better performance.
+	 * <p>
+	 * If DelayUpdates is false, the program waits for updates to the server to be posted. If you set DelayUpdates to true, server updates
+	 * are cached and the program proceeds immediately. At a convenient time, the cached updates are posted. This makes for better
+	 * performance but risks losing the cached updates in the event of a crash. This method applies to save and remove operations on
+	 * documents.
+	 * </p>
+	 * <p>
+	 * Set this property each time you open a database. The property is not saved.
+	 * </p>
+	 * <p>
+	 * The database must be open to use this property.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#isDelayUpdates()
+	 *
+	 * @return true delays server updates; this is the default
 	 */
 	@Override
 	public boolean isDelayUpdates();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether design locking is enabled for this database. The design elements that can be locked are agents, forms, and views.
 	 *
-	 * @see lotus.domino.Database#isDesignLockingEnabled()
+	 * The database must be open to use this property.
+	 *
+	 * @return true if design locking is enabled, false if not
 	 */
 	@Override
 	public boolean isDesignLockingEnabled();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether a database is a Directory Catalog database, also known as the Light Weight NAB, or the Enterprise Address Book.
+	 * <p>
+	 * This property is valid only for a database retrieved through the AddressBooks property of Session, and when the database is
+	 * explicitly opened. For all other Database objects, this property returns false.
 	 *
-	 * @see lotus.domino.Database#isDirectoryCatalog()
+	 * The database must be open to use this property.
+	 * </p>
+	 *
+	 * @return true if the database is a Directory Catalog, false if not
 	 */
 	@Override
 	public boolean isDirectoryCatalog();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether document locking is enabled for a database. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#isDocumentLockingEnabled()
+	 * @return true if document locking is enabled. false if not
 	 */
 	@Override
 	public boolean isDocumentLockingEnabled();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether or not a database has a full-text index. The database must be open to use this property.
 	 *
-	 * @see lotus.domino.Database#isFTIndexed()
+	 * @return true if the database has a full-text index, false if not
 	 */
 	@Override
 	public boolean isFTIndexed();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether a database can be included in multi-database indexing. This property corresponds to "Include in multi-database
+	 * indexing" in the database design properties of the UI.
 	 *
-	 * @see lotus.domino.Database#isInMultiDbIndexing()
+	 * The database must be open to use this property.
+	 *
+	 * @return true if the database allows inclusion in multi-database indexing
 	 */
 	@Override
 	public boolean isInMultiDbIndexing();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether a database on a server in a cluster is accessible. {@link #markForDelete()} sets this property read-only with a
+	 * value of false.
 	 *
-	 * @see lotus.domino.Database#isInService()
+	 * The database must be open to use this property.
+	 *
+	 * @return Indicates whether a database on a server in a cluster is accessible.
 	 */
 	@Override
 	public boolean isInService();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether a database is the target of a link. A link is a text file with an NSF extension whose only content is the full path
+	 * name of a database. Accessing the link accesses the specified database.
 	 *
-	 * @see lotus.domino.Database#isLink()
+	 * The target database appears to exist at the location of the link. For example, the {@link #getFilePath() FilePath} property returns
+	 * the path of the link, not the target.
 	 */
 	@Override
 	public boolean isLink();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#isMultiDbSearch()
+	/**
+	 * Indicates whether a database is of type "Multi DB Search." The database must be open to use this property.
 	 */
 	@Override
 	public boolean isMultiDbSearch();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates whether the database is open. A database must be open to use the Database methods except: {@link #getCategories()},
+	 * {@link #getDelayUpdates()}, {@link #getDesignTemplateName()}, {@link #getFileName()}, {@link #getFilePath()}, {@link #isOpen()},
+	 * {@link #isPrivateAddressBook()}, {@link #isPublicAddressBook()}, {@link #getParent()}, {@link #getReplicaID()}, {@link #getServer()},
+	 * {@link #getSize()}, {@link #getSizeQuota()}, {@link #getTemplateName()}, and {@link #getTitle()}.
+	 * <p>
+	 * The following methods do not open a database: {@link DbDirectory#getFirstDatabase(int)}, {@link DbDirectory#getNextDatabase()}, and
+	 * {@link Session#getAddressBooks()}. You must explicitly call {@link Database#open()}.
+	 * </p>
+	 * <p>
+	 * If a Database object must be open but is not, the following error occurs: "Database has not been opened yet." This error does not
+	 * occur when the Database is created, but later when the attempt to use it occurs. Possible causes of the error are: the database as
+	 * specified does not exist; the user does not have permission to access the database; the database is damaged.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#isOpen()
+	 * @return true if the database is open.
 	 */
 	@Override
 	public boolean isOpen();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#isPendingDelete()
+	/**
+	 * Indicates whether this database on a server in a cluster is marked for deletion. The database must be open to use this property.
 	 */
 	@Override
 	public boolean isPendingDelete();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates if this database is a Personal Address Book. This property is available for Database objects retrieved by getAddressBooks
+	 * in Session. For other Database objects, this property has no value and evaluates to false.
 	 *
-	 * @see lotus.domino.Database#isPrivateAddressBook()
+	 * The database must be open to use this property.
 	 */
 	@Override
 	public boolean isPrivateAddressBook();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Indicates if this database is a Domino Directory. This property is available for Database objects retrieved from
+	 * {@link Session#getAddressBooks()} in Session. For other Database objects, this property has no value and evaluates to false.
 	 *
-	 * @see lotus.domino.Database#isPublicAddressBook()
+	 * The database must be open to use this property.
 	 */
 	@Override
 	public boolean isPublicAddressBook();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Marks this database for deletion from a server in a cluster. Once a database is marked for deletion, it does not accept any new
+	 * database open requests. After all active users are finished with it, the Cluster Manager pushes all changes to another replica (if
+	 * there is another replica) and then deletes the database.
+	 * <p>
+	 * Use this method if you want to remove a database that is obsolete or if you are copying a database from one server to another and
+	 * want to delete the database from the original server. If you want to delete a database and all its replicas from a cluster, each
+	 * database on each server must be marked for deletion.
+	 * </p>
+	 * <p>
+	 * This method cannot be undone. You cannot remove a mark for deletion from a database once this method is used.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#markForDelete()
+	 * <p>
+	 * This method sets isPendingDelete to true and isInService to false.
+	 * </p>
+	 *
+	 * <p>
+	 * This method differs from the remove method in that the database must be in a cluster. If the database is not on a server in a
+	 * cluster, this method does not return an error, but the database is not deleted. Additionally, the remove method fails if the database
+	 * is in use. The markForDelete method waits for all current users to finish, then deletes the database. The Cluster Manager is
+	 * responsible for deleting databases marked for deletion in the cluster; the Adminp task is not called.
+	 * </p>
+	 *
+	 * <p>
+	 * You can programmatically determine if a database is available on other servers in a cluster by querying the cldbdir.nsf database,
+	 * which exists on every cluster and holds an up-to-date list of all the databases in the cluster and their replicas. The cldbdir.nsf
+	 * database also tracks each database's enabled or disabled status.
+	 * </p>
+	 * <p>
+	 * Use the {@link AdministrationProcess#deleteReplicas(String, String)} method if you want to delete a database and all replicas of it
+	 * from the entire domain.
+	 * </p>
+	 *
+	 * <p>
+	 * This method requires Manager access privileges.
+	 * </p>
 	 */
 	@Override
 	public void markForDelete();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Opens a database. A database must be open to use the Database properties and methods with some exceptions. Most methods that access a
+	 * database open it, but some do not.
 	 *
-	 * @see lotus.domino.Database#open()
+	 * <p>
+	 * An error is returned if the user does not have access rights to the database or server.
+	 * </p>
+	 *
+	 * @return true if the database exists and is opened or false if no database with this name exists
+	 * @see Database.isOpen()
 	 */
 	@Override
 	public boolean open();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given a server name and a replica ID, opens the specified database, if it exists. Use <code>Session.getDatabase(null, null)</code> to
+	 * instantiate an empty <code>Database</code> object.
 	 *
-	 * @see lotus.domino.Database#openByReplicaID(java.lang.String, java.lang.String)
+	 * @param server
+	 *            The name of the server on which the database resides. Use null to indicate a database on the current computer.
+	 * @param replicaId
+	 *            The replica ID of the database that you want to open.
+	 * @return when the replica was found and opened or false when the replica was not found on the server, or could not be opened
 	 */
 	@Override
 	public boolean openByReplicaID(final String server, final String replicaId);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given a date, opens the specified database if it has been modified since that date. Use Session.getDatabase(null, null) to
+	 * instantiate an empty Database object.
 	 *
-	 * @see lotus.domino.Database#openIfModified(java.lang.String, java.lang.String, lotus.domino.DateTime)
+	 * @param server
+	 *            The name of the server on which the database resides. Use null to indicate a database on the current computer.
+	 * @param dbFile
+	 *            The file name of the database.
+	 * @param modifiedSince
+	 *            A cutoff date. If one or more documents in the database has been modified since this date, the database is opened; if not,
+	 *            it is not opened.
+	 * @return true when the database was opened
 	 */
 	@Override
 	public boolean openIfModified(final String server, final String dbFile, final lotus.domino.DateTime modifiedSince);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Opens a database on a server.
 	 *
-	 * @see lotus.domino.Database#openWithFailover(java.lang.String, java.lang.String)
+	 * @param server
+	 *            The name of the primary server on which the database resides.
+	 * @param dbFile
+	 *            The file name of the database to open.
+	 * @return true when the database exists and was opened or false when there is no database with this name in the cluster.
 	 */
 	@Override
 	public boolean openWithFailover(final String server, final String dbFile);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns a person's, group's, or server's current access level to a database. If the <code>name</code> you specify is listed
+	 * explicitly in the ACL, then queryAccess returns the access level for that ACL entry and does not check the groups.
+	 * <p>
+	 * If the <code>name</code> you specify is not listed explicitly in the ACL, queryAccess checks if the <code>name</code> is a member of
+	 * a group in the Primary Address Book known to the computer on which the script is running. On a local workstation, that address book
+	 * is the Personal Address Book. On a server, that address book is the Domino Directory. If the queryAccess method finds
+	 * <code>name</code> in one or more groups, then it returns the highest access level among those groups.
+	 * </p>
+	 * <p>
+	 * If the <code>name</code> you specify is not listed in the ACL either individually or as part of a group, queryAccess returns the
+	 * default access level for the ACL.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#queryAccess(java.lang.String)
+	 * @param name
+	 *            The name of the person, group, or server. For a hierarchical name, the full name must be specified but can be in
+	 *            abbreviated format.
+	 * @return The current access level, which is one of the following:
+	 *         <ul>
+	 *         <li>ACL.LEVEL_AUTHOR</li>
+	 *         <li>ACL.LEVEL_DEPOSITOR</li>
+	 *         <li>ACL.LEVEL_DESIGNER</li>
+	 *         <li>ACL.LEVEL_EDITOR</li>
+	 *         <li>ACL.LEVEL_MANAGER</li>
+	 *         <li>ACL.LEVEL_NOACCESS</li>
+	 *         <li>ACL.LEVEL_READER</li>
+	 *         </ul>
 	 */
 	@Override
 	public int queryAccess(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the privileges of a person, group, or server in a database. If the <code>name</code> you specify is listed explicitly in the
+	 * ACL, then queryAccessPrivileges returns the privileges for that ACL entry and does not check groups.
 	 *
-	 * @see lotus.domino.Database#queryAccessPrivileges(java.lang.String)
+	 * <p>
+	 * If the <code>name</code> you specify is not listed explicitly in the ACL, queryAccessPrivileges checks to see if the name is a member
+	 * of a group in the primary address book where the program is running: on a workstation the Personal Address Book; on a server the
+	 * Domino Directory.
+	 * </p>
+	 *
+	 * @param name
+	 *            The name of the person, group, or server. For a hierarchical name, the full name must be specified but can be in
+	 *            abbreviated format.
+	 * @return The current access privileges, a combination of the following (Individual privileges can be discerned through bitwise
+	 *         operations):
+	 *         <ul>
+	 *         <li>Database.DBACL_CREATE_DOCS (1)</li>
+	 *         <li>Database.DBACL_DELETE_DOCS (2)</li>
+	 *         <li>Database.DBACL_CREATE_PRIV_AGENTS (4)</li>
+	 *         <li>Database.DBACL_CREATE_PRIV_FOLDERS_VIEWS (8)</li>
+	 *         <li>Database.DBACL_CREATE_SHARED_FOLDERS_VIEWS (16)</li>
+	 *         <li>Database.DBACL_CREATE_SCRIPT_AGENTS (32)</li>
+	 *         <li>Database.DBACL_READ_PUBLIC_DOCS (64)</li>
+	 *         <li>Database.DBACL_WRITE_PUBLIC_DOCS (128)</li>
+	 *         <li>Database.DBACL_REPLICATE_COPY_DOCS (256)</li>
+	 *         </ul>
 	 */
 	@Override
 	public int queryAccessPrivileges(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the roles of a person, group, or server in a database. If the name you specify is listed explicitly in the ACL, then
+	 * queryAccessRoles returns the roles for that ACL entry and does not check groups.
+	 * <p>
+	 * If the name you specify is not listed explicitly in the ACL, queryAccessRoles checks to see if the name is a member of a group in the
+	 * primary address book where the program is running: on a workstation the Personal Address Book; on a server the Domino Directory.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#queryAccessRoles(java.lang.String)
+	 * @param name
+	 *            The name of the person, group, or server. For a hierarchical name, the full name must be specified but can be in
+	 *            abbreviated format.
+	 * @return A vector with elements of type String. If the name has roles, each element of the vector contains one role. If the name has
+	 *         no roles, the vector has a size of 0.
 	 */
 	@Override
 	public Vector<String> queryAccessRoles(final String name);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#remove()
+	/**
+	 * Permanently deletes a database.
 	 */
 	@Override
 	public void remove();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Removes a full-text index from this database. No error occurs if the database does not have a full-text index.
 	 *
-	 * @see lotus.domino.Database#removeFTIndex()
+	 * This method works only for local databases.
 	 */
 	@Override
 	public void removeFTIndex();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Replicates a local database with its replica(s) on a server. Successful replication does not necessarily mean that documents
+	 * replicate. The replication settings are honored. For example, if replication is temporarily disabled on one of the databases, the
+	 * replication task runs without error but no documents actually replicate.
 	 *
-	 * @see lotus.domino.Database#replicate(java.lang.String)
+	 * The source database must be local or an exception is thrown.
+	 *
+	 * @param server
+	 *            The name of the server with which you want to replicate. Any replica of the source database that exists on the server will
+	 *            replicate.
+	 * @return true if the replication task runs without error
 	 */
 	@Override
 	public boolean replicate(final String server);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Removes a person, group, or server from a database access control list. This resets the access level for that person, group, or
+	 * server to the Default setting for the database. Revoking access is different than assigning No Access (which you can do with the
+	 * {@link #grantAccess(String, org.openntf.domino.ACL.Level)} method). When you revoke access, you remove the name from the ACL, but the
+	 * person, group, or server can still access the database at the level specified for Default. When you use the <code>grantAccess</code>
+	 * method to assign No Access, the name remains in the ACL, and the person, group, or server cannot access the database, regardless of
+	 * the Default setting.
 	 *
-	 * @see lotus.domino.Database#revokeAccess(java.lang.String)
+	 * <p>
+	 * The name must be explicitly listed in the database ACL. If it isn't, revokeAccess throws an exception, even if the name is a member
+	 * of a group that is listed in the ACL.
+	 * </p>
+	 *
+	 * @param name
+	 *            The name of the person, group, or server whose access you want to revoke. For a hierarchical name, the full name must be
+	 *            specified but can be in abbreviated format.
 	 */
 	@Override
 	public void revokeAccess(final String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given selection criteria for a document, returns all documents in a database that meet the criteria.
 	 *
-	 * @see lotus.domino.Database#search(java.lang.String)
+	 * @param formula
+	 *            A Notes formula that specifies the selection criteria.
+	 * @return An unsorted collection of documents that match the selection criteria.
 	 */
 	@Override
 	public DocumentCollection search(final String formula);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given selection criteria for a document, returns all documents in a database that meet the criteria.
 	 *
-	 * @see lotus.domino.Database#search(java.lang.String, lotus.domino.DateTime)
+	 * @param formula
+	 *            A Notes formula that specifies the selection criteria.
+	 * @param startDate
+	 *            The method searches only documents created or modified since the start date. Can be null to indicate no start date.
+	 * @return An unsorted collection of documents that match the selection criteria.
 	 */
 	@Override
 	public DocumentCollection search(final String formula, final lotus.domino.DateTime startDate);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given selection criteria for a document, returns all documents in a database that meet the criteria.
+	 * <p>
+	 * This method returns a maximum of 5,000 documents by default. The Notes.ini variable FT_MAX_SEARCH_RESULTS overrides this limit for
+	 * indexed databases or databases that are not indexed but that are running an agent on the client. For a database that is not indexed
+	 * and is running in an agent on the server, you must set the TEMP_INDEX_MAX_DOC Notes.ini variable as well. The absolute maximum is
+	 * 2,147,483,647.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#search(java.lang.String, lotus.domino.DateTime, int)
+	 * @param formula
+	 *            A Notes formula that specifies the selection criteria.
+	 * @param startDate
+	 *            A start date. The method searches only documents created or modified since the start date. Can be null to indicate no
+	 *            start date.
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned. Specify 0 to receive all matching documents (up to 5,000).
+	 * @return An unsorted collection of documents that match the selection criteria.
 	 */
 	@Override
 	public DocumentCollection search(final String formula, final lotus.domino.DateTime startDate, final int maxDocs);
@@ -1714,94 +2509,140 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setAllowOpenSoftDeleted(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets categories under which a database appears in the Database Library. Multiple categories are separated by a comma or a semicolon.
 	 *
-	 * @see lotus.domino.Database#setCategories(java.lang.String)
+	 * @param categories
+	 *            One or more categories separated by a comma (,) or a semicolon (;)
 	 */
 	@Override
 	public void setCategories(final String categories);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether updates to a server are delayed (batched) for better performance.
 	 *
-	 * @see lotus.domino.Database#setDelayUpdates(boolean)
+	 * @param flag
+	 *            true to delay server updates
+	 * @see Database#isDelayUpdates()
 	 */
 	@Override
 	public void setDelayUpdates(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether design locking is enabled for a database.
 	 *
-	 * @see lotus.domino.Database#setDesignLockingEnabled(boolean)
+	 * @param flag
+	 *            true to enable design locking, false to disable it
 	 */
 	@Override
 	public void setDesignLockingEnabled(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether document locking is enabled for a database.
 	 *
-	 * @see lotus.domino.Database#setDocumentLockingEnabled(boolean)
+	 * @param flag
+	 *            true to enable document locking, false to disable it
 	 */
 	@Override
 	public void setDocumentLockingEnabled(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether this database maintains folder references for documents.
 	 *
-	 * @see lotus.domino.Database#setFolderReferencesEnabled(boolean)
+	 * @param flag
+	 *            true to maintain the folder references
+	 * @see Database#getFolderReferencesEnabled()
 	 */
 	@Override
 	public void setFolderReferencesEnabled(final boolean flag);
 
 	/**
-	 * @deprecated replaced by {@link Database#setFTIndexFrequency(FTIndexFrequency)} method.
+	 * Sets the update frequency of this database's full-text index.This property applies only to databases on servers. The database must
+	 * have a full-text index. The database must be open to use this property.
+	 *
+	 * @param frequency
+	 *            The update frequency of the full-text index. One of:
+	 *            <ul>
+	 *            <li>Database.FTINDEX_DAILY (1)</li>
+	 *            <li>Database.FTINDEX_HOURLY (3)</li>
+	 *            <li>Database.FTINDEX_IMMEDIATE (4)</li>
+	 *            <li>Database.FTINDEX_SCHEDULED (2)</li>
+	 *            </ul>
+	 * @deprecated replaced by {@link org.openntf.domino.ext.Database#setFTIndexFrequency(FTIndexFrequency)} method.
 	 */
 	@Override
 	@Deprecated
 	public void setFTIndexFrequency(final int frequency);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether a database can be included in multi-database indexing.
 	 *
-	 * @see lotus.domino.Database#setInMultiDbIndexing(boolean)
+	 * @param flag
+	 *            true to include the database in multi-database indexing
+	 * @see Database#isInMultiDbIndexing()
 	 */
 	@Override
 	public void setInMultiDbIndexing(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether a database on a server in a cluster is accessible.
 	 *
-	 * @see lotus.domino.Database#setInService(boolean)
+	 * @param flag
+	 * @see Database#isInService()
 	 */
 	@Override
 	public void setInService(final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets the maximum number of entries allowed in the $Revisions field.
 	 *
-	 * @see lotus.domino.Database#setLimitRevisions(double)
+	 * @param revisions
+	 * @see Database#getLimitRevisions()
 	 */
 	@Override
 	public void setLimitRevisions(final double revisions);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The maximum number of entries allowed in the $UpdatedBy field.
 	 *
-	 * @see lotus.domino.Database#setLimitUpdatedBy(double)
+	 * @param updatedBys
+	 * @see Database#getLimitUpdatedBy()
 	 */
 	@Override
 	public void setLimitUpdatedBy(final double updatedBys);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets whether a database appears in database catalogs or not.
 	 *
-	 * @see lotus.domino.Database#setListInDbCatalog(boolean)
+	 * @param flag
+	 *            true to make the database appear in database catalogs, false to not make it appear in database catalogs
 	 */
 	@Override
 	public void setListInDbCatalog(final boolean flag);
 
 	/**
+	 * Sets the value of a database option.
+	 *
+	 * @param optionname
+	 *            One of the following:
+	 *            <ul>
+	 *            <li>Database.DBOPT_LZ1 uses LZ1 compression for attachments</li>
+	 *            <li>Database.DBOPT_LZCOMPRESSION uses LZ1 compression for attachments</li>
+	 *            <li>Database.DBOPT_MAINTAINLASTACCESSED maintains LastAcessed property</li>
+	 *            <li>Database.DBOPT_MOREFIELDS allows more fields in database</li>
+	 *            <li>Database.DBOPT_NOHEADLINEMONITORS doesn't allow headline monitoring</li>
+	 *            <li>Database.DBOPT_NOOVERWRITE doesn't overwrite free space</li>
+	 *            <li>Database.DBOPT_NORESPONSEINFO doesn't support specialized response hierarchy</li>
+	 *            <li>Database.DBOPT_NOTRANSACTIONLOGGING disables transaction logging</li>
+	 *            <li>Database.DBOPT_NOUNREAD doesn't maintain unread marks</li>
+	 *            <li>Database.DBOPT_OPTIMIZATION enables document table bitmap optimization</li>
+	 *            <li>Database.DBOPT_REPLICATEUNREADMARKSTOANY replicates unread marks to all servers</li>
+	 *            <li>Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER replicates unread marks to clustered servers only</li>
+	 *            <li>Database.DBOPT_SOFTDELETE allows soft deletions</li>
+	 *            </ul>
+	 * @param flag
+	 *            true to enable the option, false to disable
+	 *
 	 * @deprecated replaced by {@link Database#setOption(DBOption, boolean)} method.
 	 */
 	@Override
@@ -1811,110 +2652,196 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setOption(final DBOption optionName, final boolean flag);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The size quota of a database, in kilobytes.
 	 *
-	 * @see lotus.domino.Database#setSizeQuota(int)
+	 * @param quota
 	 */
 	@Override
 	public void setSizeQuota(final int quota);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The size warning threshold of a database, in kilobytes.
 	 *
-	 * @see lotus.domino.Database#setSizeWarning(int)
+	 * @param warning
+	 *            in kilobytes
 	 */
 	@Override
 	public void setSizeWarning(final int warning);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The title of a database.
 	 *
-	 * @see lotus.domino.Database#setTitle(java.lang.String)
+	 * @param title
 	 */
 	@Override
 	public void setTitle(final String title);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets the number of hours before soft deletions become hard deletions.
 	 *
-	 * @see lotus.domino.Database#setUndeleteExpireTime(int)
+	 * @param hours
 	 */
 	@Override
 	public void setUndeleteExpireTime(final int hours);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see lotus.domino.Database#sign()
+	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
 	 */
 	@Override
 	public void sign();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
 	 *
-	 * @see lotus.domino.Database#sign(int)
+	 * @param documentType
+	 *            One of the following constants.
+	 *            <ul>
+	 *            <li>Database.DBSIGN_DOC_ACL (64) signs the ACL</li>
+	 *            <li>Database.DBSIGN_DOC_AGENT (512) signs all agents</li>
+	 *            <li>Database.DBSIGN_DOC_ALL (32767) signs all elements</li>
+	 *            <li>Database.DBSIGN_DOC_DATA (1) signs all data documents' active content (hotspots)</li>
+	 *            <li>Database.DBSIGN_DOC_FORM (4) signs all forms</li>
+	 *            <li>Database.DBSIGN_DOC_HELP (256) signs the "About Database" and "Using Database" documents</li>
+	 *            <li>Database.DBSIGN_DOC_ICON (16) signs the icon</li>
+	 *            <li>Database.DBSIGN_DOC_REPLFORMULA (2048) signs the replication formula</li>
+	 *            <li>Database.DBSIGN_DOC_SHAREDFIELD (1024) signs all shared fields</li>
+	 *            <li>Database.DBSIGN_DOC_VIEW (8) signs all views</li>
+	 *            </ul>
 	 */
 	@Override
 	public void sign(final int documentType);
 
 	/**
-	 * Sign.
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
 	 *
 	 * @param documentType
-	 *            the document type
+	 *            What documents to sign
 	 */
 	@Override
 	public void sign(final SignDocType documentType);
 
 	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
+	 *
+	 * @param documentType
+	 *            The type of documents to sign
+	 *
+	 * @param existingSigsOnly
+	 *            true to sign only elements with existing signatures, false to sign all elements
+	 *
 	 * @deprecated replaced by {@link #sign(SignDocType, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly);
 
+	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
+	 *
+	 * @param documentType
+	 *            The type of documents to sign
+	 * @param existingSigsOnly
+	 *            true to sign only elements with existing signatures, false to sign all elements
+	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly);
 
 	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
+	 *
+	 * @param documentType
+	 *            The type of documents to sign
+	 * @param existingSigsOnly
+	 *            true to sign only elements with existing signatures, false to sign all elements
+	 * @param name
+	 *            Programmatic name or note ID of a single design element.
 	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly, final String name);
 
+	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
+	 *
+	 * @param documentType
+	 *            The type of documents to sign
+	 * @param existingSigsOnly
+	 *            true to sign only elements with existing signatures, false to sign all elements
+	 * @param name
+	 *            Programmatic name or note ID of a single design element.
+	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String)} method.
+	 */
+	@Deprecated
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name);
 
 	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
+	 *
+	 * @param documentType
+	 *            The type of documents to sign
+	 * @param existingSigsOnly
+	 *            true to sign only elements with existing signatures, false to sign all elements
+	 * @param name
+	 *            Programmatic name or note ID of a single design element.
+	 * @param namesIsNoteid
+	 *            true if parameter 3 represents a note ID or false if parameter 3 represents a programmatic name.
 	 * @deprecated replaced by {@link Database#sign(SignDocType, boolean, String, boolean)} method.
 	 */
 	@Override
 	@Deprecated
 	public void sign(final int documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
+	/**
+	 * Signs elements in a database with the signature of the current user. This method executes only on a workstation.
+	 *
+	 * @param documentType
+	 *            The type of documents to sign
+	 * @param existingSigsOnly
+	 *            true to sign only elements with existing signatures, false to sign all elements
+	 * @param name
+	 *            Programmatic name or note ID of a single design element.
+	 * @param namesIsNoteid
+	 *            true if parameter 3 represents a note ID or false if parameter 3 represents a programmatic name.
+	 */
 	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Updates the full-text index of a database. An exception is thrown if you attempt to create a full-text index on a database that is
+	 * not local.
+	 * <p>
+	 * A database must contain at least one document in order for an index to be created, even if the create parameter is set to true.
+	 * </p>
 	 *
-	 * @see lotus.domino.Database#updateFTIndex(boolean)
+	 * @param create
+	 *            Specify true if you want to create an index if none exists (valid only for local databases). Otherwise, specify false.
 	 */
 	@Override
 	public void updateFTIndex(final boolean create);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Database#setUserIDForDecrypt(lotus.domino.UserID)
+	/**
+	 * After calling this method on a database, any document that is opened within the database is decrypted using the encryption keys
+	 * within the userID object, as specified in the document SecretEncryptionKeys field.
+	 *
+	 * @param arg0
+	 *            After setting the User id, documents in this database will be decrypted with encryption keys of this user id
 	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
 	public void setUserIDForDecrypt(lotus.domino.UserID arg0);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Database#setUserIDFileForDecrypt(java.lang.String, java.lang.String)
+	/**
+	 * After calling this method on a database, any document that is opened within the database is decrypted using the encryption keys
+	 * within the userID object, as specified in the document SecretEncryptionKeys field.
+	 *
+	 * @param arg0
+	 *            id file. Provides the file path of id file. After setting it, all documents in this database will be decrypted with
+	 *            encryption keys of this id file.
+	 * @param arg1
+	 *            Password. After setting the User id, documents in this database will be decrypted with encryption keys of this user id
 	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
