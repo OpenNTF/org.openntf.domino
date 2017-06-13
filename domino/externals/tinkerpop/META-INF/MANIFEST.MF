@@ -32,7 +32,6 @@ Export-Package: com.tinkerpop.blueprints,
  com.tinkerpop.pipes.util,
  com.tinkerpop.pipes.util.iterators,
  com.tinkerpop.pipes.util.structures
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  lib/collections-generic-4.01.jar,
  lib/com.google.guava_18.0.1.jar,

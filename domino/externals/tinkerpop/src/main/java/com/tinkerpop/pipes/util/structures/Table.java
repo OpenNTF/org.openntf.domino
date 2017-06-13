@@ -159,16 +159,16 @@ public class Table extends ArrayList<Row> {
      * @param comparator a row comparator
      * @return a newly created sorted table
      */
-    public Table sort(Comparator<Row> comparator) {
-        final Table temp = Table.cloneTableStructure(this);
-        final List<Row> rows = new ArrayList<Row>();
-        for (final Row row : this) {
-            rows.add(row);
-        }
-        Collections.sort(rows, comparator);
-        temp.addAll(rows);
-        return temp;
-    }
+//    public Table sort(Comparator<Row> comparator) {
+//        final Table temp = Table.cloneTableStructure(this);
+//        final List<Row> rows = new ArrayList<Row>();
+//        for (final Row row : this) {
+//            rows.add(row);
+//        }
+//        Collections.sort(rows, comparator);
+//        temp.addAll(rows);
+//        return temp;
+//    }
 
     /**
      * Create a new table with the same column names as provided table
