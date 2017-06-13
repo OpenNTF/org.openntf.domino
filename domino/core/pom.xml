@@ -26,26 +26,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>javadocs-assembly</id>
-						<phase>package</phase>
-						<configuration>
-							<finalName>${project.artifactId}-${project.version}-javadoc</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>assemble.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 	
@@ -53,4 +33,34 @@
 		<name>OpenNTF</name>
 		<url>http://www.openntf.org</url>
 	</organization>
+	
+	<profiles>
+		<profile>
+			<id>distribution</id>
+			
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>javadocs-assembly</id>
+								<phase>package</phase>
+								<configuration>
+									<finalName>${project.artifactId}-${project.version}-javadoc</finalName>
+									<appendAssemblyId>false</appendAssemblyId>
+									<descriptors>
+										<descriptor>assemble.xml</descriptor>
+									</descriptors>
+								</configuration>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
