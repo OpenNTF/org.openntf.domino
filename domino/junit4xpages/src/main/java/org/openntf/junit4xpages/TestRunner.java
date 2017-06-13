@@ -72,16 +72,15 @@ public class TestRunner {
 			Result r = AccessController.doPrivileged(new PrivilegedAction() {
 				@Override
 				public Object run() {
-					Result r = runner.run(testClass);
-					return r;
+					return runner.run(testClass);
 				}
 			});
 
 			if (r.getFailureCount() == 0) {
 				// test run was successful
 				// result.put("success", "1");
-				result.put("result", "<font color='green'>OK - " + r.getRunCount() + " tests succeeded</font> (" + r.getIgnoreCount()
-						+ " ignored)");
+				result.put("result",
+						"<font color='green'>OK - " + r.getRunCount() + " tests succeeded</font> (" + r.getIgnoreCount() + " ignored)");
 				details.print("OK");
 				result.put("status", "OK");
 			} else {
