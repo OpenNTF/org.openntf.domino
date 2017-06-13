@@ -46,6 +46,7 @@ import org.openntf.domino.types.NamesList;
 import org.openntf.domino.types.ReadersList;
 
 import com.google.common.collect.ImmutableList;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -1105,7 +1106,7 @@ public enum TypeUtils {
 		StringBuilder sb = new StringBuilder();
 		Iterator<?> it = values.iterator();
 		while (it.hasNext()) {
-			sb.append(String.valueOf(it.next()));
+			sb.append(StringUtil.toString(it.next()));
 			if (it.hasNext()) {
 				sb.append(separator);
 			}
