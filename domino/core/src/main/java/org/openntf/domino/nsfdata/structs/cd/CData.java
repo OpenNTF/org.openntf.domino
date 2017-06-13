@@ -45,7 +45,7 @@ public class CData extends AbstractSequentialList<CDRecord> implements Externali
 		int breaker = 0;
 		while (data_.hasRemaining()) {
 			fetchNextRecord();
-			if (breaker > 100000) {
+			if (breaker++ > 100000) {
 				throw new RuntimeException("Too many records!");
 			}
 		}
