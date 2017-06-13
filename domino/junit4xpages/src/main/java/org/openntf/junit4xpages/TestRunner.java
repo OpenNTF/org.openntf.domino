@@ -69,9 +69,9 @@ public class TestRunner {
 			PrintStream details = new PrintStream(testDetail);
 
 			// result.put("success", "0"); // success = false/unknown
-			Result r = AccessController.doPrivileged(new PrivilegedAction() {
+			Result r = AccessController.doPrivileged(new PrivilegedAction<Result>() {
 				@Override
-				public Object run() {
+				public Result run() {
 					return runner.run(testClass);
 				}
 			});
