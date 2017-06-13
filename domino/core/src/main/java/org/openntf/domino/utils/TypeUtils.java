@@ -2006,7 +2006,7 @@ public enum TypeUtils {
 			// empty vectors are treated as "null"
 			if (dominoFriendlyObj == null) {
 				if (dominoFriendlyVec == null || dominoFriendlyVec.size() == 0) {
-					return writeToItem(doc, itemName, null, isSummary);
+					return ((org.openntf.domino.impl.Document) doc).replaceItemValueLotus(itemName, null, isSummary, true);
 				} else {
 					firstElement = dominoFriendlyVec.get(0);
 				}

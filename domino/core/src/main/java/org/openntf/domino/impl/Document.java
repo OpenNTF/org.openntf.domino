@@ -2780,6 +2780,34 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		try {
 
 			try {
+				// Special case. If the argument is an Item, just copy it.
+				if (value instanceof Item) {
+					List<lotus.domino.Base> recycleThis = null;
+					lotus.domino.Item tmpResult;
+					recycleThis = new ArrayList<lotus.domino.Base>();
+					// remove the mime item first, so that it will not collide with MIME etc.
+					MIMEEntity mimeChk = getMIMEEntity(itemName);
+					if (mimeChk != null) {
+						try {
+							mimeChk.remove();
+						} finally {
+							closeMIMEEntities(true, itemName);
+						}
+					}
+					beginEdit();
+					tmpResult = getDelegate().replaceItemValue(itemName,
+							TypeUtils.toDominoFriendly(value, getAncestorSession(), recycleThis));
+					markDirty(itemName, true);
+
+					s_recycle(tmpResult);
+
+					if (returnItem) {
+						return getFactory().create(Item.SCHEMA, this, itemName);
+					} else {
+						return null;
+					}
+				}
+				
 				result = replaceItemValueLotus(itemName, value, isSummary, returnItem);
 			} catch (Exception ex2) {
 				if (this.getAutoMime() == AutoMime.WRAP_NONE) {

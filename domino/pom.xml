@@ -5,7 +5,7 @@
 
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>domino</artifactId>
-	<version>3.2.0</version>
+	<version>3.2.1</version>
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
