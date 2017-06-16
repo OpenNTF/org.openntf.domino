@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensions to Log class
  * 
- *         OpenNTF extensions to Log class
+ * @author withersp
+ *
  */
 public interface Log {
 
