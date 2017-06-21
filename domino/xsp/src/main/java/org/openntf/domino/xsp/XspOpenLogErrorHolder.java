@@ -20,6 +20,7 @@ package org.openntf.domino.xsp;
 
 import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.logging.Level;
 
 import javax.faces.component.UIComponent;
 
@@ -138,7 +139,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addError(e, this, 1, doc.getUniversalId());
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            The default level is 4.
 	 */
@@ -170,7 +171,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addError(e, this, 1);
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            The default level is 4.
 	 */
@@ -200,7 +201,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addError(e, this);
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            To pass no control, call openLogBean.addError(e, null)
 	 */
@@ -238,7 +239,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addError(e, &quot;This is an extra error message&quot;, this, 1, doc.getUniversalId());
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            The default level is 4.
 	 */
@@ -272,7 +273,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addError(e, &quot;This is an extra error message&quot;, this, 1);
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            The default level is 4.
 	 */
@@ -304,7 +305,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addError(e, &quot;This is an extra error message&quot;, this);
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            To pass no control, call openLogBean.addError(e, null)
 	 */
@@ -353,7 +354,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addEvent(&quot;This is an extra message&quot;, this, 1, doc.getUniversalId());
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            The default level is 4. To pass no UNID, pass "".
 	 */
@@ -383,7 +384,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addEvent(&quot;This is an extra message&quot;, this, 1);
 	 * }
-	 * </pre>
+	 *            </pre>
 	 * 
 	 *            The default level is 4.
 	 */
@@ -411,7 +412,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * } catch(e) {
 	 * 	openLogBean.addEvent(&quot;This is an extra message&quot;, this);
 	 * }
-	 * </pre>
+	 *            </pre>
 	 */
 	public void addEvent(final String msg, final Object thisObj) {
 		try {
@@ -439,14 +440,20 @@ public class XspOpenLogErrorHolder implements Serializable {
 			if ("com.ibm.xsp.component.xp.XspEventHandler".equals(thisObj.getClass().getName())) {
 				XspEventHandler handler = (XspEventHandler) thisObj;
 				return handler.getParent();
+			} else if ("com.ibm.jscript.types.FBSGlobalObject".equals(thisObj.getClass().getName())) {
+				XspOpenLogUtil.logErrorEx(new Throwable(),
+						"Developer has passed 'this' directly from an SSJS function in a Script Library. "
+								+ "Please note, SSJS Script Libraries have no context for components. You must pass the relevant component into your SSJS function as a parameter.",
+						Level.WARNING, null);
+				return null;
 			} else {
 				return (UIComponent) thisObj;
 			}
 		} catch (Exception e) {
 			// We've got something I wasn't expecting, an exception
-			System.out
-			.println("WARNING: invalid object passed in by developer. Should be a component (not component id) or eventHandler. Found "
-					+ (thisObj == null ? null : thisObj.getClass().getName()));
+			System.out.println(
+					"WARNING: invalid object passed in by developer. Should be a component (not component id) or eventHandler. Found "
+							+ (thisObj == null ? null : thisObj.getClass().getName()));
 			return null;
 		}
 	}
