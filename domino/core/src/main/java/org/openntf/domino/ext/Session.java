@@ -518,6 +518,7 @@ public interface Session {
 	 * Similar to {@link org.openntf.domino.Session#getServerName()}, but returning abbreviated format rather than hierarchical
 	 *
 	 * @return abbreviated server name, e.g. Server1/Acme
+	 * @since 4.1.0
 	 */
 	public String getServerNameAbbreviated();
 
@@ -525,6 +526,7 @@ public interface Session {
 	 * Gets the current server name as a Name object
 	 *
 	 * @return server name as Name
+	 * @since 4.1.0
 	 */
 	public Name getServerNameAsName();
 }
