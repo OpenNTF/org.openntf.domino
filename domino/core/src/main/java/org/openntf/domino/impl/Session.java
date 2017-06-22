@@ -2151,4 +2151,14 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		}
 		return null;
 	}
+
+	@Override
+	public Name getServerNameAsName() {
+		return createName(getServerName());
+	}
+
+	@Override
+	public String getServerNameAbbreviated() {
+		return getServerNameAsName().getAbbreviated();
+	}
 }

@@ -509,5 +509,22 @@ public interface Session {
 	 */
 	public void recycle();
 
+	/**
+	 * Reset the current session identity, so it cannot be resurrected
+	 */
 	public void clearIdentity();
+
+	/**
+	 * Similar to {@link org.openntf.domino.Session#getServerName()}, but returning abbreviated format rather than hierarchical
+	 *
+	 * @return abbreviated server name, e.g. Server1/Acme
+	 */
+	public String getServerNameAbbreviated();
+
+	/**
+	 * Gets the current server name as a Name object
+	 *
+	 * @return server name as Name
+	 */
+	public Name getServerNameAsName();
 }
