@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.utils;
@@ -295,7 +295,7 @@ public enum DominoUtils {
 
 	/**
 	 * Checksum.
-	 * 
+	 *
 	 * @param bytes
 	 *            the bytes
 	 * @param alg
@@ -330,7 +330,7 @@ public enum DominoUtils {
 
 	/**
 	 * Checks if is number.
-	 * 
+	 *
 	 * @param value
 	 *            the value
 	 * @return true, if is number
@@ -374,7 +374,7 @@ public enum DominoUtils {
 
 	/**
 	 * Checksum.
-	 * 
+	 *
 	 * @param object
 	 *            the object
 	 * @param algorithm
@@ -397,7 +397,7 @@ public enum DominoUtils {
 
 	/**
 	 * Handle exception.
-	 * 
+	 *
 	 * @param t
 	 *            the t
 	 * @return the throwable
@@ -455,7 +455,7 @@ public enum DominoUtils {
 
 	/**
 	 * Gets the unid from notes url.
-	 * 
+	 *
 	 * @param notesurl
 	 *            the notesurl
 	 * @return the unid from notes url
@@ -491,7 +491,7 @@ public enum DominoUtils {
 
 	/**
 	 * Incinerate.
-	 * 
+	 *
 	 * @param args
 	 *            the args
 	 * @deprecated you should recycle objects by passing them to the WrapperFactory
@@ -577,14 +577,18 @@ public enum DominoUtils {
 				int start = m.start() + 3;
 				int end = m.end();
 				if (start < end) {
-					if (i == 0)
+					if (i == 0) {
 						map.put(NamePartKey.OrgUnit1, name.subSequence(start, end).toString());
-					if (i == 1)
+					}
+					if (i == 1) {
 						map.put(NamePartKey.OrgUnit2, name.subSequence(start, end).toString());
-					if (i == 2)
+					}
+					if (i == 2) {
 						map.put(NamePartKey.OrgUnit3, name.subSequence(start, end).toString());
-					if (i == 3)
+					}
+					if (i == 3) {
 						map.put(NamePartKey.OrgUnit4, name.subSequence(start, end).toString());
+					}
 				}
 			}
 		}
@@ -620,15 +624,17 @@ public enum DominoUtils {
 			//			}
 			String o = toOrgName(name);
 			if (o.length() > 0) {
-				if (!isFirst)
+				if (!isFirst) {
 					builder.append('/');
+				}
 				isFirst = false;
 				builder.append(o);
 			}
 			String c = toCountry(name);
 			if (c.length() > 0) {
-				if (!isFirst)
+				if (!isFirst) {
 					builder.append('/');
+				}
 				isFirst = false;
 				builder.append(c);
 			}
@@ -777,7 +783,8 @@ public enum DominoUtils {
 		}
 	}
 
-	public static List<String> toSelectionList(final Collection<String> names, final Name.NameType firstType, final Name.NameType secondType) {
+	public static List<String> toSelectionList(final Collection<String> names, final Name.NameType firstType,
+			final Name.NameType secondType) {
 		return toSelectionList(names, firstType, secondType, "|");
 	}
 
@@ -798,14 +805,15 @@ public enum DominoUtils {
 
 	/**
 	 * Checks if is hex.
-	 * 
+	 *
 	 * @param value
 	 *            the value
 	 * @return true, if is hex
 	 */
 	public static boolean isHex(final CharSequence value) {
-		if (value == null)
+		if (value == null) {
 			return false;
+		}
 		String chk = value.toString();
 		for (int i = 0; i < chk.length(); i++) {
 			char c = chk.charAt(i);
@@ -822,46 +830,49 @@ public enum DominoUtils {
 
 	/**
 	 * Checks if is unid.
-	 * 
+	 *
 	 * @param value
 	 *            the value
 	 * @return true, if is 32-character hexadecimal sequence
 	 */
 	public static boolean isUnid(final CharSequence value) {
-		if (value.length() != 32)
+		if (value.length() != 32) {
 			return false;
+		}
 		return DominoUtils.isHex(value);
 	}
 
 	/**
 	 * Checks if is replica id.
-	 * 
+	 *
 	 * @param value
 	 *            the value
 	 * @return true, if is 16-character hexadecimal sequence
 	 */
 	public static boolean isReplicaId(final CharSequence value) {
-		if (value.length() != 16)
+		if (value.length() != 16) {
 			return false;
+		}
 		return DominoUtils.isHex(value);
 	}
 
 	/**
 	 * Checks if is metaversal id.
-	 * 
+	 *
 	 * @param value
 	 *            the value
 	 * @return true, if is 48-character hexadecimal sequence
 	 */
 	public static boolean isMetaversalId(final CharSequence value) {
-		if (value.length() != 48)
+		if (value.length() != 48) {
 			return false;
+		}
 		return DominoUtils.isHex(value);
 	}
 
 	/**
 	 * Md5.
-	 * 
+	 *
 	 * @param object
 	 *            the Serializable object
 	 * @return the string representing the MD5 hash value of the serialized version of the object
@@ -872,14 +883,15 @@ public enum DominoUtils {
 
 	/**
 	 * To unid.
-	 * 
+	 *
 	 * @param value
 	 *            the value
 	 * @return a 32-character hexadecimal string that can be used as a UNID, uniquely and deterministically based on the value argument
 	 */
 	public static String toUnid(final Serializable value) {
-		if (value instanceof CharSequence && DominoUtils.isUnid((CharSequence) value))
+		if (value instanceof CharSequence && DominoUtils.isUnid((CharSequence) value)) {
 			return value.toString();
+		}
 		String hash = DominoUtils.md5(value);
 		while (hash.length() < 32) {
 			hash = "0" + hash;
@@ -888,8 +900,9 @@ public enum DominoUtils {
 	}
 
 	public static byte[] toByteArray(final CharSequence hexString) {
-		if (hexString.length() % 2 != 0)
+		if (hexString.length() % 2 != 0) {
 			throw new IllegalArgumentException("Only hex strings with an even number of digits can be converted");
+		}
 		int arrLength = hexString.length() >> 1;
 		byte buf[] = new byte[arrLength];
 
@@ -931,7 +944,7 @@ public enum DominoUtils {
 
 	/**
 	 * To java calendar safe.
-	 * 
+	 *
 	 * @param dt
 	 *            the dt
 	 * @return the calendar
@@ -945,7 +958,7 @@ public enum DominoUtils {
 
 	/**
 	 * To java date.
-	 * 
+	 *
 	 * @param l
 	 *            the l
 	 * @return the date
@@ -958,7 +971,7 @@ public enum DominoUtils {
 
 	/**
 	 * To java date.
-	 * 
+	 *
 	 * @param ls
 	 *            the ls
 	 * @return the collection
@@ -973,7 +986,7 @@ public enum DominoUtils {
 
 	/**
 	 * To java date safe.
-	 * 
+	 *
 	 * @param dt
 	 *            the dt
 	 * @return the date
@@ -998,7 +1011,7 @@ public enum DominoUtils {
 
 	/**
 	 * Gets the domino ini var.
-	 * 
+	 *
 	 * @param propertyName
 	 *            String property to retrieve from notes.ini
 	 * @param defaultValue
@@ -1016,7 +1029,7 @@ public enum DominoUtils {
 
 	/**
 	 * Gets properties file and returns as an InputStream.
-	 * 
+	 *
 	 * @param fileType
 	 *            int passed to switch statement. <br/>
 	 *            1 -> name of a properties file in this package<br/>
@@ -1046,7 +1059,7 @@ public enum DominoUtils {
 				is = new FileInputStream(dirPath + "/" + fileLoc);
 				returnStream = new BufferedInputStream(is);
 				break;
-				// TODO Need to work out how to get from properties file in NSF
+			// TODO Need to work out how to get from properties file in NSF
 			}
 			return returnStream;
 		} catch (Throwable e) {
@@ -1110,12 +1123,13 @@ public enum DominoUtils {
 
 	public static String escapeForFormulaString(final String value) {
 		// I wonder if this is sufficient escaping
-		return value.replace("{", "\\{").replace("}", "\\}");
+		return value.replace("{", "\\{").replace("}", "\\}").replace("\\", "\\\\");
 	}
 
 	public static boolean isSerializable(final Collection<?> values) {
-		if (values == null)
+		if (values == null) {
 			return false;
+		}
 		boolean result = true;
 		Iterator<?> it = values.iterator();
 		while (it.hasNext()) {
@@ -1159,8 +1173,9 @@ public enum DominoUtils {
 
 	@SuppressWarnings("unchecked")
 	public static Collection<Serializable> toSerializable(final Collection<?> values) {
-		if (DominoUtils.isSerializable(values))
+		if (DominoUtils.isSerializable(values)) {
 			return (Collection<Serializable>) values;
+		}
 		Collection<Serializable> result = new ArrayList<Serializable>();
 		if (values != null && !values.isEmpty()) {
 			Iterator<?> it = values.iterator();

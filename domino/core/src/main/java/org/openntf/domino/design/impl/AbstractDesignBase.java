@@ -321,6 +321,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	protected String getFlags() {
 		if (getDxlFormat(true) != DxlFormat.RAWNOTE) {
+			Document doc = getDocument();
+			if (null != doc) {
+				return doc.getItemValueString(FLAGS_ITEM);
+			}
 			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE");
 		}
 		return getItemValueString(FLAGS_ITEM);
@@ -346,7 +350,13 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	// FlagsExt
 	protected String getFlagsExt() {
-		getDxlFormat(true); // as far as I know, this item is also 
+		if (getDxlFormat(true) != DxlFormat.RAWNOTE) {
+			Document doc = getDocument();
+			if (null != doc) {
+				return doc.getItemValueString(FLAGS_EXT_ITEM);
+			}
+			throw new IllegalStateException("Flags are available only in DxlFormat.RAWNOTE");
+		}
 		return getItemValueString(FLAGS_EXT_ITEM);
 	}
 
