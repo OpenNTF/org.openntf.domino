@@ -947,4 +947,13 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return lastModified_;
 	}
 
+	@Override
+	public String getDesignerVersion() {
+		if (null == getDocument()) {
+			return "";
+		} else {
+			return getDocument().getItemValueString("$DesignerVersioN");
+		}
+	}
+
 }
