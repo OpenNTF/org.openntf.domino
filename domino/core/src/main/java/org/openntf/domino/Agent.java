@@ -21,6 +21,8 @@ import java.util.Vector;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.utils.enums.DominoEnumUtil;
+import org.openntf.domino.utils.enums.INumberEnum;
 
 /**
  * An agent in a Notes database.
@@ -59,6 +61,72 @@ public interface Agent
 			return Database.class;
 		}
 	};
+
+	public static enum Trigger implements INumberEnum<Integer> {
+		AFTER_MAIL(Agent.TRIGGER_AFTER_MAIL_DELIVERY), BEFORE_MAIL(Agent.TRIGGER_BEFORE_MAIL_DELIVERY),
+		DOC_PASTED(Agent.TRIGGER_DOC_PASTED), DOC_UPDATE(Agent.TRIGGER_DOC_UPDATE), MANUAL(Agent.TRIGGER_MANUAL), NONE(Agent.TRIGGER_NONE),
+		SCHEDULED(Agent.TRIGGER_SCHEDULED), STARTUP(Agent.TRIGGER_SERVERSTART);
+
+		/** The value_. */
+		private final int value_;
+
+		/**
+		 * Instantiates a new dB option.
+		 *
+		 * @param value
+		 *            the value
+		 */
+		private Trigger(final int value) {
+			value_ = value;
+		}
+
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
+		@Override
+		public Integer getValue() {
+			return value_;
+		}
+
+		public static Trigger valueOf(final int value) {
+			return DominoEnumUtil.valueOf(Trigger.class, value);
+		}
+	}
+
+	public static enum Target implements INumberEnum<Integer> {
+		ALL(Agent.TARGET_ALL_DOCS), ALL_IN_VIEW(Agent.TARGET_ALL_DOCS_IN_VIEW), NEW(Agent.TARGET_NEW_DOCS),
+		NEW_OR_MODIFIED(Agent.TARGET_NEW_OR_MODIFIED_DOCS), NONE(Agent.TARGET_NONE), SELECTED(Agent.TARGET_SELECTED_DOCS),
+		UNREAD(Agent.TARGET_UNREAD_DOCS_IN_VIEW), RUN_ONCE(Agent.TARGET_RUN_ONCE);
+
+		/** The value_. */
+		private final int value_;
+
+		/**
+		 * Instantiates a new dB option.
+		 *
+		 * @param value
+		 *            the value
+		 */
+		private Target(final int value) {
+			value_ = value;
+		}
+
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
+		@Override
+		public Integer getValue() {
+			return value_;
+		}
+
+		public static Target valueOf(final int value) {
+			return DominoEnumUtil.valueOf(Target.class, value);
+		}
+	}
 
 	public static final Schema SCHEMA = new Schema();
 

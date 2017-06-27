@@ -932,4 +932,20 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Agent#getTargetEx()
+	 */
+	@Override
+	public Target getTargetEx() {
+		return Target.valueOf(getTarget());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Agent#getTriggerEx()
+	 */
+	@Override
+	public Trigger getTriggerEx() {
+		return Trigger.valueOf(getTrigger());
+	}
+
 }
