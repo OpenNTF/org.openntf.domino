@@ -261,14 +261,6 @@
 			<id>distribution</id>
 			
 			<modules>
-				<module>externals</module>
-				<module>formula</module>
-				<module>core</module>
-				<module>xsp</module>
-				<module>rest</module>
-				<module>junit4xpages</module>
-				<module>org.openntf.domino.feature</module>
-				<module>org.openntf.domino.updatesite</module>
 				<module>oda-dist</module>
 			</modules>
 			
