@@ -170,9 +170,11 @@ public interface Agent
 	public Vector<String> getLockHolders();
 
 	/**
-	 * The name of an agent. Within a database, the name of an agent may not be unique.
+	 * The name of an agent. Within a database, the name of an agent may not be unique. Use {@link #getActualName()} and {@link #getAlias()}
+	 * instead for better accuracy
 	 */
 	@Override
+	@Deprecated
 	public String getName();
 
 	/**
