@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -49,7 +49,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/**
 	 * Instantiates a new agent.
-	 * 
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -73,7 +73,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getComment()
 	 */
 	@Override
@@ -88,7 +88,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getCommonOwner()
 	 */
 	@Override
@@ -103,7 +103,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getDocument()
 	 */
 	@Override
@@ -113,7 +113,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getHttpURL()
 	 */
 	@Override
@@ -128,7 +128,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getLastRun()
 	 */
 	@Override
@@ -143,7 +143,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
@@ -159,7 +159,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getName()
 	 */
 	@Override
@@ -174,7 +174,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getNoteID()
 	 */
 	@Override
@@ -186,7 +186,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getNotesURL()
 	 */
 	@Override
@@ -201,7 +201,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getOnBehalfOf()
 	 */
 	@Override
@@ -216,7 +216,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getOwner()
 	 */
 	@Override
@@ -231,7 +231,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getParameterDocID()
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -256,7 +256,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getQuery()
 	 */
 	@Override
@@ -271,7 +271,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getServerName()
 	 */
 	@Override
@@ -286,7 +286,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getTarget()
 	 */
 	@Override
@@ -301,7 +301,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getTrigger()
 	 */
 	@Override
@@ -316,7 +316,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.Design#getUniversalID()
 	 */
 	@Override
@@ -328,7 +328,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#getURL()
 	 */
 	@Override
@@ -343,7 +343,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#isActivatable()
 	 */
 	@Override
@@ -358,7 +358,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#isEnabled()
 	 */
 	@Override
@@ -373,7 +373,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#isNotesAgent()
 	 */
 	@Override
@@ -388,7 +388,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#isProhibitDesignUpdate()
 	 */
 	@Override
@@ -403,7 +403,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#isPublic()
 	 */
 	@Override
@@ -418,7 +418,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#isWebAgent()
 	 */
 	@Override
@@ -433,7 +433,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lock()
 	 */
 	@Override
@@ -448,7 +448,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lock(boolean)
 	 */
 	@Override
@@ -463,7 +463,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lock(java.lang.String)
 	 */
 	@Override
@@ -478,7 +478,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lock(java.lang.String, boolean)
 	 */
 	@Override
@@ -493,7 +493,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -509,7 +509,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -525,7 +525,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lockProvisional()
 	 */
 	@Override
@@ -540,7 +540,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lockProvisional(java.lang.String)
 	 */
 	@Override
@@ -555,7 +555,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -571,7 +571,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#remove()
 	 */
 	@Override
@@ -585,7 +585,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#run()
 	 */
 	@Override
@@ -604,7 +604,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#run(java.lang.String)
 	 */
 	@Override
@@ -623,7 +623,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#runOnServer()
 	 */
 	@Override
@@ -644,7 +644,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#runOnServer(java.lang.String)
 	 */
 	@Override
@@ -668,7 +668,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#runWithDocumentContext(lotus.domino.Document)
 	 */
 	@Override
@@ -687,7 +687,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#runWithDocumentContext(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
@@ -709,7 +709,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#save()
 	 */
 	@Override
@@ -723,7 +723,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#setEnabled(boolean)
 	 */
 	@Override
@@ -737,7 +737,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#setProhibitDesignUpdate(boolean)
 	 */
 	@Override
@@ -751,7 +751,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#setServerName(java.lang.String)
 	 */
 	@Override
@@ -765,7 +765,7 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.Agent#unlock()
 	 */
 	@Override
@@ -832,8 +832,9 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 		super.readExternal(in);
 
 		int version = in.readInt();
-		if (version != EXTERNALVERSIONUID)
+		if (version != EXTERNALVERSIONUID) {
 			throw new InvalidClassException("Cannot read dataversion " + version);
+		}
 
 		names_ = (String) in.readObject();
 
@@ -890,6 +891,15 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 			metaversalid_ = getAncestorDatabase().getReplicaID() + getUniversalID();
 		}
 		return metaversalid_;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Agent#isProfiled()
+	 */
+	@Override
+	public boolean isProfiled() {
+		String flags = getDocument().getItemValueString("$Flags");
+		return flags.contains("F");
 	}
 
 }
