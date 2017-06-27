@@ -13,6 +13,11 @@
 	<name>tinkerpop</name>
 	
 	<packaging>eclipse-plugin</packaging>
+	
+	<properties>
+		<!-- This will be re-computed per-project, hence the extra two layers -->
+		<osgi-deps-path>${project.baseUri}../../../dependencies</osgi-deps-path>
+	</properties>
 
 	<repositories>
 		<repository>

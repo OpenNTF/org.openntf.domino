@@ -15,6 +15,9 @@
 		<tycho-version>0.22.0</tycho-version>
 		<compiler>1.8</compiler>
 		<manifest-location>META-INF</manifest-location>
+		
+		<!-- This will be re-computed per-project, hence the extra two layers -->
+		<osgi-deps-path>${project.baseUri}../../dependencies</osgi-deps-path>
 	</properties>
 
 	<repositories>
@@ -26,8 +29,8 @@
 		
 		<!-- Used for JUnit -->
 		<repository>
-			<id>eclipse-platform</id>
-			<url>http://download.eclipse.org/releases/neon/</url>
+			<id>misc-osgi-dependencies</id>
+            <url>${osgi-deps-path}/Misc/repository</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -48,23 +51,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<!-- <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate> 
-						<downloadSources>true</downloadSources> <downloadJavadocs>false</downloadJavadocs> 
-						<additionalBuildcommands> <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand> 
-						<buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand> <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand> 
-						</additionalBuildcommands> <additionalProjectnatures> <projectnature>org.eclipse.pde.PluginNature</projectnature> 
-						<projectnature>org.eclipse.jdt.core.javanature</projectnature> </additionalProjectnatures> -->
-					<classpathContainers>
-						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
-						<classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
-					</classpathContainers>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
