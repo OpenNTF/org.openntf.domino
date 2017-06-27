@@ -36,6 +36,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Strings;
 
 import com.ibm.commons.util.StringUtil;
 
@@ -898,8 +899,37 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 	 */
 	@Override
 	public boolean isProfiled() {
-		String flags = getDocument().getItemValueString("$Flags");
+		String flags = getDocument().getItemValueString("$FlagsExt");
 		return flags.contains("F");
+	}
+
+	@Override
+	public org.openntf.domino.Document getProfileResults() {
+		try {
+			if (isProfiled()) {
+				NoteCollection nc = getParent().createNoteCollection(false);
+				String subject = " Profile";
+				if (getName().contains("|")) {
+					subject = Strings.left(getName(), "|") + subject;
+				} else {
+					if (getName().contains("(")) {
+						subject = Strings.right(Strings.left(getName(), ")"), "(") + subject;
+					} else {
+						subject = getName() + subject;
+					}
+				}
+				nc.setSelectProfiles(true);
+				nc.setSelectionFormula("Form=\"$BEProfileR7\" & Subject=\"" + subject + "\"");
+				nc.buildCollection();
+				if (!Strings.isBlankString(nc.getFirstNoteID())) {
+					return getParent().getDocumentByID(nc.getFirstNoteID());
+				}
+			}
+			return null;
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 }

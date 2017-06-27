@@ -19,4 +19,11 @@ public interface Agent {
 	 * @return whether or not the agent is enabled for profiling
 	 */
 	public boolean isProfiled();
+
+	/**
+	 * Gets the Profile Results document, or null if not profiled or not available
+	 *
+	 * @return profile document or null
+	 */
+	public org.openntf.domino.Document getProfileResults();
 }
