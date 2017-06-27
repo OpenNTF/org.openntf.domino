@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Date;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -946,6 +947,15 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 	@Override
 	public Trigger getTriggerEx() {
 		return Trigger.valueOf(getTrigger());
+	}
+
+	@Override
+	public Date getLastRunDate() {
+		if (null == getLastRun()) {
+			return null;
+		} else {
+			return getLastRun().toJavaDate();
+		}
 	}
 
 }

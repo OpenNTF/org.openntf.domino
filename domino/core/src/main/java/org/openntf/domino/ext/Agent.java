@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.ext;
 
+import java.util.Date;
+
 import org.openntf.domino.Agent.Target;
 import org.openntf.domino.Agent.Trigger;
 
@@ -47,4 +49,12 @@ public interface Agent {
 	 * @since 4.1.0
 	 */
 	public Trigger getTriggerEx();
+
+	/**
+	 * Gets the last run time as a Date. If it has not run, it will be null
+	 *
+	 * @return date and time the agent last ran
+	 * @since 4.1.0
+	 */
+	public Date getLastRunDate();
 }
