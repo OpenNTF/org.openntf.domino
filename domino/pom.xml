@@ -159,7 +159,7 @@
 					<!-- javadoc configuration -->
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9</version>
+					<version>2.10.4</version>
 					<configuration>
 						<!-- Activated by profile below -->
 						<skip>true</skip>
@@ -256,7 +256,6 @@
 						<!-- javadoc configuration -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9</version>
 						<configuration>
 							<skip>false</skip>
 						</configuration>
