@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -28,13 +28,17 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.AnyFileResource;
+import org.openntf.domino.design.DesignAgent;
 import org.openntf.domino.design.DesignBase;
 import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.domino.design.DesignForm;
@@ -45,13 +49,16 @@ import org.openntf.domino.design.FileResourceWebContent;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLDocument;
+import org.openntf.domino.utils.xml.XMLNode;
+import org.xml.sax.SAXException;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
 
 /**
  * @author jgallagher
- * 
+ *
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign {
 	private static final Logger log_ = Logger.getLogger(DatabaseDesign.class.getName());
@@ -75,6 +82,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	private transient Properties props;
 
 	private final Database database_;
+	private XMLDocument databaseXml;
 
 	public DatabaseDesign(final Database database) {
 		database_ = database;
@@ -133,6 +141,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public ACLNote getACL() {
 		return new ACLNote(database_.getDocumentByID(ACL_NOTE));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getAgent(java.lang.String)
+	 */
+	@Override
+	public DesignAgent getAgent(final String name) {
+		return getDesignElementByName(DesignAgent.class, name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getAgents()
+	 */
+	@Override
+	public DesignCollection<DesignAgent> getAgents() {
+		return getDesignElements(org.openntf.domino.design.DesignAgent.class);
 	}
 
 	@Override
@@ -232,7 +256,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResource(java.lang.String)
 	 */
 	@Override
@@ -242,7 +266,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResources()
 	 */
 
@@ -271,7 +295,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DatabaseDesign#getXPage(java.lang.String)
 	 */
 	@Override
@@ -281,7 +305,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DatabaseDesign#getXPages()
 	 */
 	@Override
@@ -388,7 +412,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader()
 	 */
 	@Override
@@ -398,7 +422,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader(java.lang.ClassLoader, boolean)
 	 */
 	@Override
@@ -421,7 +445,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
 	 */
 	@Override
@@ -431,7 +455,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -520,10 +544,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			return (T) DesignFactory.fromDocument(doc);
 		}
 		Iterator<T> elems = getDesignElementsByName(type, name).iterator();
-		if (elems.hasNext())
+		if (elems.hasNext()) {
 			return elems.next();
-		if (!create)
+		}
+		if (!create) {
 			return null;
+		}
 		for (ODPMapping mapping : ODPMapping.values()) {
 			Class<? extends AbstractDesignBase> cls = mapping.getInstanceClass();
 			if (type.isAssignableFrom(cls)) {
@@ -550,6 +576,56 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 		}
 		throw new IllegalArgumentException("Cannot Create a DesignElement of type " + type.getName() + " with name " + name);
+	}
+
+	@Override
+	public String getOdsVersion() {
+		return getDatabaseInfoNode().getAttribute("odsversion");
+	}
+
+	private XMLNode getDatabaseNode() {
+		return getDatabaseXml().selectSingleNode("//database");
+	}
+
+	private XMLNode getDatabaseInfoNode() {
+		return getDatabaseXml().selectSingleNode("//databaseinfo");
+	}
+
+	/**
+	 * Gets database XML, for which we need a minimum of two design notes in exported DXL
+	 *
+	 * @return
+	 */
+	public XMLDocument getDatabaseXml() {
+		if (null == databaseXml) {
+			loadDatabaseXml();
+		}
+		return databaseXml;
+	}
+
+	private void loadDatabaseXml() {
+		DxlExporter exporter = getAncestorSession().createDxlExporter();
+		exporter.setOutputDOCTYPE(false);
+		NoteCollection nc = database_.createNoteCollection(false);
+		nc.setSelectAcl(true);
+		nc.setSelectIcon(true);
+		nc.buildCollection();
+		String xml = exporter.exportDxl(nc);
+		databaseXml = loadDxl(xml);
+	}
+
+	protected final XMLDocument loadDxl(final String xml) {
+		XMLDocument dxl_ = new XMLDocument();
+		try {
+			dxl_.loadString(xml);
+		} catch (SAXException e) {
+			DominoUtils.handleException(e);
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		} catch (ParserConfigurationException e) {
+			DominoUtils.handleException(e);
+		}
+		return dxl_;
 	}
 
 }

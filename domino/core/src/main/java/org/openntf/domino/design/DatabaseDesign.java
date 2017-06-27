@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -20,7 +20,7 @@ import java.util.SortedSet;
 
 /**
  * @author jgallagher
- * 
+ *
  */
 public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescendant {
 
@@ -55,6 +55,20 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @return the ACL note of the database
 	 */
 	public ACLNote getACL();
+
+	/**
+	 * Gets an agent by name
+	 *
+	 * @param name
+	 *            name of the agent
+	 * @return AgentData object
+	 */
+	public DesignAgent getAgent(String name);
+
+	/**
+	 * @return a collection of all agents in the database, as AgentData objects
+	 */
+	public DesignCollection<DesignAgent> getAgents();
 
 	/**
 	 * @return the form marked as default for the database, as a DesignForm object
@@ -261,7 +275,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 
 	/**
 	 * Gets an XSP-Property from WEB-INF/xsp.properties
-	 * 
+	 *
 	 * @param propertyName
 	 * @return the value of that property
 	 */
@@ -269,7 +283,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 
 	/**
 	 * Checks whether or not the API is enabled for the current database
-	 * 
+	 *
 	 * @return boolean whether or not enabled
 	 * @since org.openntf.domino 5.0.0
 	 */
@@ -277,7 +291,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 
 	/**
 	 * common code to test if a flag is set in the xsp.properties file for the "org.openntf.domino.xsp" value.
-	 * 
+	 *
 	 * @param flagName
 	 *            use upperCase for flagName, e.g. RAID
 	 * @return true if the flag is set
@@ -287,7 +301,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 
 	/**
 	 * Returns all design elements matching to the according formula. The type of the design element is autot detected
-	 * 
+	 *
 	 * @param formula
 	 *            the formula
 	 * @return a subclass of DesignBase
@@ -301,5 +315,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public <T extends DesignBase> DesignCollection<T> getDesignElementsByName(Class<T> type, String name);
 
 	public <T extends DesignBase> T getDesignElementByName(Class<T> type, String name);
+
+	public String getOdsVersion();
 
 }
