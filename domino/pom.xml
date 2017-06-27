@@ -248,49 +248,6 @@
 		</license>
 	</licenses>
 
-	<!-- List all developers here -->
-	<developers>
-		<developer>
-			<id>AWa</id>
-			<name>Alex Wagner</name>
-			<email>alexander.wagner@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>MSte</id>
-			<name>Manfred Steinsiek</name>
-			<email>manfred.steinsiek@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>RPr</id>
-			<name>Roland Praml</name>
-			<email>roland.praml@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-			<properties>
-				<picUrl><![CDATA[https://avatars2.githubusercontent.com/u/5530228?v=2&s=60]]></picUrl>
-			</properties>
-		</developer>
-	</developers>
-
 	<distributionManagement>
 		<repository>
 			<id>artifactory.openntf.org</id>
