@@ -958,4 +958,30 @@ public class Agent extends BaseResurrectable<org.openntf.domino.Agent, lotus.dom
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Agent#getActualName()
+	 */
+	@Override
+	public String getActualName() {
+		String fullName = getParent().getDocumentByID(getNoteID()).getItemValueString("$TITLE");
+		if (fullName.contains("|")) {
+			return Strings.left(fullName, "|");
+		} else {
+			return fullName;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Agent#getAlias()
+	 */
+	@Override
+	public String getAlias() {
+		String fullName = getName();	// getName() is inconsistent for actual name, but fine for alias
+		if (fullName.contains("|")) {
+			return Strings.right(fullName, "|");
+		} else {
+			return "";
+		}
+	}
+
 }

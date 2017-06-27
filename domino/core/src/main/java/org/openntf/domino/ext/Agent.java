@@ -57,4 +57,20 @@ public interface Agent {
 	 * @since 4.1.0
 	 */
 	public Date getLastRunDate();
+
+	/**
+	 * {@link org.openntf.domino.Agent#getName()} is an absolute mess. If an agent has a trigger of "Agent list selection", the core method
+	 * is inconsistent, depending on whether or not there's an alias. This method, instead, goes to the Note and gets its $TITLE field,
+	 * which is correct
+	 *
+	 * @return actual name from the $TITLE field
+	 */
+	public String getActualName();
+
+	/**
+	 * Extracts the alias from the name - {@link org.openntf.domino.Agent#getName()} contains alias as well
+	 *
+	 * @return alias
+	 */
+	public String getAlias();
 }
