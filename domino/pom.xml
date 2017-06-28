@@ -33,6 +33,13 @@
             <url>${osgi-deps-path}/Misc/repository</url>
 			<layout>p2</layout>
 		</repository>
+		
+		<!-- Used for JUnit4XPages -->
+		<repository>
+			<id>junit4xpages</id>
+            <url>http://p2.openntf.org/repository/junit4xpages/</url>
+			<layout>p2</layout>
+		</repository>
 	</repositories>
 
 	<!-- See also profile-triggered module sets below -->
