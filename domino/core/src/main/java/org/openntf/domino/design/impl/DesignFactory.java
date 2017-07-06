@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 
@@ -25,7 +25,7 @@ import com.ibm.commons.util.StringUtil;
 
 /**
  * @author jgallagher
- * 
+ *
  */
 public enum DesignFactory {
 	INSTANCE;
@@ -77,7 +77,7 @@ public enum DesignFactory {
 
 	/**
 	 * This method tests the Flags in an equal way as the "NotesUtlis.CmemflagTestMultiple" does
-	 * 
+	 *
 	 * @param flags
 	 *            the flags to test
 	 * @param pattern
@@ -93,30 +93,34 @@ public enum DesignFactory {
 	 */
 
 	public static boolean testFlag(final String flags, final String pattern) {
-		if (pattern.length() < 1)
+		if (pattern.length() < 1) {
 			return false;
+		}
 
 		int i = 0;
 		switch (pattern.charAt(i++)) {
 
 		case '+': // flags must contain ANY char of pattern
 			while (i < pattern.length()) {
-				if (flags.indexOf(pattern.charAt(i++)) >= 0)
+				if (flags.indexOf(pattern.charAt(i++)) >= 0) {
 					return true;
+				}
 			}
 			return false;
 
 		case '-': // flags must NOT contain ANY char of pattern
 			while (i < pattern.length()) {
-				if (flags.indexOf(pattern.charAt(i++)) >= 0)
+				if (flags.indexOf(pattern.charAt(i++)) >= 0) {
 					return false;
+				}
 			}
 			return true;
 
 		case '*': // flags must contain ALL char of pattern
 			while (i < pattern.length()) {
-				if (flags.indexOf(pattern.charAt(i++)) < 0)
+				if (flags.indexOf(pattern.charAt(i++)) < 0) {
 					return false;
+				}
 			}
 			return true;
 
@@ -124,8 +128,9 @@ public enum DesignFactory {
 			boolean success = false;
 
 			// must follow with '+' "(+...."
-			if (pattern.charAt(i++) != '+')
+			if (pattern.charAt(i++) != '+') {
 				return false;
+			}
 
 			if (i < pattern.length() && pattern.charAt(i) == '-') { // special case if no plus rule is there "(+-..."
 				success = true;
@@ -135,22 +140,26 @@ public enum DesignFactory {
 			while (i < pattern.length()) {
 				ch = pattern.charAt(i++);
 				if (ch == '-') {
-					if (!success)
+					if (!success) {
 						return false;
+					}
 					break;
 				}
 				// in + mode, at least one the flags must appear
-				if (!success && flags.indexOf(ch) >= 0)
+				if (!success && flags.indexOf(ch) >= 0) {
 					success = true;
+				}
 			}
 
 			// verify the negative list and scan to next '*'
-			if (!success || ch != '-')
+			if (!success || ch != '-') {
 				return false;
+			}
 			while (i < pattern.length()) {
 				ch = pattern.charAt(i++);
-				if (ch == '*')
+				if (ch == '*') {
 					break;
+				}
 				if (flags.indexOf(ch) >= 0) {
 					// handle negative list
 					return false;
@@ -160,8 +169,9 @@ public enum DesignFactory {
 			// verify the * rule. all chars must appear
 			while (i < pattern.length()) {
 				ch = pattern.charAt(i++);
-				if (flags.indexOf(ch) < 0)
+				if (flags.indexOf(ch) < 0) {
 					return false;
+				}
 			}
 			return true;
 
@@ -172,14 +182,15 @@ public enum DesignFactory {
 
 	/**
 	 * Builds a formula that matches on <code>pattern</code>
-	 * 
+	 *
 	 * @param pattern
 	 *            The flag pattern to search for
 	 * @return A formula searching for the specified pattern
 	 */
 	public static String buildFlagFormula(final String pattern) {
-		if (pattern.length() < 1)
+		if (pattern.length() < 1) {
 			return "@False";
+		}
 
 		StringBuilder sb = new StringBuilder();
 		int i = 0;
@@ -189,8 +200,9 @@ public enum DesignFactory {
 		case '+': // flags must contain ANY char of pattern
 			sb.append("@Contains($FLAGS;");
 			while (i < pattern.length()) {
-				if (!first)
+				if (!first) {
 					sb.append(':');
+				}
 				sb.append('"');
 				sb.append(pattern.charAt(i++));
 				sb.append('"');
@@ -202,8 +214,9 @@ public enum DesignFactory {
 		case '-': // flags must NOT contain ANY char of pattern
 			sb.append("!@Contains($FLAGS;");
 			while (i < pattern.length()) {
-				if (!first)
+				if (!first) {
 					sb.append(':');
+				}
 				sb.append('"');
 				sb.append(pattern.charAt(i++));
 				sb.append('"');
@@ -215,8 +228,9 @@ public enum DesignFactory {
 		case '*': // flags must contain ALL char of pattern
 			sb.append('(');
 			while (i < pattern.length()) {
-				if (!first)
+				if (!first) {
 					sb.append('&');
+				}
 				sb.append("@Contains($FLAGS;\"");
 				sb.append(pattern.charAt(i++));
 				sb.append("\")");
@@ -228,8 +242,9 @@ public enum DesignFactory {
 		case '(': // combined rule
 
 			// must follow with '+' "(+...."
-			if (pattern.charAt(i++) != '+')
+			if (pattern.charAt(i++) != '+') {
 				return "@False";
+			}
 
 			char ch = 0;
 			// verify + rule and scan to next -
@@ -237,8 +252,9 @@ public enum DesignFactory {
 			while (i < pattern.length()) {
 				ch = pattern.charAt(i++);
 				if (ch == '-') {
-					if (!first)
+					if (!first) {
 						sb.append(")");
+					}
 					break;
 				}
 				if (first) {
@@ -253,15 +269,17 @@ public enum DesignFactory {
 			}
 
 			// verify the negative list and scan to next '*'
-			if (ch != '-')
+			if (ch != '-') {
 				return "@False";
+			}
 
 			first = true;
 			while (i < pattern.length()) {
 				ch = pattern.charAt(i++);
 				if (ch == '*') {
-					if (!first)
+					if (!first) {
 						sb.append(")");
+					}
 					break;
 				}
 				if (first) {
@@ -275,8 +293,9 @@ public enum DesignFactory {
 				first = false;
 			}
 
-			if (ch != '*')
+			if (ch != '*') {
 				return "@False";
+			}
 
 			while (i < pattern.length()) {
 				sb.append("& @Contains($FLAGS;\"");
@@ -295,8 +314,9 @@ public enum DesignFactory {
 	}
 
 	public static org.openntf.domino.design.DesignBase fromDocument(final Document doc) {
-		if (doc.hasItem("IconBitmap") && doc.getNoteClass() == NoteClass.ICON)
+		if (doc.hasItem("IconBitmap") && doc.getNoteClass() == NoteClass.ICON) {
 			return new IconNote(doc);
+		}
 		// RPr: Flags :) Dont ask! accept it! (Tested with a database that contains at least one element of each type)
 		String flags = doc.getItemValueString("$Flags");
 
@@ -351,13 +371,15 @@ public enum DesignFactory {
 			return new SavedQuery(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_LS)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
+			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W")) {
 				return new WebServiceConsumerLS(doc);
+			}
 			return new ScriptLibraryLS(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JAVA)) {
-			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W"))
+			if (testFlag(doc.getItemValueString("$FlagsExt"), "+W")) {
 				return new WebServiceConsumerJava(doc);
+			}
 			return new ScriptLibraryJava(doc);
 		}
 		if (testFlag(flags, DFLAGPAT_SCRIPTLIB_JS)) {
@@ -413,13 +435,16 @@ public enum DesignFactory {
 
 			if (doc.hasItem("$AssistType")) {
 				Integer assist = doc.getItemValue("$AssistType", Integer.class);
-				if (assist == 65413)
+				if (assist == 65413) {
 					return new DesignAgentLS(doc);
-				if (assist == 65426)
+				}
+				if (assist == 65426) {
 					return new DesignAgentF(doc);
+				}
 				if (assist == 65427) {
-					if (testFlag(flags, "+J"))
+					if (testFlag(flags, "+J")) {
 						return new DesignAgentJ(doc);
+					}
 					return new DesignAgentIJ(doc);
 				}
 				return new DesignAgentA(doc);
@@ -690,46 +715,4 @@ public enum DesignFactory {
 		return new DesignCollection<T>(coll, type);
 
 	}
-	/*
-		@SuppressWarnings("unchecked")
-		public static <T> T fromDocument(final Document doc, final Class<? extends org.openntf.domino.design.DesignBase> T) {
-			if (T == null) {
-				return (T) fromDocument(doc);
-			}
-			// TODO: Replace the code below by this
-			if (false) {
-				DesignBase ret = fromDocument(doc);
-				if (T.isAssignableFrom(ret.getClass())) {
-					return (T) ret;
-				}
-				throw new ClassCastException("something went wrong");
-			}
-			if (T == ACLNote.class) {
-				return (T) (new ACLNote(doc));
-			} else if (T == AboutDocument.class) {
-				return (T) (new AboutDocument(doc));
-			} else if (T == FileResource.class) {
-				return (T) (new FileResource(doc));
-			} else if (T == DesignForm.class) {
-				return (T) (new DesignForm(doc));
-			} else if (T == IconNote.class) {
-				return (T) (new IconNote(doc));
-			} else if (T == ReplicationFormula.class) {
-				return (T) (new ReplicationFormula(doc));
-			} else if (T == UsingDocument.class) {
-				return (T) (new UsingDocument(doc));
-			} else if (T == DesignView.class) {
-				return (T) (new DesignView(doc));
-				//		} else if (T == JavaResource.class) {
-				//			return (T) (new JavaResource(doc));
-			} else if (T == JarResource.class) {
-				return (T) (new JarResource(doc));
-			} else if (T == XPage.class) {
-				return (T) (new XPage(doc));
-			} else if (T == JavaScriptLibrary.class) {
-				return (T) (new JavaScriptLibrary(doc));
-			}
-			return null;
-		}
-	 */
 }
