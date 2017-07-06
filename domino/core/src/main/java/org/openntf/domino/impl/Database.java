@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -2035,6 +2036,31 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			DominoUtils.handleException(e, this);
 			return null;
 
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getViews(java.lang.String)
+	 */
+	@Override
+	public List<View> getViews(final String name) {
+		try {
+			ArrayList<View> views = new ArrayList<View>();
+			for (View view : getViews()) {
+				if (name.equals(view.getName())) {
+					views.add(view);
+				} else {
+					for (String alias : view.getAliases()) {
+						if (name.equals(alias)) {
+							views.add(view);
+						}
+					}
+				}
+			}
+			return views;
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
 		}
 	}
 
