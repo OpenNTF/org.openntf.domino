@@ -8,6 +8,7 @@ import org.openntf.domino.utils.xml.XMLNode;
 import com.ibm.commons.util.StringUtil;
 
 public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
