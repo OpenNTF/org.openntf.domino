@@ -370,7 +370,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			if (StringUtil.isEmpty(getLogEmail())) {
 				db = getLogDb();
 			} else {
-				db = Factory.getSession(SessionType.SIGNER).getDatabase(getThisServer(), "mail.box", false);
+				db = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), "mail.box", false);
 			}
 			if (db == null) {
 				System.out.println("Could not retrieve database at path " + getLogDbName());
