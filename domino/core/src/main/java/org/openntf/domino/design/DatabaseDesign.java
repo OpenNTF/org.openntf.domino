@@ -20,6 +20,7 @@ import java.util.SortedSet;
 
 /**
  * @author jgallagher
+ * @author Paul Withers
  *
  */
 public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescendant {
@@ -151,6 +152,20 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @return a collection of all style sheet resources in the database
 	 */
 	public DesignCollection<StyleSheet> getStyleSheets();
+
+	/**
+	 * @param name
+	 *            name of a style sheet resource
+	 * @return the named subform
+	 * @since ODA 4.1.0
+	 */
+	public Subform getSubform(String name);
+
+	/**
+	 * @return a collection of all subforms in the database
+	 * @since ODA 4.1.0
+	 */
+	public DesignCollection<Subform> getSubforms();
 
 	/**
 	 * @param name

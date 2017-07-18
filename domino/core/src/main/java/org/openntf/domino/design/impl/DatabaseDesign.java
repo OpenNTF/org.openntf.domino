@@ -46,6 +46,7 @@ import org.openntf.domino.design.DesignView;
 import org.openntf.domino.design.FileResource;
 import org.openntf.domino.design.FileResourceHidden;
 import org.openntf.domino.design.FileResourceWebContent;
+import org.openntf.domino.design.Subform;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
 import org.openntf.domino.utils.DominoUtils;
@@ -58,6 +59,7 @@ import com.ibm.commons.util.io.StreamUtil;
 
 /**
  * @author jgallagher
+ * @author Paul Withers
  *
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign {
@@ -252,6 +254,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public org.openntf.domino.design.DesignCollection<org.openntf.domino.design.StyleSheet> getStyleSheets() {
 		return getDesignElements(org.openntf.domino.design.StyleSheet.class);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getSubform(java.lang.String)
+	 */
+	@Override
+	public Subform getSubform(final String name) {
+		return getDesignElementByName(Subform.class, name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getSubforms()
+	 */
+	@Override
+	public org.openntf.domino.design.DesignCollection<Subform> getSubforms() {
+		return getDesignElements(org.openntf.domino.design.Subform.class);
 	}
 
 	/*
