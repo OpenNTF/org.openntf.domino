@@ -32,6 +32,8 @@ import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import lotus.domino.NotesException;
+
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
@@ -889,6 +891,44 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 		}
 
+	}
+
+	@Override
+	public boolean save() {
+		DxlImporter importer = getAncestorSession().createDxlImporter();
+		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+		importer.setReplicaRequiredForReplaceOrUpdate(false);
+		importer.setReplaceDbProperties(true);
+		Database database = getAncestorDatabase();
+		try {
+			lotus.domino.Stream stream = getAncestorSession().createStream();
+			stream.writeText(getDatabaseXml().getXml());
+			importer.importDxl(stream, database);
+		} catch (IOException | NotesException e) {
+			DominoUtils.handleException(e);
+			if (importer != null) {
+				System.out.println(importer.getLog());
+			}
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public void setMaxUpdatedBy(final int newMax) {
+		if (newMax <= 0) {
+			getDatabaseNode().removeAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName());
+		}
+		getDatabaseNode().setAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName(), Integer.toString(newMax));
+	}
+
+	@Override
+	public void setMaxRevisions(final int newMax) {
+		if (newMax <= 0) {
+			getDatabaseNode().removeAttribute(DbProperties.MAX_REVISIONS.getPropertyName());
+		}
+		getDatabaseNode().setAttribute(DbProperties.MAX_REVISIONS.getPropertyName(), Integer.toString(newMax));
 	}
 
 }

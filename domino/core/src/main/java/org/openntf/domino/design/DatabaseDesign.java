@@ -483,6 +483,14 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public int getMaxUpdatedBy();
 
 	/**
+	 * Sets the maximum $UpdatedBy elements set for the database
+	 *
+	 * @param newMax
+	 *            0 to clear the value or a positive number of entries to set
+	 */
+	public void setMaxUpdatedBy(int newMax);
+
+	/**
 	 * Gets the maximum $Revisions elements set for the database
 	 *
 	 * @return 0 if not set or more if set
@@ -491,11 +499,27 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public int getMaxRevisions();
 
 	/**
+	 * Sets the maximum $Revisions elements set for the database
+	 *
+	 * @param newMax
+	 *            0 to clear the value or a positive number of entries to set
+	 */
+	public void setMaxRevisions(int newMax);
+
+	/**
 	 * Gets the number of hours soft deletions are set to expire in
 	 *
 	 * @return Integer.MIN_VALUE if soft deletions is not enabled, 48 if it's not set, otherwise the value
 	 * @since ODA 4.1.0
 	 */
 	public int getSoftDeletionsExpireIn();
+
+	/**
+	 * Update the database DXL with changes made
+	 *
+	 * @return success or failure
+	 * @since ODA 4.1.0
+	 */
+	public boolean save();
 
 }

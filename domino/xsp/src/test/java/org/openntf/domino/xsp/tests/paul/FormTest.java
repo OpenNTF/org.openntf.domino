@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
-import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.DatabaseDesign.DbProperties;
 import org.openntf.domino.design.DesignForm;
+import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
@@ -36,7 +36,7 @@ public class FormTest implements Runnable {
 	}
 
 	private void getDbInfo(final Database db, final StringBuilder sb) {
-		DatabaseDesign dbDesign = db.getDesign();
+		DatabaseDesign dbDesign = (DatabaseDesign) db.getDesign();
 		List<DbProperties> props = dbDesign.getDatabaseProperties();
 		for (DbProperties prop : props) {
 			sb.append(prop);
@@ -55,6 +55,8 @@ public class FormTest implements Runnable {
 		sb.append("Max Revisions = " + dbDesign.getMaxRevisions());
 		addNewLine(sb);
 		sb.append("Soft Deletes = " + dbDesign.getSoftDeletionsExpireIn());
+		//dbDesign.setMaxRevisions(30);
+		//dbDesign.save();
 	}
 
 	private void getFormInfo(final Database db, final StringBuilder sb) {
