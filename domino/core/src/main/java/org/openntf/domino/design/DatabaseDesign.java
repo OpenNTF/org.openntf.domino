@@ -16,7 +16,10 @@
 
 package org.openntf.domino.design;
 
+import java.util.List;
 import java.util.SortedSet;
+
+import org.openntf.domino.utils.xml.XMLDocument;
 
 /**
  * @author jgallagher
@@ -24,6 +27,82 @@ import java.util.SortedSet;
  *
  */
 public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescendant {
+
+	/**
+	 * Setting for how unread marks are replicated
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 *
+	 */
+	public enum UnreadReplicationSetting {
+		NEVER(""), CLUSTER("cluster"), ALL_SERVERS("all");
+
+		String propName;
+
+		private UnreadReplicationSetting(final String propName) {
+			this.propName = propName;
+		}
+
+		public String getPropertyName() {
+			return propName;
+		}
+	}
+
+	/**
+	 * DAS setting for the NSF
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 *
+	 */
+	public enum DASEnabledFor {
+		NOTHING("0"), VIEWS("1"), VIEWS_AND_DOCS("2");
+
+		String value;
+
+		private DASEnabledFor(final String value) {
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	/**
+	 * Enum for database properties set on Database Properties box
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 */
+	public enum DbProperties {
+		USE_JS("usejavascriptinpages"), REQUIRE_SSL("requiressl"), NO_URL_OPEN("nourlopen"), ENHANCED_HTML("$AllowPost8HTML"),
+		BLOCK_ICAA("$DisallowOpenInNBP"), DISABLE_BACKGROUND_AGENTS("allowbackgroundagents"), ALLOW_STORED_FORMS("allowstoredforms"),
+		DEFER_IMAGE_LOADING("imageloadsdeferred"), ALLOW_DOC_LOCKING("allowdocumentlocking"), INHERIT_OS_THEME("inheritostheme"),
+		ALLOW_DESIGN_LOCKING("allowdesignlocking"), SHOW_IN_OPEN_DIALOG("showinopendialog"), MULTI_DB_INDEXING("multidbindexed"),
+		MODIFIED_NOT_UNREAD("markmodifiedunread"), MARK_PARENT_REPLY_FORWARD("trackreplyforward"), INHERIT_FROM_TEMPLATE("fromtemplate"),
+		DB_IS_TEMPLATE("templatename"), ADVANCED_TEMPLATE("advancedtemplate"), MULTILINGUAL("multilingual"),
+		DONT_MAINTAIN_UNREAD("maintainunread"), REPLICATE_UNREAD("replicateunread"), OPTIMIZE_DOC_MAP("optimizetablebitmap"),
+		DONT_OVERWRITE_FREE_SPACE("overwritefreespace"), MAINTAIN_LAST_ACCESSED("savelastaccessed"),
+		DISABLE_TRANSACTION_LOGGING("logtransactions"), NO_SPECIAL_RESPONSE_HIERARCHY("allowspecialhierarchy"), USE_LZ1("uselz1"),
+		NO_HEADLINE_MONITORING("allowheadlinemonitoring"), ALLOW_MORE_FIELDS("increasemaxfields"),
+		SUPPORT_RESPONSE_THREADS("supportrespthread"), NO_SIMPLE_SEARCH("nosimplesearch"), COMPRESS_DESIGN("compressdesign"),
+		COMPRESS_DATA("compressdata"), NO_AUTO_VIEW_UPDATE("noautoviewupdate"), NO_EXPORT_VIEW("$DisableExport"),
+		ALLOW_SOFT_DELETE("allowsoftdeletion"), SOFT_DELETE_EXPIRY("softdeletionsexpirein"), MAX_UPDATED_BY("maxupdatedbyentries"),
+		MAX_REVISIONS("maxrevisionentries"), ALLOW_DAS("$AllowRESTDbAPI");
+
+		String propName;
+
+		private DbProperties(final String propName) {
+			this.propName = propName;
+		}
+
+		public String getPropertyName() {
+			return propName;
+		}
+
+	}
 
 	/**
 	 * @return a new, nameless, empty file-resource object
@@ -331,6 +410,92 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 
 	public <T extends DesignBase> T getDesignElementByName(Class<T> type, String name);
 
+	/**
+	 * Gets database XML, for which we need a minimum of two design notes in exported DXL
+	 *
+	 * @return
+	 */
+	public XMLDocument getDatabaseXml();
+
+	/**
+	 * Retrieves the ODS version of the NSF. Options are:
+	 * <ul>
+	 * <li>52 = Domino 9.0.1</li>
+	 * <li>51 = Domino 8.5</li>
+	 * <li>48 = Domino 8.0</li>
+	 * <li>43 = Domino 6.x / 7.0</li>
+	 * <li>41 = Domino 5</li>
+	 * <li>20 = Domino 4.x</li>
+	 * </ul>
+	 *
+	 * @return ODS Version
+	 * @since ODA 4.1.0
+	 */
 	public String getOdsVersion();
+
+	/**
+	 * Retrieves database properties from DXL, including only those set. Picks up settings on Database Basics and Advanced tabs of database
+	 * properties box
+	 *
+	 * @return List of DbProperties enums, mapping to database properties.
+	 * @since ODA 4.1.0
+	 */
+	public List<DbProperties> getDatabaseProperties();
+
+	/**
+	 * Name of the template this database inherits from
+	 *
+	 * @return name of template it inherits from
+	 * @since ODA 4.1.0
+	 */
+	public String getTemplateName();
+
+	/**
+	 * Template name defined for this database
+	 *
+	 * @return template name defined for this database
+	 * @since ODA 4.1.0
+	 */
+	public String getNameIfTemplate();
+
+	/**
+	 * Returns what the DAS setting is for the database
+	 *
+	 * @return DASEnabledFor enum option
+	 * @since ODA 4.1.0
+	 */
+	public DASEnabledFor getDasSetting();
+
+	/**
+	 * Returns what the replicate unread setting is for the database
+	 *
+	 * @return UnreadReplicationSetting enum option
+	 * @since ODA 4.1.0
+	 */
+	public UnreadReplicationSetting getReplicateUnreadSetting();
+
+	/**
+	 * Gets the maximum $UpdatedBy elements set for the database
+	 *
+	 * @return 0 if not set or more if set
+	 * @since ODA 4.1.0
+	 */
+	public int getMaxUpdatedBy();
+
+	/**
+	 * Gets the maximum $Revisions elements set for the database
+	 *
+	 * @return 0 if not set or more if set
+	 * @since ODA 4.1.0
+	 */
+	public int getMaxRevisions();
+
+	/**
+	 * Gets the number of hours soft deletions are set to expire in
+	 *
+	 * @return Integer.MIN_VALUE if soft deletions is not enabled, 48 if it's not set, otherwise the value
+	 * @since ODA 4.1.0
+	 */
+	public int getSoftDeletionsExpireIn();
 
 }
