@@ -29,6 +29,90 @@ import org.openntf.domino.utils.xml.XMLDocument;
 public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescendant {
 
 	/**
+	 * Enum for LaunchContext for Notes
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 */
+	public enum LaunchContextNotes {
+		LAST_VIEWED(""), ABOUT_DOC("openaboutdocument"), NAVIGATOR("opennavigator"), NAVIGATOR_IN_WINDOW("opennavigatorinwindow"),
+		FRAMESET("openframeset"), XPAGE("openxpage"), ABOUT_ATTACHMENT("openfirstaboutattachment"), ABOUT_DOCLINK("openfirstdoclink"),
+		COMPOSITE_APP("opencompapp");
+
+		String propName;
+
+		private LaunchContextNotes(final String propName) {
+			this.propName = propName;
+		}
+
+		public String getPropertyName() {
+			return propName;
+		}
+	}
+
+	/**
+	 * Enum for LaunchContext for Web
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 */
+	public enum LaunchContextWeb {
+		NOTES_LAUNCH(""), ABOUT_DOC("openaboutdocument"), NAVIGATOR("opennavigator"), NAVIGATOR_IN_WINDOW("opennavigatorinwindow"),
+		FRAMESET("openframeset"), PAGE("openpage"), XPAGE("openxpage"), ABOUT_DOCLINK("openfirstdoclink"),
+		SPECIFIC_DOC_LINK("openspecifieddoclink"), FIRST_DOC_IN_VIEW("openfirstdocumentinview");
+
+		String propName;
+
+		private LaunchContextWeb(final String propName) {
+			this.propName = propName;
+		}
+
+		public String getPropertyName() {
+			return propName;
+		}
+	}
+
+	/**
+	 * Enum for context for showing the about document
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 */
+	public enum ShowAboutContext {
+		FIRST_OPENED(""), FIRST_OPENED_AND_CHANGED("firstopenandchanged"), NEVER("never");
+
+		String propName;
+
+		private ShowAboutContext(final String propName) {
+			this.propName = propName;
+		}
+
+		public String getPropertyName() {
+			return propName;
+		}
+	}
+
+	/**
+	 * Enum for default locations for preview pane
+	 *
+	 * @author Paul Withers
+	 * @since ODA 4.1.0
+	 */
+	public enum PreviewPaneDefault {
+		BOTTOM(""), BOTTOM_RIGHT("bottomright"), RIGHT("right");
+
+		String propName;
+
+		private PreviewPaneDefault(final String propName) {
+			this.propName = propName;
+		}
+
+		public String getPropertyName() {
+			return propName;
+		}
+	}
+
+	/**
 	 * Setting for how unread marks are replicated
 	 *
 	 * @author Paul Withers
@@ -90,7 +174,8 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 		SUPPORT_RESPONSE_THREADS("supportrespthread"), NO_SIMPLE_SEARCH("nosimplesearch"), COMPRESS_DESIGN("compressdesign"),
 		COMPRESS_DATA("compressdata"), NO_AUTO_VIEW_UPDATE("noautoviewupdate"), NO_EXPORT_VIEW("$DisableExport"),
 		ALLOW_SOFT_DELETE("allowsoftdeletion"), SOFT_DELETE_EXPIRY("softdeletionsexpirein"), MAX_UPDATED_BY("maxupdatedbyentries"),
-		MAX_REVISIONS("maxrevisionentries"), ALLOW_DAS("$AllowRESTDbAPI");
+		MAX_REVISIONS("maxrevisionentries"), ALLOW_DAS("$AllowRESTDbAPI"), DAOS_ENABLED("$Daos"),
+		LAUNCH_XPAGE_ON_SERVER("$LaunchXPageRunOnServer"), DOCUMENT_SUMMARY_16MB("$LargeSummary");
 
 		String propName;
 
@@ -503,8 +588,90 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 *
 	 * @param newMax
 	 *            0 to clear the value or a positive number of entries to set
+	 * @since ODA 4.1.0
 	 */
 	public void setMaxRevisions(int newMax);
+
+	/**
+	 * What Notes should launch as (e.g. XPage, Frameset etc)
+	 *
+	 * @return LaunchContext
+	 * @since ODA 4.1.0
+	 */
+	public LaunchContextNotes getNotesLaunchContext();
+
+	/**
+	 * Gets the design element that is to be launched
+	 *
+	 * @return design element name or blank if About document / attachment / doclink or restore as last viewed. For composite applications,
+	 *         the value will be CompositeAppXmlFile##CompositeAppPage
+	 * @since ODA 4.1.0
+	 */
+	public String getNotesLaunchDesignElement();
+
+	/**
+	 * When the about document should be shown in Notes Client
+	 *
+	 * @return when first opened, when first opened or changed, or never
+	 * @since ODA 4.1.0
+	 */
+	public ShowAboutContext getShowAboutContext();
+
+	/**
+	 * Where the default setting for the preview pane is
+	 *
+	 * @return bottom, bottom-right, or right
+	 * @since ODA 4.1.0
+	 */
+	public PreviewPaneDefault getDefaultPreviewPaneLocation();
+
+	/**
+	 * What Web should launch as (e.g. XPage, Page etc)
+	 *
+	 * @return LaunchContext
+	 * @since ODA 4.1.0
+	 */
+	public LaunchContextWeb getWebLaunchContext();
+
+	/**
+	 * Gets the design element that is to be launched
+	 *
+	 * @return design element name or blank if restore as last viewed
+	 * @since ODA 4.1.0
+	 */
+	public String getWebLaunchDesignElement();
+
+	/**
+	 * Number of days CSS files should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.1.0
+	 */
+	public int getCssExpiry();
+
+	/**
+	 * Number of days File resources should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.1.0
+	 */
+	public int getFileExpiry();
+
+	/**
+	 * Number of days Image files should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.1.0
+	 */
+	public int getImageExpiry();
+
+	/**
+	 * Number of days JavaScript files should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.1.0
+	 */
+	public int getJsExpiry();
 
 	/**
 	 * Gets the number of hours soft deletions are set to expire in

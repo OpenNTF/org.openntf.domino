@@ -53,7 +53,6 @@ import org.openntf.domino.design.FileResourceWebContent;
 import org.openntf.domino.design.Subform;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
-import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -614,6 +613,14 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return getDatabaseXml().selectSingleNode("//databaseinfo");
 	}
 
+	private XMLNode getNotesLaunchSettingsNode() {
+		return getDatabaseXml().selectSingleNode("//noteslaunch");
+	}
+
+	private XMLNode getWebLaunchSettingsNode() {
+		return getDatabaseXml().selectSingleNode("//weblaunch");
+	}
+
 	@Override
 	public XMLDocument getDatabaseXml() {
 		if (null == databaseXml) {
@@ -809,6 +816,30 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		if (null != getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.ALLOW_DAS.getPropertyName() + "']")) {
 			returnVal.add(DbProperties.ALLOW_DAS);
 		}
+		// DAOS has an item called $Daos, set to 1
+		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.DAOS_ENABLED.getPropertyName() + "']");
+		if (null != node) {
+			String daosValue = node.selectSingleNode("//text").getText();
+			if ("1".equals(daosValue)) {
+				returnVal.add(DbProperties.DAOS_ENABLED);
+			}
+		}
+		// Lunch XPage Run On Server has an item called $LaunchXPageRunOnServer, set to 1
+		node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName() + "']");
+		if (null != node) {
+			String xpageOnServerValue = node.selectSingleNode("//text").getText();
+			if ("1".equals(xpageOnServerValue)) {
+				returnVal.add(DbProperties.LAUNCH_XPAGE_ON_SERVER);
+			}
+		}
+		// Document Summary 16Mb has an item called $LargeSummary, set to 1
+		node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.DOCUMENT_SUMMARY_16MB.getPropertyName() + "']");
+		if (null != node) {
+			String daosValue = node.selectSingleNode("//text").getText();
+			if ("1".equals(daosValue)) {
+				returnVal.add(DbProperties.DAOS_ENABLED);
+			}
+		}
 		return returnVal;
 	}
 
@@ -828,34 +859,28 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public DASEnabledFor getDasSetting() {
 		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.ALLOW_DAS.getPropertyName() + "']");
-		if (null == node) {
-			return DASEnabledFor.NOTHING;
-		} else {
+		if (null != node) {
 			String dasValue = node.selectSingleNode("//number").getText();
-			if (DASEnabledFor.VIEWS.getValue().equals(dasValue)) {
-				return DASEnabledFor.VIEWS;
-			} else if (DASEnabledFor.VIEWS_AND_DOCS.getValue().equals(dasValue)) {
-				return DASEnabledFor.VIEWS_AND_DOCS;
-			} else {
-				throw new UnimplementedException(
-						"The value " + dasValue + " was unexpected for Database Property " + DbProperties.ALLOW_DAS.name());
+			for (DASEnabledFor dasOpt : DASEnabledFor.values()) {
+				if (dasOpt.getValue().equals(dasOpt)) {
+					return dasOpt;
+				}
 			}
 		}
+		return DASEnabledFor.NOTHING;
 	}
 
 	@Override
 	public UnreadReplicationSetting getReplicateUnreadSetting() {
 		String replicateSetting = getDatabaseNode().getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName());
-		if (StringUtil.isEmpty(replicateSetting)) {
-			return UnreadReplicationSetting.NEVER;
-		} else if (UnreadReplicationSetting.CLUSTER.getPropertyName().equals(replicateSetting)) {
-			return UnreadReplicationSetting.CLUSTER;
-		} else if (UnreadReplicationSetting.ALL_SERVERS.getPropertyName().equals(replicateSetting)) {
-			return UnreadReplicationSetting.ALL_SERVERS;
-		} else {
-			throw new UnimplementedException(
-					"The value " + replicateSetting + " was unexpected for Database Property " + DbProperties.REPLICATE_UNREAD.name());
+		if (!StringUtil.isEmpty(replicateSetting)) {
+			for (UnreadReplicationSetting opt : UnreadReplicationSetting.values()) {
+				if (opt.equals(replicateSetting)) {
+					return opt;
+				}
+			}
 		}
+		return UnreadReplicationSetting.NEVER;
 	}
 
 	@Override
@@ -929,6 +954,143 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			getDatabaseNode().removeAttribute(DbProperties.MAX_REVISIONS.getPropertyName());
 		}
 		getDatabaseNode().setAttribute(DbProperties.MAX_REVISIONS.getPropertyName(), Integer.toString(newMax));
+	}
+
+	@Override
+	public LaunchContextNotes getNotesLaunchContext() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("whenopened");
+			for (LaunchContextNotes context : LaunchContextNotes.values()) {
+				if (context.getPropertyName().equals(val)) {
+					return context;
+				}
+			}
+		}
+		return LaunchContextNotes.LAST_VIEWED;
+	}
+
+	@Override
+	public String getNotesLaunchDesignElement() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		switch (getNotesLaunchContext()) {
+		case NAVIGATOR:
+		case NAVIGATOR_IN_WINDOW:
+			return node.getAttribute("navigator");
+		case FRAMESET:
+			return node.getAttribute("frameset");
+		case XPAGE:
+			return node.getAttribute("xpage");
+		case COMPOSITE_APP:
+			return node.getAttribute("compapp") + "##" + node.getAttribute("compapppage");
+		default:
+			return "";
+		}
+	}
+
+	@Override
+	public ShowAboutContext getShowAboutContext() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("showaboutdocument");
+			for (ShowAboutContext context : ShowAboutContext.values()) {
+				if (context.getPropertyName().equals(val)) {
+					return context;
+				}
+			}
+		}
+		return ShowAboutContext.FIRST_OPENED;
+	}
+
+	@Override
+	public PreviewPaneDefault getDefaultPreviewPaneLocation() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("previewdefault");
+			for (PreviewPaneDefault location : PreviewPaneDefault.values()) {
+				if (location.getPropertyName().equals(val)) {
+					return location;
+				}
+			}
+		}
+		return PreviewPaneDefault.BOTTOM;
+	}
+
+	@Override
+	public LaunchContextWeb getWebLaunchContext() {
+		XMLNode node = getWebLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("whenopened");
+			for (LaunchContextWeb context : LaunchContextWeb.values()) {
+				if (context.getPropertyName().equals(val)) {
+					return context;
+				}
+			}
+		}
+		return LaunchContextWeb.NOTES_LAUNCH;
+	}
+
+	@Override
+	public String getWebLaunchDesignElement() {
+		XMLNode node = getWebLaunchSettingsNode();
+		switch (getWebLaunchContext()) {
+		case NAVIGATOR:
+		case NAVIGATOR_IN_WINDOW:
+			return node.getAttribute("navigator");
+		case FRAMESET:
+			return node.getAttribute("frameset");
+		case XPAGE:
+			return node.getAttribute("xpage");
+		case FIRST_DOC_IN_VIEW:
+			return node.getAttribute("view");
+		case PAGE:
+			return node.getAttribute("page");
+		case SPECIFIC_DOC_LINK:
+			XMLNode docLinkDetails = node.selectSingleNode("//doclink");
+			return docLinkDetails.getAttribute("database") + docLinkDetails.getAttribute("document");
+		default:
+			return "";
+		}
+	}
+
+	@Override
+	public int getCssExpiry() {
+		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$CSSExpires']");
+		if (null != node) {
+			String value = node.selectSingleNode("//text").getText();
+			return Integer.parseInt(value);
+		}
+		return Integer.MIN_VALUE;
+	}
+
+	@Override
+	public int getFileExpiry() {
+		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$FileExpires']");
+		if (null != node) {
+			String value = node.selectSingleNode("//text").getText();
+			return Integer.parseInt(value);
+		}
+		return Integer.MIN_VALUE;
+	}
+
+	@Override
+	public int getImageExpiry() {
+		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$ImageExpires']");
+		if (null != node) {
+			String value = node.selectSingleNode("//text").getText();
+			return Integer.parseInt(value);
+		}
+		return Integer.MIN_VALUE;
+	}
+
+	@Override
+	public int getJsExpiry() {
+		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$JSExpires']");
+		if (null != node) {
+			String value = node.selectSingleNode("//text").getText();
+			return Integer.parseInt(value);
+		}
+		return Integer.MIN_VALUE;
 	}
 
 }
