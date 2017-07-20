@@ -819,7 +819,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		// DAOS has an item called $Daos, set to 1
 		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.DAOS_ENABLED.getPropertyName() + "']");
 		if (null != node) {
-			String daosValue = node.selectSingleNode("//text").getText();
+			String daosValue = node.getText();
 			if ("1".equals(daosValue)) {
 				returnVal.add(DbProperties.DAOS_ENABLED);
 			}
@@ -827,7 +827,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		// Lunch XPage Run On Server has an item called $LaunchXPageRunOnServer, set to 1
 		node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName() + "']");
 		if (null != node) {
-			String xpageOnServerValue = node.selectSingleNode("//text").getText();
+			String xpageOnServerValue = node.getText();
 			if ("1".equals(xpageOnServerValue)) {
 				returnVal.add(DbProperties.LAUNCH_XPAGE_ON_SERVER);
 			}
@@ -835,7 +835,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		// Document Summary 16Mb has an item called $LargeSummary, set to 1
 		node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.DOCUMENT_SUMMARY_16MB.getPropertyName() + "']");
 		if (null != node) {
-			String daosValue = node.selectSingleNode("//text").getText();
+			String daosValue = node.getText();
 			if ("1".equals(daosValue)) {
 				returnVal.add(DbProperties.DAOS_ENABLED);
 			}
@@ -858,9 +858,9 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	@Override
 	public DASEnabledFor getDasSetting() {
-		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.ALLOW_DAS.getPropertyName() + "']");
+		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.ALLOW_DAS.getPropertyName() + "']/number");
 		if (null != node) {
-			String dasValue = node.selectSingleNode("//number").getText();
+			String dasValue = node.getText();
 			for (DASEnabledFor dasOpt : DASEnabledFor.values()) {
 				if (dasOpt.getValue().equals(dasOpt)) {
 					return dasOpt;
@@ -1057,7 +1057,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public int getCssExpiry() {
 		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$CSSExpires']");
 		if (null != node) {
-			String value = node.selectSingleNode("//text").getText();
+			String value = node.getText();
 			return Integer.parseInt(value);
 		}
 		return Integer.MIN_VALUE;
@@ -1067,7 +1067,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public int getFileExpiry() {
 		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$FileExpires']");
 		if (null != node) {
-			String value = node.selectSingleNode("//text").getText();
+			String value = node.getText();
 			return Integer.parseInt(value);
 		}
 		return Integer.MIN_VALUE;
@@ -1077,7 +1077,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public int getImageExpiry() {
 		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$ImageExpires']");
 		if (null != node) {
-			String value = node.selectSingleNode("//text").getText();
+			String value = node.getText();
 			return Integer.parseInt(value);
 		}
 		return Integer.MIN_VALUE;
@@ -1087,7 +1087,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public int getJsExpiry() {
 		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$JSExpires']");
 		if (null != node) {
-			String value = node.selectSingleNode("//text").getText();
+			String value = node.getText();
 			return Integer.parseInt(value);
 		}
 		return Integer.MIN_VALUE;
