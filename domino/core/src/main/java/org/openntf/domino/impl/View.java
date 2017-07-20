@@ -2739,19 +2739,17 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	public IndexType getIndexType() {
 		IndexType result = IndexType.SHARED;
 		String flags = getFlags();
-		if (flags.contains("P") && flags.contains("Y")) {
-			if (flags.contains("V")) {
-				result = IndexType.PRIVATE;
-			} else if (flags.contains("p")) {
-				result = IndexType.SHAREDPRIVATEONSERVER;
-				if (flags.contains("o")) {
-					result = IndexType.SHAREDPRIVATEONDESKTOP;
-				}
-			} else if (flags.contains("l")) {
-				result = IndexType.SHAREDINCLUDESDELETES;
-			} else if (flags.contains("a")) {
-				result = IndexType.SHAREDNOTINFOLDERS;
+		if (flags.contains("V")) {
+			result = IndexType.PRIVATE;
+		} else if (flags.contains("p")) {
+			result = IndexType.SHAREDPRIVATEONSERVER;
+			if (flags.contains("o")) {
+				result = IndexType.SHAREDPRIVATEONDESKTOP;
 			}
+		} else if (flags.contains("l")) {
+			result = IndexType.SHAREDINCLUDESDELETES;
+		} else if (flags.contains("a")) {
+			result = IndexType.SHAREDNOTINFOLDERS;
 		}
 		return result;
 	}
