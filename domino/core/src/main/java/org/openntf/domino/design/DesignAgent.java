@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design;
 
+import java.util.List;
+
 /**
  * @author Roland Praml
  * @author Paul Withers
@@ -128,5 +130,34 @@ public interface DesignAgent extends DesignBaseNamed {
 	 * @return number of minutes (5 - 59) agent should run every, or 0 if scheduleType is not MORE_THAN_DAILY
 	 */
 	public int getIntervalMinutes();
+
+	/**
+	 * Gets the last run log for the agent. If the agent has not run since last log, it is a blank String.
+	 *
+	 * @return String containing run log
+	 */
+	public String getRunLog();
+
+	/**
+	 * Splits the run log into a String for each line
+	 *
+	 * @return List of run log messages
+	 */
+	public List<String> getRunLogAsList();
+
+	/**
+	 * Analyses the last run log to work out the number of seconds for last run duration
+	 *
+	 * @return number of seconds between start and end of last run time, or Long.MIN_VALUE
+	 */
+	public Long getLastRunDuration();
+
+	/**
+	 * Analyses the last run log to work out if the last run exceeded the max run time for agents. Combine with
+	 * {@link #getLastRunDuration()} to work out what that max run time setting is.
+	 *
+	 * @return whether the last run time exceeded max run time for agents. If there is no run log, this will also be false
+	 */
+	public boolean isLastRunExceededTimeLimit();
 
 }

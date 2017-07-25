@@ -1,11 +1,20 @@
 package org.openntf.domino.design.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
+import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.xml.XMLNode;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
 	private static final long serialVersionUID = 1L;
@@ -192,6 +201,72 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 			}
 		}
 		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignAgent#getRunLog()
+	 */
+	@Override
+	public String getRunLog() {
+		XMLNode runLogNode = getDxl().selectSingleNode("/agent/rundata/runlog");
+		if (null != runLogNode) {
+			return runLogNode.getText();
+		} else {
+			return "";
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignAgent#getRunLogAsList()
+	 */
+	@Override
+	public List<String> getRunLogAsList() {
+		String log = getRunLog();
+		if ("".equals(log)) {
+			return new ArrayList<String>();
+		} else {
+			return CollectionUtils.getListStrings(log.split(Strings.REGEX_NEWLINE));
+		}
+	}
+
+	@Override
+	public Long getLastRunDuration() {
+		List<String> lastRunLog = getRunLogAsList();
+		if (!lastRunLog.isEmpty()) {
+			try {
+				String strStart = "";
+				String strEnd = "";
+				for (String str : lastRunLog) {
+					if (Strings.startsWithIgnoreCase(str, "Started running agent")) {
+						strStart = str.substring(str.length() - 19, str.length());
+					} else if (Strings.startsWithIgnoreCase(str, "Done running agent")) {
+						strEnd = str.substring(str.length() - 19, str.length());
+					}
+				}
+				DateTime start = Factory.getSession(SessionType.CURRENT).createDateTime(strStart);
+				DateTime end = Factory.getSession(SessionType.CURRENT).createDateTime(strEnd);
+				Calendar thisCal = start.toJavaCal();
+				Calendar thatCal = end.toJavaCal();
+				return (thatCal.getTimeInMillis() - thisCal.getTimeInMillis()) / 1000;
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+			}
+		}
+		return Long.MIN_VALUE;
+	}
+
+	@Override
+	public boolean isLastRunExceededTimeLimit() {
+		boolean retVal = false;
+		List<String> lastRunLog = getRunLogAsList();
+		if (!lastRunLog.isEmpty()) {
+			for (String str : lastRunLog) {
+				if (str.contains("ERROR: Agent execution time limit exceeded")) {
+					retVal = true;
+				}
+			}
+		}
+		return retVal;
 	}
 
 }
