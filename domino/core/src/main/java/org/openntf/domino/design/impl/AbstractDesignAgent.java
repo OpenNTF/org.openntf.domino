@@ -233,15 +233,31 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 	public Long getLastRunDuration() {
 		List<String> lastRunLog = getRunLogAsList();
 		if (!lastRunLog.isEmpty()) {
+			String strStart = "";
+			String strEnd = "";
 			try {
-				String strStart = "";
-				String strEnd = "";
 				for (String str : lastRunLog) {
 					if (Strings.startsWithIgnoreCase(str, "Started running agent")) {
 						strStart = str.substring(str.length() - 19, str.length());
+						if (strStart.contains("AM") || strStart.contains("PM")) {
+							strStart = str.substring(str.length() - 22, str.length() - 3);
+						}
 					} else if (Strings.startsWithIgnoreCase(str, "Done running agent")) {
 						strEnd = str.substring(str.length() - 19, str.length());
+						if (strEnd.contains("AM") || strEnd.contains("PM")) {
+							strEnd = str.substring(str.length() - 22, str.length() - 3);
+						}
 					}
+				}
+				if (strStart == "" || strEnd == "") {
+					return Long.MIN_VALUE;
+				}
+				// Adjust for pre-2000 dates, which don't have four-digit year
+				if ("/9".equals(strStart.substring(7, 9))) {
+					strStart = strStart.substring(2);
+				}
+				if ("/9".equals(strEnd.substring(7, 9))) {
+					strEnd = strEnd.substring(2);
 				}
 				DateTime start = Factory.getSession(SessionType.CURRENT).createDateTime(strStart);
 				DateTime end = Factory.getSession(SessionType.CURRENT).createDateTime(strEnd);
@@ -249,7 +265,7 @@ public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implem
 				Calendar thatCal = end.toJavaCal();
 				return (thatCal.getTimeInMillis() - thisCal.getTimeInMillis()) / 1000;
 			} catch (Exception e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, "Error on " + getName() + " - start: " + strStart + ", end: " + strEnd);
 			}
 		}
 		return Long.MIN_VALUE;
