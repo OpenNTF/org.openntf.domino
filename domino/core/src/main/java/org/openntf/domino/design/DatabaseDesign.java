@@ -17,6 +17,7 @@
 package org.openntf.domino.design;
 
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 import org.openntf.domino.utils.xml.XMLDocument;
@@ -526,6 +527,16 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	 * @since ODA 4.1.0
 	 */
 	public List<DbProperties> getDatabaseProperties();
+
+	/**
+	 * Sets database properties via DXL, setting as checked if true, not checked if false. Properties can be found on Database Basics and
+	 * Advanced tabs. It's worth being aware of what the default values are.
+	 *
+	 * @param props
+	 *            DbProperties option to set and whether to switch on or off
+	 * @since ODA 4.1.0
+	 */
+	public void setDatabaseProperties(Map<DbProperties, Boolean> props);
 
 	/**
 	 * Name of the template this database inherits from

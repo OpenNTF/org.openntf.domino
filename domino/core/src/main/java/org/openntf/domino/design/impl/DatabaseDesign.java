@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -660,164 +661,166 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public List<DbProperties> getDatabaseProperties() {
 		List<DbProperties> returnVal = new ArrayList<DbProperties>();
-		// Use Javascript is false or missing in DXL if checked
-		if (!"false".equals(getDatabaseNode().getAttribute(DbProperties.USE_JS.getPropertyName()))) {
+		XMLNode node = getDatabaseNode();
+		XMLDocument xml = getDatabaseXml();
+		// Use Javascript is false, or missing in DXL if checked
+		if (!"false".equals(node.getAttribute(DbProperties.USE_JS.getPropertyName()))) {
 			returnVal.add(DbProperties.USE_JS);
 		}
 		// Require SSL is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.REQUIRE_SSL.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.REQUIRE_SSL.getPropertyName()))) {
 			returnVal.add(DbProperties.REQUIRE_SSL);
 		}
 		// Don't Allow URL Open is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.NO_URL_OPEN.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.NO_URL_OPEN.getPropertyName()))) {
 			returnVal.add(DbProperties.NO_URL_OPEN);
 		}
 		// Enable enhanced HTML has an item called $AllowPost8HTML
-		if (null != getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.ENHANCED_HTML.getPropertyName() + "']")) {
+		if (null != xml.selectSingleNode("//item[@name='" + DbProperties.ENHANCED_HTML.getPropertyName() + "']")) {
 			returnVal.add(DbProperties.ENHANCED_HTML);
 		}
 		// Don't allow open in ICAA has an item called $DisallowOpenInNBP
-		if (null != getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.BLOCK_ICAA.getPropertyName() + "']")) {
+		if (null != xml.selectSingleNode("//item[@name='" + DbProperties.BLOCK_ICAA.getPropertyName() + "']")) {
 			returnVal.add(DbProperties.BLOCK_ICAA);
 		}
 		// Don't allow background agents is false if checked or missing in DXL - SO NEEDS REVERSING
-		if ("false".equals(getDatabaseNode().getAttribute(DbProperties.DISABLE_BACKGROUND_AGENTS.getPropertyName()))) {
+		if ("false".equals(node.getAttribute(DbProperties.DISABLE_BACKGROUND_AGENTS.getPropertyName()))) {
 			returnVal.add(DbProperties.DISABLE_BACKGROUND_AGENTS);
 		}
 		// Allow stored forms is false or missing in DXL if checked
-		if (!"false".equals(getDatabaseNode().getAttribute(DbProperties.ALLOW_STORED_FORMS.getPropertyName()))) {
+		if (!"false".equals(node.getAttribute(DbProperties.ALLOW_STORED_FORMS.getPropertyName()))) {
 			returnVal.add(DbProperties.ALLOW_STORED_FORMS);
 		}
 		// Display images after loading is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.DEFER_IMAGE_LOADING.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.DEFER_IMAGE_LOADING.getPropertyName()))) {
 			returnVal.add(DbProperties.DEFER_IMAGE_LOADING);
 		}
 		// Allow document locking is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.ALLOW_DOC_LOCKING.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_DOC_LOCKING.getPropertyName()))) {
 			returnVal.add(DbProperties.ALLOW_DOC_LOCKING);
 		}
 		// Inherit OS theme is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.INHERIT_OS_THEME.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.INHERIT_OS_THEME.getPropertyName()))) {
 			returnVal.add(DbProperties.INHERIT_OS_THEME);
 		}
 		// Allow design locking is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.ALLOW_DESIGN_LOCKING.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_DESIGN_LOCKING.getPropertyName()))) {
 			returnVal.add(DbProperties.ALLOW_DESIGN_LOCKING);
 		}
 		// Show in open dialog is false or missing in DXL if checked
-		if (!"false".equals(getDatabaseNode().getAttribute(DbProperties.SHOW_IN_OPEN_DIALOG.getPropertyName()))) {
+		if (!"false".equals(node.getAttribute(DbProperties.SHOW_IN_OPEN_DIALOG.getPropertyName()))) {
 			returnVal.add(DbProperties.SHOW_IN_OPEN_DIALOG);
 		}
 		// Multi db indexed is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.MULTI_DB_INDEXING.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.MULTI_DB_INDEXING.getPropertyName()))) {
 			returnVal.add(DbProperties.MULTI_DB_INDEXING);
 		}
 		// Don't mark modified unread is false if checked or missing in DXL - SO NEEDS REVERSING
-		if ("false".equals(getDatabaseNode().getAttribute(DbProperties.MODIFIED_NOT_UNREAD.getPropertyName()))) {
+		if ("false".equals(node.getAttribute(DbProperties.MODIFIED_NOT_UNREAD.getPropertyName()))) {
 			returnVal.add(DbProperties.MODIFIED_NOT_UNREAD);
 		}
 		// Mark parent on reply or forward is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.MARK_PARENT_REPLY_FORWARD.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.MARK_PARENT_REPLY_FORWARD.getPropertyName()))) {
 			returnVal.add(DbProperties.MARK_PARENT_REPLY_FORWARD);
 		}
 		// Source template name is set or missing
-		if (!StringUtil.isEmpty(getDatabaseNode().getAttribute(DbProperties.INHERIT_FROM_TEMPLATE.getPropertyName()))) {
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.INHERIT_FROM_TEMPLATE.getPropertyName()))) {
 			returnVal.add(DbProperties.INHERIT_FROM_TEMPLATE);
 		}
 		// Template name is set or missing
-		if (!StringUtil.isEmpty(getDatabaseNode().getAttribute(DbProperties.DB_IS_TEMPLATE.getPropertyName()))) {
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.DB_IS_TEMPLATE.getPropertyName()))) {
 			returnVal.add(DbProperties.DB_IS_TEMPLATE);
 		}
 		// Advanced template is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.ADVANCED_TEMPLATE.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.ADVANCED_TEMPLATE.getPropertyName()))) {
 			returnVal.add(DbProperties.ADVANCED_TEMPLATE);
 		}
 		// Multilingual is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.MULTILINGUAL.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.MULTILINGUAL.getPropertyName()))) {
 			returnVal.add(DbProperties.MULTILINGUAL);
 		}
 		// Don't maintain unread is false or missing in DXL if checked
-		if (!"false".equals(getDatabaseNode().getAttribute(DbProperties.DONT_MAINTAIN_UNREAD.getPropertyName()))) {
+		if (!"false".equals(node.getAttribute(DbProperties.DONT_MAINTAIN_UNREAD.getPropertyName()))) {
 			returnVal.add(DbProperties.DONT_MAINTAIN_UNREAD);
 		}
 		// Replicate unread marks is "cluster", "all", or missing
-		if (!StringUtil.isEmpty(getDatabaseNode().getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName()))) {
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName()))) {
 			returnVal.add(DbProperties.REPLICATE_UNREAD);
 		}
 		// Optimize document table map is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.OPTIMIZE_DOC_MAP.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.OPTIMIZE_DOC_MAP.getPropertyName()))) {
 			returnVal.add(DbProperties.OPTIMIZE_DOC_MAP);
 		}
 		// Don't overwrite free space is false if checked or missing in DXL - SO NEEDS REVERSING
-		if ("false".equals(getDatabaseNode().getAttribute(DbProperties.DONT_OVERWRITE_FREE_SPACE.getPropertyName()))) {
+		if ("false".equals(node.getAttribute(DbProperties.DONT_OVERWRITE_FREE_SPACE.getPropertyName()))) {
 			returnVal.add(DbProperties.DONT_OVERWRITE_FREE_SPACE);
 		}
 		// Maintain last accessed is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.MAINTAIN_LAST_ACCESSED.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.MAINTAIN_LAST_ACCESSED.getPropertyName()))) {
 			returnVal.add(DbProperties.MAINTAIN_LAST_ACCESSED);
 		}
 		// Disable transaction logging is false if checked or missing in DXL - SO NEEDS REVERSING
-		if ("false".equals(getDatabaseNode().getAttribute(DbProperties.DISABLE_TRANSACTION_LOGGING.getPropertyName()))) {
+		if ("false".equals(node.getAttribute(DbProperties.DISABLE_TRANSACTION_LOGGING.getPropertyName()))) {
 			returnVal.add(DbProperties.DISABLE_TRANSACTION_LOGGING);
 		}
 		// Don't support specialized response hierarchy is false if checked or missing in DXL - SO NEEDS REVERSING
-		if ("false".equals(getDatabaseNode().getAttribute(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY.getPropertyName()))) {
+		if ("false".equals(node.getAttribute(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY.getPropertyName()))) {
 			returnVal.add(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY);
 		}
 		// Use LZ1 compression is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.USE_LZ1.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.USE_LZ1.getPropertyName()))) {
 			returnVal.add(DbProperties.USE_LZ1);
 		}
 		// Dont' allow headling monitoring is false if checked or missing in DXL - SO NEEDS REVERSING
-		if ("false".equals(getDatabaseNode().getAttribute(DbProperties.NO_HEADLINE_MONITORING.getPropertyName()))) {
+		if ("false".equals(node.getAttribute(DbProperties.NO_HEADLINE_MONITORING.getPropertyName()))) {
 			returnVal.add(DbProperties.NO_HEADLINE_MONITORING);
 		}
 		// Allow more fields is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.ALLOW_MORE_FIELDS.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_MORE_FIELDS.getPropertyName()))) {
 			returnVal.add(DbProperties.ALLOW_MORE_FIELDS);
 		}
 		// Support response thread history is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.SUPPORT_RESPONSE_THREADS.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.SUPPORT_RESPONSE_THREADS.getPropertyName()))) {
 			returnVal.add(DbProperties.SUPPORT_RESPONSE_THREADS);
 		}
 		// Don't allow simple search is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.NO_SIMPLE_SEARCH.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.NO_SIMPLE_SEARCH.getPropertyName()))) {
 			returnVal.add(DbProperties.NO_SIMPLE_SEARCH);
 		}
 		// Compress design is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.COMPRESS_DESIGN.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.COMPRESS_DESIGN.getPropertyName()))) {
 			returnVal.add(DbProperties.COMPRESS_DESIGN);
 		}
 		// Compress data is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.COMPRESS_DATA.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.COMPRESS_DATA.getPropertyName()))) {
 			returnVal.add(DbProperties.COMPRESS_DATA);
 		}
 		// Disable view auto update is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.NO_AUTO_VIEW_UPDATE.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.NO_AUTO_VIEW_UPDATE.getPropertyName()))) {
 			returnVal.add(DbProperties.NO_AUTO_VIEW_UPDATE);
 		}
 		// Disable view export  has an item called $DisallowOpenInNBP
-		if (null != getDatabaseXml().selectSingleNode("//item[@name='$DisableExport']")) {
+		if (null != xml.selectSingleNode("//item[@name='$DisableExport']")) {
 			returnVal.add(DbProperties.NO_EXPORT_VIEW);
 		}
 		// Allow soft deletions is true if checked or missing in DXL
-		if ("true".equals(getDatabaseNode().getAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName()))) {
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName()))) {
 			returnVal.add(DbProperties.ALLOW_SOFT_DELETE);
 		}
 		// Limit $UpdatedBy entries has a value or, if missing, = 0
-		if (!StringUtil.isEmpty(getDatabaseNode().getAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName()))) {
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName()))) {
 			returnVal.add(DbProperties.MAX_UPDATED_BY);
 		}
 		// Limit $Revisions entries has a value or, if missing, = 0
-		if (!StringUtil.isEmpty(getDatabaseNode().getAttribute(DbProperties.MAX_REVISIONS.getPropertyName()))) {
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.MAX_REVISIONS.getPropertyName()))) {
 			returnVal.add(DbProperties.MAX_REVISIONS);
 		}
 		// Allow DAS has an item called $DisallowOpenInNBP
-		if (null != getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.ALLOW_DAS.getPropertyName() + "']")) {
+		if (null != xml.selectSingleNode("//item[@name='" + DbProperties.ALLOW_DAS.getPropertyName() + "']")) {
 			returnVal.add(DbProperties.ALLOW_DAS);
 		}
 		// DAOS has an item called $Daos, set to 1
-		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.DAOS_ENABLED.getPropertyName() + "']");
+		node = xml.selectSingleNode("//item[@name='" + DbProperties.DAOS_ENABLED.getPropertyName() + "']");
 		if (null != node) {
 			String daosValue = node.getText();
 			if ("1".equals(daosValue)) {
@@ -825,7 +828,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 		}
 		// Lunch XPage Run On Server has an item called $LaunchXPageRunOnServer, set to 1
-		node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName() + "']");
+		node = xml.selectSingleNode("//item[@name='" + DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName() + "']");
 		if (null != node) {
 			String xpageOnServerValue = node.getText();
 			if ("1".equals(xpageOnServerValue)) {
@@ -833,7 +836,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 		}
 		// Document Summary 16Mb has an item called $LargeSummary, set to 1
-		node = getDatabaseXml().selectSingleNode("//item[@name='" + DbProperties.DOCUMENT_SUMMARY_16MB.getPropertyName() + "']");
+		node = xml.selectSingleNode("//item[@name='" + DbProperties.DOCUMENT_SUMMARY_16MB.getPropertyName() + "']");
 		if (null != node) {
 			String daosValue = node.getText();
 			if ("1".equals(daosValue)) {
@@ -841,6 +844,39 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			}
 		}
 		return returnVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#setDatabaseProperties(java.util.Map)
+	 */
+	@Override
+	public void setDatabaseProperties(final Map<DbProperties, Boolean> props) {
+		XMLNode node = getDatabaseNode();
+		XMLDocument xml = getDatabaseXml();
+		// Use Javascript is false, or missing in DXL if checked
+		if (props.containsKey(DbProperties.USE_JS)) {
+			if (props.get(DbProperties.USE_JS)) {
+				node.removeAttribute(DbProperties.USE_JS.getPropertyName());
+			} else {
+				node.setAttribute(DbProperties.USE_JS.getPropertyName(), "false");
+			}
+		}
+		// Require SSL is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.REQUIRE_SSL)) {
+			if (props.get(DbProperties.REQUIRE_SSL)) {
+				node.setAttribute(DbProperties.REQUIRE_SSL.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.REQUIRE_SSL.getPropertyName());
+			}
+		}
+		// Don't Allow URL Open is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.NO_URL_OPEN)) {
+			if (props.get(DbProperties.NO_URL_OPEN)) {
+				node.setAttribute(DbProperties.NO_URL_OPEN.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.NO_URL_OPEN.getPropertyName());
+			}
+		}
 	}
 
 	/* (non-Javadoc)
