@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.utils.xml;
 
@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author jgallagher
- * 
+ *
  */
 public class XMLNode implements Map<String, Object>, Serializable {
 	private static final long serialVersionUID = 2304991412510751453L;
@@ -109,8 +109,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public void removeAttribute(final String attribute) {
-		Node attr = this.node_.getAttributes().getNamedItem(attribute);
-		attr.getParentNode().removeChild(attr);
+		if (null != this.node_.getAttributes().getNamedItem(attribute)) {
+			this.node_.getAttributes().removeNamedItem(attribute);
+		}
 	}
 
 	public void setAttribute(final String attribute, final String value) {
@@ -279,8 +280,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public String getXml(Transformer transformer) throws IOException {
 		try {
-			if (transformer == null)
+			if (transformer == null) {
 				transformer = DEFAULT_TRANSFORMER;
+			}
 			StreamResult result = new StreamResult(new StringWriter());
 			DOMSource source = new DOMSource(this.node_);
 			transformer.transform(source, result);
@@ -293,8 +295,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public void getXml(Transformer transformer, final File out) throws IOException {
 		try {
-			if (transformer == null)
+			if (transformer == null) {
 				transformer = DEFAULT_TRANSFORMER;
+			}
 
 			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
 			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
