@@ -554,8 +554,13 @@ public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedOb
 	}
 
 	@Override
-	public int getFileEncoding() throws NotesException {
-		return getDelegate().getFileEncoding();
+	public int getFileEncoding() {
+		try {
+			return getDelegate().getFileEncoding();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return Integer.MIN_VALUE;
+		}
 	}
 
 }
