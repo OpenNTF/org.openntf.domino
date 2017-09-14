@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.openntf.domino.design.IconNote.DASMode;
 import org.openntf.domino.utils.xml.XMLDocument;
 
 /**
@@ -131,27 +132,6 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 
 		public String getPropertyName() {
 			return propName;
-		}
-	}
-
-	/**
-	 * DAS setting for the NSF
-	 *
-	 * @author Paul Withers
-	 * @since ODA 4.1.0
-	 *
-	 */
-	public enum DASEnabledFor {
-		NOTHING("0"), VIEWS("1"), VIEWS_AND_DOCS("2");
-
-		String value;
-
-		private DASEnabledFor(final String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
 		}
 	}
 
@@ -547,6 +527,15 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public String getTemplateName();
 
 	/**
+	 * Sets the template it inherits from
+	 *
+	 * @param name
+	 *            of template
+	 * @since ODA 4.1.0
+	 */
+	public void setTemplateName(String name);
+
+	/**
 	 * Template name defined for this database
 	 *
 	 * @return template name defined for this database
@@ -555,20 +544,38 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public String getNameIfTemplate();
 
 	/**
-	 * Returns what the DAS setting is for the database
+	 * Sets template name for this database
 	 *
-	 * @return DASEnabledFor enum option
+	 * @param name
+	 *            template name
+	 * @since 4.1.0
+	 */
+	public void setNameIfTemplate(String name);
+
+	/**
+	 * Returns DAS setting (stored in icon note)
+	 *
+	 * @return DASMode enum option
 	 * @since ODA 4.1.0
 	 */
-	public DASEnabledFor getDasSetting();
+	public DASMode getDasMode();
 
 	/**
 	 * Returns what the replicate unread setting is for the database
 	 *
-	 * @return UnreadReplicationSetting enum option
+	 * @return {@link UnreadReplicationSetting} enum option
 	 * @since ODA 4.1.0
 	 */
 	public UnreadReplicationSetting getReplicateUnreadSetting();
+
+	/**
+	 * Sets what the replicate unread setting should be for the database
+	 *
+	 * @param setting
+	 *            {@link UnreadReplicationSetting} enum option
+	 * @since 4.1.0
+	 */
+	public void setReplicateUnreadSetting(UnreadReplicationSetting setting);
 
 	/**
 	 * Gets the maximum $UpdatedBy elements set for the database

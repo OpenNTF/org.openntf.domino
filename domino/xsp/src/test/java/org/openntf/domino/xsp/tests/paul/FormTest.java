@@ -46,7 +46,7 @@ public class FormTest implements Runnable {
 		addNewLine(sb);
 		sb.append(dbDesign.getNameIfTemplate());
 		addNewLine(sb);
-		sb.append("DAS Setting = " + dbDesign.getDasSetting().name());
+		sb.append("DAS Setting = " + dbDesign.getDasMode().name());
 		addNewLine(sb);
 		sb.append("Replicate Unread = " + dbDesign.getReplicateUnreadSetting().name());
 		addNewLine(sb);

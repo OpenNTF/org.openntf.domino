@@ -1,11 +1,13 @@
 package org.openntf.domino.xsp.tests.paul;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign.DbProperties;
+import org.openntf.domino.design.DatabaseDesign.UnreadReplicationSetting;
 import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
@@ -28,8 +30,8 @@ public class DbPropTest implements Runnable {
 			Session sess = Factory.getSession(SessionType.NATIVE);
 			Database db = sess.getDatabase("PrivateTest.nsf");
 			StringBuilder sb = new StringBuilder();
-			getDbInfo(db, sb);
 			setDbInfo(db);
+			getDbInfo(db, sb);
 			System.out.println(sb.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -47,7 +49,7 @@ public class DbPropTest implements Runnable {
 		addNewLine(sb);
 		sb.append(dbDesign.getNameIfTemplate());
 		addNewLine(sb);
-		sb.append("DAS Setting = " + dbDesign.getDasSetting().name());
+		sb.append("DAS Setting = " + dbDesign.getDasMode().name());
 		addNewLine(sb);
 		sb.append("Replicate Unread = " + dbDesign.getReplicateUnreadSetting().name());
 		addNewLine(sb);
@@ -58,12 +60,14 @@ public class DbPropTest implements Runnable {
 		sb.append("Soft Deletes = " + dbDesign.getSoftDeletionsExpireIn());
 	}
 
-	private void setDbInfo(final Database db) {
+	private void setDbInfo(final Database db) throws IOException {
 		DatabaseDesign dbDesign = (DatabaseDesign) db.getDesign();
 		HashMap<DbProperties, Boolean> props = new HashMap<>();
 		props.put(DbProperties.USE_JS, false);
 		props.put(DbProperties.REQUIRE_SSL, true);
 		props.put(DbProperties.NO_URL_OPEN, false);
+		props.put(DbProperties.ENHANCED_HTML, true);
+		dbDesign.setReplicateUnreadSetting(UnreadReplicationSetting.CLUSTER);
 		dbDesign.setDatabaseProperties(props);
 		dbDesign.setMaxRevisions(30);
 		dbDesign.save();
