@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensions to NotesProperty class
  * 
- *         OpenNTF extensions to NotesProperty class
+ * @author withersp
+ *
  */
 public interface NotesProperty {
 
