@@ -754,8 +754,14 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public boolean writeToLog() {
 		Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 		// Current database may be null from Xots
-		if (null != currDb && !StringUtil.equals(getCurrentDatabasePath(), currDb.getFilePath())) {
-			reinitialiseSettings();
+		if (null != currDb) {
+			if (!StringUtil.equals(getCurrentDatabasePath(), "")) {
+				reinitialiseSettings();
+			}
+		} else {
+			if (!StringUtil.equals(getCurrentDatabasePath(), Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
+				reinitialiseSettings();
+			}
 		}
 
 		// exit early if there is no database
