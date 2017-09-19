@@ -362,9 +362,15 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			RichTextItem rtitem;
 			Database docDb;
 
-			if (!StringUtil.equals(super.getCurrentDatabasePath(),
-					Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
-				reinitialiseSettings();
+			if (null == Factory.getSession(SessionType.CURRENT).getCurrentDatabase()) {
+				if (!StringUtil.equals(super.getCurrentDatabasePath(), "")) {
+					reinitialiseSettings();
+				}
+			} else {
+				if (!StringUtil.equals(super.getCurrentDatabasePath(),
+						Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
+					reinitialiseSettings();
+				}
 			}
 
 			if (StringUtil.isEmpty(getLogEmail())) {
