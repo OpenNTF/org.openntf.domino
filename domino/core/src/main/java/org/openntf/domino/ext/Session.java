@@ -21,7 +21,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.ibm.icu.util.Calendar;
 
 /**
- * @author withersp
+ * @author Paul Withers
  *
  *         OpenNTF extensions to Session class
  */
@@ -529,4 +529,28 @@ public interface Session {
 	 * @since 4.1.0
 	 */
 	public Name getServerNameAsName();
+
+	/**
+	 * Create a blank database in the current session's data directory
+	 *
+	 * @param folder
+	 *            in which to create the NSF
+	 * @param fileName
+	 *            for the NSF, e.g. "MyNSF.nsf". Do not include folder
+	 * @return Database created
+	 * @since 4.1.0
+	 */
+	public Database createBlankDatabase(String folder, String fileName);
+
+	/**
+	 * Creates a blank database using an absolute path
+	 *
+	 * @param absoluteFolderPath
+	 *            to create the database at, e.g. C:\Temp
+	 * @param fileName
+	 *            for the NSF, e.g. "MyNSF.nsf". Do not include folder
+	 * @return Database created
+	 * @since 4.1.0
+	 */
+	public Database createBlankDatabaseAbsolutePath(String absoluteFolderPath, String fileName);
 }

@@ -17,7 +17,10 @@ package org.openntf.domino.impl;
 
 import java.awt.Color;
 import java.io.Externalizable;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -71,6 +74,8 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
+import com.ibm.commons.util.StringUtil;
+import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.icu.util.Calendar;
 
 // TODO: Auto-generated Javadoc
@@ -80,6 +85,7 @@ import com.ibm.icu.util.Calendar;
  * The Class Session.
  *
  * @author nfreeman
+ * @author Paul Withers
  */
 
 public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
@@ -2160,5 +2166,41 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public String getServerNameAbbreviated() {
 		return getServerNameAsName().getAbbreviated();
+	}
+
+	@Override
+	public Database createBlankDatabase(final String folder, final String fileName) {
+		String dir = getEnvironmentString("directory", true);
+		String s = File.separator;
+		String path = dir;
+		if (StringUtil.isNotEmpty(folder)) {
+			path = path + s + folder;
+		}
+		return createBlankDatabaseAbsolutePath(path, fileName);
+	}
+
+	@Override
+	public Database createBlankDatabaseAbsolutePath(final String absoluteFolderPath, String fileName) {
+		try {
+			File temp = new File(absoluteFolderPath);
+			temp.mkdir();
+			if (!StringUtil.endsWithIgnoreCase(fileName, ".nsf")) {
+				fileName = fileName + ".nsf";
+			}
+			File dbFile = new File(absoluteFolderPath + File.separator + fileName); //$NON-NLS-1$
+			FileOutputStream fos = new FileOutputStream(dbFile);
+			InputStream is = Session.class.getResourceAsStream("/empty.nsf"); //$NON-NLS-1$ //$NON-NLS-2$
+			StreamUtil.copyStream(is, fos);
+			fos.flush();
+			StreamUtil.close(fos);
+			StreamUtil.close(is);
+			return getDatabase(dbFile.getAbsolutePath());
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+			return null;
+		}
 	}
 }
