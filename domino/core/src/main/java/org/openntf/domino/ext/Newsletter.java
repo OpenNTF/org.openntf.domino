@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensions to Newsletter class
  * 
- *         OpenNTF extensions to Newsletter class
+ * @author withersp
+ *
  */
 public interface Newsletter {
 
