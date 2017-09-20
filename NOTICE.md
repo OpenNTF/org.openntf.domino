@@ -1,6 +1,6 @@
 OpenNTF Domino API
 &copy; Copyright 2012-2015
-  Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkelmeyer, Declan Lynch, Paul Withers, Devin Olson, Mark Leusink, Keith Smillie, Foconis AG
+  Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkelmeyer, Declan Lynch, Paul Withers, Devin Olson, Mark Leusink, Keith Smillie, Foconis AG, Jan Krejcarek, Cameron Gregor
   https://www.foconis.de
 
 Includes content licensed under Apache License 2.0
