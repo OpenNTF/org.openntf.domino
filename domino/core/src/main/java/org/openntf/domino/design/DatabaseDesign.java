@@ -393,7 +393,8 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public DesignCollection<DesignForm> getForms();
 
 	/**
-	 * @return the icon note of the database
+	 * @return the icon note of the database. The icon is cached, so all settings will be as they were at the start of the request (when the
+	 *         Session was initiated)
 	 */
 	public IconNote getIconNote();
 

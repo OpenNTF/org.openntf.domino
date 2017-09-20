@@ -23,6 +23,9 @@ import org.openntf.domino.design.DatabaseDesign.DbProperties;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
+ * NOTE: The icon note is cached by the Session. So if you change a database property stored in the icon, you won't get the updated setting
+ * until the next server request
+ *
  * @author jgallagher
  * @author Paul Withers
  *
@@ -126,7 +129,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 
 	@Override
 	public boolean isEnhancedHTML() {
-		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.ENHANCED_HTML.getPropertyName() + "']/text");
+		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.ENHANCED_HTML.getPropertyName() + "']");
 		return node != null;
 	}
 
@@ -137,7 +140,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 			if (node == null) {
 				node = getDxlNode("/note").addChildElement("item");
 				node.setAttribute("name", DbProperties.ENHANCED_HTML.getPropertyName());
-				node.setTextContent("1");
+				node.addChildElement("text").setTextContent("1");
 			}
 		} else {
 			if (node != null) {
@@ -148,7 +151,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 
 	@Override
 	public boolean isBlockICAA() {
-		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.BLOCK_ICAA.getPropertyName() + "']/text");
+		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.BLOCK_ICAA.getPropertyName() + "']");
 		return node != null;
 	}
 
@@ -159,7 +162,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 			if (node == null) {
 				node = getDxlNode("/note").addChildElement("item");
 				node.setAttribute("name", DbProperties.BLOCK_ICAA.getPropertyName());
-				node.setTextContent("1");
+				node.addChildElement("text").setTextContent("1");
 			}
 		} else {
 			if (node != null) {
@@ -170,7 +173,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 
 	@Override
 	public boolean isDisableViewExport() {
-		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.NO_EXPORT_VIEW.getPropertyName() + "']/text");
+		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.NO_EXPORT_VIEW.getPropertyName() + "']");
 		return node != null;
 	}
 
@@ -181,7 +184,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 			if (node == null) {
 				node = getDxlNode("/note").addChildElement("item");
 				node.setAttribute("name", DbProperties.NO_EXPORT_VIEW.getPropertyName());
-				node.setTextContent("1");
+				node.addChildElement("text").setTextContent("1");
 			}
 		} else {
 			if (node != null) {
@@ -192,7 +195,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 
 	@Override
 	public boolean isLaunchXPageRunOnServer() {
-		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName() + "']/text");
+		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName() + "']");
 		return node != null;
 	}
 
@@ -203,7 +206,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 			if (node == null) {
 				node = getDxlNode("/note").addChildElement("item");
 				node.setAttribute("name", DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName());
-				node.setTextContent("1");
+				node.addChildElement("text").setTextContent("1");
 			}
 		} else {
 			if (node != null) {
@@ -214,13 +217,13 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 
 	@Override
 	public boolean isDocumentSummary16MB() {
-		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.DOCUMENT_SUMMARY_16MB.getPropertyName() + "']/text");
+		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.DOCUMENT_SUMMARY_16MB.getPropertyName() + "']");
 		return node != null;
 	}
 
 	@Override
 	public boolean isDaosEnabled() {
-		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.DAOS_ENABLED.getPropertyName() + "']/text");
+		XMLNode node = getDxlNode("/note/item[@name='" + DbProperties.DAOS_ENABLED.getPropertyName() + "']");
 		return node != null;
 	}
 
