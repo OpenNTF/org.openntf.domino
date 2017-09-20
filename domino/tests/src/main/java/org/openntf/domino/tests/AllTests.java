@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openntf.domino.Session;
+import org.openntf.domino.tests.wrapper.TestDatabasePropertyWrapper;
 import org.openntf.domino.tests.wrapper.TestWrapperFactory;
 import org.openntf.domino.utils.Factory;
 
@@ -23,7 +24,7 @@ import lotus.domino.NotesThread;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	TestWrapperFactory.class
+		TestWrapperFactory.class, TestDatabasePropertyWrapper.class
 })
 public class AllTests {
 	public static lotus.domino.Session lotusSession;
@@ -60,7 +61,7 @@ public class AllTests {
 	 * Internal utility methods
 	 ********************************************************************************/
 
-	private static String instantiateDb(final String basename) throws IOException {
+	public static String instantiateDb(final String basename) throws IOException {
 		File dbFile = File.createTempFile(basename, ".nsf"); //$NON-NLS-1$
 		System.out.println(format("{0} location is {1}", basename, dbFile.getAbsolutePath())); //$NON-NLS-1$
 		FileOutputStream fos = new FileOutputStream(dbFile);
@@ -72,11 +73,12 @@ public class AllTests {
 		return dbFile.getAbsolutePath();
 	}
 
-	private static void deleteDb(final String dbName) {
+	public static void deleteDb(final String dbName) {
 		try {
 			File testDB = new File(dbName);
 			if(testDB.exists()) {
 				testDB.delete();
+				System.out.println(format("{0} deleted", dbName)); //$NON-NLS-1$
 			}
 		} catch(Exception e) { }
 	}

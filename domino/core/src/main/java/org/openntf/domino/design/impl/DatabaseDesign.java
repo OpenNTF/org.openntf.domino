@@ -875,6 +875,9 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		if (props.containsKey(DbProperties.MAX_UPDATED_BY)) {
 			setterMethods.add(DbProperties.MAX_UPDATED_BY);
 		}
+		if (props.containsKey(DbProperties.SOFT_DELETE_EXPIRY)) {
+			nonSettable.add(DbProperties.SOFT_DELETE_EXPIRY.name());
+		}
 		if (!setterMethods.isEmpty() || !nonSettable.isEmpty()) {
 			String message = "";
 			if (!nonSettable.isEmpty()) {
@@ -1267,6 +1270,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 		if (isIconDirty_) {
 			getIconNote().save();
+			// Icon Note gets cached, so this won't be the latest version
 		}
 
 		return true;
