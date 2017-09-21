@@ -125,5 +125,73 @@ public interface IconNote extends DesignBase {
 	 */
 	boolean isAllowDas();
 
+	/**
+	 * Number of days CSS files should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.3.0
+	 */
+	public int getCssExpiry();
+
+	/**
+	 * Sets the number of days CSS files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setCssExpiry(int days);
+
+	/**
+	 * Number of days File resources should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.3.0
+	 */
+	public int getFileExpiry();
+
+	/**
+	 * Sets the number of days files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setFileExpiry(int days);
+
+	/**
+	 * Number of days Image files should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.3.0
+	 */
+	public int getImageExpiry();
+
+	/**
+	 * Sets the number of days image files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setImageExpiry(int days);
+
+	/**
+	 * Number of days JavaScript files should expire in or Integer.MIN_VALUE if not set
+	 *
+	 * @return number of days
+	 * @since ODA 4.3.0
+	 */
+	public int getJsExpiry();
+
+	/**
+	 * Sets the number of days JavaScript files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setJsExpiry(int days);
+
 	String[] getXotsClassNames();
 }
