@@ -236,4 +236,108 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 		}
 	}
 
+	@Override
+	public int getCssExpiry() {
+		XMLNode node = getDxlNode("/note/item[@name='$CSSExpires']/text");
+		if (null == node) {
+			return Integer.MIN_VALUE;
+		} else {
+			return Integer.parseInt(node.getText());
+		}
+	}
+
+	@Override
+	public void setCssExpiry(final int days) {
+		XMLNode node = getDxlNode("/note/item[@name='$CSSExpires']");
+		if (days > Integer.MIN_VALUE) {
+			if (node == null) {
+				node = getDxlNode("/note").addChildElement("item");
+				node.setAttribute("name", DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName());
+				node.addChildElement("text").setTextContent("1");
+			}
+		} else {
+			if (node != null) {
+				node.getParentNode().removeChild(node);
+			}
+		}
+	}
+
+	@Override
+	public int getFileExpiry() {
+		XMLNode node = getDxlNode("/note/item[@name='$FileExpires']/text");
+		if (null == node) {
+			return Integer.MIN_VALUE;
+		} else {
+			return Integer.parseInt(node.getText());
+		}
+	}
+
+	@Override
+	public void setFileExpiry(final int days) {
+		XMLNode node = getDxlNode("/note/item[@name='$FileExpires']");
+		if (days > Integer.MIN_VALUE) {
+			if (node == null) {
+				node = getDxlNode("/note").addChildElement("item");
+				node.setAttribute("name", DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName());
+				node.addChildElement("text").setTextContent("1");
+			}
+		} else {
+			if (node != null) {
+				node.getParentNode().removeChild(node);
+			}
+		}
+	}
+
+	@Override
+	public int getImageExpiry() {
+		XMLNode node = getDxlNode("/note/item[@name='$ImageExpires']/text");
+		if (null == node) {
+			return Integer.MIN_VALUE;
+		} else {
+			return Integer.parseInt(node.getText());
+		}
+	}
+
+	@Override
+	public void setImageExpiry(final int days) {
+		XMLNode node = getDxlNode("/note/item[@name='$ImageExpires']");
+		if (days > Integer.MIN_VALUE) {
+			if (node == null) {
+				node = getDxlNode("/note").addChildElement("item");
+				node.setAttribute("name", DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName());
+				node.addChildElement("text").setTextContent("1");
+			}
+		} else {
+			if (node != null) {
+				node.getParentNode().removeChild(node);
+			}
+		}
+	}
+
+	@Override
+	public int getJsExpiry() {
+		XMLNode node = getDxlNode("/note/item[@name='$JSExpires']/text");
+		if (null == node) {
+			return Integer.MIN_VALUE;
+		} else {
+			return Integer.parseInt(node.getText());
+		}
+	}
+
+	@Override
+	public void setJsExpiry(final int days) {
+		XMLNode node = getDxlNode("/note/item[@name='$JSExpires']");
+		if (days > Integer.MIN_VALUE) {
+			if (node == null) {
+				node = getDxlNode("/note").addChildElement("item");
+				node.setAttribute("name", DbProperties.LAUNCH_XPAGE_ON_SERVER.getPropertyName());
+				node.addChildElement("text").setTextContent("1");
+			}
+		} else {
+			if (node != null) {
+				node.getParentNode().removeChild(node);
+			}
+		}
+	}
+
 }

@@ -669,12 +669,30 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public int getCssExpiry();
 
 	/**
+	 * Sets the number of days CSS files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setCssExpiry(int days);
+
+	/**
 	 * Number of days File resources should expire in or Integer.MIN_VALUE if not set
 	 *
 	 * @return number of days
 	 * @since ODA 4.1.0
 	 */
 	public int getFileExpiry();
+
+	/**
+	 * Sets the number of days files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setFileExpiry(int days);
 
 	/**
 	 * Number of days Image files should expire in or Integer.MIN_VALUE if not set
@@ -685,6 +703,15 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public int getImageExpiry();
 
 	/**
+	 * Sets the number of days image files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setImageExpiry(int days);
+
+	/**
 	 * Number of days JavaScript files should expire in or Integer.MIN_VALUE if not set
 	 *
 	 * @return number of days
@@ -693,12 +720,30 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public int getJsExpiry();
 
 	/**
+	 * Sets the number of days JavaScript files should expire in.
+	 *
+	 * @param days
+	 *            to expire after. Use Integer.MIN_VALUE to clear it
+	 * @since 4.3.0
+	 */
+	public void setJsExpiry(int days);
+
+	/**
 	 * Gets the number of hours soft deletions are set to expire in
 	 *
 	 * @return Integer.MIN_VALUE if soft deletions is not enabled, 48 if it's not set, otherwise the value
 	 * @since ODA 4.1.0
 	 */
 	public int getSoftDeletionsExpireIn();
+
+	/**
+	 * Sets the number of hours soft deletions should expire in
+	 *
+	 * @param hours
+	 *            to expire in or Integer.MIN_VALUE to disable soft deletions and reset to 48
+	 * @since 4.3.0
+	 */
+	public void setSoftDeletionsExpireIn(int hours);
 
 	/**
 	 * Update the database DXL with changes made
