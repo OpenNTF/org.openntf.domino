@@ -1190,6 +1190,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
+	public void setDasMode(final DASMode mode) {
+		getIconNote().setDASMode(mode);
+		isIconDirty_ = true;
+	}
+
+	@Override
 	public UnreadReplicationSetting getReplicateUnreadSetting() {
 		String replicateSetting = getDatabaseNode().getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName());
 		if (!StringUtil.isEmpty(replicateSetting)) {
@@ -1421,21 +1427,25 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public void setCssExpiry(final int days) {
 		getIconNote().setCssExpiry(days);
+		isIconDirty_ = true;
 	}
 
 	@Override
 	public void setFileExpiry(final int days) {
 		getIconNote().setFileExpiry(days);
+		isIconDirty_ = true;
 	}
 
 	@Override
 	public void setImageExpiry(final int days) {
 		getIconNote().setImageExpiry(days);
+		isIconDirty_ = true;
 	}
 
 	@Override
 	public void setJsExpiry(final int days) {
 		getIconNote().setJsExpiry(days);
+		isIconDirty_ = true;
 	}
 
 }
