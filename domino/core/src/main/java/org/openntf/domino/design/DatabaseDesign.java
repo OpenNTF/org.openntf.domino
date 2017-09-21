@@ -562,6 +562,14 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public DASMode getDasMode();
 
 	/**
+	 * Sets the Domino Data Access Service mode for the database.
+	 *
+	 * @param mode
+	 * @since ODA 4.3.0
+	 */
+	public void setDasMode(DASMode mode);
+
+	/**
 	 * Returns what the replicate unread setting is for the database
 	 *
 	 * @return {@link UnreadReplicationSetting} enum option
