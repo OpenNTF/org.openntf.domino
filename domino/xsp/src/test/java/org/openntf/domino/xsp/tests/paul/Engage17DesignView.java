@@ -43,11 +43,15 @@ public class Engage17DesignView implements Runnable {
 		name.setFormula("FirstName+\" \"+LastName");
 		name.setSortOrder(SortOrder.ASCENDING);
 		name.setTitle("NAME");
+		DesignColumn name2 = newView.addColumn();
+		name2.setFormula("LastName");
+		name2.setSortOrder(SortOrder.ASCENDING);
+		name2.setTitle("NAME");
 		DesignColumn city = newView.addColumn();
 		city.setItemName("City");
 		city.setTitle("CITY");
 		city.setResortOrder(ResortOrder.ASCENDING);
-		city.setSecondarySortColumn(1);
+		city.setSecondarySortColumn(2);
 		newView.save();
 	}
 

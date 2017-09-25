@@ -116,6 +116,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return new org.openntf.domino.design.impl.DesignView(database_);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createForm()
+	 */
+	@Override
+	public DesignForm createForm() {
+		return new org.openntf.domino.design.impl.DesignForm(database_);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createForm()
+	 */
+	@Override
+	public Subform createSubform() {
+		return new org.openntf.domino.design.impl.Subform(database_);
+	}
+
 	@Override
 	public FileResource createFileResource() {
 		return new org.openntf.domino.design.impl.FileResource(database_);

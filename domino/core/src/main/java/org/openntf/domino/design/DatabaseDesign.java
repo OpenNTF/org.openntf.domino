@@ -191,6 +191,18 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	public DesignView createView();
 
 	/**
+	 * @return a new Form with no fields
+	 * @since ODA 4.3.0
+	 */
+	public DesignForm createForm();
+
+	/**
+	 * @return a new Subform with no fields
+	 * @since ODA 4.3.0
+	 */
+	public Subform createSubform();
+
+	/**
 	 * @param create
 	 *            whether a new using document should be created when one does not yet exist in the database
 	 * @return the About Document note of the database, or null if no document exists and create is false

@@ -6,6 +6,9 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DatabaseDesign.DbProperties;
 import org.openntf.domino.design.DesignForm;
+import org.openntf.domino.design.FormField;
+import org.openntf.domino.design.FormField.Kind;
+import org.openntf.domino.design.FormField.Type;
 import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.junit.TestRunnerUtil;
 import org.openntf.domino.utils.Factory;
@@ -61,6 +64,16 @@ public class FormTest implements Runnable {
 
 	private void getFormInfo(final Database db, final StringBuilder sb) {
 		DesignForm form = db.getDesign().getForm("testForm");
+		FormField field = form.addField();
+		field.setName("EclipseTest");
+		field.setKind(Kind.COMPUTED);
+		field.setDefaultValueFormula("@Today");
+		field.setFieldType(Type.DATETIME);
+		FormField field2 = form.addField();
+		field2.setName("EclipseTest2");
+		field2.setKind(Kind.EDITABLE);
+		field2.setDefaultValueFormula("Hello");
+		field2.setAllowMultiValues(true);
 		sb.append("Outputting explicit subforms for testForm");
 		addNewLine(sb);
 		List<String> subforms = form.getExplicitSubforms();
