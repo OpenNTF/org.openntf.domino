@@ -531,6 +531,16 @@ public interface Session {
 	public Name getServerNameAsName();
 
 	/**
+	 * Creates a blank database in the current session's data directory
+	 *
+	 * @param filePath
+	 *            for the relevant database
+	 * @return Database created
+	 * @since 4.3.0
+	 */
+	public Database createBlankDatabase(String filePath);
+
+	/**
 	 * Create a blank database in the current session's data directory
 	 *
 	 * @param folder
@@ -553,4 +563,14 @@ public interface Session {
 	 * @since 4.1.0
 	 */
 	public Database createBlankDatabaseAbsolutePath(String absoluteFolderPath, String fileName);
+
+	/**
+	 * Creates a blank database using an absolute path
+	 *
+	 * @param absoluteFilePath
+	 *            to create the database
+	 * @return Database created
+	 * @since 4.3.0
+	 */
+	public Database createBlankDatabaseAbsolutePath(String absoluteFilePath);
 }
