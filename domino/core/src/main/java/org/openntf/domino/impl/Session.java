@@ -66,6 +66,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.GenericDominoEventFactory;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.types.Encapsulated;
@@ -73,6 +74,7 @@ import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Strings;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.commons.util.io.StreamUtil;
@@ -2183,11 +2185,16 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	public Database createBlankDatabaseAbsolutePath(final String absoluteFolderPath, String fileName) {
 		try {
 			File temp = new File(absoluteFolderPath);
-			temp.mkdir();
+			if (!temp.exists()) {
+				temp.mkdir();
+			}
 			if (!StringUtil.endsWithIgnoreCase(fileName, ".nsf")) {
 				fileName = fileName + ".nsf";
 			}
 			File dbFile = new File(absoluteFolderPath + File.separator + fileName); //$NON-NLS-1$
+			if (dbFile.exists()) {
+				throw new OpenNTFNotesException("Database already exists at this location");
+			}
 			FileOutputStream fos = new FileOutputStream(dbFile);
 			InputStream is = Session.class.getResourceAsStream("/empty.nsf"); //$NON-NLS-1$ //$NON-NLS-2$
 			StreamUtil.copyStream(is, fos);
@@ -2201,6 +2208,51 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#createBlankDatabase(java.lang.String)
+	 */
+	@Override
+	public Database createBlankDatabase(final String filePath) {
+		if (Strings.isBlankString(filePath)) {
+			throw new OpenNTFNotesException("Cannot create a blank database without a filepath");
+		} else {
+			return createBlankDatabase(getFolder(filePath), getFileName(filePath));
+		}
+	}
+
+	@Override
+	public Database createBlankDatabaseAbsolutePath(final String filePath) {
+		if (Strings.isBlankString(filePath)) {
+			throw new OpenNTFNotesException("Cannot create a blank database without a filepath");
+		} else {
+			return createBlankDatabaseAbsolutePath(getFolder(filePath), getFileName(filePath));
+		}
+	}
+
+	private String getFolder(final String filePath) {
+		if (filePath.contains(File.separator)) {
+			return Strings.leftBack(filePath, File.separator);
+		} else if (filePath.contains("/")) {
+			return Strings.leftBack(filePath, "/");
+		} else if (filePath.contains("\\")) {
+			return Strings.leftBack(filePath, "\\");
+		} else {
+			return "";
+		}
+	}
+
+	private String getFileName(final String filePath) {
+		if (filePath.contains(File.separator)) {
+			return Strings.rightBack(filePath, File.separator);
+		} else if (filePath.contains("/")) {
+			return Strings.rightBack(filePath, "/");
+		} else if (filePath.contains("\\")) {
+			return Strings.rightBack(filePath, "\\");
+		} else {
+			return filePath;
 		}
 	}
 }
