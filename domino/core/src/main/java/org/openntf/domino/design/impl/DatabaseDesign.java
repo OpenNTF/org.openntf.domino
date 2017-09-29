@@ -390,10 +390,10 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		Document iconNoteDoc = database_.getDocumentByID(ICON_NOTE);
 		if (iconNoteDoc != null) {
 			iconNote_ = new IconNote(iconNoteDoc);
-			return iconNote_;
+		} else {
+			iconNote_ = new IconNote(database_);
 		}
-		log_.fine("No icon note found for database " + getAncestorDatabase().getApiPath());
-		return null;
+		return iconNote_;
 	}
 
 	@Override
