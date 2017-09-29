@@ -43,3 +43,8 @@
 
 - Additional method required for FP9 (Zircon) - EmbeddedObject.getFileEncoding()
 
+###4.2.1
+- Setters for expiry on images, javascript, css and files
+- setDasMode extended onto DatabaseDesign class
+- Form / subform creation added to Design API
+- Fixes and streamlining of methods for creating a blank database. Use a single filepath instead of folder / filename. Ability added to create on remote server.
