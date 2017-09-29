@@ -189,13 +189,13 @@ public class OsgiCommandProvider implements CommandProvider {
 	}
 
 	private void xotsTasks(final CommandInterpreter ci) {
-		ci.println("ID\tSTATE\tNEXT EXEC TIME");
+		ci.println("ID\tSTATE\tCLASS\tNEXT EXEC TIME");
 
 		List<DominoFutureTask<?>> tasks = Xots.getTasks(null);
 		for (DominoFutureTask<?> task : tasks) {
 			ci.println(task.getId() + "\t" + // ID
 					task.getState() + "\t" + // State
-					convertTimeUnit(task.getNextExecutionTimeInMillis()));
+					task.getWrappedTask().getDescription() + "\t" + convertTimeUnit(task.getNextExecutionTimeInMillis()));
 
 		}
 	}

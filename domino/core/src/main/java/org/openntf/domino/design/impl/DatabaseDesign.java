@@ -116,6 +116,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return new org.openntf.domino.design.impl.DesignView(database_);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createForm()
+	 */
+	@Override
+	public DesignForm createForm() {
+		return new org.openntf.domino.design.impl.DesignForm(database_);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createForm()
+	 */
+	@Override
+	public Subform createSubform() {
+		return new org.openntf.domino.design.impl.Subform(database_);
+	}
+
 	@Override
 	public FileResource createFileResource() {
 		return new org.openntf.domino.design.impl.FileResource(database_);
@@ -1190,6 +1206,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
+	public void setDasMode(final DASMode mode) {
+		getIconNote().setDASMode(mode);
+		isIconDirty_ = true;
+	}
+
+	@Override
 	public UnreadReplicationSetting getReplicateUnreadSetting() {
 		String replicateSetting = getDatabaseNode().getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName());
 		if (!StringUtil.isEmpty(replicateSetting)) {
@@ -1246,7 +1268,16 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 				return Integer.parseInt(softDeleteExpiry);
 			}
 		}
+	}
 
+	@Override
+	public void setSoftDeletionsExpireIn(final int hours) {
+		if (hours > Integer.MIN_VALUE) {
+			getDatabaseNode().setAttribute(DbProperties.SOFT_DELETE_EXPIRY.getPropertyName(), Integer.toString(hours));
+		} else {
+			getDatabaseNode().removeAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName());
+			getDatabaseNode().setAttribute(DbProperties.SOFT_DELETE_EXPIRY.getPropertyName(), "48");
+		}
 	}
 
 	@Override
@@ -1391,42 +1422,46 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	@Override
 	public int getCssExpiry() {
-		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$CSSExpires']");
-		if (null != node) {
-			String value = node.getText();
-			return Integer.parseInt(value);
-		}
-		return Integer.MIN_VALUE;
+		return getIconNote().getCssExpiry();
 	}
 
 	@Override
 	public int getFileExpiry() {
-		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$FileExpires']");
-		if (null != node) {
-			String value = node.getText();
-			return Integer.parseInt(value);
-		}
-		return Integer.MIN_VALUE;
+		return getIconNote().getFileExpiry();
 	}
 
 	@Override
 	public int getImageExpiry() {
-		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$ImageExpires']");
-		if (null != node) {
-			String value = node.getText();
-			return Integer.parseInt(value);
-		}
-		return Integer.MIN_VALUE;
+		return getIconNote().getImageExpiry();
 	}
 
 	@Override
 	public int getJsExpiry() {
-		XMLNode node = getDatabaseXml().selectSingleNode("//item[@name='$JSExpires']");
-		if (null != node) {
-			String value = node.getText();
-			return Integer.parseInt(value);
-		}
-		return Integer.MIN_VALUE;
+		return getIconNote().getJsExpiry();
+	}
+
+	@Override
+	public void setCssExpiry(final int days) {
+		getIconNote().setCssExpiry(days);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public void setFileExpiry(final int days) {
+		getIconNote().setFileExpiry(days);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public void setImageExpiry(final int days) {
+		getIconNote().setImageExpiry(days);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public void setJsExpiry(final int days) {
+		getIconNote().setJsExpiry(days);
+		isIconDirty_ = true;
 	}
 
 }

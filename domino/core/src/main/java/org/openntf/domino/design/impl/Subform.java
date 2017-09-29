@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,25 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		super(document);
 	}
 
+	/**
+	 * @param database
+	 *            parent
+	 * @since 4.3.0
+	 */
+	protected Subform(final Database database) {
+		super(database, Subform.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_subform.xml"));
+	}
+
+	/**
+	 * @param database
+	 *            parent
+	 * @param is
+	 *            InputStream to use from which to generate the design element
+	 */
+	protected Subform(final Database database, final InputStream is) {
+		super(database, is);
+	}
+
 	@Override
 	protected boolean enforceRawFormat() {
 		return false;
@@ -49,14 +69,13 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 
 	@Override
 	public FormField addField() {
-		XMLNode body = getDxl().selectSingleNode("/subform/body/richtext");
+		XMLNode body = getBody();
 
 		// Create an appropriate paragraph definition
 		XMLNode finalPardef = getDxl().selectSingleNode("//pardef[last()]");
 		int nextId = Integer.valueOf(finalPardef.getAttribute("id")) + 1;
 		XMLNode pardef = body.addChildElement("pardef");
 		pardef.setAttribute("id", String.valueOf(nextId));
-		pardef.setAttribute("hide", "notes web mobile");
 
 		// Now create the par and the field
 		XMLNode par = body.addChildElement("par");
@@ -69,6 +88,11 @@ public class Subform extends AbstractDesignBaseNamed implements org.openntf.domi
 		field.setAttribute("type", "text");
 
 		return new org.openntf.domino.design.impl.FormField(field);
+	}
+
+	protected XMLNode getBody() {
+		XMLNode body = getDxl().selectSingleNode("/subform/body/richtext");
+		return body;
 	}
 
 	/*

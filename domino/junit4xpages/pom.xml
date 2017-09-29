@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>4.2.0</version>
+		<version>4.2.1</version>
 	</parent>
 	<artifactId>org.openntf.junit4xpages</artifactId>
 	<name>OpenNTF JUnit implementation</name>

@@ -531,26 +531,34 @@ public interface Session {
 	public Name getServerNameAsName();
 
 	/**
-	 * Create a blank database in the current session's data directory
+	 * Creates a blank database in the current session's data directory or gets the database at that path
 	 *
-	 * @param folder
-	 *            in which to create the NSF
-	 * @param fileName
-	 *            for the NSF, e.g. "MyNSF.nsf". Do not include folder
+	 * @param filePath
+	 *            for the relevant database
 	 * @return Database created
-	 * @since 4.1.0
+	 * @since 4.3.0
 	 */
-	public Database createBlankDatabase(String folder, String fileName);
+	public Database createBlankDatabase(String filePath);
 
 	/**
-	 * Creates a blank database using an absolute path
+	 * Creates a blank database in an alternate server's data directory or gets the database at that path
 	 *
-	 * @param absoluteFolderPath
-	 *            to create the database at, e.g. C:\Temp
-	 * @param fileName
-	 *            for the NSF, e.g. "MyNSF.nsf". Do not include folder
+	 * @param dbDir
+	 *            database directory on alternate server
+	 * @param filePath
+	 *            for the relevant database
 	 * @return Database created
-	 * @since 4.1.0
+	 * @since 4.3.0
 	 */
-	public Database createBlankDatabaseAbsolutePath(String absoluteFolderPath, String fileName);
+	public Database createBlankDatabase(org.openntf.domino.DbDirectory dbDir, String filePath);
+
+	/**
+	 * Creates a blank database using an absolute path or gets the database at that path
+	 *
+	 * @param absoluteFilePath
+	 *            to create the database
+	 * @return Database created
+	 * @since 4.3.0
+	 */
+	public Database createBlankDatabaseAbsolutePath(String absoluteFilePath);
 }

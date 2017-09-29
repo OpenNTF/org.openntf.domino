@@ -59,7 +59,8 @@ For Windows it would be e.g.:
 
 You will also need to amend your Target Platform in Eclipse to add the directory location from the repository "dependencies\Misc". That folder includes junit, which it's looking for. By telling the Target Platform where to find that, the project will no longer throw an error.
 
-### Building a Release Versions
+###Building a Release Versions
+
 In `domino` folder run:
 
 	mvn versions:set -DnewVersion=4.2.0 -DgenerateBackupPoms=false
@@ -85,8 +86,7 @@ To deploy to artifactory, you need access to write to artifactory and the follow
 	</servers>
 
 This is a child of the settings XML object. Then run `mvn deploy` (I had to run this from Maven command line, I don't think eclipse has the right SSL settings).
-
-### Updating back to a Snapshot version
+Updating back to a Snapshot version
 
 In `domino` folder run:
 
@@ -95,6 +95,7 @@ In `domino` folder run:
 Then run:
 
 	mvn versions:set -DnewVersion=4.3.0 -DgenerateBackupPoms=false
+
 
 ## Acknowlegements
 
