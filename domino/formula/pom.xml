@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>4.1.1-SNAPSHOT</version>
+		<version>4.1.1</version>
 	</parent>
 	<artifactId>org.openntf.formula</artifactId>
 	<name>OpenNTF Formula Engine</name>

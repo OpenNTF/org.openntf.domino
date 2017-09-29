@@ -59,6 +59,43 @@ For Windows it would be e.g.:
 
 You will also need to amend your Target Platform in Eclipse to add the directory location from the repository "dependencies\Misc". That folder includes junit, which it's looking for. By telling the Target Platform where to find that, the project will no longer throw an error.
 
+### Building a Release Versions
+In `domino` folder run:
+
+	mvn versions:set -DnewVersion=4.2.0 -DgenerateBackupPoms=false
+
+Then run:
+
+	mvn tycho-versions:set-version -DnewVersion=4.2.0
+
+Then run the maven command (if you don't have up-to-date FP version in C:\UpdateSite folder, this will need to be run from Eclipse):
+
+	mvn -Pdistribution clean package
+
+This generates Javadocs etc.
+
+To deploy to artifactory, you need access to write to artifactory and the following block in your Maven settings (m2/settings.xml):
+
+	<servers>
+		<server>
+			<id>artifactory.openntf.org</id>
+			<username>YOUR OPENNTF USERNAME</username>
+			<password>YOUR OPENNTF PASSWORD</password>
+		</server>
+	</servers>
+
+This is a child of the settings XML object. Then run `mvn deploy` (I had to run this from Maven command line, I don't think eclipse has the right SSL settings).
+
+### Updating back to a Snapshot version
+
+In `domino` folder run:
+
+	mvn tycho-versions:set-version -DnewVersion=4.3.0-SNAPSHOT
+
+Then run:
+
+	mvn versions:set -DnewVersion=4.3.0 -DgenerateBackupPoms=false
+
 ## Acknowlegements
 
 ### OpenNTF
