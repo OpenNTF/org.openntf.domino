@@ -94,7 +94,7 @@ In `domino` folder run:
 
 Then run:
 
-	mvn versions:set -DnewVersion=4.3.0 -DgenerateBackupPoms=false
+	mvn versions:set -DnewVersion=4.3.0-SNAPSHOT -DgenerateBackupPoms=false
 
 
 ## Acknowlegements
