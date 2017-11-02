@@ -123,7 +123,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		if (currXPage_ == null) {
 			setThisAgent(true);
 		}
-		return super.getThisAgent();
+		return currXPage_;
 	}
 
 	public void setThisAgent(final boolean currPage) {
@@ -153,7 +153,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					fromPage = fromPage.substring(0, fromPage.indexOf("?"));
 				}
 			}
-			super.setThisAgent(fromPage);
+			currXPage_ = fromPage;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -415,6 +415,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 			if ("".equals(errMsg)) {
 				errMsg = getMessage();
+			} else {
+				errMsg += " - " + getMessage();
 			}
 
 			logDoc.replaceItemValue("LogErrorMessage", errMsg);
