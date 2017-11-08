@@ -1043,7 +1043,7 @@ public enum TypeUtils {
 	}
 
 	public static Object toPrimitive(final Collection<Object> values, final Class<?> ctype) {
-		if (ctype.isPrimitive()) {
+		if (!ctype.isPrimitive()) {
 			throw new DataNotCompatibleException(ctype.getName() + " is not a primitive type.");
 		}
 		if (values.size() > 1) {
