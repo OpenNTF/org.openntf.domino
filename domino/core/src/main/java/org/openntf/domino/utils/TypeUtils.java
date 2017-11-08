@@ -12,8 +12,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -649,7 +651,15 @@ public enum TypeUtils {
 				}
 			} else if (java.util.Collection.class.isAssignableFrom(type)) {
 				try {
-					result = type.newInstance();
+					// Support some known concrete implementations of collection interfaces
+					if (List.class.equals(type)) {
+						result = new ArrayList<Object>();
+					} else if (Set.class.equals(type)) {
+						result = new HashSet<Object>();
+					} else {
+						result = type.newInstance();
+					}
+
 					Collection coll = (Collection) result;
 					coll.addAll(DominoUtils.toSerializable(v));
 				} catch (IllegalAccessException e) {
