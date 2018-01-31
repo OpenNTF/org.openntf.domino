@@ -21,14 +21,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
+
+import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -46,9 +51,13 @@ import org.openntf.domino.design.DesignView;
 import org.openntf.domino.design.FileResource;
 import org.openntf.domino.design.FileResourceHidden;
 import org.openntf.domino.design.FileResourceWebContent;
+import org.openntf.domino.design.IconNote.DASMode;
+import org.openntf.domino.design.Subform;
 import org.openntf.domino.design.XspJavaResource;
 import org.openntf.domino.design.XspResource;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;
@@ -58,6 +67,7 @@ import com.ibm.commons.util.io.StreamUtil;
 
 /**
  * @author jgallagher
+ * @author Paul Withers
  *
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign {
@@ -83,6 +93,8 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	private final Database database_;
 	private XMLDocument databaseXml;
+	private IconNote iconNote_;
+	private boolean isIconDirty_;
 
 	public DatabaseDesign(final Database database) {
 		database_ = database;
@@ -102,6 +114,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public DesignView createView() {
 		return new org.openntf.domino.design.impl.DesignView(database_);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createForm()
+	 */
+	@Override
+	public DesignForm createForm() {
+		return new org.openntf.domino.design.impl.DesignForm(database_);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createForm()
+	 */
+	@Override
+	public Subform createSubform() {
+		return new org.openntf.domino.design.impl.Subform(database_);
 	}
 
 	@Override
@@ -254,6 +282,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return getDesignElements(org.openntf.domino.design.StyleSheet.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getSubform(java.lang.String)
+	 */
+	@Override
+	public Subform getSubform(final String name) {
+		return getDesignElementByName(Subform.class, name);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getSubforms()
+	 */
+	@Override
+	public org.openntf.domino.design.DesignCollection<Subform> getSubforms() {
+		return getDesignElements(org.openntf.domino.design.Subform.class);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -340,12 +384,16 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	@Override
 	public IconNote getIconNote() {
-		Document iconNote = database_.getDocumentByID(ICON_NOTE);
-		if (iconNote != null) {
-			return new IconNote(iconNote);
+		if (null != iconNote_) {
+			return iconNote_;
 		}
-		log_.fine("No icon note found for database " + getAncestorDatabase().getApiPath());
-		return null;
+		Document iconNoteDoc = database_.getDocumentByID(ICON_NOTE);
+		if (iconNoteDoc != null) {
+			iconNote_ = new IconNote(iconNoteDoc);
+		} else {
+			iconNote_ = new IconNote(database_);
+		}
+		return iconNote_;
 	}
 
 	@Override
@@ -591,11 +639,15 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return getDatabaseXml().selectSingleNode("//databaseinfo");
 	}
 
-	/**
-	 * Gets database XML, for which we need a minimum of two design notes in exported DXL
-	 *
-	 * @return
-	 */
+	private XMLNode getNotesLaunchSettingsNode() {
+		return getDatabaseXml().selectSingleNode("//noteslaunch");
+	}
+
+	private XMLNode getWebLaunchSettingsNode() {
+		return getDatabaseXml().selectSingleNode("//weblaunch");
+	}
+
+	@Override
 	public XMLDocument getDatabaseXml() {
 		if (null == databaseXml) {
 			loadDatabaseXml();
@@ -626,6 +678,790 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			DominoUtils.handleException(e);
 		}
 		return dxl_;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseProperties()
+	 */
+	@Override
+	public List<DbProperties> getDatabaseProperties() {
+		List<DbProperties> returnVal = new ArrayList<DbProperties>();
+		XMLNode node = getDatabaseNode();
+		XMLDocument xml = getDatabaseXml();
+		// Use Javascript is false, or missing in DXL if checked
+		if (!"false".equals(node.getAttribute(DbProperties.USE_JS.getPropertyName()))) {
+			returnVal.add(DbProperties.USE_JS);
+		}
+		// Require SSL is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.REQUIRE_SSL.getPropertyName()))) {
+			returnVal.add(DbProperties.REQUIRE_SSL);
+		}
+		// Don't Allow URL Open is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.NO_URL_OPEN.getPropertyName()))) {
+			returnVal.add(DbProperties.NO_URL_OPEN);
+		}
+		// Enable enhanced HTML has an item called $AllowPost8HTML
+		if (getIconNote().isEnhancedHTML()) {
+			returnVal.add(DbProperties.ENHANCED_HTML);
+		}
+		// Don't allow open in ICAA has an item called $DisallowOpenInNBP
+		if (getIconNote().isBlockICAA()) {
+			returnVal.add(DbProperties.BLOCK_ICAA);
+		}
+		// Don't allow background agents is false if checked or missing in DXL - SO NEEDS REVERSING
+		if ("false".equals(node.getAttribute(DbProperties.DISABLE_BACKGROUND_AGENTS.getPropertyName()))) {
+			returnVal.add(DbProperties.DISABLE_BACKGROUND_AGENTS);
+		}
+		// Allow stored forms is false or missing in DXL if checked
+		if (!"false".equals(node.getAttribute(DbProperties.ALLOW_STORED_FORMS.getPropertyName()))) {
+			returnVal.add(DbProperties.ALLOW_STORED_FORMS);
+		}
+		// Display images after loading is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.DEFER_IMAGE_LOADING.getPropertyName()))) {
+			returnVal.add(DbProperties.DEFER_IMAGE_LOADING);
+		}
+		// Allow document locking is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_DOC_LOCKING.getPropertyName()))) {
+			returnVal.add(DbProperties.ALLOW_DOC_LOCKING);
+		}
+		// Inherit OS theme is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.INHERIT_OS_THEME.getPropertyName()))) {
+			returnVal.add(DbProperties.INHERIT_OS_THEME);
+		}
+		// Allow design locking is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_DESIGN_LOCKING.getPropertyName()))) {
+			returnVal.add(DbProperties.ALLOW_DESIGN_LOCKING);
+		}
+		// Show in open dialog is false or missing in DXL if checked
+		if (!"false".equals(node.getAttribute(DbProperties.SHOW_IN_OPEN_DIALOG.getPropertyName()))) {
+			returnVal.add(DbProperties.SHOW_IN_OPEN_DIALOG);
+		}
+		// Multi db indexed is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.MULTI_DB_INDEXING.getPropertyName()))) {
+			returnVal.add(DbProperties.MULTI_DB_INDEXING);
+		}
+		// Don't mark modified unread is false if checked or missing in DXL - SO NEEDS REVERSING
+		if ("false".equals(node.getAttribute(DbProperties.MODIFIED_NOT_UNREAD.getPropertyName()))) {
+			returnVal.add(DbProperties.MODIFIED_NOT_UNREAD);
+		}
+		// Mark parent on reply or forward is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.MARK_PARENT_REPLY_FORWARD.getPropertyName()))) {
+			returnVal.add(DbProperties.MARK_PARENT_REPLY_FORWARD);
+		}
+		// Source template name is set or missing
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.INHERIT_FROM_TEMPLATE.getPropertyName()))) {
+			returnVal.add(DbProperties.INHERIT_FROM_TEMPLATE);
+		}
+		// Template name is set or missing
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.DB_IS_TEMPLATE.getPropertyName()))) {
+			returnVal.add(DbProperties.DB_IS_TEMPLATE);
+		}
+		// Advanced template is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.ADVANCED_TEMPLATE.getPropertyName()))) {
+			returnVal.add(DbProperties.ADVANCED_TEMPLATE);
+		}
+		// Multilingual is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.MULTILINGUAL.getPropertyName()))) {
+			returnVal.add(DbProperties.MULTILINGUAL);
+		}
+		// Don't maintain unread is false or missing in DXL if checked
+		if (!"false".equals(node.getAttribute(DbProperties.DONT_MAINTAIN_UNREAD.getPropertyName()))) {
+			returnVal.add(DbProperties.DONT_MAINTAIN_UNREAD);
+		}
+		// Replicate unread marks is "cluster", "all", or missing
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName()))) {
+			returnVal.add(DbProperties.REPLICATE_UNREAD);
+		}
+		// Optimize document table map is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.OPTIMIZE_DOC_MAP.getPropertyName()))) {
+			returnVal.add(DbProperties.OPTIMIZE_DOC_MAP);
+		}
+		// Don't overwrite free space is false if checked or missing in DXL - SO NEEDS REVERSING
+		if ("false".equals(node.getAttribute(DbProperties.DONT_OVERWRITE_FREE_SPACE.getPropertyName()))) {
+			returnVal.add(DbProperties.DONT_OVERWRITE_FREE_SPACE);
+		}
+		// Maintain last accessed is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.MAINTAIN_LAST_ACCESSED.getPropertyName()))) {
+			returnVal.add(DbProperties.MAINTAIN_LAST_ACCESSED);
+		}
+		// Disable transaction logging is false if checked or missing in DXL - SO NEEDS REVERSING
+		if ("false".equals(node.getAttribute(DbProperties.DISABLE_TRANSACTION_LOGGING.getPropertyName()))) {
+			returnVal.add(DbProperties.DISABLE_TRANSACTION_LOGGING);
+		}
+		// Don't support specialized response hierarchy is false if checked or missing in DXL - SO NEEDS REVERSING
+		if ("false".equals(node.getAttribute(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY.getPropertyName()))) {
+			returnVal.add(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY);
+		}
+		// Use LZ1 compression is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.USE_LZ1.getPropertyName()))) {
+			returnVal.add(DbProperties.USE_LZ1);
+		}
+		// Dont' allow headling monitoring is false if checked or missing in DXL - SO NEEDS REVERSING
+		if ("false".equals(node.getAttribute(DbProperties.NO_HEADLINE_MONITORING.getPropertyName()))) {
+			returnVal.add(DbProperties.NO_HEADLINE_MONITORING);
+		}
+		// Allow more fields is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_MORE_FIELDS.getPropertyName()))) {
+			returnVal.add(DbProperties.ALLOW_MORE_FIELDS);
+		}
+		// Support response thread history is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.SUPPORT_RESPONSE_THREADS.getPropertyName()))) {
+			returnVal.add(DbProperties.SUPPORT_RESPONSE_THREADS);
+		}
+		// Don't allow simple search is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.NO_SIMPLE_SEARCH.getPropertyName()))) {
+			returnVal.add(DbProperties.NO_SIMPLE_SEARCH);
+		}
+		// Compress design is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.COMPRESS_DESIGN.getPropertyName()))) {
+			returnVal.add(DbProperties.COMPRESS_DESIGN);
+		}
+		// Compress data is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.COMPRESS_DATA.getPropertyName()))) {
+			returnVal.add(DbProperties.COMPRESS_DATA);
+		}
+		// Disable view auto update is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.NO_AUTO_VIEW_UPDATE.getPropertyName()))) {
+			returnVal.add(DbProperties.NO_AUTO_VIEW_UPDATE);
+		}
+		// Disable view export  has an item called $DisableExport
+		if (getIconNote().isDisableViewExport()) {
+			returnVal.add(DbProperties.NO_EXPORT_VIEW);
+		}
+		// Allow soft deletions is true if checked or missing in DXL
+		if ("true".equals(node.getAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName()))) {
+			returnVal.add(DbProperties.ALLOW_SOFT_DELETE);
+		}
+		// Limit $UpdatedBy entries has a value or, if missing, = 0
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName()))) {
+			returnVal.add(DbProperties.MAX_UPDATED_BY);
+		}
+		// Limit $Revisions entries has a value or, if missing, = 0
+		if (!StringUtil.isEmpty(node.getAttribute(DbProperties.MAX_REVISIONS.getPropertyName()))) {
+			returnVal.add(DbProperties.MAX_REVISIONS);
+		}
+		// Allow DAS has an item called $AllowDas
+		if (getIconNote().isAllowDas()) {
+			returnVal.add(DbProperties.ALLOW_DAS);
+		}
+		// DAOS has an item called $Daos, set to 1
+		if (getIconNote().isDaosEnabled()) {
+			returnVal.add(DbProperties.DAOS_ENABLED);
+		}
+		// Lunch XPage Run On Server has an item called $LaunchXPageRunOnServer, set to 1
+		if (getIconNote().isLaunchXPageRunOnServer()) {
+			returnVal.add(DbProperties.LAUNCH_XPAGE_ON_SERVER);
+		}
+		// Document Summary 16Mb has an item called $LargeSummary, set to 1
+		if (getIconNote().isDocumentSummary16MB()) {
+			returnVal.add(DbProperties.DOCUMENT_SUMMARY_16MB);
+		}
+		return returnVal;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#setDatabaseProperties(java.util.Map)
+	 */
+	@Override
+	public void setDatabaseProperties(final Map<DbProperties, Boolean> props) {
+		// Capture and error for non-settable options
+		ArrayList nonSettable = new ArrayList<String>();
+		ArrayList setterMethods = new ArrayList<String>();
+		if (props.containsKey(DbProperties.DAOS_ENABLED)) {
+			nonSettable.add(DbProperties.DAOS_ENABLED.name());
+		}
+		if (props.containsKey(DbProperties.DOCUMENT_SUMMARY_16MB)) {
+			nonSettable.add(DbProperties.DOCUMENT_SUMMARY_16MB.name());
+		}
+		if (props.containsKey(DbProperties.ALLOW_DAS)) {
+			setterMethods.add(DbProperties.ALLOW_DAS.name());
+		}
+		if (props.containsKey(DbProperties.DB_IS_TEMPLATE)) {
+			setterMethods.add(DbProperties.DB_IS_TEMPLATE.name());
+		}
+		if (props.containsKey(DbProperties.INHERIT_FROM_TEMPLATE)) {
+			setterMethods.add(DbProperties.INHERIT_FROM_TEMPLATE.name());
+		}
+		if (props.containsKey(DbProperties.REPLICATE_UNREAD)) {
+			setterMethods.add(DbProperties.REPLICATE_UNREAD.name());
+		}
+		if (props.containsKey(DbProperties.MAX_REVISIONS)) {
+			setterMethods.add(DbProperties.MAX_REVISIONS.name());
+		}
+		if (props.containsKey(DbProperties.MAX_UPDATED_BY)) {
+			setterMethods.add(DbProperties.MAX_UPDATED_BY);
+		}
+		if (props.containsKey(DbProperties.SOFT_DELETE_EXPIRY)) {
+			nonSettable.add(DbProperties.SOFT_DELETE_EXPIRY.name());
+		}
+		if (!setterMethods.isEmpty() || !nonSettable.isEmpty()) {
+			String message = "";
+			if (!nonSettable.isEmpty()) {
+				message = "The following cannot be set programmatically but need admin processes to run: " + Strings.join(nonSettable, ",")
+						+ ". ";
+			}
+			if (!setterMethods.isEmpty()) {
+				message += "The following methods need to be set with specific setters in DatabaseDesign class: "
+						+ Strings.join(setterMethods, ",") + ".";
+			}
+			throw new OpenNTFNotesException(message);
+		}
+
+		XMLNode node = getDatabaseNode();
+		XMLDocument xml = getDatabaseXml();
+		// Use Javascript is false, or missing in DXL if checked
+		if (props.containsKey(DbProperties.USE_JS)) {
+			if (props.get(DbProperties.USE_JS)) {
+				node.removeAttribute(DbProperties.USE_JS.getPropertyName());
+			} else {
+				node.setAttribute(DbProperties.USE_JS.getPropertyName(), "false");
+			}
+		}
+		// Require SSL is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.REQUIRE_SSL)) {
+			if (props.get(DbProperties.REQUIRE_SSL)) {
+				node.setAttribute(DbProperties.REQUIRE_SSL.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.REQUIRE_SSL.getPropertyName());
+			}
+		}
+		// Don't Allow URL Open is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.NO_URL_OPEN)) {
+			if (props.get(DbProperties.NO_URL_OPEN)) {
+				node.setAttribute(DbProperties.NO_URL_OPEN.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.NO_URL_OPEN.getPropertyName());
+			}
+		}
+		// $AllowPost8HTML is a node or not
+		if (props.containsKey(DbProperties.ENHANCED_HTML)) {
+			getIconNote().setEnhancedHTML(props.get(DbProperties.ENHANCED_HTML));
+			isIconDirty_ = true;
+		}
+		// $DisallowOpenInNBP is a node or not
+		if (props.containsKey(DbProperties.BLOCK_ICAA)) {
+			getIconNote().setBlockICAA(props.get(DbProperties.BLOCK_ICAA));
+			isIconDirty_ = true;
+		}
+		// Don't Allow Background Agents is false if checked or missing in DXL
+		if (props.containsKey(DbProperties.DISABLE_BACKGROUND_AGENTS)) {
+			if (props.get(DbProperties.DISABLE_BACKGROUND_AGENTS)) {
+				node.setAttribute(DbProperties.DISABLE_BACKGROUND_AGENTS.getPropertyName(), "false");
+			} else {
+				node.removeAttribute(DbProperties.DISABLE_BACKGROUND_AGENTS.getPropertyName());
+			}
+		}
+		// Allow stored forms is false, or missing in DXL if checked
+		if (props.containsKey(DbProperties.ALLOW_STORED_FORMS)) {
+			if (props.get(DbProperties.ALLOW_STORED_FORMS)) {
+				node.removeAttribute(DbProperties.ALLOW_STORED_FORMS.getPropertyName());
+			} else {
+				node.setAttribute(DbProperties.ALLOW_STORED_FORMS.getPropertyName(), "false");
+			}
+		}
+		// Display Images After Loading is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.DEFER_IMAGE_LOADING)) {
+			if (props.get(DbProperties.DEFER_IMAGE_LOADING)) {
+				node.setAttribute(DbProperties.DEFER_IMAGE_LOADING.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.DEFER_IMAGE_LOADING.getPropertyName());
+			}
+		}
+		// Allow document locking is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.ALLOW_DOC_LOCKING)) {
+			if (props.get(DbProperties.ALLOW_DOC_LOCKING)) {
+				node.setAttribute(DbProperties.ALLOW_DOC_LOCKING.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.ALLOW_DOC_LOCKING.getPropertyName());
+			}
+		}
+		// Inherit OS theme is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.INHERIT_OS_THEME)) {
+			if (props.get(DbProperties.INHERIT_OS_THEME)) {
+				node.setAttribute(DbProperties.INHERIT_OS_THEME.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.INHERIT_OS_THEME.getPropertyName());
+			}
+		}
+		// Allow design locking is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.ALLOW_DESIGN_LOCKING)) {
+			if (props.get(DbProperties.ALLOW_DESIGN_LOCKING)) {
+				node.setAttribute(DbProperties.ALLOW_DESIGN_LOCKING.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.ALLOW_DESIGN_LOCKING.getPropertyName());
+			}
+		}
+		// Show in open dialog is false, or missing in DXL if checked
+		if (props.containsKey(DbProperties.SHOW_IN_OPEN_DIALOG)) {
+			if (props.get(DbProperties.SHOW_IN_OPEN_DIALOG)) {
+				node.removeAttribute(DbProperties.SHOW_IN_OPEN_DIALOG.getPropertyName());
+			} else {
+				node.setAttribute(DbProperties.SHOW_IN_OPEN_DIALOG.getPropertyName(), "false");
+			}
+		}
+		// Multi Db indexing is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.MULTI_DB_INDEXING)) {
+			if (props.get(DbProperties.MULTI_DB_INDEXING)) {
+				node.setAttribute(DbProperties.MULTI_DB_INDEXING.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.MULTI_DB_INDEXING.getPropertyName());
+			}
+		}
+		// Don't mark modified unread is false if checked or missing in DXL
+		if (props.containsKey(DbProperties.MODIFIED_NOT_UNREAD)) {
+			if (props.get(DbProperties.MODIFIED_NOT_UNREAD)) {
+				node.setAttribute(DbProperties.MODIFIED_NOT_UNREAD.getPropertyName(), "false");
+			} else {
+				node.removeAttribute(DbProperties.MODIFIED_NOT_UNREAD.getPropertyName());
+			}
+		}
+		// Mark parent on reply or forward is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.MARK_PARENT_REPLY_FORWARD)) {
+			if (props.get(DbProperties.MARK_PARENT_REPLY_FORWARD)) {
+				node.setAttribute(DbProperties.MARK_PARENT_REPLY_FORWARD.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.MARK_PARENT_REPLY_FORWARD.getPropertyName());
+			}
+		}
+		// Advanced template is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.ADVANCED_TEMPLATE)) {
+			if (props.get(DbProperties.ADVANCED_TEMPLATE)) {
+				node.setAttribute(DbProperties.ADVANCED_TEMPLATE.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.ADVANCED_TEMPLATE.getPropertyName());
+			}
+		}
+		// Multilingual is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.MULTILINGUAL)) {
+			if (props.get(DbProperties.MULTILINGUAL)) {
+				node.setAttribute(DbProperties.MULTILINGUAL.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.MULTILINGUAL.getPropertyName());
+			}
+		}
+		// Don't maintain unread is false, or missing in DXL if checked
+		if (props.containsKey(DbProperties.DONT_MAINTAIN_UNREAD)) {
+			if (props.get(DbProperties.DONT_MAINTAIN_UNREAD)) {
+				node.removeAttribute(DbProperties.DONT_MAINTAIN_UNREAD.getPropertyName());
+			} else {
+				node.setAttribute(DbProperties.DONT_MAINTAIN_UNREAD.getPropertyName(), "false");
+			}
+		}
+		// Optimize document table map is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.OPTIMIZE_DOC_MAP)) {
+			if (props.get(DbProperties.OPTIMIZE_DOC_MAP)) {
+				node.setAttribute(DbProperties.OPTIMIZE_DOC_MAP.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.OPTIMIZE_DOC_MAP.getPropertyName());
+			}
+		}
+		// Don't overwrite free space is false if checked or missing in DXL
+		if (props.containsKey(DbProperties.DONT_OVERWRITE_FREE_SPACE)) {
+			if (props.get(DbProperties.DONT_OVERWRITE_FREE_SPACE)) {
+				node.setAttribute(DbProperties.DONT_OVERWRITE_FREE_SPACE.getPropertyName(), "false");
+			} else {
+				node.removeAttribute(DbProperties.DONT_OVERWRITE_FREE_SPACE.getPropertyName());
+			}
+		}
+		// Maintain last accessed is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.MAINTAIN_LAST_ACCESSED)) {
+			if (props.get(DbProperties.MAINTAIN_LAST_ACCESSED)) {
+				node.setAttribute(DbProperties.MAINTAIN_LAST_ACCESSED.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.MAINTAIN_LAST_ACCESSED.getPropertyName());
+			}
+		}
+		// Disable transaction logging is false if checked or missing in DXL
+		if (props.containsKey(DbProperties.DISABLE_TRANSACTION_LOGGING)) {
+			if (props.get(DbProperties.DISABLE_TRANSACTION_LOGGING)) {
+				node.setAttribute(DbProperties.DISABLE_TRANSACTION_LOGGING.getPropertyName(), "false");
+			} else {
+				node.removeAttribute(DbProperties.DISABLE_TRANSACTION_LOGGING.getPropertyName());
+			}
+		}
+		// Don't support specialized response hierarchy is false if checked or missing in DXL
+		if (props.containsKey(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY)) {
+			if (props.get(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY)) {
+				node.setAttribute(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY.getPropertyName(), "false");
+			} else {
+				node.removeAttribute(DbProperties.NO_SPECIAL_RESPONSE_HIERARCHY.getPropertyName());
+			}
+		}
+		// LZ1 compression is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.USE_LZ1)) {
+			if (props.get(DbProperties.USE_LZ1)) {
+				node.setAttribute(DbProperties.USE_LZ1.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.USE_LZ1.getPropertyName());
+			}
+		}
+		// Don't allow headline monitoring is false if checked or missing in DXL
+		if (props.containsKey(DbProperties.NO_HEADLINE_MONITORING)) {
+			if (props.get(DbProperties.NO_HEADLINE_MONITORING)) {
+				node.setAttribute(DbProperties.NO_HEADLINE_MONITORING.getPropertyName(), "false");
+			} else {
+				node.removeAttribute(DbProperties.NO_HEADLINE_MONITORING.getPropertyName());
+			}
+		}
+		// Allow more fields is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.ALLOW_MORE_FIELDS)) {
+			if (props.get(DbProperties.ALLOW_MORE_FIELDS)) {
+				node.setAttribute(DbProperties.ALLOW_MORE_FIELDS.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.ALLOW_MORE_FIELDS.getPropertyName());
+			}
+		}
+		// Support response thread hierarchy is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.SUPPORT_RESPONSE_THREADS)) {
+			if (props.get(DbProperties.SUPPORT_RESPONSE_THREADS)) {
+				node.setAttribute(DbProperties.SUPPORT_RESPONSE_THREADS.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.SUPPORT_RESPONSE_THREADS.getPropertyName());
+			}
+		}
+		// Don't allow simple search is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.NO_SIMPLE_SEARCH)) {
+			if (props.get(DbProperties.NO_SIMPLE_SEARCH)) {
+				node.setAttribute(DbProperties.NO_SIMPLE_SEARCH.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.NO_SIMPLE_SEARCH.getPropertyName());
+			}
+		}
+		// Compress design is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.COMPRESS_DESIGN)) {
+			if (props.get(DbProperties.COMPRESS_DESIGN)) {
+				node.setAttribute(DbProperties.COMPRESS_DESIGN.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.COMPRESS_DESIGN.getPropertyName());
+			}
+		}
+		// Compress data is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.COMPRESS_DATA)) {
+			if (props.get(DbProperties.COMPRESS_DATA)) {
+				node.setAttribute(DbProperties.COMPRESS_DATA.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.COMPRESS_DATA.getPropertyName());
+			}
+		}
+		// Disable view auto update is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.NO_AUTO_VIEW_UPDATE)) {
+			if (props.get(DbProperties.NO_AUTO_VIEW_UPDATE)) {
+				node.setAttribute(DbProperties.NO_AUTO_VIEW_UPDATE.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.NO_AUTO_VIEW_UPDATE.getPropertyName());
+			}
+		}
+		// $DisableViewExport is a node or not
+		if (props.containsKey(DbProperties.NO_EXPORT_VIEW)) {
+			getIconNote().setEnhancedHTML(props.get(DbProperties.NO_EXPORT_VIEW));
+			isIconDirty_ = true;
+		}
+		// Allow soft deletions is true if checked or missing in DXL
+		if (props.containsKey(DbProperties.ALLOW_SOFT_DELETE)) {
+			if (props.get(DbProperties.ALLOW_SOFT_DELETE)) {
+				node.setAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName(), "true");
+			} else {
+				node.removeAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName());
+			}
+		}
+		// $LaunchXPageRunOnServer is a node or not
+		if (props.containsKey(DbProperties.LAUNCH_XPAGE_ON_SERVER)) {
+			getIconNote().setEnhancedHTML(props.get(DbProperties.LAUNCH_XPAGE_ON_SERVER));
+			isIconDirty_ = true;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getTemplateName()
+	 */
+	@Override
+	public String getTemplateName() {
+		return getDatabaseNode().getAttribute(DbProperties.INHERIT_FROM_TEMPLATE.getPropertyName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#setTemplateName(java.lang.String)
+	 */
+	@Override
+	public void setTemplateName(final String name) {
+		getDatabaseNode().setAttribute(DbProperties.INHERIT_FROM_TEMPLATE.getPropertyName(), name);
+	}
+
+	@Override
+	public String getNameIfTemplate() {
+		return getDatabaseNode().getAttribute(DbProperties.DB_IS_TEMPLATE.getPropertyName());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#setTemplateName(java.lang.String)
+	 */
+	@Override
+	public void setNameIfTemplate(final String name) {
+		getDatabaseNode().setAttribute(DbProperties.DB_IS_TEMPLATE.getPropertyName(), name);
+	}
+
+	@Override
+	public DASMode getDasMode() {
+		return getIconNote().getDASMode();
+	}
+
+	@Override
+	public void setDasMode(final DASMode mode) {
+		getIconNote().setDASMode(mode);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public UnreadReplicationSetting getReplicateUnreadSetting() {
+		String replicateSetting = getDatabaseNode().getAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName());
+		if (!StringUtil.isEmpty(replicateSetting)) {
+			for (UnreadReplicationSetting opt : UnreadReplicationSetting.values()) {
+				if (opt.getPropertyName().equals(replicateSetting)) {
+					return opt;
+				}
+			}
+		}
+		return UnreadReplicationSetting.NEVER;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#setReplicateUnreadSetting(org.openntf.domino.design.DatabaseDesign.UnreadReplicationSetting)
+	 */
+	@Override
+	public void setReplicateUnreadSetting(final UnreadReplicationSetting setting) {
+		if (setting.equals(UnreadReplicationSetting.NEVER)) {
+			getDatabaseNode().removeAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName());
+		} else {
+			getDatabaseNode().setAttribute(DbProperties.REPLICATE_UNREAD.getPropertyName(), setting.getPropertyName());
+		}
+	}
+
+	@Override
+	public int getMaxUpdatedBy() {
+		String updatedBy = getDatabaseNode().getAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName());
+		if (StringUtil.isEmpty(updatedBy)) {
+			return 0;
+		} else {
+			return Integer.parseInt(updatedBy);
+		}
+	}
+
+	@Override
+	public int getMaxRevisions() {
+		String revisions = getDatabaseNode().getAttribute(DbProperties.MAX_REVISIONS.getPropertyName());
+		if (StringUtil.isEmpty(revisions)) {
+			return 0;
+		} else {
+			return Integer.parseInt(revisions);
+		}
+	}
+
+	@Override
+	public int getSoftDeletionsExpireIn() {
+		if (!"true".equals(getDatabaseNode().getAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName()))) {
+			return Integer.MIN_VALUE;
+		} else {
+			String softDeleteExpiry = getDatabaseNode().getAttribute(DbProperties.SOFT_DELETE_EXPIRY.getPropertyName());
+			if (StringUtil.isEmpty(softDeleteExpiry)) {
+				return 48;
+			} else {
+				return Integer.parseInt(softDeleteExpiry);
+			}
+		}
+	}
+
+	@Override
+	public void setSoftDeletionsExpireIn(final int hours) {
+		if (hours > Integer.MIN_VALUE) {
+			getDatabaseNode().setAttribute(DbProperties.SOFT_DELETE_EXPIRY.getPropertyName(), Integer.toString(hours));
+		} else {
+			getDatabaseNode().removeAttribute(DbProperties.ALLOW_SOFT_DELETE.getPropertyName());
+			getDatabaseNode().setAttribute(DbProperties.SOFT_DELETE_EXPIRY.getPropertyName(), "48");
+		}
+	}
+
+	@Override
+	public boolean save() {
+		DxlImporter importer = getAncestorSession().createDxlImporter();
+		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+		importer.setReplicaRequiredForReplaceOrUpdate(false);
+		importer.setReplaceDbProperties(true);
+		Database database = getAncestorDatabase();
+		try {
+			lotus.domino.Stream stream = getAncestorSession().createStream();
+			stream.writeText(getDatabaseXml().getXml());
+			importer.importDxl(stream, database);
+		} catch (IOException | NotesException e) {
+			DominoUtils.handleException(e);
+			if (importer != null) {
+				System.out.println(importer.getLog());
+			}
+			return false;
+		}
+
+		if (isIconDirty_) {
+			getIconNote().save();
+			// Icon Note gets cached, so this won't be the latest version
+		}
+
+		return true;
+	}
+
+	@Override
+	public void setMaxUpdatedBy(final int newMax) {
+		if (newMax <= 0) {
+			getDatabaseNode().removeAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName());
+		}
+		getDatabaseNode().setAttribute(DbProperties.MAX_UPDATED_BY.getPropertyName(), Integer.toString(newMax));
+	}
+
+	@Override
+	public void setMaxRevisions(final int newMax) {
+		if (newMax <= 0) {
+			getDatabaseNode().removeAttribute(DbProperties.MAX_REVISIONS.getPropertyName());
+		}
+		getDatabaseNode().setAttribute(DbProperties.MAX_REVISIONS.getPropertyName(), Integer.toString(newMax));
+	}
+
+	@Override
+	public LaunchContextNotes getNotesLaunchContext() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("whenopened");
+			for (LaunchContextNotes context : LaunchContextNotes.values()) {
+				if (context.getPropertyName().equals(val)) {
+					return context;
+				}
+			}
+		}
+		return LaunchContextNotes.LAST_VIEWED;
+	}
+
+	@Override
+	public String getNotesLaunchDesignElement() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		switch (getNotesLaunchContext()) {
+		case NAVIGATOR:
+		case NAVIGATOR_IN_WINDOW:
+			return node.getAttribute("navigator");
+		case FRAMESET:
+			return node.getAttribute("frameset");
+		case XPAGE:
+			return node.getAttribute("xpage");
+		case COMPOSITE_APP:
+			return node.getAttribute("compapp") + "##" + node.getAttribute("compapppage");
+		default:
+			return "";
+		}
+	}
+
+	@Override
+	public ShowAboutContext getShowAboutContext() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("showaboutdocument");
+			for (ShowAboutContext context : ShowAboutContext.values()) {
+				if (context.getPropertyName().equals(val)) {
+					return context;
+				}
+			}
+		}
+		return ShowAboutContext.FIRST_OPENED;
+	}
+
+	@Override
+	public PreviewPaneDefault getDefaultPreviewPaneLocation() {
+		XMLNode node = getNotesLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("previewdefault");
+			for (PreviewPaneDefault location : PreviewPaneDefault.values()) {
+				if (location.getPropertyName().equals(val)) {
+					return location;
+				}
+			}
+		}
+		return PreviewPaneDefault.BOTTOM;
+	}
+
+	@Override
+	public LaunchContextWeb getWebLaunchContext() {
+		XMLNode node = getWebLaunchSettingsNode();
+		if (null != node) {
+			String val = node.getAttribute("whenopened");
+			for (LaunchContextWeb context : LaunchContextWeb.values()) {
+				if (context.getPropertyName().equals(val)) {
+					return context;
+				}
+			}
+		}
+		return LaunchContextWeb.NOTES_LAUNCH;
+	}
+
+	@Override
+	public String getWebLaunchDesignElement() {
+		XMLNode node = getWebLaunchSettingsNode();
+		switch (getWebLaunchContext()) {
+		case NAVIGATOR:
+		case NAVIGATOR_IN_WINDOW:
+			return node.getAttribute("navigator");
+		case FRAMESET:
+			return node.getAttribute("frameset");
+		case XPAGE:
+			return node.getAttribute("xpage");
+		case FIRST_DOC_IN_VIEW:
+			return node.getAttribute("view");
+		case PAGE:
+			return node.getAttribute("page");
+		case SPECIFIC_DOC_LINK:
+			XMLNode docLinkDetails = node.selectSingleNode("//doclink");
+			return docLinkDetails.getAttribute("database") + docLinkDetails.getAttribute("document");
+		default:
+			return "";
+		}
+	}
+
+	@Override
+	public int getCssExpiry() {
+		return getIconNote().getCssExpiry();
+	}
+
+	@Override
+	public int getFileExpiry() {
+		return getIconNote().getFileExpiry();
+	}
+
+	@Override
+	public int getImageExpiry() {
+		return getIconNote().getImageExpiry();
+	}
+
+	@Override
+	public int getJsExpiry() {
+		return getIconNote().getJsExpiry();
+	}
+
+	@Override
+	public void setCssExpiry(final int days) {
+		getIconNote().setCssExpiry(days);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public void setFileExpiry(final int days) {
+		getIconNote().setFileExpiry(days);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public void setImageExpiry(final int days) {
+		getIconNote().setImageExpiry(days);
+		isIconDirty_ = true;
+	}
+
+	@Override
+	public void setJsExpiry(final int days) {
+		getIconNote().setJsExpiry(days);
+		isIconDirty_ = true;
 	}
 
 }

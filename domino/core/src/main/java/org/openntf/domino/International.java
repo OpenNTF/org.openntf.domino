@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino;
@@ -19,12 +19,11 @@ import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
- * The Interface International.<br/>
  * Represents the international settings in the operating environment, for example, the Regional Settings in the Windows Control Panel. When
  * settings change in the operating environment, Notes recognizes the new settings immediately.
  */
-public interface International extends Base<lotus.domino.International>, lotus.domino.International, org.openntf.domino.ext.International,
-SessionDescendant {
+public interface International
+		extends Base<lotus.domino.International>, lotus.domino.International, org.openntf.domino.ext.International, SessionDescendant {
 
 	public static class Schema extends FactorySchema<International, lotus.domino.International, Session> {
 		@Override
@@ -45,170 +44,135 @@ SessionDescendant {
 
 	public static final Schema SCHEMA = new Schema();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getAMString()
+	/**
+	 * The string that denotes AM time, for example, "AM" in English.
 	 */
 	@Override
 	public String getAMString();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getCurrencyDigits()
+	/**
+	 * Indicates the number of decimal digits for number format.
 	 */
 	@Override
 	public int getCurrencyDigits();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getCurrencySymbol()
+	/**
+	 * The symbol that indicates a number is currency, for example, the dollar sign.
 	 */
 	@Override
 	public String getCurrencySymbol();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getDateSep()
+	/**
+	 * The character used to separate months, days, and years, for example, the slash.
 	 */
+
 	@Override
 	public String getDateSep();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getDecimalSep()
+	/**
+	 * The decimal separator for number format, for example, the decimal point.
 	 */
 	@Override
 	public String getDecimalSep();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getParent()
+	/**
+	 * The Notes session that contains this International object.
 	 */
 	@Override
 	public Session getParent();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getPMString()
+	/**
+	 * The string that denotes PM time, for example, "PM" in English.
 	 */
 	@Override
 	public String getPMString();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getThousandsSep()
+	/**
+	 * The thousands separator in number format, for example, the comma.
 	 */
 	@Override
 	public String getThousandsSep();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getTimeSep()
+	/**
+	 * The character used to separate hours, minutes, and seconds, for example, the colon.
 	 */
 	@Override
 	public String getTimeSep();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getTimeZone()
+	/**
+	 * The UTS/GMT value of the time zone.
 	 */
 	@Override
 	public int getTimeZone();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getToday()
+	/**
+	 * The string that means today in a time-date specification, for example, "Today" in English.
 	 */
 	@Override
 	public String getToday();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getTomorrow()
+	/**
+	 * The string that means tomorrow in a time-date specification, for example, "Tomorrow" in English.
 	 */
 	@Override
 	public String getTomorrow();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#getYesterday()
+	/**
+	 * The string that means yesterday in a time-date specification, for example, "Yesterday" in English.
 	 */
 	@Override
 	public String getYesterday();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isCurrencySpace()
+	/**
+	 * Indicates whether the currency format has a space between the currency symbol and the number.
+	 * <p>
+	 * Under UNIX, this property is derived from the language installed on the machine as indicated by the LANG environment variable.
+	 * </p>
 	 */
 	@Override
 	public boolean isCurrencySpace();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isCurrencySuffix()
+	/**
+	 * Indicates whether the currency symbol follows the number in the currency format.
 	 */
 	@Override
 	public boolean isCurrencySuffix();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isCurrencyZero()
+	/**
+	 * Indicates whether fractions have a zero before the decimal point in number format.
+	 * <p>
+	 * Under UNIX, this property is meaningless.
+	 * </p>
 	 */
 	@Override
 	public boolean isCurrencyZero();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isDateDMY()
+	/**
+	 * Indicates whether the order of the date format is day-month-year.
 	 */
 	@Override
 	public boolean isDateDMY();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isDateMDY()
+	/**
+	 * Indicates whether the order of the date format is month-day-year.
 	 */
 	@Override
 	public boolean isDateMDY();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isDateYMD()
+	/**
+	 * Indicates whether the order of the date format is year-month-day.
 	 */
 	@Override
 	public boolean isDateYMD();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isDST()
+	/**
+	 * Indicates whether the time format reflects daylight savings time.
 	 */
 	@Override
 	public boolean isDST();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.International#isTime24Hour()
+	/**
+	 * Indicates whether the time format is 24-hour.
 	 */
 	@Override
 	public boolean isTime24Hour();

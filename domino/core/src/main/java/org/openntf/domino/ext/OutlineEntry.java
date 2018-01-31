@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensiosn to outlineEntry class
  * 
- *         OpenNTF extensiosn to outlineEntry class
+ * @author withersp
+ *
  */
 public interface OutlineEntry {
 

@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -851,6 +852,19 @@ public interface Database extends Base {
 	 * @return View object
 	 */
 	public View getView(final Document viewDocument);
+
+	/**
+	 * SHAREDPRIVATEONFIRSTUSE views have multiple Views with the same title, the "template" view and the private versions for each user
+	 * that the ID used to run with can access. The default {@link lotus.domino.Database#getView(String)} method just gets the current
+	 * user's view or, when running as the server, the version for the first alphabetical user. This method gets all available under the
+	 * current authority.
+	 *
+	 * @param name
+	 *            the String title or alias
+	 * @return List of Views matching the name
+	 * @since ODA 4.1.0
+	 */
+	public List<View> getViews(String name);
 
 	/**
 	 * Returns a {@link Set} of {@link DBPrivilege}s for the provided user.

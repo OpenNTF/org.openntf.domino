@@ -39,8 +39,8 @@ import org.xml.sax.InputSource;
 /**
  * The Class EmbeddedObject.
  */
-public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
-		org.openntf.domino.EmbeddedObject {
+public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document>
+		implements org.openntf.domino.EmbeddedObject {
 
 	protected AtomicInteger referenceCounter = new AtomicInteger();
 	protected RichTextItem parent_;
@@ -551,6 +551,16 @@ public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedOb
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getAncestorSession().getFactory();
+	}
+
+	@Override
+	public int getFileEncoding() {
+		try {
+			return getDelegate().getFileEncoding();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return Integer.MIN_VALUE;
+		}
 	}
 
 }

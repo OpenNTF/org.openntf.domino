@@ -995,6 +995,12 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 		}
 	}
 
+	/**
+	 * Sets the value of this item replacing any previous values.
+	 *
+	 * @param value
+	 *            The new value
+	 */
 	public void setValues(final Object value) {
 		parent.replaceItemValue(this.getName(), value);
 	}

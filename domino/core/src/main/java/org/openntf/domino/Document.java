@@ -139,7 +139,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Item appendItemValue(final String name);
 
 	/**
-	 * Creates a new item in this document.
+	 * Creates a new item in this document or if the <code>Fixes.APPEND_ITEM_VALUE</code> fix is enabled, appends a value to an existing
+	 * item.
 	 * <p>
 	 * In general, {@link #replaceItemValue(String, Object)} is favored over this method. If an item of the same name already exists in a
 	 * document, <code>appendItemValue</code> creates a second item of the same name, and the duplicate items are not accessible except
@@ -151,6 +152,18 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * <p>
 	 * If the document already has an item called <code>name</code>, this method does not replace it. Instead, it creates another item of
 	 * the same name and gives it the value you specify.
+	 * </p>
+	 * <h5>Note</h5>
+	 * <p>
+	 * When the Khan mode is active, this method appends the <code>value</code> to an item if it already exists. It does not create a new
+	 * item.
+	 * </p>
+	 * <p>
+	 * To enable the Khan mode, put the line <code>org.openntf.domino.xsp=khan</code> to the xsp.properties file.
+	 * </p>
+	 * <p>
+	 * To enable only this specific behaviour without enabling the Khan mode, call
+	 * <code>Session.setFixEnable(Fixes.APPEND_ITEM_VALUE, true)</code> before calling the <code>appendItemValue()</code> method.
 	 * </p>
 	 *
 	 * @param name
@@ -163,7 +176,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Item appendItemValue(final String name, final double value);
 
 	/**
-	 * Creates a new item in this document.
+	 * Creates a new item in this document or if the <code>Fixes.APPEND_ITEM_VALUE</code> fix is enabled, appends a value to an existing
+	 * item.
 	 * <p>
 	 * In general, {@link #replaceItemValue(String, Object)} is favored over this method. If an item of the same name already exists in a
 	 * document, <code>appendItemValue</code> creates a second item of the same name, and the duplicate items are not accessible except
@@ -176,6 +190,18 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * If the document already has an item called <code>name</code>, this method does not replace it. Instead, it creates another item of
 	 * the same name and gives it the value you specify.
 	 * </p>
+	 * <h5>Note</h5>
+	 * <p>
+	 * When the Khan mode is active, this method appends the <code>value</code> to an item if it already exists. It does not create a new
+	 * item.
+	 * </p>
+	 * <p>
+	 * To enable the Khan mode, put the line <code>org.openntf.domino.xsp=khan</code> to the xsp.properties file.
+	 * </p>
+	 * <p>
+	 * To enable only this specific behaviour without enabling the Khan mode, call
+	 * <code>Session.setFixEnable(Fixes.APPEND_ITEM_VALUE, true)</code> before calling the <code>appendItemValue()</code> method.
+	 * </p>
 	 *
 	 * @param name
 	 *            The name of the new item.
@@ -187,7 +213,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Item appendItemValue(final String name, final int value);
 
 	/**
-	 * Creates a new item in this document.
+	 * Creates a new item in this document or if the <code>Fixes.APPEND_ITEM_VALUE</code> fix is enabled, appends a value to an existing
+	 * item.
 	 * <p>
 	 * In general, {@link #replaceItemValue(String, Object)} is favored over this method. If an item of the same name already exists in a
 	 * document, <code>appendItemValue</code> creates a second item of the same name, and the duplicate items are not accessible except
@@ -237,6 +264,18 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * </tr>
 	 * </tbody>
 	 * </table>
+	 * <h5>Note</h5>
+	 * <p>
+	 * When the Khan mode is active, this method appends the <code>value</code> to an item if it already exists. It does not create a new
+	 * item.
+	 * </p>
+	 * <p>
+	 * To enable the Khan mode, put the line <code>org.openntf.domino.xsp=khan</code> to the xsp.properties file.
+	 * </p>
+	 * <p>
+	 * To enable only this specific behaviour without enabling the Khan mode, call
+	 * <code>Session.setFixEnable(Fixes.APPEND_ITEM_VALUE, true)</code> before calling the <code>appendItemValue()</code> method.
+	 * </p>
 	 *
 	 * @param name
 	 *            The name of the new item.

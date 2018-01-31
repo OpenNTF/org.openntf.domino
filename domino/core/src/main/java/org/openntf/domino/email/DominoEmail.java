@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.email;
 
@@ -29,40 +29,34 @@ import com.ibm.commons.util.StringUtil;
 
 /**
  * @author withersp
- * 
+ *
  *         Creates an email with text, HTML or JSON content. Also allows attachments. Based on Mark Leusink's XSnippet {@link http
  *         ://openntf.org/XSnippets.nsf/snippet.xsp?id=create-html-mails-in-ssjs-using-mime}
- * 
+ *
  *         Usage example (simple):
- * 
+ *
  *         <code>
- *   DominoEmail myEmail = new DominoEmail();
- *   myEmail.createSimpleEmail(toNames,ccNames,bccNames,"My Subject",body,"fromEmail@emailDomain.com");
- * </code>
- * 
+ * 			DominoEmail myEmail = new DominoEmail();
+ *  		myEmail.createSimpleEmail(toNames,ccNames,bccNames,"My Subject",body,"fromEmail@emailDomain.com");
+ *		   </code>
+ *
  *         Usage example (extended):
- * 
+ *
  *         <code> DominoEmail myEmail = new DominoEmail(); ArrayList<String> sendTo = new ArrayList<String>();
  *         sendTo.add("pwithers@intec.co.uk"); myEmail.setTo(sendTo); ArrayList<String> cc = new ArrayList<String>();
  *         cc.add("user@domain.com"); cc.add("anotheruser@domain.com"); myEmail.setCC(cc); ArrayList<String> bcc = new ArrayList<String>();
  *         bcc.add("user3@domain.com"); myEmail.setBCC(bcc); myEmail.setSubject("Your notification"); StringBuilder body = new
-<<<<<<< HEAD
- *         StringBuilder(); body.append("<h1>Hi!</h1>"); body.append("<table>"); body.append("<tbody>"); body.append("<tr>"); body.append(
- *         "<td>contents in a table here</td>"); body.append("</tr>"); body.append("</tbody>"); body.append("</table>");
- *         myEmail.addHTML(body); myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
-=======
  *         StringBuilder(); body.append("
  *         <h1>Hi!</h1>"); body.append("
  *         <table>
- * 		"); body.append("<tbody>"); body.append("
+ *         "); body.append("<tbody>"); body.append("
  *         <tr>
- * 		"); body.append("
+ *         "); body.append( "
  *         <td>contents in a table here</td>"); body.append("
  *         </tr>
- * 		"); body.append("</tbody>"); body.append("
+ *         "); body.append("</tbody>"); body.append("
  *         </table>
- * 		"); myEmail.addHTML(body); myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
->>>>>>> nathan
+ *         "); myEmail.addHTML(body); myEmail.addFileAttachment( "c:/temp/report.pdf", "report.pdf", false);
  *         myEmail.setSenderEmail("pwithers@intec.co.uk"); myEmail.setSenderName("Paul Withers"); myEmail.send();
  */
 
@@ -85,7 +79,7 @@ public class DominoEmail implements IEmail {
 	 * https://github.com/OpenNTF/SocialSDK/blob/2a6bd1cc6300e13b0c00c23d936c876158a79efd/src/eclipse/plugins/com.ibm.sbt.core
 	 * /src/com/ibm/sbt/services/client/email/MimeEmailFactory.java and
 	 * http://openntf.org/XSnippets.nsf/snippet.xsp?id=create-html-mails-in-ssjs-using-mime
-	 * 
+	 *
 	 */
 	@Deprecated
 	public DominoEmail() {
@@ -94,7 +88,7 @@ public class DominoEmail implements IEmail {
 
 	/**
 	 * RPr: New Constructor. Should specify Session on creation
-	 * 
+	 *
 	 * @param sess
 	 *            the session of that email
 	 */
@@ -104,7 +98,7 @@ public class DominoEmail implements IEmail {
 
 	/**
 	 * Gets the session related to the email
-	 * 
+	 *
 	 * @return Session
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -118,7 +112,7 @@ public class DominoEmail implements IEmail {
 	 *   DominoEmail myEmail = new DominoEmail();
 	 *   myEmail.createSimpleEmail(toNames,ccNames,bccNames,"My Subject",body,"fromEmail@emailDomain.com");
 	 * </code>
-	 * 
+	 *
 	 * @param toNames
 	 *            List, array or comma-separated string of names
 	 * @param ccNames
@@ -160,7 +154,7 @@ public class DominoEmail implements IEmail {
 
 	/**
 	 * Takes an object - String, List, Array - and converts it to a List for passing into to, cc, bcc
-	 * 
+	 *
 	 * @param obj
 	 *            object to be tested / converted into a List of strings
 	 * @param separator
@@ -182,13 +176,13 @@ public class DominoEmail implements IEmail {
 			} else if (obj instanceof CharSequence) {
 				String tmp = obj.toString();
 				String[] tmpArr = tmp.split(",");
-				for (int i = 0; i < tmpArr.length; i++) {
-					retVal_.add(tmpArr[i]);
+				for (String element : tmpArr) {
+					retVal_.add(element);
 				}
 			} else if (obj instanceof String[]) {
 				String[] tmp = (String[]) obj;
-				for (int i = 0; i < tmp.length; i++) {
-					retVal_.add(tmp[i]);
+				for (String element : tmp) {
+					retVal_.add(element);
 				}
 			} else {
 				retVal_.add(obj.toString());
@@ -202,7 +196,7 @@ public class DominoEmail implements IEmail {
 
 	/**
 	 * Generates a content id. This is used to generate a unique reference for each attachment to be added to the email
-	 * 
+	 *
 	 * @return String result of @Unique
 	 * @since org.openntf.domino 4.5.0
 	 */
@@ -676,7 +670,7 @@ public class DominoEmail implements IEmail {
 			}
 
 			//create embedded JSON part
-			if (StringUtil.isEmpty(getJSON())) {
+			if (!StringUtil.isEmpty(getJSON())) {
 				mimeEntity = mimeRootChild.createChildEntity();
 				stream = currSess.createStream();
 				String json = "{\"url\" : \"" + getJSON() + "\"}" + System.getProperty("line.separator");
@@ -706,7 +700,7 @@ public class DominoEmail implements IEmail {
 
 	/**
 	 * Sets the sender details into the email, using senderName and senderEmail
-	 * 
+	 *
 	 * @param mimeRoot
 	 *            MIMEEntity root of the email, into which the sender details will be added as a child
 	 * @since org.openntf.domino 4.5.0
@@ -745,9 +739,9 @@ public class DominoEmail implements IEmail {
 
 	/**
 	 * Take a Collection and join the values
-	 * 
+	 *
 	 * TODO: Move to DominoUtils
-	 * 
+	 *
 	 * @param vals
 	 *            Collection of values
 	 * @param separator

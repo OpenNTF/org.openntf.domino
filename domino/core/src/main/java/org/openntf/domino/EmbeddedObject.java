@@ -383,4 +383,10 @@ public interface EmbeddedObject
 	@Override
 	public void transformXML(final Object style, final XSLTResultTarget result);
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.EmbeddedObject#getFileEncoding()
+	 */
+	@Override
+	public int getFileEncoding();
+
 }

@@ -21,7 +21,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.ibm.icu.util.Calendar;
 
 /**
- * @author withersp
+ * @author Paul Withers
  *
  *         OpenNTF extensions to Session class
  */
@@ -529,4 +529,36 @@ public interface Session {
 	 * @since 4.1.0
 	 */
 	public Name getServerNameAsName();
+
+	/**
+	 * Creates a blank database in the current session's data directory or gets the database at that path
+	 *
+	 * @param filePath
+	 *            for the relevant database
+	 * @return Database created
+	 * @since 4.3.0
+	 */
+	public Database createBlankDatabase(String filePath);
+
+	/**
+	 * Creates a blank database in an alternate server's data directory or gets the database at that path
+	 *
+	 * @param dbDir
+	 *            database directory on alternate server
+	 * @param filePath
+	 *            for the relevant database
+	 * @return Database created
+	 * @since 4.3.0
+	 */
+	public Database createBlankDatabase(org.openntf.domino.DbDirectory dbDir, String filePath);
+
+	/**
+	 * Creates a blank database using an absolute path or gets the database at that path
+	 *
+	 * @param absoluteFilePath
+	 *            to create the database
+	 * @return Database created
+	 * @since 4.3.0
+	 */
+	public Database createBlankDatabaseAbsolutePath(String absoluteFilePath);
 }

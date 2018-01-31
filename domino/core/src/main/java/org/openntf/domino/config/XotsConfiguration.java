@@ -224,8 +224,6 @@ public class XotsConfiguration extends ConfigurationObject {
 	}
 
 	public void logStart() {
-		// TODO Auto-generated method stub
-		System.out.println("### LOGSTART");
 		DominoExecutor executor = Configuration.getExecutor();
 		if (executor != null) {
 			String[] keys = new String[3];
@@ -244,7 +242,6 @@ public class XotsConfiguration extends ConfigurationObject {
 	}
 
 	public void logError(final Exception e) {
-		System.out.println("### LOGERR " + e);
 		DominoExecutor executor = Configuration.getExecutor();
 		if (executor != null) {
 			String[] keys = new String[4];
@@ -266,7 +263,6 @@ public class XotsConfiguration extends ConfigurationObject {
 	}
 
 	public void logSuccess() {
-		System.out.println("### LOGSUCCESS");
 		DominoExecutor executor = Configuration.getExecutor();
 		if (executor != null) {
 			String[] keys = new String[2];

@@ -123,7 +123,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		if (currXPage_ == null) {
 			setThisAgent(true);
 		}
-		return super.getThisAgent();
+		return currXPage_;
 	}
 
 	public void setThisAgent(final boolean currPage) {
@@ -153,7 +153,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					fromPage = fromPage.substring(0, fromPage.indexOf("?"));
 				}
 			}
-			super.setThisAgent(fromPage);
+			currXPage_ = fromPage;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -362,15 +362,21 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			RichTextItem rtitem;
 			Database docDb;
 
-			if (!StringUtil.equals(super.getCurrentDatabasePath(),
-					Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
-				reinitialiseSettings();
+			if (null == Factory.getSession(SessionType.CURRENT).getCurrentDatabase()) {
+				if (!StringUtil.equals(super.getCurrentDatabasePath(), "")) {
+					reinitialiseSettings();
+				}
+			} else {
+				if (!StringUtil.equals(super.getCurrentDatabasePath(),
+						Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
+					reinitialiseSettings();
+				}
 			}
 
 			if (StringUtil.isEmpty(getLogEmail())) {
 				db = getLogDb();
 			} else {
-				db = Factory.getSession(SessionType.SIGNER).getDatabase(getThisServer(), "mail.box", false);
+				db = Factory.getSession(SessionType.NATIVE).getDatabase(getThisServer(), "mail.box", false);
 			}
 			if (db == null) {
 				System.out.println("Could not retrieve database at path " + getLogDbName());
@@ -409,6 +415,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 			if ("".equals(errMsg)) {
 				errMsg = getMessage();
+			} else {
+				errMsg += " - " + getMessage();
 			}
 
 			logDoc.replaceItemValue("LogErrorMessage", errMsg);

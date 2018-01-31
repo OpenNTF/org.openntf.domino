@@ -30,7 +30,6 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.NoteIterator;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class NoteCollection.
  */
@@ -38,8 +37,8 @@ import org.openntf.domino.utils.DominoUtils;
  * @author withersp
  *
  */
-public class NoteCollection extends BaseThreadSafe<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection, Database> implements
-		org.openntf.domino.NoteCollection {
+public class NoteCollection extends BaseThreadSafe<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection, Database>
+		implements org.openntf.domino.NoteCollection {
 	//private static final Logger log_ = Logger.getLogger(NoteCollection.class.getName());
 
 	/**

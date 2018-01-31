@@ -1029,7 +1029,7 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		}
 		Calendar thisCal = this.toJavaCal();
 		Calendar thatCal = dt.toJavaCal();
-		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
+		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) / 1000;
 	}
 
 	@Override

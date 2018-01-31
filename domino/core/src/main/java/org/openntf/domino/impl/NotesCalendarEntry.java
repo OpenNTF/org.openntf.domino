@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -27,17 +27,24 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class NotesCalendarEntry.
+ * Represents a Domino calendar entry.
+ * <h5>Usage</h5>
+ * <p>
+ * Usage This object provides access to one entry of the calendar and scheduling services in a Domino mail application in standard iCalendar
+ * format. See Internet Calendaring and Scheduling Core Object Specification (iCalendar) at http://tools.ietf.org/html/rfc5545 for the
+ * format. NotesCalendar provides methods for getting and creating calendar entries. Entries include meetings, appointments, reminders, and
+ * other events that the owner places on the calendar, and notices from other users after they are processed. Unprocessed notices are
+ * handled by NotesCalendarNotice.
+ * </p>
  */
-public class NotesCalendarEntry extends
-		BaseThreadSafe<org.openntf.domino.NotesCalendarEntry, lotus.domino.NotesCalendarEntry, NotesCalendar> implements
-org.openntf.domino.NotesCalendarEntry {
+public class NotesCalendarEntry
+		extends BaseThreadSafe<org.openntf.domino.NotesCalendarEntry, lotus.domino.NotesCalendarEntry, NotesCalendar>
+		implements org.openntf.domino.NotesCalendarEntry {
 
 	/**
-	 * Instantiates a new outline.
-	 * 
+	 * Instantiates a new calendar entry.
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -471,7 +478,7 @@ org.openntf.domino.NotesCalendarEntry {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -563,7 +570,8 @@ org.openntf.domino.NotesCalendarEntry {
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
-	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4, final int arg5) {
+	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4,
+			final int arg5) {
 		try {
 			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3, arg4, arg5);
 		} catch (NotesException e) {
