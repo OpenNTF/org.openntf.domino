@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>4.3.0-SNAPSHOT</version>
+		<version>4.4.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>org.openntf.domino.nonxsp.feature</artifactId>
 	
