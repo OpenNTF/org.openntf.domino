@@ -77,3 +77,8 @@
 - Fix for IconNote creation
 
 ###4.4.0 (First 9.0.1 FP10 release)
+- Overloaded Database.getUserID() method
+- Support for getting List and Set from items
+- Logic bug fixed in TypeUtils.toPrimitive
+- DOTS license file added
+- pom and version number cleanup in source code
