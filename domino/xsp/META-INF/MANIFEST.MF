@@ -42,5 +42,4 @@ Import-Package: com.ibm.domino.commons.json,
  javax.ws.rs.ext,
  lotus.domino,
  org.apache.wink.common.internal.utils,
- org.eclipse.osgi.baseadaptor,
  org.apache.wink.server.internal.servlet
