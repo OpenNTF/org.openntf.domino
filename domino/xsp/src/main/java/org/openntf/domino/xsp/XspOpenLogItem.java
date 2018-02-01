@@ -323,9 +323,6 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 		}
 		try {
-			if (getDisplayError()) {
-				addFacesMessage("", m);
-			}
 			setBase(ee);
 
 			// if (ee.getMessage().length() > 0) {
@@ -333,12 +330,23 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			setSeverity(Level.WARNING);
 			setEventType(LogType.TYPE_ERROR);
 			setLogSuccess(writeToLog());
+			writeToFacesMessage(m);
 			return getMessage();
 
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			setLogSuccess(false);
 			return "";
+		}
+	}
+
+	private void writeToFacesMessage(final String message) {
+		try {
+			if (getDisplayError()) {
+				addFacesMessage("", message);
+			}
+		} catch (Exception e) {
+			System.out.println("ODA: User error logged to OpenLog but could not write error to XPages browser. Check OpenLog.");
 		}
 	}
 
