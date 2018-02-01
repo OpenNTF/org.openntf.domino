@@ -9,10 +9,15 @@
 		<version>4.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>com.tinkerpop</artifactId>
-	<version>2.6.0-SNAPSHOT</version>
+	<version>2.6.1-SNAPSHOT</version>
 	<name>tinkerpop</name>
 	
 	<packaging>eclipse-plugin</packaging>
+	
+	<properties>
+		<!-- This will be re-computed per-project, hence the extra two layers -->
+		<osgi-deps-path>${project.baseUri}../../../dependencies</osgi-deps-path>
+	</properties>
 
 	<repositories>
 		<repository>
@@ -25,12 +30,4 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>18.0</version>
-		</dependency>
-	</dependencies>
 </project>

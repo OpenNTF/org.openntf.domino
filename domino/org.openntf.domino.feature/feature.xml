@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.domino.feature"
       label="OpenNTF Domino API"
-      version="4.2.0.qualifier"
+      version="4.3.0.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
@@ -98,20 +98,6 @@
 
    <plugin
          id="org.openntf.formula.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openntf.junit4xpages"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openntf.junit4xpages.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

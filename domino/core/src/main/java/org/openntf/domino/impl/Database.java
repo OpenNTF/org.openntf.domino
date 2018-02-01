@@ -3917,4 +3917,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return ACL.Privilege.getPrivileges(privs);
 	}
 
+	@Override
+	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
+		return getDelegate().getUserID(arg0, arg1);
+	}
+
 }
