@@ -16,5 +16,4 @@ This distribution contains several components:
 Requirements
 ============
 
-- Domino 9.0.1 (recent fix packs recommended)
-- Extension Library v17 or above (for the graph REST service)
+- Domino 9.0.1 F10
