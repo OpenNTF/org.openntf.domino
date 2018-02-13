@@ -45,4 +45,4 @@ Import-Package: com.ibm.domino.commons.json,
  lotus.domino,
  org.apache.wink.common.internal.utils,
  org.apache.wink.server.internal.servlet,
- org.eclipse.osgi.baseadaptor
+ org.eclipse.osgi.baseadaptor;resolution:=optional
