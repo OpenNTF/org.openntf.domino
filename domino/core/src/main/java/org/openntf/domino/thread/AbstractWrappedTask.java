@@ -7,6 +7,8 @@ import java.util.concurrent.Callable;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.session.NamedSessionFactory;
+import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
