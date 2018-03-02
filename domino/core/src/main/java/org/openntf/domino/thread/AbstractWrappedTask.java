@@ -68,9 +68,17 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 				switch (annot.session()) {
 				case CLONE:
 					sessionFactory = Factory.getSessionFactory(SessionType.CURRENT);
+					// DasCurrentSessionFactory uses ContextInfo, which is not accessible in a Xots task.
+					if (sessionFactory.getClass().getSimpleName().contains("DasCurrent")) {
+						sessionFactory = new NamedSessionFactory(null, Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
+					}
 					break;
 				case CLONE_FULL_ACCESS:
 					sessionFactory = Factory.getSessionFactory(SessionType.CURRENT_FULL_ACCESS);
+					// DasCurrentSessionFactory uses ContextInfo, which is not accessible in a Xots task.
+					if (sessionFactory.getClass().getSimpleName().contains("DasCurrent")) {
+						sessionFactory = new SessionFullAccessFactory(null, Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
+					}
 					break;
 
 				case FULL_ACCESS:
