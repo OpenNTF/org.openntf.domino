@@ -7,6 +7,8 @@ import java.util.concurrent.Callable;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.session.ISessionFactory;
+import org.openntf.domino.session.NamedSessionFactory;
+import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.xots.Tasklet;
@@ -68,9 +70,17 @@ public abstract class AbstractWrappedTask implements IWrappedTask {
 				switch (annot.session()) {
 				case CLONE:
 					sessionFactory = Factory.getSessionFactory(SessionType.CURRENT);
+					// DasCurrentSessionFactory uses ContextInfo, which is not accessible in a Xots task.
+					if (sessionFactory.getClass().getSimpleName().contains("DasCurrent")) {
+						sessionFactory = new NamedSessionFactory(null, Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
+					}
 					break;
 				case CLONE_FULL_ACCESS:
 					sessionFactory = Factory.getSessionFactory(SessionType.CURRENT_FULL_ACCESS);
+					// DasCurrentSessionFactory uses ContextInfo, which is not accessible in a Xots task.
+					if (sessionFactory.getClass().getSimpleName().contains("DasCurrent")) {
+						sessionFactory = new SessionFullAccessFactory(null, Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
+					}
 					break;
 
 				case FULL_ACCESS:

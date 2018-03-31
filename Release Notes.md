@@ -1,5 +1,49 @@
 ##Release Notes
 
+###4.4.0 (First 9.0.1 FP10 release)
+- Overloaded Database.getUserID() method
+- Support for getting List and Set from items
+- Logic bug fixed in TypeUtils.toPrimitive
+- DOTS license file added
+- pom and version number cleanup in source code
+
+###4.3.0 (Last planned 9.0.1 FP9 release)
+- Getting OnRefreshType of Views and Folders in design API
+- Callback interfaces and helper methods for doing boilerplating for extracting HttpRequest and HttpResponse, processing, and properly terminating the response from an XAgent. One is specifically designed to allow population of a JSON object which will get passed back to the REST request
+
+<pre>
+   /*
+    * One method call to XspUtils.initialiseAndProcessResponse() does all the boilerplating for extracting the request, response and JsonJavaObject
+    * and properly terminating the response. JsonJavaObject is basically the same as a Java Map. All gotchas are handled for you!
+    *
+    * The bit that could be new to most is that XspUtils.initialiseAndProcessResponseAsJson() takes an anonymous inner class as its method. This is just
+    * a way to pass in a process() method that can interact with the request and response set up by XspUtils.initialiseAndProcessResponseAsJson()
+    *
+    * With Java 8 it becomes more readable with lambdas:
+    *
+    * XspUtils.initialiseAndProcessResponseAsJson((request, response, jsonObj) -> {
+    *     // do stuff here
+    * });
+    */
+</pre>
+
+- OpenLog fix for full logging of XPages SSJS uncaught exceptions.
+- Fix for IconNote creation
+
+###4.2.1
+- Setters for expiry on images, javascript, css and files
+- setDasMode extended onto DatabaseDesign class
+- Form / subform creation added to Design API
+- Fixes and streamlining of methods for creating a blank database. Use a single filepath instead of folder / filename. Ability added to create on remote server.
+
+###4.2.0 (First 9.0.1 FP9 Zircon release)
+
+- Additional method required for FP9 (Zircon) - EmbeddedObject.getFileEncoding()
+
+###4.1.1
+- OpenLog fix for full logging of XPages SSJS uncaught exceptions.
+- Fix for IconNote creation
+
 ###4.1.0 (Second 9.0.1 FP8 Release)  
 
 - Additional Javadoc documentation added
@@ -38,13 +82,3 @@
 - Fix for XMLNode.removeAttribute
 - Additional getters / setters in IconNote for some Database properties
 - Additional build tests
-
-###4.2.0 (First 9.0.1 FP9 Zircon release)
-
-- Additional method required for FP9 (Zircon) - EmbeddedObject.getFileEncoding()
-
-###4.2.1
-- Setters for expiry on images, javascript, css and files
-- setDasMode extended onto DatabaseDesign class
-- Form / subform creation added to Design API
-- Fixes and streamlining of methods for creating a blank database. Use a single filepath instead of folder / filename. Ability added to create on remote server.

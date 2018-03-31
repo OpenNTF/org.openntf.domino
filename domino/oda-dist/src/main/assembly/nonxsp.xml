@@ -21,7 +21,10 @@
 			<directory>${project.basedir}/../..</directory>
 			<includes>
 				<include>LICENSE</include>
+				<include>LICENSE-ODA</include>
 				<include>NOTICE.md</include>
+				<include>README.md</include>
+				<include>Release Notes.md</include>
 			</includes>
 		</fileSet>
 	</fileSets>
