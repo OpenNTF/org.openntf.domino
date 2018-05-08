@@ -131,6 +131,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 
 	private transient Database currentDatabase_;
 	private transient Boolean isConvertMime_;
+	private transient Boolean isViewExactMatch_;
 	private String currentDatabaseApiPath_;
 
 	private String username_;
@@ -2222,5 +2223,24 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		} else {
 			return filePath;
 		}
+	}
+
+	@Override
+	public boolean isViewExactMatch() {
+		if (isViewExactMatch_ == null) {
+			try {
+				isViewExactMatch_ = Boolean.valueOf(getDelegate().isConvertMIME());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				isViewExactMatch_ = Boolean.FALSE;
+
+			}
+		}
+		return isViewExactMatch_.booleanValue();
+	}
+
+	@Override
+	public void setViewExactMatch(final boolean exactMatch) {
+		isViewExactMatch_ = exactMatch;
 	}
 }
