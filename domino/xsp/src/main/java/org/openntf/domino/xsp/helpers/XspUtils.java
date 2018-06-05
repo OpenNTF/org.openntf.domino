@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.XSPUtil;
+import org.openntf.domino.xots.Xots;
 import org.openntf.domino.xsp.IXspHttpServletJsonResponseCallback;
 import org.openntf.domino.xsp.IXspHttpServletResponseCallback;
 import org.openntf.domino.xsp.ODAPlatform;
+import org.openntf.domino.xsp.xots.BasicXotsXspCallbackRunnable;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
@@ -120,6 +122,34 @@ public class XspUtils {
 		response.setHeader("Cache-Control", "no-cache");
 		callback.process((HttpServletRequest) ext.getRequest(), response);
 		//  Terminate the request processing lifecycle.
+		FacesContext.getCurrentInstance().responseComplete();
+	}
+
+	/**
+	 * A more basic generic method that performs boilerplate code to extract XspHttpServletRequest and HttpServletResponse; triggers a
+	 * callback method passed in ASYNCHRONOUSLY, passing it the request and response; then terminates the response
+	 * 
+	 * It's down to you to handle printing something to the response
+	 * 
+	 * @param callback
+	 *            anonymous inner class callback that implements IXspHttpServletResponse, so has a process() method that can be called from
+	 *            here
+	 * @throws IOException
+	 *             that may be caused by manipulating the response
+	 * @since ODA 4.5.0
+	 */
+	public static void initialiseAndProcessResponseAsync(final IXspHttpServletResponseCallback callback) throws IOException {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ExternalContext ext = ctx.getExternalContext();
+		BasicXotsXspCallbackRunnable task = new BasicXotsXspCallbackRunnable(callback, (HttpServletRequest) ext.getRequest());
+		Xots.getService().submit(task);
+		//  Terminate the request processing lifecycle.
+		XspHttpServletResponse response = (XspHttpServletResponse) ext.getResponse();
+		response.setContentType(HttpServiceConstants.CONTENTTYPE_APPLICATION_JSON);
+		response.setHeader("Cache-Control", "no-cache");
+		response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		PrintWriter writer = response.getWriter();
+		writer.write("{\"message\": \"asynchronous task scheduled\"}");
 		FacesContext.getCurrentInstance().responseComplete();
 	}
 

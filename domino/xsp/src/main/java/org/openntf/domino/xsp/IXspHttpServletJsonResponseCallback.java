@@ -28,7 +28,7 @@ import com.ibm.xsp.webapp.XspHttpServletResponse;
  * @since ODA 4.3.0
  * 
  */
-public interface IXspHttpServletJsonResponseCallback {
+public interface IXspHttpServletJsonResponseCallback extends IXspHttpServletResponseCallback {
 
 	/**
 	 * {@linkplain Utils#initialiseAndProcessResponse(IXspHttpServletJsonResponseCallback)} will extract the HttpServletRequest and
