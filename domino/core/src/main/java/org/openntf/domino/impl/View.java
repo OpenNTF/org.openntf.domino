@@ -3200,4 +3200,52 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		return count;
 	}
+
+	@Override
+	public int FTSearchSorted(final String paramString1, final int paramInt, final String paramString2, final boolean paramBoolean1,
+			final boolean paramBoolean2, final boolean paramBoolean3, final boolean paramBoolean4, final boolean paramBoolean5) {
+		try {
+			return getDelegate().FTSearchSorted(paramString1, paramInt, paramString2, paramBoolean1, paramBoolean2, paramBoolean3,
+					paramBoolean4, paramBoolean5);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return 0;
+		}
+	}
+
+	@Override
+	public int FTSearchSorted(final String paramString, final int paramInt1, final int paramInt2, final boolean paramBoolean1,
+			final boolean paramBoolean2, final boolean paramBoolean3, final boolean paramBoolean4, final boolean paramBoolean5) {
+		try {
+			return getDelegate().FTSearchSorted(paramString, paramInt1, paramInt2, paramBoolean1, paramBoolean2, paramBoolean3,
+					paramBoolean4, paramBoolean5);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return 0;
+		}
+	}
+
+	@Override
+	public int FTSearchSorted(final Vector paramVector, final int paramInt, final String paramString, final boolean paramBoolean1,
+			final boolean paramBoolean2, final boolean paramBoolean3, final boolean paramBoolean4, final boolean paramBoolean5) {
+		try {
+			return getDelegate().FTSearchSorted(paramVector, paramInt, paramString, paramBoolean1, paramBoolean2, paramBoolean3,
+					paramBoolean4, paramBoolean5);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return 0;
+		}
+	}
+
+	@Override
+	public int FTSearchSorted(final Vector paramVector, final int paramInt1, final int paramInt2, final boolean paramBoolean1,
+			final boolean paramBoolean2, final boolean paramBoolean3, final boolean paramBoolean4, final boolean paramBoolean5) {
+		try {
+			return getDelegate().FTSearchSorted(paramVector, paramInt1, paramInt2, paramBoolean1, paramBoolean2, paramBoolean3,
+					paramBoolean4, paramBoolean5);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return 0;
+		}
+	}
 }

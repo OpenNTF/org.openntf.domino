@@ -4449,4 +4449,23 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			DominoUtils.handleException(e, this);
 		}
 	}
+
+	@Override
+	public boolean isCancelSendOnMissingKey() {
+		try {
+			return getDelegate().isCancelSendOnMissingKey();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
+	}
+
+	@Override
+	public void setCancelSendOnMissingKey(final boolean paramBoolean) throws NotesException {
+		try {
+			getDelegate().setCancelSendOnMissingKey(paramBoolean);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
 }

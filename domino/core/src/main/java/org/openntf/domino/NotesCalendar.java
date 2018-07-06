@@ -17,6 +17,8 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import lotus.domino.NotesError;
+
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -656,15 +658,17 @@ public interface NotesCalendar
 	 * @see lotus.domino.NotesCalendar#getActAsDbOwner()
 	 * @since Domino 9.0.1 FP8
 	 */
-	@Override
-	public boolean getActAsDbOwner();
+	// Presumably-temporarily missing during the v10 beta
+	//	@Override
+	//	public boolean getActAsDbOwner();
 
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendar#getAutoRemoveProcessedNotices()
 	 * @since Domino 9.0.1 FP8
 	 */
-	@Override
-	public boolean getAutoRemoveProcessedNotices();
+	// Presumably-temporarily missing during the v10 beta
+	//	@Override
+	//	public boolean getAutoRemoveProcessedNotices();
 
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendar#getRecurrenceID(lotus.domino.DateTime)
@@ -677,14 +681,16 @@ public interface NotesCalendar
 	 * @see lotus.domino.NotesCalendar#setActAsDbOwner(boolean)
 	 * @since Domino 9.0.1 FP8
 	 */
-	@Override
-	public void setActAsDbOwner(boolean arg0);
+	// Presumably-temporarily missing during the v10 beta
+	//	@Override
+	//	public void setActAsDbOwner(boolean arg0);
 
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendar#setAutoRemoveProcessedNotices(boolean)
 	 * @since Domino 9.0.1 FP8
 	 */
-	@Override
-	public void setAutoRemoveProcessedNotices(boolean arg0);
+	// Presumably-temporarily missing during the v10 beta
+	//	@Override
+	//	public void setAutoRemoveProcessedNotices(boolean arg0);
 
 }

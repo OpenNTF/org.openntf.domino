@@ -30,8 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Registration.
  */
-public class Registration extends BaseThreadSafe<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
-org.openntf.domino.Registration {
+public class Registration extends BaseThreadSafe<org.openntf.domino.Registration, lotus.domino.Registration, Session>
+		implements org.openntf.domino.Registration {
 
 	/**
 	 * Instantiates a new registration.
@@ -1650,6 +1650,17 @@ org.openntf.domino.Registration {
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public boolean crossCertify(final String paramString1, final String paramString2, final String paramString3,
+			final String paramString4) {
+		try {
+			return getDelegate().crossCertify(paramString1, paramString2, paramString3, paramString4);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
 }

@@ -63,7 +63,7 @@ Export-Package: org.openntf.arpa,
 Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  org.openntf.formula;bundle-version="2.0.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
- com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
+ com.ibm.notes.java.api;bundle-version="9.0.2";resolution:=optional,
  com.ibm.icu;bundle-version="3.8.1",
  org.openntf.junit.libraries;bundle-version="1.1.0";resolution:=optional
 Bundle-ClassPath: .,

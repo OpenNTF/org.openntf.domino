@@ -3922,4 +3922,17 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return getDelegate().getUserID(arg0, arg1);
 	}
 
+	@Override
+	public org.openntf.domino.Database createFromTemplate(final String paramString1, final String paramString2, final boolean paramBoolean1,
+			final int paramInt, final boolean paramBoolean2) {
+		try {
+			return fromLotus(getDelegate().createFromTemplate(paramString1, paramString2, paramBoolean1, paramInt, paramBoolean2), SCHEMA,
+					getParent());
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
+
+		}
+	}
+
 }
