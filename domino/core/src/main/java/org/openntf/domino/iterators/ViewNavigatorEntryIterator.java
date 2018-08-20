@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.iterators;
 
@@ -11,7 +11,7 @@ import org.openntf.domino.ViewNavigator;
 
 /**
  * @author Nathan T. Freeman
- * 
+ *
  */
 public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 	@SuppressWarnings("unused")
@@ -26,7 +26,7 @@ public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Instantiates a new view entry iterator.
-	 * 
+	 *
 	 * @param navigator
 	 *            the navigator
 	 */
@@ -40,13 +40,13 @@ public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
 	public boolean hasNext() {
 		if (currentEntry_ != null) {
-			nextEntry_ = getNavigator().getNext(currentEntry_);
+			nextEntry_ = getNavigator().getNext();
 		} else {
 			nextEntry_ = getNavigator().getFirst();
 		}
@@ -55,7 +55,7 @@ public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
@@ -72,7 +72,7 @@ public class ViewNavigatorEntryIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#remove()
 	 */
 	@Override

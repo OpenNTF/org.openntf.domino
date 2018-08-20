@@ -24,7 +24,6 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -60,11 +59,11 @@ import com.tinkerpop.frames.VertexFrame;
 @Path(Routes.ROOT + "/" + Routes.FRAMES + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class FramedCollectionResource extends AbstractCollectionResource {
 
-	public FramedCollectionResource(ODAGraphService service) {
+	public FramedCollectionResource(final ODAGraphService service) {
 		super(service);
 	}
 
-	private ResponseBuilder getBuilder(String jsonEntity, Date lastMod, boolean includeEtag, Request request) {
+	private ResponseBuilder getBuilder(final String jsonEntity, final Date lastMod, final boolean includeEtag, final Request request) {
 		String etagSource = DominoUtils.md5(jsonEntity);
 		EntityTag etag = new EntityTag(etagSource);
 		ResponseBuilder berg = null;
@@ -96,7 +95,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace,
-			@Context Request request) throws JsonException, IOException {
+			@Context final Request request) throws JsonException, IOException {
 		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		ParamMap pm = Parameters.toParamMap(uriInfo);
@@ -115,6 +114,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				if (types.size() == 0) {
 					writer.outNull();
 				} else if (types.size() == 1) {
+					long startTime = new Date().getTime();
 					CharSequence typename = types.get(0);
 
 					Iterable<?> elements = null;
@@ -141,6 +141,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 						}
 						writer.outArrayLiteral(maps);
 					}
+					long endTime = new Date().getTime();
+					System.out.println("TEMP DEBUG Output for " + typename + " took " + (endTime-startTime) + "ms");
 				} else {
 					MixedFramedVertexList vresult = null;
 					FramedEdgeList eresult = null;
@@ -191,12 +193,6 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			} else {
 				// System.out.println("TEMP DEBUG: ID was null therefore we
 				// can't report...");
-
-				MultivaluedMap<String, String> mvm = uriInfo.getQueryParameters();
-				for (String key : mvm.keySet()) {
-					// System.out.println("TEMP DEBUG: " + key + ": " +
-					// mvm.getFirst(key));
-				}
 				Map<String, Object> jsonMap = new LinkedHashMap<String, Object>();
 				jsonMap.put("namespace", namespace);
 				jsonMap.put("status", "active");
@@ -215,7 +211,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
-	private List<?> sortAndLimitList(List<?> elements, ParamMap pm) {
+	private List<?> sortAndLimitList(final List<?> elements, final ParamMap pm) {
 		if (elements instanceof FramedEdgeList) {
 			FramedEdgeList<?> result = (FramedEdgeList<?>) elements;
 			if (pm.getOrderBys() != null) {
@@ -223,7 +219,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			if (pm.getStart() >= 0) {
 				if (pm.getCount() > 0) {
-					result = (FramedEdgeList<?>) result.subList(pm.getStart(), pm.getCount());
+					result = (FramedEdgeList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
 				} else {
 					result = (FramedEdgeList<?>) result.subList(pm.getStart(), result.size());
 				}
@@ -236,7 +232,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			if (pm.getStart() >= 0) {
 				if (pm.getCount() > 0) {
-					result = (FramedVertexList<?>) result.subList(pm.getStart(), pm.getCount());
+					result = (FramedVertexList<?>) result.subList(pm.getStart(), pm.getStart() + pm.getCount());
 				} else {
 					result = (FramedVertexList<?>) result.subList(pm.getStart(), result.size());
 				}
@@ -264,9 +260,9 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createFramedObject(String requestEntity, @Context final UriInfo uriInfo,
-			@PathParam(Routes.NAMESPACE) final String namespace, @Context Request request)
-			throws JsonException, IOException {
+	public Response createFramedObject(final String requestEntity, @Context final UriInfo uriInfo,
+			@PathParam(Routes.NAMESPACE) final String namespace, @Context final Request request)
+					throws JsonException, IOException {
 		// org.apache.wink.common.internal.registry.metadata.ResourceMetadataCollector
 		// rc;
 		@SuppressWarnings("rawtypes")
@@ -335,8 +331,8 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
-	private boolean processJsonObject(JsonJavaObject jsonItems, DFramedTransactionalGraph graph, JsonGraphWriter writer,
-			Map<Object, Object> results) {
+	private boolean processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
+			final Map<Object, Object> results) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
 		for (String jsonKey : jsonItems.keySet()) {
 			CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
@@ -498,6 +494,13 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 								}
 							}
 							writer.outObject(result);
+						} catch (IllegalArgumentException iae) {
+							Exception e = new RuntimeException("Invokation of method " + method.getName() + " on a vertex of type "
+									+ DGraphUtils.findInterface(parVertex) + " with an argument of type "
+									+ DGraphUtils.findInterface(otherVertex)
+									+ " resulted in an exception", iae);
+							throw new WebApplicationException(
+									ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
 						} catch (Exception e) {
 							throw new WebApplicationException(
 									ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
@@ -521,7 +524,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				}
 			} else {
 				org.openntf.domino.utils.Factory
-						.println("element is not a VertexFrame. It's a " + element.getClass().getName());
+				.println("element is not a VertexFrame. It's a " + element.getClass().getName());
 			}
 		} else {
 			System.err.println("Cannot POST without an @type in the JSON");
@@ -535,17 +538,17 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@PATCH
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response patchDocumentByUnid(String requestEntity, @Context final UriInfo uriInfo,
+	public Response patchDocumentByUnid(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace,
-			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince, @Context Request request)
-			throws JsonException, IOException {
+			@HeaderParam(Headers.IF_UNMODIFIED_SINCE) final String ifUnmodifiedSince, @Context final Request request)
+					throws JsonException, IOException {
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		Response response = updateFrameByMetaid(requestEntity, namespace, ifUnmodifiedSince, pm, false, request);
 		return response;
 	}
 
-	protected Response updateFrameByMetaid(String requestEntity, String namespace, String ifUnmodifiedSince,
-			ParamMap pm, boolean isPut, Request request) throws JsonException, IOException {
+	protected Response updateFrameByMetaid(final String requestEntity, final String namespace, final String ifUnmodifiedSince,
+			final ParamMap pm, final boolean isPut, final Request request) throws JsonException, IOException {
 		Response result = null;
 		DFramedTransactionalGraph<?> graph = this.getGraph(namespace);
 		JsonJavaObject jsonItems = null;
@@ -579,7 +582,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			for (Object raw : jsonArray) {
 				if (raw instanceof JsonJavaObject) {
 					writer.startArrayItem();
-					processJsonUpdate((JsonJavaObject) raw, graph, writer, pm, isPut);
+					processJsonUpdate((JsonJavaObject) raw, graph, writer, pm, request.getMethod());
 					writer.endArrayItem();
 				} else {
 					System.err.println("Expected a JsonJavaObject but instead we got a " + raw.getClass().getName());
@@ -587,7 +590,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 			}
 			writer.endArray();
 		} else if (jsonItems != null) {
-			processJsonUpdate(jsonItems, graph, writer, pm, isPut);
+			processJsonUpdate(jsonItems, graph, writer, pm, request.getMethod());
 		}
 
 		String jsonEntity = sw.toString();
@@ -596,9 +599,10 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		return response;
 	}
 
-	private void processJsonUpdate(JsonJavaObject jsonItems, DFramedTransactionalGraph graph, JsonGraphWriter writer,
-			ParamMap pm, boolean isPut) throws JsonException, IOException {
+	private void processJsonUpdate(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
+			final ParamMap pm, final String method) throws JsonException, IOException {
 		boolean commit = true;
+		boolean isPut = "put".equalsIgnoreCase(method);
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
 		for (String jsonKey : jsonItems.keySet()) {
 			CaseInsensitiveString cis = new CaseInsensitiveString(jsonKey);
@@ -613,7 +617,11 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		} else if (element instanceof VertexFrame) {
 			adapter = new JsonFrameAdapter(graph, (VertexFrame) element, null, true);
 		} else if (element == null) {
-			throw new RuntimeException("Cannot force a metaversalid through REST API: " + id);
+			if ("post".equalsIgnoreCase(method)) {
+				throw new RuntimeException("Cannot force a metaversalid through REST API: " + id);
+			} else {
+				throw new RuntimeException("Element id " + id + " was not found in the graph");
+			}
 		} else {
 			throw new RuntimeException("TODO"); // TODO
 		}

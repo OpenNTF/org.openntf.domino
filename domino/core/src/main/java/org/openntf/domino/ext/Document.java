@@ -573,4 +573,17 @@ public interface Document {
 	 * </pre>
 	 */
 	public void makeResponse(final lotus.domino.Document doc, String itemName);
+
+	/**
+	 * When setting the universal id, also include a $Created item with the current date/time so that
+	 *
+	 * <pre>
+	 * &#64;Created
+	 * </pre>
+	 *
+	 * works correctly
+	 */
+	public void setUniversalID(final CharSequence unid, boolean includeCreated);
+
+	public boolean isEditable();
 }

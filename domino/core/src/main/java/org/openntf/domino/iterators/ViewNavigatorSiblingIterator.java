@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.iterators;
 
@@ -11,7 +11,7 @@ import org.openntf.domino.ViewNavigator;
 
 /**
  * @author Nathan T. Freeman
- * 
+ *
  */
 public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 	@SuppressWarnings("unused")
@@ -26,7 +26,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Instantiates a new view entry iterator.
-	 * 
+	 *
 	 * @param navigator
 	 *            the navigator
 	 */
@@ -40,7 +40,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	//	/**
 	//	 * Gets the current entry.
-	//	 * 
+	//	 *
 	//	 * @return the current entry
 	//	 */
 	//	public ViewEntry getCurrentEntry() {
@@ -49,13 +49,13 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
 	public boolean hasNext() {
 		if (currentEntry_ != null) {
-			nextEntry_ = getNavigator().getNextSibling(currentEntry_);
+			nextEntry_ = getNavigator().getNextSibling();
 		} else {
 			nextEntry_ = getNavigator().getFirst();
 		}
@@ -64,7 +64,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	//	/**
 	//	 * Checks if is done.
-	//	 * 
+	//	 *
 	//	 * @return true, if is done
 	//	 */
 	//	public boolean isDone() {
@@ -73,7 +73,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 	//
 	//	/**
 	//	 * Checks if is started.
-	//	 * 
+	//	 *
 	//	 * @return true, if is started
 	//	 */
 	//	public boolean isStarted() {
@@ -82,7 +82,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
@@ -100,7 +100,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#remove()
 	 */
 	@Override
@@ -110,7 +110,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 
 	//	/**
 	//	 * Sets the current entry.
-	//	 * 
+	//	 *
 	//	 * @param currentEntry
 	//	 *            the new current entry
 	//	 */
@@ -122,7 +122,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 	//
 	//	/**
 	//	 * Sets the done.
-	//	 * 
+	//	 *
 	//	 * @param done
 	//	 *            the new done
 	//	 */
@@ -132,7 +132,7 @@ public class ViewNavigatorSiblingIterator implements Iterator<ViewEntry> {
 	//
 	//	/**
 	//	 * Sets the started.
-	//	 * 
+	//	 *
 	//	 * @param started
 	//	 *            the new started
 	//	 */

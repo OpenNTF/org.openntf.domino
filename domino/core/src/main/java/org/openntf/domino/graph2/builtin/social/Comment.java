@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.social;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -34,7 +36,7 @@ public interface Comment extends Likeable {
 	public void removeCommentsOn(CommentsOn commentsOn);
 
 	@AdjacencyUnique(label = CommentsAbout.LABEL)
-	public Iterable<Commentable> getCommentables();
+	public List<Commentable> getCommentables();
 
 	@AdjacencyUnique(label = CommentsAbout.LABEL)
 	public CommentsAbout addCommentable(Commentable commentable);
@@ -43,7 +45,7 @@ public interface Comment extends Likeable {
 	public void removeCommentable(Commentable commentable);
 
 	@IncidenceUnique(label = CommentsAbout.LABEL)
-	public Iterable<CommentsAbout> getCommentsAbouts();
+	public List<CommentsAbout> getCommentsAbouts();
 
 	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public int countCommentsAbouts();
@@ -52,7 +54,7 @@ public interface Comment extends Likeable {
 	public void removeCommentsAbout(CommentsAbout commentsAbout);
 
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Iterable<Socializer> getSocializers();
+	public List<Socializer> getSocializers();
 
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public Mentions addSocializer(Socializer socializer);
@@ -61,7 +63,7 @@ public interface Comment extends Likeable {
 	public void removeSocializer(Socializer socializer);
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Iterable<Mentions> getMentions();
+	public List<Mentions> getMentions();
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public int countMentions();

@@ -110,4 +110,20 @@ public interface DElementStore extends Externalizable {
 
 	public CustomProxyResolver getCustomProxyResolver();
 
+	Long getReverseProxyStoreKey();
+
+	Object getReverseProxyStoreDelegate();
+
+	boolean isReverseProxied();
+
+	void setCustomReverseProxyResolver(CustomProxyResolver resolver);
+
+	CustomProxyResolver getCustomReverseProxyResolver();
+
+	void setReverseProxyStoreDelegate(Object store);
+
+	void setReverseProxyStoreKey(Long storeKey);
+
+	void setReverseProxyStoreKey(CharSequence storeKey);
+
 }

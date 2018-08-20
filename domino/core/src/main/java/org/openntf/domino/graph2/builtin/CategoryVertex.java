@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.Shardable;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -24,9 +26,9 @@ public interface CategoryVertex extends VertexFrame {
 	public String getNoteid();
 
 	@IncidenceUnique(label = "contents", direction = Direction.OUT)
-	public Iterable<Contains> getContents();
+	public List<Contains> getContents();
 
 	@IncidenceUnique(label = "doccontents", direction = Direction.OUT)
-	public Iterable<Contains> getDocContents();
+	public List<Contains> getDocContents();
 
 }

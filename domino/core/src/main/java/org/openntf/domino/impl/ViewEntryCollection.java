@@ -61,6 +61,9 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void addEntry(final Object obj) {
 		try {
 			getDelegate().addEntry(toLotus(obj));
+			if (countCache_ > -1) {
+				countCache_++;
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -75,6 +78,9 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void addEntry(final Object obj, final boolean checkDups) {
 		try {
 			getDelegate().addEntry(toLotus(obj), checkDups);
+			if (countCache_ > -1) {
+				countCache_++;
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -161,6 +167,9 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void deleteEntry(final lotus.domino.ViewEntry entry) {
 		try {
 			getDelegate().deleteEntry(toLotus(entry));
+			if (countCache_ > -1) {
+				countCache_--;
+			}
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -194,6 +203,8 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 		}
 	}
 
+	private int countCache_ = -1;
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -201,12 +212,14 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	 */
 	@Override
 	public int getCount() {
-		try {
-			return getDelegate().getCount();
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-			return 0;
+		if (countCache_ == -1) {
+			try {
+				countCache_ = getDelegate().getCount();
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+			}
 		}
+		return countCache_;
 	}
 
 	/*
@@ -367,6 +380,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void intersect(final lotus.domino.Base entries) {
 		try {
 			getDelegate().intersect(toLotus(entries));
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -381,6 +395,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void intersect(final int noteId) {
 		try {
 			getDelegate().intersect(noteId);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -395,6 +410,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void intersect(final String noteId) {
 		try {
 			getDelegate().intersect(noteId);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -465,6 +481,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void merge(final lotus.domino.Base entries) {
 		try {
 			getDelegate().merge(toLotus(entries));
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -479,6 +496,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void merge(final int noteId) {
 		try {
 			getDelegate().merge(noteId);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -493,6 +511,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void merge(final String noteId) {
 		try {
 			getDelegate().merge(noteId);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -535,6 +554,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void removeAll(final boolean force) {
 		try {
 			getDelegate().removeAll(force);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -614,6 +634,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void subtract(final lotus.domino.Base entries) {
 		try {
 			getDelegate().subtract(toLotus(entries));
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -628,6 +649,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void subtract(final int noteId) {
 		try {
 			getDelegate().subtract(noteId);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -642,6 +664,7 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 	public void subtract(final String noteId) {
 		try {
 			getDelegate().subtract(noteId);
+			countCache_ = -1;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}

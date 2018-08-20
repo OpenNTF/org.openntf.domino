@@ -1,11 +1,5 @@
 package org.openntf.domino.rest.utils;
 
-import com.ibm.commons.util.StringUtil;
-import com.ibm.domino.napi.NException;
-import com.ibm.domino.napi.c.BackendBridge;
-import com.ibm.domino.napi.c.html.HtmlConverter;
-import com.ibm.domino.napi.c.html.HtmlReferenceData;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +10,12 @@ import java.util.Map;
 import org.openntf.domino.Document;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.RichTextItem;
+
+import com.ibm.commons.util.StringUtil;
+import com.ibm.domino.napi.NException;
+import com.ibm.domino.napi.c.BackendBridge;
+import com.ibm.domino.napi.c.html.HtmlConverter;
+import com.ibm.domino.napi.c.html.HtmlReferenceData;
 
 public class RTtoHTMLUtil {
 	// private IMimeMultipart newValue;
@@ -32,8 +32,8 @@ public class RTtoHTMLUtil {
 		protected String _cid;
 		protected String _dbKey;
 
-		public AttachmentHolder(Document document, RichTextItem richTextItem, EmbeddedObject embedObject,
-				String displayName, String dbKey) {
+		public AttachmentHolder(final Document document, final RichTextItem richTextItem, final EmbeddedObject embedObject,
+				final String displayName, final String dbKey) {
 			this._state = 0;
 			this._internalName = embedObject.getName();
 			this._displayName = displayName;
@@ -48,11 +48,11 @@ public class RTtoHTMLUtil {
 			return this._cid;
 		}
 
-		public void setCID(String paramString) {
+		public void setCID(final String paramString) {
 			this._cid = paramString;
 		}
 
-		private String getDatabaseAttachmentUrl(Document document, RichTextItem rtItem, String internalName) {
+		private String getDatabaseAttachmentUrl(final Document document, final RichTextItem rtItem, final String internalName) {
 			StringBuilder localStringBuilder = new StringBuilder(256);
 			localStringBuilder.append("/.ibmmodres/");
 			localStringBuilder.append("domino/OpenAttachment");
@@ -77,7 +77,7 @@ public class RTtoHTMLUtil {
 			return this._state;
 		}
 
-		public void setState(int paramInt) {
+		public void setState(final int paramInt) {
 			this._state = paramInt;
 		}
 
@@ -122,15 +122,15 @@ public class RTtoHTMLUtil {
 		}
 	}
 
-	public static String getHTML(RichTextItem rtItem) {
+	public static String getHTML(final RichTextItem rtItem) {
 		return getText(rtItem.getAncestorDocument(), rtItem.getName());
 	}
 
-	public static String getCustomHtml(RichTextItem rtItem, Map<String, Integer> converterArgs) {
+	public static String getCustomHtml(final RichTextItem rtItem, final Map<String, Integer> converterArgs) {
 		return getCustomText(rtItem.getAncestorDocument(), rtItem.getName(), converterArgs);
 	}
 
-	private static String getCustomText(Document document, String richTextName, Map<String, Integer> converterArgs) {
+	private static String getCustomText(final Document document, final String richTextName, final Map<String, Integer> converterArgs) {
 		HtmlConverter htmlConverter = new HtmlConverter();
 
 		try {
@@ -187,10 +187,10 @@ public class RTtoHTMLUtil {
 		return ("");
 	}
 
-	private static String getText(Document document, String richTextItemName) {
+	private static String getText(final Document document, final String richTextItemName) {
 		Map<String, Integer> argMap = new LinkedHashMap<String, Integer>();
 		argMap.put("AutoClass", 2);
-		argMap.put("RowAtATimeTableAlt", 2);
+		//		argMap.put("RowAtATimeTableAlt", 2);
 		argMap.put("SectionAlt", 1);
 		argMap.put("XMLCompatibleHTML", 1);
 		argMap.put("AttachmentLink", 1);
@@ -204,7 +204,7 @@ public class RTtoHTMLUtil {
 		return getCustomText(document, richTextItemName, argMap);
 	}
 
-	private static void generateCID(HtmlReferenceData htmlRef, String itemName) throws IOException {
+	private static void generateCID(final HtmlReferenceData htmlRef, final String itemName) throws IOException {
 		String str1 = htmlRef.getReferenceUrl();
 		StringBuilder localStringBuilder1 = new StringBuilder();
 		localStringBuilder1.append("_1_");
@@ -267,7 +267,7 @@ public class RTtoHTMLUtil {
 		// paramHtmlReferenceData.setNewReferenceUrl(str5);
 	}
 
-	private String computeUniqueAttachmentName(Collection<AttachmentHolder> holders, String paramString) {
+	private String computeUniqueAttachmentName(final Collection<AttachmentHolder> holders, String paramString) {
 		if (holders == null) {
 			return paramString;
 		}

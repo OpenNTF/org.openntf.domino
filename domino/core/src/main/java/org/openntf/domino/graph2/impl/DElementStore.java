@@ -126,15 +126,29 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 					if (result instanceof Document) {
 						isProxy = ((Document) result).hasItem(DProxyVertex.PROXY_ITEM);
 					}
-					if (parent_.isProxied() && result instanceof Document) {
-						//						System.out.println("TEMP DEBUG Setting up proxy");
-						result = parent_.setupProxy(result, (Serializable) key);
+					if (parent_.isProxied()) {
+						if (result instanceof Document) {
+							//							System.out.println("TEMP DEBUG from ElementStoreCacheLoader: ElementStore "
+							//									+ ((Database) parent_.getStoreDelegate()).getApiPath()
+							//									+ " is proxied. Setting up proxy on delegate...");
+							result = parent_.setupProxy(result, (Serializable) key);
+						} else if (result instanceof ViewEntry) {
+							//NO OP
+						} else {
+							//							System.out.println("TEMP DEBUG from ElementStoreCacheLoader: ElementStore "
+							//									+ ((Database) parent_.getStoreDelegate()).getApiPath() + " is proxied. But our result is a "
+							//									+ result.getClass().getName());
+						}
+					} else {
+						//						System.out.println(
+						//								"TEMP DEBUG ElementStore " + ((Database) parent_.getStoreDelegate()).getApiPath() + " is not proxied.");
+
 					}
 				}
 			} else {
 				if (key != null) {
-					System.out.println(
-							"WARNING: Unknown delegatekey of type " + key.getClass().getName() + ". Creating a brand new delegate.");
+					//					System.out.println(
+					//							"WARNING: Unknown delegatekey of type " + key.getClass().getName() + ". Creating a brand new delegate.");
 				}
 				//null is a perfectly valid key, since it means we want to let the system assign it.
 				result = db.createDocument();
@@ -147,15 +161,24 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			if (delegate instanceof Element) {
 				result = (Element) delegate;
 			} else if (delegate instanceof Document) {
-				if (isProxiedSource) {
-					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
-					result = vertex;
-				} else if (DesignFactory.isView((Document) delegate)) {
+				if (DesignFactory.isView((Document) delegate)) {
 					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
 					result = vertex;
 				} else if (DesignFactory.isIcon((Document) delegate) || DesignFactory.isACL((Document) delegate)) {
 					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
 					result = vertex;
+					//				} else if (((Document) delegate).hasItem(DProxyVertex.PROXY_ITEM)) {
+					//					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
+					//					result = parent_.setupProxy(vertex, null);
+				} else if (isProxiedSource) {
+					DVertex vertex = new DVertex(parent_.getConfiguration().getGraph(), (Document) delegate);
+					if (parent_.isReverseProxied()) {
+						result = parent_.setupReverseProxy(vertex);
+						//						System.out.println("TEMP DEBUG from toElement: Created a new reverse proxied vertex for original "
+						//								+ vertex.getId().toString() + " at proxy " + result.getId().toString());
+					} else {
+						result = vertex;
+					}
 				} else {
 					Object typeChk = ((Document) delegate).get(org.openntf.domino.graph2.DElement.TYPE_FIELD);
 					String strChk = org.openntf.domino.utils.TypeUtils.toString(typeChk);
@@ -202,16 +225,23 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Element result = null;
 			Object delegate = null;
 			boolean isProxiedSource = false;
-			if (key instanceof NoteCoordinate && parent_.isProxied() && !(key instanceof ViewEntryCoordinate || key.getX() == 0)) {
+			if (key instanceof NoteCoordinate && (parent_.isProxied() || parent_.isReverseProxied())
+					&& !(key instanceof ViewEntryCoordinate || key.getX() == 0)) {
 				//				System.out.println("TEMP DEBUG in proxy branch...");
 				NoteCoordinate nc = key;
 				if (parent_.getStoreKey().equals(nc.getReplicaLong())) {
 					//this is a request for a vertex out of the proxied store, not the proxy itself
 					Database sourcedb = (Database) parent_.getStoreDelegate();
-					String unid = nc.getUNID();
-					delegate = sourcedb.getDocumentByUNID(unid, true);
-					if (delegate != null) {
-						isProxiedSource = true;
+					if (sourcedb != null) {
+						String unid = nc.getUNID();
+						delegate = sourcedb.getDocumentByUNID(unid, true);
+						if (delegate != null) {
+							isProxiedSource = true;
+						}
+					} else {
+						System.out.println("EXCEPTION Delegate database for an ElementStore is not available. The key requested is " + key
+								+ " and the expect path to the store is " + String.valueOf(parent_.provisionalDelegateKey_));
+						return null;
 					}
 				}
 			}
@@ -268,9 +298,33 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	private Object provisionalDelegateKey_;
 	private Object proxyDelegate_;
 	private Long proxyDelegateKey_;
+	private boolean isProxyStore_ = false;
+
+	public boolean isProxyStore() {
+		return isProxyStore_;
+	}
+
+	public void setProxyStore(final boolean isProxyStore) {
+		isProxyStore_ = isProxyStore;
+	}
+
+	public boolean isReverseProxyStore() {
+		return isReverseProxyStore_;
+	}
+
+	public void setReverseProxyStore(final boolean isReverseProxyStore) {
+		isReverseProxyStore_ = isReverseProxyStore;
+	}
+
 	private Object provisionalProxyDelegateKey_;
-	private DIdentityFactory identityFactory_;
+
 	private CustomProxyResolver proxyResolver_;
+	private Object reverseProxyDelegate_;
+	private Long reverseProxyDelegateKey_;
+	private boolean isReverseProxyStore_ = false;
+	private Object provisionalReverseProxyDelegateKey_;
+	private CustomProxyResolver reverseProxyResolver_;
+	private DIdentityFactory identityFactory_;
 	private transient Map<Object, NoteCoordinate> keyMap_;
 	//	private transient Map<Object, Element> elementCache_OLD;
 	private LoadingCache<NoteCoordinate, Element> elementCache_;
@@ -282,7 +336,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	protected LoadingCache<NoteCoordinate, Element> getElementCache() {
 		if (elementCache_ == null) {
-			elementCache_ = CacheBuilder.newBuilder().maximumSize(16384).expireAfterWrite(10, TimeUnit.MINUTES)
+			elementCache_ = CacheBuilder.newBuilder().maximumSize(16384).expireAfterWrite(20, TimeUnit.HOURS)
 					.build(new ElementStoreCacheLoader(this));
 		}
 		return elementCache_;
@@ -330,8 +384,9 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		types_ = new FastTable<Class<?>>();
 
 		ClassLoader cl = Factory.getClassLoader();
-		if (cl == null)
+		if (cl == null) {
 			cl = Thread.currentThread().getContextClassLoader();
+		}
 		for (int i = 0; i < count; i++) {
 			String className = in.readUTF();
 			Class<?> clazz = cl.loadClass(className);
@@ -407,6 +462,20 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
+	public Object getReverseProxyStoreDelegate() {
+		if (reverseProxyDelegate_ == null) {
+			org.openntf.domino.graph2.DConfiguration config = getConfiguration();
+			org.openntf.domino.graph2.DGraph graph = config.getGraph();
+			if (reverseProxyDelegateKey_ == null) {
+				reverseProxyDelegate_ = graph.getProxyStoreDelegate(this, provisionalReverseProxyDelegateKey_);
+			} else {
+				reverseProxyDelegate_ = graph.getProxyStoreDelegate(this);
+			}
+		}
+		return reverseProxyDelegate_;
+	}
+
+	@Override
 	public void setStoreDelegate(final Object store) {
 		delegate_ = store;
 		if (store instanceof Database) {
@@ -419,12 +488,32 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public void setProxyStoreDelegate(final Object store) {
-		proxyDelegate_ = store;
 		if (store instanceof Database) {
 			String rid = ((Database) store).getReplicaID();
 			proxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
+			proxyDelegate_ = store;
 		} else if (store instanceof DElementStore) {
 			proxyDelegateKey_ = ((DElementStore) store).getStoreKey();
+			proxyDelegate_ = ((DElementStore) store).getStoreDelegate();
+			//			System.out.println("TEMP DEBUG Setting proxy store delegate for element store " + ((Database) getStoreDelegate()).getApiPath()
+			//					+ " to " + (proxyDelegate_ == null ? "null" : ((Database) proxyDelegate_).getApiPath()));
+		} else {
+			//TODO Some other mechanism to get the key
+		}
+	}
+
+	@Override
+	public void setReverseProxyStoreDelegate(final Object store) {
+		if (store instanceof Database) {
+			String rid = ((Database) store).getReplicaID();
+			reverseProxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
+			reverseProxyDelegate_ = store;
+		} else if (store instanceof DElementStore) {
+			reverseProxyDelegateKey_ = ((DElementStore) store).getStoreKey();
+			reverseProxyDelegate_ = ((DElementStore) store).getStoreDelegate();
+			//			System.out.println(
+			//					"TEMP DEBUG Setting reverse proxy store delegate for element store " + ((Database) getStoreDelegate()).getApiPath()
+			//							+ " to " + (reverseProxyDelegate_ == null ? "null" : ((Database) reverseProxyDelegate_).getApiPath()));
 		} else {
 			//TODO Some other mechanism to get the key
 		}
@@ -472,6 +561,29 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
+	public Long getReverseProxyStoreKey() {
+		if (reverseProxyDelegateKey_ == null) {
+			if (provisionalReverseProxyDelegateKey_ != null) {
+				//				System.out.println("Setting up proxy key using provisional delegate " + provisionalProxyDelegateKey_);
+				Object delegate = getProxyStoreDelegate();
+				if (delegate != null) {
+					if (delegate instanceof Database) {
+						String rid = ((Database) delegate).getReplicaID();
+						reverseProxyDelegateKey_ = NoteCoordinate.Utils.getLongFromReplid(rid);
+						//						System.out.println("Proxy database is " + System.identityHashCode(this) + " at "
+						//								+ ((Database) delegate).getApiPath() + " (" + ((Database) getStoreDelegate()).getApiPath() + ")");
+						//						Throwable t = new Throwable();
+						//						t.printStackTrace();
+					} else {
+						//TODO Some other mechanism to get the key
+					}
+				}
+			}
+		}
+		return reverseProxyDelegateKey_;
+	}
+
+	@Override
 	public void setStoreKey(final Long storeKey) {
 		delegateKey_ = storeKey;
 	}
@@ -504,6 +616,25 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				this.provisionalProxyDelegateKey_ = storeKey;
 			} else {
 				this.provisionalProxyDelegateKey_ = storeKey;
+			}
+		}
+	}
+
+	@Override
+	public void setReverseProxyStoreKey(final Long storeKey) {
+		reverseProxyDelegateKey_ = storeKey;
+
+	}
+
+	@Override
+	public void setReverseProxyStoreKey(final CharSequence storeKey) {
+		if (DominoUtils.isReplicaId(storeKey)) {
+			setProxyStoreKey(NoteCoordinate.Utils.getLongFromReplid(storeKey));
+		} else {
+			if (storeKey.toString().contains("!!")) {
+				this.provisionalReverseProxyDelegateKey_ = storeKey;
+			} else {
+				this.provisionalReverseProxyDelegateKey_ = storeKey;
 			}
 		}
 	}
@@ -543,6 +674,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		Map<String, Object> delegate = addElementDelegate(localkey, Vertex.class, temporary);
 		if (delegate != null) {
 			if (isProxied()) {
+				//				System.out.println("TEMP DEBUG from addVertex: ElementStore " + ((Database) getStoreDelegate()).getApiPath()
+				//						+ " is proxied. Setting up proxy on delegate...");
 				result = setupProxy(delegate, (Serializable) id);
 			} else {
 				DVertex vertex = new DVertex(getConfiguration().getGraph(), delegate);
@@ -671,8 +804,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	@Override
 	public Element getElement(final Object id) throws IllegalStateException {
 		try {
+			//			if (isProxied()) {
+			//				System.out.println("Getting a proxied element for id: " + String.valueOf(id));
+			//			}
 			NoteCoordinate nc = normalizeId((Serializable) id);
 			Element result = getElementCache().get(nc);
+			//			if (isProxied()) {
+			//				if (result instanceof DProxyVertex) {
+			//					NoteCoordinate proxyid = ((DProxyVertex) result).getProxiedId();
+			//					getElementCache().put(proxyid, result);
+			//				}
+			//			}
 			//			System.out.println("TEMP DEBUG requesting element for id " + id.getClass().getSimpleName() + ": " + String.valueOf(id)
 			//					+ " from element store " + System.identityHashCode(this) + " using element cache "
 			//					+ System.identityHashCode(getElementCache()) + " resulting in a " + result.getClass().getSimpleName() + ": "
@@ -689,6 +831,8 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			} else {
 				throw uee;
 			}
+		} catch (UserAccessException uae) {
+			throw uae;
 		} catch (Throwable t) {
 			throw new IllegalStateException("Unable to retrieve id " + String.valueOf(id), t);
 		}
@@ -839,14 +983,17 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 
 	@Override
 	public boolean isProxied() {
-		//		Object pDelegate = getProxyStoreDelegate();
-		boolean result = getProxyStoreKey() != null;
-		//		if (!result) {
-		//			System.out.println("Checking proxy status on store " + System.identityHashCode(this) + " in thread "
-		//					+ System.identityHashCode(Thread.currentThread()));
-		//			Throwable t = new Throwable();
-		//			t.printStackTrace();
-		//		}
+		Object pDelegate = getProxyStoreDelegate();
+		Long l = this.getProxyStoreKey();
+		boolean result = (l != null || pDelegate != null);
+		return result;
+	}
+
+	@Override
+	public boolean isReverseProxied() {
+		Object pDelegate = getReverseProxyStoreDelegate();
+		Long l = this.getReverseProxyStoreKey();
+		boolean result = (l != null || pDelegate != null);
 		return result;
 	}
 
@@ -895,9 +1042,11 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		DProxyVertex result = new DProxyVertex(getConfiguration().getGraph(), (Map<String, Object>) proxy);
 		Object rawpid = result.getProxiedId();
 		if (rawpid != null) {
-			DElement elem = (DElement) getConfiguration().getGraph().getElement(rawpid);
-			if (elem == null) {
-				rawpid = null;
+			if (result.getProxyDelegate() == null) {
+				DElement elem = (DElement) getConfiguration().getGraph().getElement(rawpid);
+				if (elem == null) {
+					rawpid = null;
+				}
 			}
 		}
 		if (rawpid == null) {
@@ -933,6 +1082,36 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
+	protected DProxyVertex setupReverseProxy(final DVertex original) {
+		if (original == null) {
+			return null;
+		}
+		DProxyVertex result = null;
+		try {
+			CustomProxyResolver resolver = getCustomReverseProxyResolver();
+			Map<String, Object> proxyDel = null;
+			if (resolver == null) {
+				Object rpDel = getReverseProxyStoreDelegate();
+				if (rpDel instanceof Database) {
+					proxyDel = ((Database) rpDel).getDocumentWithKey((Serializable) original.getId(), true);
+				} else {
+					System.out.println("WARNING reverse proxy delegate is not a Database. It's a "
+							+ (rpDel == null ? "null" : rpDel.getClass().getName()));
+				}
+			} else {
+				proxyDel = resolver.getProxyDelegate((Serializable) original.getId());
+			}
+			result = new DProxyVertex(getConfiguration().getGraph(), proxyDel);
+			DElementStore proxyStore = (DElementStore) result.getElementStore();
+			proxyStore.getElementCache().put((NoteCoordinate) result.getId(), result);
+			result.setProxyDelegate(original);
+			result.setReverseProxy(true);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return result;
+	}
+
 	//	@Override
 	@Override
 	public Object findElementDelegate(final Object delegateKey) throws IllegalStateException, IllegalArgumentException {
@@ -940,6 +1119,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		Object del = null;
 		del = getStoreDelegate();
 		if (isProxied()) {
+			//			System.out.println("TEMP DEBUG Retrieving from proxied store for key " + String.valueOf(delegateKey));
 			NoteCoordinate nc = null;
 			if (delegateKey instanceof NoteCoordinate) {
 				nc = (NoteCoordinate) delegateKey;
@@ -951,20 +1131,29 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				if (getProxyStoreKey().equals(dbkey)) {
 					del = getProxyStoreDelegate();
 				}
-				//			System.out.println("TEMP DEBUG Retrieving from proxied store");
 			}
 		}
 		if (del instanceof Database) {
 			Database db = (Database) del;
+			boolean isDeletedDoc;
 			db.getAncestorSession().setFixEnable(Fixes.MIME_BLOCK_ITEM_INTERFACE, false);
 			if (delegateKey instanceof Serializable) {
 				if (delegateKey instanceof ViewEntryCoordinate) {
 					result = ((ViewEntryCoordinate) delegateKey).getViewEntry();
 				} else if (delegateKey instanceof NoteCoordinate) {
 					String unid = ((NoteCoordinate) delegateKey).getUNID();
-					result = db.getDocumentWithKey(unid, false);
-					if (result != null && ((Document) result).isNewNote()) {
-						((Document) result).save();
+					try {
+						result = db.getDocumentWithKey(unid, false);
+					} catch (UserAccessException uae) {
+						//this is normal and acceptable. Don't report.
+					} catch (RuntimeException re) {
+						throw re;
+					}
+					if (result != null) {
+						if (((Document) result).isDeleted()) {
+							isDeletedDoc = true;
+							result = null;
+						}
 					}
 					//					System.out.println("Retrieved result using NoteCoordinate with unid " + unid);
 				} else if (delegateKey instanceof CharSequence) {
@@ -985,15 +1174,25 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				}
 				if (result == null) {
 					result = db.getDocumentWithKey((Serializable) delegateKey, false);
+					if (result != null) {
+						if (((Document) result).isDeleted()) {
+							isDeletedDoc = true;
+							result = null;
+						}
+					}
 				}
 				if (result != null) {
 					//					System.out.println("TEMP DEBUG Checking for proxy status for type " + type.getSimpleName());
-					boolean isProxy = false;
-					if (result instanceof Document) {
-						isProxy = ((Document) result).hasItem(DProxyVertex.PROXY_ITEM);
-					}
+					//					boolean isProxy = false;
+					//					if (result instanceof Document) {
+					//						isProxy = ((Document) result).hasItem(DProxyVertex.PROXY_ITEM);
+					//					}
 					if (isProxied()) {
+						//						System.out.println("TEMP DEBUG from findElementDelegate: ElementStore "
+						//								+ ((Database) getStoreDelegate()).getApiPath() + "is proxied. Setting up proxy on delegate...");
 						result = setupProxy(result, (Serializable) delegateKey);
+					} else {
+						//						System.out.println("TEMP DEBUG ElementStore " + ((Database) getStoreDelegate()).getApiPath() + " is not proxied.");
 					}
 				}
 			} else {
@@ -1332,6 +1531,16 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			nc.setSelectDocuments(true);
 			nc.setSelectionFormula(formulaFilter);
 			nc.buildCollection();
+			if (nc.getCount() == 0) {
+				raw = this.getProxyStoreDelegate();
+				if (raw != null) {
+					db = (Database) raw;
+					nc = db.createNoteCollection(false);
+					nc.setSelectDocuments(true);
+					nc.setSelectionFormula(formulaFilter);
+					nc.buildCollection();
+				}
+			}
 			result = Lists.newArrayListWithCapacity(nc.getCount());
 			for (String noteid : nc) {
 				result.add(NoteCoordinate.Utils.getNoteCoordinate(nc, noteid));
@@ -1369,8 +1578,19 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	}
 
 	@Override
+	public void setCustomReverseProxyResolver(final CustomProxyResolver resolver) {
+		reverseProxyResolver_ = resolver;
+		resolver.setProxiedElementStore(this);
+	}
+
+	@Override
 	public CustomProxyResolver getCustomProxyResolver() {
 		return proxyResolver_;
+	}
+
+	@Override
+	public CustomProxyResolver getCustomReverseProxyResolver() {
+		return reverseProxyResolver_;
 	}
 
 	@Override

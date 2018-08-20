@@ -145,6 +145,24 @@ public enum Strings {
 		return ((null == al) || (al.size() < 1)) ? null : new Vector<String>(al);
 	}
 
+	public static String getServer(final String apiPath) {
+		String result = "";
+		int sep = apiPath.indexOf("!!");
+		if (sep > -1) {
+			result = apiPath.substring(0, sep);
+		}
+		return result;
+	}
+
+	public static String getFilepath(final String apiPath) {
+		String result = apiPath;
+		int sep = apiPath.indexOf("!!");
+		if (sep > -1) {
+			result = apiPath.substring(sep + 2);
+		}
+		return result;
+	}
+
 	/**
 	 * Generates a properly formatted String which can be used as an Environment Variable name.
 	 *

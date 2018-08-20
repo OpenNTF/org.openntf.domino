@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.iterators;
@@ -46,7 +46,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Instantiates a new view entry iterator.
-	 * 
+	 *
 	 * @param collection
 	 *            the collection
 	 */
@@ -59,7 +59,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	//	/*
 	//	 * (non-Javadoc)
-	//	 * 
+	//	 *
 	//	 * @see org.openntf.domino.iterators.AbstractDominoIterator#getCollection()
 	//	 */
 	//	@Override
@@ -74,7 +74,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Gets the current entry.
-	 * 
+	 *
 	 * @return the current entry
 	 */
 	public ViewEntry getCurrentEntry() {
@@ -83,7 +83,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
@@ -93,7 +93,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Checks if is done.
-	 * 
+	 *
 	 * @return true, if is done
 	 */
 	public boolean isDone() {
@@ -102,7 +102,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Checks if is started.
-	 * 
+	 *
 	 * @return true, if is started
 	 */
 	public boolean isStarted() {
@@ -111,7 +111,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#next()
 	 */
 	@Override
@@ -120,7 +120,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 		ViewEntry result = null;
 		ViewEntry currentEntry = getCurrentEntry();
 		try {
-			result = ((currentEntry == null) ? collection_.getFirstEntry() : collection_.getNextEntry(currentEntry));
+			result = ((currentEntry == null) ? collection_.getFirstEntry() : collection_.getNextEntry());
 			currentIndex_++;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
@@ -132,7 +132,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Iterator#remove()
 	 */
 	@Override
@@ -142,7 +142,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Sets the current entry.
-	 * 
+	 *
 	 * @param currentEntry
 	 *            the new current entry
 	 */
@@ -154,7 +154,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Sets the done.
-	 * 
+	 *
 	 * @param done
 	 *            the new done
 	 */
@@ -164,7 +164,7 @@ public class ViewEntryIterator implements Iterator<ViewEntry> {
 
 	/**
 	 * Sets the started.
-	 * 
+	 *
 	 * @param started
 	 *            the new started
 	 */

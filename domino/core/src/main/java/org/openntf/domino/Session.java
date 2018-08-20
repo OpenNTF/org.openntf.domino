@@ -1086,12 +1086,12 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	public boolean changePassword(String arg0, String arg1, String arg2);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Session#getIDVault()
-	 * @since Domino 9.0.1 FP8
-	 */
-	@Override
-	public IDVault getIDVault();
+	//	/* (non-Javadoc)
+	//	 * @see lotus.domino.Session#getIDVault()
+	//	 * @since Domino 9.0.1 FP8
+	//	 */
+	//	@Override
+	//	public IDVault getIDVault();
 
 	//	/* (non-Javadoc)
 	//	 * @see lotus.domino.Session#getIDVault(java.lang.String)

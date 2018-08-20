@@ -94,7 +94,14 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		if (id instanceof NoteCoordinate) {
 
 		}
+		//		System.out.println("TEMP DEBUG Getting element from id " + String.valueOf(id));
 		DElementStore store = findElementStore(id);
+		//		if (store.isProxied()) {
+		//			String key = NoteCoordinate.Utils.getReplidFromLong(store.getStoreKey());
+		//			String proxykey = NoteCoordinate.Utils.getReplidFromLong(store.getProxyStoreKey());
+		//			System.out.println(
+		//					"Found a proxied element store for element key " + String.valueOf(id) + ", key: " + key + ", proxykey: " + proxykey);
+		//		}
 		Element result = store.getElement(id);
 		return result;
 	}
@@ -111,17 +118,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	@Override
 	public Vertex getVertex(final Object id) {
-		DElementStore store = findElementStore(id);
-		if (store == null) {
-			Throwable t = new IllegalArgumentException("No element store found for id " + String.valueOf(id));
-			t.printStackTrace();
-			try {
-				throw t;
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-		return (Vertex) store.getElement(id);
+		//		DElementStore store = findElementStore(id);
+		//		if (store == null) {
+		//			Throwable t = new IllegalArgumentException("No element store found for id " + String.valueOf(id));
+		//			t.printStackTrace();
+		//			try {
+		//				throw t;
+		//			} catch (Throwable e) {
+		//				e.printStackTrace();
+		//			}
+		//		}
+		return (Vertex) getElement(id);
 	}
 
 	@Override
@@ -168,7 +175,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		if (id instanceof NoteCoordinate) {
 
 		}
-		return (Edge) findElementStore(id).getElement(id);
+		return (Edge) getElement(id);
 	}
 
 	@Override
@@ -289,6 +296,12 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	@Override
 	public Object findDelegate(final Object delegateKey) {
 		DElementStore store = findElementStore(delegateKey);
+		if (store.isProxied()) {
+			String key = NoteCoordinate.Utils.getReplidFromLong(store.getStoreKey());
+			String proxykey = NoteCoordinate.Utils.getReplidFromLong(store.getProxyStoreKey());
+			System.out.println("Found a proxied element store for element key" + String.valueOf(delegateKey) + ", key: " + key
+					+ ", proxykey: " + proxykey);
+		}
 		return store.findElementDelegate(delegateKey/*, Element.class*/);
 	}
 
@@ -350,7 +363,18 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 					if (result == null) {
 						DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
 						newStore.setStoreKey(rid);
-						newStore.setConfiguration(this.getConfiguration());
+						DConfiguration config = this.getConfiguration();
+						if (config.getDefaultProxyStore() != null) {
+							newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+						}
+						if (config.getDefaultReverseProxyStore() != null) {
+							newStore.setReverseProxyStoreDelegate(config.getDefaultReverseProxyStore());
+							//							System.out.println(
+							//									"TEMP DEBUG Setting reverse proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+							//											+ " to " + ((Database) config.getDefaultReverseProxyStore().getStoreDelegate()).getApiPath());
+						}
+						config.addElementStore(newStore);
+						//						newStore.setConfiguration(config);
 						getElementStores().put(rid, newStore);
 						//						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 						result = newStore;
@@ -374,8 +398,17 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 							DConfiguration config = this.getConfiguration();
 							if (config.getDefaultProxyStore() != null) {
 								newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+								//								System.out.println(
+								//										"TEMP DEBUG Setting proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+								//												+ " to " + ((Database) config.getDefaultProxyStore().getStoreDelegate()).getApiPath());
 							}
-							newStore.setConfiguration(config);
+							if (config.getDefaultReverseProxyStore() != null) {
+								newStore.setReverseProxyStoreDelegate(config.getDefaultReverseProxyStore());
+								//								System.out.println("TEMP DEBUG Setting reverse proxy default on "
+								//										+ ((Database) newStore.getStoreDelegate()).getApiPath() + " to "
+								//										+ ((Database) config.getDefaultReverseProxyStore().getStoreDelegate()).getApiPath());
+							}
+							config.addElementStore(newStore);
 							getElementStores().put(rid, newStore);
 							//							System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 							result = newStore;
@@ -393,8 +426,18 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 							DConfiguration config = this.getConfiguration();
 							if (config.getDefaultProxyStore() != null) {
 								newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+								//								System.out.println(
+								//										"TEMP DEBUG Setting proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+								//												+ " to " + ((Database) config.getDefaultProxyStore().getStoreDelegate()).getApiPath());
+
 							}
-							newStore.setConfiguration(config);
+							if (config.getDefaultReverseProxyStore() != null) {
+								newStore.setReverseProxyStoreDelegate(config.getDefaultReverseProxyStore());
+								//								System.out.println("TEMP DEBUG Setting reverse proxy default on "
+								//										+ ((Database) newStore.getStoreDelegate()).getApiPath() + " to "
+								//										+ ((Database) config.getDefaultReverseProxyStore().getStoreDelegate()).getApiPath());
+							}
+							config.addElementStore(newStore);
 							getElementStores().put(rid, newStore);
 							//							System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 							result = newStore;
@@ -407,15 +450,29 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			} else if (skey.length() > 16) {
 				CharSequence prefix = skey.subSequence(0, 16);
 				if (DominoUtils.isReplicaId(prefix)) {
-					System.out.println("TEMP DEBUG Attempting to resolve replica id " + prefix + " to an element store");
+					//					System.out.println("TEMP DEBUG Attempting to resolve replica id " + prefix + " to an element store");
 					Long rid = NoteCoordinate.Utils.getLongFromReplid(prefix);
 					result = getElementStores().get(rid);
 					if (result == null) {
 						DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+						DConfiguration config = this.getConfiguration();
 						newStore.setStoreKey(rid);
-						newStore.setConfiguration(this.getConfiguration());
+						//						newStore.setConfiguration(config);
+						if (config.getDefaultProxyStore() != null) {
+							newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+							//							System.out
+							//									.println("TEMP DEBUG Setting proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+							//											+ " to " + ((Database) config.getDefaultProxyStore().getStoreDelegate()).getApiPath());
+						}
+						if (config.getDefaultReverseProxyStore() != null) {
+							newStore.setReverseProxyStoreDelegate(config.getDefaultReverseProxyStore());
+							//							System.out.println(
+							//									"TEMP DEBUG Setting reverse proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+							//											+ " to " + ((Database) config.getDefaultReverseProxyStore().getStoreDelegate()).getApiPath());
+						}
+						config.addElementStore(newStore);
 						getElementStores().put(rid, newStore);
-						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
+						//						System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(rid));
 						result = newStore;
 					}
 				} else {
@@ -431,8 +488,21 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 			result = getElementStores().get(key);
 			if (result == null) {
 				DElementStore newStore = new org.openntf.domino.graph2.impl.DElementStore();
+				DConfiguration config = this.getConfiguration();
 				newStore.setStoreKey(key);
-				newStore.setConfiguration(this.getConfiguration());
+				//				newStore.setConfiguration(config);
+				if (config.getDefaultProxyStore() != null) {
+					newStore.setProxyStoreDelegate(config.getDefaultProxyStore());
+					//					System.out.println("TEMP DEBUG Setting proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+					//							+ " to " + ((Database) config.getDefaultProxyStore().getStoreDelegate()).getApiPath());
+				}
+				if (config.getDefaultReverseProxyStore() != null) {
+					newStore.setReverseProxyStoreDelegate(config.getDefaultReverseProxyStore());
+					//					System.out
+					//							.println("TEMP DEBUG Setting reverse proxy default on " + ((Database) newStore.getStoreDelegate()).getApiPath()
+					//									+ " to " + ((Database) config.getDefaultReverseProxyStore().getStoreDelegate()).getApiPath());
+				}
+				config.addElementStore(newStore);
 				getElementStores().put(key, newStore);
 				//				System.out.println("TEMP DEBUG Added new dynamic element store " + String.valueOf(key));
 				result = newStore;
@@ -524,7 +594,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 				localSession.setFixEnable(Fixes.CREATE_DB, true);
 				DbDirectory localDir = localSession.getDbDirectory(server);
 				Database newDb = localDir.createDatabase(key, true);
-				if (newDb.isOpen()) {
+				if (newDb != null && newDb.isOpen()) {
 					//					System.out.println("Configuring NSF...");
 					newDb.setCategories("graph2");
 					newDb.setFolderReferencesEnabled(false);
@@ -537,7 +607,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 					org.openntf.domino.View v = newDb.createView("NONE");
 					v.setSelectionFormula("SELECT @False");
 				} else {
-					System.out.println("Database is not open");
+					System.out.println("Database not created for key: " + key);
 				}
 				result = newDb;
 				//				System.out.println("New NSF complete");

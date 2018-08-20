@@ -1165,10 +1165,10 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
 					if (checksum != null) {
-						doc.setUniversalID(checksum);
+						doc.setUniversalID(checksum, true);
 					}
-					doc.replaceItemValue("$Created", new Date());
 					doc.replaceItemValue("$$Key", key);
+					doc.replaceItemValue("$Created", new Date());
 				}
 				return doc;
 
@@ -1181,6 +1181,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				//				doc.replaceItemValue("$$Key", "");
 				return doc;
 			}
+		} catch (UserAccessException uae) {
+			throw uae;
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -1212,6 +1214,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				getDelegate().open();
 			}
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
+		} catch (UserAccessException uae) {
+			throw uae;
 		} catch (NotesException e) {
 			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
 			} else {
@@ -3736,7 +3740,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	@Override
 	public String getUNID(final String noteid) {
-		return getInternalNoteCollection().getUNID(noteid);
+		if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+			return getInternalNoteCollection().getUNID(noteid).toLowerCase();
+		} else {
+			return getInternalNoteCollection().getUNID(noteid);
+		}
 	}
 
 	@Override

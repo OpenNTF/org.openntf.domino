@@ -321,11 +321,15 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public int getInEdgeCount(final String label) {
-		NoteList edgeIds = getInEdgesMap().get(label);
-		if (edgeIds == null) {
+		if (hasProperty("_COUNT" + DVertex.IN_PREFIX + label)) {
 			return getProperty("_COUNT" + DVertex.IN_PREFIX + label, Integer.class, false);
 		} else {
-			return edgeIds.size();
+			NoteList edgeIds = getInEdgesMap().get(label);
+			if (edgeIds == null) {
+				return getProperty("_COUNT" + DVertex.IN_PREFIX + label, Integer.class, false);
+			} else {
+				return edgeIds.size();
+			}
 		}
 	}
 
@@ -374,15 +378,23 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 
 	@Override
 	public int getOutEdgeCount(final String label) {
-		NoteList edgeIds = getOutEdgesMap().get(label);
-		if (edgeIds == null) {
+		if (hasProperty("_COUNT" + DVertex.OUT_PREFIX + label)) {
 			try {
 				return getProperty("_COUNT" + DVertex.OUT_PREFIX + label, Integer.class, false);
 			} catch (Throwable t) {
 				throw new RuntimeException("Exception getting edge count for label " + label, t);
 			}
 		} else {
-			return edgeIds.size();
+			NoteList edgeIds = getOutEdgesMap().get(label);
+			if (edgeIds == null) {
+				try {
+					return getProperty("_COUNT" + DVertex.OUT_PREFIX + label, Integer.class, false);
+				} catch (Throwable t) {
+					throw new RuntimeException("Exception getting edge count for label " + label, t);
+				}
+			} else {
+				return edgeIds.size();
+			}
 		}
 	}
 
@@ -622,5 +634,10 @@ public class DVertex extends DElement implements org.openntf.domino.graph2.DVert
 	@Override
 	public void setFrameImplObject(final String key, final Object value) {
 		getFrameImplCache().put(key, value);
+	}
+
+	@Override
+	public org.openntf.domino.graph2.DElementStore getElementStore() {
+		return getParent().findElementStore(this);
 	}
 }

@@ -31,7 +31,8 @@ Export-Package: com.tinkerpop.blueprints,
  com.tinkerpop.pipes.transform,
  com.tinkerpop.pipes.util,
  com.tinkerpop.pipes.util.iterators,
- com.tinkerpop.pipes.util.structures
+ com.tinkerpop.pipes.util.structures,
+ javassist.util.proxy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  lib/collections-generic-4.01.jar,

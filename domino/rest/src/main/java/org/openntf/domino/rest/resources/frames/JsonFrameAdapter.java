@@ -1,5 +1,6 @@
 package org.openntf.domino.rest.resources.frames;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import org.openntf.domino.graph2.DEdgeList;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
 import org.openntf.domino.graph2.annotations.FramedVertexList;
+import org.openntf.domino.graph2.annotations.Inclusive;
 import org.openntf.domino.graph2.annotations.TypedProperty;
 import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
@@ -50,7 +52,7 @@ public class JsonFrameAdapter implements JsonObject {
 
 	// TODO NTF Add support for modification date checking prior to permitting
 	// PUT/PATCH
-	static private boolean ifUnmodifiedSince(Object object, Date ifUnmodifiedSince) {
+	static private boolean ifUnmodifiedSince(final Object object, final Date ifUnmodifiedSince) {
 		if (object instanceof DEdgeFrame) {
 			Date mod = ((DEdgeFrame) object).getModified();
 			return !mod.after(ifUnmodifiedSince);
@@ -63,7 +65,7 @@ public class JsonFrameAdapter implements JsonObject {
 		}
 	}
 
-	public static VertexFrame toVertexFrame(DFramedTransactionalGraph graph, Edge edge, Vertex source) {
+	public static VertexFrame toVertexFrame(final DFramedTransactionalGraph graph, final Edge edge, final Vertex source) {
 		VertexFrame result = null;
 		Vertex other = null;
 		if (edge instanceof DEdge) {
@@ -91,7 +93,7 @@ public class JsonFrameAdapter implements JsonObject {
 	protected ParamMap parameters_;
 
 	@SuppressWarnings("rawtypes")
-	public JsonFrameAdapter(DFramedTransactionalGraph graph, EdgeFrame frame, ParamMap pm, boolean isCollectionRoute) {
+	public JsonFrameAdapter(final DFramedTransactionalGraph graph, final EdgeFrame frame, final ParamMap pm, final boolean isCollectionRoute) {
 		graph_ = graph;
 		frame_ = frame;
 		parameters_ = pm;
@@ -100,8 +102,8 @@ public class JsonFrameAdapter implements JsonObject {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public JsonFrameAdapter(DFramedTransactionalGraph graph, VertexFrame frame, ParamMap pm,
-			boolean isCollectionRoute) {
+	public JsonFrameAdapter(final DFramedTransactionalGraph graph, final VertexFrame frame, final ParamMap pm,
+			final boolean isCollectionRoute) {
 		graph_ = graph;
 		frame_ = frame;
 		parameters_ = pm;
@@ -142,6 +144,20 @@ public class JsonFrameAdapter implements JsonObject {
 	public List<CharSequence> getOutProperties() {
 		if (parameters_ != null) {
 			return parameters_.getOutProperties();
+		}
+		return null;
+	}
+
+	public List<CharSequence> getInVProperties() {
+		if (parameters_ != null) {
+			return parameters_.getInVProperties();
+		}
+		return null;
+	}
+
+	public List<CharSequence> getOutVProperties() {
+		if (parameters_ != null) {
+			return parameters_.getOutVProperties();
 		}
 		return null;
 	}
@@ -291,6 +307,16 @@ public class JsonFrameAdapter implements JsonObject {
 		return setters_;
 	}
 
+	private static boolean isInclusive(final Class<?> clazz) {
+		boolean result = false;
+		Class<?> [] interfaces = clazz.getInterfaces();
+		for (Class<?> inter : interfaces) {
+			Annotation incl = inter.getAnnotation(Inclusive.class);
+			if (incl != null) return true;
+		}
+		return result;
+	}
+
 	@Override
 	public Iterator<String> getJsonProperties() {
 		// System.out
@@ -305,6 +331,7 @@ public class JsonFrameAdapter implements JsonObject {
 		// }
 		result.add("@id");
 		result.add("@type");
+		result.add("@editable");
 		if (getIncludeDebug()) {
 			result.add("@debug");
 		}
@@ -314,17 +341,24 @@ public class JsonFrameAdapter implements JsonObject {
 			// ((VertexFrame)frame_).asVertex().getId();
 			props = new ArrayList<CharSequence>();
 			props.addAll(getGetters().keySet());
-			if (props == null || props.size() < 5) {
+			Class<?> klazz = frame_.getClass();
+			boolean incl = isInclusive(klazz);
+			//			if (incl) {
+			//				System.out.println("TEMP DEBUG Found an inclusive ");
+			//			}
+			if (props == null || props.size() < 5 || incl) {
 				if (frame_ instanceof DVertexFrame) {
 					try {
-						Set<CharSequence> raw = ((DVertexFrame) frame_).asMap().keySet();
+						Set<String> raw =  ((DVertexFrame)frame_).asVertex().getPropertyKeys();
+						//						Set<CharSequence> raw = ((DVertexFrame) frame_).asMap().keySet();
+						//						System.out.println("TEMP DEBUG raw vertex has " + raw.size() + " properties");
 						props.addAll(CaseInsensitiveString.toCaseInsensitive(raw));
 					} catch (Throwable t) {
 						Throwable cause = t.getCause();
 						if (cause != null) {
 							System.err.println(
 									"Exception trying to process a frame of type " + DGraphUtils.findInterface(frame_)
-											+ " resulting in a " + cause.getClass().getSimpleName());
+									+ " resulting in a " + cause.getClass().getSimpleName());
 							cause.printStackTrace();
 							try {
 								throw cause;
@@ -370,6 +404,7 @@ public class JsonFrameAdapter implements JsonObject {
 		if (frame instanceof EdgeFrame) {
 			result.add("@in");
 			result.add("@out");
+			result.add("@label");
 		}
 		if (frame instanceof ViewVertex) {
 			result.add("@columninfo");
@@ -389,20 +424,33 @@ public class JsonFrameAdapter implements JsonObject {
 				result.remove(cis.toString());
 			}
 		}
+
+		//		System.out.println("TEMP DEBUG getting properties for a " + DGraphUtils.getInterfaceList(frame) + " -- " + Strings.getString(result, ","));
 		return result.iterator();
 	}
 
 	@Override
-	public Object getJsonProperty(String paramKey) {
+	public Object getJsonProperty(final String paramKey) {
 		Object result = null;
 		Object frame = getFrame();
 		if (frame != null) {
 			CaseInsensitiveString key = new CaseInsensitiveString(paramKey);
 			if (key.equals("@id")) {
 				if (frame instanceof VertexFrame) {
-					result = ((VertexFrame) frame).asVertex().getId().toString();
+					Vertex v = ((VertexFrame)frame).asVertex();
+					//					if (v instanceof DProxyVertex) {
+					//						result = ((DProxyVertex)v).getProxyDelegate().getId().toString();
+					//					} else {
+					result = String.valueOf(v.getId());
+					//					}
 				} else if (frame instanceof EdgeFrame) {
-					result = ((EdgeFrame) frame).asEdge().getId().toString();
+					result = String.valueOf(((EdgeFrame) frame).asEdge().getId());
+				}
+			} else if (key.equals("@editable")) {
+				if (frame instanceof VertexFrame) {
+					result = ((DVertex)((VertexFrame)frame).asVertex()).isEditable();
+				} else if (frame instanceof EdgeFrame) {
+					result = ((DEdge)((EdgeFrame)frame).asEdge()).isEditable();
 				}
 			} else if (key.equals("@proxyid")) {
 				// System.out.println("TEMP DEBUG @proxyid requested");
@@ -428,6 +476,11 @@ public class JsonFrameAdapter implements JsonObject {
 					result = type_;
 				} else if (frame instanceof EdgeFrame) {
 					result = type_;
+				}
+			} else if (key.equals("@label")) {
+				if (frame instanceof EdgeFrame) {
+					Edge e = ((EdgeFrame) frame).asEdge();
+					result = e.getLabel();
 				}
 			} else if (key.equals("@in") && frame instanceof EdgeFrame) {
 				if (getInProperties() == null) {
@@ -464,6 +517,8 @@ public class JsonFrameAdapter implements JsonObject {
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
+					} else {
+						System.out.println("In method not found for type: " + type_.getName());
 					}
 				}
 			} else if (key.equals("@out") && frame instanceof EdgeFrame) {
@@ -520,6 +575,9 @@ public class JsonFrameAdapter implements JsonObject {
 							} else {
 
 							}
+						} catch (IllegalArgumentException iae) {
+							System.out.println("TEMP DEBUG Attempting to invoke " + crystal.getDeclaringClass().getName() + "." + crystal.getName() + " on an " + getFrame().getClass().getName() + " (" + DGraphUtils.getInterfaceList(getFrame()) + ")");
+							throw new RuntimeException(iae);
 						} catch (Exception e) {
 							throw new RuntimeException(e);
 						}
@@ -563,10 +621,16 @@ public class JsonFrameAdapter implements JsonObject {
 					Map<String, String> columnInfo = new LinkedHashMap<String, String>();
 					if (frame instanceof ViewVertex) {
 						View view = ((ViewVertex) frame).asView();
-						for (ViewColumn column : view.getColumns()) {
-							String progName = column.getItemName();
-							String title = column.getTitle();
-							columnInfo.put(progName, title);
+						if (view != null){
+							try {
+								for (ViewColumn column : view.getColumns()) {
+									String progName = column.getItemName();
+									String title = column.getTitle();
+									columnInfo.put(progName, title);
+								}
+							} catch (Throwable t) {
+								columnInfo.put("@error", "Unable to access column information");
+							}
 						}
 					} else {
 						System.err.println("Frame is not a ViewVertex. It is " + DGraphUtils.findInterface(frame));
@@ -584,6 +648,8 @@ public class JsonFrameAdapter implements JsonObject {
 				if (crystal != null) {
 					try {
 						result = crystal.invoke(frame, (Object[]) null);
+					} catch (IllegalArgumentException iae) {
+						throw new RuntimeException(iae.getMessage() + " where the expect call is " + crystal.getDeclaringClass().getName() + "." + crystal.getName() + " but the object is " + DGraphUtils.getInterfaceList(frame));
 					} catch (Exception e) {
 						throw new RuntimeException(e);
 					}
@@ -688,16 +754,20 @@ public class JsonFrameAdapter implements JsonObject {
 							// getStart() + " and count is " + getCount()
 							// + " for a " + result.getClass().getName());
 							if (getCount() > 0) {
+								int end = getStart() + getCount();
 								if (result instanceof FramedEdgeList) {
 									// System.out.println("TEMP DEBUG Sublisting
 									// a FramedEdgeList...");
-									result = ((FramedEdgeList<?>) result).subList(getStart(), getCount());
+									int size = ((FramedEdgeList<?>) result).size();
+									result = ((FramedEdgeList<?>) result).subList(getStart(), (end>size?size:end));
 								} else if (result instanceof FramedVertexList) {
-									result = ((FramedVertexList<?>) result).subList(getStart(), getCount());
+									int size = ((FramedVertexList<?>) result).size();
+									result = ((FramedVertexList<?>) result).subList(getStart(), (end>size?size:end));
 								} else if (result instanceof DEdgeEntryList) {
 									// System.out.println("TEMP DEBUG Sublisting
 									// a DEdgeEntryList...");
-									result = ((DEdgeEntryList) result).subList(getStart(), getCount());
+									int size = ((DEdgeEntryList) result).size();
+									result = ((DEdgeEntryList) result).subList(getStart(), (end>size?size:end));
 								}
 							} else {
 								if (result instanceof FramedEdgeList) {
@@ -709,7 +779,7 @@ public class JsonFrameAdapter implements JsonObject {
 								} else if (result instanceof DEdgeEntryList) {
 									// System.out.println("TEMP DEBUG Sublisting
 									// a DEdgeEntryList...");
-									result = ((DEdgeEntryList) result).subList(getStart(),
+									result = ((DEdgeEntryList) result).subList(getStart()+1,
 											((DEdgeEntryList) result).size());
 								}
 							}
@@ -781,7 +851,7 @@ public class JsonFrameAdapter implements JsonObject {
 	}
 
 	@Override
-	public void putJsonProperty(String paramKey, Object value) {
+	public void putJsonProperty(final String paramKey, Object value) {
 		Object frame = getFrame();
 		if (frame != null) {
 			CaseInsensitiveString key = new CaseInsensitiveString(paramKey);
@@ -833,7 +903,7 @@ public class JsonFrameAdapter implements JsonObject {
 			} else {
 				Method man = getGetters().get(key);
 				if (man == null) { // NTF if there's no getter, it's an
-									// undefined property
+					// undefined property
 					if (frame instanceof EdgeFrame) {
 						((EdgeFrame) frame).asEdge().setProperty(paramKey, value);
 					} else if (frame instanceof VertexFrame) {
@@ -860,7 +930,7 @@ public class JsonFrameAdapter implements JsonObject {
 		}
 	}
 
-	public boolean runAction(CharSequence key) {
+	public boolean runAction(final CharSequence key) {
 		Object result = Boolean.FALSE;
 		CharSequence name = key/* .subSequence(1, key.length()) */;
 		Method crystal = getActions().get(name);
@@ -876,7 +946,7 @@ public class JsonFrameAdapter implements JsonObject {
 		return (Boolean) result;
 	}
 
-	public boolean runAction(CharSequence key, List<Object> arguments) {
+	public boolean runAction(final CharSequence key, final List<Object> arguments) {
 		Object result = Boolean.FALSE;
 		CharSequence name = key/* .subSequence(1, key.length()) */;
 		Method crystal = getActions().get(name);

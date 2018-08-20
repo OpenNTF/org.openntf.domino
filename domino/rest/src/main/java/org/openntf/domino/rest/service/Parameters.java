@@ -11,9 +11,9 @@ import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
 public enum Parameters {
-	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, COMMAND, ITEM, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS;
+	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, INVPROPS, OUTVPROPS, COMMAND, ITEM, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS;
 
-	public static ParamMap toParamMap(UriInfo uriInfo) {
+	public static ParamMap toParamMap(final UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
 		MultivaluedMap<String, String> mm = uriInfo.getQueryParameters(true);
 		for (String key : mm.keySet()) {
@@ -123,6 +123,14 @@ public enum Parameters {
 
 		public List<CharSequence> getOutProperties() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.OUTPROPS));
+		}
+
+		public List<CharSequence> getInVProperties() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.INVPROPS));
+		}
+
+		public List<CharSequence> getOutVProperties() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.OUTVPROPS));
 		}
 
 		public List<CharSequence> getLabels() {

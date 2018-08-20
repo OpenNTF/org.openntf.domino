@@ -13,7 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<tycho-version>0.22.0</tycho-version>
-		<compiler>1.8</compiler>
+		<compiler>1.6</compiler>
 		<manifest-location>META-INF</manifest-location>
 	</properties>
 

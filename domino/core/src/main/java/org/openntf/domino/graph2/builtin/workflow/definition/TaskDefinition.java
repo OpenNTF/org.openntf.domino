@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.workflow.definition;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
@@ -11,7 +13,7 @@ public interface TaskDefinition extends DVertexFrame {
 
 	/* BEGIN Starts relationships */
 	@IncidenceUnique(label = StartsWith.LABEL_STARTSWITH, direction = Direction.IN)
-	public Iterable<StartsWith> getStartsWith();
+	public List<StartsWith> getStartsWith();
 
 	@IncidenceUnique(label = StartsWith.LABEL_STARTSWITH, direction = Direction.IN)
 	public StartsWith addStartsWith(FlowDefinition definition);
@@ -20,7 +22,7 @@ public interface TaskDefinition extends DVertexFrame {
 	public void removeStartsWith(FlowDefinition definition);
 
 	@AdjacencyUnique(label = StartsWith.LABEL_STARTSWITH, direction = Direction.IN)
-	public Iterable<FlowDefinition> getStartFlows();
+	public List<FlowDefinition> getStartFlows();
 
 	@AdjacencyUnique(label = StartsWith.LABEL_STARTSWITH, direction = Direction.IN)
 	public FlowDefinition addStartFlow(FlowDefinition definition);
@@ -32,7 +34,7 @@ public interface TaskDefinition extends DVertexFrame {
 
 	/* BEGIN Finishes relationships */
 	@IncidenceUnique(label = Finishes.LABEL_FINISHES)
-	public Iterable<Finishes> getFinishes();
+	public List<Finishes> getFinishes();
 
 	@IncidenceUnique(label = Finishes.LABEL_FINISHES)
 	public Finishes addFinishes(FlowDefinition definition);
@@ -41,7 +43,7 @@ public interface TaskDefinition extends DVertexFrame {
 	public void removeFinishes(FlowDefinition definition);
 
 	@AdjacencyUnique(label = Finishes.LABEL_FINISHES)
-	public Iterable<FlowDefinition> getFinishFlows();
+	public List<FlowDefinition> getFinishFlows();
 
 	@AdjacencyUnique(label = Finishes.LABEL_FINISHES)
 	public FlowDefinition addFinishFlow(FlowDefinition definition);
@@ -53,7 +55,7 @@ public interface TaskDefinition extends DVertexFrame {
 
 	/* BEGIN FollowedBy relationships */
 	@IncidenceUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY)
-	public Iterable<FollowedBy> getFollowedBys();
+	public List<FollowedBy> getFollowedBys();
 
 	@IncidenceUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY)
 	public FollowedBy addFollowedBy(TaskDefinition definition);
@@ -62,7 +64,7 @@ public interface TaskDefinition extends DVertexFrame {
 	public void removeFollowedBy(TaskDefinition definition);
 
 	@AdjacencyUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY)
-	public Iterable<TaskDefinition> getFollowedByTasks();
+	public List<TaskDefinition> getFollowedByTasks();
 
 	@AdjacencyUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY)
 	public TaskDefinition addFollowedByTask(TaskDefinition definition);
@@ -74,7 +76,7 @@ public interface TaskDefinition extends DVertexFrame {
 
 	/* BEGIN Follows relationships */
 	@IncidenceUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY, direction = Direction.IN)
-	public Iterable<FollowedBy> getFollows();
+	public List<FollowedBy> getFollows();
 
 	@IncidenceUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY, direction = Direction.IN)
 	public FollowedBy addFollows(TaskDefinition definition);
@@ -83,7 +85,7 @@ public interface TaskDefinition extends DVertexFrame {
 	public void removeFollows(TaskDefinition definition);
 
 	@AdjacencyUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY, direction = Direction.IN)
-	public Iterable<TaskDefinition> getFollowsTasks();
+	public List<TaskDefinition> getFollowsTasks();
 
 	@AdjacencyUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY, direction = Direction.IN)
 	public TaskDefinition addFollowsTask(TaskDefinition definition);
@@ -95,7 +97,7 @@ public interface TaskDefinition extends DVertexFrame {
 
 	/* BEGIN Defines relationships */
 	@IncidenceUnique(label = Defines.LABEL_FLOWABLEDEFINES)
-	public Iterable<Defines> getDefines();
+	public List<Defines> getDefines();
 
 	@IncidenceUnique(label = Defines.LABEL_FLOWABLEDEFINES)
 	public Defines addDefines(Task task);
@@ -104,7 +106,7 @@ public interface TaskDefinition extends DVertexFrame {
 	public void removeDefines(Task task);
 
 	@AdjacencyUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY)
-	public Iterable<Task> getDefinesTasks();
+	public List<Task> getDefinesTasks();
 
 	@AdjacencyUnique(label = FollowedBy.LABEL_FLOWFOLLOWEDBY)
 	public Task addDefinesTask(Task task);

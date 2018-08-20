@@ -10,10 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
@@ -24,6 +26,8 @@ import org.openntf.domino.rest.resources.command.CommandResource;
 import org.openntf.domino.rest.resources.frames.FramedCollectionResource;
 import org.openntf.domino.rest.resources.frames.FramedResource;
 import org.openntf.domino.rest.resources.info.InfoResource;
+import org.openntf.domino.rest.resources.search.SearchResource;
+import org.openntf.domino.rest.resources.search.TermsResource;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Factory.ThreadConfig;
@@ -48,7 +52,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	private Set<Class<?>> externalClasses_ = new HashSet<Class<?>>();
 	public static final String PREFIX = "ODA Graph Service: ";
 
-	static void report(String message) {
+	static void report(final String message) {
 		System.out.println(PREFIX + message);
 	}
 
@@ -86,7 +90,12 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 					try {
 						beforeDoService(null);
 						final Object object = configElement.createExecutableExtension("class"); // $NON-NLS-1$
-						report("Found a Graph Factory extension point: " + object.getClass().getName());
+						IContributor contributor = configElement.getContributor();
+						String contribSource = "";
+						if (contributor instanceof RegistryContributor) {
+							contribSource = contributor.getName() + " (" + ((RegistryContributor)contributor).getActualName() + ")";
+						}
+						report("Found a Graph Factory extension point: " + object.getClass().getName() + " from contributor " + contribSource);
 						if (object instanceof IGraphFactory) {
 							IGraphFactory factory = (IGraphFactory) object;
 							Map<String, FramedGraph<?>> registry = factory.getRegisteredGraphs();
@@ -150,6 +159,8 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		result.add(new FramedCollectionResource(this));
 		result.add(new InfoResource(this));
 		result.add(new ReferenceResource(this));
+		result.add(new SearchResource(this));
+		result.add(new TermsResource(this));
 		// result.add(new VertexFrameResource(this));
 		// result.add(new VertexFrameCollectionResource(this));
 		// result.add(new EdgeFrameResource(this));
@@ -178,24 +189,31 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return factoryMap_;
 	}
 
-	public void addFactory(String name, IGraphFactory factory) {
+	public void addFactory(final String name, final IGraphFactory factory) {
 		getFactoryMap().put(name, factory);
 	}
 
-	public IGraphFactory getFactory(String name) {
+	public IGraphFactory getFactory(final String name) {
 		return getFactoryMap().get(name);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public DFramedTransactionalGraph getGraph(String name) {
+	public DFramedTransactionalGraph getGraph(final String name) {
 		return (DFramedTransactionalGraph) getGraphMap().get(name);
 	}
 
-	public void addGraph(String name, FramedGraph<?> graph) {
+	public void addGraph(final String name, final FramedGraph<?> graph) {
+		Map<String, FramedGraph<?>> map = getGraphMap();
+		if (map.containsKey(name)) {
+			Class<?> graphClass = graph.getClass();
+			Package graphPackage = graphClass.getPackage();
+			String version = graphPackage.getImplementationVersion();
+			report ("A graph called " + name + " is already registered with the ODA Graph Service. You cannot add it again. The graph object was a " + graphClass.getName() + " with package implementation version of " + version);
+		}
 		getGraphMap().put(name, graph);
 	}
 
-	public FramedGraph<?> removeGraph(String name) {
+	public FramedGraph<?> removeGraph(final String name) {
 		return getGraphMap().remove(name);
 	}
 
@@ -221,7 +239,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public boolean beforeDoService(HttpServletRequest request) {
+	public boolean beforeDoService(final HttpServletRequest request) {
 		try {
 			Factory.initThread(getDataServiceConfig());
 			REQUEST_CTX.set(request);
@@ -233,7 +251,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public void afterDoService(HttpServletRequest request) {
+	public void afterDoService(final HttpServletRequest request) {
 		Map<String, FramedGraph<?>> graphs = getGraphMap();
 		for (FramedGraph graph : graphs.values()) {
 			if (graph instanceof DFramedTransactionalGraph) {
@@ -248,7 +266,7 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 	}
 
 	@Override
-	public void onError(HttpServletRequest request, Throwable t) {
+	public void onError(final HttpServletRequest request, final Throwable t) {
 		Factory.termThread();
 		t.printStackTrace();
 	}

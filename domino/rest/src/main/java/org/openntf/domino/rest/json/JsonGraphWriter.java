@@ -14,12 +14,14 @@ import org.openntf.domino.DateRange;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.big.impl.NoteCoordinate;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.rest.json.JsonGraphFactory.IJsonWriterAdapter;
 import org.openntf.domino.rest.resources.frames.JsonFrameAdapter;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.rest.utils.RTtoHTMLUtil;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Strings;
 
 // import com.ibm.domino.services.util.JsonWriter;
 import com.ibm.commons.util.AbstractIOException;
@@ -67,8 +69,8 @@ public class JsonGraphWriter extends JsonWriter {
 
 	private boolean forceLowerCaseKeys_ = false;
 
-	public JsonGraphWriter(Writer arg1, DFramedTransactionalGraph<?> graph, ParamMap parameters, boolean arg2,
-			boolean forceLowerCaseKeys, boolean isCollectionRoute) {
+	public JsonGraphWriter(final Writer arg1, final DFramedTransactionalGraph<?> graph, final ParamMap parameters, final boolean arg2,
+			final boolean forceLowerCaseKeys, final boolean isCollectionRoute) {
 		super(JsonGraphFactory.instance, arg1, arg2);
 		factory_ = JsonGraphFactory.instance;
 		forceLowerCaseKeys_ = forceLowerCaseKeys;
@@ -77,41 +79,56 @@ public class JsonGraphWriter extends JsonWriter {
 		isCollectionRoute_ = isCollectionRoute;
 	}
 
-	public void outDateLiteral(Date paramDate) throws IOException {
+	@Override
+	public void outNumberLiteral(final double paramDouble) throws IOException {
+		long l = (long)paramDouble;
+		if((l)==paramDouble) {
+			String s = Long.toString(l);
+			out(s);
+		} else {
+			String s = Double.toString(paramDouble);
+			if (s.equalsIgnoreCase("infinity")) {
+				out(null);
+			}
+			out(s);
+		}
+	}
+
+	public void outDateLiteral(final Date paramDate) throws IOException {
 		String str = dateToString(paramDate, true);
 		outStringLiteral(str);
 	}
 
-	public void outNoteCoordinate(NoteCoordinate nc) throws IOException {
+	public void outNoteCoordinate(final NoteCoordinate nc) throws IOException {
 		outStringLiteral(nc.toString());
 	}
 
-	public void outDateLiteral(DateTime paramDateTime) throws IOException {
+	public void outDateLiteral(final DateTime paramDateTime) throws IOException {
 		String str = dateToString(paramDateTime, true);
 		out(str);
 	}
 
-	public void outDateRangeLiteral(DateRange paramDateRange) throws IOException {
+	public void outDateRangeLiteral(final DateRange paramDateRange) throws IOException {
 		String start = dateToString(paramDateRange.getStartDateTime(), true);
 		String end = dateToString(paramDateRange.getEndDateTime(), true);
 		outStringLiteral(start + " - " + end); // TODO NTF probably want to make
-												// this an object with start/end
-												// properties at some point
+		// this an object with start/end
+		// properties at some point
 	}
 
-	private String dateOnlyToString(Date paramDate) {
+	private String dateOnlyToString(final Date paramDate) {
 		return ISO8601_DO.get().format(paramDate);
 	}
 
-	private String timeOnlyToString(Date paramDate) {
+	private String timeOnlyToString(final Date paramDate) {
 		return ISO8601_TO.get().format(paramDate);
 	}
 
-	private String dateToString(DateTime paramDateTime, boolean paramBoolean) throws IOException {
+	private String dateToString(final DateTime paramDateTime, final boolean paramBoolean) throws IOException {
 		return dateToString(paramDateTime.toJavaDate(), paramBoolean);
 	}
 
-	private String dateToString(Date paramDate, boolean paramBoolean) throws IOException {
+	private String dateToString(final Date paramDate, final boolean paramBoolean) throws IOException {
 		String str = null;
 
 		if (paramBoolean) {
@@ -123,7 +140,7 @@ public class JsonGraphWriter extends JsonWriter {
 		return str;
 	}
 
-	public void outRichTextItem(RichTextItem richText) throws IOException, JsonException {
+	public void outRichTextItem(final RichTextItem richText) throws IOException, JsonException {
 		String html = RTtoHTMLUtil.getHTML(richText);
 		outStringLiteral(html);
 	}
@@ -132,57 +149,77 @@ public class JsonGraphWriter extends JsonWriter {
 	public void outObject(Object paramObject) throws IOException, JsonException {
 		// System.out.println("TEMP DEBUG Attempting to jsonify an object of "
 		// + (paramObject == null ? "NULL" : paramObject.getClass().getName()));
-		if (paramObject != null) {
-			Class<?> objClass = paramObject.getClass();
-			IJsonWriterAdapter adapter = factory_.getJsonWriterAdapter(objClass);
-			if (adapter != null) {
-				paramObject = adapter.toJson(paramObject);
+		try {
+			if (paramObject != null) {
+				Class<?> objClass = paramObject.getClass();
+				IJsonWriterAdapter adapter = factory_.getJsonWriterAdapter(objClass);
+				if (adapter != null) {
+					paramObject = adapter.toJson(paramObject);
+				}
 			}
-		}
 
-		if (paramObject == null) {
-			super.outNull();
-		} else if (paramObject instanceof EdgeFrame) {
-			JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (EdgeFrame) paramObject, parameters_,
-					isCollectionRoute_);
-			super.outObject(adapter);
-		} else if (paramObject instanceof VertexFrame) {
-			JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (VertexFrame) paramObject, parameters_,
-					isCollectionRoute_);
-			super.outObject(adapter);
-		} else if (paramObject instanceof Class<?>) {
-			String className = ((Class<?>) paramObject).getName();
-			super.outStringLiteral(className);
-		} else if (paramObject instanceof RichTextItem) {
-			outRichTextItem((RichTextItem) paramObject);
-		} else if (paramObject instanceof Enum) {
-			String className = ((Enum<?>) paramObject).getClass().getName();
-			String enumName = ((Enum<?>) paramObject).name();
-		} else if (paramObject instanceof NoteCoordinate) {
-			String nc = ((NoteCoordinate) paramObject).toString();
-			super.outStringLiteral(nc);
-		} else if (paramObject instanceof org.openntf.domino.impl.View.DominoColumnInfo) {
-			String itemName = ((org.openntf.domino.impl.View.DominoColumnInfo) paramObject).getItemName();
-			super.outStringLiteral(itemName);
-		} else if (paramObject instanceof Set) {
-			// System.out.println("TEMP DEBUG outObject received a Set");
-			outArrayLiteral(((Set) paramObject).toArray());
-		} else if (paramObject instanceof DateTime) {
-			outDateLiteral((DateTime) paramObject);
-		} else if (paramObject instanceof DateRange) {
-			outDateRangeLiteral((DateRange) paramObject);
-		} else if (paramObject instanceof NoteCoordinate) {
-			outNoteCoordinate((NoteCoordinate) paramObject);
-		} else if (paramObject instanceof Throwable) {
-			outException((Throwable) paramObject);
-		} else {
-			// Class<?> clazz = paramObject.getClass();
-			// String name = clazz.getName();
-			super.outObject(paramObject);
+			if (paramObject == null) {
+				super.outNull();
+				//		} else if (paramObject instanceof Term) {
+				//			JsonSearchAdapter adapter = new JsonSearchAdapter(graph_, (Term) paramObject, parameters_,
+				//					isCollectionRoute_);
+				//			super.outObject(adapter);
+				//		} else if (paramObject instanceof Value) {
+				//			JsonSearchAdapter adapter = new JsonSearchAdapter(graph_, (Value) paramObject, parameters_,
+				//					isCollectionRoute_);
+				//			super.outObject(adapter);
+				//		} else if (paramObject instanceof RichTextReference) {
+				//			JsonSearchAdapter adapter = new JsonSearchAdapter(graph_, (RichTextReference) paramObject, parameters_,
+				//					isCollectionRoute_);
+				//			super.outObject(adapter);
+			} else if (paramObject instanceof EdgeFrame) {
+				JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (EdgeFrame) paramObject, parameters_,
+						isCollectionRoute_);
+				super.outObject(adapter);
+			} else if (paramObject instanceof VertexFrame) {
+				JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (VertexFrame) paramObject, parameters_,
+						isCollectionRoute_);
+				super.outObject(adapter);
+			} else if (paramObject instanceof Class<?>) {
+				String className = ((Class<?>) paramObject).getName();
+				super.outStringLiteral(className);
+			} else if (paramObject instanceof RichTextItem) {
+				outRichTextItem((RichTextItem) paramObject);
+			} else if (paramObject instanceof Enum) {
+				String className = ((Enum<?>) paramObject).getClass().getName();
+				String enumName = ((Enum<?>) paramObject).name();
+			} else if (paramObject instanceof NoteCoordinate) {
+				String nc = ((NoteCoordinate) paramObject).toString();
+				super.outStringLiteral(nc);
+			} else if (paramObject instanceof org.openntf.domino.impl.View.DominoColumnInfo) {
+				String itemName = ((org.openntf.domino.impl.View.DominoColumnInfo) paramObject).getItemName();
+				super.outStringLiteral(itemName);
+			} else if (paramObject instanceof Set) {
+				// System.out.println("TEMP DEBUG outObject received a Set");
+				outArrayLiteral(((Set) paramObject).toArray());
+			} else if (paramObject instanceof DateTime) {
+				outDateLiteral((DateTime) paramObject);
+			} else if (paramObject instanceof DateRange) {
+				outDateRangeLiteral((DateRange) paramObject);
+			} else if (paramObject instanceof NoteCoordinate) {
+				outNoteCoordinate((NoteCoordinate) paramObject);
+			} else if (paramObject instanceof Throwable) {
+				outException((Throwable) paramObject);
+			} else {
+				// Class<?> clazz = paramObject.getClass();
+				// String name = clazz.getName();
+				super.outObject(paramObject);
+			}
+		} catch (UserAccessException uae) {
+			throw uae;
+		} catch (RuntimeException re) {
+			throw re;
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
-	public void outException(Throwable throwable) throws IOException, JsonException {
+	public void outException(final Throwable throwable) throws IOException, JsonException {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
 		result.put("currentUsername",
 				org.openntf.domino.utils.Factory.getSession(SessionType.CURRENT).getEffectiveUserName());
@@ -210,7 +247,7 @@ public class JsonGraphWriter extends JsonWriter {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void outDominoValue(Object paramObject) throws IOException {
+	public void outDominoValue(final Object paramObject) throws IOException {
 		try {
 			if (paramObject == null) {
 				outNull();
@@ -266,7 +303,7 @@ public class JsonGraphWriter extends JsonWriter {
 	}
 
 	@Override
-	public void outPropertyName(String arg0) throws IOException {
+	public void outPropertyName(final String arg0) throws IOException {
 		if (forceLowerCaseKeys_) {
 			super.outPropertyName(arg0.toLowerCase());
 		} else {
@@ -275,15 +312,24 @@ public class JsonGraphWriter extends JsonWriter {
 	}
 
 	@Override
-	public void outArrayLiteral(Object arg0, boolean paramBoolean) throws IOException, JsonException {
-		// Class<?> clazz = arg0.getClass();
-		// String name = clazz.getName();
-		// System.out.println("DEBUG: Attempting to jsonify an array " + name);
-		super.outArrayLiteral(arg0, paramBoolean);
+	public void outArrayLiteral(final Object arg0, final boolean paramBoolean) throws IOException, JsonException {
+		Class<?> clazz = arg0.getClass();
+		String name = clazz.getName();
+		try {
+			super.outArrayLiteral(arg0, paramBoolean);
+		} catch (UserAccessException uae) {
+			throw uae;
+		} catch (Throwable t) {
+			System.out.println("DEBUG: Attempting to jsonify an array " + name);
+			if (arg0 instanceof Map) {
+				System.out.println("TEMP DEBUG Trying to output a Map with keys " + Strings.getString(((Map)arg0).keySet(), ","));
+			}
+			t.printStackTrace();
+		}
 	}
 
 	@Override
-	public void outArrayLiteral(Object arg0) throws IOException, JsonException {
+	public void outArrayLiteral(final Object arg0) throws IOException, JsonException {
 		// Class<?> clazz = arg0.getClass();
 		// String name = clazz.getName();
 		// System.out.println("DEBUG: Attempting to jsonify an array " + name);
@@ -292,7 +338,7 @@ public class JsonGraphWriter extends JsonWriter {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected void outLiteral(Object paramObject, boolean paramBoolean) throws IOException, JsonException {
+	protected void outLiteral(Object paramObject, final boolean paramBoolean) throws IOException, JsonException {
 		// System.out.println("TEMP DEBUG outputting a literal of "
 		// + (paramObject == null ? "NULL VALUE" :
 		// paramObject.getClass().getName()));
@@ -306,6 +352,18 @@ public class JsonGraphWriter extends JsonWriter {
 
 		if (this.getFactory().isNull(paramObject)) {
 			outNull();
+			//		} else if (paramObject instanceof Term) {
+			//			JsonSearchAdapter adapter = new JsonSearchAdapter(graph_, (Term) paramObject, parameters_,
+			//					isCollectionRoute_);
+			//			super.outObject(adapter);
+			//		} else if (paramObject instanceof Value) {
+			//			JsonSearchAdapter adapter = new JsonSearchAdapter(graph_, (Value) paramObject, parameters_,
+			//					isCollectionRoute_);
+			//			super.outObject(adapter);
+			//		} else if (paramObject instanceof RichTextReference) {
+			//			JsonSearchAdapter adapter = new JsonSearchAdapter(graph_, (RichTextReference) paramObject, parameters_,
+			//					isCollectionRoute_);
+			//			super.outObject(adapter);
 		} else if (paramObject instanceof VertexFrame) {
 			JsonFrameAdapter adapter = new JsonFrameAdapter(graph_, (VertexFrame) paramObject, parameters_,
 					isCollectionRoute_);

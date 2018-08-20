@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.social;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -24,7 +26,7 @@ public interface Rateable extends DVertexFrame {
 	public double getAverageRating();
 
 	@AdjacencyUnique(label = Rates.LABEL, direction = Direction.IN)
-	public Iterable<Rater> getRaters();
+	public List<Rater> getRaters();
 
 	@AdjacencyUnique(label = Rates.LABEL, direction = Direction.IN)
 	public Rates addRater(Rater rater);
@@ -36,7 +38,7 @@ public interface Rateable extends DVertexFrame {
 	public Rates findRates(Rater rater);
 
 	@IncidenceUnique(label = Rates.LABEL, direction = Direction.IN)
-	public Iterable<Rates> getRates();
+	public List<Rates> getRates();
 
 	@IncidenceUnique(label = Rates.LABEL, direction = Direction.IN)
 	public int countRates();
@@ -49,7 +51,7 @@ public interface Rateable extends DVertexFrame {
 
 		@Override
 		public double getAverageRating() {
-			Iterable<Rates> rates = getRates();
+			List<Rates> rates = getRates();
 			if (rates != null) {
 				long count = 0l;
 				long total = 0l;

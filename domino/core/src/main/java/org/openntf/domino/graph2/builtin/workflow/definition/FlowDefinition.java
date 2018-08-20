@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.workflow.definition;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
@@ -32,7 +34,7 @@ public interface FlowDefinition extends DVertexFrame {
 
 	/* BEGIN Finishes relationships */
 	@IncidenceUnique(label = Finishes.LABEL_FINISHES, direction = Direction.IN)
-	public Iterable<Finishes> getFinishes();
+	public List<Finishes> getFinishes();
 
 	@IncidenceUnique(label = Finishes.LABEL_FINISHES, direction = Direction.IN)
 	public Finishes addFinishes(TaskDefinition definition);
@@ -41,7 +43,7 @@ public interface FlowDefinition extends DVertexFrame {
 	public void removeFinishes(TaskDefinition definition);
 
 	@AdjacencyUnique(label = Finishes.LABEL_FINISHES, direction = Direction.IN)
-	public Iterable<TaskDefinition> getFinishTasks();
+	public List<TaskDefinition> getFinishTasks();
 
 	@AdjacencyUnique(label = Finishes.LABEL_FINISHES, direction = Direction.IN)
 	public TaskDefinition addFinishTask(TaskDefinition definition);
@@ -53,7 +55,7 @@ public interface FlowDefinition extends DVertexFrame {
 
 	/* BEGIN Flowable relationships */
 	@IncidenceUnique(label = Uses.LABEL_FLOWABLEUSES, direction = Direction.IN)
-	public Iterable<Uses> getUses();
+	public List<Uses> getUses();
 
 	@IncidenceUnique(label = Uses.LABEL_FLOWABLEUSES, direction = Direction.IN)
 	public Uses addUses(Flowable flowable);
@@ -62,7 +64,7 @@ public interface FlowDefinition extends DVertexFrame {
 	public void removeUses(Flowable flowable);
 
 	@AdjacencyUnique(label = Uses.LABEL_FLOWABLEUSES, direction = Direction.IN)
-	public Iterable<Flowable> getUsesFlowables();
+	public List<Flowable> getUsesFlowables();
 
 	@AdjacencyUnique(label = Uses.LABEL_FLOWABLEUSES, direction = Direction.IN)
 	public Flowable addUsesFlowable(Flowable flowable);

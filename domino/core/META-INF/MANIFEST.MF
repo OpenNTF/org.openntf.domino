@@ -4,8 +4,7 @@ Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
 Bundle-Version: 4.1.0.qualifier
 Bundle-Vendor: OpenNTF
-Export-Package: javassist.util.proxy,
- org.openntf.arpa,
+Export-Package: org.openntf.arpa,
  org.openntf.calendars,
  org.openntf.conference.graph,
  org.openntf.conference.graph.examples,
@@ -70,7 +69,7 @@ Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
 Bundle-ClassPath: .,
  lib/jsr305_1.0.1.jar,
  lib/com.google.guava_18.0.1.jar,
- lib/javassist_3.18.2.jar,
  lib/javolution_6.1.1.jar
 Bundle-ActivationPolicy: lazy
-Import-Package: lotus.domino
+Import-Package: javassist.util.proxy,
+ lotus.domino
