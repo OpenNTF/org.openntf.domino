@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
-Bundle-Version: 4.1.0.qualifier
+Bundle-Version: 4.4.1.qualifier
 Bundle-Vendor: OpenNTF
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
@@ -65,11 +65,12 @@ Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.0",
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
  com.ibm.icu;bundle-version="3.8.1",
- org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional
+ org.openntf.junit.libraries;bundle-version="1.1.0";resolution:=optional
 Bundle-ClassPath: .,
  lib/jsr305_1.0.1.jar,
  lib/com.google.guava_18.0.1.jar,
+ lib/javassist_3.18.2.jar,
  lib/javolution_6.1.1.jar
 Bundle-ActivationPolicy: lazy
-Import-Package: javassist.util.proxy,
- lotus.domino
+Import-Package: lotus.domino,
+ org.osgi.service.log;resolution:=optional

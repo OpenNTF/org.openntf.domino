@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensions to NotesCalendarEntry class
  * 
- *         OpenNTF extensions to NotesCalendarEntry class
+ * @author withersp
+ *
  */
 public interface NotesCalendarEntry {
 

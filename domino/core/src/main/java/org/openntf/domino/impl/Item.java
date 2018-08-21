@@ -54,7 +54,7 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 	private EnumSet<Flags> flagSet_;
 
 	/**
-	 * Instantiates a new outline.
+	 * Instantiates a new item.
 	 *
 	 * @param delegate
 	 *            the delegate
@@ -67,7 +67,7 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 	}
 
 	/**
-	 * Instatiates a new RichtextItem
+	 * Instantiates a new RichtextItem
 	 *
 	 * @param delegate
 	 * @param parent
@@ -995,6 +995,12 @@ public class Item extends BaseResurrectable<org.openntf.domino.Item, lotus.domin
 		}
 	}
 
+	/**
+	 * Sets the value of this item replacing any previous values.
+	 *
+	 * @param value
+	 *            The new value
+	 */
 	public void setValues(final Object value) {
 		parent.replaceItemValue(this.getName(), value);
 	}

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.logging;
 
@@ -13,14 +13,16 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 
 /**
- * @author withersp
+ * Interface for an object containing logging information to be written to a document in the OpenLog database.
  * 
+ * @author withersp
+ *
  */
 public interface IOpenLogItem {
 
 	/**
 	 * Enum to define log type
-	 * 
+	 *
 	 * @since org.openntf.domino 4.0.0
 	 */
 	public static enum LogType {
@@ -40,7 +42,7 @@ public interface IOpenLogItem {
 	/**
 	 * Enum to define debug level if errors are encountered writing the log - do nothing, print summary to console or print full details to
 	 * console
-	 * 
+	 *
 	 * @since org.openntf.domino 4.0.0
 	 */
 	public static enum DebugLevel {
@@ -59,7 +61,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * This method decides what to do with any Exceptions that we encounter internal to this class, based on the olDebugLevel variable.
-	 * 
+	 *
 	 * @param ee
 	 *            the ee
 	 * @since org.openntf.domino 4.0.0
@@ -68,7 +70,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the access level of the current user.
-	 * 
+	 *
 	 * @return the access level for the current user
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -76,7 +78,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the base Throwable passed into the OpenLogItem.
-	 * 
+	 *
 	 * @return throwable to be logged
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -84,7 +86,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the Notes Client or Domino Server version.
-	 * 
+	 *
 	 * @return the version of the Notes Client or Domino server, if running on server
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -92,7 +94,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Gets the "current" database.
-	 * 
+	 *
 	 * @return current Database object the error is being logged for
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -100,14 +102,14 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the current database object to the current database.
-	 * 
+	 *
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setCurrentDatabase();
 
 	/**
 	 * Sets the current database object to a specific database, useful when running outside XPages containers, e.g. Xots.
-	 * 
+	 *
 	 * @param db
 	 *            Database specific database to set as running from
 	 * @since org.openntf.domino 5.0.0
@@ -116,7 +118,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Gets the "current" database path.
-	 * 
+	 *
 	 * @return String database path error is being logged for
 	 * @since org.openntf.domino 5.0.0
 	 */
@@ -124,7 +126,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the Document the error occurred on, if one exists.
-	 * 
+	 *
 	 * @return the Document to be logged into the log document
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -132,7 +134,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the error line for the current Throwable.
-	 * 
+	 *
 	 * @param ee
 	 *            the ee
 	 * @return the error line of the stack trace
@@ -142,7 +144,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the event time of the OpenLogItem.
-	 * 
+	 *
 	 * @return the event time
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -150,7 +152,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the event type - Error or Event.
-	 * 
+	 *
 	 * @return the event type
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -158,14 +160,14 @@ public interface IOpenLogItem {
 
 	/**
 	 * Gets the OpenLog database to be logged to.
-	 * 
+	 *
 	 * @return the Log Database
 	 */
 	public Database getLogDb();
 
 	/**
 	 * Retrieves the Log Database name to log to.
-	 * 
+	 *
 	 * @return the log database name
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -173,7 +175,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves whether or not to suppress event strack trace
-	 * 
+	 *
 	 * @return Boolean of whether or not to suppress stack trace
 	 * @since org.openntf.domino 5.0.0
 	 */
@@ -181,7 +183,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets whether the stack trace should be suppressed from Event logs
-	 * 
+	 *
 	 * @param error
 	 *            whether or not to display the errors
 	 * @since org.openntf.domino 5.0.0
@@ -190,7 +192,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the Form name for the log document.
-	 * 
+	 *
 	 * @return the Form name of the log document
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -198,7 +200,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieve what the status of the last logging event was.
-	 * 
+	 *
 	 * @return success (true) or failure (false)
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -206,7 +208,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the error message.
-	 * 
+	 *
 	 * @return the error message
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -214,9 +216,9 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the severity level for the OpenLogItem.
-	 * 
+	 *
 	 * @return the severity level
-	 * 
+	 *
 	 * @see #setSeverity(Level) for options
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -225,7 +227,7 @@ public interface IOpenLogItem {
 	/**
 	 * Retrieves the stack trace of an Exception as an ArrayList without the initial error message. Also skips over a given number of items
 	 * (as determined by the skip parameter)
-	 * 
+	 *
 	 * @param ee
 	 *            Throwable passed into the OpenLogItem
 	 * @param skip
@@ -237,7 +239,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Gets the Stack Trace from a Throwable, passing to getStackTrace(Throwable, int) passing 0 as second parameter.
-	 * 
+	 *
 	 * @param ee
 	 *            Throwable passed into the OpenLogItem
 	 * @return ArrayList of elements of stack trace
@@ -246,7 +248,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the start time for the OpenLogItem.
-	 * 
+	 *
 	 * @return the start time
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -254,7 +256,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the current server name._session = Factory.getSession();
-	 * 
+	 *
 	 * @return the current servername or a blank String if local
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -262,7 +264,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Retrieves the roles for the current user for the current database.
-	 * 
+	 *
 	 * @return the user roles of the current user
 	 * @since org.openntf.domino 4.0.0
 	 */
@@ -270,7 +272,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Logs an error using the passed Session.
-	 * 
+	 *
 	 * @param s
 	 *            Session to log the error against
 	 * @param ee
@@ -281,7 +283,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Logs an error with extended options using the passed Session.
-	 * 
+	 *
 	 * @param s
 	 *            Session to log the error against
 	 * @param ee
@@ -299,7 +301,7 @@ public interface IOpenLogItem {
 	/**
 	 * The basic method used to log an error. Just pass the Exception that you caught and this method collects information and saves it to
 	 * the OpenLog database.
-	 * 
+	 *
 	 * @param ee
 	 *            Throwable to be logged
 	 * @return the error message
@@ -309,7 +311,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * A More flexible way to send an error to the OpenLog database.
-	 * 
+	 *
 	 * @param ee
 	 *            Throwable to be logged
 	 * @param msg
@@ -325,7 +327,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Logs an event with extended options using the passed Session.
-	 * 
+	 *
 	 * @param s
 	 *            Session to log the error against
 	 * @param ee
@@ -342,7 +344,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * This method allows you to log an Event to the OpenLog database.
-	 * 
+	 *
 	 * @param ee
 	 *            Throwable to be logged
 	 * @param msg
@@ -358,7 +360,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the base Throwable for the OpenLogItem.
-	 * 
+	 *
 	 * @param base
 	 *            Throwable - base throwable to be logged
 	 * @since org.openntf.domino 4.0.0
@@ -367,7 +369,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the Document on which the error occurred.
-	 * 
+	 *
 	 * @param doc
 	 *            the Document to be logged into the log document
 	 * @since org.openntf.domino 4.0.0
@@ -376,7 +378,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the OpenLogItem type - Event or Error.
-	 * 
+	 *
 	 * @param typeError
 	 *            the new event type
 	 * @since org.openntf.domino 4.0.0
@@ -385,7 +387,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the Log Database name, allowing overriding.
-	 * 
+	 *
 	 * @param newLogPath
 	 *            new log database path, to modify initial option
 	 * @since org.openntf.domino 4.0.0
@@ -394,7 +396,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets what the status of the logging event is
-	 * 
+	 *
 	 * @param logsuccess
 	 *            boolean success or failure
 	 * @since org.openntf.domino 4.0.0
@@ -403,7 +405,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the message to be logged in this OpenLogItem.
-	 * 
+	 *
 	 * @param message
 	 *            the message to set
 	 * @since org.openntf.domino 4.0.0
@@ -412,24 +414,24 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the new debug level. A String is used because the value is initially set from a properties file
-	 * 
+	 *
 	 * Right now the valid debug levels are:
 	 * <ul>
 	 * <li>0 -- internal errors are discarded</li>
 	 * <li>1 -- Exception messages from internal errors are printed</li>
 	 * <li>2 -- stack traces from internal errors are also printed</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param newDebugLevel
 	 *            new debug level for any errors generated when creating log document
 	 * @since org.openntf.domino 4.0.0
-	 * 
+	 *
 	 */
 	public void setOlDebugLevel(final DebugLevel newDebugLevel);
 
 	/**
 	 * Sets the Session property of the OpenLogItem.
-	 * 
+	 *
 	 * @param s
 	 *            Session
 	 * @since org.openntf.domino 4.0.0
@@ -438,10 +440,10 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the severity for the current OpenLogItem.
-	 * 
+	 *
 	 * @param severity
 	 *            java.util.logging.Level
-	 * 
+	 *
 	 *            Options:
 	 *            <ul>
 	 *            <li>Level.SEVERE</li>
@@ -458,7 +460,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the agent / page the error comes from
-	 * 
+	 *
 	 * @param fromContext
 	 *            String context the error log is coming from
 	 * @since org.openntf.domino 4.0.0
@@ -467,7 +469,7 @@ public interface IOpenLogItem {
 
 	/**
 	 * Sets the roles
-	 * 
+	 *
 	 * @param roles
 	 *            Vector<Object> of user roles
 	 * @since org.openntf.domino 4.0.0
@@ -476,10 +478,10 @@ public interface IOpenLogItem {
 
 	/**
 	 * This is the method that does the actual logging to the OpenLog database.
-	 * 
+	 *
 	 * This method creates a document in the log database, populates the fields of that document with the values in the global variables,
 	 * and adds some associated information about any Document that needs to be referenced.
-	 * 
+	 *
 	 * @return true, if successful
 	 * @since org.openntf.domino 4.0.0
 	 */

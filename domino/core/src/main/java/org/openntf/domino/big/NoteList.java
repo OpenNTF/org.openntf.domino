@@ -9,5 +9,4 @@ public interface NoteList extends List<NoteCoordinate>, Externalizable {
 	public void sortBy(final String key);
 
 	public byte[] toByteArray();
-
 }

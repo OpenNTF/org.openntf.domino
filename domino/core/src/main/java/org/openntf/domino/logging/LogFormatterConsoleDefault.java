@@ -6,6 +6,10 @@ import java.util.logging.LogRecord;
 
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 
+/**
+ * Default formatter for writing log messages to the Domino console when no formatter is specified in the configuration file. Date and time
+ * is written as 'yyyy-MM-dd HH:mm:ss'. Does not write the full stack trace if there is one.
+ */
 public class LogFormatterConsoleDefault extends Formatter {
 
 	public static LogFormatterConsoleDefault getInstance() {
@@ -14,7 +18,7 @@ public class LogFormatterConsoleDefault extends Formatter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
 	 */
 	@Override
@@ -28,13 +32,15 @@ public class LogFormatterConsoleDefault extends Formatter {
 		StackTraceElement ste = null;
 		if (t != null) {
 			StackTraceElement[] stes = t.getStackTrace();
-			if (stes != null && stes.length > 0)
+			if (stes != null && stes.length > 0) {
 				ste = stes[0];
+			}
 		}
-		if (ste != null)
+		if (ste != null) {
 			sb.append(ste.getClassName() + "." + ste.getMethodName());
-		else
+		} else {
 			sb.append("***NO STACK TRACE***");
+		}
 		sb.append(" - ");
 		sb.append(logRecord.getMessage());
 		sb.append('\n');

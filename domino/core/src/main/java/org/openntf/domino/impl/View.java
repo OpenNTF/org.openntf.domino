@@ -1296,7 +1296,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	 */
 	@Override
 	public Document getDocumentByKey(final Object key) {
-		return getDocumentByKey(key, false);
+		return getDocumentByKey(key, getAncestorSession().isViewExactMatch());
 	}
 
 	/*
@@ -1332,7 +1332,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Document getDocumentByKey(final java.util.Vector keys) {
-		return getDocumentByKey((Object) keys, false);
+		return getDocumentByKey((Object) keys, getAncestorSession().isViewExactMatch());
 	}
 
 	/*
@@ -1353,7 +1353,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	 */
 	@Override
 	public ViewEntry getEntryByKey(final Object key) {
-		return getEntryByKey(key, false);
+		return getEntryByKey(key, getAncestorSession().isViewExactMatch());
 	}
 
 	/*
@@ -1388,7 +1388,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntry getEntryByKey(final Vector keys) {
-		return getEntryByKey((Object) keys, false);
+		return getEntryByKey((Object) keys, getAncestorSession().isViewExactMatch());
 	}
 
 	/*
@@ -2739,19 +2739,17 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	public IndexType getIndexType() {
 		IndexType result = IndexType.SHARED;
 		String flags = getFlags();
-		if (flags.contains("P") && flags.contains("Y")) {
-			if (flags.contains("p")) {
-				result = IndexType.SHAREDPRIVATEONSERVER;
-				if (flags.contains("o")) {
-					result = IndexType.SHAREDPRIVATEONDESKTOP;
-				}
-			} else if (flags.contains("V")) {
-				result = IndexType.PRIVATE;
-			} else if (flags.contains("l")) {
-				result = IndexType.SHAREDINCLUDESDELETES;
-			} else if (flags.contains("a")) {
-				result = IndexType.SHAREDNOTINFOLDERS;
+		if (flags.contains("V")) {
+			result = IndexType.PRIVATE;
+		} else if (flags.contains("p")) {
+			result = IndexType.SHAREDPRIVATEONSERVER;
+			if (flags.contains("o")) {
+				result = IndexType.SHAREDPRIVATEONDESKTOP;
 			}
+		} else if (flags.contains("l")) {
+			result = IndexType.SHAREDINCLUDESDELETES;
+		} else if (flags.contains("a")) {
+			result = IndexType.SHAREDNOTINFOLDERS;
 		}
 		return result;
 	}
@@ -3178,6 +3176,18 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	}
 
 	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#isResortable()
+	 */
+	@Override
+	public boolean isResortable() {
+		if (getDocument().hasItem("$Collation1")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.View#getIndexCount()
 	 */
 	@Override
@@ -3189,17 +3199,5 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 			}
 		}
 		return count;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.ext.View#isResortable()
-	 */
-	@Override
-	public boolean isResortable() {
-		if (getDocument().hasItem("$Collation1")) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 }

@@ -2,17 +2,17 @@
  * Copyright Paul Withers, Intec 2011-2013
 =======
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *
  * Some significant enhancements here from the OpenNTF version
@@ -40,7 +40,7 @@
  * or...
  *
  * OpenLogItem.logEvent(session, message, level, document)
- * 
+ *
  */
 
 package org.openntf.domino.logging;
@@ -67,8 +67,10 @@ import org.openntf.domino.utils.Factory.SessionType;
 import com.ibm.commons.util.StringUtil;
 
 /**
- * @author withersp The Class OpenLogItem.
- * 
+ * Contains logging information to be written to a document in the OpenLog database.
+ *
+ * @author withersp
+ *
  */
 public class BaseOpenLogItem implements IOpenLogItem {
 	/*
@@ -89,39 +91,39 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 * added getLogDatabase method, to be consistent with LotusScript functions; added useServerLogWhenLocal and logToCurrentDatabase
 	 * variables/options 20040217a: this version made the agentContext object global and fixed a problem where the agentContext was being
 	 * recycled in the constuctor (this is very bad) 20040214b: initial version
-	 * 
+	 *
 	 * DISCLAIMER: This code is provided "as-is", and should be used at your own risk. The authors make no express or implied warranty about
 	 * anything, and they will not be responsible or liable for any damage caused by the use or misuse of this code or its byproducts. No
 	 * guarantees are made about anything.
-	 * 
+	 *
 	 * That being said, you can use, modify, and distribute this code in any way you want, as long as you keep this header section intact
 	 * and in a prominent place in the code. </HEADER> =======================================================
-	 * 
+	 *
 	 * This class contains generic functions that can be used to log events and errors to the OpenLog database. All you have to do it copy
 	 * this script library to any database that should be sending errors to the OpenLog database, and add it to your Java agents using the
 	 * Edit Project button (see the "Using This Database" doc in the OpenLog database for more details).
-	 * 
+	 *
 	 * At the beginning of your agent, create a global instance of this class like this:
-	 * 
+	 *
 	 * private OpenLogItem oli = new OpenLogItem();
-	 * 
+	 *
 	 * and then in all the try/catch blocks that you want to send errors from, add the line:
-	 * 
+	 *
 	 * oli.logError(e);
-	 * 
+	 *
 	 * where "e" is the Exception that you caught. That's all you have to do. The LogError method will automatically create a document in
 	 * the OpenLog database that contains all sorts of information about the error that occurred, including the name of the agent and
 	 * function/sub that it occurred in.
-	 * 
+	 *
 	 * For additional functionality, you can use the LogErrorEx function to add a custom message, a severity level, and/or a link to a
 	 * NotesDocument to the log doc.
-	 * 
+	 *
 	 * In addition, you can use the LogEvent function to add a notification document to the OpenLog database.
-	 * 
+	 *
 	 * You'll notice that I trap and discard almost all of the Exceptions that may occur as the methods in this class are running. This is
 	 * because the class is normally only used when an error is occurring anyway, so there's not sense in trying to pass any new errors back
 	 * up the stack.
-	 * 
+	 *
 	 * The master copy of this script library resides in the OpenLog database. All copies of this library in other databases should be set
 	 * to inherit changes from that database.
 	 */
@@ -152,12 +154,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;
 
-	/*
-	 * Constructor
-	 */
 	/**
 	 * Instantiates a new open log item.
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public BaseOpenLogItem() {
@@ -166,7 +165,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 
 	/**
 	 * Instantiates a new open log item.
-	 * 
+	 *
 	 * @param s
 	 *            the s
 	 * @since org.openntf.domino 1.0.0
@@ -408,7 +407,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 
 	/**
 	 * Retrieves the value for a property from logging.properties file.
-	 * 
+	 *
 	 * @param propertyName
 	 *            property to be retrieved from the Properties file
 	 * @return the value of the property
@@ -514,8 +513,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	@Override
 	public String getMessage() {
-		if (_message.length() > 0)
+		if (_message.length() > 0) {
 			return _message;
+		}
 		return getBase() == null ? "" : getBase().getMessage();
 	}
 
@@ -698,10 +698,11 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			StringTokenizer st = new StringTokenizer(sw.toString(), "\n");
 			int count = 0;
 			while (st.hasMoreTokens()) {
-				if (skip <= count++)
+				if (skip <= count++) {
 					v.add(st.nextToken().trim());
-				else
+				} else {
 					st.nextToken();
+				}
 			}
 
 		} catch (Exception e) {
@@ -753,8 +754,14 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public boolean writeToLog() {
 		Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 		// Current database may be null from Xots
-		if (null != currDb && !StringUtil.equals(getCurrentDatabasePath(), currDb.getFilePath())) {
-			reinitialiseSettings();
+		if (null != currDb) {
+			if (!StringUtil.equals(getCurrentDatabasePath(), "")) {
+				reinitialiseSettings();
+			}
+		} else {
+			if (!StringUtil.equals(getCurrentDatabasePath(), Factory.getSession(SessionType.CURRENT).getCurrentDatabase().getFilePath())) {
+				reinitialiseSettings();
+			}
 		}
 
 		// exit early if there is no database
@@ -845,8 +852,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	@Override
 	public void debugPrint(final Throwable ee) {
-		if ((ee == null) || (debugOut == null))
+		if ((ee == null) || (debugOut == null)) {
 			return;
+		}
 
 		try {
 			// debug level of 1 prints the basic error message#

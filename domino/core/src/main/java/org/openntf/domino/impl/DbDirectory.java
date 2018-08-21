@@ -45,8 +45,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-		org.openntf.domino.DbDirectory, Encapsulated {
+public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session>
+		implements org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	/* the MetaData contains s small subset of information of a (closed) Database */
@@ -422,10 +422,12 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		return dbMetaDataSet_;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Iterable#iterator()
+	/**
+	 * Returns an iterator over the databases in this directory.
+	 * <p>
+	 * Set the database types you want to have returned by the iterator before calling this method. Use
+	 * {@link org.openntf.domino.DbDirectory#setDirectoryType(org.openntf.domino.DbDirectory.Type)} to set the database types.
+	 * </p>
 	 */
 	@Override
 	public Iterator<org.openntf.domino.Database> iterator() {
@@ -577,6 +579,13 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		out.writeObject(dbMetaDataSet_);
 	}
 
+	/**
+	 * Adds a database to this directory.
+	 *
+	 * @param db
+	 *            database to add
+	 * @return true if this directory did not already contain the specified database
+	 */
 	@Override
 	public boolean add(final Database db) {
 		try {
@@ -587,6 +596,13 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		}
 	}
 
+	/**
+	 * Adds all of the databases in the specified collection to this directory if they are not already present.
+	 *
+	 * @param dbs
+	 *            Collection of databases
+	 * @return true if at least one of the databases was added
+	 */
 	@Override
 	public boolean addAll(final Collection<? extends Database> dbs) {
 		boolean ret = false;
@@ -598,6 +614,12 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		return ret;
 	}
 
+	/**
+	 * Removes all databases from this directory
+	 * <p>
+	 * This method does <em>NOT</em> delete the database from the server, it only removes them from the list.
+	 * </p>
+	 */
 	@Override
 	public void clear() {
 		if (dbMetaDataSet_ == null) {
@@ -607,6 +629,13 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		}
 	}
 
+	/**
+	 * Tests if this directory contains the specified Database
+	 *
+	 * @param obj
+	 *            Database whose presence in this directory is to be tested
+	 * @return true if this directory contains the specified database
+	 */
 	@Override
 	public boolean contains(final Object obj) {
 		if (obj instanceof Database) {
@@ -621,6 +650,13 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		}
 	}
 
+	/**
+	 * Tests if this directory contains all databases in the specified collection
+	 *
+	 * @param objs
+	 *            collection to be checked for containment in this directory
+	 * @return true if this directory contains all of the elements of the specified collection
+	 */
 	@Override
 	public boolean containsAll(final Collection<?> objs) {
 		for (Object obj : objs) {
@@ -631,11 +667,26 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		return true;
 	}
 
+	/**
+	 * Tests if this directory contains any databases
+	 *
+	 * @return true if this directory contains no databases
+	 */
 	@Override
 	public boolean isEmpty() {
 		return getMetaDataSet().isEmpty();
 	}
 
+	/**
+	 * Removes the specified database from this collection
+	 * <p>
+	 * This method does <em>NOT</em> delete the database from the server, it only removes it from the list.
+	 * </p>
+	 *
+	 * @param obj
+	 *            Database to be removed
+	 * @return true if this directory contained the specified database
+	 */
 	@Override
 	public boolean remove(final Object obj) {
 		if (obj instanceof Database) {
@@ -650,6 +701,16 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		}
 	}
 
+	/**
+	 * Removes all databases in the specified collection from this directory.
+	 * <p>
+	 * This method does <em>NOT</em> delete the databases from the server, it only removes them from the list.
+	 * </p>
+	 *
+	 * @param objs
+	 *            Collection of databases to be removed
+	 * @return true if at lease on database was contained in this directory
+	 */
 	@Override
 	public boolean removeAll(final Collection<?> objs) {
 		boolean ret = false;
@@ -661,6 +722,13 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		return ret;
 	}
 
+	/**
+	 * Removes all databases from this collection that are not contained in the specified collection.
+	 *
+	 * @param objs
+	 *            collection containing databases to be retained in this directory
+	 * @return true if this directory changed as a result of the call
+	 */
 	@Override
 	public boolean retainAll(final Collection<?> objs) {
 		Collection<DatabaseMetaData> holders = new ArrayList<DatabaseMetaData>(objs.size());
@@ -670,6 +738,7 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 				try {
 					holders.add(new DatabaseMetaData((Database) obj));
 				} catch (NotesException ne) {
+
 					DominoUtils.handleException(ne);
 					return false;
 				}
@@ -678,11 +747,17 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		return getMetaDataSet().retainAll(holders);
 	}
 
+	/**
+	 * Returns number of databases of specified type in this directory
+	 */
 	@Override
 	public int size() {
 		return getMetaDataSet().size();
 	}
 
+	/**
+	 * Returns an array containing all of the databases in this directory
+	 */
 	@Override
 	public Object[] toArray() {
 		Object[] ret = new Object[size()];
@@ -694,6 +769,14 @@ public class DbDirectory extends BaseResurrectable<org.openntf.domino.DbDirector
 		return ret;
 	}
 
+	/**
+	 * Returns an array containing all of the elements in this set
+	 *
+	 * @param paramArrayOfT
+	 *            the array into which the databases of this set are to be stored, if it is big enough; otherwise, a new array of the same
+	 *            runtime type is allocated for this purpose.
+	 * @return an array containing all the databases in this directory
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T[] toArray(T[] paramArrayOfT) {

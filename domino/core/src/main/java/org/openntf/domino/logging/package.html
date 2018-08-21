@@ -1,19 +1,300 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-<head></head>
+<head>
+
+</head>
 <body>
-  Provides logging support for the API
-  <br>
-  <br>
-  <p><b>Created By : </b>
-  <ul>
-  <li>Nathan T Freeman</li>
-  <li>Jesse Gallagher</li>
-  <li>Tim Tripcony</li>
-  <li>Paul Withers</li>
-  <li>René Winkelmeyer</li>
-  <li>Declan Lynch</li>
-  </ul>
-  </p>
+	Provides logging support for the API.
+	<p>
+		Logging ensures that problems and program errors are recorded for
+		later analysis. The logging mechanism must be configured properly to
+		record the information. For OpenNTF Domino API the configuration is
+		stored in the 
+		<code>IBM_TECHNICAL_SUPPORT\org.openntf.domino.logging.logconfig.properties</code>
+		file in the Domino data directory. When this file does not exist, the ODA
+		uses default settings.
+	</p>
+	<h5>Default logging settings</h5>
+	<p>
+		By default the log messages for the
+		<code>org.openntf.domino</code>
+		package with level WARNING and higher are:
+	<ul>
+		<li>Written to a file org.openntf.*.*.log in the <code>IBM_TECHNICAL_SUPPORT</code>
+			directory within the Domino data directory
+		</li>
+		<li>Printed to the server console</li>
+		<li>Written to the OpenLog.nsf database</li>
+	</ul>
+
+	<h5>Logging configuration</h5>
+	<p>
+		Configuration for the logging mechanism is stored in the
+		<code>IBM_TECHNICAL_SUPPORT\org.openntf.domino.logging.logconfig.properties</code>
+		file in the Domino data directory. This file is checked for changes
+		every minute and dynamically reloaded when needed. The message
+		"Logging: Updated LogConfig from changed PropertyFile" is printed on
+		the server console when the configuration is successfully reloaded.
+	</p>
+	<p>The configuration file consists of two parts. First part defines
+		the Handlers, second part defines the Filter Handlers.</p>
+	<h5>Handlers</h5>
+	<p>A Handler object takes log messages from a Logger and exports
+		them. You may define arbitrary many handlers. These handlers must be
+		listed on the "Handlers=&lt;handler 1 name&gt;, &lt;handler 2
+		name&gt;" line. Handler names are arbitrary. Each handler is
+		configured by Handler. &lt;handler name&gt;-properties, where the
+		following properties may/must be defined:
+	<table style="margin: 16px 0">
+		<tr class="rowColor">
+			<td style="padding: 10px">Class</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">Handler's class name (subclass of <code>java.util.logging.Handler</code>).
+			</td>
+		</tr>
+		<tr class="altColor">
+			<td style="padding: 10px">MinimalLevel</td>
+			<td style="padding: 10px">Optional</td>
+			<td style="padding: 10px">Minimal level (SEVERE, WARNING, FINE,
+				...) the handler may publish.</td>
+		</tr>
+		<tr class="rowColor">
+			<td style="padding: 10px">Formatter</td>
+			<td style="padding: 10px">Optional</td>
+			<td style="padding: 10px">Class for the handler's Formatter; if
+				none is specified, some default formatter is used.</td>
+		</tr>
+		<tr class="altColor">
+			<td style="padding: 10px">Props</td>
+			<td style="padding: 10px">Optional</td>
+			<td style="padding: 10px">Set of comma-separated properties for
+				handler configuration. The properties are specific to the handler.</td>
+		</tr>
+	</table>
+	<br />
+	<p>A handler's class must implement some static methods which will
+		be called via reflection:</p>
+	<table style="margin: 16px 0">
+		<tr>
+			<td style="padding: 10px">{@link
+				org.openntf.domino.logging.LogHandlerConfigIF}</td>
+			<td style="padding: 10px"><code>configFromProps(String
+					props)</code> [public static]</td>
+			<td style="padding: 10px">The "Props" from above are examined,
+				the resulting Object should contain a configuration set for the
+				handler. In case of "wrong" props, an Exception should be thrown.</td>
+		<tr>
+			<td style="padding: 10px">&lt;HandlerClass&gt;</td>
+			<td style="padding: 10px"><code>getInstance(LogHandlerConfigIF
+					config, boolean useDefaultFormatter)</code> [public static]</td>
+			<td style="padding: 10px">Parameter config contains the return
+				value from <code>configFromProps</code> method, useDefaultFormatter
+				is true if (and only if) no Formatter is configured.
+			</td>
+		</tr>
+
+
+	</table>
+	<p>Additionally, a handler may implement the {@link
+		org.openntf.domino.logging.LogHandlerUpdateIF} interface to enable the
+		handler to be dynamically attached to a new log configuration.</p>
+	<h6>Example</h6>
+	<pre>
+	Handlers=HFile1, HConsole, HLogDB
+
+	Handler.HFile1.Class=org.openntf.domino.logging.LogHandlerFile
+	Handler.HFile1.Props=	Limit=50000000,	\
+			Count=10, \
+			Append=true, \
+			Pattern=&lt;notesdata&gt;/IBM_TECHNICAL_SUPPORT/org.openntf.log.%u.%g.txt
+	
+	Handler.HConsole.Class=org.openntf.domino.logging.LogHandlerConsole
+	Handler.HConsole.MinimalLevel=WARNING
+	
+	Handler.HLogDB.Class=org.openntf.domino.logging.LogHandlerOpenLog
+	Handler.HLogDB.MinimalLevel=INFO
+	Handler.HLogDB.Props=	LogDB=OpenLog.nsf
+	
+	</pre>
+
+	<h5>FilterHandlers</h5>
+	<p>Handlers are attached to Loggers through FilterHandlers. Loggers
+		are identified by name (usually a package or a class name) and
+		specified using the LoggerPrefices property. FilterHandlers are
+		identified by name, each can have the following properties:</p>
+	<table style="margin: 16px 0">
+		<tr class="rowColor">
+			<td style="padding: 10px">LoggerPrefices</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">Comma separated names of loggers to
+				attached the specified handlers to</td>
+		</tr>
+		<tr class="altColor">
+			<td style="padding: 10px">DefaultLevel</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">Messages of this level and above will
+				be passed to the Handler. If the message level is the same or above of a
+				MinimalLevel property specified for the handler, it will be
+				processed.</td>
+		</tr>
+		<tr class="rowColor">
+			<td style="padding: 10px">DefaultHandlers</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">Comma separated list of handler names
+				specified on the "Handlers=" line. Specified handlers will be
+				attached to loggers identified by LoggerPrefices property.</td>
+		</tr>
+	</table>
+	<h6>Example</h6>
+	<pre>
+FilterHandlers=OpenNTF
+
+FilterHandler.OpenNTF.LoggerPrefices=org.openntf.domino
+FilterHandler.OpenNTF.DefaultLevel=WARNING
+FilterHandler.OpenNTF.DefaultHandlers=HFile1, HConsole, HLogDB
+</pre>
+
+
+	<h5>Filter Config Entries</h5>
+	<p>Optionally a FilterHandler can be accompanied by a Filter Config
+		Entry. They further fine tune the behavior of the logging mechanism.
+		Filter Config Entries can be used to change loggers based on a formula
+		condition.</p>
+	<p>There can be any number of Filter Config Entries. They are
+		supposed to be named FCE1, FCE2 and so on and are attached to a
+		FilterHandler.</p>
+	<h6>Available properties:</h6>
+	<table style="margin: 16px 0">
+		<tr class="rowColor">
+			<td style="padding: 10px">FCE&lt;n&gt;</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">Logger name; must be a child of one of
+				the FilterHandler's loggers</td>
+		</tr>
+		<tr class="altColor">
+			<td style="padding: 10px">FCE&lt;n&gt;.Level</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">FINEST, FINER, FINE, CONFIG, INFO,
+				WARNING, or SEVERE</td>
+		</tr>
+		<tr class="rowColor">
+			<td style="padding: 10px">FCE&lt;n&gt;.Handlers</td>
+			<td style="padding: 10px">Required</td>
+			<td style="padding: 10px">One or more defined Handlers (not
+				necessarily contained in DefaultHandlers)</td>
+		</tr>
+		<tr class="altColor">
+			<td style="padding: 10px">FCE&lt;n&gt;.FormulaCondition</td>
+			<td style="padding: 10px">Optional</td>
+			<td style="padding: 10px">Condition as a formula (in Formula
+				Language); the following variables may be used:
+				<ul>
+					<li>$USER$ - the actual user (given by
+						Session.getEffectiveUser)</li>
+					<li>$DBPATH$ - path of the current DB (getApiPath)</li>
+					<li>$LOGGER$ - the Logger which generated the LogRecord</li>
+					<li>$MESSAGE$ - the LogRecord's message</li>
+				</ul>
+			</td>
+		</tr>
+		<tr class="rowColor">
+			<td style="padding: 10px">FCE&lt;n&gt;.ValidUntil</td>
+			<td style="padding: 10px">Optional</td>
+			<td style="padding: 10px">Expiration date in ISO format
+				(yyyy-mm-dd), i.e. the whole FCE entry is ignored after this date.</td>
+		</tr>
+	</table>
+
+	<h6>Example</h6>
+	<p>In this example the logging level for the
+		"org.openntf.domino.impl.Document" logger will be changed to FINE and
+		log records will be written to a file pointing to by the HFile1
+		handler from Monday through Friday:</p>
+	<pre>
+FilterHandler.OpenNTF.FCE1=org.openntf.domino.impl.Document
+FilterHandler.OpenNTF.FCE1.Level=FINE
+FilterHandler.OpenNTF.FCE1.Handlers=HFile1
+FilterHandler.OpenNTF.FCE1.FormulaCondition=@Weekday(@Today) = 2:3:4:5:6
+	</pre>
+
+	<h5>Complete example</h5>
+	<p>Below is a complete example of the configuration file. It
+		defines three handlers - HFile1 writes log records to a text file,
+		HConsole handler writes to the server console and HLogDB to the
+		OpenLog.nsf Notes database. A more detailed logging is turned on for
+		an application with the path ending with hvm.nsf for the implementation
+		of a Document class (via a Filter Config Entry).</p>
+	<pre>
+Handlers=HFile1, HConsole, HLogDB
+
+Handler.HFile1.Class=org.openntf.domino.logging.LogHandlerFile
+Handler.HFile1.Props=	Limit=50000000,	\
+			Count=10, \
+			Append=true, \
+			Pattern=&lt;notesdata&gt;/IBM_TECHNICAL_SUPPORT/org.openntf.log.%u.%g.txt
+
+Handler.HConsole.Class=org.openntf.domino.logging.LogHandlerConsole
+Handler.HConsole.MinimalLevel=WARNING
+
+Handler.HLogDB.Class=org.openntf.domino.logging.LogHandlerOpenLog
+Handler.HLogDB.MinimalLevel=INFO
+Handler.HLogDB.Props=	LogDB=OpenLog.nsf
+
+FilterHandlers=OpenNTF
+
+FilterHandler.OpenNTF.LoggerPrefices=org.openntf.domino
+FilterHandler.OpenNTF.DefaultLevel=WARNING
+FilterHandler.OpenNTF.DefaultHandlers=HFile1, HConsole, HLogDB
+
+FilterHandler.OpenNTF.FCE1=org.openntf.domino.impl.Document
+FilterHandler.OpenNTF.FCE1.Level=FINE
+FilterHandler.OpenNTF.FCE1.Handlers=HFile1
+FilterHandler.OpenNTF.FCE1.FormulaCondition=@Ends($DBPATH$; "hvm.nsf")
+
+</pre>
+
+	<h5>Using your own loggers</h5>
+	<p>You can configure OpenNTF Domino API logging for your own
+		loggers. This way messages logged by your logger will be recorded
+		using the same mechanisms as ODA uses.</p>
+
+	<h6>Configuration</h6>
+	<p>A minimum configuration requires:</p>
+	<ul>
+		<li>Add a filter handler to the FilterHandlers= line</li>
+		<li>Specify LoggerPrefices, DefaultLevel and DefaultHandlers
+			properties for the new filter handler</li>
+	</ul>
+	<p>Using your own FilterHandler helps to distinguish your logging settings from the settings for the ODA.  
+	</p>
+	<p>Bellow is an example of this configuration which adds a new
+		filter handler and specifies the required properties. Log messages
+		will be recorded using the handler HFile1 defined in the Handlers
+		part. You can also specify your own handler which writes messages to a
+		separate file or a separate copy of OpenLog.nsf database. Check the
+		MinimalLevel property of the handler - if this is specified then only messages of
+		that level and above will be recorded no matter what DefaultLevel you
+		specify for your FilterHandler.</p>
+	<pre>
+FilterHandlers=OpenNTF,[your filter handler name]
+	
+FilterHandler.[your filter handler name].LoggerPrefices=[hierarchical dot-separated name of your logger]
+FilterHandler.[your filter handler name].DefaultLevel=INFO
+FilterHandler.[your filter handler name].DefaultHandlers=HFile1
+	</pre>
+
+	<p>
+		<b>Created By : </b>
+	</p>
+	<ul>
+		<li>Nathan T Freeman</li>
+		<li>Jesse Gallagher</li>
+		<li>Tim Tripcony</li>
+		<li>Paul Withers</li>
+		<li>Rene Winkelmeyer</li>
+		<li>Declan Lynch</li>
+	</ul>
+
+
 </body>
 </html>

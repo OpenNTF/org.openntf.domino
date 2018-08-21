@@ -12,8 +12,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -46,6 +48,7 @@ import org.openntf.domino.types.NamesList;
 import org.openntf.domino.types.ReadersList;
 
 import com.google.common.collect.ImmutableList;
+import com.ibm.commons.util.StringUtil;
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -648,7 +651,15 @@ public enum TypeUtils {
 				}
 			} else if (java.util.Collection.class.isAssignableFrom(type)) {
 				try {
-					result = type.newInstance();
+					// Support some known concrete implementations of collection interfaces
+					if (List.class.equals(type)) {
+						result = new ArrayList<Object>();
+					} else if (Set.class.equals(type)) {
+						result = new HashSet<Object>();
+					} else {
+						result = type.newInstance();
+					}
+
 					Collection coll = (Collection) result;
 					coll.addAll(DominoUtils.toSerializable(v));
 				} catch (IllegalAccessException e) {
@@ -1042,7 +1053,7 @@ public enum TypeUtils {
 	}
 
 	public static Object toPrimitive(final Collection<Object> values, final Class<?> ctype) {
-		if (ctype.isPrimitive()) {
+		if (!ctype.isPrimitive()) {
 			throw new DataNotCompatibleException(ctype.getName() + " is not a primitive type.");
 		}
 		if (values.size() > 1) {
@@ -1105,7 +1116,7 @@ public enum TypeUtils {
 		StringBuilder sb = new StringBuilder();
 		Iterator<?> it = values.iterator();
 		while (it.hasNext()) {
-			sb.append(String.valueOf(it.next()));
+			sb.append(StringUtil.toString(it.next()));
 			if (it.hasNext()) {
 				sb.append(separator);
 			}

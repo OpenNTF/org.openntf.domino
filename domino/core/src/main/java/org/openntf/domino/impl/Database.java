@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -181,6 +182,12 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		} else {
 			replid_ = metaData.getReplicaID();
 		}
+	}
+
+	@Override
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final int otherOpt,
+			final int start, final int count, final String entryForm) {
+		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
 
 	/*
@@ -1131,6 +1138,20 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
+	public Document getDocumentByID_Or_UNID(final String id) {
+		Document doc;
+		doc = getDocumentByUNID(id);
+		if (doc == null) {
+			try {
+				doc = getDocumentByID(id);
+			} catch (Throwable te) {
+				// Just couldn't get doc
+			}
+		}
+		return doc;
+	}
+
+	@Override
 	public Document getACLNote() {
 		NoteCollection nc = createNoteCollection(false);
 		nc.setSelectionFormula("@all");
@@ -2022,6 +2043,31 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getViews(java.lang.String)
+	 */
+	@Override
+	public List<View> getViews(final String name) {
+		try {
+			ArrayList<View> views = new ArrayList<View>();
+			for (View view : getViews()) {
+				if (name.equals(view.getName())) {
+					views.add(view);
+				} else {
+					for (String alias : view.getAliases()) {
+						if (name.equals(alias)) {
+							views.add(view);
+						}
+					}
+				}
+			}
+			return views;
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
+		}
+	}
+
 	private static final Pattern PIPE_SPLIT = Pattern.compile("\\|");
 
 	@Override
@@ -2552,6 +2598,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			return 0;
 
 		}
+	}
+
+	@Override
+	public Set<DBPrivilege> queryAccessPrivilegesEx(final String name) {
+		return DominoEnumUtil.valuesOf(DBPrivilege.class, queryAccessPrivileges(name));
 	}
 
 	/*
@@ -3781,6 +3832,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
+	public Document getDocumentByID(final int noteid) {
+		return getDocumentByID(noteid, false);
+	}
+
+	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		parent.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
@@ -3843,28 +3899,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
-	public lotus.domino.Database createFromTemplate(final String arg0, final String arg1, final boolean arg2, final int arg3,
-			final boolean arg4) {
-		try {
-			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3, arg4);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
-	}
-
-	@Override
-	public lotus.domino.NoteCollection getModifiedDocumentsWithOptions(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1,
-			final int arg2) {
-		try {
-			return getDelegate().getModifiedDocumentsWithOptions(arg0, arg1, arg2);
-		} catch (Exception e) {
-			DominoUtils.handleException(e, this);
-		}
-		return null;
-	}
-
-	@Override
 	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
 		try {
 			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
@@ -3904,6 +3938,7 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
+
 	public Document getDocumentByID(final int noteid) {
 		return getDocumentByID(noteid, false);
 	}
@@ -3927,6 +3962,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			}
 		}
 		return doc;
+
+	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
+		return getDelegate().getUserID(arg0, arg1);
 	}
 
 }

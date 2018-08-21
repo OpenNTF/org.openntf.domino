@@ -960,8 +960,12 @@ public enum Factory {
 
 				Session currentChk = tv.sessionHolders[SessionType.CURRENT.index];
 				if (currentChk == null) {
-					tv.sessionHolders[SessionType.CURRENT.index] = result;
-					tv.ownSessions.put(SessionType.CURRENT.alias, result);
+					try {
+						Factory.getSession(SessionType.CURRENT);
+					} catch (Exception e) {
+						tv.sessionHolders[SessionType.CURRENT.index] = result;
+						tv.ownSessions.put(SessionType.CURRENT.alias, result);
+					}
 				}
 				//					System.out.println("TEMP DEBUG: Created new session " + System.identityHashCode(result) + " of type " + mode.name()
 				//							+ " in thread " + System.identityHashCode(Thread.currentThread()) + " from TV " + System.identityHashCode(tv));

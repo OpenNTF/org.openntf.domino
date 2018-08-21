@@ -1,13 +1,14 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
+ * OpenNTF Domino extensions to AdministrationProcess class
+ * 
  * @author withersp
- * 
- *         OpenNTF Domino extensions to AdministrationProcess class
- * 
+ *
+ *
  */
 public interface AdministrationProcess {
 

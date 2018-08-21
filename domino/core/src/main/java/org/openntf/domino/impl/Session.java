@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import java.awt.Color;
 import java.io.Externalizable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
@@ -64,6 +65,7 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.GenericDominoEventFactory;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.types.Encapsulated;
@@ -82,12 +84,15 @@ import com.ibm.icu.util.Calendar;
  * The Class Session.
  *
  * @author nfreeman
+ * @author Paul Withers
  */
 
 public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
 		implements org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
+
+	private static final String BLANK_DB_REPID = "802581A000512F49";
 
 	/** The formatter_. */
 	private DominoFormatter formatter_;// RPr: changed to non static as this can cause thread issues
@@ -127,6 +132,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 
 	private transient Database currentDatabase_;
 	private transient Boolean isConvertMime_;
+	private transient Boolean isViewExactMatch_;
 	private String currentDatabaseApiPath_;
 
 	private String username_;
@@ -2164,13 +2170,88 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		return false;
 	}
 
-	//		@Override
-	//		public IDVault getIDVault(final String arg0) {
-	//			try {
-	//				return fromLotus(getDelegate().getIDVault(arg0), IDVault.SCHEMA, this);
-	//			} catch (Exception e) {
-	//				DominoUtils.handleException(e);
-	//			}
-	//			return null;
-	//		}
+	@Override
+	public Name getServerNameAsName() {
+		return createName(getServerName());
+	}
+
+	@Override
+	public String getServerNameAbbreviated() {
+		return getServerNameAsName().getAbbreviated();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#createBlankDatabase(java.lang.String)
+	 */
+	@Override
+	public Database createBlankDatabase(final String filePath) {
+		DbDirectory localDir = getDbDirectory(getServerName());
+		return createBlankDatabase(localDir, filePath);
+	}
+
+	@Override
+	public Database createBlankDatabase(final DbDirectory dbDir, final String filePath) {
+		if (Strings.isBlankString(filePath)) {
+			throw new OpenNTFNotesException("Cannot create a blank database without a filepath");
+		} else {
+			setFixEnable(Fixes.CREATE_DB, true);
+			return dbDir.createDatabase(filePath, true);
+		}
+	}
+
+	@Override
+	public Database createBlankDatabaseAbsolutePath(final String filePath) {
+		if (Strings.isBlankString(filePath)) {
+			throw new OpenNTFNotesException("Cannot create a blank database without a filepath");
+		} else {
+			File temp = new File(getFolder(filePath));
+			if (!temp.exists()) {
+				temp.mkdir();
+			}
+			return createBlankDatabase(filePath);
+		}
+	}
+
+	private String getFolder(final String filePath) {
+		if (filePath.contains(File.separator)) {
+			return Strings.leftBack(filePath, File.separator);
+		} else if (filePath.contains("/")) {
+			return Strings.leftBack(filePath, "/");
+		} else if (filePath.contains("\\")) {
+			return Strings.leftBack(filePath, "\\");
+		} else {
+			return "";
+		}
+	}
+
+	private String getFileName(final String filePath) {
+		if (filePath.contains(File.separator)) {
+			return Strings.rightBack(filePath, File.separator);
+		} else if (filePath.contains("/")) {
+			return Strings.rightBack(filePath, "/");
+		} else if (filePath.contains("\\")) {
+			return Strings.rightBack(filePath, "\\");
+		} else {
+			return filePath;
+		}
+	}
+
+	@Override
+	public boolean isViewExactMatch() {
+		if (isViewExactMatch_ == null) {
+			try {
+				isViewExactMatch_ = Boolean.valueOf(getDelegate().isConvertMIME());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e, this);
+				isViewExactMatch_ = Boolean.FALSE;
+
+			}
+		}
+		return isViewExactMatch_.booleanValue();
+	}
+
+	@Override
+	public void setViewExactMatch(final boolean exactMatch) {
+		isViewExactMatch_ = exactMatch;
+	}
 }

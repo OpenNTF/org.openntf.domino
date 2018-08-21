@@ -1126,7 +1126,7 @@ public enum DominoUtils {
 
 	public static String escapeForFormulaString(final String value) {
 		// I wonder if this is sufficient escaping
-		return value.replace("{", "\\{").replace("}", "\\}");
+		return value.replace("{", "\\{").replace("}", "\\}").replace("\\", "\\\\");
 	}
 
 	public static boolean isSerializable(final Collection<?> values) {

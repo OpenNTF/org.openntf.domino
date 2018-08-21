@@ -55,7 +55,7 @@ public class Xots {
 
 	}
 
-	private static XotsExecutorService getService() {
+	public static XotsExecutorService getService() {
 		if (!isStarted()) {
 			throw new IllegalStateException("Xots is not started");
 		}

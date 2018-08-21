@@ -2,10 +2,13 @@ package org.openntf.domino.logging;
 
 import java.util.logging.Formatter;
 
+/**
+ * Implemented by handlers to enable them to be dynamically attached to a new log configuration.
+ */
 public interface LogHandlerUpdateIF {
 	/**
 	 * Indicates whether the handler is able to update itself with the new handlerConfig
-	 * 
+	 *
 	 * @param newHandlerConfig
 	 *            new Config
 	 * @param oldHandlerConfig
@@ -16,7 +19,7 @@ public interface LogHandlerUpdateIF {
 
 	/**
 	 * Tells the handler to update itself; mustn't throw any Exceptions
-	 * 
+	 *
 	 * @param newhandlerConfig
 	 *            new Config
 	 * @param oldHandlerConfig

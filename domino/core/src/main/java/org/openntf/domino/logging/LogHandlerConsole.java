@@ -6,6 +6,23 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * Handler for writing log messages to the Domino server console.
+ * <p>
+ * This class can be used as an handler in the configuration file. This handler does not use any custom properties. You should use this
+ * handler together with some other handler which writes log messages to a file or to the OpenLog database (as it does not by default print
+ * full stack trace if there is one attached to the LogRecord).
+ * </p>
+ * <h5>Example configuration</h5>
+ * <p>
+ * The example defines a handler named HConsole (the name is arbitrary).
+ * </p>
+ *
+ * <pre>
+ * Handlers=HConsole
+ * Handler.HConsole.Class=org.openntf.domino.logging.LogHandlerConsole
+ * </pre>
+ */
 public class LogHandlerConsole extends ConsoleHandler implements LogHandlerUpdateIF {
 
 	private static class LHCConfig implements LogHandlerConfigIF {
@@ -22,11 +39,13 @@ public class LogHandlerConsole extends ConsoleHandler implements LogHandlerUpdat
 	}
 
 	public static LogHandlerConsole getInstance(final LogHandlerConfigIF config, final boolean useDefaultFormatter) {
-		if (!(config instanceof LHCConfig))
+		if (!(config instanceof LHCConfig)) {
 			throw new IllegalArgumentException("Invalid call to LogHandlerConsole.getInstance");
+		}
 		LogHandlerConsole ret = new LogHandlerConsole();
-		if (useDefaultFormatter)
+		if (useDefaultFormatter) {
 			ret.setFormatter(new LogFormatterConsoleDefault());
+		}
 		return ret;
 	}
 
@@ -38,17 +57,18 @@ public class LogHandlerConsole extends ConsoleHandler implements LogHandlerUpdat
 	@Override
 	public void doUpdateYourself(final LogHandlerConfigIF newhandlerConfig, final LogHandlerConfigIF oldHandlerConfig,
 			final boolean useDefaultFormatter, final Formatter newFormatter) {
-		if (newFormatter != null)
+		if (newFormatter != null) {
 			setFormatter(newFormatter);
-		else if (useDefaultFormatter && !(getFormatter() instanceof LogFormatterConsoleDefault))
+		} else if (useDefaultFormatter && !(getFormatter() instanceof LogFormatterConsoleDefault)) {
 			setFormatter(new LogFormatterConsoleDefault());
+		}
 	}
 
 	/**
 	 * Calls the publish method of the parent ConsoleHandler class
-	 * 
+	 *
 	 * Called from publish method via a PrivilegedAction to avoid access issues
-	 * 
+	 *
 	 * @param record
 	 *            LogRecord to be outputted
 	 * @since org.openntf.domino 1.0.0
@@ -59,13 +79,14 @@ public class LogHandlerConsole extends ConsoleHandler implements LogHandlerUpdat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.ConsoleHandler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
 	public synchronized void publish(final LogRecord record) {
-		if (publishing_.get() == Boolean.TRUE)
+		if (publishing_.get() == Boolean.TRUE) {
 			return;
+		}
 		publishing_.set(Boolean.TRUE);
 		try {
 			AccessController.doPrivileged(new PrivilegedAction<Object>() {

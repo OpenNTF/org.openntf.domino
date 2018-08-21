@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensions to Outline class
  * 
- *         OpenNTF extensions to Outline class
+ * @author withersp
+ *
  */
 public interface Outline {
 	public String getMetaversalID();

@@ -1,12 +1,13 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
- * @author withersp
+ * OpenNTF extensions to Registration class
  * 
- *         OpenNTF extensions to Registration class
+ * @author withersp
+ *
  */
 public interface Registration {
 

@@ -3763,12 +3763,20 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				Item item = getFirstItem(key, true);
 				if (item instanceof RichTextItem) {
 					String text = ((RichTextItem) item).getText();
-					return text.contains((CharSequence) value);
+					if (text.contains((CharSequence) value)) {
+						return true;
+					} else {
+						continue;
+					}
 				}
 			}
 			Object itemVal = this.get(key);
 			if (itemVal instanceof List) {
-				return ((List) itemVal).contains(value);
+				if (((List) itemVal).contains(value)) {
+					return true;
+				} else {
+					continue;
+				}
 			}
 			if ((value == null && itemVal == null) || (value != null && value.equals(itemVal))) {
 				return true;
@@ -3785,12 +3793,20 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				Item item = getFirstItem(key, true);
 				if (item instanceof RichTextItem) {
 					String text = ((RichTextItem) item).getText();
-					return text.contains((CharSequence) value);
+					if (text.contains((CharSequence) value)) {
+						return true;
+					} else {
+						continue;
+					}
 				}
 			}
 			Object itemVal = this.get(key);
 			if (itemVal instanceof List) {
-				return ((List) itemVal).contains(value);
+				if (((List) itemVal).contains(value)) {
+					return true;
+				} else {
+					continue;
+				}
 			}
 			if ((value == null && itemVal == null) || (value != null && value.equals(itemVal))) {
 				return true;

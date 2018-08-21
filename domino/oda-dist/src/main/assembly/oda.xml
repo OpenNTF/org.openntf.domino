@@ -21,7 +21,10 @@
 			<directory>${project.basedir}/../..</directory>
 			<includes>
 				<include>LICENSE</include>
+				<include>LICENSE-DOTS</include>
 				<include>NOTICE.md</include>
+				<include>README.md</include>
+				<include>Release Notes.md</include>
 			</includes>
 		</fileSet>
 	</fileSets>
@@ -54,10 +57,9 @@
 			
 			<binaries>
 				<attachmentClassifier>assembly</attachmentClassifier>
-				<outputDirectory>.</outputDirectory>
-				<unpack>false</unpack>
+				<outputDirectory>UpdateSite</outputDirectory>
+				<unpack>true</unpack>
 				<includeDependencies>false</includeDependencies>
-				<outputFileNameMapping>UpdateSite.zip</outputFileNameMapping>
 			</binaries>
 		</moduleSet>
 		

@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
@@ -27,17 +27,13 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class NotesCalendarNotice.
- */
-public class NotesCalendarNotice extends
-		BaseThreadSafe<org.openntf.domino.NotesCalendarNotice, lotus.domino.NotesCalendarNotice, NotesCalendar> implements
-org.openntf.domino.NotesCalendarNotice {
+public class NotesCalendarNotice
+		extends BaseThreadSafe<org.openntf.domino.NotesCalendarNotice, lotus.domino.NotesCalendarNotice, NotesCalendar>
+		implements org.openntf.domino.NotesCalendarNotice {
 
 	/**
-	 * Instantiates a new outline.
-	 * 
+	 * Instantiates a new calendar notice.
+	 *
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
@@ -52,9 +48,6 @@ org.openntf.domino.NotesCalendarNotice {
 		super(delegate, parent, NOTES_CALENDARNOTICE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.NotesCalendarNotice#accept(java.lang.String)
-	 */
 	@Override
 	public void accept(final String comments) {
 		try {
@@ -321,7 +314,7 @@ org.openntf.domino.NotesCalendarNotice {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override

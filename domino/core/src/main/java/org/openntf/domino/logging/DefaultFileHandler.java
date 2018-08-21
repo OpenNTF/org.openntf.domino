@@ -1,16 +1,16 @@
 /*
  * Copyright 2013
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
 package org.openntf.domino.logging;
@@ -24,16 +24,14 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * DefaultFileHandler class
- * 
- * Handles outputting error log to IBM_TECHNICAL_SUPPORT\\org.openntf.log.X.Y.txt, where X and Y are integers incremented when the previous
- * file is full
+ * Handles outputting log messages to IBM_TECHNICAL_SUPPORT\\org.openntf.log.X.Y.txt, where X and Y are integers incremented when the
+ * previous file is full, used in the default configuration when a configuration file is missing.
  */
 public class DefaultFileHandler extends FileHandler {
 
 	/**
 	 * Instantiates a new default file handler.
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 * @since org.openntf.domino 1.0.0
@@ -43,7 +41,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/**
 	 * Instantiates a new default file handler with pattern for file name
-	 * 
+	 *
 	 * @param pattern
 	 *            String predefined pattern for file names for the log file
 	 * @throws IOException
@@ -56,7 +54,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/**
 	 * Instantiates a new default file handler with pattern for filename and whether or not to append to an existing file
-	 * 
+	 *
 	 * @param pattern
 	 *            String predefined pattern for file names for the log file
 	 * @param append
@@ -71,7 +69,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/**
 	 * Instantiates a new default file handler with pattern for filename, size limit and max file count
-	 * 
+	 *
 	 * @param pattern
 	 *            String pattern for file names
 	 * @param limit
@@ -89,7 +87,7 @@ public class DefaultFileHandler extends FileHandler {
 	/**
 	 * Instantiates a new default file handler with pattern for filename, size limit, max file count and whether or not to append to an
 	 * existing file
-	 * 
+	 *
 	 * @param pattern
 	 *            String pattern for file names
 	 * @param limit
@@ -108,7 +106,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.FileHandler#close()
 	 */
 	@Override
@@ -117,11 +115,11 @@ public class DefaultFileHandler extends FileHandler {
 	}
 
 	/**
-	 * 
+	 *
 	 * Calls the publish method of the parent FileHandler class
-	 * 
+	 *
 	 * Called from publish method via a PrivilegedAction to avoid access issues
-	 * 
+	 *
 	 * @param record
 	 *            LogRecord to be outputted
 	 * @since org.openntf.domino 1.0.0
@@ -132,7 +130,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.FileHandler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
@@ -155,7 +153,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.StreamHandler#flush()
 	 */
 	@Override
@@ -165,7 +163,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.StreamHandler#setOutputStream(java.io.OutputStream)
 	 */
 	@Override
@@ -175,7 +173,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Handler#getFormatter()
 	 */
 	@Override
@@ -185,7 +183,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Handler#reportError(java.lang.String, java.lang.Exception, int)
 	 */
 	@Override
@@ -195,7 +193,7 @@ public class DefaultFileHandler extends FileHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Handler#setFormatter(java.util.logging.Formatter)
 	 */
 	@Override

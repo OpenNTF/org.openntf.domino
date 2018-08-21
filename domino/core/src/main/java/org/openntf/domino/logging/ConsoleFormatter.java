@@ -4,12 +4,10 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * ConsoleFormatter class
- * 
  * Handles formatting of output to Domino console
- * 
+ *
  * @author withersp
- * 
+ *
  */
 public class ConsoleFormatter extends Formatter {
 
@@ -18,7 +16,7 @@ public class ConsoleFormatter extends Formatter {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public ConsoleFormatter() {
@@ -26,7 +24,7 @@ public class ConsoleFormatter extends Formatter {
 
 	/**
 	 * Checks whether dates should be outputted in UTC format
-	 * 
+	 *
 	 * @return boolean, if is UTC format
 	 * @since org.openntf.domino 1.0.0
 	 */
@@ -36,7 +34,7 @@ public class ConsoleFormatter extends Formatter {
 
 	/**
 	 * Sets whether dates should be outputted in UTC format
-	 * 
+	 *
 	 * @param uTC_Format
 	 *            boolean, whether UTC format
 	 * @since org.openntf.domino 1.0.0
@@ -47,7 +45,7 @@ public class ConsoleFormatter extends Formatter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
 	 */
 	@Override
@@ -61,7 +59,7 @@ public class ConsoleFormatter extends Formatter {
 			//			sb.append(logRecord.getLevel().getName());
 			//			sb.append("]: ");
 
-			// 
+			//
 			sb.append(logRecord.getMessage());
 
 			sb.append("\n   (source:");

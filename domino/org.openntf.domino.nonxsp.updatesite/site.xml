@@ -3,7 +3,7 @@
    <description name="OpenNTF Domino API">
       OpenNTF Domino API
    </description>
-   <feature url="features/org.openntf.domino.nonxsp.feature_4.1.0.qualifier.jar" id="org.openntf.domino.nonxsp.feature" version="4.1.0.qualifier">
+   <feature url="features/org.openntf.domino.nonxsp.feature_4.4.1.qualifier.jar" id="org.openntf.domino.nonxsp.feature" version="4.4.1.qualifier">
       <category name="OpenNTF Domino API"/>
    </feature>
    <category-def name="OpenNTF Domino API" label="OpenNTF Domino API"/>
