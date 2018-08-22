@@ -184,12 +184,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
-	@Override
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final int otherOpt,
-			final int start, final int count, final String entryForm) {
-		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -1137,19 +1131,19 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return getDocumentByID(NOTEID_ICONNOTE);
 	}
 
-	@Override
-	public Document getDocumentByID_Or_UNID(final String id) {
-		Document doc;
-		doc = getDocumentByUNID(id);
-		if (doc == null) {
-			try {
-				doc = getDocumentByID(id);
-			} catch (Throwable te) {
-				// Just couldn't get doc
-			}
-		}
-		return doc;
-	}
+	//	@Override
+	//	public Document getDocumentByID_Or_UNID(final String id) {
+	//		Document doc;
+	//		doc = getDocumentByUNID(id);
+	//		if (doc == null) {
+	//			try {
+	//				doc = getDocumentByID(id);
+	//			} catch (Throwable te) {
+	//				// Just couldn't get doc
+	//			}
+	//		}
+	//		return doc;
+	//	}
 
 	@Override
 	public Document getACLNote() {
@@ -3832,11 +3826,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
-	public Document getDocumentByID(final int noteid) {
-		return getDocumentByID(noteid, false);
-	}
-
-	@Override
 	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		parent.fillExceptionDetails(result);
 		result.add(new ExceptionDetails.Entry(this, getApiPath()));
@@ -3944,11 +3933,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
-	public Set<DBPrivilege> queryAccessPrivilegesEx(final String name) {
-		return DominoEnumUtil.valuesOf(DBPrivilege.class, queryAccessPrivileges(name));
-	}
-
-	@Override
 	public Document getDocumentByID_Or_UNID(final String id) {
 		Document doc = null;
 		if (id.length() == 32) {
@@ -3962,9 +3946,32 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			}
 		}
 		return doc;
-
-	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
-		return getDelegate().getUserID(arg0, arg1);
 	}
+
+	@Override
+	public lotus.domino.Database createFromTemplate(final String arg0, final String arg1, final boolean arg2, final int arg3,
+			final boolean arg4) {
+		try {
+			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3, arg4);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	@Override
+	public lotus.domino.NoteCollection getModifiedDocumentsWithOptions(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1,
+			final int arg2) {
+		try {
+			return getDelegate().getModifiedDocumentsWithOptions(arg0, arg1, arg2);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+		return null;
+	}
+
+	//	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
+	//		return getDelegate().getUserID(arg0, arg1);
+	//	}
 
 }

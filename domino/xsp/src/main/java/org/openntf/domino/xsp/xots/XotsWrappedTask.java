@@ -5,6 +5,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.Callable;
 
+import org.eclipse.osgi.baseadaptor.loader.BaseClassLoader;
 import org.openntf.domino.config.Configuration;
 import org.openntf.domino.config.XotsConfiguration;
 import org.openntf.domino.thread.AbstractWrappedTask;
@@ -111,9 +112,9 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 				XotsDominoExecutor.initModule(ctx, mcl, wrappedTask);
 
 				XotsConfiguration config = null;
-				if (mcl instanceof org.eclipse.osgi.internal.loader.ModuleClassLoader) {
+				if (mcl instanceof BaseClassLoader) {
 					// Determine the bundle of mcl
-					String bundle = ((org.eclipse.osgi.internal.loader.ModuleClassLoader) mcl).getBundle().getSymbolicName();
+					String bundle = ((BaseClassLoader) mcl).getClasspathManager().getBaseData().getSymbolicName();
 					config = Configuration.getXotsBundleConfiguration(bundle, wrappedTask.getClass().getName());
 				} else {
 					config = Configuration.getXotsNSFConfiguration(module.getDatabasePath(), wrappedTask.getClass().getName());

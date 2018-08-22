@@ -553,14 +553,14 @@ public class EmbeddedObject extends BaseThreadSafe<org.openntf.domino.EmbeddedOb
 		return parent.getAncestorSession().getFactory();
 	}
 
-	@Override
-	public int getFileEncoding() {
-		try {
-			return getDelegate().getFileEncoding();
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return Integer.MIN_VALUE;
-		}
-	}
+	//	@Override
+	//	public int getFileEncoding() {
+	//		try {
+	//			return getDelegate().getFileEncoding();
+	//		} catch (Exception e) {
+	//			DominoUtils.handleException(e);
+	//			return Integer.MIN_VALUE;
+	//		}
+	//	}
 
 }
