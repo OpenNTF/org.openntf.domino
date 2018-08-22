@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Formula Engine
 Bundle-SymbolicName: org.openntf.formula;singleton:=true
-Bundle-Version: 4.1.1
+Bundle-Version: 4.1.2
 Bundle-Vendor: foconis.de
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openntf.formula,
@@ -13,5 +13,4 @@ Export-Package: org.openntf.formula,
  org.openntf.formula.parse,
  org.openntf.service
 Bundle-ClassPath: .
-Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1",
- org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional
+Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1"
