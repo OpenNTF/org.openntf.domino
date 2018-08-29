@@ -54,12 +54,14 @@ public enum EMBridgeMessageQueue {
 					if (event != null) {
 						int eventCode = EMBridgeEventFactory.getEventId(event);
 						EMEventIds id = EMEventIds.getEMEventFromId(eventCode);
-						//						System.out.println("TEMP DEBUG: Dispatcher thread dispatched an event " + id.toString() + ": " + event);
-						List<IEMBridgeSubscriber> subscribers = bridge_.getSubscriberList(id);
-						if (subscribers != null && !subscribers.isEmpty()) {
-							for (IEMBridgeSubscriber subscriber : subscribers) {
-								subscriber.handleMessage(id, event);
-								//								System.out.println("TEMP DEBUG: Dispatcher thread dispatched an event " + id.toString() + ": " + event);
+						if (id != null) {
+							//						System.out.println("TEMP DEBUG: Dispatcher thread dispatched an event " + id.toString() + ": " + event);
+							List<IEMBridgeSubscriber> subscribers = bridge_.getSubscriberList(id);
+							if (subscribers != null && !subscribers.isEmpty()) {
+								for (IEMBridgeSubscriber subscriber : subscribers) {
+									subscriber.handleMessage(id, event);
+									//								System.out.println("TEMP DEBUG: Dispatcher thread dispatched an event " + id.toString() + ": " + event);
+								}
 							}
 						}
 					}
