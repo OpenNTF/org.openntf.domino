@@ -565,6 +565,21 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int, boolean)
+	 */
+	@Override
+	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit,
+			final int maxSize, final boolean doNotForce) {
+		try {
+			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize, doNotForce), Database.SCHEMA,
+					getAncestorSession());
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -3879,18 +3894,18 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
-	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
+	public void setUserIDFileForDecrypt(final String userId, final String password) {
 		try {
-			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
+			getDelegate().setUserIDFileForDecrypt(userId, password);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
 	}
 
 	@Override
-	public void setUserIDForDecrypt(final UserID arg0) {
+	public void setUserIDForDecrypt(final UserID userId) {
 		try {
-			getDelegate().setUserIDForDecrypt(arg0);
+			getDelegate().setUserIDForDecrypt(userId);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3917,9 +3932,17 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return ACL.Privilege.getPrivileges(privs);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#getUserID(java.lang.String, java.lang.String)
+	 */
 	@Override
-	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
-		return getDelegate().getUserID(arg0, arg1);
+	public UserID getUserID(final String userId, final String password) {
+		try {
+			return getDelegate().getUserID(userId, password);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
+		}
 	}
 
 }

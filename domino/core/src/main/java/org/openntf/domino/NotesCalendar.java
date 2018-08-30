@@ -17,6 +17,8 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import lotus.domino.NotesError;
+
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -651,40 +653,5 @@ public interface NotesCalendar
 	 */
 	@Override
 	public String getApptunidFromUID(String arg0, boolean arg1);
-
-	/* (non-Javadoc)
-	 * @see lotus.domino.NotesCalendar#getActAsDbOwner()
-	 * @since Domino 9.0.1 FP8
-	 */
-	@Override
-	public boolean getActAsDbOwner();
-
-	/* (non-Javadoc)
-	 * @see lotus.domino.NotesCalendar#getAutoRemoveProcessedNotices()
-	 * @since Domino 9.0.1 FP8
-	 */
-	@Override
-	public boolean getAutoRemoveProcessedNotices();
-
-	/* (non-Javadoc)
-	 * @see lotus.domino.NotesCalendar#getRecurrenceID(lotus.domino.DateTime)
-	 * @since Domino 9.0.1 FP8
-	 */
-	@Override
-	public String getRecurrenceID(lotus.domino.DateTime arg0);
-
-	/* (non-Javadoc)
-	 * @see lotus.domino.NotesCalendar#setActAsDbOwner(boolean)
-	 * @since Domino 9.0.1 FP8
-	 */
-	@Override
-	public void setActAsDbOwner(boolean arg0);
-
-	/* (non-Javadoc)
-	 * @see lotus.domino.NotesCalendar#setAutoRemoveProcessedNotices(boolean)
-	 * @since Domino 9.0.1 FP8
-	 */
-	@Override
-	public void setAutoRemoveProcessedNotices(boolean arg0);
 
 }

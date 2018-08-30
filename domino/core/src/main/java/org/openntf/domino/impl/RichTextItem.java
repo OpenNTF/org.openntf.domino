@@ -717,4 +717,24 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		}
 		return result;
 	}
+
+	@Override
+	public String convertToHTML(final Vector options) {
+		try {
+			return getDelegate().convertToHTML(options);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e, this);
+			return null;
+		}
+	}
+
+	@Override
+	public Vector<String> getHTMLReferences() {
+		try {
+			return getDelegate().getHTMLReferences();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e, this);
+			return null;
+		}
+	}
 }

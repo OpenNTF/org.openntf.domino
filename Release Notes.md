@@ -1,5 +1,24 @@
 ##Release Notes
 
+###4.5.0 (First Domino V10 release)
+- Fix for XOTS running as current user when triggered from REST service plugin
+- Additional Xsp Property, "snap", which forces all calls on `getDocumentByKey` etc to exact match (second parameter set to `true`)
+- Fix for case where s_recycle tried to recycle non-Base objects
+- `BasicXotsXspCallbackRunnable` class added, which takes an `IXspHttpServletResponseCallback` and the `HttpServletRequest` as the parameters for the constructor
+- Helpers to process asynchronous tasks in the background: `XspUtils.intialiseAndProcessResponseAsAsync(IXspHttpServletResponseCallback)`, which uses a `BasicXotsXspCallbackRunnable`
+- NotesCalendar methods removed, as in core
+- New methods for V10
+	- Database.createFromTemplate
+	- DateTime.getReplicaID
+	- Document.isCancelSendOnMissingKey
+	- Document.setCancelSendOnMissingKey
+	- Registration.crossCertify
+	- RichTextItem.convertToHTML
+	- RichTextItem.getHTMLReferences
+	- Session.applicationShouldQuit
+	- View.FTSearchSorted methods overloaded with final boolean webQuerySyntax parameter
+	- 
+
 ###4.4.0 (First 9.0.1 FP10 release)
 - Overloaded Database.getUserID() method
 - Support for getting List and Set from items

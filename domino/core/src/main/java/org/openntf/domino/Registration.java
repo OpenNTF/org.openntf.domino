@@ -401,6 +401,33 @@ public interface Registration
 	public boolean crossCertify(final String idFile, final String certPassword, final String comment);
 
 	/**
+	 * Cross-certifies an ID file.
+	 * <p>
+	 * This method requires that {@link #setCertifierIDFile(String) CertifierIDFile} be set.
+	 * </p>
+	 * <p>
+	 * {@link #getExpiration() Expiration} defaults to 10 years from now.
+	 * </p>
+	 * <p>
+	 * This method acts on the Domino Directory (names.nsf) for the server specified by {@link #getRegistrationServer() RegistrationServer},
+	 * or names.nsf in the local Domino data directory if this property is not set.
+	 * </p>
+	 *
+	 * @param idfile
+	 *            The ID file to be cross-certified. Specify the full path, for example, c:\\notes\\data\\user.id.
+	 * @param certPassword
+	 *            The password for the certifier ID file.
+	 * @param comment
+	 *            A value for the comment field in the user's Domino Directory record.
+	 * @param idpw
+	 *            The password for the ID file to be cross-certified
+	 * @return Returns true if the operation is successful; false otherwise.
+	 * @since Domino V10
+	 */
+	@Override
+	public boolean crossCertify(final String idFile, final String certPassword, final String comment, final String idPassword);
+
+	/**
 	 * Deletes the user ID attachment from a Person or Server record in a Domino Directory.
 	 * <p>
 	 * This method acts on the Domino Directory (names.nsf) for the server specified by

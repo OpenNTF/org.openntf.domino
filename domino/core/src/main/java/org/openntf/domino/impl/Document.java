@@ -4433,18 +4433,37 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	//	}
 
 	@Override
-	public void encrypt(final UserID arg0) {
+	public void encrypt(final UserID userId) {
 		try {
-			getDelegate().encrypt(arg0);
+			getDelegate().encrypt(userId);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
 	}
 
 	@Override
-	public void encrypt(final String arg0, final String arg1) {
+	public void encrypt(final String filePath, final String password) {
 		try {
-			getDelegate().encrypt(arg0, arg1);
+			getDelegate().encrypt(filePath, password);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public boolean isCancelSendOnMissingKey() {
+		try {
+			return getDelegate().isCancelSendOnMissingKey();
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return false;
+		}
+	}
+
+	@Override
+	public void setCancelSendOnMissingKey(final boolean cancelSend) {
+		try {
+			getDelegate().setCancelSendOnMissingKey(cancelSend);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}

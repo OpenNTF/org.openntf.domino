@@ -1053,4 +1053,15 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		return parent.getFactory();
 	}
 
+	@Override
+	public String getReplicaID() {
+		String ret = null;
+		try {
+			ret = getDelegate().getReplicaID();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return ret;
+	}
+
 }

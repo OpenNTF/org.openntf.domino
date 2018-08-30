@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>4.4.1-SNAPSHOT</version>
+		<version>4.5.0</version>
 	</parent>
 	<artifactId>org.openntf.domino.updatesite</artifactId>
 	<packaging>eclipse-update-site</packaging>

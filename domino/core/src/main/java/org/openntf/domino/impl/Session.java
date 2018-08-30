@@ -2243,4 +2243,15 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	public void setViewExactMatch(final boolean exactMatch) {
 		isViewExactMatch_ = exactMatch;
 	}
+
+	@Override
+	public boolean applicationShouldQuit() {
+		boolean retVal = false;
+		try {
+			retVal = getDelegate().applicationShouldQuit();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e, this);
+		}
+		return retVal;
+	}
 }
