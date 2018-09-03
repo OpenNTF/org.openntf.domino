@@ -1498,7 +1498,7 @@ public enum TypeUtils {
 		// strings = vector.toArray(new String[0]);
 		for (Object o : vector) {
 			if (o instanceof org.openntf.domino.DateTime) {
-				strings[i++] = ((org.openntf.domino.DateTime) o).getGMTTime();
+				strings[i++] = ((org.openntf.domino.DateTime) o).toGMTISO();
 			} else {
 				strings[i++] = String.valueOf(o);
 			}

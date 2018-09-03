@@ -784,6 +784,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 									update = false;
 								}
 							} else if (usingDefault) {
+								//								System.out.println("Using default vertex of type: " + defaultV.getName());
 								update = false;
 								if (classChk != null) {
 									kind = classChk;
@@ -840,10 +841,10 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 						}
 					}
 				} else {
-					//					System.out.println("TEMP DEBUG: type value annotation is null");
+					System.out.println("TEMP DEBUG: type value annotation is null");
 				}
 			} else {
-				//				System.out.println("TEMP DEBUG: TypeHoldingTypeField is null for type " + kind.getName());
+				System.out.println("TEMP DEBUG: TypeHoldingTypeField is null for type " + kind.getName());
 			}
 
 			//			if (kind.getSimpleName().equals("Fact") || kind.getSimpleName().equals("User")) {

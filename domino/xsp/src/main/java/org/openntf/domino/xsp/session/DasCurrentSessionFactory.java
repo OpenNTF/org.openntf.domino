@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.session.NativeSessionFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -41,6 +42,12 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 	public Session createSession() {
 		if (request_ == null) {
 			lotus.domino.Session rawSession = ContextInfo.getUserSession();
+			if (rawSession == null) {
+				NativeSessionFactory nsf = new NativeSessionFactory(null);
+				Session result = nsf.createSession();
+				Factory.setCurrentToSession(result);
+				return result;
+			}
 			try {
 				lotus.domino.Database rawDb = rawSession.getCurrentDatabase();
 				if (rawDb != null) {
@@ -53,7 +60,7 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
-			return wrapSession(ContextInfo.getUserSession(), false);
+			return wrapSession(rawSession, false);
 		} else {
 			String name = request_.getUserPrincipal().getName();
 			//			System.out.println("TEMP DEBUG getting session for " + name);

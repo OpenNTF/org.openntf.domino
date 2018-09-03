@@ -10,7 +10,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Comment")
-public interface Comment extends Likeable {
+public interface Comment extends Likeable, Commentable {
 	@TypedProperty("Body")
 	public String getBody();
 
@@ -44,30 +44,39 @@ public interface Comment extends Likeable {
 	@AdjacencyUnique(label = CommentsAbout.LABEL)
 	public void removeCommentable(Commentable commentable);
 
+	@Override
 	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public List<CommentsAbout> getCommentsAbouts();
 
+	@Override
 	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public int countCommentsAbouts();
 
+	@Override
 	@IncidenceUnique(label = CommentsAbout.LABEL)
 	public void removeCommentsAbout(CommentsAbout commentsAbout);
 
+	@Override
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public List<Socializer> getSocializers();
 
+	@Override
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public Mentions addSocializer(Socializer socializer);
 
+	@Override
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public void removeSocializer(Socializer socializer);
 
+	@Override
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public List<Mentions> getMentions();
 
+	@Override
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public int countMentions();
 
+	@Override
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public void removeMentions(Mentions mentions);
 

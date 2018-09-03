@@ -84,7 +84,6 @@ import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 
-import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
 // TODO: Auto-generated Javadoc
@@ -226,7 +225,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
 				}
 			}
-
+		
 		}*/
 		return false;
 	}
@@ -307,7 +306,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.Document#getCreated()
 	 */
 	@Override
-	@Deprecated
+	//	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getCreated() {
 		checkMimeOpen(null);// RPr: needed?
@@ -380,7 +379,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.Document#getLastAccessed()
 	 */
 	@Override
-	@Deprecated
+	//	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastAccessed() {
 		checkMimeOpen(null);// RPr: needed?
@@ -420,7 +419,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * @see org.openntf.domino.Document#getLastModified()
 	 */
 	@Override
-	@Deprecated
+	//	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastModified() {
 		checkMimeOpen(null);// RPr: needed?
@@ -1305,7 +1304,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1341,7 +1340,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -4180,29 +4179,84 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		try {
 			jw.startObject();
 			jw.outStringProperty("@unid", getUniversalID());
+			jw.outStringProperty("@noteid", getNoteID());
+			jw.outStringProperty("@replicaid", getParentDatabase().getReplicaID());
+			jw.outStringProperty("@metaversalid", getMetaversalID());
+
+			try {
+				jw.outStringProperty("@created", getCreated().toGMTISO());
+				jw.outStringProperty("@lastmodified", getLastModified().toGMTISO());
+				jw.outStringProperty("@lastaccessed", getLastAccessed().toGMTISO());
+			} catch (Exception e) {
+				DominoUtils.handleException(e, "Exception trying to index Dates.");
+			}
 			Set<String> keys = keySet();
 			for (String key : keys) {
 				Item currItem = getFirstItem(key);
-				if (currItem.getMIMEEntity() == null) {
-					jw.outProperty(key, currItem.getText());
-				} else {
-					String abstractedText = currItem.abstractText(0, false, false);
-					if (null == abstractedText) {
-						jw.outProperty(key, "**MIME ITEM, VALUE CANNOT BE DECODED TO JSON**");
-					} else {
-						jw.outProperty(key, abstractedText);
+
+				Type itemType = currItem.getTypeEx();
+
+				try {
+					if (itemType == Type.ATTACHMENT) {
+						jw.outProperty(key, "ATTACHMENT");
+					} else if (itemType == Type.AUTHORS || itemType == Type.READERS || itemType == Type.NAMES || itemType == Type.TEXT
+							|| itemType == Type.NUMBERS) {
+						Vector<Object> values = currItem.getValues();
+						if (values.size() == 1) {
+							jw.outProperty(key, values.elementAt(0));
+						} else {
+							jw.outProperty(key, values);
+						}
+					} else if (itemType == Type.DATETIMES) {
+						Vector<DateTime> values = currItem.getValueDateTimeArray();
+						//						Vector<Date> valueDates = new Vector<Date>();
+						//						for (DateTime dt : values) {
+						//							valueDates.add(dt.toJavaDate());
+						//						}
+
+						if (values.size() == 1) {
+							jw.outProperty(key, values.get(0).toGMTISO());
+						} else {
+							jw.outProperty(key, TypeUtils.toStrings(values));
+						}
+					} else if (itemType == Type.EMBEDDEDOBJECT) {
+						jw.outProperty(key, "EMBEDDED_OBJECT");
+					} else if (itemType == Type.RICHTEXT) {
+						RichTextItem rtItem = (RichTextItem) currItem;
+						jw.outProperty(key, rtItem.getUnformattedText());
+					} else if (itemType == Type.MIME_PART) {
+						MIMEEntity mimeEntity = currItem.getMIMEEntity();
+						if (mimeEntity != null) {
+							jw.outProperty(key, mimeEntity.getContentAsText());
+						} else {
+							jw.outProperty(key, "MIME_PART null");
+						}
 					}
+				} catch (Exception e) {
+					DominoUtils.handleException(e, this);
+					e.printStackTrace();	// NTF - temporary
 				}
+
+				//				if (currItem.getMIMEEntity() == null) {
+				//					jw.outProperty(key, currItem.getText());
+				//				} else {
+				//					String abstractedText = currItem.abstractText(0, false, false);
+				//					if (null == abstractedText) {
+				//						jw.outProperty(key, "**MIME ITEM, VALUE CANNOT BE DECODED TO JSON**");
+				//					} else {
+				//						jw.outProperty(key, abstractedText);
+				//					}
+				//				}
 			}
 			jw.endObject();
 			jw.flush();
 		} catch (IOException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-		} catch (JsonException e) {
+		} /*catch (JsonException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-		}
+			}*/
 		return sw.toString();
 	}
 

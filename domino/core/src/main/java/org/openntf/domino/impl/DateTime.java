@@ -19,6 +19,10 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +46,15 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		implements org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
+
+	private static final DateTimeFormatter GMT_FORMAT_1 = DateTimeFormatter.ofPattern("dd' 'MMM' 'uuuu' 'HH:mm:ss' 'O")
+			.withResolverStyle(ResolverStyle.SMART);
+
+	private static final DateTimeFormatter GMT_FORMAT_2 = DateTimeFormatter.ofPattern("MM/dd/uuuu' 'hh:mm:ss' 'a' 'O")
+			.withResolverStyle(ResolverStyle.SMART);
+
+	private static final DateTimeFormatter GMT_FORMAT_DATE = DateTimeFormatter.ofPattern("MM/dd/uuuu")
+			.withResolverStyle(ResolverStyle.SMART);
 
 	static {
 		Factory.addTerminateHook(new Runnable() {
@@ -413,6 +426,73 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		}
 		// TODO NTF - find out what this actually does. The documentation is... vague
 		//throw new UnimplementedException("convertToZone is not yet implemented.");
+	}
+
+	public void convertToZone(final int zone) {
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.convertToZone(zone, this.isDST());
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+	}
+
+	@Override
+	public void convertToGMT() {
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.convertToZone(0, this.isDST());
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+	}
+
+	@Override
+	public ZonedDateTime toGMTDateTime() {
+		String gmtTime = getGMTTime() + "+0";
+		ZonedDateTime result = null;
+		if (isAnyTime()) {
+			try {
+				return ZonedDateTime.parse(gmtTime, DateTime.GMT_FORMAT_DATE);
+			} catch (DateTimeParseException pe) {
+				DominoUtils.handleException(pe, "Parse exception. Unable to parse string " + gmtTime);
+				System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_DATE " + gmtTime);
+				pe.printStackTrace();
+			} catch (Throwable t) {
+				DominoUtils.handleException(t, "Not a parse exception");
+			}
+		} else {
+			try {
+				return ZonedDateTime.parse(gmtTime, GMT_FORMAT_1);
+			} catch (DateTimeParseException pe) {
+				try {
+					return ZonedDateTime.parse(gmtTime, GMT_FORMAT_2);
+				} catch (DateTimeParseException pe1) {
+					DominoUtils.handleException(pe1, "Parse exception. Unable to parse string " + gmtTime);
+					System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_1 or GMT_FORMAT_2 " + gmtTime
+							+ ": " + pe1.getMessage());
+					pe1.printStackTrace();
+					if (pe1.getCause() != null) {
+						pe1.getCause().printStackTrace();
+					}
+				}
+			} catch (Throwable t) {
+				DominoUtils.handleException(t, "Not a parse exception");
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String toGMTISO() {
+		ZonedDateTime zdt = toGMTDateTime();
+		if (zdt != null) {
+			return zdt.format(DateTimeFormatter.ISO_INSTANT);
+		} else {
+			return null;
+		}
 	}
 
 	/* (non-Javadoc)
