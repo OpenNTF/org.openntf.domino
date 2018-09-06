@@ -3,10 +3,10 @@
    <description name="OpenNTF Domino API">
       OpenNTF Domino API
    </description>
-   <feature url="features/org.openntf.domino.nonxsp.feature_4.5.0.qualifier.jar" id="org.openntf.domino.nonxsp.feature" version="4.5.0.qualifier">
+   <feature url="features/org.openntf.domino.nonxsp.feature_5.0.0.qualifier.jar" id="org.openntf.domino.nonxsp.feature" version="5.0.0.qualifier">
       <category name="OpenNTF Domino API"/>
    </feature>
-   <feature url="features/org.openntf.domino.dependencies.feature_4.5.0.qualifier.jar" id="org.openntf.domino.dependencies.feature" version="4.5.0.qualifier">
+   <feature url="features/org.openntf.domino.dependencies.feature_5.0.0.qualifier.jar" id="org.openntf.domino.dependencies.feature" version="5.0.0.qualifier">
       <category name="OpenNTF Domino API"/>
    </feature>
    <category-def name="OpenNTF Domino API" label="OpenNTF Domino API"/>
