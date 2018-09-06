@@ -74,3 +74,4 @@ Bundle-ClassPath: .,
 Bundle-ActivationPolicy: lazy
 Import-Package: lotus.domino,
  org.osgi.service.log;resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
