@@ -1,7 +1,6 @@
 package org.openntf.domino.impl;
 
 import org.openntf.domino.Session;
-import org.openntf.domino.UserID;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -23,7 +22,7 @@ public class IDVault extends BaseThreadSafe<org.openntf.domino.IDVault, lotus.do
 	}
 
 	@Override
-	public UserID getUserID(final String arg0, final String arg1) {
+	public org.openntf.domino.UserID getUserID(final String arg0, final String arg1) {
 		try {
 			return fromLotus(getDelegate().getUserID(arg0, arg1), UserID.SCHEMA, this);
 		} catch (Exception e) {
@@ -33,7 +32,7 @@ public class IDVault extends BaseThreadSafe<org.openntf.domino.IDVault, lotus.do
 	}
 
 	@Override
-	public UserID getUserID(final String arg0, final String arg1, final String arg2) {
+	public org.openntf.domino.UserID getUserID(final String arg0, final String arg1, final String arg2) {
 		try {
 			return fromLotus(getDelegate().getUserID(arg0, arg1, arg2), UserID.SCHEMA, this);
 		} catch (Exception e) {

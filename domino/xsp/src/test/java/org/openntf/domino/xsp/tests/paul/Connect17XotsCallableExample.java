@@ -33,7 +33,7 @@ public class Connect17XotsCallableExample implements Runnable {
 		Xots.start(executor);
 		List<Future<String>> results = new ArrayList<Future<String>>();
 		for (int i = 0; i < 10; i++) {
-			results.add(Xots.getService().submit(new DemoXotsCallable("Hello", i)));
+			results.add(Xots.submit(new DemoXotsCallable("Hello", i)));
 		}
 		for (Future<String> f : results) {
 			try {

@@ -1,5 +1,6 @@
 package org.openntf.domino.graph2.builtin;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openntf.domino.Database;
@@ -45,10 +46,10 @@ public interface ViewVertex extends VertexFrame {
 	public String getTitle();
 
 	@Incidence(label = "contents", direction = Direction.OUT)
-	public Iterable<Contains> getContents();
+	public List<Contains> getContents();
 
 	@Incidence(label = "doccontents", direction = Direction.OUT)
-	public Iterable<Contains> getDocContents();
+	public List<Contains> getDocContents();
 
 	public abstract static class ViewVertexImpl implements ViewVertex, JavaHandlerContext<Vertex> {
 		@Override
@@ -70,12 +71,22 @@ public interface ViewVertex extends VertexFrame {
 		public View asView() {
 			Document doc = asDocument();
 			Database db = doc.getParentDatabase();
-			return db.getView(doc);
+			View result = db.getView(doc);
+			if (result == null) {
+				System.out.println("TEMP DEBUG Can't find a view for a document with title " + doc.getItemValueString("$Title")
+						+ " in database " + db.getApiPath());
+			}
+			return result;
 		}
 
 		@Override
 		public int getDocCount() {
-			return asView().getAllEntries().getCount();
+			View view = asView();
+			if (view != null) {
+				return view.createViewNav().getCount();
+			} else {
+				return 0;
+			}
 		}
 
 		@SuppressWarnings("unchecked")

@@ -148,9 +148,9 @@ public enum EMBridgeMessageQueue {
 	public static void start() {
 		if (!isStarted.get()) {
 			INSTANCE.dispatcher_ = new QueueDispatcher(INSTANCE);
-			Xots.getService().execute(INSTANCE.dispatcher_);
+			Xots.execute(INSTANCE.dispatcher_);
 			INSTANCE.listener_ = new QueueListener(INSTANCE);
-			Xots.getService().execute(INSTANCE.listener_);
+			Xots.execute(INSTANCE.listener_);
 			isStarted = new AtomicBoolean(true);
 		}
 	}

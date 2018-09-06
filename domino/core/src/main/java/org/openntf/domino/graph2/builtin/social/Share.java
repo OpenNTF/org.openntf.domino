@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.social;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -22,7 +24,7 @@ public interface Share extends Likeable {
 	public void setFollowUpDate(String date);
 
 	@AdjacencyUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public Iterable<Sharer> getSharers();
+	public List<Sharer> getSharers();
 
 	@AdjacencyUnique(label = SharedBy.LABEL, direction = Direction.IN)
 	public SharedBy addSharer(Sharer sharer);
@@ -31,7 +33,7 @@ public interface Share extends Likeable {
 	public void removeSharer(Sharer sharer);
 
 	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
-	public Iterable<SharedBy> getSharedBys();
+	public List<SharedBy> getSharedBys();
 
 	@IncidenceUnique(label = SharedBy.LABEL, direction = Direction.IN)
 	public int countSharedBys();
@@ -40,7 +42,7 @@ public interface Share extends Likeable {
 	public void removeSharedBy(SharedBy sharedBy);
 
 	@AdjacencyUnique(label = SharedWith.LABEL)
-	public Iterable<Sharer> getSharedWithSharers();
+	public List<Sharer> getSharedWithSharers();
 
 	@AdjacencyUnique(label = SharedWith.LABEL)
 	public Sharer addSharedWithSharer(Sharer sharer);
@@ -49,7 +51,7 @@ public interface Share extends Likeable {
 	public void removeSharedWithSharer(Sharer sharer);
 
 	@IncidenceUnique(label = SharedWith.LABEL)
-	public Iterable<SharedWith> getSharedWiths();
+	public List<SharedWith> getSharedWiths();
 
 	@IncidenceUnique(label = SharedWith.LABEL)
 	public int countSharedWiths();

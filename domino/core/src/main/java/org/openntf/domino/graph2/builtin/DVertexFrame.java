@@ -113,12 +113,14 @@ public interface DVertexFrame extends Editable {
 				result.put("modifiedDate", getModified());
 				String[] editors = getEditors();
 				if (editors != null && editors.length > 0) {
-					result.put("lastEditor", getEditors()[0]);
+					result.put("lastEditor", editors[editors.length - 1]);
+				} else {
+					result.put("lastEditor", null);
 				}
 			} catch (UserAccessException uae) {
 				throw uae;
 			} catch (Throwable t1) {
-				t1.printStackTrace();
+				//				t1.printStackTrace();
 			}
 			return result;
 		}
@@ -136,8 +138,10 @@ public interface DVertexFrame extends Editable {
 					//					System.out.println("TEMP DEBUG $UpdatedBy was null for " + asVertex().getId().toString());
 				}
 				return result;
+			} catch (UserAccessException uae) {
+				return null;
 			} catch (Throwable t) {
-				t.printStackTrace();
+				//				t.printStackTrace();
 				return null;
 			}
 		}

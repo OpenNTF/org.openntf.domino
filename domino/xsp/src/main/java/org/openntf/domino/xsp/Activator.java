@@ -77,7 +77,7 @@ public class Activator extends Plugin {
 	 */
 	public static String getVersion() {
 		if (version == null) {
-			version = (String) instance.getBundle().getHeaders().get("Bundle-Version");
+			version = instance.getBundle().getHeaders().get("Bundle-Version");
 		}
 		return version;
 	}
@@ -106,6 +106,7 @@ public class Activator extends Plugin {
 	 * Constructor
 	 */
 	public Activator() {
+		System.out.println("Activating org.openntf.domino.xsp!");
 		instance = this;
 	}
 

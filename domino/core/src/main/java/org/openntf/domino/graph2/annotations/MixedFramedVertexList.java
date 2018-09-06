@@ -20,7 +20,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.gremlin.Tokens.T;
 
-public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/implements List {
+public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/ implements List {
 	public static class MixedFramedListIterator implements ListIterator {
 		//		    protected final Direction direction_;
 		protected final ListIterator<Vertex> iterator_;
@@ -34,8 +34,9 @@ public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/implements
 
 		@Override
 		public void add(final Object arg0) {
-			if (arg0 == null)
+			if (arg0 == null) {
 				return;
+			}
 			if (arg0 instanceof Vertex) {
 				iterator_.add((Vertex) arg0);
 			} else if (arg0 instanceof VertexFrame) {
@@ -158,27 +159,31 @@ public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/implements
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public MixedFramedVertexList applyFilter(final String key, final Object value) {
-		List<DVertex> vertList = new DVertexList((DVertex) sourceVertex_);
+		DVertexList vertList = new DVertexList((DVertex) sourceVertex_);
 		if (this.size() > 0) {
 			for (Object raw : this) {
-				if (raw instanceof VertexFrame) {
-					try {
-						VertexFrame vertex = (VertexFrame) raw;
-						if ("@type".equals(key)) {
-							if (DGraphUtils.isType(vertex, TypeUtils.toString(value))) {
-								vertList.add((DVertex) vertex.asVertex());
+				VertexFrame vertex = (VertexFrame) raw;
+				try {
+					if ("@type".equals(key)) {
+						if (DGraphUtils.isType(vertex, TypeUtils.toString(value))) {
+							vertList.add((DVertex) vertex.asVertex());
+						}
+					} else {
+						Object vertexVal = DGraphUtils.getFramedProperty(getGraph(), vertex, key);
+						if (vertexVal instanceof Collection) {
+							for (Object rawVal : (Collection) vertexVal) {
+								if (value.equals(TypeUtils.toString(rawVal))) {
+									vertList.add((DVertex) vertex.asVertex());
+								}
 							}
 						} else {
-							Object vertexVal = DGraphUtils.getFramedProperty(getGraph(), vertex, key);
 							if (value.equals(TypeUtils.toString(vertexVal))) {
 								vertList.add((DVertex) vertex.asVertex());
 							}
 						}
-					} catch (Throwable t) {
-						t.printStackTrace();
 					}
-				} else {
-					System.out.println("Alert: MixedFramedVertexList has a member of " + (raw == null ? "null" : raw.getClass().getName()));
+				} catch (Throwable t) {
+					t.printStackTrace();
 				}
 			}
 		}
@@ -218,8 +223,8 @@ public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/implements
 			} else if (raw instanceof VertexFrame) {
 				result.add(((VertexFrame) raw).asVertex());
 			} else {
-				throw new IllegalArgumentException("Cannot set an object of type " + arg0.getClass().getName()
-						+ " to an EdgeFrame iterator");
+				throw new IllegalArgumentException(
+						"Cannot set an object of type " + arg0.getClass().getName() + " to an EdgeFrame iterator");
 			}
 		}
 		return result;
@@ -339,8 +344,9 @@ public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/implements
 	@Override
 	public Iterator iterator() {
 		ListIterator<Vertex> iterator = list_.listIterator();
-		if (iterator == null)
+		if (iterator == null) {
 			System.err.println("ListIterator IS NULL from list of type " + list_.getClass().getName());
+		}
 		return new MixedFramedListIterator(framedGraph, iterator);
 	}
 

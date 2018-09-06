@@ -27,7 +27,7 @@ public class Connect17XotsRunnableExample implements Runnable {
 		DominoExecutor executor = new XotsDominoExecutor(10);
 		Xots.start(executor);
 		for (int i = 0; i < 10; i++) {
-			Xots.getService().submit(new DemoXotsRunnable("Hello", i));
+			Xots.submit(new DemoXotsRunnable("Hello", i));
 		}
 		Xots.stop(120);
 	}

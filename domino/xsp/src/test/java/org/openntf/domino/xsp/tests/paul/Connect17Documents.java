@@ -83,14 +83,14 @@ public class Connect17Documents implements Runnable {
 		doc.replaceItemValue("MVField", blank);
 		System.out.println(doc.hasItem("MVField"));
 
-		NamesList<String> names = new NamesList<String>();
+		NamesList names = new NamesList();
 		names.add("CN=Paul Withers/O=Intec");
 		names.add("CN=Admin/O=Intec=PW");
 		newDoc.replaceItemValue("Names", names);
-		AuthorsList<String> authors = new AuthorsList<String>();
+		AuthorsList authors = new AuthorsList();
 		authors.addAll(names);
 		newDoc.replaceItemValue("Authors", authors);
-		ReadersList<String> readers = new ReadersList<String>();
+		ReadersList readers = new ReadersList();
 		readers.addAll(names);
 		newDoc.replaceItemValue("Readers", readers);
 		Item dt = newDoc.replaceItemValue("TestDate", "");

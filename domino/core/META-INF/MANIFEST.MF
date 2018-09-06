@@ -60,7 +60,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.utils.xml,
  org.openntf.domino.xots,
  org.openntf.domino.xots.events
-Require-Bundle: com.tinkerpop;bundle-version="2.6.0";visibility:=reexport,
+Require-Bundle: com.tinkerpop;bundle-version="2.6.1";visibility:=reexport,
  org.openntf.formula;bundle-version="2.0.0";visibility:=reexport,
  com.ibm.commons;bundle-version="9.0.1",
  com.ibm.notes.java.api;bundle-version="9.0.1";resolution:=optional,

@@ -33,10 +33,14 @@ public class DEdge extends DElement implements org.openntf.domino.graph2.DEdge {
 	@Override
 	protected void applyChanges() {
 		if (beforeUpdate()) {
-			Object inId = getVertexId(Direction.IN);
-			Object outId = getVertexId(Direction.OUT);
-			if (inId.equals(outId)) {
-				throw new IllegalStateException("Edge cannot have the same vertex for both in and out directions.");
+			try {
+				Object inId = getVertexId(Direction.IN);
+				Object outId = getVertexId(Direction.OUT);
+				if (inId.equals(outId)) {
+					throw new IllegalStateException("Edge cannot have the same vertex for both in and out directions.");
+				}
+			} catch (Throwable t) {
+				t.printStackTrace();
 			}
 			super.applyChanges();
 		}

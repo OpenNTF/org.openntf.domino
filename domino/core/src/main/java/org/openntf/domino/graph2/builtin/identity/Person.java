@@ -1,8 +1,16 @@
 package org.openntf.domino.graph2.builtin.identity;
 
+import java.util.List;
+
+import org.openntf.domino.graph2.annotations.AdjacencyUnique;
+import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
+import org.openntf.domino.graph2.builtin.DEdgeFrame;
 import org.openntf.domino.graph2.builtin.Editor;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.InVertex;
+import com.tinkerpop.frames.OutVertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("Person")
@@ -181,6 +189,36 @@ public interface Person extends Name, Editor {
 	@TypedProperty("Owner")
 	public void setOwner(String owner);
 
+	@TypedProperty("officeZip")
+	public String getOfficeZip();
+
+	@TypedProperty("officeZip")
+	public void setOfficeZip(String officeZip);
+
+	@TypedProperty("officeStreetAddress")
+	public String getOfficeStreetAddress();
+
+	@TypedProperty("officeStreetAddress")
+	public void setOfficeStreetAddress(String officeStreetAddress);
+
+	@TypedProperty("officeState")
+	public String getOfficeState();
+
+	@TypedProperty("officeState")
+	public void setOfficeState(String officeState);
+
+	@TypedProperty("officeCity")
+	public String getOfficeCity();
+
+	@TypedProperty("officeCity")
+	public void setOfficeCity(String officeCity);
+
+	@TypedProperty("officeCountry")
+	public String getOfficeCountry();
+
+	@TypedProperty("officeCountry")
+	public void setOfficeCountry(String officeCountry);
+
 	@TypedProperty("PhoneNumber")
 	public String getPhoneNumber();
 
@@ -290,5 +328,52 @@ public interface Person extends Name, Editor {
 
 	@TypedProperty("ZIP")
 	public void setZip(String ZIP);
+
+	@TypeValue(ReportsTo.LABEL)
+	public abstract static interface ReportsTo extends DEdgeFrame {
+		public static final String LABEL = "ReportsTo";
+
+		@OutVertex
+		public Person getSupervisor();
+
+		@InVertex
+		public Person getWorker();
+	}
+
+	@AdjacencyUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public Person getReportsToSupervisor();
+
+	@AdjacencyUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public ReportsTo addReportsToSupervisor(Person supervisor);
+
+	@AdjacencyUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public void removeReportsToSupervisor(Person supervisor);
+
+	@IncidenceUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public ReportsTo getReportsTo();
+
+	@IncidenceUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public int countReportsTo();
+
+	@IncidenceUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public void removeReportsTo(ReportsTo supervisor);
+
+	@AdjacencyUnique(label = ReportsTo.LABEL)
+	public List<Person> getReportsToWorkers();
+
+	@AdjacencyUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public ReportsTo addReportsToWorker(Person worker);
+
+	@AdjacencyUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public void removeReportsToWorker(Person worker);
+
+	@IncidenceUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public List<ReportsTo> getReportsToSubs();
+
+	@IncidenceUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public int countReportsToSubs();
+
+	@IncidenceUnique(label = ReportsTo.LABEL, direction = Direction.OUT)
+	public void removeReportsToSub(ReportsTo supervisor);
 
 }

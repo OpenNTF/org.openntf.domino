@@ -32,13 +32,18 @@ public enum EMEventIds {
 	private static EMEventIds[] eventArray;
 
 	public static EMEventIds getEMEventFromId(final int id) {
-		if (id < 0) {
+		if (id < 1) {
 			return null;
 		}
-		if (eventArray == null) {
-			initEventArray();
+		try {
+			if (eventArray == null) {
+				initEventArray();
+			}
+			return eventArray[id];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("An EMBridge exception was encountered. No enum found for event id " + id);
+			return null;
 		}
-		return eventArray[id];
 	}
 
 	synchronized static private void initEventArray() {

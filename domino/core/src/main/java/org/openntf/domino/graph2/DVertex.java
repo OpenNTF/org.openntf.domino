@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.graph2;
 
@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.Vertex;
 
 /**
  * @author nfreeman
- * 
+ *
  */
 public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 	public static final String GRAPH_TYPE_VALUE = "V";
@@ -47,5 +47,7 @@ public interface DVertex extends com.tinkerpop.blueprints.Vertex, DElement {
 	public Object getFrameImplObject(String key);
 
 	public void setFrameImplObject(String key, Object value);
+
+	DElementStore getElementStore();
 
 }

@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.social;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
@@ -9,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("Commenter")
 public interface Commenter extends DVertexFrame {
 	@AdjacencyUnique(label = CommentsOn.LABEL)
-	public Iterable<Comment> getComments();
+	public List<Comment> getComments();
 
 	@AdjacencyUnique(label = CommentsOn.LABEL)
 	public CommentsOn addComment(Comment comment);
@@ -18,7 +20,7 @@ public interface Commenter extends DVertexFrame {
 	public void removeComment(Comment comment);
 
 	@IncidenceUnique(label = CommentsOn.LABEL)
-	public Iterable<CommentsOn> getCommentsOns();
+	public List<CommentsOn> getCommentsOns();
 
 	@IncidenceUnique(label = CommentsOn.LABEL)
 	public int countCommentsOns();

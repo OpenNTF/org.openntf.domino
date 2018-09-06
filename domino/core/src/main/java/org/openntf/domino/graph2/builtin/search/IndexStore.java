@@ -21,6 +21,7 @@ import org.openntf.domino.graph2.builtin.identity.Name;
 import org.openntf.domino.graph2.impl.DElementStore;
 import org.openntf.domino.graph2.impl.DFramedTransactionalGraph;
 import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.CaseInsensitiveString;
 
 import com.tinkerpop.blueprints.Graph;
@@ -239,17 +240,17 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 
 	@Override
 	public void saveTokenLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
-			final DocumentScanner scanner) {
-		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+			final DocumentScanner scanner, final ScanStatus status, final long doccount, final long docstoprocess) {
+		setLastIndexDate(mapKey, scanner.getLastDocModDate(), status, doccount, docstoprocess);
 		Set<CharSequence> keySet = fullMap.keySet();
 		if (keySet.size() > 0) {
 			for (CharSequence cis : keySet) {
 				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
 				String strValue = cis.toString();
-				Term tokenV = (Term) getGraph().getVertex(strValue.toLowerCase(), Term.class);
-				if (tokenV == null) {
-					tokenV = (Term) getGraph().addVertex(strValue.toLowerCase(), Term.class);
-				}
+				Term tokenV = (Term) getGraph().addVertex(strValue.toLowerCase(), Term.class);
+				//				if (tokenV == null) {
+				//					tokenV = (Term) getGraph().addVertex(strValue.toLowerCase(), Term.class);
+				//				}
 				DVertex dv = (DVertex) tokenV.asVertex();
 				String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
 				dv.setProperty(itemName, tlValue);
@@ -263,8 +264,9 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 	}
 
 	@Override
-	public void setLastIndexDate(final Object mapKey, final Date date) {
-		getInternalIndexDatabase().setLastIndexDate(mapKey, date);
+	public void setLastIndexDate(final Object mapKey, final Date date, final ScanStatus status, final long doccount,
+			final long docstoprocess) {
+		getInternalIndexDatabase().setLastIndexDate(mapKey, date, status, doccount, docstoprocess);
 	}
 
 	@Override
@@ -300,7 +302,8 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
 								//										+ " items and " + scanner.getTokenCount());
 								synchronized (tokenLocationMap) {
-									saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
+									saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner, ScanStatus.RUNNING,
+											scanner.getDocCount(), scanner.getDocsToProcess());
 									tokenLocationMap.clear();
 								}
 							}
@@ -312,7 +315,8 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 							int nlsize = nameLocationMap.size();
 							if (nlsize >= 128) {
 								synchronized (nameLocationMap) {
-									saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+									saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner, ScanStatus.RUNNING,
+											scanner.getDocCount(), scanner.getDocsToProcess());
 									nameLocationMap.clear();
 								}
 							}
@@ -324,7 +328,8 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
 								//										+ " items and " + scanner.getTokenCount());
 								synchronized (valueLocationMap) {
-									saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner);
+									saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner, ScanStatus.RUNNING,
+											scanner.getDocCount(), scanner.getDocsToProcess());
 									valueLocationMap.clear();
 								}
 							}
@@ -336,7 +341,8 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
 								//										+ " items and " + scanner.getTokenCount());
 								synchronized (richTextLocationMap) {
-									saveRichTextLocationMap(scanner.getStateManagerKey(), richTextLocationMap, scanner);
+									saveRichTextLocationMap(scanner.getStateManagerKey(), richTextLocationMap, scanner, ScanStatus.RUNNING,
+											scanner.getDocCount(), scanner.getDocsToProcess());
 									richTextLocationMap.clear();
 								}
 							}
@@ -344,6 +350,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 					} else {
 						System.out.println("Scanner is null from notifications");
 					}
+					//					System.out.println("TEMP DEBUG Committing the graph");
 					getGraph().commit();
 					break;
 				case COMPLETE:
@@ -353,7 +360,8 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 						if (scanner.isTrackTokenLocation()) {
 							Map tokenLocationMap = scanner.getTokenLocationMap();
 							synchronized (tokenLocationMap) {
-								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
+								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner, ScanStatus.COMPLETE,
+										scanner.getDocCount(), scanner.getDocsToProcess());
 								tokenLocationMap.clear();
 							}
 						} else {
@@ -362,28 +370,32 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 						if (scanner.isTrackNameLocation()) {
 							Map nameLocationMap = scanner.getNameLocationMap();
 							synchronized (nameLocationMap) {
-								saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+								saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner, ScanStatus.COMPLETE,
+										scanner.getDocCount(), scanner.getDocsToProcess());
 								nameLocationMap.clear();
 							}
 						}
 						if (scanner.isTrackValueLocation()) {
 							Map valueLocationMap = scanner.getValueLocationMap();
 							synchronized (valueLocationMap) {
-								saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner);
+								saveValueLocationMap(scanner.getStateManagerKey(), valueLocationMap, scanner, ScanStatus.COMPLETE,
+										scanner.getDocCount(), scanner.getDocsToProcess());
 								valueLocationMap.clear();
 							}
 						}
 						if (scanner.isTrackRichTextLocation()) {
-							System.out.println("TEMP DEBUG finalizing Rich Text Location map");
+							//							System.out.println("TEMP DEBUG finalizing Rich Text Location map");
 							Map richTextLocationMap = scanner.getRichTextLocationMap();
 							synchronized (richTextLocationMap) {
-								saveRichTextLocationMap(scanner.getStateManagerKey(), richTextLocationMap, scanner);
+								saveRichTextLocationMap(scanner.getStateManagerKey(), richTextLocationMap, scanner, ScanStatus.COMPLETE,
+										scanner.getDocCount(), scanner.getDocsToProcess());
 								richTextLocationMap.clear();
 							}
 						}
 					} else {
 						System.out.println("ALERT! Scanner was null??");
 					}
+					//					System.out.println("TEMP DEBUG Committing the graph");
 					getGraph().commit();
 					break;
 				case ERROR:
@@ -397,6 +409,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+
 	}
 
 	@Override
@@ -427,7 +440,7 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 
 	@Override
 	public void saveNameLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
-			final DocumentScanner scanner) {
+			final DocumentScanner scanner, final ScanStatus status, final long doccount, final long docstoprocess) {
 		Set<CharSequence> keySet = fullMap.keySet();
 		for (CharSequence cis : keySet) {
 			Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
@@ -442,17 +455,17 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 
 	@Override
 	public void saveValueLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
-			final DocumentScanner scanner) {
-		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+			final DocumentScanner scanner, final ScanStatus status, final long doccount, final long docstoprocess) {
+		setLastIndexDate(mapKey, scanner.getLastDocModDate(), status, doccount, docstoprocess);
 		Set<CharSequence> keySet = fullMap.keySet();
 		if (keySet.size() > 0) {
 			for (CharSequence cis : keySet) {
 				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
 				String strValue = cis.toString();
-				Value valueV = (Value) getGraph().getVertex(strValue.toLowerCase(), Value.class);
-				if (valueV == null) {
-					valueV = (Value) getGraph().addVertex(strValue.toLowerCase(), Value.class);
-				}
+				Value valueV = (Value) getGraph().addVertex(strValue.toLowerCase(), Value.class);
+				//				if (valueV == null) {
+				//					valueV = (Value) getGraph().addVertex(strValue.toLowerCase(), Value.class);
+				//				}
 				DVertex dv = (DVertex) valueV.asVertex();
 				String itemName = VALUE_MAP_PREFIX + String.valueOf(mapKey);
 				dv.setProperty(itemName, tlValue);
@@ -466,8 +479,8 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 
 	@Override
 	public void saveRichTextLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, CharSequence>> fullMap,
-			final DocumentScanner scanner) {
-		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+			final DocumentScanner scanner, final ScanStatus status, final long doccount, final long docstoprocess) {
+		setLastIndexDate(mapKey, scanner.getLastDocModDate(), status, doccount, docstoprocess);
 		Set<CharSequence> keySet = fullMap.keySet();
 		if (keySet.size() > 0) {
 			//			System.out.println("TEMP DEBUG saving an RT location map of size " + keySet.size());
@@ -476,13 +489,16 @@ public class IndexStore extends DElementStore implements IndexDatabase, IScanner
 				for (CharSequence itemName : tlValue.keySet()) {
 					String key = RICH_TEXT_ID_PREFIX + cis.toString() + "$" + itemName.toString();
 					//					System.out.println("TEMP DEBUG RT Location Map processing key " + key);
-					RichTextReference rtV = (RichTextReference) getGraph().getVertex(key.toLowerCase(), RichTextReference.class);
-					if (rtV == null) {
-						rtV = (RichTextReference) getGraph().addVertex(key.toLowerCase(), RichTextReference.class);
-					}
+					RichTextReference rtV = (RichTextReference) getGraph().addVertex(key.toLowerCase(), RichTextReference.class);
+					//					if (rtV == null) {
+					//						rtV = (RichTextReference) getGraph().addVertex(key.toLowerCase(), RichTextReference.class);
+					//					}
 					rtV.setItemName(itemName.toString());
 					rtV.setSourceMetaid(cis.toString());
 					rtV.setTokenProcessed(false);
+					CharSequence rtText = tlValue.get(itemName);
+					BigString rtBigString = new BigString(rtText.toString());
+					rtV.setText(rtBigString);
 					RichTextReference.Utils.processContent(rtV, getGraph(), scanner.isCaseSensitive(), false);
 				}
 			}

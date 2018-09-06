@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.workflow;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.annotations.TypedProperty;
@@ -23,7 +25,7 @@ public interface Task extends DVertexFrame {
 	public void setOutcome(String outcome);
 
 	@IncidenceUnique(label = Requires.LABEL_REQUIRES)
-	public Iterable<Requires> getRequires();
+	public List<Requires> getRequires();
 
 	@IncidenceUnique(label = Requires.LABEL_REQUIRES)
 	public Requires addRequires(Flowable flowable);
@@ -32,7 +34,7 @@ public interface Task extends DVertexFrame {
 	public void removeRequires(Flowable flowable);
 
 	@AdjacencyUnique(label = Requires.LABEL_REQUIRES)
-	public Iterable<Flowable> getFlowables();
+	public List<Flowable> getFlowables();
 
 	@AdjacencyUnique(label = Requires.LABEL_REQUIRES)
 	public Task addFlowable(Flowable flowable);
@@ -59,7 +61,7 @@ public interface Task extends DVertexFrame {
 	public void removeAssignsFlower(Flower flower);
 
 	@Incidence(label = AssignedTo.LABEL_ASSIGNEDTO)
-	public Iterable<AssignedTo> getAssignedTo();
+	public List<AssignedTo> getAssignedTo();
 
 	@Incidence(label = AssignedTo.LABEL_ASSIGNEDTO)
 	public AssignedTo addAssignedTo(Flower flower);
@@ -68,7 +70,7 @@ public interface Task extends DVertexFrame {
 	public void removeAssignedTo(Flower flower);
 
 	@Adjacency(label = AssignedTo.LABEL_ASSIGNEDTO)
-	public Iterable<Flower> getAssignedToFlower();
+	public List<Flower> getAssignedToFlower();
 
 	@Adjacency(label = AssignedTo.LABEL_ASSIGNEDTO)
 	public Flower addAssignedToFlower(Flower flower);
@@ -77,7 +79,7 @@ public interface Task extends DVertexFrame {
 	public void removeAssignedToFlower(Flower flower);
 
 	@Incidence(label = Performs.LABEL_PERFORMS, direction = Direction.IN)
-	public Iterable<Performs> getPerformedBy();
+	public List<Performs> getPerformedBy();
 
 	@Incidence(label = Performs.LABEL_PERFORMS, direction = Direction.IN)
 	public Performs addPerformedBy(Flower flower);
@@ -86,7 +88,7 @@ public interface Task extends DVertexFrame {
 	public void removePerformedBy(Flower flower);
 
 	@Adjacency(label = Performs.LABEL_PERFORMS, direction = Direction.IN)
-	public Iterable<Flower> getPerformedByFlowers();
+	public List<Flower> getPerformedByFlowers();
 
 	@Adjacency(label = Performs.LABEL_PERFORMS, direction = Direction.IN)
 	public Task addPerformedByFlower(Flower flower);

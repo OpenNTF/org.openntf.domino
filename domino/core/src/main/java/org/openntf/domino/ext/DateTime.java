@@ -3,11 +3,13 @@
  */
 package org.openntf.domino.ext;
 
+import java.time.ZonedDateTime;
+
 import com.ibm.icu.util.Calendar;
 
 /**
  * OpenNTF extensions to DateTime class
- * 
+ *
  * @author nfreeman
  *
  *
@@ -138,4 +140,11 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	public void setLocalTime(Calendar calendar);
 
 	public org.openntf.domino.DateTime clone();
+
+	public String toGMTISO();
+
+	public ZonedDateTime toGMTDateTime();
+
+	public void convertToGMT();
+
 }

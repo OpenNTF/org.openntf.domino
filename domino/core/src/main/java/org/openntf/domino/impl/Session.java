@@ -47,7 +47,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.ExceptionDetails;
-import org.openntf.domino.IDVault;
+//import org.openntf.domino.IDVault;
 import org.openntf.domino.International;
 import org.openntf.domino.Log;
 import org.openntf.domino.Name;
@@ -520,6 +520,8 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		}
 	}
 
+	private static boolean EVALUATE_DEBUG = true;
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -544,7 +546,12 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 			}
 			lotus.domino.Session lsession = getDelegate();
 			Vector<Object> result = null;
-
+			Long startTime = null;
+			Long endTime = null;
+			if (EVALUATE_DEBUG) {
+				startTime = System.currentTimeMillis();
+				System.out.println("Evaluating a formula: " + formula);
+			}
 			if (doc == null) {
 				try {
 					result = lsession.evaluate(formula);
@@ -560,6 +567,11 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 					result = new Vector<Object>();
 					result.add("ERROR: " + ne1.text);
 				}
+			}
+
+			if (EVALUATE_DEBUG) {
+				endTime = System.currentTimeMillis();
+				System.out.println("Completed a formula in " + (endTime - startTime) + "ms: " + formula);
 			}
 
 			if (result == null) {
@@ -816,13 +828,11 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	 */
 	@Override
 	public org.openntf.domino.Database getDatabase(final String apiPath) {
-		String server = getServerName();
-		String dbpath = apiPath;
-		int sep = apiPath.indexOf("!!");
-		if (sep > -1) {
-			server = apiPath.substring(0, sep);
-			dbpath = apiPath.substring(sep + 2);
+		String server = Strings.getServer(apiPath);
+		if (server.length() == 0) {
+			server = getServerName();
 		}
+		String dbpath = Strings.getFilepath(apiPath);
 		return getDatabase(server, dbpath);
 	}
 
@@ -2141,22 +2151,22 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 
 	@Override
 	public IDVault getIDVault() {
-		try {
-			return fromLotus(getDelegate().getIDVault(), IDVault.SCHEMA, this);
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-		}
+		//			try {
+		//			return fromLotus(getDelegate().getIDVault(), IDVault.SCHEMA, this);
+		//		} catch (Exception e) {
+		//			DominoUtils.handleException(e);
+		//		}
 		return null;
 	}
 
 	@Override
-	public IDVault getIDVault(final String arg0) {
+	public boolean applicationShouldQuit() {
 		try {
-			return fromLotus(getDelegate().getIDVault(arg0), IDVault.SCHEMA, this);
+			return getDelegate().applicationShouldQuit();
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
-		return null;
+		return false;
 	}
 
 	@Override
@@ -2245,13 +2255,12 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	}
 
 	@Override
-	public boolean applicationShouldQuit() {
-		boolean retVal = false;
+	public org.openntf.domino.IDVault getIDVault(final String server) {
 		try {
-			retVal = getDelegate().applicationShouldQuit();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
+			return fromLotus(getDelegate().getIDVault(server), org.openntf.domino.IDVault.SCHEMA, this);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
 		}
-		return retVal;
 	}
 }

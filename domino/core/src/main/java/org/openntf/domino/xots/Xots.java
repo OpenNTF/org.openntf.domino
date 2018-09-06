@@ -1,9 +1,12 @@
 package org.openntf.domino.xots;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -60,7 +63,11 @@ public class Xots {
 	}
 
 	public static void execute(final Runnable r) {
-		getService().execute(r);
+		if (isStarted()) {
+			getService().execute(r);
+		} else {
+			runnableCache_.add(r);
+		}
 	}
 
 	public static int getActiveThreadCount() {
@@ -72,35 +79,92 @@ public class Xots {
 	}
 
 	public static void remove(final Runnable task) {
-		executor_.remove(task);
+		if (isStarted()) {
+			executor_.remove(task);
+		} else {
+			runnableCache_.remove(task);
+		}
 	}
+
+	private static Map<Callable<?>, Scheduler> scheduleCallableCache_ = new LinkedHashMap<Callable<?>, Scheduler>();
 
 	public static <T> Future<T> schedule(final Callable<T> task, final Scheduler scheduler) {
-		return executor_.schedule(task, scheduler);
+		if (isStarted()) {
+			return getService().schedule(task, scheduler);
+		} else {
+			scheduleCallableCache_.put(task, scheduler);
+			return null;
+		}
 	}
+
+	private static Map<Runnable, Scheduler> scheduleRunnableCache_ = new LinkedHashMap<Runnable, Scheduler>();
 
 	public static Future schedule(final Runnable task, final Scheduler scheduler) {
-		return executor_.schedule(task, scheduler);
+		if (isStarted()) {
+			return getService().schedule(task, scheduler);
+		} else {
+			scheduleRunnableCache_.put(task, scheduler);
+			return null;
+		}
 	}
+
+	private static Map<Callable<?>, Long> scheduleCallableDelayCache_ = new LinkedHashMap<Callable<?>, Long>();
+	private static Map<Callable<?>, TimeUnit> scheduleCallableTimeUnitCache_ = new LinkedHashMap<Callable<?>, TimeUnit>();
 
 	public static <T> Future<T> schedule(final Callable<T> task, final long delay, final TimeUnit unit) {
-		return getService().schedule(task, delay, unit);
+		if (isStarted()) {
+			return getService().schedule(task, delay, unit);
+		} else {
+			scheduleCallableDelayCache_.put(task, delay);
+			scheduleCallableTimeUnitCache_.put(task, unit);
+			return null;
+		}
 	}
+
+	private static Map<Runnable, Long> scheduleRunnableDelayCache_ = new LinkedHashMap<Runnable, Long>();
+	private static Map<Runnable, TimeUnit> scheduleRunnableTimeUnitCache_ = new LinkedHashMap<Runnable, TimeUnit>();
 
 	public static Future schedule(final Runnable task, final long delay, final TimeUnit unit) {
-		return getService().schedule(task, delay, unit);
+		if (isStarted()) {
+			return getService().schedule(task, delay, unit);
+		} else {
+			scheduleRunnableDelayCache_.put(task, delay);
+			scheduleRunnableTimeUnitCache_.put(task, unit);
+			return null;
+		}
 	}
+
+	private static List<Runnable> runnableCache_ = new ArrayList<Runnable>();
 
 	public static Future submit(final Runnable task) {
-		return getService().submit(task);
+		if (isStarted()) {
+			return getService().submit(task);
+		} else {
+			runnableCache_.add(task);
+			return null;
+		}
 	}
+
+	private static List<Callable<?>> callableCache_ = new ArrayList<Callable<?>>();
 
 	public static <T> Future<T> submit(final Callable<T> task) {
-		return getService().submit(task);
+		if (isStarted()) {
+			return getService().submit(task);
+		} else {
+			callableCache_.add(task);
+			return null;
+		}
 	}
 
+	private static Map<Runnable, Object> runnableResultCache_ = new LinkedHashMap<Runnable, Object>();
+
 	public static <T> Future<T> submit(final Runnable task, final T result) {
-		return getService().submit(task, result);
+		if (isStarted()) {
+			return getService().submit(task, result);
+		} else {
+			runnableResultCache_.put(task, result);
+			return null;
+		}
 	}
 
 	public static <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks) throws InterruptedException {
@@ -115,7 +179,7 @@ public class Xots {
 		if (!isStarted()) {
 			return Collections.emptyList();
 		}
-		return executor_.getTasks(comparator);
+		return getService().getTasks(comparator);
 	}
 
 	/**
@@ -128,6 +192,48 @@ public class Xots {
 		try {
 			executor_ = executor;
 			EMBridgeMessageQueue.start();
+			if (!scheduleCallableCache_.isEmpty()) {
+				for (Callable<?> task : scheduleCallableCache_.keySet()) {
+					Scheduler scheduler = scheduleCallableCache_.get(task);
+					schedule(task, scheduler);
+				}
+			}
+			if (!scheduleCallableDelayCache_.isEmpty()) {
+				for (Callable<?> task : scheduleCallableDelayCache_.keySet()) {
+					Long delay = scheduleCallableDelayCache_.get(task);
+					TimeUnit unit = scheduleCallableTimeUnitCache_.get(task);
+					schedule(task, delay, unit);
+				}
+			}
+			if (!scheduleRunnableCache_.isEmpty()) {
+				for (Runnable task : scheduleRunnableCache_.keySet()) {
+					Scheduler scheduler = scheduleRunnableCache_.get(task);
+					schedule(task, scheduler);
+				}
+			}
+			if (!scheduleRunnableDelayCache_.isEmpty()) {
+				for (Runnable task : scheduleRunnableDelayCache_.keySet()) {
+					Long delay = scheduleRunnableDelayCache_.get(task);
+					TimeUnit unit = scheduleRunnableTimeUnitCache_.get(task);
+					schedule(task, delay, unit);
+				}
+			}
+			if (!callableCache_.isEmpty()) {
+				for (Callable<?> task : callableCache_) {
+					submit(task);
+				}
+			}
+			if (!runnableCache_.isEmpty()) {
+				for (Runnable task : runnableCache_) {
+					submit(task);
+				}
+			}
+			if (!runnableResultCache_.isEmpty()) {
+				for (Runnable task : runnableResultCache_.keySet()) {
+					Object result = runnableResultCache_.get(task);
+					submit(task, result);
+				}
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

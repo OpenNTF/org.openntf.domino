@@ -49,6 +49,8 @@ public class DocumentScanner extends Observable {
 	protected Map<CharSequence, Map<CharSequence, CharSequence>> richTextLocationMap_;
 
 	protected boolean trackFieldValues_ = true;
+
+	protected boolean splitNameTokens_ = true;
 	@SuppressWarnings("rawtypes")
 	protected Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
@@ -67,6 +69,7 @@ public class DocumentScanner extends Observable {
 	protected boolean caseSensitive_ = false;
 	//	private boolean caseSensitiveValues_ = false;
 	protected long docCount_ = 0l;
+	protected long docsToProcess_ = 0l;
 	protected int docLimit_ = Integer.MAX_VALUE;
 	protected Date lastScanDate_;
 	protected Date lastDocModDate_;
@@ -161,7 +164,7 @@ public class DocumentScanner extends Observable {
 
 	/**
 	 * Instantiates a new document scanner.
-	 * 
+	 *
 	 * @param stopTokenList
 	 *            the stop token list
 	 */
@@ -208,7 +211,7 @@ public class DocumentScanner extends Observable {
 
 	/**
 	 * Gets the field token map.
-	 * 
+	 *
 	 * @return the field token map
 	 */
 	public Map<CharSequence, NavigableSet<CharSequence>> getFieldTokenMap() {
@@ -350,7 +353,7 @@ public class DocumentScanner extends Observable {
 
 	/**
 	 * Gets the token freq map.
-	 * 
+	 *
 	 * @return the token freq map
 	 */
 	public NavigableMap<CharSequence, Integer> getTokenFreqMap() {
@@ -411,6 +414,7 @@ public class DocumentScanner extends Observable {
 
 	public void processCollection() {
 		//		System.out.println("DEBUG: Scanning a collection of " + collection_.getCount());
+		docsToProcess_ = collection_.getCount();
 		for (Document doc : collection_) {
 			if (docCount_ < docLimit_) {
 				if (!Thread.interrupted()) {
@@ -440,6 +444,7 @@ public class DocumentScanner extends Observable {
 
 	public void processNoteCollection() {
 		//		System.out.println("DEBUG: Scanning a collection of " + collection_.getCount());
+		docsToProcess_ = noteCollection_.getCount();
 		for (String nid : noteCollection_) {
 			if (docCount_ < docLimit_) {
 				if (!Thread.interrupted()) {
@@ -492,91 +497,96 @@ public class DocumentScanner extends Observable {
 
 	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
-		if (doc != null && !doc.isDeleted()) {
-			docCount_++;
-			Map<CharSequence, Item.Type> typeMap = getFieldTypeMap();
-			Vector<Item> items = doc.getItems();
-			boolean hasReaders = doc.hasReaders();
-			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
-			//			System.out.println("TEMP DEBUG processing document " + doc.getMetaversalID() + " with " + items.size() + " items.");
-			for (Item item : items) {
-				if (item != null) {
-					CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-					if (!(name.startsWith("$") && getIgnoreDollar())) {
-						//						if ("Body".equalsIgnoreCase(name.toString())) {
-						//							System.out.println("TEMP DEBUG Processing a Body item");
-						//						}
-						try {
-							boolean isRT = false;
-							String value = null;
-							Vector<Object> values = null;
-							RichTextItem rti = null;
+		try {
+			if (doc != null && !doc.isDeleted()) {
+				docCount_++;
+				Map<CharSequence, Item.Type> typeMap = getFieldTypeMap();
+				Vector<Item> items = doc.getItems();
+				boolean hasReaders = doc.hasReaders();
+				String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
+				//			System.out.println("TEMP DEBUG processing document " + doc.getMetaversalID() + " with " + items.size() + " items.");
+				for (Item item : items) {
+					if (item != null) {
+						CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
+						if (!(name.startsWith("$") && getIgnoreDollar())) {
+							//						if ("Body".equalsIgnoreCase(name.toString())) {
+							//							System.out.println("TEMP DEBUG Processing a Body item");
+							//						}
+							try {
+								boolean isRT = false;
+								String value = null;
+								Vector<Object> values = null;
+								RichTextItem rti = null;
 
-							switch (item.getTypeEx()) {
-							case AUTHORS:
-							case READERS:
-							case NAMES:
-							case TEXT:
-								value = item.getValueString();
-								values = item.getValues();
-								break;
-							case RICHTEXT:
-								rti = (RichTextItem) item;
-								isRT = true;
-								break;
-							default:
-							}
-							if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
-								if (item.isNames() || DominoUtils.isHierarchicalName(value)) {
-									if (values != null && !values.isEmpty()) {
-										for (Object o : values) {
-											if (o instanceof String) {
-												CharSequence parmName = caseSensitive_ ? (String) o : new CaseInsensitiveString((String) o);
-												processName(parmName, name, doc.getAncestorSession(), address);
+								switch (item.getTypeEx()) {
+								case AUTHORS:
+								case READERS:
+								case NAMES:
+								case TEXT:
+									value = item.getValueString();
+									values = item.getValues();
+									break;
+								case RICHTEXT:
+									rti = (RichTextItem) item;
+									isRT = true;
+									break;
+								default:
+								}
+								if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
+									if (item.isNames() || DominoUtils.isHierarchicalName(value)) {
+										if (values != null && !values.isEmpty()) {
+											for (Object o : values) {
+												if (o instanceof String) {
+													CharSequence parmName = caseSensitive_ ? (String) o
+															: new CaseInsensitiveString((String) o);
+													processName(parmName, name, doc.getAncestorSession(), address);
+												}
 											}
 										}
-									}
-								} else {
-									itemCount_++;
-									if (values != null && !values.isEmpty()) {
-										for (Object o : values) {
-											processValue(name, o, address);
-										}
 									} else {
-										processTextValue(name, value, address);
+										itemCount_++;
+										if (values != null && !values.isEmpty()) {
+											for (Object o : values) {
+												processValue(name, o, address);
+											}
+										} else {
+											processTextValue(name, value, address);
+										}
 									}
 								}
-							}
 
-							if (isTrackRichTextLocation() && isRT) {
-								processRichText(name, rti);
-							} else {
-								//								System.out.println("TEMP DEBUG Not processing item " + name);
-							}
-
-							if (isTrackFieldTypes()) {
-								if (!typeMap.containsKey(name)) {
-									typeMap.put(name, item.getTypeEx());
+								if (isTrackRichTextLocation() && isRT) {
+									processRichText(name, rti, address);
+								} else {
+									//								System.out.println("TEMP DEBUG Not processing item " + name);
 								}
-							}
-						} catch (Exception e) {
-							Database db = doc.getAncestorDatabase();
-							System.err.println("Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database "
-									+ db.getApiPath() + " due to an " + e.getClass().getName() + " with message " + e.getMessage());
-							e.printStackTrace();
 
+								if (isTrackFieldTypes()) {
+									if (!typeMap.containsKey(name)) {
+										typeMap.put(name, item.getTypeEx());
+									}
+								}
+							} catch (Exception e) {
+								Database db = doc.getAncestorDatabase();
+								System.err.println("Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database "
+										+ db.getApiPath() + " due to an " + e.getClass().getName() + " with message " + e.getMessage());
+								e.printStackTrace();
+
+							}
 						}
 					}
 				}
-			}
 
-			setLastDocModDate(doc.getLastModifiedDate());
-			setChanged();
-			notifyObservers(ScanStatus.RUNNING);
+				setLastDocModDate(doc.getLastModifiedDate());
+				setChanged();
+				notifyObservers(ScanStatus.RUNNING);
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
-	public void processRichText(final CaseInsensitiveString name, final RichTextItem rtitem) {
+	public void processRichText(final CaseInsensitiveString name, final RichTextItem rtitem, final String address) {
 		if (isTrackRichTextLocation()) {
 			//			System.out.println("TEMP DEBUG PROCESSING rich text item " + name);
 			String mid = rtitem.getAncestorDocument().getMetaversalID();
@@ -585,6 +595,18 @@ public class DocumentScanner extends Observable {
 				Map<CharSequence, CharSequence> tlval = getRichTextLocationMap(mid);
 				tlval.put(name, text);
 			}
+
+			Scanner s = new Scanner(text);
+			s.useDelimiter(REGEX_NONALPHANUMERIC);
+			while (s.hasNext()) {
+				CharSequence token = scrubToken(s.next(), caseSensitive_);
+				if (token != null && (token.length() > 2) && !isStopped(token)) {
+					tokenCount_++;
+					processToken(token, name, address);
+				}
+			}
+			s.close();
+
 		}
 	}
 
@@ -676,6 +698,10 @@ public class DocumentScanner extends Observable {
 		return docCount_;
 	}
 
+	public long getDocsToProcess() {
+		return docsToProcess_;
+	}
+
 	public long getItemCount() {
 		return itemCount_;
 	}
@@ -723,15 +749,17 @@ public class DocumentScanner extends Observable {
 				tfmap.put(lname, 1);
 			}
 		}
-		if (name instanceof String) {
-			String val = (String) name;
-			Scanner s = new Scanner(val);
-			s.useDelimiter(REGEX_NONALPHANUMERIC);
-			while (s.hasNext()) {
-				CharSequence token = scrubToken(s.next(), caseSensitive_);
-				if (token != null && (token.length() > 2) && !isStopped(token)) {
-					tokenCount_++;
-					processToken(token, itemName, address);
+		if (this.isSplitNameTokens()) {
+			if (name instanceof String) {
+				String val = (String) name;
+				Scanner s = new Scanner(val);
+				s.useDelimiter(REGEX_NONALPHANUMERIC);
+				while (s.hasNext()) {
+					CharSequence token = scrubToken(s.next(), caseSensitive_);
+					if (token != null && (token.length() > 2) && !isStopped(token)) {
+						tokenCount_++;
+						processToken(token, itemName, address);
+					}
 				}
 			}
 		}
@@ -772,10 +800,10 @@ public class DocumentScanner extends Observable {
 			}
 		}
 		if (isTrackTokenLocation()) {
-			if ("computer".equalsIgnoreCase(token.toString()) && "body".equalsIgnoreCase(itemName.toString())) {
-				System.out.println("TEMP DEBUG Found term 'Computer' in a Body field in document " + address + " This is the "
-						+ ++TEMP_COMPUTER_TRACKING + " time this has happened.");
-			}
+			//			if ("computer".equalsIgnoreCase(token.toString()) && "body".equalsIgnoreCase(itemName.toString())) {
+			//				System.out.println("TEMP DEBUG Found term 'Computer' in a Body field in document " + address + " This is the "
+			//						+ ++TEMP_COMPUTER_TRACKING + " time this has happened.");
+			//			}
 			Map<CharSequence, Set<CharSequence>> tlval = getTokenLocationMap(token);
 			if (tlval.containsKey(itemName)) {
 				Set<CharSequence> tllist = tlval.get(itemName);
@@ -954,6 +982,14 @@ public class DocumentScanner extends Observable {
 		return trackTokenFreq_;
 	}
 
+	public boolean isSplitNameTokens() {
+		return splitNameTokens_;
+	}
+
+	public void setSplitNameTokens(final boolean splitNameTokens) {
+		splitNameTokens_ = splitNameTokens;
+	}
+
 	/**
 	 * @param trackTokenFreq
 	 *            the trackTokenFreq to set
@@ -979,23 +1015,41 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
+	public void removeDocument(final Document doc) {
+		String mid = doc.getMetaversalID();
+		removeDocument(mid);
+	}
+
+	public void removeDocument(final Database db, final String noteid) {
+		String unid = db.getUNID(noteid);
+		String mid = (db.getReplicaID() + unid).toLowerCase();
+		removeDocument(mid);
+	}
+
+	public void removeDocument(final String metaversalid) {
+		//TODO NTF
+	}
+
 	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldTokenMap(final Object obj) {
 		boolean result = false;
-		if (obj == null)
+		if (obj == null) {
 			return result;
+		}
 		Class<?> clazz = obj.getClass();
 		//Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>>
 		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
+			if (((Map) obj).isEmpty()) {
 				return false;
+			}
 			Set keys = ((Map) obj).keySet();
 			Object keyObj = keys.iterator().next();
 			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
 				Object valObj = ((Map) obj).get(keyObj);
 				if (NavigableSet.class.isAssignableFrom(valObj.getClass())) {
-					if (((NavigableSet) valObj).isEmpty())
+					if (((NavigableSet) valObj).isEmpty()) {
 						return false;
+					}
 					Object tokenObj = ((NavigableSet) valObj).iterator().next();
 					if (CaseInsensitiveString.class.isAssignableFrom(tokenObj.getClass())) {
 						result = true;
@@ -1009,20 +1063,23 @@ public class DocumentScanner extends Observable {
 	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldValueMap(final Object obj) {
 		boolean result = false;
-		if (obj == null)
+		if (obj == null) {
 			return result;
+		}
 		Class<?> clazz = obj.getClass();
 		//Map<CaseInsensitiveString, NavigableSet<Comparable>>
 		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
+			if (((Map) obj).isEmpty()) {
 				return false;
+			}
 			Set keys = ((Map) obj).keySet();
 			Object keyObj = keys.iterator().next();
 			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
 				Object valObj = ((Map) obj).get(keyObj);
 				if (NavigableSet.class.isAssignableFrom(valObj.getClass())) {
-					if (((NavigableSet) valObj).isEmpty())
+					if (((NavigableSet) valObj).isEmpty()) {
 						return false;
+					}
 					Object tokenObj = ((NavigableSet) valObj).iterator().next();
 					if (Comparable.class.isAssignableFrom(tokenObj.getClass())) {
 						result = true;
@@ -1036,13 +1093,15 @@ public class DocumentScanner extends Observable {
 	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldTypeMap(final Object obj) {
 		boolean result = false;
-		if (obj == null)
+		if (obj == null) {
 			return result;
+		}
 		Class<?> clazz = obj.getClass();
 		//Map<CaseInsensitiveString, Integer>
 		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
+			if (((Map) obj).isEmpty()) {
 				return false;
+			}
 			Set keys = ((Map) obj).keySet();
 			Object keyObj = keys.iterator().next();
 			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
@@ -1058,13 +1117,15 @@ public class DocumentScanner extends Observable {
 	@SuppressWarnings("rawtypes")
 	public static boolean validateTokenFreqMap(final Object obj) {
 		boolean result = false;
-		if (obj == null)
+		if (obj == null) {
 			return result;
+		}
 		Class<?> clazz = obj.getClass();
 		//NavigableMap<CaseInsensitiveString, Integer>
 		if (NavigableMap.class.isAssignableFrom(clazz)) {
-			if (((NavigableMap) obj).isEmpty())
+			if (((NavigableMap) obj).isEmpty()) {
 				return false;
+			}
 			Set keys = ((NavigableMap) obj).keySet();
 			Object keyObj = keys.iterator().next();
 			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
@@ -1080,8 +1141,9 @@ public class DocumentScanner extends Observable {
 	@SuppressWarnings("rawtypes")
 	public static boolean validateTokenLocationMap(final Object obj) {
 		boolean result = false;
-		if (obj == null)
+		if (obj == null) {
 			return result;
+		}
 		Class<?> clazz = obj.getClass();
 		//Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>
 		if (Map.class.isAssignableFrom(clazz)) {

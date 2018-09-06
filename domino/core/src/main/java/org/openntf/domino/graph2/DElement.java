@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.graph2;
 
@@ -10,7 +10,7 @@ import org.openntf.domino.Document;
 
 /**
  * @author nfreeman
- * 
+ *
  */
 public interface DElement extends com.tinkerpop.blueprints.Element {
 	public static final String TYPE_FIELD = "_ODA_GRAPHTYPE";
@@ -48,5 +48,7 @@ public interface DElement extends com.tinkerpop.blueprints.Element {
 	public Document asDocument();
 
 	public void uncache();
+
+	public boolean isEditable();
 
 }

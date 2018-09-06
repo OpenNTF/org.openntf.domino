@@ -69,8 +69,9 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public boolean add(final org.openntf.domino.big.NoteCoordinate e) {
-		if (e == null)
+		if (e == null) {
 			return true;
+		}
 		return delegate_.add(e);
 	}
 
@@ -83,15 +84,17 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.big.NoteCoordinate> c) {
-		if (c == null)
+		if (c == null) {
 			return true;
+		}
 		return delegate_.addAll(c);
 	}
 
 	@Override
 	public boolean addAll(final int index, final Collection<? extends org.openntf.domino.big.NoteCoordinate> c) {
-		if (c == null)
+		if (c == null) {
 			return true;
+		}
 		return delegate_.addAll(index, c);
 	}
 
@@ -102,15 +105,17 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 
 	@Override
 	public boolean contains(final Object o) {
-		if (o == null)
+		if (o == null) {
 			return true;
+		}
 		return delegate_.contains(o);
 	}
 
 	@Override
 	public boolean containsAll(final Collection<?> c) {
-		if (c == null)
+		if (c == null) {
 			return true;
+		}
 		return delegate_.containsAll(c);
 	}
 
@@ -238,5 +243,10 @@ public class NoteList implements org.openntf.domino.big.NoteList {
 			arg0.write(coord.toByteArray());
 		}
 	}
+
+	//	public NoteList intersect(final NoteList intersectingList) {
+	//		delegate_.retainAll(intersectingList.delegate_);
+	//		return this;
+	//	}
 
 }

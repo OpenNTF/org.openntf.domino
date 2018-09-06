@@ -40,6 +40,9 @@ public interface IndexDatabase extends IScannerStateManager {
 	public static final String DB_NAME_LOCATION_NAME = "NameLocationMap";
 	public static final String DB_FIELD_TOKEN_NAME = "FieldTokenMap";
 	public static final String DB_LAST_INDEX_NAME = "LastIndexTime";
+	public static final String DB_INDEX_STATUS = "IndexStatus";
+	public static final String DB_DOC_COUNT = "DocsProcessed";
+	public static final String DB_DOCS_TO_PROCESS = "DocsToProcess";
 	public static final String DB_DOC_LIST_NAME = "DocumentList";
 	public static final String DB_TITLE_NAME = "Title";
 	public static final String DB_DOC_SORTER_NAME = "DocumentSorter";
@@ -49,8 +52,9 @@ public interface IndexDatabase extends IScannerStateManager {
 	public static class Utils {
 		public static Set<CharSequence> toCISSet(final Object value) {
 			Set<CharSequence> result = new HashSet<CharSequence>();
-			if (value == null)
+			if (value == null) {
 				return result;
+			}
 			if (value instanceof Iterable) {
 				Iterable values = (Iterable) value;
 				for (Object o : values) {
@@ -74,8 +78,9 @@ public interface IndexDatabase extends IScannerStateManager {
 
 		public static Set<CharSequence> toStringSet(final Object value) {
 			Set<CharSequence> result = new HashSet<CharSequence>();
-			if (value == null)
+			if (value == null) {
 				return result;
+			}
 			if (value instanceof Iterable) {
 				Iterable values = (Iterable) value;
 				for (Object o : values) {

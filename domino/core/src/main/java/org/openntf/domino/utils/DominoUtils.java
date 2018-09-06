@@ -864,6 +864,9 @@ public enum DominoUtils {
 	 * @return true, if is 48-character hexadecimal sequence
 	 */
 	public static boolean isMetaversalId(final CharSequence value) {
+		if (value == null) {
+			return false;
+		}
 		if (value.length() != 48) {
 			return false;
 		}
