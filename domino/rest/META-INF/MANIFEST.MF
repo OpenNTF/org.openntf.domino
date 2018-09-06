@@ -40,5 +40,3 @@ Export-Package: org.openntf.domino.rest,
  org.openntf.domino.rest.servlet,
  org.openntf.domino.rest.utils
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .,
- lib/javassist_3.18.2.jar
