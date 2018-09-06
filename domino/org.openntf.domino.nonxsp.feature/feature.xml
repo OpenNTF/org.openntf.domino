@@ -44,20 +44,6 @@
    </requires>
 
    <plugin
-         id="com.tinkerpop"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.tinkerpop.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openntf.domino"
          download-size="0"
          install-size="0"
