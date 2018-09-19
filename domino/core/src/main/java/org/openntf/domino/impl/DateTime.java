@@ -19,11 +19,17 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
+import java.time.temporal.Temporal;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,14 +53,12 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	private static final DateTimeFormatter GMT_FORMAT_1 = DateTimeFormatter.ofPattern("dd' 'MMM' 'uuuu' 'HH:mm:ss' 'O")
-			.withResolverStyle(ResolverStyle.SMART);
-
-	private static final DateTimeFormatter GMT_FORMAT_2 = DateTimeFormatter.ofPattern("MM/dd/uuuu' 'hh:mm:ss' 'a' 'O")
-			.withResolverStyle(ResolverStyle.SMART);
-
-	private static final DateTimeFormatter GMT_FORMAT_DATE = DateTimeFormatter.ofPattern("MM/dd/uuuu")
-			.withResolverStyle(ResolverStyle.SMART);
+	private static final DateTimeFormatter GMT_FORMAT_DATETIME = new DateTimeFormatterBuilder().appendPattern("MM/dd/uuuu hh:mm:ss a")
+			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
+	private static final DateTimeFormatter GMT_FORMAT_DATE = new DateTimeFormatterBuilder().appendPattern("MM/dd/uuuu")
+			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 
 	static {
 		Factory.addTerminateHook(new Runnable() {
@@ -450,12 +454,13 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 	}
 
 	@Override
-	public ZonedDateTime toGMTDateTime() {
-		String gmtTime = getGMTTime() + "+0";
-		ZonedDateTime result = null;
+	public Temporal toGMTDateTime() {
+		String gmtTime = getGMTTime();
+
+		Temporal result = null;
 		if (isAnyTime()) {
 			try {
-				return ZonedDateTime.parse(gmtTime, DateTime.GMT_FORMAT_DATE);
+				result = LocalDate.parse(gmtTime, DateTime.GMT_FORMAT_DATE);
 			} catch (DateTimeParseException pe) {
 				DominoUtils.handleException(pe, "Parse exception. Unable to parse string " + gmtTime);
 				System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_DATE " + gmtTime);
@@ -464,35 +469,38 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 				DominoUtils.handleException(t, "Not a parse exception");
 			}
 		} else {
+			String strippedTime = gmtTime.substring(0, gmtTime.indexOf("G")).trim();
 			try {
-				return ZonedDateTime.parse(gmtTime, GMT_FORMAT_1);
+				result = ZonedDateTime.parse(strippedTime, GMT_FORMAT_DATETIME);
 			} catch (DateTimeParseException pe) {
-				try {
-					return ZonedDateTime.parse(gmtTime, GMT_FORMAT_2);
-				} catch (DateTimeParseException pe1) {
-					DominoUtils.handleException(pe1, "Parse exception. Unable to parse string " + gmtTime);
-					System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_1 or GMT_FORMAT_2 " + gmtTime
-							+ ": " + pe1.getMessage());
-					pe1.printStackTrace();
-					if (pe1.getCause() != null) {
-						pe1.getCause().printStackTrace();
-					}
+				DominoUtils.handleException(pe, "Parse exception. Unable to parse string " + strippedTime);
+				System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_DATETIME " + strippedTime + ": "
+						+ pe.getMessage());
+				pe.printStackTrace();
+				if (pe.getCause() != null) {
+					pe.getCause().printStackTrace();
 				}
 			} catch (Throwable t) {
 				DominoUtils.handleException(t, "Not a parse exception");
 			}
 		}
-		return null;
+		return result;
 	}
 
 	@Override
 	public String toGMTISO() {
-		ZonedDateTime zdt = toGMTDateTime();
-		if (zdt != null) {
-			return zdt.format(DateTimeFormatter.ISO_INSTANT);
-		} else {
-			return null;
+		String result = null;
+		try {
+			Temporal zdt = toGMTDateTime();
+			if (zdt != null && zdt instanceof ZonedDateTime) {
+				result = ((ZonedDateTime) zdt).format(DateTimeFormatter.ISO_INSTANT);
+			} else if (zdt != null && zdt instanceof LocalDate) {
+				result = ((LocalDate) zdt).format(DateTimeFormatter.ISO_DATE);
+			}
+		} catch (Throwable t) {
+			DominoUtils.handleException(t, "Unable to get ISO Date");
 		}
+		return result;
 	}
 
 	/* (non-Javadoc)

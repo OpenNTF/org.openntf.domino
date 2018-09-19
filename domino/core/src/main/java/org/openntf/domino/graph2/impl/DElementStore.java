@@ -808,7 +808,18 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			//				System.out.println("Getting a proxied element for id: " + String.valueOf(id));
 			//			}
 			NoteCoordinate nc = normalizeId((Serializable) id);
-			Element result = getElementCache().get(nc);
+			Element result = null;
+			//			if (nc.getReplicaId().equalsIgnoreCase("852582F7007073B5")) {
+			//				System.out.println("Getting a demo document " + nc + " from the element cache");
+			//				result = getElementCache().get(nc);
+			//				if (result != null) {
+			//					System.out.println(
+			//							"Result was loaded from cache with id " + nc + " and cache now has " + getElementCache().size() + " elements");
+			//
+			//				}
+			//			} else {
+			result = getElementCache().get(nc);
+			//			}
 			//			if (isProxied()) {
 			//				if (result instanceof DProxyVertex) {
 			//					NoteCoordinate proxyid = ((DProxyVertex) result).getProxiedId();
@@ -1597,5 +1608,42 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 	public void flushCache() {
 		keyMap_ = null;
 		elementCache_ = null;
+	}
+
+	@Override
+	public void flushCache(final String id) {
+		//		if (id.startsWith("852582F7007073B5".toLowerCase())) {
+		//			System.out.println("TEMP DEBUG flushing cache for metaversalid: " + id);
+		//		}
+		try {
+			if (keyMap_ != null && keyMap_.containsKey(id)) {
+				keyMap_.remove(id);
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		try {
+			if (this.getElementCache() != null) {
+				NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+				Object chk = getElementCache().getIfPresent(nc);
+				if (chk != null) {
+					//					getElementCache().refresh(nc);
+					getElementCache().invalidate(nc);
+					//					System.out.println("TEMP DEBUG Invalidated id " + nc + " in Element Store");
+				} else {
+					//					if (id.startsWith("852582F7007073B5".toLowerCase())) {
+					//						System.out.println("TEMP DEBUG id " + nc + " not found in cache");
+					//						System.out.println("TEMP DEBUG cache has " + getElementCache().size() + " elements");
+					//						if (getElementCache().size() < 6) {
+					//							//							getElementCache().asMap()
+					//						}
+					//					}
+				}
+			} else {
+				System.out.println("Element Cache not available!");
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 }

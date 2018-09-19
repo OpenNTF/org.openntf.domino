@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Item;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.types.Design;
@@ -244,6 +245,8 @@ public interface Document {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public String getMetaversalID();
+
+	public NoteCoordinate getNoteCoordinate();
 
 	/**
 	 * Gets the metaversal ID specific to a server, so appending serverName + "!!" + replicaID + documentID

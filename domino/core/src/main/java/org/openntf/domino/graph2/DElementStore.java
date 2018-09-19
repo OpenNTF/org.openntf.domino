@@ -126,4 +126,6 @@ public interface DElementStore extends Externalizable {
 
 	void setReverseProxyStoreKey(CharSequence storeKey);
 
+	public void flushCache(final String id);
+
 }

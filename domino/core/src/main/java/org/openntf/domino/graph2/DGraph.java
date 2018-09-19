@@ -19,8 +19,9 @@ public interface DGraph
 
 		public static String convertToFormula(final String key, final Object value) {
 			String result = "";
-			if (key == null)
+			if (key == null) {
 				return "";
+			}
 			if ("@".equals(key)) {
 				return String.valueOf(value);
 			}
@@ -38,8 +39,9 @@ public interface DGraph
 
 		public static String convertToPartialFormula(final String key, final Object value) {
 			String result = "";
-			if (key == null)
+			if (key == null) {
 				return "";
+			}
 			if ("@".equals(key)) {
 				return String.valueOf(value);
 			}
@@ -53,8 +55,9 @@ public interface DGraph
 
 		public static String convertToStartsFormula(final String key, final Object value) {
 			String result = "";
-			if (key == null)
+			if (key == null) {
 				return "";
+			}
 			if ("@".equals(key)) {
 				return String.valueOf(value);
 			}
@@ -217,6 +220,8 @@ public interface DGraph
 	public void setExtendedGraph(Graph graph);
 
 	public void flushCache();
+
+	public void flushCache(final String id);
 
 	public Vertex addVertex(Object id, boolean temporary);
 

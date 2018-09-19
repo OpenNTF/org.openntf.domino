@@ -3,7 +3,7 @@
  */
 package org.openntf.domino.ext;
 
-import java.time.ZonedDateTime;
+import java.time.temporal.Temporal;
 
 import com.ibm.icu.util.Calendar;
 
@@ -143,7 +143,7 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 
 	public String toGMTISO();
 
-	public ZonedDateTime toGMTDateTime();
+	public Temporal toGMTDateTime();
 
 	public void convertToGMT();
 

@@ -59,6 +59,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -225,7 +226,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
 				}
 			}
-		
+
 		}*/
 		return false;
 	}
@@ -1304,7 +1305,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-	
+
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1340,7 +1341,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-	
+
 	}*/
 
 	/*
@@ -4268,6 +4269,11 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		String replid = getAncestorDatabase().getReplicaID();
 		String unid = getUniversalID();
 		return replid + unid;
+	}
+
+	@Override
+	public NoteCoordinate getNoteCoordinate() {
+		return NoteCoordinate.Utils.getNoteCoordinate(getMetaversalID().toLowerCase());
 	}
 
 	/* (non-Javadoc)

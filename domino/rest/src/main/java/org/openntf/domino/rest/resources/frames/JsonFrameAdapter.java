@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
 import org.openntf.domino.exceptions.UserAccessException;
@@ -34,11 +36,15 @@ import org.openntf.domino.graph2.impl.DVertexList;
 import org.openntf.domino.rest.service.Parameters;
 import org.openntf.domino.rest.service.Parameters.ParamMap;
 import org.openntf.domino.types.CaseInsensitiveString;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
+import com.redpillnow.peabody.data.DatabaseProxy;
+import com.redpillnow.peabody.data.DocumentProxy;
+import com.redpillnow.peabody.manager.ProxyManager;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -335,6 +341,9 @@ public class JsonFrameAdapter implements JsonObject {
 		if (getIncludeDebug()) {
 			result.add("@debug");
 		}
+		if (getFrame() instanceof VertexFrame) {
+			result.add("@versions") ;
+		}
 		Collection<CharSequence> props = getProperties();
 		if (props == null) {
 			// NoteCoordinate nc = (NoteCoordinate)
@@ -459,6 +468,44 @@ public class JsonFrameAdapter implements JsonObject {
 					if (v instanceof DProxyVertex) {
 						result = ((DProxyVertex) v).getProperty(DProxyVertex.PROXY_ITEM, String.class);
 					}
+				}
+			} else if (key.equals("@versions")) {
+				if (frame instanceof VertexFrame) {
+					try {
+						Vertex v = ((VertexFrame)frame).asVertex();
+						Object id = v.getId();
+						Session sess = Factory.getSession(SessionType.CURRENT);
+						Document doc = sess.getDocumentByMetaversalID(id.toString());
+						if (doc != null) {
+							Database db = doc.getAncestorDatabase();
+							ProxyManager pm = com.redpillnow.peabody.manager.PeabodyManager.get().getProxyManager();
+							if (pm != null) {
+								DatabaseProxy dp = pm.getProxy(db);
+								if (dp != null) {
+									DocumentProxy docprox = dp.getDocumentProxy(doc.getUniversalID());
+									if (docprox != null) {
+										result = docprox.getRevisionDates();
+										if (result == null) {
+											//										System.out.println("TEMP DEBUG Got null revision dates for " + id );
+										} else {
+											//										System.out.println("TEMP DEBUG Got " + ((List)result).size() + " revision dates for " + id );
+										}
+									} else {
+										//									System.out.println("TEMP DEBUG No DocumentProxy found for id " + id);
+									}
+								} else {
+									//								System.out.println("TEMP DEBUG No DatabaseProxy found for " + db.getApiPath());
+								}
+							} else {
+								//							System.out.println("TEMP DEBUG ProxyManager unavailable!?");
+							}
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				}
+				if (result == null) {
+					result = "N/A";
 				}
 			} else if (key.equals("@debug")) {
 				Map<String, String> debugMap = new LinkedHashMap<String, String>();

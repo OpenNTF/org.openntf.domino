@@ -11,10 +11,18 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.design.impl.DesignFactory;
 import org.openntf.domino.exceptions.UserAccessException;
+import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.extmgr.AbstractEMBridgeSubscriber;
+import org.openntf.domino.extmgr.EMBridgeEventFactory;
+import org.openntf.domino.extmgr.EMBridgeMessageQueue;
+import org.openntf.domino.extmgr.events.EMEventIds;
+import org.openntf.domino.extmgr.events.document.UpdateExtendedEvent;
 import org.openntf.domino.graph2.DElementStore;
 import org.openntf.domino.graph2.DKeyResolver;
 import org.openntf.domino.graph2.annotations.FramedEdgeList;
@@ -29,6 +37,8 @@ import org.openntf.domino.graph2.impl.DConfiguration.DTypeManager;
 import org.openntf.domino.graph2.impl.DConfiguration.DTypeRegistry;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -51,12 +61,45 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	private Cache<Object, Object> framedElementCache_;
 	private IndexScanner indexScanner_;
 
-	//	protected Map<Element, Object> getFramedElementCache() {
-	//		if (framedElementCache_ == null) {
-	//			framedElementCache_ = new FastMap<Element, Object>().atomic();
-	//		}
-	//		return framedElementCache_;
-	//	}
+	public static class CacheMonitor extends AbstractEMBridgeSubscriber {
+		private DFramedTransactionalGraph parentGraph_;
+
+		protected CacheMonitor(final DFramedTransactionalGraph parent) {
+			parentGraph_ = parent;
+		}
+
+		@Override
+		public Collection<EMEventIds> getSubscribedEventIds() {
+			List<EMEventIds> result = new ArrayList<EMEventIds>();
+			System.out.println("Registering Graph extension manager events");
+			result.add(EMEventIds.EM_NSFNOTEUPDATEXTENDED);
+			result.add(EMEventIds.EM_NSFNOTEUPDATE);
+			return result;
+		}
+
+		@Override
+		public void handleMessage(final EMEventIds eventid, final String eventMessage) {
+			if (EMEventIds.EM_NSFNOTEUPDATEXTENDED.equals(eventid) || EMEventIds.EM_NSFNOTEUPDATE.equals(eventid)) {
+				try {
+					UpdateExtendedEvent event = new UpdateExtendedEvent();
+					EMBridgeEventFactory.parseEventBuffer(eventMessage, event);
+
+					Session session = Factory.getSession(SessionType.NATIVE);
+					session.setFixEnable(Fixes.FORCE_HEX_LOWER_CASE, true);
+					Database database = session.getDatabase("", event.getDbPath());
+					if (database != null) {
+						Document doc = database.getDocumentByID(event.getNoteId());
+						if (doc != null) {
+							String mid = doc.getMetaversalID();
+							parentGraph_.flushCache(mid.toLowerCase());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	public static class DefaultKeyResolver implements DKeyResolver {
 		private Collection<Class<?>> types_;
@@ -257,6 +300,8 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 
 	public DFramedTransactionalGraph(final T baseGraph, final FramedGraphConfiguration config) {
 		super(baseGraph, config);
+		CacheMonitor monitor = new CacheMonitor(this);
+		EMBridgeMessageQueue.addSubscriber(monitor);
 	}
 
 	public DTypeRegistry getTypeRegistry() {
@@ -865,6 +910,22 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		} else {
 			return requestedType;
+		}
+	}
+
+	public void flushCache(final String id) {
+		((DGraph) this.getBaseGraph()).flushCache(id);
+		try {
+			if (this.getFramedElementCache() != null) {
+				NoteCoordinate nc = NoteCoordinate.Utils.getNoteCoordinate(id);
+				Object chk = getFramedElementCache().getIfPresent(nc);
+				if (chk != null) {
+					getFramedElementCache().invalidate(nc);
+					//					System.out.println("Invalidated id " + id + " in Framed Cache");
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
