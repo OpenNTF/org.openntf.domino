@@ -1386,7 +1386,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						return result;
 					} else {
 						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
-								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text results.");
 						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
