@@ -32,6 +32,9 @@ public enum EMEventIds {
 	private static EMEventIds[] eventArray;
 
 	public static EMEventIds getEMEventFromId(final int id) {
+		if (id < 0) {
+			return null;
+		}
 		if (eventArray == null) {
 			initEventArray();
 		}
