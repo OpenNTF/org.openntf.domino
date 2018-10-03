@@ -505,7 +505,9 @@ public class JsonFrameAdapter implements JsonObject {
 					}
 				}
 				if (result == null) {
-					result = "N/A";
+					List<String> resultList = new ArrayList<String>();
+					resultList.add("N/A");
+					result = resultList;
 				}
 			} else if (key.equals("@debug")) {
 				Map<String, String> debugMap = new LinkedHashMap<String, String>();

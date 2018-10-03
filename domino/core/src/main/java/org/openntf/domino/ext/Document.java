@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openntf.domino.AutoMime;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Item;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -589,4 +590,6 @@ public interface Document {
 	public void setUniversalID(final CharSequence unid, boolean includeCreated);
 
 	public boolean isEditable();
+
+	public List<Item> getItemsModifiedSince(final DateTime datetime);
 }

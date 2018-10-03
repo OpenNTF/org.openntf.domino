@@ -226,7 +226,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities_.keySet());
 				}
 			}
-
+		
 		}*/
 		return false;
 	}
@@ -1305,7 +1305,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
-
+	
 		//try {
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
@@ -1341,7 +1341,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			}
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
-
+	
 	}*/
 
 	/*
@@ -4607,4 +4607,15 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			DominoUtils.handleException(e, this);
 		}
 	}
+
+	public List<Item> getItemsModifiedSince(final DateTime datetime) {
+		List<Item> result = new ArrayList<Item>();
+		for (Item item : this.getItems()) {
+			if (item.getLastModified().isAfter(datetime)) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
 }

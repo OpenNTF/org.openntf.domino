@@ -74,6 +74,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			System.out.println("Registering Graph extension manager events");
 			result.add(EMEventIds.EM_NSFNOTEUPDATEXTENDED);
 			result.add(EMEventIds.EM_NSFNOTEUPDATE);
+			result.add(EMEventIds.EM_NSFNOTEDELETE);
 			return result;
 		}
 
@@ -88,9 +89,27 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 					session.setFixEnable(Fixes.FORCE_HEX_LOWER_CASE, true);
 					Database database = session.getDatabase("", event.getDbPath());
 					if (database != null) {
-						Document doc = database.getDocumentByID(event.getNoteId());
-						if (doc != null) {
-							String mid = doc.getMetaversalID();
+						String unid = database.getUNID(event.getNoteId());
+						if (unid != null) {
+							String mid = database.getReplicaID() + unid;
+							parentGraph_.flushCache(mid.toLowerCase());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (EMEventIds.EM_NSFNOTEDELETE.equals(eventid)) {
+				try {
+					UpdateExtendedEvent event = new UpdateExtendedEvent();
+					EMBridgeEventFactory.parseEventBuffer(eventMessage, event);
+
+					Session session = Factory.getSession(SessionType.NATIVE);
+					session.setFixEnable(Fixes.FORCE_HEX_LOWER_CASE, true);
+					Database database = session.getDatabase("", event.getDbPath());
+					if (database != null) {
+						String unid = database.getUNID(event.getNoteId());
+						if (unid != null) {
+							String mid = database.getReplicaID() + unid;
 							parentGraph_.flushCache(mid.toLowerCase());
 						}
 					}
