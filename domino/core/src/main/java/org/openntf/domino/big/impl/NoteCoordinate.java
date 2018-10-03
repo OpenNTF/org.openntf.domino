@@ -89,21 +89,21 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	}
 
 	public NoteCoordinate(final Document doc) {
-		this(doc.getAncestorDatabase().getReplicaID(), doc.getUniversalID());
+		this(doc.getAncestorDatabase().getReplicaID().toLowerCase(), doc.getUniversalID().toLowerCase());
 	}
 
 	public NoteCoordinate(final View view) {
-		this(view.getAncestorDatabase().getReplicaID(), view.getUniversalID());
+		this(view.getAncestorDatabase().getReplicaID().toLowerCase(), view.getUniversalID().toLowerCase());
 		isView_ = true;
 	}
 
 	public NoteCoordinate(final NoteCollection notecoll, final String nid) {
-		this(notecoll.getAncestorDatabase().getReplicaID(), notecoll.getUNID(nid));
+		this(notecoll.getAncestorDatabase().getReplicaID().toLowerCase(), notecoll.getUNID(nid).toLowerCase());
 	}
 
 	@Override
 	public String getReplicaId() {
-		return getReplidFromLong(db);
+		return getReplidFromLong(db).toLowerCase();
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 
 	@Override
 	public String getUNID() {
-		return getUnidFromLongs(x, y);
+		return getUnidFromLongs(x, y).toLowerCase();
 	}
 
 	protected Database getDatabase(final String server) {
@@ -253,18 +253,24 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 	@Override
 	public int compareTo(final org.openntf.domino.big.NoteCoordinate arg0) {
 		NoteCoordinate local = (NoteCoordinate) arg0;
-		if (this.db > local.db)
+		if (this.db > local.db) {
 			return 1;
-		if (this.db < local.db)
+		}
+		if (this.db < local.db) {
 			return -1;
-		if (this.y > local.y)
+		}
+		if (this.y > local.y) {
 			return 1;
-		if (this.y < local.y)
+		}
+		if (this.y < local.y) {
 			return -1;
-		if (this.x > local.x)
+		}
+		if (this.x > local.x) {
 			return 1;
-		if (this.x < local.x)
+		}
+		if (this.x < local.x) {
 			return -1;
+		}
 		return 0;
 	}
 
@@ -280,19 +286,25 @@ public class NoteCoordinate implements org.openntf.domino.big.NoteCoordinate {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!getClass().equals(obj.getClass()))
+		}
+		if (!getClass().equals(obj.getClass())) {
 			return false;
+		}
 		NoteCoordinate other = (NoteCoordinate) obj;
-		if (db != other.db)
+		if (db != other.db) {
 			return false;
-		if (x != other.x)
+		}
+		if (x != other.x) {
 			return false;
-		if (y != other.y)
+		}
+		if (y != other.y) {
 			return false;
+		}
 		return true;
 	}
 

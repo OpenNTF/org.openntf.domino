@@ -33,6 +33,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
 import org.openntf.domino.exceptions.UserAccessException;
@@ -54,12 +57,17 @@ import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.das.utils.ErrorHelper;
 import com.ibm.domino.httpmethod.PATCH;
+import com.ibm.icu.text.SimpleDateFormat;
+import com.redpillnow.peabody.data.DatabaseProxy;
+import com.redpillnow.peabody.data.DocumentProxy;
+import com.redpillnow.peabody.manager.ProxyManager;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -81,9 +89,11 @@ public class FramedResource extends AbstractResource {
 		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		ParamMap pm = Parameters.toParamMap(uriInfo);
+		if (pm.getVersion() != null) {
+			System.out.println("TEMP DEBUG Version number parameter detected " + pm.getVersion().get(0));
+		}
 		StringWriter sw = new StringWriter();
 		JsonGraphWriter writer = new JsonGraphWriter(sw, graph, pm, false, true, false);
-
 		Date lastModified = new Date();
 		boolean getLastMod = false;
 		try {
@@ -112,7 +122,39 @@ public class FramedResource extends AbstractResource {
 						// writer.outStringProperty("message", "Graph is null
 						// for namespace " + namespace);
 					}
-					Object elem = graph.getElement(nc, null);
+					NoteCoordinate versionNC = null;
+					if (pm.getVersion() != null) {
+						String versionString = pm.getVersion().get(0).toString();
+						System.out.println("Version parameter detected: " + versionString);
+						SimpleDateFormat sdf = TypeUtils.getDefaultDateFormat();
+						Date versionDate = sdf.parse(versionString);
+						try {
+							Session sess = Factory.getSession(SessionType.CURRENT);
+							Document doc = sess.getDocumentByMetaversalID(nc.toString());
+							Database db = doc.getAncestorDatabase();
+							ProxyManager proxyMgr = com.redpillnow.peabody.manager.PeabodyManager.get().getProxyManager();
+							if (pm != null) {
+								DatabaseProxy dp = proxyMgr.getProxy(db);
+								if (dp != null) {
+									DocumentProxy docprox = dp.getDocumentProxy(doc.getUniversalID());
+									if (docprox != null) {
+										Document versionDoc = docprox.createSidecarDocumentFrom(sess, versionDate);
+										versionNC = versionDoc.getNoteCoordinate();
+										System.out.println("Created sidecar document with metaversalid: " + versionNC);
+									}
+								}
+							}
+						} catch (Throwable t) {
+							t.printStackTrace();
+						}
+					}
+					Object elem = null;
+					if (versionNC != null) {
+						elem = graph.getElement(versionNC, null);
+						//						System.out.println("Got an element from graph with id " + ((Element)elem).getId());
+					} else {
+						elem = graph.getElement(nc, null);
+					}
 					if (elem == null) {
 						// builder = Response.status(Status.NOT_FOUND);
 						// writer.outStringProperty("currentUsername",
@@ -307,6 +349,17 @@ public class FramedResource extends AbstractResource {
 					jsonItems = (JsonJavaObject) jsonRaw;
 				} else if (jsonRaw instanceof List) {
 					jsonArray = (List) jsonRaw;
+				} else if (jsonRaw instanceof String) {
+					//NTF reparse
+					reader = new StringReader((String)jsonRaw);
+					Object jsonRaw2 = JsonParser.fromJson(factory, reader);
+					if (jsonRaw2 instanceof JsonJavaObject) {
+						jsonItems = (JsonJavaObject) jsonRaw2;
+					} else if (jsonRaw2 instanceof List) {
+						jsonArray = (List) jsonRaw2;
+					} else {
+						System.out.println("ALERT Got a jsonRaw2 of type " + (jsonRaw2 !=null?jsonRaw2.getClass().getName():"null") + ".  Value is: " + String.valueOf(jsonRaw));
+					}
 				}
 
 			} catch (UserAccessException uae) {
@@ -337,6 +390,8 @@ public class FramedResource extends AbstractResource {
 			writer.endArray();
 		} else if (jsonItems != null) {
 			processJsonUpdate(jsonItems, graph, writer, pm, isPut);
+		} else {
+			System.out.println("ALERT! Received a JSON object that was not expected!");
 		}
 
 		String jsonEntity = sw.toString();
@@ -516,14 +571,26 @@ public class FramedResource extends AbstractResource {
 		JsonJavaObject jsonItems = null;
 		List<Object> jsonArray = null;
 		JsonGraphFactory factory = JsonGraphFactory.instance;
+		Object jsonRaw = null;
 		try {
 			StringReader reader = new StringReader(requestEntity);
 			try {
-				Object jsonRaw = JsonParser.fromJson(factory, reader);
+				jsonRaw = JsonParser.fromJson(factory, reader);
 				if (jsonRaw instanceof JsonJavaObject) {
 					jsonItems = (JsonJavaObject) jsonRaw;
 				} else if (jsonRaw instanceof List) {
 					jsonArray = (List) jsonRaw;
+				} else if (jsonRaw instanceof String) {
+					//NTF reparse
+					reader = new StringReader((String)jsonRaw);
+					Object jsonRaw2 = JsonParser.fromJson(factory, reader);
+					if (jsonRaw2 instanceof JsonJavaObject) {
+						jsonItems = (JsonJavaObject) jsonRaw2;
+					} else if (jsonRaw2 instanceof List) {
+						jsonArray = (List) jsonRaw2;
+					} else {
+						System.out.println("ALERT Got a jsonRaw2 of type " + (jsonRaw2 !=null?jsonRaw2.getClass().getName():"null") + ".  Value is: " + String.valueOf(jsonRaw));
+					}
 				}
 			} catch (Exception e) {
 				throw new WebApplicationException(
@@ -549,7 +616,7 @@ public class FramedResource extends AbstractResource {
 		} else if (jsonItems != null) {
 			processJsonObject(jsonItems, graph, writer, pm/* , results */);
 		} else {
-			System.out.println("TEMP DEBUG Nothing to POST. No JSON items found.");
+			System.out.println("ALERT Got a jsonRaw of type " + (jsonRaw !=null?jsonRaw.getClass().getName():"null") + ".  Value is: " + String.valueOf(requestEntity));
 		}
 
 		String jsonEntity = sw.toString();

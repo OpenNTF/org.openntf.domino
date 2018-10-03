@@ -69,6 +69,10 @@ public enum TypeUtils {
 		}
 	};
 
+	public static SimpleDateFormat getDefaultDateFormat() {
+		return DEFAULT_FORMAT.get();
+	}
+
 	public static interface CustomConverter {
 
 		public Object convert(Object from);

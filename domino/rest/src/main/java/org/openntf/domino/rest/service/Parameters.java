@@ -10,8 +10,23 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
+import com.ibm.icu.text.SimpleDateFormat;
+
 public enum Parameters {
-	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, INVPROPS, OUTVPROPS, COMMAND, ITEM, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS;
+	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START,
+	COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, INVPROPS, OUTVPROPS, COMMAND, ITEM, SWITCH,
+	PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS, VERSION, REVERTTO;
+
+	private static final ThreadLocal<SimpleDateFormat> URL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyyMMddHHmmss");
+		}
+	};
+
+	public static SimpleDateFormat getURLDateFormat() {
+		return URL_DATE_FORMAT.get();
+	}
 
 	public static ParamMap toParamMap(final UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
@@ -163,6 +178,10 @@ public enum Parameters {
 
 		public boolean getDescending() {
 			return get(Parameters.DESC) != null;
+		}
+
+		public List<CharSequence> getVersion() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.VERSION));
 		}
 
 	}

@@ -59,6 +59,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -4270,6 +4271,11 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return replid + unid;
 	}
 
+	@Override
+	public NoteCoordinate getNoteCoordinate() {
+		return NoteCoordinate.Utils.getNoteCoordinate(getMetaversalID().toLowerCase());
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.Document#getMetaversalID(java.lang.String)
 	 */
@@ -4620,4 +4626,15 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 			DominoUtils.handleException(e, this);
 		}
 	}
+
+	public List<Item> getItemsModifiedSince(final DateTime datetime) {
+		List<Item> result = new ArrayList<Item>();
+		for (Item item : this.getItems()) {
+			if (item.getLastModified().isAfter(datetime)) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
 }

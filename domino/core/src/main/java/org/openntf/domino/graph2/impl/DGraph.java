@@ -1,6 +1,7 @@
 package org.openntf.domino.graph2.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,11 +14,16 @@ import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.NoteList;
 import org.openntf.domino.exceptions.DocumentWriteAccessException;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.extmgr.AbstractEMBridgeSubscriber;
+import org.openntf.domino.extmgr.EMBridgeEventFactory;
+import org.openntf.domino.extmgr.events.EMEventIds;
+import org.openntf.domino.extmgr.events.document.UpdateExtendedEvent;
 //import org.openntf.domino.big.impl.DbCache;
 import org.openntf.domino.graph2.DConfiguration;
 import org.openntf.domino.graph2.DElementStore;
@@ -56,6 +62,46 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 
 	}
 
+	public static class CacheMonitor extends AbstractEMBridgeSubscriber {
+		private DGraph parentGraph_;
+
+		protected CacheMonitor(final DGraph parent) {
+			parentGraph_ = parent;
+		}
+
+		@Override
+		public Collection<EMEventIds> getSubscribedEventIds() {
+			List<EMEventIds> result = new ArrayList<EMEventIds>();
+			System.out.println("Registering Graph extension manager events");
+			result.add(EMEventIds.EM_NSFNOTEUPDATEXTENDED);
+			result.add(EMEventIds.EM_NSFNOTEUPDATE);
+			return result;
+		}
+
+		@Override
+		public void handleMessage(final EMEventIds eventid, final String eventMessage) {
+			if (EMEventIds.EM_NSFNOTEUPDATEXTENDED.equals(eventid) || EMEventIds.EM_NSFNOTEUPDATE.equals(eventid)) {
+				try {
+					UpdateExtendedEvent event = new UpdateExtendedEvent();
+					EMBridgeEventFactory.parseEventBuffer(eventMessage, event);
+
+					Session session = Factory.getSession(SessionType.NATIVE);
+					session.setFixEnable(Fixes.FORCE_HEX_LOWER_CASE, true);
+					Database database = session.getDatabase("", event.getDbPath());
+					if (database != null) {
+						Document doc = database.getDocumentByID(event.getNoteId());
+						if (doc != null) {
+							String mid = doc.getMetaversalID();
+							parentGraph_.flushCache(mid.toLowerCase());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	public static ThreadLocal<GraphTransaction> localTxn = new ThreadLocal<GraphTransaction>() {
 		@Override
 		public GraphTransaction get() {
@@ -69,6 +115,8 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 	public DGraph(final DConfiguration config) {
 		configuration_ = config;
 		config.setGraph(this);
+		//		CacheMonitor monitor = new CacheMonitor(this);
+		//		EMBridgeMessageQueue.addSubscriber(monitor);
 	}
 
 	protected Map<Class<?>, Long> getTypeMap() {
@@ -697,6 +745,19 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		for (Long key : getElementStores().keySet()) {
 			DElementStore elemStore = getElementStores().get(key);
 			elemStore.flushCache();
+		}
+	}
+
+	//TODO NTF - Add capability to handle a collection of ids for bulk deletes
+	@Override
+	public void flushCache(final String id) {
+		try {
+			DElementStore store = findElementStore(id);
+			if (store != null) {
+				store.flushCache(id);
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 }
