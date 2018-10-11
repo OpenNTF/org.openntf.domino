@@ -428,26 +428,25 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 		return parent.getFactory();
 	}
 
-	// Presumably-temporarily missing during the v10 beta 
-	//	@Override
-	//	public boolean getActAsDbOwner() {
-	//		try {
-	//			return getDelegate().getActAsDbOwner();
-	//		} catch (Exception e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//		return false;
-	//	}
-	//
-	//	@Override
-	//	public boolean getAutoRemoveProcessedNotices() {
-	//		try {
-	//			return getDelegate().getAutoRemoveProcessedNotices();
-	//		} catch (Exception e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//		return false;
-	//	}
+	@Override
+	public boolean getActAsDbOwner() {
+		try {
+			return getDelegate().getActAsDbOwner();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean getAutoRemoveProcessedNotices() {
+		try {
+			return getDelegate().getAutoRemoveProcessedNotices();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return false;
+	}
 
 	@Override
 	public String getRecurrenceID(final lotus.domino.DateTime arg0) {
@@ -459,23 +458,22 @@ public class NotesCalendar extends BaseThreadSafe<org.openntf.domino.NotesCalend
 		return null;
 	}
 
-	// Presumably-temporarily missing during the v10 beta
-	//	@Override
-	//	public void setActAsDbOwner(final boolean arg0) {
-	//		try {
-	//			getDelegate().setActAsDbOwner(arg0);
-	//		} catch (Exception e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//	}
-	//
-	//	@Override
-	//	public void setAutoRemoveProcessedNotices(final boolean arg0) {
-	//		try {
-	//			getDelegate().setAutoRemoveProcessedNotices(arg0);
-	//		} catch (Exception e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//	}
+	@Override
+	public void setActAsDbOwner(final boolean arg0) {
+		try {
+			getDelegate().setActAsDbOwner(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setAutoRemoveProcessedNotices(final boolean arg0) {
+		try {
+			getDelegate().setAutoRemoveProcessedNotices(arg0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
 
 }
