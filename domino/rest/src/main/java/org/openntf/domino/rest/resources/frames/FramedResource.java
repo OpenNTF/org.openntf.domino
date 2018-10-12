@@ -149,8 +149,6 @@ public class FramedResource extends AbstractResource {
 								}
 							} catch(ClassNotFoundException e) {
 								// Peabody not installed
-							} finally {
-
 							}
 						} catch (Throwable t) {
 							t.printStackTrace();

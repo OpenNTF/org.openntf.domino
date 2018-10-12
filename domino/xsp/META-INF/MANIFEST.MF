@@ -42,3 +42,4 @@ Import-Package: com.ibm.domino.osgi.core.context,
  org.apache.wink.common.internal.utils,
  org.apache.wink.server.internal.servlet
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Eclipse-ExtensibleAPI: true

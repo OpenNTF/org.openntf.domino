@@ -42,9 +42,6 @@ import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
-import com.redpillnow.peabody.data.DatabaseProxy;
-import com.redpillnow.peabody.data.DocumentProxy;
-import com.redpillnow.peabody.manager.ProxyManager;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -470,6 +467,7 @@ public class JsonFrameAdapter implements JsonObject {
 					}
 				}
 			} else if (key.equals("@versions")) {
+				// TODO add extension point to contribute Peabody extension
 				if (frame instanceof VertexFrame) {
 					try {
 						Vertex v = ((VertexFrame)frame).asVertex();
@@ -478,26 +476,21 @@ public class JsonFrameAdapter implements JsonObject {
 						Document doc = sess.getDocumentByMetaversalID(id.toString());
 						if (doc != null) {
 							Database db = doc.getAncestorDatabase();
-							ProxyManager pm = com.redpillnow.peabody.manager.PeabodyManager.get().getProxyManager();
-							if (pm != null) {
-								DatabaseProxy dp = pm.getProxy(db);
-								if (dp != null) {
-									DocumentProxy docprox = dp.getDocumentProxy(doc.getUniversalID());
-									if (docprox != null) {
-										result = docprox.getRevisionDates();
-										if (result == null) {
-											//										System.out.println("TEMP DEBUG Got null revision dates for " + id );
-										} else {
-											//										System.out.println("TEMP DEBUG Got " + ((List)result).size() + " revision dates for " + id );
+							try {
+								Class<?> proxyMgrClass = Class.forName("com.redpillnow.peabody.manager.PeabodyManager"); //$NON-NLS-1$
+								Method getMethod = proxyMgrClass.getMethod("getProxyManager"); //$NON-NLS-1$
+								Object proxyMgr = getMethod.invoke(null);
+								if(proxyMgr != null) {
+									Object dp = proxyMgrClass.getMethod("getProxy", Database.class).invoke(proxyMgr, db); //$NON-NLS-1$
+									if(dp != null) {
+										Object docprox = dp.getClass().getMethod("getDocumentProxy", String.class).invoke(dp, doc.getUniversalID()); //$NON-NLS-1$
+										if(docprox != null) {
+											result = docprox.getClass().getMethod("getRevisionDates").invoke(docprox); //$NON-NLS-1$
 										}
-									} else {
-										//									System.out.println("TEMP DEBUG No DocumentProxy found for id " + id);
 									}
-								} else {
-									//								System.out.println("TEMP DEBUG No DatabaseProxy found for " + db.getApiPath());
 								}
-							} else {
-								//							System.out.println("TEMP DEBUG ProxyManager unavailable!?");
+							} catch(ClassNotFoundException e) {
+								// Peabody not installed
 							}
 						}
 					} catch (Throwable t) {

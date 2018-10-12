@@ -21,7 +21,7 @@ Import-Package: com.ibm.commons.util.io.json,
  org.osgi.framework;version="1.3.0"
 Require-Bundle: com.ibm.domino.services;bundle-version="9.0.1",
  com.ibm.wink;bundle-version="9.0.1",
- org.openntf.domino.xsp;bundle-version="1.5.0";resolution:=optional,
+ org.openntf.domino.xsp;bundle-version="1.5.0",
  com.ibm.commons;bundle-version="9.0.1",
  com.ibm.notes.java.api;resolution:=optional,
  com.tinkerpop,
