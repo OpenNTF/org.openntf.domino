@@ -65,9 +65,6 @@ import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.das.utils.ErrorHelper;
 import com.ibm.domino.httpmethod.PATCH;
 import com.ibm.icu.text.SimpleDateFormat;
-import com.redpillnow.peabody.data.DatabaseProxy;
-import com.redpillnow.peabody.data.DocumentProxy;
-import com.redpillnow.peabody.manager.ProxyManager;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -132,17 +129,28 @@ public class FramedResource extends AbstractResource {
 							Session sess = Factory.getSession(SessionType.CURRENT);
 							Document doc = sess.getDocumentByMetaversalID(nc.toString());
 							Database db = doc.getAncestorDatabase();
-							ProxyManager proxyMgr = com.redpillnow.peabody.manager.PeabodyManager.get().getProxyManager();
-							if (pm != null) {
-								DatabaseProxy dp = proxyMgr.getProxy(db);
-								if (dp != null) {
-									DocumentProxy docprox = dp.getDocumentProxy(doc.getUniversalID());
-									if (docprox != null) {
-										Document versionDoc = docprox.createSidecarDocumentFrom(sess, versionDate);
-										versionNC = versionDoc.getNoteCoordinate();
-										System.out.println("Created sidecar document with metaversalid: " + versionNC);
+							// Do this reflectively for now to make it work but allow compilation by non-Peabody devs
+							// TODO factor this out to extension contributions
+							try {
+								Class<?> proxyMgrClass = Class.forName("com.redpillnow.peabody.manager.PeabodyManager"); //$NON-NLS-1$
+								Method getMethod = proxyMgrClass.getMethod("getProxyManager"); //$NON-NLS-1$
+								Object proxyMgr = getMethod.invoke(null);
+								if(proxyMgr != null) {
+									Object dp = proxyMgrClass.getMethod("getProxy", Database.class).invoke(proxyMgr, db); //$NON-NLS-1$
+									if(dp != null) {
+										Object docprox = dp.getClass().getMethod("getDocumentProxy", String.class).invoke(dp, doc.getUniversalID()); //$NON-NLS-1$
+										if(docprox != null) {
+											Method sidecarMethod = docprox.getClass().getMethod("createSidecarDocumentFrom", Session.class, Date.class); //$NON-NLS-1$
+											Document versionDoc = (Document)sidecarMethod.invoke(docprox, sess, versionDate);
+											versionNC = versionDoc.getNoteCoordinate();
+											System.out.println("Created sidecar document with metaversalid: " + versionNC);
+										}
 									}
 								}
+							} catch(ClassNotFoundException e) {
+								// Peabody not installed
+							} finally {
+
 							}
 						} catch (Throwable t) {
 							t.printStackTrace();
