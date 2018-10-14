@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openntf.domino.Database;
@@ -16,6 +17,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
+import org.openntf.domino.contributor.DocumentBackupContributor;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DEdgeList;
 import org.openntf.domino.graph2.DGraphUtils;
@@ -476,21 +478,16 @@ public class JsonFrameAdapter implements JsonObject {
 						Document doc = sess.getDocumentByMetaversalID(id.toString());
 						if (doc != null) {
 							Database db = doc.getAncestorDatabase();
-							try {
-								Class<?> proxyMgrClass = Class.forName("com.redpillnow.peabody.manager.PeabodyManager"); //$NON-NLS-1$
-								Method getMethod = proxyMgrClass.getMethod("getProxyManager"); //$NON-NLS-1$
-								Object proxyMgr = getMethod.invoke(null);
-								if(proxyMgr != null) {
-									Object dp = proxyMgrClass.getMethod("getProxy", Database.class).invoke(proxyMgr, db); //$NON-NLS-1$
-									if(dp != null) {
-										Object docprox = dp.getClass().getMethod("getDocumentProxy", String.class).invoke(dp, doc.getUniversalID()); //$NON-NLS-1$
-										if(docprox != null) {
-											result = docprox.getClass().getMethod("getRevisionDates").invoke(docprox); //$NON-NLS-1$
-										}
+
+							List<DocumentBackupContributor> contributors = Factory.findApplicationServices(DocumentBackupContributor.class);
+							if(contributors != null) {
+								for(DocumentBackupContributor contributor : contributors) {
+									Optional<List<Date>> dates = contributor.getRevisionDates(db, doc.getUniversalID());
+									if(dates != null) {
+										result = dates;
+										break;
 									}
 								}
-							} catch(ClassNotFoundException e) {
-								// Peabody not installed
 							}
 						}
 					} catch (Throwable t) {
