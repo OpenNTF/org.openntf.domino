@@ -482,8 +482,8 @@ public class JsonFrameAdapter implements JsonObject {
 							if(contributors != null) {
 								for(DocumentBackupContributor contributor : contributors) {
 									Optional<List<Date>> dates = contributor.getRevisionDates(db, doc.getUniversalID());
-									if(dates != null) {
-										result = dates;
+									if(dates.isPresent()) {
+										result = dates.get();
 										break;
 									}
 								}
