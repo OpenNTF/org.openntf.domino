@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,6 +39,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.contributor.DocumentBackupContributor;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
@@ -129,26 +131,16 @@ public class FramedResource extends AbstractResource {
 							Session sess = Factory.getSession(SessionType.CURRENT);
 							Document doc = sess.getDocumentByMetaversalID(nc.toString());
 							Database db = doc.getAncestorDatabase();
-							// Do this reflectively for now to make it work but allow compilation by non-Peabody devs
-							// TODO factor this out to extension contributions
-							try {
-								Class<?> proxyMgrClass = Class.forName("com.redpillnow.peabody.manager.PeabodyManager"); //$NON-NLS-1$
-								Method getMethod = proxyMgrClass.getMethod("getProxyManager"); //$NON-NLS-1$
-								Object proxyMgr = getMethod.invoke(null);
-								if(proxyMgr != null) {
-									Object dp = proxyMgrClass.getMethod("getProxy", Database.class).invoke(proxyMgr, db); //$NON-NLS-1$
-									if(dp != null) {
-										Object docprox = dp.getClass().getMethod("getDocumentProxy", String.class).invoke(dp, doc.getUniversalID()); //$NON-NLS-1$
-										if(docprox != null) {
-											Method sidecarMethod = docprox.getClass().getMethod("createSidecarDocumentFrom", Session.class, Date.class); //$NON-NLS-1$
-											Document versionDoc = (Document)sidecarMethod.invoke(docprox, sess, versionDate);
-											versionNC = versionDoc.getNoteCoordinate();
-											System.out.println("Created sidecar document with metaversalid: " + versionNC);
-										}
+
+							List<DocumentBackupContributor> contributors = Factory.findApplicationServices(DocumentBackupContributor.class);
+							if(contributors != null) {
+								for(DocumentBackupContributor contributor : contributors) {
+									Optional<Document> versionDoc = contributor.createSidecarDocument(db, doc.getUniversalID(), versionDate);
+									if(versionDoc.isPresent()) {
+										versionNC = versionDoc.get().getNoteCoordinate();
+										break;
 									}
 								}
-							} catch(ClassNotFoundException e) {
-								// Peabody not installed
 							}
 						} catch (Throwable t) {
 							t.printStackTrace();
