@@ -469,7 +469,6 @@ public class JsonFrameAdapter implements JsonObject {
 					}
 				}
 			} else if (key.equals("@versions")) {
-				// TODO add extension point to contribute Peabody extension
 				if (frame instanceof VertexFrame) {
 					try {
 						Vertex v = ((VertexFrame)frame).asVertex();
