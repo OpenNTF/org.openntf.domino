@@ -1,5 +1,6 @@
 package org.openntf.domino.graph2.builtin.identity;
 
+import java.util.List;
 import java.util.Scanner;
 
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
@@ -22,7 +23,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerClass;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("Name")
+@TypeValue("org.openntf.domino.graph2.builtin.identity.Name")
 @JavaHandlerClass(Name.NameImpl.class)
 public interface Name extends DVertexFrame, Socializer {
 	public static enum Utils {
@@ -77,7 +78,7 @@ public interface Name extends DVertexFrame, Socializer {
 	public void setTokenProcessed(boolean processed);
 
 	@AdjacencyUnique(label = ContainsPart.LABEL, direction = Direction.IN)
-	public Iterable<Term> getParts();
+	public List<Term> getParts();
 
 	@AdjacencyUnique(label = ContainsPart.LABEL, direction = Direction.IN)
 	public ContainsPart addPart(Term term);
@@ -86,7 +87,7 @@ public interface Name extends DVertexFrame, Socializer {
 	public void removePart(Term term);
 
 	@IncidenceUnique(label = ContainsPart.LABEL, direction = Direction.IN)
-	public Iterable<ContainsPart> getContainsParts();
+	public List<ContainsPart> getContainsParts();
 
 	@IncidenceUnique(label = ContainsPart.LABEL, direction = Direction.IN)
 	public int countContainsParts();

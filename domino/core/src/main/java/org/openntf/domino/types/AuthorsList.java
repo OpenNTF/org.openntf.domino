@@ -1,6 +1,6 @@
 package org.openntf.domino.types;
 
-public class AuthorsList<String> extends NamesList<String> {
+public class AuthorsList extends NamesList {
 
 	public AuthorsList() {
 		// TODO Auto-generated constructor stub

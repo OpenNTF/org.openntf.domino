@@ -10,10 +10,25 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.wink.common.internal.utils.StringUtils;
 import org.openntf.domino.types.CaseInsensitiveString;
 
-public enum Parameters {
-	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START, COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, COMMAND, ITEM, SWITCH, PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS;
+import com.ibm.icu.text.SimpleDateFormat;
 
-	public static ParamMap toParamMap(UriInfo uriInfo) {
+public enum Parameters {
+	DEBUG, ID, KEY, TYPE, EDGES, VERTICES, COUNTS, DESC, FILTERKEY, FILTERVALUE, LABEL, DIRECTION, START,
+	COUNT, ORDERBY, PROPS, HIDEPROPS, INPROPS, OUTPROPS, INVPROPS, OUTVPROPS, COMMAND, ITEM, SWITCH,
+	PARTIALKEY, PARTIALVALUE, STARTSKEY, STARTSVALUE, ADD, REMOVE, ACTION, ACTIONS, VERSION, REVERTTO;
+
+	private static final ThreadLocal<SimpleDateFormat> URL_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyyMMddHHmmss");
+		}
+	};
+
+	public static SimpleDateFormat getURLDateFormat() {
+		return URL_DATE_FORMAT.get();
+	}
+
+	public static ParamMap toParamMap(final UriInfo uriInfo) {
 		ParamMap result = new ParamMap();
 		MultivaluedMap<String, String> mm = uriInfo.getQueryParameters(true);
 		for (String key : mm.keySet()) {
@@ -125,6 +140,14 @@ public enum Parameters {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.OUTPROPS));
 		}
 
+		public List<CharSequence> getInVProperties() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.INVPROPS));
+		}
+
+		public List<CharSequence> getOutVProperties() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.OUTVPROPS));
+		}
+
 		public List<CharSequence> getLabels() {
 			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.LABEL));
 		}
@@ -155,6 +178,10 @@ public enum Parameters {
 
 		public boolean getDescending() {
 			return get(Parameters.DESC) != null;
+		}
+
+		public List<CharSequence> getVersion() {
+			return CaseInsensitiveString.toCaseInsensitive(get(Parameters.VERSION));
 		}
 
 	}

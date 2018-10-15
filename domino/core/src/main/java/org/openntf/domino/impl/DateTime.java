@@ -19,7 +19,17 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+import java.time.temporal.Temporal;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,6 +52,13 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		implements org.openntf.domino.DateTime {
 	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
+
+	private static final DateTimeFormatter GMT_FORMAT_DATETIME = new DateTimeFormatterBuilder().appendPattern("MM/dd/uuuu hh:mm:ss a")
+			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
+	private static final DateTimeFormatter GMT_FORMAT_DATE = new DateTimeFormatterBuilder().appendPattern("MM/dd/uuuu")
+			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 
 	static {
 		Factory.addTerminateHook(new Runnable() {
@@ -413,6 +430,77 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 		}
 		// TODO NTF - find out what this actually does. The documentation is... vague
 		//throw new UnimplementedException("convertToZone is not yet implemented.");
+	}
+
+	public void convertToZone(final int zone) {
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.convertToZone(zone, this.isDST());
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+	}
+
+	@Override
+	public void convertToGMT() {
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.convertToZone(0, this.isDST());
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+	}
+
+	@Override
+	public Temporal toGMTDateTime() {
+		String gmtTime = getGMTTime();
+
+		Temporal result = null;
+		if (isAnyTime()) {
+			try {
+				result = LocalDate.parse(gmtTime, DateTime.GMT_FORMAT_DATE);
+			} catch (DateTimeParseException pe) {
+				DominoUtils.handleException(pe, "Parse exception. Unable to parse string " + gmtTime);
+				System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_DATE " + gmtTime);
+				pe.printStackTrace();
+			} catch (Throwable t) {
+				DominoUtils.handleException(t, "Not a parse exception");
+			}
+		} else {
+			String strippedTime = gmtTime.substring(0, gmtTime.indexOf("G")).trim();
+			try {
+				result = ZonedDateTime.parse(strippedTime, GMT_FORMAT_DATETIME);
+			} catch (DateTimeParseException pe) {
+				DominoUtils.handleException(pe, "Parse exception. Unable to parse string " + strippedTime);
+				System.out.println("TEMP DEBUG Parse exception. Unable to parse string from GMT_FORMAT_DATETIME " + strippedTime + ": "
+						+ pe.getMessage());
+				pe.printStackTrace();
+				if (pe.getCause() != null) {
+					pe.getCause().printStackTrace();
+				}
+			} catch (Throwable t) {
+				DominoUtils.handleException(t, "Not a parse exception");
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public String toGMTISO() {
+		String result = null;
+		try {
+			Temporal zdt = toGMTDateTime();
+			if (zdt != null && zdt instanceof ZonedDateTime) {
+				result = ((ZonedDateTime) zdt).format(DateTimeFormatter.ISO_INSTANT);
+			} else if (zdt != null && zdt instanceof LocalDate) {
+				result = ((LocalDate) zdt).format(DateTimeFormatter.ISO_DATE);
+			}
+		} catch (Throwable t) {
+			DominoUtils.handleException(t, "Unable to get ISO Date");
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -1051,6 +1139,16 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getFactory();
+	}
+
+	@Override
+	public String getReplicaID() {
+		try {
+			return getWorker().getReplicaID();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 }

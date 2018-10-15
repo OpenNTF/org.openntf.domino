@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.openntf.domino.graph2.impl.DGraph;
 
+import com.tinkerpop.frames.EdgeFrame;
+import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.typedgraph.TypeManager;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
@@ -50,5 +52,19 @@ public interface DConfiguration extends Externalizable {
 	public boolean isSuppressSingleValueCategories();
 
 	public void setSuppressSingleValueCategories(boolean value);
+
+	public Class<?> getDefaultVertexFrameType();
+
+	public void setDefaultVertexFrameType(Class<? extends VertexFrame> clazz);
+
+	public Class<?> getDefaultEdgeFrameType();
+
+	public void setDefaultEdgeFrameType(Class<? extends EdgeFrame> clazz);
+
+	void setDefaultReverseProxyStore(Long key);
+
+	void setDefaultReverseProxyStore(DElementStore store);
+
+	DElementStore getDefaultReverseProxyStore();
 
 }

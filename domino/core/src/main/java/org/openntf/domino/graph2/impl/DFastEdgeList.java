@@ -117,8 +117,9 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	}
 
 	private static Collection<NoteCoordinate> getNCs(final Collection<?> arg0) {
-		if (arg0 == null)
+		if (arg0 == null) {
 			return null;
+		}
 		Collection<NoteCoordinate> ncs = new ArrayList<NoteCoordinate>();
 		for (Object raw : arg0) {
 			if (raw instanceof Edge) {
@@ -217,8 +218,9 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public boolean contains(final Object arg0) {
-		if (arg0 == null)
+		if (arg0 == null) {
 			return false;
+		}
 		if (arg0 instanceof Edge) {
 			NoteCoordinate nc = getNC((Edge) arg0);
 			return delegate_.contains(nc);
@@ -253,8 +255,9 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public int indexOf(final Object arg0) {
-		if (arg0 == null)
+		if (arg0 == null) {
 			return -1;
+		}
 		if (arg0 instanceof Edge) {
 			NoteCoordinate nc = getNC((Edge) arg0);
 			return delegate_.indexOf(nc);
@@ -280,8 +283,9 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public int lastIndexOf(final Object arg0) {
-		if (arg0 == null)
+		if (arg0 == null) {
 			return -1;
+		}
 		if (arg0 instanceof Edge) {
 			NoteCoordinate nc = getNC((Edge) arg0);
 			return delegate_.lastIndexOf(nc);
@@ -313,8 +317,9 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 
 	@Override
 	public boolean remove(final Object arg0) {
-		if (arg0 == null)
+		if (arg0 == null) {
 			return false;
+		}
 		if (arg0 instanceof Edge) {
 			NoteCoordinate nc = getNC((Edge) arg0);
 			return delegate_.remove(nc);
@@ -332,8 +337,9 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	public boolean removeAll(final Collection<?> arg0) {
 		boolean result = false;
 		for (Object raw : arg0) {
-			if (remove(raw))
+			if (remove(raw)) {
 				result = true;
+			}
 		}
 		return result;
 	}
@@ -341,6 +347,14 @@ public class DFastEdgeList implements org.openntf.domino.graph2.DEdgeList {
 	@Override
 	public boolean retainAll(final Collection<?> arg0) {
 		return delegate_.retainAll(getNCs(arg0));
+	}
+
+	public boolean retainAll(final NoteList notelist) {
+		return delegate_.retainAll(notelist);
+	}
+
+	public boolean retainAll(final DFastEdgeList edgelist) {
+		return delegate_.retainAll(edgelist.delegate_);
 	}
 
 	@Override

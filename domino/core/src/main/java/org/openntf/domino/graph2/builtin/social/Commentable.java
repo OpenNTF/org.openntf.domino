@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.social;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
@@ -10,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("Commentable")
 public interface Commentable extends DVertexFrame {
 	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public Iterable<Comment> getComments();
+	public List<Comment> getComments();
 
 	@AdjacencyUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public CommentsAbout addComment(Comment comment);
@@ -19,7 +21,7 @@ public interface Commentable extends DVertexFrame {
 	public void removeComment(Comment comment);
 
 	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
-	public Iterable<CommentsAbout> getCommentsAbouts();
+	public List<CommentsAbout> getCommentsAbouts();
 
 	@IncidenceUnique(label = CommentsAbout.LABEL, direction = Direction.IN)
 	public int countCommentsAbouts();
@@ -28,7 +30,7 @@ public interface Commentable extends DVertexFrame {
 	public void removeCommentsAbout(CommentsAbout commentsAbout);
 
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Iterable<Socializer> getSocializers();
+	public List<Socializer> getSocializers();
 
 	@AdjacencyUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public Mentions addSocializer(Socializer socializer);
@@ -37,7 +39,7 @@ public interface Commentable extends DVertexFrame {
 	public void removeSocializer(Socializer socializer);
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
-	public Iterable<Mentions> getMentions();
+	public List<Mentions> getMentions();
 
 	@IncidenceUnique(label = Mentions.LABEL, direction = Direction.IN)
 	public int countMentions();

@@ -431,6 +431,18 @@ public enum ODAPlatform {
 	}
 
 	/**
+	 * Gets whether the snap flag is enabled for the application
+	 * 
+	 * @param ctx
+	 *            FacesContext
+	 * @return boolean
+	 * @since org.openntf.domino.xsp 3.0.0
+	 */
+	public static boolean isAppViewExactMatch(final Application app) {
+		return isAppFlagSet("SNAP", app);
+	}
+
+	/**
 	 * Gets whether the raid flag is enabled for the application
 	 * 
 	 * @param ctx

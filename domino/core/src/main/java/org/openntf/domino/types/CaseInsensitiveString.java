@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.types;
 
@@ -16,7 +16,7 @@ import com.ibm.icu.lang.UCharacter;
 /**
  * @author Nathan T. Freeman Much source code shamelessly stolen from com.ibm.icu.util.CaseInsensitiveString. We would have properly
  *         extended it, but folded is private in IBM's implementation :-/
- * 
+ *
  */
 public class CaseInsensitiveString implements CharSequence, Comparable<CharSequence>, Externalizable {
 	@SuppressWarnings("unused")
@@ -27,9 +27,17 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	protected int hash = 0;
 	protected String folded = null;
 
-	public static List<CharSequence> toCaseInsensitive(final Iterable<? extends CharSequence> strings) {
-		if (strings == null)
+	public static CharSequence toCaseInsensitive(final CharSequence chars) {
+		if (chars == null) {
 			return null;
+		}
+		return new CaseInsensitiveString(chars);
+	}
+
+	public static List<CharSequence> toCaseInsensitive(final Iterable<? extends CharSequence> strings) {
+		if (strings == null) {
+			return null;
+		}
 		List<CharSequence> result = new ArrayList<CharSequence>();
 		for (CharSequence str : strings) {
 			result.add(new CaseInsensitiveString(str));
@@ -38,8 +46,9 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	}
 
 	public static List<String> toStrings(final Iterable<CharSequence> cis) {
-		if (cis == null)
+		if (cis == null) {
 			return null;
+		}
 		List<String> result = new ArrayList<String>();
 		for (CharSequence str : cis) {
 			result.add(str.toString());
@@ -68,12 +77,12 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 
 	/**
 	 * Constructs an CaseInsentiveString object from the given string
-	 * 
+	 *
 	 * @param s
 	 *            The string to construct this object from
 	 */
 	public CaseInsensitiveString(final CharSequence s) {
-		string = s.toString();
+		string = String.valueOf(s);
 	}
 
 	public CaseInsensitiveString() {	//used for Externalization
@@ -82,7 +91,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 
 	/**
 	 * returns the underlying string
-	 * 
+	 *
 	 * @return String
 	 * @stable ICU 2.0
 	 */
@@ -92,7 +101,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 
 	/**
 	 * Compare the object with this
-	 * 
+	 *
 	 * @param o
 	 *            Object to compare this object with
 	 */
@@ -122,7 +131,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 
 	/**
 	 * Returns the hashCode of this object
-	 * 
+	 *
 	 * @return int hashcode
 	 */
 	@Override

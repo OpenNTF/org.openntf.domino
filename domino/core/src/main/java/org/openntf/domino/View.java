@@ -701,6 +701,53 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * </p>
 	 *
 	 * @param query
+	 *            The full-text query
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the search. If you want to receive all documents that match the
+	 *            query, specify 0.
+	 * @param column
+	 *            0-based index of a sorted column. A specification of View.VIEW_FTSS_RELEVANCE_ORDER (512) returns results in relevance
+	 *            order while honoring the use of the extended flags for exact case, variants, and fuzzy search.
+	 * @param ascending
+	 *            Sorts column data in ascending order if true, descending order if false. Ignored if View.VIEW_FTSS_RELEVANCE_ORDER is in
+	 *            effect. The availability of a column to be sorted in ascending or descending order is determined by "Click on column
+	 *            header to sort" on the Sorting tab of the column properties. The relevant options are Ascending, Descending, and Both.
+	 *            Trying to sort a column in an unsupported direction throws an exception.
+	 * @param exact
+	 *            specify true to apply exact case to the search
+	 * @param variants
+	 *            specify true to return word variants in the search results
+	 * @param fuzzy
+	 *            specify true to return misspelled words in the search results
+	 * @param webQuerySyntax
+	 *            specify true to use web query syntax instead of Notes full text search syntax
+	 * @return The number of documents in the view after the search. Each of these documents matches the query.
+	 */
+	@Override
+	public int FTSearchSorted(final String query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax);
+
+	/**
+	 * Conducts a full-text search on all documents in a view and filters the view so it represents only those documents that match the
+	 * full-text query in sorted order.
+	 * <p>
+	 * After calling this method, you can use the regular View methods to navigate the result, which is a subset of the documents in the
+	 * view. If the database is not full-text indexed, the documents in the subset are in the same order as they are in the original view.
+	 * However, if the database is full-text indexed, the documents in the subset are sorted into descending order of relevance. The method
+	 * getFirstDocument returns the first document in the subset, getLastDocument returns the last document, and so on. Use the clear method
+	 * to clear the full-text search filtering. The View methods now navigate to the full set of documents in the view. If the database is
+	 * not full-text indexed, this method works, but less efficiently. To test for an index, use isFTIndexed. To create an index on a local
+	 * database, use updateFTIndex.
+	 * </p>
+	 * <h5>Query syntax</h5>
+	 * <p>
+	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
+	 * escape quotes if you are inside a literal. Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 * "Refining a search query using operators" in Notes Help. You can also search for "query syntax" in the Domino Designer Eclipse help
+	 * system.
+	 * </p>
+	 *
+	 * @param query
 	 *            The full-text query or the intersection of multiple queries.
 	 * @param maxDocs
 	 *            The maximum number of documents you want returned from the search. If you want to receive all documents that match the
@@ -755,6 +802,53 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	public int FTSearchSorted(final String query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
 			final boolean variants, final boolean fuzzy);
+
+	/**
+	 * Conducts a full-text search on all documents in a view and filters the view so it represents only those documents that match the
+	 * full-text query in sorted order.
+	 * <p>
+	 * After calling this method, you can use the regular View methods to navigate the result, which is a subset of the documents in the
+	 * view. If the database is not full-text indexed, the documents in the subset are in the same order as they are in the original view.
+	 * However, if the database is full-text indexed, the documents in the subset are sorted into descending order of relevance. The method
+	 * getFirstDocument returns the first document in the subset, getLastDocument returns the last document, and so on. Use the clear method
+	 * to clear the full-text search filtering. The View methods now navigate to the full set of documents in the view. If the database is
+	 * not full-text indexed, this method works, but less efficiently. To test for an index, use isFTIndexed. To create an index on a local
+	 * database, use updateFTIndex.
+	 * </p>
+	 * <h5>Query syntax</h5>
+	 * <p>
+	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
+	 * escape quotes if you are inside a literal. Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 * "Refining a search query using operators" in Notes Help. You can also search for "query syntax" in the Domino Designer Eclipse help
+	 * system.
+	 * </p>
+	 *
+	 * @param query
+	 *            The full-text query
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the search. If you want to receive all documents that match the
+	 *            query, specify 0.
+	 * @param column
+	 *            The name of a sorted column.
+	 * @param ascending
+	 *            Sorts column data in ascending order if true, descending order if false. Ignored if View.VIEW_FTSS_RELEVANCE_ORDER is in
+	 *            effect. The availability of a column to be sorted in ascending or descending order is determined by "Click on column
+	 *            header to sort" on the Sorting tab of the column properties. The relevant options are Ascending, Descending, and Both.
+	 *            Trying to sort a column in an unsupported direction throws an exception.
+	 * @param exact
+	 *            specify true to apply exact case to the search
+	 * @param variants
+	 *            specify true to return word variants in the search results
+	 * @param fuzzy
+	 *            specify true to return misspelled words in the search results
+	 * @param webQuerySyntax
+	 *            specify true to use web query syntax instead of Notes full text search syntax
+	 * @return The number of documents in the view after the search. Each of these documents matches the query.
+	 * @since Domino V10
+	 */
+	@Override
+	public int FTSearchSorted(final String query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax);
 
 	/**
 	 * Conducts a full-text search on all documents in a view and filters the view so it represents only those documents that match the
@@ -929,6 +1023,57 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 *            The maximum number of documents you want returned from the search. If you want to receive all documents that match the
 	 *            query, specify 0.
 	 * @param column
+	 *            0-based index of a sorted column. A specification of View.VIEW_FTSS_RELEVANCE_ORDER (512) returns results in relevance
+	 *            order while honoring the use of the extended flags for exact case, variants, and fuzzy search.
+	 * @param ascending
+	 *            Sorts column data in ascending order if true, descending order if false. Ignored if View.VIEW_FTSS_RELEVANCE_ORDER is in
+	 *            effect. The availability of a column to be sorted in ascending or descending order is determined by "Click on column
+	 *            header to sort" on the Sorting tab of the column properties. The relevant options are Ascending, Descending, and Both.
+	 *            Trying to sort a column in an unsupported direction throws an exception.
+	 * @param exact
+	 *            specify true to apply exact case to the search
+	 * @param variants
+	 *            specify true to return word variants in the search results
+	 * @param fuzzy
+	 *            specify true to return misspelled words in the search results
+	 * @param webQuerySyntax
+	 *            specify true to use web query syntax instead of Notes full text search syntax
+	 * @return The number of documents in the view after the search. Each of these documents matches the query.
+	 * @since Domino V10
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	@Deprecated
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax);
+
+	/**
+	 * Conducts a full-text search on all documents in a view and filters the view so it represents only those documents that match the
+	 * full-text query in sorted order.
+	 * <p>
+	 * After calling this method, you can use the regular View methods to navigate the result, which is a subset of the documents in the
+	 * view. If the database is not full-text indexed, the documents in the subset are in the same order as they are in the original view.
+	 * However, if the database is full-text indexed, the documents in the subset are sorted into descending order of relevance. The method
+	 * getFirstDocument returns the first document in the subset, getLastDocument returns the last document, and so on. Use the clear method
+	 * to clear the full-text search filtering. The View methods now navigate to the full set of documents in the view. If the database is
+	 * not full-text indexed, this method works, but less efficiently. To test for an index, use isFTIndexed. To create an index on a local
+	 * database, use updateFTIndex.
+	 * </p>
+	 * <h5>Query syntax</h5>
+	 * <p>
+	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
+	 * escape quotes if you are inside a literal. Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 * "Refining a search query using operators" in Notes Help. You can also search for "query syntax" in the Domino Designer Eclipse help
+	 * system.
+	 * </p>
+	 *
+	 * @param query
+	 *            intersection of multiple full-text queries
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the search. If you want to receive all documents that match the
+	 *            query, specify 0.
+	 * @param column
 	 *            Name of a sorted column
 	 * @return The number of documents in the view after the search. Each of these documents matches the query.
 	 */
@@ -984,6 +1129,56 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
 			final boolean variants, final boolean fuzzy);
+
+	/**
+	 * Conducts a full-text search on all documents in a view and filters the view so it represents only those documents that match the
+	 * full-text query in sorted order.
+	 * <p>
+	 * After calling this method, you can use the regular View methods to navigate the result, which is a subset of the documents in the
+	 * view. If the database is not full-text indexed, the documents in the subset are in the same order as they are in the original view.
+	 * However, if the database is full-text indexed, the documents in the subset are sorted into descending order of relevance. The method
+	 * getFirstDocument returns the first document in the subset, getLastDocument returns the last document, and so on. Use the clear method
+	 * to clear the full-text search filtering. The View methods now navigate to the full set of documents in the view. If the database is
+	 * not full-text indexed, this method works, but less efficiently. To test for an index, use isFTIndexed. To create an index on a local
+	 * database, use updateFTIndex.
+	 * </p>
+	 * <h5>Query syntax</h5>
+	 * <p>
+	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
+	 * escape quotes if you are inside a literal. Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 * "Refining a search query using operators" in Notes Help. You can also search for "query syntax" in the Domino Designer Eclipse help
+	 * system.
+	 * </p>
+	 *
+	 * @param query
+	 *            intersection of multiple full-text queries
+	 * @param maxDocs
+	 *            The maximum number of documents you want returned from the search. If you want to receive all documents that match the
+	 *            query, specify 0.
+	 * @param column
+	 *            name of a sorted column.
+	 * @param ascending
+	 *            Sorts column data in ascending order if true, descending order if false. Ignored if View.VIEW_FTSS_RELEVANCE_ORDER is in
+	 *            effect. The availability of a column to be sorted in ascending or descending order is determined by "Click on column
+	 *            header to sort" on the Sorting tab of the column properties. The relevant options are Ascending, Descending, and Both.
+	 *            Trying to sort a column in an unsupported direction throws an exception.
+	 * @param exact
+	 *            specify true to apply exact case to the search
+	 * @param variants
+	 *            specify true to return word variants in the search results
+	 * @param fuzzy
+	 *            specify true to return misspelled words in the search results
+	 * @param webQuerySyntax
+	 *            specify true to use web query syntax instead of Notes full text search syntax
+	 * @return The number of documents in the view after the search. Each of these documents matches the query.
+	 * @since Domino V10
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	@Deprecated
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax);
 
 	/**
 	 * The aliases of a view. This property does not return the name of the view. Use {@link #getName()} to return the name.

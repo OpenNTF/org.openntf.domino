@@ -323,9 +323,9 @@ public class DEdgeEntryList implements DEdgeList {
 	}
 
 	@Override
-	public List<Edge> subList(final int arg0, final int arg1) {
+	public List<Edge> subList(final int fromIndex, final int toIndex) {
 		//		System.out.println("TEMP DEBUG DEdgeEntryList sublisting a " + entryList_.getClass().getName() + " from " + arg0 + " to " + arg1);
-		ViewEntryList sublist = (ViewEntryList) entryList_.subList(arg0, arg1);
+		ViewEntryList sublist = (ViewEntryList) entryList_.subList(fromIndex, toIndex);
 		return new DEdgeEntryList(source_, store_, sublist);
 	}
 

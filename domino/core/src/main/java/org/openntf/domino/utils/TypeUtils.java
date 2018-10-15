@@ -12,16 +12,16 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
 
 import lotus.domino.DateTime;
 import lotus.domino.Name;
@@ -69,6 +69,10 @@ public enum TypeUtils {
 		}
 	};
 
+	public static SimpleDateFormat getDefaultDateFormat() {
+		return DEFAULT_FORMAT.get();
+	}
+
 	public static interface CustomConverter {
 
 		public Object convert(Object from);
@@ -81,7 +85,7 @@ public enum TypeUtils {
 
 		public Class<?> getTo();
 
-		public boolean isCompatible(@Nonnull final Class<?> fromClass);
+		public boolean isCompatible(final Class<?> fromClass);
 	}
 
 	public static abstract class AbstractConverter implements CustomConverter {
@@ -99,7 +103,7 @@ public enum TypeUtils {
 		}
 
 		@Override
-		public boolean isCompatible(@Nonnull final Class<?> fromClass) {
+		public boolean isCompatible(final Class<?> fromClass) {
 			return fromClass_.isAssignableFrom(fromClass);
 		}
 	}
@@ -649,7 +653,15 @@ public enum TypeUtils {
 				}
 			} else if (java.util.Collection.class.isAssignableFrom(type)) {
 				try {
-					result = type.newInstance();
+					// Support some known concrete implementations of collection interfaces
+					if (List.class.equals(type)) {
+						result = new ArrayList<Object>();
+					} else if (Set.class.equals(type)) {
+						result = new HashSet<Object>();
+					} else {
+						result = type.newInstance();
+					}
+
 					Collection coll = (Collection) result;
 					coll.addAll(DominoUtils.toSerializable(v));
 				} catch (IllegalAccessException e) {
@@ -1043,7 +1055,7 @@ public enum TypeUtils {
 	}
 
 	public static Object toPrimitive(final Collection<Object> values, final Class<?> ctype) {
-		if (ctype.isPrimitive()) {
+		if (!ctype.isPrimitive()) {
 			throw new DataNotCompatibleException(ctype.getName() + " is not a primitive type.");
 		}
 		if (values.size() > 1) {
@@ -1488,7 +1500,7 @@ public enum TypeUtils {
 		// strings = vector.toArray(new String[0]);
 		for (Object o : vector) {
 			if (o instanceof org.openntf.domino.DateTime) {
-				strings[i++] = ((org.openntf.domino.DateTime) o).getGMTTime();
+				strings[i++] = ((org.openntf.domino.DateTime) o).toGMTISO();
 			} else {
 				strings[i++] = String.valueOf(o);
 			}
@@ -1923,8 +1935,8 @@ public enum TypeUtils {
 		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
 	}
 
-	public static Item writeToItem(@Nonnull final org.openntf.domino.Document doc, @Nonnull final String itemName, @Nonnull Object value,
-			final Boolean isSummary) throws Domino32KLimitException {
+	public static Item writeToItem(final org.openntf.domino.Document doc, final String itemName, Object value, final Boolean isSummary)
+			throws Domino32KLimitException {
 		Class<?> fromClass = value.getClass();
 		CustomConverter converter = findCustomConverter(fromClass);
 		if (converter != null) {

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.impl.DElement;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.utils.Factory.SessionType;
@@ -138,6 +139,8 @@ public abstract class AbstractPropertyHandler {
 				element.removeProperty(annotationValue);
 				return null;
 			}
+		} catch (UserAccessException uae) {
+			throw uae;
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

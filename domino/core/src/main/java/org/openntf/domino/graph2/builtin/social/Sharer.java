@@ -1,5 +1,7 @@
 package org.openntf.domino.graph2.builtin.social;
 
+import java.util.List;
+
 import org.openntf.domino.graph2.annotations.AdjacencyUnique;
 import org.openntf.domino.graph2.annotations.IncidenceUnique;
 import org.openntf.domino.graph2.builtin.DVertexFrame;
@@ -10,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("Sharer")
 public interface Sharer extends DVertexFrame {
 	@AdjacencyUnique(label = SharedBy.LABEL)
-	public Iterable<Share> getShares();
+	public List<Share> getShares();
 
 	@AdjacencyUnique(label = SharedBy.LABEL)
 	public SharedBy addShare(Share share);
@@ -19,7 +21,7 @@ public interface Sharer extends DVertexFrame {
 	public void removeShare(Share share);
 
 	@IncidenceUnique(label = SharedBy.LABEL)
-	public Iterable<SharedBy> getSharedBys();
+	public List<SharedBy> getSharedBys();
 
 	@IncidenceUnique(label = SharedBy.LABEL)
 	public int countSharedBys();
@@ -28,7 +30,7 @@ public interface Sharer extends DVertexFrame {
 	public void removeSharedBy(SharedBy sharedBy);
 
 	@AdjacencyUnique(label = SharedWith.LABEL, direction = Direction.IN)
-	public Iterable<Share> getSharedWithShares();
+	public List<Share> getSharedWithShares();
 
 	@AdjacencyUnique(label = SharedWith.LABEL, direction = Direction.IN)
 	public SharedWith addSharedWithShare(Share share);
@@ -37,7 +39,7 @@ public interface Sharer extends DVertexFrame {
 	public void removeSharedWithShare(Share share);
 
 	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
-	public Iterable<SharedWith> getSharedWiths();
+	public List<SharedWith> getSharedWiths();
 
 	@IncidenceUnique(label = SharedWith.LABEL, direction = Direction.IN)
 	public int countSharedWiths();

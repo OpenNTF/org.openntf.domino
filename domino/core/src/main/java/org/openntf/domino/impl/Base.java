@@ -724,7 +724,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			Collection<?> c = (Collection<?>) o;
 			if (!c.isEmpty()) {
 				for (Object io : c) {
-					s_recycle((lotus.domino.Base) io);
+					s_recycle(io);
 				}
 			}
 		} else if (o instanceof lotus.domino.Base) {

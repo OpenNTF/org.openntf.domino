@@ -184,12 +184,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		}
 	}
 
-	@Override
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final int otherOpt,
-			final int start, final int count, final String entryForm) {
-		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -562,6 +556,21 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 			DominoUtils.handleException(e, this);
 			return null;
 
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int, boolean)
+	 */
+	@Override
+	public org.openntf.domino.Database createFromTemplate(final String server, final String dbFile, final boolean inherit,
+			final int maxSize, final boolean doNotForce) {
+		try {
+			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize, doNotForce), Database.SCHEMA,
+					getAncestorSession());
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
 		}
 	}
 
@@ -1137,19 +1146,19 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return getDocumentByID(NOTEID_ICONNOTE);
 	}
 
-	@Override
-	public Document getDocumentByID_Or_UNID(final String id) {
-		Document doc;
-		doc = getDocumentByUNID(id);
-		if (doc == null) {
-			try {
-				doc = getDocumentByID(id);
-			} catch (Throwable te) {
-				// Just couldn't get doc
-			}
-		}
-		return doc;
-	}
+	//	@Override
+	//	public Document getDocumentByID_Or_UNID(final String id) {
+	//		Document doc;
+	//		doc = getDocumentByUNID(id);
+	//		if (doc == null) {
+	//			try {
+	//				doc = getDocumentByID(id);
+	//			} catch (Throwable te) {
+	//				// Just couldn't get doc
+	//			}
+	//		}
+	//		return doc;
+	//	}
 
 	@Override
 	public Document getACLNote() {
@@ -1186,10 +1195,10 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
 					if (checksum != null) {
-						doc.setUniversalID(checksum);
+						doc.setUniversalID(checksum, true);
 					}
-					doc.replaceItemValue("$Created", new Date());
 					doc.replaceItemValue("$$Key", key);
+					doc.replaceItemValue("$Created", new Date());
 				}
 				return doc;
 
@@ -1202,6 +1211,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				//				doc.replaceItemValue("$$Key", "");
 				return doc;
 			}
+		} catch (UserAccessException uae) {
+			throw uae;
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -1233,6 +1244,8 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 				getDelegate().open();
 			}
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
+		} catch (UserAccessException uae) {
+			throw uae;
 		} catch (NotesException e) {
 			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
 			} else {
@@ -3327,6 +3340,18 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int, int, int,
+	 * java.lang.String)
+	 */
+	@Override
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
+			final int otherOpt, final int start, final int count, final String entryForm) {
+		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int)
 	 */
 	@Override
@@ -3775,7 +3800,11 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 
 	@Override
 	public String getUNID(final String noteid) {
-		return getInternalNoteCollection().getUNID(noteid);
+		if (getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+			return getInternalNoteCollection().getUNID(noteid).toLowerCase();
+		} else {
+			return getInternalNoteCollection().getUNID(noteid);
+		}
 	}
 
 	@Override
@@ -3809,11 +3838,6 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		} else {
 			return getDocumentByID(Integer.toHexString(noteid));
 		}
-	}
-
-	@Override
-	public Document getDocumentByID(final int noteid) {
-		return getDocumentByID(noteid, false);
 	}
 
 	@Override
@@ -3879,18 +3903,18 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
-	public void setUserIDFileForDecrypt(final String arg0, final String arg1) {
+	public void setUserIDFileForDecrypt(final String userId, final String password) {
 		try {
-			getDelegate().setUserIDFileForDecrypt(arg0, arg1);
+			getDelegate().setUserIDFileForDecrypt(userId, password);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
 	}
 
 	@Override
-	public void setUserIDForDecrypt(final UserID arg0) {
+	public void setUserIDForDecrypt(final UserID userId) {
 		try {
-			getDelegate().setUserIDForDecrypt(arg0);
+			getDelegate().setUserIDForDecrypt(userId);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3916,5 +3940,43 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		int privs = this.queryAccessPrivileges(name);
 		return ACL.Privilege.getPrivileges(privs);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#getUserID(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public UserID getUserID(final String userId, final String password) {
+		try {
+			return getDelegate().getUserID(userId, password);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return null;
+		}
+	}
+
+	@Override
+	public Document getDocumentByID(final int noteid) {
+		return getDocumentByID(noteid, false);
+	}
+
+	@Override
+	public Document getDocumentByID_Or_UNID(final String id) {
+		Document doc = null;
+		if (id.length() == 32) {
+			doc = getDocumentByUNID(id);
+		}
+		if (doc == null) {
+			try {
+				doc = getDocumentByID(id);
+			} catch (Throwable te) {
+				// Just couldn't get doc
+			}
+		}
+		return doc;
+	}
+
+	//	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
+	//		return getDelegate().getUserID(arg0, arg1);
+	//	}
 
 }

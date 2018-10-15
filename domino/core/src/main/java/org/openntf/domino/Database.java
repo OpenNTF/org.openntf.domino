@@ -19,6 +19,8 @@ import java.io.Externalizable;
 import java.util.Comparator;
 import java.util.Vector;
 
+import lotus.domino.UserID;
+
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
@@ -864,6 +866,30 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize);
+
+	/**
+	 * Creates a new database from an existing database.
+	 *
+	 * @param server
+	 *            The name of the server where the new database resides. Specify null or an empty string ("") to create a database on the
+	 *            current computer.
+	 * @param dbFile
+	 *            The file name of the new database.
+	 * @param inherit
+	 *            Specify true if you want the new database to inherit future design changes from the template; otherwise, specify false.
+	 * @param maxSize
+	 *            The maximum size (in gigabytes) that you would like to assign to the new database. This parameter applies only to Release
+	 *            4 databases or those created on a server that has not been upgraded to Release 5. Entering an integer greater than 4
+	 *            generates a run-time error.
+	 * @param doNotForce
+	 *            TODO: Not sure what this is, documentation not complete in beta 2
+	 * @return The new database, which contains the forms, subforms, fields, views, folders, navigators, agents, and documents of the
+	 *         template.
+	 * @since Domino V10
+	 */
+	@Override
+	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize,
+			final boolean doNotForce);
 
 	/**
 	 * Creates a full-text index for a database.
@@ -2826,25 +2852,38 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * After calling this method on a database, any document that is opened within the database is decrypted using the encryption keys
 	 * within the userID object, as specified in the document SecretEncryptionKeys field.
 	 *
-	 * @param arg0
+	 * @param userId
 	 *            After setting the User id, documents in this database will be decrypted with encryption keys of this user id
 	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
-	public void setUserIDForDecrypt(lotus.domino.UserID arg0);
+	public void setUserIDForDecrypt(lotus.domino.UserID userId);
 
 	/**
 	 * After calling this method on a database, any document that is opened within the database is decrypted using the encryption keys
 	 * within the userID object, as specified in the document SecretEncryptionKeys field.
 	 *
-	 * @param arg0
+	 * @param idFile
 	 *            id file. Provides the file path of id file. After setting it, all documents in this database will be decrypted with
 	 *            encryption keys of this id file.
-	 * @param arg1
+	 * @param password
 	 *            Password. After setting the User id, documents in this database will be decrypted with encryption keys of this user id
 	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
-	public void setUserIDFileForDecrypt(String arg0, String arg1);
+	public void setUserIDFileForDecrypt(String idFile, String password);
+
+	/*
+	 * Get a UserID for a user from the ID Vault, relevant for encryption support
+	 *
+	 * @param
+	 *            id file. Provides the file path of id file. After setting it, all documents in this database will be decrypted with
+	 *            encryption keys of this id file.
+	 * @param password
+	 *            Password. After setting the User id, documents in this database will be decrypted with encryption keys of this user id
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public UserID getUserID(final String userId, final String password);
 
 }

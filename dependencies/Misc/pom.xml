@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.openntf.domino</groupId>
+	<artifactId>misc-dependencies-site</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	
+	<packaging>pom</packaging>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>eclipse-platform</id>
+			<url>http://download.eclipse.org/releases/neon/201612211000</url>
+			<layout>p2</layout>
+		</repository>
+        <repository>
+            <id>project-m2</id>
+            <url>${project.baseUri}/../m2</url>
+        </repository>
+	</repositories>
+	
+	<build>
+		<plugins>
+			<plugin>
+			    <groupId>org.reficio</groupId>
+				<artifactId>p2-maven-plugin</artifactId>
+				<version>1.3.0</version>
+				<extensions>true</extensions>
+				
+				<executions>
+					<execution>
+						<id>generate-p2-site</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+                            <artifacts>
+                                <artifact><id>com.google.guava:guava:19.0</id><source>true</source></artifact>
+                                <artifact><id>org.javassist:javassist:3.18.2-GA</id><source>true</source></artifact>
+                                <artifact><id>com.google.code.findbugs:jsr305:3.0.1</id><source>true</source></artifact>
+                                <artifact><id>org.javolution:javolution:6.1.1</id></artifact>
+                            </artifacts>
+							<p2>
+								<artifact>
+									<id>org.eclipse.equinox.launcher:1.3.201.v20161025-1711</id>
+								</artifact>
+								<artifact>
+									<id>org.junit:4.12.0.v201504281640</id>
+								</artifact>
+								<artifact>
+									<id>org.slf4j.api:1.7.2.v20121108-1250</id>
+								</artifact>
+								<artifact>
+									<id>org.hamcrest.core:1.3.0.v201303031735</id>
+								</artifact>
+							</p2>
+							<compressSite>true</compressSite>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

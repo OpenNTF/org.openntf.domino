@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF XSP Wrapper for org.openntf.domino API
 Bundle-SymbolicName: org.openntf.domino.xsp;singleton:=true
-Bundle-Version: 4.2.0.qualifier
+Bundle-Version: 10.0.0.qualifier
 Bundle-Activator: org.openntf.domino.xsp.Activator
 Bundle-Vendor: OpenNTF.org
 Bundle-ClassPath: .
@@ -13,8 +13,6 @@ Export-Package: org.openntf.domino.xsp,
  org.openntf.domino.xsp.config,
  org.openntf.domino.xsp.formula,
  org.openntf.domino.xsp.helpers,
- org.openntf.domino.xsp.junit,
- org.openntf.domino.xsp.junit.test,
  org.openntf.domino.xsp.model,
  org.openntf.domino.xsp.msg,
  org.openntf.domino.xsp.readers,
@@ -34,15 +32,14 @@ Require-Bundle: org.eclipse.osgi;bundle-version="[3.0.0,4.0.0)",
  com.ibm.icu;bundle-version="3.8.1",
  com.ibm.designer.lib.jsf,
  org.openntf.formula,
- org.openntf.junit4xpages;bundle-version="4.11.0";resolution:=optional,
- com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional
-Import-Package: com.ibm.domino.commons.json,
- com.ibm.domino.commons.util,
- com.ibm.domino.osgi.core.context,
+ com.ibm.domino.xsp.bridge.http;bundle-version="9.0.1";resolution:=optional,
+ org.openntf.junit.libraries;bundle-version="1.1.0";resolution:=optional
+Import-Package: com.ibm.domino.osgi.core.context,
  javax.ws.rs,
  javax.ws.rs.core,
  javax.ws.rs.ext,
  lotus.domino,
  org.apache.wink.common.internal.utils,
- org.apache.wink.server.internal.servlet,
- org.eclipse.osgi.baseadaptor;resolution:=optional
+ org.apache.wink.server.internal.servlet
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Eclipse-ExtensibleAPI: true

@@ -5,16 +5,19 @@
 
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>domino</artifactId>
-	<version>4.2.1</version>
+	<version>10.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-version>0.22.0</tycho-version>
+		<tycho-version>1.1.0</tycho-version>
 		<compiler>1.8</compiler>
 		<manifest-location>META-INF</manifest-location>
+		
+		<!-- This will be re-computed per-project, hence the extra two layers -->
+		<osgi-deps-path>${project.baseUri}../../dependencies</osgi-deps-path>
 	</properties>
 
 	<repositories>
@@ -26,8 +29,15 @@
 		
 		<!-- Used for JUnit -->
 		<repository>
-			<id>eclipse-platform</id>
-			<url>http://download.eclipse.org/releases/neon/</url>
+			<id>misc-osgi-dependencies</id>
+            <url>${osgi-deps-path}/Misc/repository</url>
+			<layout>p2</layout>
+		</repository>
+		
+		<!-- Used for JUnit4XPages -->
+		<repository>
+			<id>junit4xpages</id>
+            <url>http://p2.openntf.org/repository/junit4xpages/</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -37,10 +47,13 @@
 		<module>externals</module>
 		<module>formula</module>
 		<module>core</module>
+		<module>org.openntf.domino.junit</module>
+		<module>org.openntf.domino.samples</module>
 		<module>xsp</module>
+        <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
-		<module>junit4xpages</module>
 		<module>tests</module>
+		<module>org.openntf.domino.dependencies.feature</module>
 		<module>org.openntf.domino.feature</module>
 		<module>org.openntf.domino.nonxsp.feature</module>
 		<module>org.openntf.domino.updatesite</module>
@@ -49,23 +62,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<!-- <projectNameTemplate>${project.groupId}-${project.artifactId}</projectNameTemplate> 
-						<downloadSources>true</downloadSources> <downloadJavadocs>false</downloadJavadocs> 
-						<additionalBuildcommands> <buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand> 
-						<buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand> <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand> 
-						</additionalBuildcommands> <additionalProjectnatures> <projectnature>org.eclipse.pde.PluginNature</projectnature> 
-						<projectnature>org.eclipse.jdt.core.javanature</projectnature> </additionalProjectnatures> -->
-					<classpathContainers>
-						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</classpathContainer>
-						<classpathContainer>org.eclipse.pde.core.requiredPlugins</classpathContainer>
-					</classpathContainers>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -151,6 +147,7 @@
 						</environment>
 					</environments>
 					<dependency-resolution>
+						<optionalDependencies>ignore</optionalDependencies>
 						<extraRequirements>
 							<requirement>
 								<type>eclipse-plugin</type>
@@ -174,7 +171,7 @@
 					<!-- javadoc configuration -->
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.9</version>
+					<version>2.10.4</version>
 					<configuration>
 						<!-- Activated by profile below -->
 						<skip>true</skip>
@@ -249,49 +246,6 @@
 		</license>
 	</licenses>
 
-	<!-- List all developers here -->
-	<developers>
-		<developer>
-			<id>AWa</id>
-			<name>Alex Wagner</name>
-			<email>alexander.wagner@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>MSte</id>
-			<name>Manfred Steinsiek</name>
-			<email>manfred.steinsiek@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-		</developer>
-		<developer>
-			<id>RPr</id>
-			<name>Roland Praml</name>
-			<email>roland.praml@foconis.de</email>
-			<organization>FOCONIS AG</organization>
-			<organizationUrl>http://www.foconis.de</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+1</timezone>
-			<properties>
-				<picUrl><![CDATA[https://avatars2.githubusercontent.com/u/5530228?v=2&s=60]]></picUrl>
-			</properties>
-		</developer>
-	</developers>
-
 	<distributionManagement>
 		<repository>
 			<id>artifactory.openntf.org</id>
@@ -305,14 +259,6 @@
 			<id>distribution</id>
 			
 			<modules>
-				<module>externals</module>
-				<module>formula</module>
-				<module>core</module>
-				<module>xsp</module>
-				<module>rest</module>
-				<module>junit4xpages</module>
-				<module>org.openntf.domino.feature</module>
-				<module>org.openntf.domino.updatesite</module>
 				<module>oda-dist</module>
 			</modules>
 			
@@ -322,7 +268,6 @@
 						<!-- javadoc configuration -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9</version>
 						<configuration>
 							<skip>false</skip>
 						</configuration>

@@ -123,7 +123,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		if (currXPage_ == null) {
 			setThisAgent(true);
 		}
-		return super.getThisAgent();
+		return currXPage_;
 	}
 
 	public void setThisAgent(final boolean currPage) {
@@ -153,7 +153,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					fromPage = fromPage.substring(0, fromPage.indexOf("?"));
 				}
 			}
-			super.setThisAgent(fromPage);
+			currXPage_ = fromPage;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -323,9 +323,6 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 		}
 		try {
-			if (getDisplayError()) {
-				addFacesMessage("", m);
-			}
 			setBase(ee);
 
 			// if (ee.getMessage().length() > 0) {
@@ -333,12 +330,23 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			setSeverity(Level.WARNING);
 			setEventType(LogType.TYPE_ERROR);
 			setLogSuccess(writeToLog());
+			writeToFacesMessage(m);
 			return getMessage();
 
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			setLogSuccess(false);
 			return "";
+		}
+	}
+
+	private void writeToFacesMessage(final String message) {
+		try {
+			if (getDisplayError()) {
+				addFacesMessage("", message);
+			}
+		} catch (Exception e) {
+			System.out.println("ODA: User error logged to OpenLog but could not write error to XPages browser. Check OpenLog.");
 		}
 	}
 
@@ -415,6 +423,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 			if ("".equals(errMsg)) {
 				errMsg = getMessage();
+			} else {
+				errMsg += " - " + getMessage();
 			}
 
 			logDoc.replaceItemValue("LogErrorMessage", errMsg);

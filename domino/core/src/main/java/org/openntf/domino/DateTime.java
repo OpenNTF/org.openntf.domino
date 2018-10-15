@@ -579,6 +579,15 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	@Override
 	public DateTime clone();
 
+	/**
+	 * Gets the replica ID corresponding to a timestamp
+	 *
+	 * @return 16 character hex string
+	 * @since Domino V10
+	 */
+	@Override
+	public String getReplicaID();
+
 	// /**
 	// * To java cal.
 	// *

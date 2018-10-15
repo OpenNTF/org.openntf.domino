@@ -25,10 +25,12 @@ public abstract class AbstractXPageSessionFactory implements ISessionFactory {
 		boolean allFix = true;
 		AutoMime autoMime = AutoMime.WRAP_32K;
 		boolean mimeFriendly = true;
+		boolean viewExactMatch = false;
 		if (NotesContext.getCurrentUnchecked() != null) {
 			allFix = ODAPlatform.isAppAllFix(null);
 			autoMime = ODAPlatform.getAppAutoMime(null);
 			mimeFriendly = ODAPlatform.isAppMimeFriendly(null);
+			viewExactMatch = ODAPlatform.isAppViewExactMatch(null);
 		}
 
 		if (allFix) {
@@ -39,6 +41,7 @@ public abstract class AbstractXPageSessionFactory implements ISessionFactory {
 			}
 		}
 		sess.setAutoMime(autoMime);
+		sess.setViewExactMatch(viewExactMatch);
 
 		if (mimeFriendly) {
 			sess.setConvertMIME(false);

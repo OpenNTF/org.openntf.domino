@@ -27,6 +27,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.iterators.NoteIterator;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -802,7 +803,11 @@ public class NoteCollection extends BaseThreadSafe<org.openntf.domino.NoteCollec
 	@Override
 	public String getUNID(final String noteid) {
 		try {
-			return getDelegate().getUNID(noteid);
+			if (this.getAncestorSession().isFixEnabled(Fixes.FORCE_HEX_LOWER_CASE)) {
+				return getDelegate().getUNID(noteid).toLowerCase();
+			} else {
+				return getDelegate().getUNID(noteid);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

@@ -216,7 +216,7 @@ public class XotsNsfScanner extends AbstractDominoRunnable implements Serializab
 			DatabaseDesign design = template == null ? db.getDesign() : template.getDesign();
 			if (design.isAPIEnabled()) {
 				log_.info("ODA enabled database: " + db.getApiPath());
-				return Xots.getService().submit(new XotsClassScanner(db.getApiPath()));
+				return Xots.submit(new XotsClassScanner(db.getApiPath()));
 
 			}
 

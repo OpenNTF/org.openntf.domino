@@ -561,4 +561,21 @@ public interface Session {
 	 * @since 4.3.0
 	 */
 	public Database createBlankDatabaseAbsolutePath(String absoluteFilePath);
+
+	/**
+	 * Whether getDocumentByKey etc should be exact match
+	 *
+	 * @return boolean
+	 * @since 4.5.0
+	 */
+	public boolean isViewExactMatch();
+
+	/**
+	 * Whether getDocumentByKey etc should be exact match
+	 *
+	 * @param exactMatch
+	 *            boolean
+	 * @since 4.5.0
+	 */
+	public void setViewExactMatch(boolean exactMatch);
 }

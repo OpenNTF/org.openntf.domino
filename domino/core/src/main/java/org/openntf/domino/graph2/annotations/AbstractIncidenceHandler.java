@@ -2,8 +2,10 @@ package org.openntf.domino.graph2.annotations;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.graph2.DEdgeList;
@@ -318,13 +320,15 @@ public abstract class AbstractIncidenceHandler {
 		NoteCoordinate id = null;
 		switch (dir) {
 		case OUT:
-			if (unique)
+			if (unique) {
 				id = getForcedId(vertex, newVertex, label, replicaid);
+			}
 			result = framedGraph.addEdge(id, vertex, newVertex, label);
 			break;
 		case IN:
-			if (unique)
+			if (unique) {
 				id = getForcedId(newVertex, vertex, label, replicaid);
+			}
 			result = framedGraph.addEdge(id, newVertex, vertex, label);
 			break;
 		case BOTH:
@@ -334,13 +338,25 @@ public abstract class AbstractIncidenceHandler {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void removeEdges(final Direction direction, final String label, final Vertex element, final Vertex otherVertex,
+	private void removeEdges(final Direction direction, final String label, final Vertex vertex, final Vertex otherVertex,
 			final FramedGraph framedGraph) {
-		for (final Edge edge : element.getEdges(direction, label)) {
-			if (null == otherVertex || edge.getVertex(direction.opposite()).getId().equals(otherVertex.getId())) {
-				framedGraph.removeEdge(edge);
+		Iterable<Edge> edges = vertex.getEdges(direction, label);
+		List<Edge> copy = new ArrayList<Edge>();
+		for (final Edge edge : edges) {
+			copy.add(edge);
+		}
+		for (Edge edge : copy) {
+			if (edge != null) {
+				if (null == otherVertex) {
+					framedGraph.removeEdge(edge);
+				} else {
+					Vertex v = edge.getVertex(direction.opposite());
+					Object id = v.getId();
+					if (id.equals(otherVertex.getId())) {
+						framedGraph.removeEdge(edge);
+					}
+				}
 			}
 		}
 	}
-
 }

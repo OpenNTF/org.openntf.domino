@@ -754,7 +754,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public boolean writeToLog() {
 		Database currDb = Factory.getSession(SessionType.CURRENT).getCurrentDatabase();
 		// Current database may be null from Xots
-		if (null != currDb) {
+		if (null == currDb) {
 			if (!StringUtil.equals(getCurrentDatabasePath(), "")) {
 				reinitialiseSettings();
 			}

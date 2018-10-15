@@ -25,6 +25,7 @@ import org.openntf.domino.big.impl.NoteCoordinate;
 //import javolution.util.function.Equalities;
 import org.openntf.domino.big.impl.NoteList;
 import org.openntf.domino.big.impl.ViewEntryCoordinate;
+import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.builtin.Eventable;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.types.SessionDescendant;
@@ -83,7 +84,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	private Map<String, Object> getProps() {
 		if (props_ == null) {
 			Map<String, Object> localProps = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
-			for (String key : getDelegate().keySet()) {
+			Set<String> keys = getDelegate().keySet();
+			for (String key : keys) {
 				if (key != null && key.length() > 0) {
 					localProps.put(key, Deferred.INSTANCE);
 				}
@@ -108,6 +110,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			try {
 				if (delegate instanceof Document) {
 					Document doc = (Document) delegate;
+					doc.closeMIMEEntities(false);
 					doc.setAutoMime(AutoMime.WRAP_ALL);
 					if (doc.hasItem(propertyName)) {
 						Item item = doc.getFirstItem(propertyName);
@@ -122,7 +125,6 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 							}
 						}
 					}
-					doc.closeMIMEEntities(false);
 					if (result == null || Deferred.INSTANCE.equals(result)) {
 						try {
 							Object raw = doc.get(propertyName);
@@ -160,6 +162,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 					}
 					props.put(propertyName, result);
 				}
+			} catch (UserAccessException uae) {
+				throw uae;
 			} catch (Exception e) {
 				log_.log(Level.WARNING,
 						"Exception occured attempting to get value from document for " + propertyName + " so we cannot return a value", e);
@@ -199,6 +203,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 								"Got a value from the document but it's not Serializable. It's a " + result.getClass().getName());
 						props.put(propertyName, result);
 					}
+				} catch (UserAccessException uae) {
+					throw uae;
 				} catch (Exception e) {
 					log_.log(Level.WARNING,
 							"Exception occured attempting to get value from document for " + propertyName
@@ -463,8 +469,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	public int incrementProperty(final String key) {
 		// TODO NTF it would be really great to figure out a way to use primitives here
 		Integer result = getProperty(key, Integer.class);
-		if (result == null)
+		if (result == null) {
 			result = 0;
+		}
 		setProperty(key, ++result);
 		return result;
 	}
@@ -473,8 +480,9 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	public int decrementProperty(final String key) {
 		// TODO NTF it would be really great to figure out a way to use primitives here
 		Integer result = getProperty(key, Integer.class);
-		if (result == null)
+		if (result == null) {
 			result = 0;
+		}
 		setProperty(key, --result);
 		return result;
 	}
@@ -485,6 +493,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((Document) delegate_).containsKey("Foo");
+			} catch (UserAccessException uae) {
+				throw uae;
 			} catch (Throwable t) {
 				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 				if (delegateKey_ == null && delegate_ instanceof Document) {
@@ -495,6 +505,8 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 			try {
 				//FIXME: This shouldn't be done this way. .isDead should really know for sure if it is not going to work across threads...
 				((View) delegate_).isDefaultView();
+			} catch (UserAccessException uae) {
+				throw uae;
 			} catch (Throwable t) {
 				delegate_ = (Map<String, Object>) getParent().findDelegate(delegateKey_);
 			}
@@ -723,6 +735,17 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 	@Override
 	public void uncache() {
 		parent_.findElementStore(this).uncache(this);
+	}
+
+	@Override
+	public boolean isEditable() {
+		Object del = getDelegate();
+		if (del instanceof Document) {
+			return ((Document) del).isEditable();
+		} else if (del instanceof DElement) {
+			return ((DElement) del).isEditable();
+		}
+		return false;
 	}
 
 }

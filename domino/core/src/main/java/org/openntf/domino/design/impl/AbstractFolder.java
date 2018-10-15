@@ -119,4 +119,22 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 			}
 		}
 	}
+
+	@Override
+	public OnRefreshType getOnRefreshUISetting() {
+		XMLNode viewNode = getDxl().selectSingleNode("/view");
+		String value = viewNode.getAttribute("onrefresh");
+		for (OnRefreshType type : OnRefreshType.values()) {
+			if (type.getPropertyName().equals(value)) {
+				return type;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setOnRefreshUISetting(final OnRefreshType onRefreshUISetting) {
+		XMLNode viewNode = getDxl().selectSingleNode("/view");
+		viewNode.setAttribute("onrefresh", onRefreshUISetting.getPropertyName());
+	}
 }

@@ -25,6 +25,8 @@ public enum Routes {
 	public final static String FRAMES = "frames";
 	public final static String SCHEMA = "schema";
 	public final static String COMMAND = "command";
+	public final static String SEARCH = "search";
+	public final static String TERMS = "terms";
 	public final static String INFO = "info";
 
 }
