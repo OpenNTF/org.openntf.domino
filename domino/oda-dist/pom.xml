@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>10.0.0-SNAPSHOT</version>
+		<version>10.0.0</version>
 	</parent>
 	<artifactId>oda-dist</artifactId>
 	
