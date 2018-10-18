@@ -520,7 +520,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		}
 	}
 
-	private static boolean EVALUATE_DEBUG = true;
+	private static boolean EVALUATE_DEBUG = false;
 
 	/*
 	 * (non-Javadoc)
