@@ -26,7 +26,9 @@ Project goals:
 
 ## Development Notes
 
-ODA is organized as a Tycho-based Maven tree and depends on the [Update Site for Build Management](https://openntf.org/main.nsf/project.xsp?r=project/IBM%20Domino%20Update%20Site%20for%20Build%20Management) from OpenNTF. To set up your environment, download it, extract the contained UpdateSite ZIP, and create a property in your Maven `~/.m2/settings.xml` called `notes-platform` to point to it. For example:
+ODA is organized as a Tycho-based Maven tree and depends on a p2 update site from Domino. Historically, the IBM-provided Update Site for Build Management was the route to use, but it has not kept up with additions to the Notes.jar API. It is not currently legal to redistribute newer versions, but you can create an appropriate update site from an existing Notes or Domino installation using the [generate-domino-update-site](https://stash.openntf.org/projects/P2T/repos/generate-domino-update-site/browse) tool.
+
+Once that is run and you have a p2 site to work with, create a property in your Maven `~/.m2/settings.xml` called `notes-platform` to point to it. For example:
 
     <?xml version="1.0"?>
     <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">

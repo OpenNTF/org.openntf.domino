@@ -30,8 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Registration.
  */
-public class Registration extends BaseThreadSafe<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
-org.openntf.domino.Registration {
+public class Registration extends BaseThreadSafe<org.openntf.domino.Registration, lotus.domino.Registration, Session>
+		implements org.openntf.domino.Registration {
 
 	/**
 	 * Instantiates a new registration.
@@ -240,6 +240,19 @@ org.openntf.domino.Registration {
 	public boolean crossCertify(final String idFile, final String certPassword, final String comment) {
 		try {
 			return getDelegate().crossCertify(idFile, certPassword, comment);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public boolean crossCertify(final String idFile, final String certPassword, final String comment, final String idPassword) {
+		try {
+			return getDelegate().crossCertify(idFile, certPassword, comment, idPassword);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;

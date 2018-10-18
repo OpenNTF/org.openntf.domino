@@ -265,8 +265,14 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		Factory.termThread();
 	}
 
-	@Override
+	//	@Override
 	public void onError(final HttpServletRequest request, final Throwable t) {
+		Factory.termThread();
+		t.printStackTrace();
+	}
+
+	@Override
+	public void onUnknownError(final HttpServletRequest request, final Throwable t) {
 		Factory.termThread();
 		t.printStackTrace();
 	}

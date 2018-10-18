@@ -228,6 +228,22 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, int, boolean, boolean, boolean, boolean)
+	 */
+	@Override
+	public int FTSearchSorted(final String query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax) {
+		try {
+			return getDelegate().FTSearchSorted(query, maxDocs, column, ascending, exact, variants, fuzzy, webQuerySyntax);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return -1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String)
 	 */
 	@Override
@@ -250,6 +266,22 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 			final boolean variants, final boolean fuzzy) {
 		try {
 			return getDelegate().FTSearchSorted(query, maxDocs, column, ascending, exact, variants, fuzzy);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return -1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String, boolean, boolean, boolean, boolean)
+	 */
+	@Override
+	public int FTSearchSorted(final String query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax) {
+		try {
+			return getDelegate().FTSearchSorted(query, maxDocs, column, ascending, exact, variants, fuzzy, webQuerySyntax);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -337,6 +369,27 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 	/*
 	 * (non-Javadoc)
 	 *
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean, boolean)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column, ascending,
+					exact, variants, fuzzy, webQuerySyntax);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
+		}
+		return -1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
 	@SuppressWarnings("rawtypes")
@@ -366,6 +419,27 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		try {
 			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column, ascending,
 					exact, variants, fuzzy);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
+		}
+		return -1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy, final boolean webQuerySyntax) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		try {
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, getAncestorSession(), recycleThis), maxDocs, column, ascending,
+					exact, variants, fuzzy, webQuerySyntax);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {

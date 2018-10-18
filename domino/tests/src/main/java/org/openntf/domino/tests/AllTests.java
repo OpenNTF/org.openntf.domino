@@ -24,7 +24,8 @@ import lotus.domino.NotesThread;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-		TestWrapperFactory.class, TestDatabasePropertyWrapper.class
+		TestWrapperFactory.class,
+		TestDatabasePropertyWrapper.class
 })
 public class AllTests {
 	public static lotus.domino.Session lotusSession;

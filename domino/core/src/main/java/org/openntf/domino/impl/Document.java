@@ -1387,7 +1387,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						return result;
 					} else {
 						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
-								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text resutls.");
+								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text results.");
 						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
@@ -4591,18 +4591,37 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	//	}
 
 	@Override
-	public void encrypt(final UserID arg0) {
+	public void encrypt(final UserID userId) {
 		try {
-			getDelegate().encrypt(arg0);
+			getDelegate().encrypt(userId);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
 	}
 
 	@Override
-	public void encrypt(final String arg0, final String arg1) {
+	public void encrypt(final String filePath, final String password) {
 		try {
-			getDelegate().encrypt(arg0, arg1);
+			getDelegate().encrypt(filePath, password);
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+		}
+	}
+
+	@Override
+	public boolean isCancelSendOnMissingKey() {
+		try {
+			return getDelegate().isCancelSendOnMissingKey();
+		} catch (Exception e) {
+			DominoUtils.handleException(e, this);
+			return false;
+		}
+	}
+
+	@Override
+	public void setCancelSendOnMissingKey(final boolean cancelSend) {
+		try {
+			getDelegate().setCancelSendOnMissingKey(cancelSend);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}

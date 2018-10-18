@@ -5,14 +5,14 @@
 
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>domino</artifactId>
-	<version>4.4.1-SNAPSHOT</version>
+	<version>10.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-version>1.0.0</tycho-version>
+		<tycho-version>1.1.0</tycho-version>
 		<compiler>1.8</compiler>
 		<manifest-location>META-INF</manifest-location>
 		
@@ -47,9 +47,13 @@
 		<module>externals</module>
 		<module>formula</module>
 		<module>core</module>
+		<module>org.openntf.domino.junit</module>
+		<module>org.openntf.domino.samples</module>
 		<module>xsp</module>
+        <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
 		<module>tests</module>
+		<module>org.openntf.domino.dependencies.feature</module>
 		<module>org.openntf.domino.feature</module>
 		<module>org.openntf.domino.nonxsp.feature</module>
 		<module>org.openntf.domino.updatesite</module>
@@ -143,6 +147,7 @@
 						</environment>
 					</environments>
 					<dependency-resolution>
+						<optionalDependencies>ignore</optionalDependencies>
 						<extraRequirements>
 							<requirement>
 								<type>eclipse-plugin</type>

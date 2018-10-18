@@ -38,4 +38,5 @@ Bundle-ClassPath: .,
  lib/collections-generic-4.01.jar,
  lib/com.google.guava_18.0.1.jar,
  lib/javassist_3.18.2.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 

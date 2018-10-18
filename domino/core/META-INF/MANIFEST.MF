@@ -2,17 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API Core
 Bundle-SymbolicName: org.openntf.domino;singleton:=true
-Bundle-Version: 4.4.1.qualifier
+Bundle-Version: 10.0.1.qualifier
 Bundle-Vendor: OpenNTF
 Export-Package: org.openntf.arpa,
  org.openntf.calendars,
- org.openntf.conference.graph,
- org.openntf.conference.graph.examples,
  org.openntf.domino,
  org.openntf.domino.annotations,
  org.openntf.domino.big,
  org.openntf.domino.big.impl,
  org.openntf.domino.config,
+ org.openntf.domino.contributor,
  org.openntf.domino.design,
  org.openntf.domino.design.impl,
  org.openntf.domino.email,
@@ -39,7 +38,6 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.i18n,
  org.openntf.domino.impl,
  org.openntf.domino.iterators,
- org.openntf.domino.junit,
  org.openntf.domino.logging,
  org.openntf.domino.nsfdata,
  org.openntf.domino.nsfdata.impldxl,
@@ -61,17 +59,16 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.xots,
  org.openntf.domino.xots.events
 Require-Bundle: com.tinkerpop;bundle-version="2.6.1";visibility:=reexport,
+ javassist;bundle-version="3.18.2",
+ javolution;bundle-version="6.1.1",
+ com.google.guava;bundle-version="19.0.0",
  org.openntf.formula;bundle-version="2.0.0";visibility:=reexport,
- com.ibm.commons;bundle-version="9.0.0",
+ com.ibm.commons;bundle-version="9.0.1",
  com.ibm.notes.java.api;bundle-version="8.5.3";resolution:=optional,
  com.ibm.icu;bundle-version="3.8.1",
- org.openntf.junit.libraries;bundle-version="1.1.0";resolution:=optional,
- org.junit;bundle-version="4.12.0"
-Bundle-ClassPath: .,
- lib/jsr305_1.0.1.jar,
- lib/com.google.guava_18.0.1.jar,
- lib/javassist_3.18.2.jar,
- lib/javolution_6.1.1.jar
+ org.openntf.junit.libraries;bundle-version="1.1.0";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Import-Package: lotus.domino,
  org.osgi.service.log;resolution:=optional
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+DynamicImport-Package: *

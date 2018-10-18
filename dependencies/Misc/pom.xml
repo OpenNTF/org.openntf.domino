@@ -28,26 +28,18 @@
 			<url>http://download.eclipse.org/releases/neon/201612211000</url>
 			<layout>p2</layout>
 		</repository>
+        <repository>
+            <id>project-m2</id>
+            <url>${project.baseUri}/../m2</url>
+        </repository>
 	</repositories>
-	
-	<pluginRepositories>
-		<pluginRepository>
-			<id>reficio</id>
-			<url>http://repo.reficio.org/maven/</url>
-		</pluginRepository>
-	</pluginRepositories>
 	
 	<build>
 		<plugins>
 			<plugin>
 			    <groupId>org.reficio</groupId>
 				<artifactId>p2-maven-plugin</artifactId>
-				<!--
-					Patched version from Dr. David H. Akehurst
-					https://github.com/dhakehurst/p2-maven-plugin
-					<version>1.1.2-dhakehurst</version>
-				-->
-				<version>1.2.0-SNAPSHOT</version>
+				<version>1.3.0</version>
 				<extensions>true</extensions>
 				
 				<executions>
@@ -58,6 +50,12 @@
 							<goal>site</goal>
 						</goals>
 						<configuration>
+                            <artifacts>
+                                <artifact><id>com.google.guava:guava:19.0</id><source>true</source></artifact>
+                                <artifact><id>org.javassist:javassist:3.18.2-GA</id><source>true</source></artifact>
+                                <artifact><id>com.google.code.findbugs:jsr305:3.0.1</id><source>true</source></artifact>
+                                <artifact><id>org.javolution:javolution:6.1.1</id></artifact>
+                            </artifacts>
 							<p2>
 								<artifact>
 									<id>org.eclipse.equinox.launcher:1.3.201.v20161025-1711</id>

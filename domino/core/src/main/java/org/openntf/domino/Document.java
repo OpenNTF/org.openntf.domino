@@ -2649,11 +2649,12 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * <li>Use the encrypt method to encrypt note with the specified encryption key set with {@link #setEncryptionKeys(Vector)}</li>
 	 * </ul>
 	 *
-	 * @param arg0
+	 * @param userId
 	 *            After setting the User id, documents in this database will be decrypted with encryption keys of this user id
+	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
-	public void encrypt(UserID arg0);
+	public void encrypt(UserID userId);
 
 	/**
 	 * Encrypts a document.
@@ -2686,13 +2687,31 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * <li>Use the encrypt method to encrypt note with the specified encryption key set with {@link #setEncryptionKeys(Vector)}</li>
 	 * </ul>
 	 *
-	 * @param arg0
+	 * @param filePath
 	 *            File path of an id file. After setting it, all documents in this database will be decrypted with encryption keys of this
 	 *            id file.
-	 * @param arg1
+	 * @param password
 	 *            password
+	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
-	public void encrypt(String arg0, String arg1);
+	public void encrypt(String filePath, String password);
+
+	/*
+	 * Whether send method should be aborted
+	 *
+	 * @result cancel sending
+	 * @since Domino V10
+	 */
+	@Override
+	public boolean isCancelSendOnMissingKey();
+
+	/*
+	 * Whether or not send method should be aborted
+	 * @param cancelSend to cancel sending
+	 * @since Domino V10
+	 */
+	@Override
+	public void setCancelSendOnMissingKey(final boolean cancelSend);
 
 }

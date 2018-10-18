@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,6 +39,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.NoteCoordinate;
 import org.openntf.domino.big.ViewEntryCoordinate;
+import org.openntf.domino.contributor.DocumentBackupContributor;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DGraphUtils;
 import org.openntf.domino.graph2.DKeyResolver;
@@ -65,9 +67,6 @@ import com.ibm.commons.util.io.json.JsonParser;
 import com.ibm.domino.das.utils.ErrorHelper;
 import com.ibm.domino.httpmethod.PATCH;
 import com.ibm.icu.text.SimpleDateFormat;
-import com.redpillnow.peabody.data.DatabaseProxy;
-import com.redpillnow.peabody.data.DocumentProxy;
-import com.redpillnow.peabody.manager.ProxyManager;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
@@ -132,15 +131,14 @@ public class FramedResource extends AbstractResource {
 							Session sess = Factory.getSession(SessionType.CURRENT);
 							Document doc = sess.getDocumentByMetaversalID(nc.toString());
 							Database db = doc.getAncestorDatabase();
-							ProxyManager proxyMgr = com.redpillnow.peabody.manager.PeabodyManager.get().getProxyManager();
-							if (pm != null) {
-								DatabaseProxy dp = proxyMgr.getProxy(db);
-								if (dp != null) {
-									DocumentProxy docprox = dp.getDocumentProxy(doc.getUniversalID());
-									if (docprox != null) {
-										Document versionDoc = docprox.createSidecarDocumentFrom(sess, versionDate);
-										versionNC = versionDoc.getNoteCoordinate();
-										System.out.println("Created sidecar document with metaversalid: " + versionNC);
+
+							List<DocumentBackupContributor> contributors = Factory.findApplicationServices(DocumentBackupContributor.class);
+							if(contributors != null) {
+								for(DocumentBackupContributor contributor : contributors) {
+									Optional<Document> versionDoc = contributor.createSidecarDocument(db, doc.getUniversalID(), versionDate);
+									if(versionDoc.isPresent()) {
+										versionNC = versionDoc.get().getNoteCoordinate();
+										break;
 									}
 								}
 							}

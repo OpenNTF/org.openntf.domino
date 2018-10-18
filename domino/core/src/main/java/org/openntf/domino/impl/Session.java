@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import lotus.domino.IDVault;
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
 
@@ -521,7 +520,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		}
 	}
 
-	private static boolean EVALUATE_DEBUG = true;
+	private static boolean EVALUATE_DEBUG = false;
 
 	/*
 	 * (non-Javadoc)
@@ -2164,7 +2163,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	}
 
 	@Override
-	public boolean applicationShouldQuit() throws NotesException {
+	public boolean applicationShouldQuit() {
 		try {
 			return getDelegate().applicationShouldQuit();
 		} catch (Exception e) {
@@ -2256,5 +2255,15 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	@Override
 	public void setViewExactMatch(final boolean exactMatch) {
 		isViewExactMatch_ = exactMatch;
+	}
+
+	@Override
+	public org.openntf.domino.IDVault getIDVault(final String server) {
+		try {
+			return fromLotus(getDelegate().getIDVault(server), org.openntf.domino.IDVault.SCHEMA, this);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 }

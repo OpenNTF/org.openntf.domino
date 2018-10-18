@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.ibm.commons.util.io.json.JsonException;
-import com.ibm.domino.commons.util.UriHelper;
 import com.ibm.domino.das.service.RestService;
 import com.ibm.domino.das.servlet.DasServlet;
 import com.ibm.domino.das.utils.ErrorHelper;
@@ -33,7 +32,7 @@ public class ODARootResource {
 
 		URI baseURI;
 		try {
-			baseURI = UriHelper.copy(uriInfo.getAbsolutePath(), true);
+			baseURI = copy(uriInfo.getAbsolutePath(), true);
 			entity = DasServlet.getServicesResponse(baseURI.toString());
 		} catch (IOException e) {
 			throw new WebApplicationException(ErrorHelper.createErrorResponse(e, Response.Status.INTERNAL_SERVER_ERROR));
@@ -46,6 +45,30 @@ public class ODARootResource {
 		Response response = builder.build();
 
 		return response;
+	}
+
+	/**
+	 * Make a relative copy of a URI. Copied from ExtLib because com.ibm.domino.commons is not in core ExtLib, only OpenNTF version
+	 *
+	 * <p>If makeRelative is false, this may return the original instance.
+	 * That should be OK because a URI is immutable.
+	 *
+	 * @param original
+	 * @param makeRelative
+	 * @return
+	 */
+	public static URI copy(final URI original, final boolean makeRelative) {
+		URI uri = original;
+
+		if ( uri.isAbsolute() && makeRelative ) {
+			String rel = uri.getRawPath();
+			if ( uri.getQuery() != null ) {
+				rel += "?" + uri.getRawQuery();
+			}
+			uri = URI.create(rel);
+		}
+
+		return uri;
 	}
 
 }

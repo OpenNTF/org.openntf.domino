@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openntf.domino.Database;
@@ -16,6 +17,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewColumn;
+import org.openntf.domino.contributor.DocumentBackupContributor;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.graph2.DEdgeList;
 import org.openntf.domino.graph2.DGraphUtils;
@@ -42,9 +44,6 @@ import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonJavaObject;
 import com.ibm.commons.util.io.json.JsonObject;
-import com.redpillnow.peabody.data.DatabaseProxy;
-import com.redpillnow.peabody.data.DocumentProxy;
-import com.redpillnow.peabody.manager.ProxyManager;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -478,26 +477,16 @@ public class JsonFrameAdapter implements JsonObject {
 						Document doc = sess.getDocumentByMetaversalID(id.toString());
 						if (doc != null) {
 							Database db = doc.getAncestorDatabase();
-							ProxyManager pm = com.redpillnow.peabody.manager.PeabodyManager.get().getProxyManager();
-							if (pm != null) {
-								DatabaseProxy dp = pm.getProxy(db);
-								if (dp != null) {
-									DocumentProxy docprox = dp.getDocumentProxy(doc.getUniversalID());
-									if (docprox != null) {
-										result = docprox.getRevisionDates();
-										if (result == null) {
-											//										System.out.println("TEMP DEBUG Got null revision dates for " + id );
-										} else {
-											//										System.out.println("TEMP DEBUG Got " + ((List)result).size() + " revision dates for " + id );
-										}
-									} else {
-										//									System.out.println("TEMP DEBUG No DocumentProxy found for id " + id);
+
+							List<DocumentBackupContributor> contributors = Factory.findApplicationServices(DocumentBackupContributor.class);
+							if(contributors != null) {
+								for(DocumentBackupContributor contributor : contributors) {
+									Optional<List<Date>> dates = contributor.getRevisionDates(db, doc.getUniversalID());
+									if(dates.isPresent()) {
+										result = dates.get();
+										break;
 									}
-								} else {
-									//								System.out.println("TEMP DEBUG No DatabaseProxy found for " + db.getApiPath());
 								}
-							} else {
-								//							System.out.println("TEMP DEBUG ProxyManager unavailable!?");
 							}
 						}
 					} catch (Throwable t) {

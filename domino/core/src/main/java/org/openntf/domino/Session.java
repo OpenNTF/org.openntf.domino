@@ -1078,25 +1078,40 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	public boolean verifyPassword(final String password, final String hashedPassword);
 
-	// TODO: Update parameter names
-	/* (non-Javadoc)
-	 * @see lotus.domino.Session#changePassword(java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * @param fileName Is this the user ID??
+	 * @param oldPassword the old password, to ensure valid change request
+	 * @param newPassword the new password to change to
+	 *
+	 * @return success or failure
 	 * @since Domino 9.0.1 FP8
 	 */
 	@Override
-	public boolean changePassword(String arg0, String arg1, String arg2);
+	public boolean changePassword(String fileName, String oldPassword, String newPassword);
 
-	//	/* (non-Javadoc)
-	//	 * @see lotus.domino.Session#getIDVault()
-	//	 * @since Domino 9.0.1 FP8
-	//	 */
-	//	@Override
-	//	public IDVault getIDVault();
+	/*
+	 * Gets the ID Vault for the current server
+	 *
+	 * @return IDVault
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public IDVault getIDVault();
 
-	//	/* (non-Javadoc)
-	//	 * @see lotus.domino.Session#getIDVault(java.lang.String)
-	//	 */
-	//	@Override
-	//	public IDVault getIDVault(String arg0);
+	/*
+	 * Gets the ID Vault for a given server
+	 *
+	 * @return IDVault
+	 * @since Domino 9.0.1 FP8
+	 */
+	@Override
+	public IDVault getIDVault(String server);
+
+	/*
+	 *
+	 * @since Domino V10
+	 */
+	@Override
+	public boolean applicationShouldQuit();
 
 }

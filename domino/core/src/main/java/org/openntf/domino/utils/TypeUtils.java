@@ -23,8 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nonnull;
-
 import lotus.domino.DateTime;
 import lotus.domino.Name;
 import lotus.domino.NotesException;
@@ -87,7 +85,7 @@ public enum TypeUtils {
 
 		public Class<?> getTo();
 
-		public boolean isCompatible(@Nonnull final Class<?> fromClass);
+		public boolean isCompatible(final Class<?> fromClass);
 	}
 
 	public static abstract class AbstractConverter implements CustomConverter {
@@ -105,7 +103,7 @@ public enum TypeUtils {
 		}
 
 		@Override
-		public boolean isCompatible(@Nonnull final Class<?> fromClass) {
+		public boolean isCompatible(final Class<?> fromClass) {
 			return fromClass_.isAssignableFrom(fromClass);
 		}
 	}
@@ -1937,8 +1935,8 @@ public enum TypeUtils {
 		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
 	}
 
-	public static Item writeToItem(@Nonnull final org.openntf.domino.Document doc, @Nonnull final String itemName, @Nonnull Object value,
-			final Boolean isSummary) throws Domino32KLimitException {
+	public static Item writeToItem(final org.openntf.domino.Document doc, final String itemName, Object value, final Boolean isSummary)
+			throws Domino32KLimitException {
 		Class<?> fromClass = value.getClass();
 		CustomConverter converter = findCustomConverter(fromClass);
 		if (converter != null) {
