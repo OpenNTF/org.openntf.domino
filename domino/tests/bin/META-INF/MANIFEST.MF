@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: ODA Compile-Time Tests
-Bundle-SymbolicName: org.openntf.domino.tests
-Bundle-Version: 4.5.0.qualifier
-Fragment-Host: org.openntf.domino
-Require-Bundle: org.junit;bundle-version="4.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
