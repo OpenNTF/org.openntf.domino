@@ -489,6 +489,9 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			retval = true;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
+		} finally {
+			_errDoc = null;
+			_errDocUnid = null;
 		}
 
 		return retval;

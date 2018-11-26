@@ -842,6 +842,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		} catch (Exception e) {
 			debugPrint(e);
 			retval = false;
+		} finally {
+			_errDoc = null;
+			_errDocUnid = null;
 		}
 
 		return retval;
