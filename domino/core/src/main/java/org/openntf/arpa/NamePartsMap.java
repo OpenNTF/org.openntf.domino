@@ -1,18 +1,18 @@
 /*
  * Copyright 2013
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *
  */
@@ -31,9 +31,9 @@ import org.openntf.domino.utils.DominoUtils;
 
 /**
  * NamePartsMap carries the various component string values that make up a name.
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
+ *
  */
 public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serializable {
 
@@ -50,7 +50,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 		/**
 		 * Gets the Label for the Canonical Key
-		 * 
+		 *
 		 * @return Label for the Canonical Key
 		 */
 		public String getLabel() {
@@ -59,7 +59,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 		/**
 		 * Sets the Label for the Canonical Key
-		 * 
+		 *
 		 * @param label
 		 *            the Label for the Canonical Key
 		 */
@@ -69,7 +69,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 		/**
 		 * Instance Constructor
-		 * 
+		 *
 		 * @param label
 		 *            Label for the Canonical Key
 		 */
@@ -94,7 +94,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Default Constructor
-	 * 
+	 *
 	 * @param source
 	 *            String from which to construct the object
 	 */
@@ -105,10 +105,10 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Optional Constructor
-	 * 
+	 *
 	 * @param source
 	 *            String from which to construct the object
-	 * 
+	 *
 	 * @param rfc822name
 	 *            RFC822name for the object.
 	 */
@@ -120,10 +120,10 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Default Constructor
-	 * 
+	 *
 	 * @param source
 	 *            String from which to construct the object
-	 * 
+	 *
 	 * @param rfc822string
 	 *            String from which to construct the RFC822name for the object.
 	 */
@@ -136,15 +136,15 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
-	 * 
+	 *
 	 * public methods
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 	/**
 	 * Gets the RFC822name for the object
-	 * 
+	 *
 	 * @return the RFC822name
 	 */
 	public RFC822name getRFC822name() {
@@ -157,7 +157,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Sets the RFC822name for the object
-	 * 
+	 *
 	 * @param rfc822name
 	 *            the RFC822name
 	 */
@@ -178,12 +178,12 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Gets the String for the key.
-	 * 
+	 *
 	 * @param key
 	 *            Key for the mapped String
-	 * 
+	 *
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
-	 * 
+	 *
 	 * @see java.util.HashMap#get(Object)
 	 */
 	@Override
@@ -209,12 +209,12 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Gets the String for the key.
-	 * 
+	 *
 	 * @param key
 	 *            Key for the mapped String
-	 * 
+	 *
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
-	 * 
+	 *
 	 * @see java.util.HashMap#get(Object)
 	 */
 	public String get(final NamePartKey key) {
@@ -227,6 +227,10 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 				final String ou3 = this.get(NamePartKey.OrgUnit3);
 				final String ou4 = this.get(NamePartKey.OrgUnit4);
 				final String organization = this.get(NamePartKey.Organization);
+				String dc1 = this.get(NamePartKey.DomainComponent1);
+				String dc2 = this.get(NamePartKey.DomainComponent2);
+				String dc3 = this.get(NamePartKey.DomainComponent3);
+				String dc4 = this.get(NamePartKey.DomainComponent4);
 				final String country = this.get(NamePartKey.Country);
 
 				final StringBuffer sb = new StringBuffer("");
@@ -252,6 +256,19 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 				if (!ISO.isBlankString(organization)) {
 					sb.append("/" + organization);
+				}
+
+				if (!ISO.isBlankString(dc1)) {
+					sb.append("/" + dc1);
+				}
+				if (!ISO.isBlankString(dc2)) {
+					sb.append("/" + dc2);
+				}
+				if (!ISO.isBlankString(dc3)) {
+					sb.append("/" + dc3);
+				}
+				if (!ISO.isBlankString(dc4)) {
+					sb.append("/" + dc4);
 				}
 
 				if (!ISO.isBlankString(country)) {
@@ -280,14 +297,19 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 				return this.getRFC822name().getAddr822Phrase();
 
 			case Canonical: {
-				if (_nameFormat.equals(NameFormat.HIERARCHICAL))
+				if (_nameFormat.equals(NameFormat.HIERARCHICAL)) {
 					return this.get(NamePartKey.SourceString);
+				}
 				final String common = this.get(NamePartKey.Common);
 				final String ou1 = this.get(NamePartKey.OrgUnit1);
 				final String ou2 = this.get(NamePartKey.OrgUnit2);
 				final String ou3 = this.get(NamePartKey.OrgUnit3);
 				final String ou4 = this.get(NamePartKey.OrgUnit4);
 				final String organization = this.get(NamePartKey.Organization);
+				String dc1 = this.get(NamePartKey.DomainComponent1);
+				String dc2 = this.get(NamePartKey.DomainComponent2);
+				String dc3 = this.get(NamePartKey.DomainComponent3);
+				String dc4 = this.get(NamePartKey.DomainComponent4);
 				final String country = this.get(NamePartKey.Country);
 
 				final StringBuffer sb = new StringBuffer("");
@@ -315,6 +337,19 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 					sb.append("/O=" + organization);
 				}
 
+				if (!ISO.isBlankString(dc1)) {
+					sb.append("/DC=" + dc1);
+				}
+				if (!ISO.isBlankString(dc2)) {
+					sb.append("/DC=" + dc2);
+				}
+				if (!ISO.isBlankString(dc3)) {
+					sb.append("/DC=" + dc3);
+				}
+				if (!ISO.isBlankString(dc4)) {
+					sb.append("/DC=" + dc4);
+				}
+
 				if (!ISO.isBlankString(country)) {
 					sb.append("/C=" + country);
 				}
@@ -333,15 +368,15 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Associates the specified String with the specified key in the map.
-	 * 
+	 *
 	 * @param key
 	 *            Key for the mapped String
-	 * 
+	 *
 	 * @param value
 	 *            String to be associated with the key.
-	 * 
+	 *
 	 * @return Previous value associated with the key. Empty string "" if no mapping exists.
-	 * 
+	 *
 	 * @see java.util.HashMap#put(Object, Object)
 	 */
 	@Override
@@ -398,9 +433,9 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Gets the IDprefix for the Name.
-	 * 
+	 *
 	 * If an IDprefix does not exist one will be created.
-	 * 
+	 *
 	 * @return IDprefix for the Name
 	 */
 	public String getIDprefix() {
@@ -430,7 +465,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 				result = sb.toString();
 
-				// use super.put() to avoid endless loop! 
+				// use super.put() to avoid endless loop!
 				super.put(NamePartKey.IDprefix, result);
 			}
 		}
@@ -440,7 +475,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Parses the source string and sets the appropriate RFC822 values.
-	 * 
+	 *
 	 * @param string
 	 *            RFC822 source string from which to set the appropriate RFC822 values.
 	 */
@@ -450,7 +485,7 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Indicates whether the object has RFC82xContent
-	 * 
+	 *
 	 * @return Flag indicating if the object has RFC82xContent
 	 */
 	public boolean isHasRFC82xContent() {
@@ -459,12 +494,12 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Determines if any of the mapped values are equal to the passed in string.
-	 * 
+	 *
 	 * Performs a case-insensitive search.
-	 * 
+	 *
 	 * @param string
 	 *            String tom compare values against
-	 * 
+	 *
 	 * @return Flag indicating if any of the values are equal to the string.
 	 */
 	public boolean equalsIgnoreCase(final String string) {
@@ -483,13 +518,13 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Determines if any of the mapped values begin with the prefix.
-	 * 
+	 *
 	 * @param prefix
 	 *            Value to compare to the mapped values.
-	 * 
+	 *
 	 * @param casesensitive
 	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
-	 * 
+	 *
 	 * @return Flag indicating if any of the mapped values begin with the prefix
 	 */
 	public boolean startsWith(final String prefix, final boolean casesensitive) {
@@ -515,16 +550,16 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 	} /*
 		* ******************************************************************
 		* ******************************************************************
-		* 
+		*
 		* private methods
-		* 
+		*
 		* ******************************************************************
 		* ******************************************************************
 		*/
 
 	/**
 	 * Retrieves and sets the various name values by parsing an input source string.
-	 * 
+	 *
 	 * @param string
 	 *            String from which to parse the name values.
 	 */
@@ -534,10 +569,10 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 
 	/**
 	 * Retrieves and sets the various name values by parsing an input source string.
-	 * 
+	 *
 	 * @param string
 	 *            String from which to parse the name values.
-	 * 
+	 *
 	 * @param allowRecursion
 	 *            Flag indicating if this method is allowed to recursively call itself.
 	 */
@@ -604,8 +639,8 @@ public class NamePartsMap extends EnumMap<NamePartKey, String> implements Serial
 													common = value;
 												}
 											} else {
-												throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \""
-														+ string + "\"");
+												throw new RuntimeException(
+														"Cannot Parse Word: \"" + word + "\", Source String: \"" + string + "\"");
 											}
 
 										} else {

@@ -1,18 +1,18 @@
 /*
  * Copyright 2013
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at:
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
- * implied. See the License for the specific language governing 
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
  * permissions and limitations under the License.
  *
  */
@@ -39,9 +39,9 @@ import org.openntf.domino.ext.Name.NamePartKey;
 
 /**
  * Name handling utilities
- * 
+ *
  * @author Devin S. Olson (dolson@czarnowski.com)
- * 
+ *
  */
 public enum Names {
 	;
@@ -50,11 +50,13 @@ public enum Names {
 
 	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
 
-	public static Pattern OU_MATCH = Pattern.compile("(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern OU_MATCH = Pattern.compile("\\b(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
 
-	public static Pattern O_MATCH = Pattern.compile("(O=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern O_MATCH = Pattern.compile("\\b(O=)[^/]+", Pattern.CASE_INSENSITIVE);
 
-	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern C_MATCH = Pattern.compile("\\b(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern DC_MATCH = Pattern.compile("\\b(DC=)[^/]+", Pattern.CASE_INSENSITIVE);
 
 	public static enum LookupType {
 		Person("P"), Group("G"), Unknown("U");
@@ -63,7 +65,7 @@ public enum Names {
 
 		/**
 		 * Instance Constructor
-		 * 
+		 *
 		 * @param code
 		 *            Code for the Key
 		 */
@@ -78,7 +80,7 @@ public enum Names {
 
 		/**
 		 * Gets the Code for the Key.
-		 * 
+		 *
 		 * @return Key's Code.
 		 */
 		public String getCode() {
@@ -87,7 +89,7 @@ public enum Names {
 
 		/**
 		 * Sets the Code for the Key.
-		 * 
+		 *
 		 * @param code
 		 *            Key's Code.
 		 */
@@ -99,19 +101,19 @@ public enum Names {
 	/*
 	 * **************************************************************************
 	 * **************************************************************************
-	 * 
+	 *
 	 * PUBLIC STATIC Properties and Methods
-	 * 
+	 *
 	 * **************************************************************************
 	 * **************************************************************************
 	 */
 
 	/**
 	 * Formats a String as a role (begins with "[", ends with "]")
-	 * 
+	 *
 	 * @param string
 	 *            String to be formatted
-	 * 
+	 *
 	 * @return source string formatted as a role.
 	 */
 	public static String formatAsRole(final String string) {
@@ -128,16 +130,16 @@ public enum Names {
 
 	/**
 	 * Gets the approprite formatted name string for the given source.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect for generating the name.
-	 * 
+	 *
 	 * @param source
 	 *            Source string from which to generate the name
-	 * 
+	 *
 	 * @param key
 	 *            Part of name string to return
-	 * 
+	 *
 	 * @return source string converted to the appropriate name format
 	 */
 	public static String getNamePart(final Session session, final String source, final NamePartKey key) {
@@ -163,16 +165,16 @@ public enum Names {
 	/**
 	 * Gets the approprite formatted name strings for the given source. The order of values is preserved, however duplicates are removed and
 	 * no values will be included for null or blank entries in the source.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            Source strings from which to generate the names.
-	 * 
+	 *
 	 * @param key
 	 *            Part of name string to return
-	 * 
+	 *
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getNameParts(final Session session, final String[] source, final NamePartKey key) {
@@ -216,13 +218,13 @@ public enum Names {
 
 	/**
 	 * Generates an array of Strings containing Abbreviated names.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            Source strings from which to generate the names.
-	 * 
+	 *
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getAbbreviated(final Session session, final String[] source) {
@@ -231,13 +233,13 @@ public enum Names {
 
 	/**
 	 * Generates an Abbreviated Name from the input.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            String from which to generate the names.
-	 * 
+	 *
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getAbbreviated(final Session session, final String source) {
@@ -246,10 +248,10 @@ public enum Names {
 
 	/**
 	 * Generates an Abbreviated Name for the current user.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @return Abbreviated name for the current user.
 	 */
 	public static String getAbbreviated(final Session session) {
@@ -258,13 +260,13 @@ public enum Names {
 
 	/**
 	 * Generates an array of Strings containing Canonical names.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            Source strings from which to generate the names.
-	 * 
+	 *
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCanonical(final Session session, final String[] source) {
@@ -273,13 +275,13 @@ public enum Names {
 
 	/**
 	 * Generates an Canonical Name from the input.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            String from which to generate the names.
-	 * 
+	 *
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCanonical(final Session session, final String source) {
@@ -288,10 +290,10 @@ public enum Names {
 
 	/**
 	 * Generates an Canonical Name for the current user.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @return Canonical name for the current user.
 	 */
 	public static String getCanonical(final Session session) {
@@ -300,13 +302,13 @@ public enum Names {
 
 	/**
 	 * Generates an array of Strings containing Common names.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            Source strings from which to generate the names.
-	 * 
+	 *
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCommon(final Session session, final String[] source) {
@@ -315,13 +317,13 @@ public enum Names {
 
 	/**
 	 * Generates an Common Name from the input.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @param source
 	 *            String from which to generate the names.
-	 * 
+	 *
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCommon(final Session session, final String source) {
@@ -330,10 +332,10 @@ public enum Names {
 
 	/**
 	 * Generates an Common Name for the current user.
-	 * 
+	 *
 	 * @param session
 	 *            Session to use
-	 * 
+	 *
 	 * @return Common name for the current user.
 	 */
 	public static String getCommon(final Session session) {
@@ -342,7 +344,7 @@ public enum Names {
 
 	/**
 	 * Gets all the roles the current user has for the Database.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param database
@@ -369,7 +371,7 @@ public enum Names {
 
 	/**
 	 * Gets all the roles the specified user has for the Database.
-	 * 
+	 *
 	 * @param database
 	 *            Database for which to check the roles.
 	 * @param name
@@ -396,11 +398,11 @@ public enum Names {
 
 	/**
 	 * Fully expands a list of name strings.
-	 * 
+	 *
 	 * Searches all public address books available to the specified session for person or group entries. For every group found the members
 	 * of the group will be checked against the searched set. If not in the searched list they will also be searched for (and added to the
 	 * searched list). Found group members will be included in the results.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect for the search.
 	 * @param searchfor
@@ -453,10 +455,10 @@ public enum Names {
 
 	/**
 	 * Fully expands a list of name strings.
-	 * 
+	 *
 	 * Searches all public address books available to the specified session for person or group entries. For every group found the members
 	 * of the group will also be searched for and included in the results.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect for the search.
 	 * @param source
@@ -534,10 +536,10 @@ public enum Names {
 
 	/**
 	 * Fully expands a list of name strings.
-	 * 
+	 *
 	 * Searches all public address books available to the specified session for person or group entries. For every group found the members
 	 * of the group will also be searched for and included in the results.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect for the search.
 	 * @param source
@@ -550,7 +552,7 @@ public enum Names {
 
 	/**
 	 * Creates a new Name object from the specified source.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param source
@@ -566,7 +568,7 @@ public enum Names {
 
 	/**
 	 * Creates a new Name object using the value of a specified item on the Document as the source.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param document
@@ -574,7 +576,7 @@ public enum Names {
 	 * @param itemname
 	 *            Name of the item from which the value string will be used to create the new Name object.
 	 * @return Name created from the specified item's value. Null on error.
-	 * 
+	 *
 	 * @deprecated use {@link Document#getItemValueName(String)}
 	 */
 	@Deprecated
@@ -599,10 +601,10 @@ public enum Names {
 
 	/**
 	 * Creates a new Name object using the specified Name object as it's source.
-	 * 
+	 *
 	 * @param name
 	 *            Name object from which to construct a new Name object.
-	 * 
+	 *
 	 * @return Name created from the specified Name. Null on error.
 	 * @deprecated use {@link Name#clone()} instead.
 	 */
@@ -625,12 +627,12 @@ public enum Names {
 
 	/**
 	 * Creates a new Name object using the specified Name object as it's source.
-	 * 
+	 *
 	 * @param name
 	 *            Name object from which to construct a new Name object.
-	 * 
+	 *
 	 * @return Name created from the specified Name. Null on error.
-	 * 
+	 *
 	 * @deprecated use {@link Factory#fromLotus}(name, Name.SCHEMA, null) instead
 	 */
 	@Deprecated
@@ -649,10 +651,10 @@ public enum Names {
 
 	/**
 	 * Creates a new RFC822name object using the specified Name object as it's source.
-	 * 
+	 *
 	 * @param name
 	 *            Name object from which to construct a new Name object.
-	 * 
+	 *
 	 * @return RFC822name created from the specified Name. Null on error.
 	 */
 	public static RFC822name createRFC822name(final Name name) {
@@ -674,10 +676,10 @@ public enum Names {
 
 	/**
 	 * Creates a new RFC822name object using the specified Name object as it's source.
-	 * 
+	 *
 	 * @param name
 	 *            Name object from which to construct a new Name object.
-	 * 
+	 *
 	 * @return RFC822name created from the specified Name. Null on error.
 	 */
 	public static RFC822name createRFC822name(final lotus.domino.Name name) {
@@ -699,7 +701,7 @@ public enum Names {
 
 	/**
 	 * Generates an RFC822 Addr822 Full Address String from the specified Name.
-	 * 
+	 *
 	 * @param name
 	 *            Name from which to construct the result.
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
@@ -722,7 +724,7 @@ public enum Names {
 
 	/**
 	 * Generates an RFC822 Addr822 Full Address String from the specified Name.
-	 * 
+	 *
 	 * @param name
 	 *            Name from which to construct the result.
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
@@ -731,8 +733,9 @@ public enum Names {
 	public static String buildAddr822Full(final lotus.domino.Name name) {
 		try {
 			String addr821 = name.getAddr821();
-			if (Strings.isBlankString(addr821))
+			if (Strings.isBlankString(addr821)) {
 				return ""; // fast exit, if there is no Addr821
+			}
 			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), addr821, name.getAddr822Comment1(), name.getAddr822Comment2(),
 					name.getAddr822Comment3());
 		} catch (Exception e) {
@@ -744,7 +747,7 @@ public enum Names {
 
 	/**
 	 * Gets alll names from a specified source which are missing the specified roles for a specified database.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param database
@@ -799,7 +802,7 @@ public enum Names {
 
 	/**
 	 * Gets alll names from a specified source which are missing the specified roles for a specified database.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param database
@@ -818,14 +821,14 @@ public enum Names {
 
 	/**
 	 * Determines if a specified Name is a member of a set of name strings.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param names
 	 *            Name strings for which to determine if name is a member.
 	 * @param name
 	 *            Name to search for in names.
-	 * 
+	 *
 	 * @return Flag indicating if name is a member of names.
 	 */
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final Name name) {
@@ -885,14 +888,14 @@ public enum Names {
 
 	/**
 	 * Determines if a specified name string is a member of a set of name strings.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect.
 	 * @param names
 	 *            Name strings for which to determine if checkname is a member.
 	 * @param checkname
 	 *            Name string for which to construct a Name object which is searched for in names.
-	 * 
+	 *
 	 * @return Flag indicating if checkname is a member of names.
 	 */
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final String checkname) {
@@ -922,20 +925,20 @@ public enum Names {
 	/*
 	 * ************************************************************************
 	 * ************************************************************************
-	 * 
+	 *
 	 * PRIVATE methods
-	 * 
+	 *
 	 * ************************************************************************
 	 * ************************************************************************
 	 */
 	/**
 	 * Gets the ACL Roles associated with a specified canonical name for a specified Database.
-	 * 
+	 *
 	 * @param database
 	 *            Database from which to get ACL Roles for canonical.
 	 * @param canonical
 	 *            Canonical string for which to search for roles in database.
-	 * 
+	 *
 	 * @return Set of roles for the specified canonical name. Null on error or none found.
 	 */
 	private static TreeSet<String> getRoles(final Database database, final String canonical) {
@@ -959,11 +962,11 @@ public enum Names {
 
 	/**
 	 * Fully expands a list of name strings.
-	 * 
+	 *
 	 * Searches a specified view for person or group entries. For every group found the members of the group will be checked against the
 	 * searched set. If not in the searched list they will also be searched for (and added to the searched list). Found group members will
 	 * be included in the results.
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect for the search.
 	 * @param view
@@ -1045,13 +1048,13 @@ public enum Names {
 
 	/**
 	 * Fully expands a list of name strings.
-	 * 
+	 *
 	 * Searches a specified database for person or group entries. For every group found the members of the group will be checked against the
 	 * searched set. If not in the searched list they will also be searched for (and added to the searched list). Found group members will
 	 * be included in the results.
-	 * 
+	 *
 	 * NOTE: NO CHECKS ARE PERFORMED TO DETERMINE IF DATABASE IS PUBLIC ADDRESS BOOK
-	 * 
+	 *
 	 * @param session
 	 *            Session in effect for the search.
 	 * @param database
