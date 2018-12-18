@@ -19,8 +19,6 @@ import java.io.Externalizable;
 import java.util.Comparator;
 import java.util.Vector;
 
-import lotus.domino.UserID;
-
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
@@ -2311,7 +2309,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * </p>
 	 *
 	 * @return true if the database exists and is opened or false if no database with this name exists
-	 * @see Database.isOpen()
+	 * @see {@link #isOpen()}
 	 */
 	@Override
 	public boolean open();
@@ -2873,11 +2871,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setUserIDFileForDecrypt(String idFile, String password);
 
-	/*
+	/**
 	 * Get a UserID for a user from the ID Vault, relevant for encryption support
 	 *
-	 * @param
-	 *            id file. Provides the file path of id file. After setting it, all documents in this database will be decrypted with
+	 * @param id
+	 *            file. Provides the file path of id file. After setting it, all documents in this database will be decrypted with
 	 *            encryption keys of this id file.
 	 * @param password
 	 *            Password. After setting the User id, documents in this database will be decrypted with encryption keys of this user id
@@ -2885,5 +2883,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public UserID getUserID(final String userId, final String password);
+
+	/**
+	 * Creates a new DQL query processor.
+	 *
+	 * @since Domino 10.0.1
+	 */
+	@Override
+	public DominoQuery createDominoQuery();
 
 }

@@ -10,7 +10,7 @@ import org.openntf.domino.types.FactorySchema;
  */
 public interface UserID extends lotus.domino.UserID, org.openntf.domino.ext.UserID, Base<lotus.domino.UserID> {
 
-	public static class Schema extends FactorySchema<UserID, lotus.domino.UserID, IDVault> {
+	public static class Schema extends FactorySchema<UserID, lotus.domino.UserID, Session> {
 
 		@Override
 		public Class<UserID> typeClass() {
@@ -23,8 +23,8 @@ public interface UserID extends lotus.domino.UserID, org.openntf.domino.ext.User
 		}
 
 		@Override
-		public Class<IDVault> parentClass() {
-			return IDVault.class;
+		public Class<Session> parentClass() {
+			return Session.class;
 		}
 	}
 

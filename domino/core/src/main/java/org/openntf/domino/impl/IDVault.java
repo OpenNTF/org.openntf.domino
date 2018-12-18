@@ -24,7 +24,7 @@ public class IDVault extends BaseThreadSafe<org.openntf.domino.IDVault, lotus.do
 	@Override
 	public org.openntf.domino.UserID getUserID(final String arg0, final String arg1) {
 		try {
-			return fromLotus(getDelegate().getUserID(arg0, arg1), UserID.SCHEMA, this);
+			return fromLotus(getDelegate().getUserID(arg0, arg1), UserID.SCHEMA, getAncestorSession());
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -34,7 +34,7 @@ public class IDVault extends BaseThreadSafe<org.openntf.domino.IDVault, lotus.do
 	@Override
 	public org.openntf.domino.UserID getUserID(final String arg0, final String arg1, final String arg2) {
 		try {
-			return fromLotus(getDelegate().getUserID(arg0, arg1, arg2), UserID.SCHEMA, this);
+			return fromLotus(getDelegate().getUserID(arg0, arg1, arg2), UserID.SCHEMA, getAncestorSession());
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

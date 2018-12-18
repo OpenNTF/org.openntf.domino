@@ -383,4 +383,10 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 */
 	@Override
 	public void updateAll();
+
+	@Override
+	void intersect(lotus.domino.Base other, boolean arg1);
+
+	@Override
+	void subtract(lotus.domino.Base other, boolean arg1);
 }
