@@ -20,7 +20,7 @@ public class TimeSensitive implements Runnable {
 		DbDirectory dir = s.getDbDirectory(s.getServerName());
 		for (Database db : dir) {
 			if (null == db) {
-				System.out.println("Database " + db.getFilePath() + " is null");
+				//System.out.println("Database " + db.getFilePath() + " is null");
 			} else {
 				try {
 					for (View vw : db.getViews()) {
