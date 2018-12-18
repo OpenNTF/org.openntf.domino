@@ -1,5 +1,7 @@
 package org.openntf.domino;
 
+import java.util.Vector;
+
 import org.openntf.domino.types.FactorySchema;
 
 /**
@@ -30,12 +32,15 @@ public interface UserID extends lotus.domino.UserID, org.openntf.domino.ext.User
 
 	public static final Schema SCHEMA = new Schema();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.UserID#getEncryptionKeys()
+	/**
+	 * Gets the encryption keys of a given UserID.
 	 */
 	@Override
-	public abstract java.util.Vector getEncryptionKeys();
+	Vector<String> getEncryptionKeys();
 
+	/**
+	 * Gets the user name of a given user ID.
+	 */
 	@Override
-	public abstract java.lang.String getUserName();
+	String getUserName();
 }
