@@ -53,7 +53,6 @@ public enum ODAPlatform {
 	 * on the server console.
 	 */
 	public synchronized static void start() {
-		System.out.println("Starting OpenNTF Domino API");
 		try {
 			if (!isStarted()) {
 				isStarted_ = true;
@@ -93,8 +92,6 @@ public enum ODAPlatform {
 					}
 				}
 				System.out.println("OpenNTF Domino API is fully operational.");
-			} else {
-				System.out.println("OpenNTF Domino API Platform is already started.");
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
