@@ -1625,6 +1625,9 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	}
 
 	private org.openntf.domino.Session recreateSession() {
+		if (sessionType_ == null) {
+			sessionType_ = SessionType.CURRENT;
+		}
 		switch (sessionType_) {
 		case _NAMED_FULL_ACCESS_internal:
 			return Factory.getNamedSession(username_, true);

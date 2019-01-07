@@ -448,14 +448,14 @@ public class IMDBTest implements Runnable {
 									System.out.println("Processing actor " + actorCount + ": " + curActor + " (" + lineCount + " lines)");
 								}
 								Database db = null; //TODO obviously not...
-//								@SuppressWarnings("null")
-//								Document doc = db.getDocumentWithKey(curActor, false);
-//								if (doc != null) {
-//									doc.replaceItemValue("Genres", genres);
-//									doc.save();
-//								} else {
-//									exceptionCount++;
-//								}
+								@SuppressWarnings("null")
+								Document doc = db.getDocumentWithKey(curActor, false);
+								if (doc != null) {
+									doc.replaceItemValue("Genres", genres);
+									doc.save();
+								} else {
+									exceptionCount++;
+								}
 								lastActor = curActor;
 								genres = new ArrayList<String>();
 							}
