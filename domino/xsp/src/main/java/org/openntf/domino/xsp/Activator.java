@@ -2,6 +2,8 @@ package org.openntf.domino.xsp;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -65,7 +67,7 @@ public class Activator extends Plugin {
 	 */
 	public static String getVersion() {
 		if (version == null) {
-			version = instance.getBundle().getHeaders().get("Bundle-Version");
+			version = AccessController.doPrivileged((PrivilegedAction<String>)() -> instance.getBundle().getHeaders().get("Bundle-Version"));
 		}
 		return version;
 	}
