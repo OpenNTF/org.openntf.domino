@@ -25,7 +25,7 @@ public class Activator extends Plugin {
 	public static Activator instance;
 
 	private static String version;
-	private ServiceRegistration consoleCommandService;
+	private ServiceRegistration<CommandProvider> consoleCommandService;
 
 	//private static BundleContext context;
 
@@ -44,7 +44,7 @@ public class Activator extends Plugin {
 		cpDictionary.put("service.ranking", new Integer(Integer.MIN_VALUE));
 		cpDictionary.put("service.pid", bundle.getBundleId() + "." + cp.getClass().getName());
 
-		consoleCommandService = bundleContext.registerService(CommandProvider.class.getName(), cp, cpDictionary);
+		consoleCommandService = bundleContext.registerService(CommandProvider.class, cp, cpDictionary);
 	}
 
 	/**
@@ -56,18 +56,6 @@ public class Activator extends Plugin {
 	public static Activator getDefault() {
 		return instance;
 	}
-
-	//	/**
-	//	 * Gets the bundle context, i.e. the top level of the plugin. Used to get resources from resources folder.
-	//	 * 
-	//	 * @see LogReader
-	//	 * 
-	//	 * @return BundleContext for all resouorces in this plugin
-	//	 * @since org.openntf.domino.xsp 2.5.0
-	//	 */
-	//	static BundleContext getContext() {
-	//		return context;
-	//	}
 
 	/**
 	 * Gets the Bundle-Version property from the MANIFEST-MF
@@ -91,7 +79,6 @@ public class Activator extends Plugin {
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	public InputStream getResourceAsStream(final String path) throws Exception {
-		//BundleContext ctx = getContext();
 		Bundle bundle = getBundle();
 		URL url = bundle.getEntry(path);
 		if (url == null) {
@@ -106,7 +93,6 @@ public class Activator extends Plugin {
 	 * Constructor
 	 */
 	public Activator() {
-		System.out.println("Activating org.openntf.domino.xsp!");
 		instance = this;
 	}
 
