@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Formula Engine
 Bundle-SymbolicName: org.openntf.formula;singleton:=true
+Automatic-Module-Name: org.openntf.formula
 Bundle-Version: 10.0.1.qualifier
-Bundle-Vendor: foconis.de
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Vendor: OpenNTF
 Export-Package: org.openntf.formula,
  org.openntf.formula.annotation,
  org.openntf.formula.ast,
