@@ -34,16 +34,11 @@ public class DetachFileEvent extends AbstractDocumentEvent {
 		super(EMEventIds.EM_NSFNOTEDETACHFILE.getId());
 	}
 
-	/**
-	 * @param fileName
-	 */
+	@SuppressWarnings("unused")
 	private void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getFileName() {
 		return fileName;
 	}

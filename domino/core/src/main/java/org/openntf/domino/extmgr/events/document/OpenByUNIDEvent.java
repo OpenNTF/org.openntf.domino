@@ -35,30 +35,18 @@ public class OpenByUNIDEvent extends AbstractDocumentEvent {
 		super(EMEventIds.EM_NSFNOTEOPENBYUNID.getId());
 	}
 
-	/**
-	 * @return
-	 */
 	public String getUnid() {
 		return unid;
 	}
 
-	/**
-	 * @param unid
-	 */
 	public void setUnid(final String unid) {
 		this.unid = unid;
 	}
 
-	/**
-	 * @return
-	 */
 	public int getOpenFlag() {
 		return openFlag;
 	}
 
-	/**
-	 * @param openFlag
-	 */
 	public void setOpenFlag(final int openFlag) {
 		this.openFlag = openFlag;
 	}

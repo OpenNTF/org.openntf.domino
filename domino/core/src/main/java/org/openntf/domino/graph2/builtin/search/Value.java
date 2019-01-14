@@ -31,6 +31,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(IndexDatabase.VALUE_FORM_NAME)
 @JavaHandlerClass(Value.ValueImpl.class)
+@SuppressWarnings({"unchecked", "rawtypes"})
 public interface Value extends DVertexFrame {
 	public static final String REPLICA_KEY = "replica";
 	public static final String FORM_KEY = "form";
@@ -52,7 +53,7 @@ public interface Value extends DVertexFrame {
 						if (tokenV.getValue() == null || tokenV.getValue().length() == 0) {
 							tokenV.setValue(token.toString());
 						}
-						ContainsTerm e = value.addTerm(tokenV);
+						value.addTerm(tokenV);
 
 					}
 				}
@@ -196,7 +197,7 @@ public interface Value extends DVertexFrame {
 			String itemname = IndexDatabase.VALUE_MAP_PREFIX + replid;
 			Vertex v = asVertex();
 			Object raw = v.getProperty(itemname);
-			if (raw != null & raw instanceof Map) {
+			if (raw != null && raw instanceof Map) {
 				Map m = (Map) raw;
 				for (Object key : m.keySet()) {
 					Object value = m.get(key);
@@ -222,7 +223,6 @@ public interface Value extends DVertexFrame {
 		}
 
 		@Override
-		@SuppressWarnings("rawtypes")
 		public Map getHits(final Map<CharSequence, Set<CharSequence>> filterMap) {
 			Map<CharSequence, Map<CharSequence, List<CharSequence>>> result = new LinkedHashMap<CharSequence, Map<CharSequence, List<CharSequence>>>();
 			Set<CharSequence> replicas = null;
@@ -242,7 +242,7 @@ public interface Value extends DVertexFrame {
 				String itemname = IndexDatabase.VALUE_MAP_PREFIX + replid;
 				Vertex v = asVertex();
 				Object raw = v.getProperty(itemname);
-				if (raw != null & raw instanceof Map) {
+				if (raw != null && raw instanceof Map) {
 					Map m = (Map) raw;
 					for (Object key : (fields != null ? fields : CaseInsensitiveString.toCaseInsensitive(m.keySet()))) {
 						List<CharSequence> addresses = new ArrayList<CharSequence>();

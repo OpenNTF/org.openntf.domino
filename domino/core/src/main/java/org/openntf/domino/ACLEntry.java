@@ -305,7 +305,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * For <code>setAdminReaderAuthor</code>, you must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should modify reader and author fields
 	 */
 	@Override
 	public void setAdminReaderAuthor(final boolean flag);
@@ -316,7 +316,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be an administration server
 	 *
 	 */
 	@Override
@@ -336,7 +336,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Author access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to create documents
 	 */
 	@Override
 	public void setCanCreateDocuments(final boolean flag);
@@ -354,7 +354,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Designer, Editor, Author, or Reader access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to create LS or Java agents
 	 */
 	@Override
 	public void setCanCreateLSOrJavaAgent(final boolean flag);
@@ -372,7 +372,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Editor, Author, or Reader access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to create personal agents
 	 */
 	@Override
 	public void setCanCreatePersonalAgent(final boolean flag);
@@ -390,7 +390,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Editor, Author, or Reader access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to create personal folders
 	 *
 	 */
 	@Override
@@ -410,7 +410,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Editor access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to create shared folders
 	 */
 	@Override
 	public void setCanCreateSharedFolder(final boolean flag);
@@ -428,7 +428,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Manager, Designer, Editor, or Author access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to delete documents
 	 *
 	 */
 	@Override
@@ -455,7 +455,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
 	 * </p>
 	 *
-	 * @param flage
+	 * @param flag whether the entry is a group
 	 */
 	@Override
 	public void setGroup(final boolean flag);
@@ -529,8 +529,8 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * <p>
 	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
 	 * </p>
-	 * 
-	 * @param flag
+	 *
+	 * @param flag whether the entry is a person
 	 */
 	@Override
 	public void setPerson(final boolean flag);
@@ -545,7 +545,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Depositor or No access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to read public documents
 	 */
 	@Override
 	public void setPublicReader(final boolean flag);
@@ -560,7 +560,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * By default, this property is false for a new entry with Author, Reader, Depositor, or No access.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry should be able to write public documents
 	 */
 	@Override
 	public void setPublicWriter(final boolean flag);
@@ -572,7 +572,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * You must call {@link ACL#save()} if you want the modified ACL to be saved to disk.
 	 * </p>
 	 *
-	 * @param flag
+	 * @param flag whether the entry is a server
 	 */
 	@Override
 	public void setServer(final boolean flag);

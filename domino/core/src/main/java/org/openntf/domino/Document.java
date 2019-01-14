@@ -93,7 +93,7 @@ import org.openntf.domino.types.Resurrectable;
  * </p>
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
-		DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
+DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 	public static int MAX_NATIVE_FIELD_SIZE = 32000;
 	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
 
@@ -2512,7 +2512,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * encrypted with the current user's public key and can only be decrypted by that user.
 	 * </p>
 	 * <p>
-	 * You must call the {@link #encrypt()} and {@link #save(){ methods to actually encrypt the document. Since encryption works differently
+	 * You must call the {@link #encrypt()} and {@link #save()} methods to actually encrypt the document. Since encryption works differently
 	 * when a document is mailed, the EncryptionKeys property has no effect when a document is encrypted when mailed.
 	 * </p>
 	 * <p>
@@ -2520,7 +2520,6 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * returns the contents of the item.
 	 * </p>
 	 *
-	 * @param keys
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override

@@ -1760,8 +1760,6 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * <p>
 	 * This property is not a stand-alone specification. It intersects the other selection criteria.
 	 * </p>
-	 *
-	 * @param sinceTime
 	 */
 	@Override
 	public void setSinceTime(final lotus.domino.DateTime sinceTime);

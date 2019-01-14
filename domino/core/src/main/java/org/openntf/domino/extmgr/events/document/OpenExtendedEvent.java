@@ -20,30 +20,20 @@ public class OpenExtendedEvent extends AbstractDocumentEvent {
 		super(EMEventIds.EM_NSFNOTEOPENEXTENDED.getId());
 	}
 
-	/**
-	 * @param flags
-	 */
+	@SuppressWarnings("unused")
 	private void setFlags(final long flags) {
 		this.flags = flags;
 	}
 
-	/**
-	 * @return
-	 */
 	public long getFlags() {
 		return flags;
 	}
 
-	/**
-	 * @param sinceSeqNum
-	 */
+	@SuppressWarnings("unused")
 	private void setSinceSeqNum(final long sinceSeqNum) {
 		this.sinceSeqNum = sinceSeqNum;
 	}
 
-	/**
-	 * @return
-	 */
 	public long getSinceSeqNum() {
 		return sinceSeqNum;
 	}

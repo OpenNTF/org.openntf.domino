@@ -35,14 +35,14 @@ public class DecryptEvent extends AbstractDocumentEvent {
 	}
 
 	/**
-	 * @param decryptFlags
+	 * @param decryptFlags the decryption flags to set
 	 */
-	private void setDecryptFlags(final int decryptFlags) {
+	public void setDecryptFlags(final int decryptFlags) {
 		this.decryptFlags = decryptFlags;
 	}
 
 	/**
-	 * @return
+	 * @return the set decryption flags
 	 */
 	public int getDecryptFlags() {
 		return decryptFlags;

@@ -20,6 +20,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.gremlin.Tokens.T;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/ implements List {
 	public static class MixedFramedListIterator implements ListIterator {
 		//		    protected final Direction direction_;
@@ -130,34 +131,17 @@ public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/ implement
 		//		this.iterable = list;
 		this.framedGraph = framedGraph;
 		sourceVertex_ = sourceVertex;
-		if (list instanceof List) {
-			if (list instanceof FramedVertexList) {
-				list_ = new ArrayList<Vertex>();
-				List<Vertex> vlist = ((FramedVertexList) list).list_;
-				for (Vertex v : vlist) {
-					list_.add(v);
-				}
-			} else {
-				list_ = (List<Vertex>) list;
+		if (list instanceof FramedVertexList) {
+			list_ = new ArrayList<Vertex>();
+			List<Vertex> vlist = ((FramedVertexList) list).list_;
+			for (Vertex v : vlist) {
+				list_.add(v);
 			}
 		} else {
-			list_ = new ArrayList<Vertex>();
-			Iterator<? extends Vertex> itty = list.iterator();
-			while (itty.hasNext()) {
-				Vertex v = null;
-				try {
-					v = itty.next();
-				} catch (Exception e) {
-					//do nothing
-				}
-				if (v != null) {
-					list_.add(v);
-				}
-			}
+			list_ = (List<Vertex>) list;
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public MixedFramedVertexList applyFilter(final String key, final Object value) {
 		DVertexList vertList = new DVertexList((DVertex) sourceVertex_);
 		if (this.size() > 0) {
@@ -433,7 +417,6 @@ public class MixedFramedVertexList /*extends FramedVertexIterable<T>*/ implement
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object[] toArray(final Object[] arg0) {
 		int size = list_.size();
 		Class c = arg0.getClass().getComponentType();

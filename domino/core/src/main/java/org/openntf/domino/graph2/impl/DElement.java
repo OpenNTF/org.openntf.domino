@@ -129,7 +129,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 						try {
 							Object raw = doc.get(propertyName);
 							if (raw instanceof Vector) {
-								if (((Vector) raw).isEmpty()) {
+								if (((Vector<?>) raw).isEmpty()) {
 									props.put(propertyName, Null.INSTANCE);
 									return null;
 								}
@@ -206,11 +206,13 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 				} catch (UserAccessException uae) {
 					throw uae;
 				} catch (Exception e) {
-					log_.log(Level.WARNING,
+					if(result != null) {
+						log_.log(Level.WARNING,
 							"Exception occured attempting to get value from document for " + propertyName
 									+ " but we have a value in the cache of type " + result.getClass().getName()
 									+ " when we were looking for a " + type.getName(),
 							e);
+					}
 				}
 			}
 		}
@@ -487,6 +489,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> getDelegate() {
 		if (delegate_ instanceof Document) {
@@ -672,7 +675,7 @@ public abstract class DElement implements org.openntf.domino.graph2.DElement, Se
 
 	@Override
 	public Object put(final String arg0, final Object arg1) {
-		Map delegate = getDelegate();
+		Map<String, Object> delegate = getDelegate();
 		if (delegate == null) {
 			throw new IllegalStateException("An element of type " + getClass().getSimpleName() + " with id " + getId()
 					+ " has no delegate and therefore cannot put new value updates.");

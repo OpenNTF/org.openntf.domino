@@ -27,6 +27,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeField("foo")
 @TypeValue("org.openntf.domino.graph2.builtin")
 @JavaHandlerClass(DbInfoVertex.DbInfoVertexImpl.class)
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface DbInfoVertex extends VertexFrame {
 
 	//	public static interface HasView extends EdgeFrame {
@@ -78,7 +79,6 @@ public interface DbInfoVertex extends VertexFrame {
 					+ (raw == null ? "null" : raw.getClass().getName()));
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public Map<CharSequence, Object> asMap() {
 			Object raw = asVertex();

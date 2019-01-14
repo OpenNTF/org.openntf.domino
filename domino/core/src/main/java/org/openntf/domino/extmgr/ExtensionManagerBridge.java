@@ -106,15 +106,11 @@ public class ExtensionManagerBridge {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private ExtensionManagerBridge() {
 	}
 
-	/**
-	 * @param commandBuffer
-	 * @return
-	 */
 	public static IEMBridgeEvent getEventFromCommand(String commandBuffer) {
 		boolean bIsEvent = commandBuffer.startsWith(EM_EVENT_PREFIX);
 		boolean bIsNSFHookEvent = commandBuffer.startsWith(EM_NSFHOOKEVENT_PREFIX);
@@ -139,7 +135,7 @@ public class ExtensionManagerBridge {
 
 	private static IEMBridgeEvent getEvent(final int eventId, final String eventBuffer) {
 		AbstractEMBridgeEvent retEvent = null;
-		Class<?> eventClass = eventsMap.get(eventId);
+		Class<?> eventClass = eventsMap.get(EMEventIds.getEMEventFromId(eventId));
 		if (eventClass != null) {
 			try {
 				Constructor<?> constructor = null;
@@ -167,7 +163,7 @@ public class ExtensionManagerBridge {
 	}
 
 	public static Class<?> getEMEventClass(final int eventId) {
-		return eventsMap.get(eventId);
+		return eventsMap.get(EMEventIds.getEMEventFromId(eventId));
 	}
 
 }

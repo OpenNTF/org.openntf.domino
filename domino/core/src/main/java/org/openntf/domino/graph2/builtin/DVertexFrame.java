@@ -23,6 +23,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeField("form")
 @TypeValue("vertexFrame")
 @JavaHandlerClass(DVertexFrame.DVertexFrameImpl.class)
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface DVertexFrame extends Editable {
 	@TypedProperty(value = "@CreatedDate", derived = true)
 	public Date getCreated();
@@ -89,7 +90,6 @@ public interface DVertexFrame extends Editable {
 					"DVertexFrame is not backed by a DVertex. It's backed by a " + (raw == null ? "null" : raw.getClass().getName()));
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public Map<CharSequence, Object> asMap() {
 			Object raw = asVertex();
@@ -125,7 +125,6 @@ public interface DVertexFrame extends Editable {
 			return result;
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public String[] getEditors() {
 			//			System.out.println("TEMP DEBUG getting Editors...");

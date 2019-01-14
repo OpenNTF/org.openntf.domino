@@ -161,7 +161,7 @@ import org.openntf.domino.utils.enums.INumberEnum;
  * @see org.openntf.domino.ext.Database.Events
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-		Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
+Resurrectable, SessionDescendant, ExceptionDetails, Externalizable {
 
 	/**
 	 * Enum to allow easy access to Schema
@@ -1235,7 +1235,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Conducts a full-text search of all the documents in this database. If the database is not full-text indexed, this method works, but
 	 * less efficiently. To test for an index, use the {@link #isFTIndexed()} property. To create an index on a local database, use the
-	 * {@link updateFTIndex()} method.
+	 * {@link #updateFTIndex()} method.
 	 * <p>
 	 * This method returns a maximum of 5,000 documents by default. The Notes.ini variable FT_MAX_SEARCH_RESULTS overrides this limit for
 	 * indexed databases or databases that are not indexed but that are running in an agent on the client. For a database that is not
@@ -1428,7 +1428,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * The categories under which a database appears in the Database Library. Multiple categories are separated by a comma or semicolon. A
-	 * database retrieved through {@link DbDirectory#getFirstDatabase(org.openntf.domino.DbDirectory.Type))} or
+	 * database retrieved through {@link DbDirectory#getFirstDatabase(org.openntf.domino.DbDirectory.Type)} or
 	 * {@link DbDirectory#getNextDatabase()} in {@link DbDirectory} does not have to be open for getCategories. Otherwise, the database must
 	 * be open.
 	 */
@@ -2611,7 +2611,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Sets whether a database on a server in a cluster is accessible.
 	 *
-	 * @param flag
+	 * @param flag whether the database should be in service
 	 * @see Database#isInService()
 	 */
 	@Override
@@ -2620,7 +2620,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Sets the maximum number of entries allowed in the $Revisions field.
 	 *
-	 * @param revisions
+	 * @param revisions the number of entries allowed
 	 * @see Database#getLimitRevisions()
 	 */
 	@Override
@@ -2629,7 +2629,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * The maximum number of entries allowed in the $UpdatedBy field.
 	 *
-	 * @param updatedBys
+	 * @param updatedBys the number of entries allowed
 	 * @see Database#getLimitUpdatedBy()
 	 */
 	@Override
@@ -2679,7 +2679,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * The size quota of a database, in kilobytes.
 	 *
-	 * @param quota
+	 * @param quota the quota to set
 	 */
 	@Override
 	public void setSizeQuota(final int quota);
@@ -2696,7 +2696,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * The title of a database.
 	 *
-	 * @param title
+	 * @param title the database title to set
 	 */
 	@Override
 	public void setTitle(final String title);
@@ -2704,7 +2704,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Sets the number of hours before soft deletions become hard deletions.
 	 *
-	 * @param hours
+	 * @param hours the number of hours to set
 	 */
 	@Override
 	public void setUndeleteExpireTime(final int hours);

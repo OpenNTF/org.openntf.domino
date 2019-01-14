@@ -57,6 +57,7 @@ import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
 	private Cache<Object, Object> framedElementCache_;
 	private IndexScanner indexScanner_;
@@ -281,7 +282,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		}
 	}
 
-	public class FramedElementIterable<T> implements Iterable<T> {
+	public class FramedElementIterable<F> implements Iterable<T> {
 		protected final Class<T> kind;
 		protected final Iterable<Element> iterable;
 		protected final DFramedTransactionalGraph<? extends Graph> framedGraph;
@@ -461,7 +462,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 				String formulaFilter = org.openntf.domino.graph2.DGraph.Utils.getFramedElementFormula(chkClass);
 				Iterable<Element> elements = (org.openntf.domino.graph2.impl.DElementIterable) store.getElements(formulaFilter);
 				if (elements instanceof List) {
-					int size = ((List) elements).size();
+//					int size = ((List) elements).size();
 					//					System.out.println("TEMP DEBUG Found a list of size " + size + " for kind " + classname);
 				}
 				return this.frameElements(elements, (Class<F>) chkClass);
@@ -712,7 +713,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		return new FramedElementIterable(this, elements, this.getReplacementType(kind));
 	}
 
-	@SuppressWarnings("deprecation")
 	public <F> F frame(final Element element, final Class<F> kind) {
 		//		Class<F> klazz = kind;
 		//		DConfiguration config = (DConfiguration) this.getConfig();
@@ -759,6 +759,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public <F> F frame(final Edge edge, final Class<F> kind) {
 		if (edge == null) {
 			return null;
@@ -776,7 +777,6 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 			}
 		}
 
-		@SuppressWarnings("deprecation")
 		F result = null;
 		try {
 			result = super.frame(edge, Direction.OUT, klazz);

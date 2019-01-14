@@ -242,7 +242,7 @@ public enum TypeUtils {
 		return (T) result;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T itemValueToClass(final Item item, final Class<T> type) {
 		// Object o = item.getAncestorDocument().getItemValue(item.getName());
 		if (Item.Type.USERDATA.equals(item.getTypeEx())) {
@@ -252,7 +252,7 @@ public enum TypeUtils {
 		if (v == null) {
 			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
 		}
-		if (java.lang.Object.class.equals(type) & v.size() > 1) {
+		if (java.lang.Object.class.equals(type) && v != null && v.size() > 1) {
 			return (T) v;
 		}
 		Session session = item.getAncestorSession();
@@ -509,11 +509,11 @@ public enum TypeUtils {
 		return (T) result;
 	}
 
-	public static Comparable toComparable(final Object value) {
+	public static Comparable<?> toComparable(final Object value) {
 		if (value == null) {
 			return null;
 		}
-		return (Comparable) toSerializable(value);
+		return (Comparable<?>) toSerializable(value);
 	}
 
 	public static Serializable toSerializable(final Object value) {
@@ -522,7 +522,6 @@ public enum TypeUtils {
 		}
 		Serializable result = null;
 		if (value instanceof org.openntf.domino.DateTime) {
-			Date date = null;
 			org.openntf.domino.DateTime dt = (org.openntf.domino.DateTime) value;
 			result = dt.toJavaDate();
 		} else if (value instanceof org.openntf.domino.Name) {
@@ -941,12 +940,12 @@ public enum TypeUtils {
 			} else {
 				return true;
 			}
-		} else if (value instanceof Vector) {
-			int size = ((Vector) value).size();
+		} else if (value instanceof List) {
+			int size = ((List<?>) value).size();
 			if (size == 0) {
 				return false;
 			} else if (size == 1) {
-				return toBoolean(((Vector) value).get(0));
+				return toBoolean(((List<?>) value).get(0));
 			} else {
 				System.err.println("Vector conversion failed because vector was size " + size);
 			}
@@ -1394,12 +1393,10 @@ public enum TypeUtils {
 		}
 
 		if (session != null) {
-			if (raw instanceof Vector && ((Vector) raw).size() == 2) {
-				System.out.println("TEMP DEBUG processing a size 2 vector to DateRange");
-				Object startRaw = ((Vector) raw).get(0);
-				Object endRaw = ((Vector) raw).get(1);
+			if (raw instanceof Vector && ((Vector<?>) raw).size() == 2) {
+				Object startRaw = ((Vector<?>) raw).get(0);
+				Object endRaw = ((Vector<?>) raw).get(1);
 				if (startRaw instanceof DateTime && endRaw instanceof DateTime) {
-					System.out.println("TEMP DEBUG processing a DateTime pair into a DateRange");
 					return session.createDateRange((DateTime) startRaw, (DateTime) endRaw);
 				} else {
 					throw new IllegalArgumentException("Can't convert a Vector to DateRange where the elements are "
@@ -1686,6 +1683,7 @@ public enum TypeUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static NoteCoordinate[] toNoteCoordinates(final Object value) throws DataNotCompatibleException {
 		if (value == null) {
 			return null;
@@ -1916,10 +1914,6 @@ public enum TypeUtils {
 
 	/**
 	 * returns the payload that the Object o needs when it is written into an item
-	 *
-	 * @param o
-	 * @param c
-	 * @return
 	 */
 	public static int getLotusPayload(final Object o, final Class<?> c) {
 		if (c.isAssignableFrom(o.getClass())) {
@@ -1935,6 +1929,7 @@ public enum TypeUtils {
 		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Item writeToItem(final org.openntf.domino.Document doc, final String itemName, Object value, final Boolean isSummary)
 			throws Domino32KLimitException {
 		Class<?> fromClass = value.getClass();
@@ -1966,7 +1961,7 @@ public enum TypeUtils {
 					recycleThis = null;
 					dominoFriendlyVec = (Vector<Object>) value;
 				} else {
-					recycleThis = new ArrayList<lotus.domino.Base>();
+					recycleThis = new ArrayList<>();
 					Collection<?> coll = (Collection<?>) value;
 					dominoFriendlyVec = new Vector<Object>(coll.size());
 					for (Object valNode : coll) {
@@ -2170,16 +2165,6 @@ public enum TypeUtils {
 		}
 	}
 
-	/**
-	 *
-	 * @param values
-	 *            the values
-	 * @param context
-	 *
-	 * @param recycleThis
-	 * @return
-	 * @throws IllegalArgumentException
-	 */
 	public static java.util.Vector<Object> toDominoFriendly(final Collection<?> values, final Session session,
 			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
 		java.util.Vector<Object> result = new java.util.Vector<Object>();
@@ -2244,12 +2229,7 @@ public enum TypeUtils {
 	}
 
 	/**
-	 * converts a lot of java types to domino-friendly types
-	 *
-	 * @param value
-	 * @param context
-	 * @param recycleThis
-	 * @return
+	 * converts a lot of java types to Domino-friendly types
 	 */
 	public static Object javaToDominoFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis) {
 		//FIXME NTF This stuff should really defer to TypeUtils. We should do ALL type coercion in that utility class

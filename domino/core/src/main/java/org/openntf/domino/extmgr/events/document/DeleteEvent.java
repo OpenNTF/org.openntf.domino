@@ -34,16 +34,11 @@ public class DeleteEvent extends AbstractDocumentEvent {
 		super(EMEventIds.EM_NSFNOTEDELETE.getId());
 	}
 
-	/**
-	 * @param flag
-	 */
+	@SuppressWarnings("unused")
 	private void setFlag(final String flag) {
 		this.flag = parseInt(flag);
 	}
 
-	/**
-	 * @return
-	 */
 	public int getFlag() {
 		return flag;
 	}

@@ -56,7 +56,7 @@ public interface IndexDatabase extends IScannerStateManager {
 				return result;
 			}
 			if (value instanceof Iterable) {
-				Iterable values = (Iterable) value;
+				Iterable<?> values = (Iterable<?>) value;
 				for (Object o : values) {
 					if (o instanceof CaseInsensitiveString) {
 						result.add((CaseInsensitiveString) o);
@@ -82,7 +82,7 @@ public interface IndexDatabase extends IScannerStateManager {
 				return result;
 			}
 			if (value instanceof Iterable) {
-				Iterable values = (Iterable) value;
+				Iterable<?> values = (Iterable<?>) value;
 				for (Object o : values) {
 					if (o instanceof String) {
 						result.add((String) o);

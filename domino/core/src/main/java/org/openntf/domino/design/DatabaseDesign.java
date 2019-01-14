@@ -492,7 +492,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	/**
 	 * Gets database XML, for which we need a minimum of two design notes in exported DXL
 	 *
-	 * @return
+	 * @return a {@link XMLDocument} representing the database design
 	 */
 	public XMLDocument getDatabaseXml();
 
@@ -576,7 +576,7 @@ public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescend
 	/**
 	 * Sets the Domino Data Access Service mode for the database.
 	 *
-	 * @param mode
+	 * @param mode the DAS mode to set
 	 * @since ODA 4.3.0
 	 */
 	public void setDasMode(DASMode mode);

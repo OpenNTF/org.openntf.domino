@@ -92,7 +92,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
  * The Class Document.
  */
 public class Document extends BaseResurrectable<org.openntf.domino.Document, lotus.domino.Document, Database>
-		implements org.openntf.domino.Document {
+implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	/**
@@ -193,7 +193,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
 	//http://www-10.lotus.com/ldd/nd8forum.nsf/5f27803bba85d8e285256bf10054620d/cd146d4165336a5e852576b600114830?OpenDocument
-	private boolean mimeWarned_ = false;
+//	private boolean mimeWarned_ = false;
 
 	protected boolean checkMimeOpen(final String key) {
 
@@ -649,7 +649,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					if (saveChanges && !ret) {
 						if (log_.isLoggable(Level.SEVERE)) {
 							log_.log(Level.SEVERE, "closeMIMEEntities returned false for item " + entityItemName + " on doc " + getNoteID()
-									+ " in db " + getAncestorDatabase().getApiPath(), new Throwable());
+							+ " in db " + getAncestorDatabase().getApiPath(), new Throwable());
 						}
 					}
 				} catch (NotesException e) {
@@ -1387,7 +1387,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						return result;
 					} else {
 						log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name + " in document " + this.getMetaversalID()
-								+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text results.");
+						+ " that is not a MIMEBean, so you should use either the MIMEEntity API or the RichTextItem API to access it. .getItemValue() will only attempt to return the text results.");
 						//						new Throwable().printStackTrace();
 
 						// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
@@ -2857,8 +2857,8 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 					log_.log(Level.INFO,
 							"Writing " + value == null ? "null"
 									: value.getClass() + " causes a " + ex2
-											+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
-											+ " Consider using 'put' or something similar in your code.");
+									+ " as AutoMime.WRAP_ALL is enabled, the value will be wrapped in a MIME bean."
+									+ " Consider using 'put' or something similar in your code.");
 				} else {
 					throw ex2;
 				}
@@ -2916,7 +2916,6 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	 * @throws Domino32KLimitException
 	 *             if the item does not fit in a field
 	 */
-	@SuppressWarnings("unchecked")
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
 			throws Domino32KLimitException {
 		checkMimeOpen(itemName);
@@ -3035,8 +3034,8 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		return result;
 	}
 
-	private static List throwableToList(final Throwable t) {
-		List<String> result = new ArrayList<String>();
+	private static List<String> throwableToList(final Throwable t) {
+		List<String> result = new ArrayList<>();
 		String summary = t.getClass().getName() + ": " + t.getMessage();
 		result.add(summary);
 		for (StackTraceElement element : t.getStackTrace()) {
@@ -3133,9 +3132,9 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 						//						Throwable t = new RuntimeException();
 						String newunid = DominoUtils.toUnid(new Date().getTime());
 						String message = "Unable to save a document with id " + getUniversalID()
-								+ " because that id already exists. Saving a " + this.getFormName()
-								+ (this.hasItem("$$Key") ? " (key: '" + getItemValueString("$$Key") + "')" : "")
-								+ " to a different unid instead: " + newunid;
+						+ " because that id already exists. Saving a " + this.getFormName()
+						+ (this.hasItem("$$Key") ? " (key: '" + getItemValueString("$$Key") + "')" : "")
+						+ " to a different unid instead: " + newunid;
 						setUniversalID(newunid);
 						try {
 							getDelegate().save(force, makeResponse, markRead);
@@ -3373,8 +3372,8 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 				if (del != null) {// this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) {// we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3602,18 +3601,18 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 							d.setUniversalID(unid_);
 							if (log_.isLoggable(Level.FINE)) {
 								log_.log(Level.FINE, "NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_)
-										+ ". However the document was new, so we'll just create a new one.");
+								+ ". However the document was new, so we'll just create a new one.");
 							}
 						} else {
 							log_.log(Level.INFO, "ALERT! NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_)
-									+ ". It is questionable whether this document can successfully be resurrected.");
+							+ ". It is questionable whether this document can successfully be resurrected.");
 							try {
 								d = db.getDocumentByUNID(unid_);
 							} catch (NotesException ne) {
 								log_.log(Level.WARNING,
 										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-												+ getParentDatabase().getFilePath() + " because of: " + ne.text,
+										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text,
 										ne);
 							}
 						}
@@ -3676,15 +3675,15 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 							if (log_.isLoggable(Level.WARNING)) {
 								log_.log(Level.WARNING,
 										"Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-												+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
-												+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 							}
 						}
 					}
 				} else {
 					if (log_.isLoggable(Level.WARNING)) {
 						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-								+ ", but the parent database object is null!");
+						+ ", but the parent database object is null!");
 					}
 				}
 				setDelegate(d, true);
@@ -4043,7 +4042,7 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 		if (source != null && !source.isEmpty()) {
 			return Collections.unmodifiableSet(keySetInt());
 		} else {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 	}
 
@@ -4557,10 +4556,6 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 
 	/**
 	 * Not implemented
-	 *
-	 * @param richTextName
-	 * @param attachmentName
-	 * @param file
 	 */
 	public void replaceAttachment(final String richTextName, final String attachmentName, final String file) {
 
@@ -4569,8 +4564,6 @@ public class Document extends BaseResurrectable<org.openntf.domino.Document, lot
 	/**
 	 * Not implemented
 	 *
-	 * @param richTextName
-	 * @param attachmentName
 	 */
 	public void removeAttachment(final String richTextName, final String attachmentName) {
 
