@@ -397,7 +397,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 			if (module == null) {
 				return super.wrap(inner);
 			} else {
-				return new XotsWrappedCallable(module, inner);
+				return new XotsWrappedCallable<V>(module, inner);
 			}
 		} else {
 			if (module == null) {
