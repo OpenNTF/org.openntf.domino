@@ -96,7 +96,6 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFramedObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace,
 			@Context final Request request) throws JsonException, IOException {
-		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();
@@ -257,6 +256,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 		// writer.outArrayLiteral(result);
 	}
 
+	@SuppressWarnings("unchecked")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -281,7 +281,7 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 				if (jsonRaw instanceof JsonJavaObject) {
 					jsonItems = (JsonJavaObject) jsonRaw;
 				} else if (jsonRaw instanceof List) {
-					jsonArray = (List) jsonRaw;
+					jsonArray = (List<Object>) jsonRaw;
 					// System.out.println("TEMP DEBUG processing a POST with an
 					// array of size " + jsonArray.size());
 				} else {
@@ -510,9 +510,9 @@ public class FramedCollectionResource extends AbstractCollectionResource {
 								+ (otherElement == null ? "null" : DGraphUtils.findInterface(otherElement).getName()));
 					}
 				} else {
-					Class[] interfaces = element.getClass().getInterfaces();
+					Class<?>[] interfaces = element.getClass().getInterfaces();
 					String intList = "";
-					for (Class inter : interfaces) {
+					for (Class<?> inter : interfaces) {
 						intList = intList + inter.getName() + ", ";
 					}
 					String methList = "";

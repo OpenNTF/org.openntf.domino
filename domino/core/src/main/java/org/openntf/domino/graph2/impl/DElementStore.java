@@ -225,7 +225,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 			Element result = null;
 			Object delegate = null;
 			boolean isProxiedSource = false;
-			if (key instanceof NoteCoordinate && (parent_.isProxied() || parent_.isReverseProxied())
+			if (key != null && (parent_.isProxied() || parent_.isReverseProxied())
 					&& !(key instanceof ViewEntryCoordinate || key.getX() == 0)) {
 				//				System.out.println("TEMP DEBUG in proxy branch...");
 				NoteCoordinate nc = key;
@@ -275,7 +275,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 				} else {
 					String replid = org.openntf.domino.big.NoteCoordinate.Utils.getReplidFromLong(parent_.getStoreKey());
 					String typelist = "";
-					for (Class type : parent_.types_) {
+					for (Class<?> type : parent_.types_) {
 						typelist = typelist + "," + type.getName();
 					}
 					throw new IllegalStateException("ElementStore delegate is not a Database; it's a "

@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -71,7 +70,6 @@ import com.ibm.commons.util.io.StreamUtil;
  *
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign {
-	private static final Logger log_ = Logger.getLogger(DatabaseDesign.class.getName());
 
 	/*
 	 * Some handy constant Note IDs for getting specific elements. h/t http://www.nsftools.com/tips/NotesTips.htm#defaultelements
@@ -687,7 +685,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	public List<DbProperties> getDatabaseProperties() {
 		List<DbProperties> returnVal = new ArrayList<DbProperties>();
 		XMLNode node = getDatabaseNode();
-		XMLDocument xml = getDatabaseXml();
+		//		XMLDocument xml = getDatabaseXml();
 		// Use Javascript is false, or missing in DXL if checked
 		if (!"false".equals(node.getAttribute(DbProperties.USE_JS.getPropertyName()))) {
 			returnVal.add(DbProperties.USE_JS);
@@ -865,8 +863,8 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	@Override
 	public void setDatabaseProperties(final Map<DbProperties, Boolean> props) {
 		// Capture and error for non-settable options
-		ArrayList nonSettable = new ArrayList<String>();
-		ArrayList setterMethods = new ArrayList<String>();
+		List<String> nonSettable = new ArrayList<>();
+		List<String> setterMethods = new ArrayList<>();
 		if (props.containsKey(DbProperties.DAOS_ENABLED)) {
 			nonSettable.add(DbProperties.DAOS_ENABLED.name());
 		}
@@ -889,7 +887,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			setterMethods.add(DbProperties.MAX_REVISIONS.name());
 		}
 		if (props.containsKey(DbProperties.MAX_UPDATED_BY)) {
-			setterMethods.add(DbProperties.MAX_UPDATED_BY);
+			setterMethods.add(DbProperties.MAX_UPDATED_BY.name());
 		}
 		if (props.containsKey(DbProperties.SOFT_DELETE_EXPIRY)) {
 			nonSettable.add(DbProperties.SOFT_DELETE_EXPIRY.name());
@@ -898,7 +896,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			String message = "";
 			if (!nonSettable.isEmpty()) {
 				message = "The following cannot be set programmatically but need admin processes to run: " + Strings.join(nonSettable, ",")
-						+ ". ";
+				+ ". ";
 			}
 			if (!setterMethods.isEmpty()) {
 				message += "The following methods need to be set with specific setters in DatabaseDesign class: "
@@ -908,7 +906,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		}
 
 		XMLNode node = getDatabaseNode();
-		XMLDocument xml = getDatabaseXml();
+		//		XMLDocument xml = getDatabaseXml();
 		// Use Javascript is false, or missing in DXL if checked
 		if (props.containsKey(DbProperties.USE_JS)) {
 			if (props.get(DbProperties.USE_JS)) {
