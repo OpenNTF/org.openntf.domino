@@ -67,6 +67,10 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
 			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 
+	private static final DateTimeFormatter GMT_FORMAT_DATETIME_12 = new DateTimeFormatterBuilder().appendPattern("dd/MM/uuuu hh:mm:ss a")
+			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
+
 	static {
 		Factory.addTerminateHook(new Runnable() {
 			@Override
@@ -485,7 +489,11 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 				if (this.getParent().getInternational().isDateMDY()) {
 					result = ZonedDateTime.parse(strippedTime, GMT_FORMAT_DATETIME_FROM_US);
 				} else {
-					result = ZonedDateTime.parse(strippedTime, GMT_FORMAT_DATETIME);
+					if (this.getParent().getInternational().isTime24Hour()) {
+						result = ZonedDateTime.parse(strippedTime, GMT_FORMAT_DATETIME);
+					} else {
+						result = ZonedDateTime.parse(strippedTime, GMT_FORMAT_DATETIME_12);
+					}
 				}
 			} catch (DateTimeParseException pe) {
 				DominoUtils.handleException(pe, "Parse exception. Unable to parse string " + strippedTime);
