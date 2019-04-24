@@ -60,7 +60,7 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
 			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 
-	private static final DateTimeFormatter GMT_FORMAT_DATETIME = new DateTimeFormatterBuilder().appendPattern("dd/MM/uuuu hh:mm:ss a")
+	private static final DateTimeFormatter GMT_FORMAT_DATETIME = new DateTimeFormatterBuilder().appendPattern("dd/MM/uuuu HH:mm:ss")
 			.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
 			.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 	private static final DateTimeFormatter GMT_FORMAT_DATE = new DateTimeFormatterBuilder().appendPattern("dd/MM/uuuu")
