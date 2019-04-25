@@ -448,14 +448,14 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 
 	private DateTimeFormatter getGMTDateFormatter() {
 		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder();
-		dfb.appendPattern(this.getParent().getDateFormat());
+		dfb.appendPattern(this.getParent().getDateFormatForDateTimeFormatter());
 		return dfb.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
 		.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 	}
 
 	private DateTimeFormatter getGMTDateTimeFormatter() {
 		DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder();
-		dfb.appendPattern(this.getParent().getDateFormat() + " " + this.getParent().getTimeFormat());
+		dfb.appendPattern(this.getParent().getDateFormatForDateTimeFormatter() + " " + this.getParent().getTimeFormatForDateTimeFormatter());
 		return dfb.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
 		.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 	}
