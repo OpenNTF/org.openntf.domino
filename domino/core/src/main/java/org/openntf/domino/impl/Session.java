@@ -2271,7 +2271,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	}
 
 	@Override
-	public String getDateFormat() {
+	public String getDateFormatForDateTimeFormatter() {
 		if (null == dateFormat_) {
 			International i = getInternational();
 			String sep = i.getDateSep();
@@ -2287,7 +2287,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	}
 
 	@Override
-	public String getTimeFormat() {
+	public String getTimeFormatForDateTimeFormatter() {
 		if (null == timeFormat_) {
 			International i = getInternational();
 			if (i.isTime24Hour()) {

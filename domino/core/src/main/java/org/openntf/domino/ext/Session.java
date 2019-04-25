@@ -584,12 +584,12 @@ public interface Session {
 	 *
 	 * @since 10.0.2
 	 */
-	public String getDateFormat();
+	public String getDateFormatForDateTimeFormatter();
 
 	/**
 	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. HH:mm:ss for 24 hour
 	 *
 	 * @since 10.0.2
 	 */
-	public String getTimeFormat();
+	public String getTimeFormatForDateTimeFormatter();
 }
