@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>10.0.1-SNAPSHOT</version>
+		<version>10.0.1</version>
 	</parent>
 	<artifactId>org.openntf.domino.rest</artifactId>
 	<name>OpenNTF Domino REST Service plugin</name>
