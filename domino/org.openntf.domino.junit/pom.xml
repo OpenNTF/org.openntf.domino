@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
-		<version>10.0.1</version>
+		<version>10.0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>org.openntf.domino.junit</artifactId>
 	<name>OpenNTF Domino API JUnit Support</name>
