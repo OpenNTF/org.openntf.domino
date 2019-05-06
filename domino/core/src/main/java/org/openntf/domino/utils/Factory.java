@@ -64,6 +64,7 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
+import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -1290,7 +1291,6 @@ public enum Factory {
 	}
 
 	public static void startup() {
-		System.out.println("Starting ODA Factory...");
 		synchronized (Factory.class) {
 
 			NotesThread.sinitThread();

@@ -1920,7 +1920,7 @@ public interface Registration
 	 * Optionally set this property before calling {@link #registerNewUser(String, String, String) registerNewUser()}.
 	 * </p>
 	 *
-	 * @return The name of the template for the design of the mail file or an empty string for a standard template
+	 * @param name The name of the template for the design of the mail file or an empty string for a standard template
 	 */
 	@Override
 	public void setMailTemplateName(final String name);

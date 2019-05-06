@@ -27,6 +27,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedEdgeIterable;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;
@@ -46,8 +47,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 
 		@Override
 		public void add(final Object arg0) {
-			if (arg0 == null)
+			if (arg0 == null) {
 				return;
+			}
 			if (kind_.isAssignableFrom(arg0.getClass())) {
 				iterator_.add(((EdgeFrame) kind_.cast(arg0)).asEdge());
 			} else if (arg0 instanceof Edge) {
@@ -213,8 +215,9 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 	public boolean isType(final EdgeFrame frame, final String typename) {
 		Class<?>[] interfaces = frame.getClass().getInterfaces();
 		for (Class<?> inter : interfaces) {
-			if (inter.getName().equals(typename))
+			if (inter.getName().equals(typename)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -425,7 +428,6 @@ public class FramedEdgeList<T extends EdgeFrame> extends FramedEdgeIterable<T> i
 		return result;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <U> U[] toArray(final U[] arg0) {
 		int size = list_.size();

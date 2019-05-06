@@ -13,7 +13,6 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,8 +27,8 @@ import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DocumentScanner extends Observable {
-	private static final Logger log_ = Logger.getLogger(DocumentScanner.class.getName());
 
 	protected boolean trackFieldTokens_ = true;
 	protected Map<CharSequence, NavigableSet<CharSequence>> fieldTokenMap_;
@@ -51,7 +50,6 @@ public class DocumentScanner extends Observable {
 	protected boolean trackFieldValues_ = true;
 
 	protected boolean splitNameTokens_ = true;
-	@SuppressWarnings("rawtypes")
 	protected Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
 
@@ -336,7 +334,6 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public Map<CharSequence, NavigableSet<Comparable>> getFieldValueMap() {
 		if (fieldValueMap_ == null) {
 			fieldValueMap_ = new HashMap<CharSequence, NavigableSet<Comparable>>();
@@ -495,7 +492,6 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
 		try {
 			if (doc != null && !doc.isDeleted()) {
@@ -752,13 +748,14 @@ public class DocumentScanner extends Observable {
 		if (this.isSplitNameTokens()) {
 			if (name instanceof String) {
 				String val = (String) name;
-				Scanner s = new Scanner(val);
-				s.useDelimiter(REGEX_NONALPHANUMERIC);
-				while (s.hasNext()) {
-					CharSequence token = scrubToken(s.next(), caseSensitive_);
-					if (token != null && (token.length() > 2) && !isStopped(token)) {
-						tokenCount_++;
-						processToken(token, itemName, address);
+				try(Scanner s = new Scanner(val)) {
+					s.useDelimiter(REGEX_NONALPHANUMERIC);
+					while (s.hasNext()) {
+						CharSequence token = scrubToken(s.next(), caseSensitive_);
+						if (token != null && (token.length() > 2) && !isStopped(token)) {
+							tokenCount_++;
+							processToken(token, itemName, address);
+						}
 					}
 				}
 			}
@@ -776,8 +773,6 @@ public class DocumentScanner extends Observable {
 		}
 
 	}
-
-	private int TEMP_COMPUTER_TRACKING = 0;
 
 	protected void processToken(final CharSequence token, final CharSequence itemName, final String address/*, final Document doc*/) {
 		if (isTrackFieldTokens()) {
@@ -820,7 +815,6 @@ public class DocumentScanner extends Observable {
 		fieldTokenMap_ = fieldTokenMap;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setFieldTokenMap(final Object value) {
 		if (validateFieldTokenMap(value)) {
 			fieldTokenMap_ = (Map<CharSequence, NavigableSet<CharSequence>>) value;
@@ -839,7 +833,6 @@ public class DocumentScanner extends Observable {
 		nameLocationMap_ = value;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setTokenLocationMap(final Object value) {
 		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
 
@@ -850,12 +843,10 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void setFieldValueMap(final Map<CharSequence, NavigableSet<Comparable>> fieldValueMap) {
 		fieldValueMap_ = fieldValueMap;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setFieldValueMap(final Object value) {
 		if (DocumentScanner.validateFieldValueMap(value)) {
 			fieldValueMap_ = (Map<CharSequence, NavigableSet<Comparable>>) value;
@@ -866,7 +857,6 @@ public class DocumentScanner extends Observable {
 		fieldTypeMap_ = fieldTypeMap;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setFieldTypeMap(final Object value) {
 		if (DocumentScanner.validateFieldTypeMap(value)) {
 			fieldTypeMap_ = (Map<CharSequence, Item.Type>) value;
@@ -877,7 +867,6 @@ public class DocumentScanner extends Observable {
 		tokenFreqMap_ = tokenFreqMap;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setTokenFreqMap(final Object value) {
 		if (DocumentScanner.validateTokenFreqMap(value)) {
 			tokenFreqMap_ = (NavigableMap<CharSequence, Integer>) value;
@@ -1030,7 +1019,6 @@ public class DocumentScanner extends Observable {
 		//TODO NTF
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldTokenMap(final Object obj) {
 		boolean result = false;
 		if (obj == null) {
@@ -1060,7 +1048,6 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldValueMap(final Object obj) {
 		boolean result = false;
 		if (obj == null) {
@@ -1090,7 +1077,6 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldTypeMap(final Object obj) {
 		boolean result = false;
 		if (obj == null) {
@@ -1114,7 +1100,6 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean validateTokenFreqMap(final Object obj) {
 		boolean result = false;
 		if (obj == null) {
@@ -1138,7 +1123,6 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean validateTokenLocationMap(final Object obj) {
 		boolean result = false;
 		if (obj == null) {

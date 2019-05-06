@@ -99,7 +99,7 @@ public class Xots {
 
 	private static Map<Runnable, Scheduler> scheduleRunnableCache_ = new LinkedHashMap<Runnable, Scheduler>();
 
-	public static Future schedule(final Runnable task, final Scheduler scheduler) {
+	public static Future<?> schedule(final Runnable task, final Scheduler scheduler) {
 		if (isStarted()) {
 			return getService().schedule(task, scheduler);
 		} else {
@@ -124,7 +124,7 @@ public class Xots {
 	private static Map<Runnable, Long> scheduleRunnableDelayCache_ = new LinkedHashMap<Runnable, Long>();
 	private static Map<Runnable, TimeUnit> scheduleRunnableTimeUnitCache_ = new LinkedHashMap<Runnable, TimeUnit>();
 
-	public static Future schedule(final Runnable task, final long delay, final TimeUnit unit) {
+	public static Future<?> schedule(final Runnable task, final long delay, final TimeUnit unit) {
 		if (isStarted()) {
 			return getService().schedule(task, delay, unit);
 		} else {
@@ -136,7 +136,7 @@ public class Xots {
 
 	private static List<Runnable> runnableCache_ = new ArrayList<Runnable>();
 
-	public static Future submit(final Runnable task) {
+	public static Future<?> submit(final Runnable task) {
 		if (isStarted()) {
 			return getService().submit(task);
 		} else {

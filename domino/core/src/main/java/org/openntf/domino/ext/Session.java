@@ -578,4 +578,18 @@ public interface Session {
 	 * @since 4.5.0
 	 */
 	public void setViewExactMatch(boolean exactMatch);
+
+	/**
+	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. dd/MM/uuuu for D/M/Y
+	 *
+	 * @since 10.0.2
+	 */
+	public String getDateFormatForDateTimeFormatter();
+
+	/**
+	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. HH:mm:ss for 24 hour
+	 *
+	 * @since 10.0.2
+	 */
+	public String getTimeFormatForDateTimeFormatter();
 }

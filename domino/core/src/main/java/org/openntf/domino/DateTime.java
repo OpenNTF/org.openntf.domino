@@ -92,7 +92,7 @@ import org.openntf.domino.types.SessionDescendant;
  * </p>
  */
 public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.DateTime, org.openntf.formula.DateTime,
-		org.openntf.domino.ext.DateTime, Encapsulated, SessionDescendant, Cloneable {
+org.openntf.domino.ext.DateTime, Encapsulated, SessionDescendant, Cloneable {
 
 	public static class Schema extends FactorySchema<DateTime, lotus.domino.DateTime, Session> {
 		@Override
@@ -471,10 +471,6 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 
 	/**
 	 * Set the year, month and day components of this DateTime object
-	 *
-	 * @param year
-	 * @param month
-	 * @param day
 	 */
 	@Override
 	public void setLocalDate(final int year, final int month, final int day);
@@ -482,9 +478,6 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	/**
 	 * Set the year, month and day components of this DateTime object
 	 *
-	 * @param year
-	 * @param month
-	 * @param day
 	 * @param preserveLocalTime
 	 *            affects adjustments from the existing date that cross a daylight-saving time boundary. Specify true to increment or
 	 *            decrement the GMT time by one hour so that a 24-hour adjustment yields the same local time in the new day. If this
@@ -496,7 +489,6 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	/**
 	 * Sets the date-time using a Calendar instance
 	 *
-	 * @param calendar
 	 */
 	@Override
 	public void setLocalTime(final java.util.Calendar calendar);
@@ -504,7 +496,6 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	/**
 	 * Sets the date-time using a Date instance
 	 *
-	 * @param date
 	 */
 	@Override
 	public void setLocalTime(final Date date);
@@ -512,10 +503,6 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	/**
 	 * Sets the time parts using hour, minute, second and hundreth of a second
 	 *
-	 * @param hour
-	 * @param minute
-	 * @param second
-	 * @param hundredth
 	 */
 	@Override
 	public void setLocalTime(final int hour, final int minute, final int second, final int hundredth);

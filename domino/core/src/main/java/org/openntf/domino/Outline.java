@@ -26,7 +26,7 @@ import org.openntf.domino.types.FactorySchema;
  * </p>
  */
 public interface Outline
-		extends Base<lotus.domino.Outline>, lotus.domino.Outline, org.openntf.domino.ext.Outline, Design, DatabaseDescendant {
+extends Base<lotus.domino.Outline>, lotus.domino.Outline, org.openntf.domino.ext.Outline, Design, DatabaseDescendant {
 
 	public static class Schema extends FactorySchema<Outline, lotus.domino.Outline, Database> {
 		@Override
@@ -419,7 +419,7 @@ public interface Outline
 	 * {@link #moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)}, {@link #removeEntry(lotus.domino.OutlineEntry)}.
 	 * </p>
 	 *
-	 * @return
+	 * @return Currently undocumented
 	 */
 	@Override
 	public int save();
@@ -444,7 +444,7 @@ public interface Outline
 
 	/**
 	 * Sets the name of an outline.
-	 * 
+	 *
 	 * @param name
 	 *            the new name of the outline
 	 */

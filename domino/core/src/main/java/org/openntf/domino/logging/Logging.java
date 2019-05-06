@@ -59,7 +59,6 @@ public class Logging {
 	 * Loads the configuration file if it exists or sets default configuration if it does not and sets a timer to check the configuration
 	 * file for changes every minute. This method is called by the ODA platform when it starts.
 	 *
-	 * @throws IOException
 	 */
 	public void startUp() throws IOException {
 		if (!activateCfgFromPropFile()) {

@@ -2304,8 +2304,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	/**
 	 * Marks all documents in the view as read on behalf of the given name. If the database does not track unread marks, all documents are
 	 * considered read, and this method has no effect.
-	 *
-	 * @param userName
 	 */
 	@Override
 	public void markAllRead(final String userName);
@@ -2318,8 +2316,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	/**
 	 * Marks all documents in the view as unread on behalf of the given user name.
-	 *
-	 * @param userName
 	 */
 	@Override
 	public void markAllUnread(final String userName);
@@ -2458,8 +2454,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * The name of a view. Use {@link #setAliases(String)} to set the aliases.
 	 *
 	 * Old-style aliases that are in the name field, separated from the name by vertical bars, are returned as part of the name.
-	 *
-	 * @param name
 	 */
 	@Override
 	public void setName(final String name);
@@ -2487,8 +2481,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * Sets $Readers field associated with the view. Setting this property replaces prior values.
 	 *
 	 * Set the property to null to remove all reader restrictions.
-	 *
-	 * @param readers
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -2583,6 +2575,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	/* (non-Javadoc)
 	 * @see lotus.domino.View#createViewNavFromKey(java.util.Vector, boolean)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewNavigator createViewNavFromKey(Vector arg0, boolean arg1);
 }

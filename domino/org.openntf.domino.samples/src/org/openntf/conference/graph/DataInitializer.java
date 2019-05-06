@@ -32,6 +32,7 @@ public class DataInitializer implements Runnable {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void run() {
 		long testStartTime = System.nanoTime();

@@ -709,4 +709,22 @@ public class ViewEntryCollection extends BaseThreadSafe<org.openntf.domino.ViewE
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public void intersect(final lotus.domino.Base other, final boolean arg1) {
+		try {
+			getDelegate().intersect(toLotus(other), arg1);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void subtract(final lotus.domino.Base other, final boolean arg1) {
+		try {
+			getDelegate().intersect(toLotus(other), arg1);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
 }

@@ -59,7 +59,9 @@ import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.ext.Name.NamePartKey;
 import org.openntf.domino.logging.LogUtils;
 import org.openntf.domino.utils.Factory.SessionType;
+import org.openntf.domino.utils.Factory.ThreadConfig;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.ULocale;
 
@@ -235,19 +237,21 @@ public enum DominoUtils {
 		return result;
 	}
 
-	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
-
-		@Override
-		protected Boolean initialValue() {
-			//			System.out.println("INIT");
-			return Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
+	private static ThreadLocal<Boolean> bubbleExceptions_ = ThreadLocal.withInitial(() -> {
+		//			System.out.println("INIT");
+		ThreadConfig c = Factory.getThreadConfig();
+		if (c != null) {
+			return Factory.getThreadConfig().bubbleExceptions;
+		} else {
+			return true;
 		}
-	};
+	});
 
 	public static Boolean getBubbleExceptions() {
 		Boolean ret = bubbleExceptions_.get();
 		if (ret == null) {
-			ret = Boolean.valueOf(Factory.getThreadConfig().bubbleExceptions);
+			ThreadConfig c = Factory.getThreadConfig();
+			ret = c == null ? true : c.bubbleExceptions;
 			bubbleExceptions_.set(ret);
 		}
 
@@ -589,6 +593,32 @@ public enum DominoUtils {
 					if (i == 3) {
 						map.put(NamePartKey.OrgUnit4, name.subSequence(start, end).toString());
 					}
+					i++;
+				}
+			}
+			m = Names.DC_MATCH.matcher(name);
+			i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					switch (i) {
+					case 0:
+						map.put(NamePartKey.DomainComponent1, name.subSequence(start, end).toString());
+						break;
+					case 1:
+						map.put(NamePartKey.DomainComponent2, name.subSequence(start, end).toString());
+						break;
+					case 2:
+						map.put(NamePartKey.DomainComponent3, name.subSequence(start, end).toString());
+						break;
+					case 3:
+						map.put(NamePartKey.DomainComponent4, name.subSequence(start, end).toString());
+						break;
+					default:
+						throw new IllegalStateException("Names are currently limited to 4 domain components");
+					}
+					i++;
 				}
 			}
 		}
@@ -629,6 +659,14 @@ public enum DominoUtils {
 				}
 				isFirst = false;
 				builder.append(o);
+			}
+			String dc = String.join("/", toDC(name));
+			if (StringUtil.isNotEmpty(dc)) {
+				if (!isFirst) {
+					builder.append('/');
+				}
+				isFirst = false;
+				builder.append(dc);
 			}
 			String c = toCountry(name);
 			if (c.length() > 0) {
@@ -712,6 +750,30 @@ public enum DominoUtils {
 		if (isHierarchicalName(name)) {
 			Matcher m = Names.OU_MATCH.matcher(name);
 			String[] ous = new String[4];	//maximum number of OUs according to spec
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					ous[i++] = name.subSequence(start, end).toString();
+				}
+			}
+			if (i == 0) {
+				return new String[0];
+			} else {
+				String[] result = new String[i];
+				System.arraycopy(ous, 0, result, 0, i);
+				return result;
+			}
+		} else {
+			return new String[0];
+		}
+	}
+
+	public static String[] toDC(final CharSequence name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = Names.DC_MATCH.matcher(name);
+			String[] ous = new String[4]; // Maximum number of supported DCs
 			int i = 0;
 			while (m.find()) {
 				int start = m.start() + 3;

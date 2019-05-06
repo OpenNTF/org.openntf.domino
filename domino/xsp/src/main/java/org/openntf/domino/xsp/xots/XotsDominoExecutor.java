@@ -373,7 +373,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 					ctx.setOpenLogApiPath(ODAPlatform.getXspPropertyAsString("xsp.openlog.filepath"));
 					ctx.setContextApiPath(module.getDatabasePath());
 					ctx.setTaskletClass(inner.getClass().getName());
-					((AbstractXotsCallable) inner).setContext(ctx);
+					((AbstractXotsCallable<?>) inner).setContext(ctx);
 				}
 				return new XotsWrappedCallable<V>(module, inner);
 			}
@@ -397,7 +397,7 @@ public class XotsDominoExecutor extends DominoExecutor {
 			if (module == null) {
 				return super.wrap(inner);
 			} else {
-				return new XotsWrappedCallable(module, inner);
+				return new XotsWrappedCallable<V>(module, inner);
 			}
 		} else {
 			if (module == null) {

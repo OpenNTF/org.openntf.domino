@@ -23,16 +23,11 @@ public class UpdateExtendedEvent extends AbstractDocumentEvent {
 		super(EMEventIds.EM_NSFNOTEUPDATEXTENDED.getId());
 	}
 
-	/**
-	 * @param sFlag
-	 */
+	@SuppressWarnings("unused")
 	private void setFlag(final String sFlag) {
 		this.updateFlag = parseInt(sFlag);
 	}
 
-	/**
-	 * @return
-	 */
 	public int getUpdateFlag() {
 		return updateFlag;
 	}

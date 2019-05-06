@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: tinkerpop
 Bundle-SymbolicName: com.tinkerpop
+Automatic-Module-Name: com.tinkerpop
 Bundle-Version: 2.6.1
 Export-Package: com.tinkerpop.blueprints,
  com.tinkerpop.blueprints.util,
@@ -31,12 +32,9 @@ Export-Package: com.tinkerpop.blueprints,
  com.tinkerpop.pipes.transform,
  com.tinkerpop.pipes.util,
  com.tinkerpop.pipes.util.iterators,
- com.tinkerpop.pipes.util.structures,
- javassist.util.proxy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .,
- lib/collections-generic-4.01.jar,
- lib/com.google.guava_18.0.1.jar,
- lib/javassist_3.18.2.jar
+ com.tinkerpop.pipes.util.structures
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.google.common.cache;version="19.0.0",
+ com.google.common.collect;version="19.0.0",
+ javassist.util.proxy
 

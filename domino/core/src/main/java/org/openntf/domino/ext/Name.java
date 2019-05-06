@@ -1,11 +1,11 @@
 /**
- * 
+ *
  */
 package org.openntf.domino.ext;
 
 /**
  * @author withersp
- * 
+ *
  *         OpenNTF extensions to Name object
  */
 public interface Name extends Cloneable {
@@ -14,11 +14,11 @@ public interface Name extends Cloneable {
 	 * Gets groups for the person / group / server etc the Name object pertains to.<br/>
 	 * The groups include the hierarchical name for the Name object, all Group entries that Name is a member of, and any OUs and O the name
 	 * relates to.
-	 * 
+	 *
 	 * <p>
 	 * Sample output: CN=admin/O=Intec-PW,admin,*,*\/O=Intec-PW,LocalDomainAdmins,Domino Developers,SEAS TestRole - Y1
 	 * </p>
-	 * 
+	 *
 	 * @param serverName
 	 *            String server name to check against
 	 * @return Collection<String> of any Domino Directory Person or Group the Name is found in, plus generic hierarchical responses
@@ -28,17 +28,17 @@ public interface Name extends Cloneable {
 
 	/**
 	 * Gets the RFC821 or RFC822 internet address
-	 * 
+	 *
 	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
 	 * <ul>
 	 * <li>jbg@us.acme.com
 	 * <li>"John B Goode" <jbg@us.acme.com>
 	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
 	 * </ul>
-	 * 
+	 *
 	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
 	 *         returned.
-	 * 
+	 *
 	 * @see Name#getAddr821()
 	 */
 	public String getRFC82xInternetAddress();
@@ -50,7 +50,7 @@ public interface Name extends Cloneable {
 	public static enum NamePartKey {
 		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common,
 		Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname,
-		IDprefix, SourceString;
+		IDprefix, SourceString, DomainComponent1, DomainComponent2, DomainComponent3, DomainComponent4;
 
 		@Override
 		public String toString() {
@@ -64,10 +64,10 @@ public interface Name extends Cloneable {
 
 	/**
 	 * Gets the Name Part for the specified key.
-	 * 
+	 *
 	 * @param key
 	 *            Key identifying the specific mapped Name Part string to return.
-	 * 
+	 *
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
 	 */
 	public String getNamePart(final NamePartKey key);

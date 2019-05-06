@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 
 import lotus.domino.NotesError;
 import lotus.domino.NotesException;
-import lotus.domino.UserID;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
@@ -50,6 +49,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.DominoQuery;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
@@ -3912,9 +3912,10 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	}
 
 	@Override
-	public void setUserIDForDecrypt(final UserID userId) {
+	public void setUserIDForDecrypt(final lotus.domino.UserID userId) {
 		try {
-			getDelegate().setUserIDForDecrypt(userId);
+			lotus.domino.UserID lotus = toLotus(userId);
+			getDelegate().setUserIDForDecrypt(lotus);
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3945,9 +3946,10 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 * @see org.openntf.domino.Database#getUserID(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public UserID getUserID(final String userId, final String password) {
+	public org.openntf.domino.UserID getUserID(final String userId, final String password) {
 		try {
-			return getDelegate().getUserID(userId, password);
+			lotus.domino.UserID lotus = getDelegate().getUserID(userId, password);
+			return fromLotus(lotus, UserID.SCHEMA, getAncestorSession());
 		} catch (Exception e) {
 			DominoUtils.handleException(e, this);
 			return null;
@@ -3975,8 +3977,15 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 		return doc;
 	}
 
-	//	public UserID getUserID(final String arg0, final String arg1) throws NotesException {
-	//		return getDelegate().getUserID(arg0, arg1);
-	//	}
+	@Override
+	public DominoQuery createDominoQuery() {
+		try {
+			lotus.domino.DominoQuery lotus = getDelegate().createDominoQuery();
+			return fromLotus(lotus, DominoQuery.SCHEMA, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
 
 }

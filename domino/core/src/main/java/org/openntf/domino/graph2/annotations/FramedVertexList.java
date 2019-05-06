@@ -21,6 +21,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterable<T> implements List<T> {
 	public static class FramedListIterator<T> implements ListIterator<T> {
 		protected final Class<T> kind_;
@@ -150,7 +151,6 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public FramedVertexList<T> applyFilter(final String key, final Object value) {
 		DVertexList vertList = new DVertexList((DVertex) sourceVertex_);
 		if (this.size() > 0) {
@@ -375,7 +375,6 @@ public class FramedVertexList<T extends VertexFrame> extends FramedVertexIterabl
 		return result;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public <U> U[] toArray(final U[] arg0) {
 		int size = list_.size();

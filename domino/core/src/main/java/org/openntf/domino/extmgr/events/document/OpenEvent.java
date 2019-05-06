@@ -19,16 +19,10 @@ public class OpenEvent extends AbstractDocumentEvent {
 		super(EMEventIds.EM_NSFNOTEOPEN.getId());
 	}
 
-	/**
-	 * @return
-	 */
 	public int getOpenFlag() {
 		return openFlag;
 	}
 
-	/**
-	 * @param openFlag
-	 */
 	public void setOpenFlag(final int openFlag) {
 		this.openFlag = openFlag;
 	}

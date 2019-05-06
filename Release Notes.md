@@ -1,6 +1,17 @@
 ##Release Notes
 
-###4.5.0 (First Domino V10 release)
+###10.0.1
+- 10.0.1 support
+- Fixes for name DC part (#166)
+- `getVersion()` method wrapped in AccessController block (#167)
+- Various cleanup
+- Off-by-one issue in ViewNavigator fixed
+- Nathan's work merged in
+- XspOpenLogPhaseListener exception-sniffing improved
+- OpenLog fixes, see https://stackoverflow.com/questions/53480994/xpages-openlog-logger-errordoc
+- Fixes for `toGMTDate()` non-US date format
+
+###10.0.0 (First Domino V10 release)
 - Fix for XOTS running as current user when triggered from REST service plugin
 - Additional Xsp Property, "snap", which forces all calls on `getDocumentByKey` etc to exact match (second parameter set to `true`)
 - Fix for case where s_recycle tried to recycle non-Base objects

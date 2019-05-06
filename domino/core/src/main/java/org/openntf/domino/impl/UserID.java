@@ -12,8 +12,9 @@ public class UserID extends BaseThreadSafe<org.openntf.domino.UserID, lotus.domi
 		super(delegate, parent, NOTES_USERID);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getEncryptionKeys() {
+	public Vector<String> getEncryptionKeys() {
 		try {
 			return getDelegate().getEncryptionKeys();
 		} catch (Exception e) {

@@ -190,7 +190,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		XspOpenLogUtil.getXspOpenLogItem().setThisAgent(false);
 
 		String msg = "";
-		if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(error.getClass().getName())) {
+		if (error instanceof EvaluationExceptionEx) {
 			// EvaluationExceptionEx, so SSJS error is on a component property.
 			// Hit by ErrorOnLoad.xsp
 			EvaluationExceptionEx ee = (EvaluationExceptionEx) error;
@@ -205,8 +205,43 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 
 			}
 			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(ee, msg, null, null);
+		} else if(error instanceof PropertyNotFoundException) {
+			// Hit by ErrorOnProperty.xsp
+			// Property not found exception, so error is on a component property
+			PropertyNotFoundException pe = (PropertyNotFoundException) error;
+			msg = "PropertyNotFoundException Error, cannot locate component:\n\n" + pe.getLocalizedMessage();
+			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(pe, msg, null, null);
+		} else if(error instanceof FacesExceptionEx) {
+			// FacesException, so error is on event - doesn't get hit in examples. Can this still get hit??
+			FacesExceptionEx fe = (FacesExceptionEx) error;
+			try {
+				if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) {
+					// sometimes the cause is a NotesException
+					NotesException ne = (NotesException) fe.getCause();
 
-		} else if ("javax.faces.FacesException".equals(error.getClass().getName())) {
+					msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text;
+				} else if ("java.io.IOException".equals(error.getClass().getName())) {
+					IOException e = (IOException) error;
+
+					msg = "Java IO:" + error.toString();
+					XspOpenLogUtil.getXspOpenLogItem().logErrorEx(e.getCause(), msg, null, null);
+				} else {
+					EvaluationExceptionEx ee = (EvaluationExceptionEx) fe.getCause();
+					InterpretException ie = (InterpretException) ee.getCause();
+
+					msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event:\n\n"
+							+ Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
+				}
+			} catch (Throwable t) {
+				try {
+					msg = "Unexpected error class: " + fe.getCause().getClass().getName() + "\n Message recorded is: "
+							+ fe.getCause().getLocalizedMessage();
+				} catch (Throwable ee) {
+					msg = fe.getLocalizedMessage();
+				}
+			}
+			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(fe.getCause(), msg, null, null);
+		} else if (error instanceof FacesException) {
 			// FacesException, so error is on event or method in EL
 			FacesException fe = (FacesException) error;
 			InterpretException ie = null;
@@ -242,46 +277,8 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				msg = msg + fe.getCause().getLocalizedMessage();
 			}
 			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(fe.getCause(), msg, null, null);
-		} else if ("com.ibm.xsp.FacesExceptionEx".equals(error.getClass().getName())) {
-			// FacesException, so error is on event - doesn't get hit in examples. Can this still get hit??
-			FacesExceptionEx fe = (FacesExceptionEx) error;
-			try {
-				if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) {
-					// sometimes the cause is a NotesException
-					NotesException ne = (NotesException) fe.getCause();
-
-					msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text;
-				} else if ("java.io.IOException".equals(error.getClass().getName())) {
-					IOException e = (IOException) error;
-
-					msg = "Java IO:" + error.toString();
-					XspOpenLogUtil.getXspOpenLogItem().logErrorEx(e.getCause(), msg, null, null);
-				} else {
-					EvaluationExceptionEx ee = (EvaluationExceptionEx) fe.getCause();
-					InterpretException ie = (InterpretException) ee.getCause();
-
-					msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event:\n\n"
-							+ Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
-				}
-			} catch (Throwable t) {
-				try {
-					msg = "Unexpected error class: " + fe.getCause().getClass().getName() + "\n Message recorded is: "
-							+ fe.getCause().getLocalizedMessage();
-				} catch (Throwable ee) {
-					msg = fe.getLocalizedMessage();
-				}
-			}
-			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(fe.getCause(), msg, null, null);
-
-		} else if ("javax.faces.el.PropertyNotFoundException".equals(error.getClass().getName())) {
-			// Hit by ErrorOnProperty.xsp
-			// Property not found exception, so error is on a component property
-			PropertyNotFoundException pe = (PropertyNotFoundException) error;
-			msg = "PropertyNotFoundException Error, cannot locate component:\n\n" + pe.getLocalizedMessage();
-			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(pe, msg, null, null);
 		} else {
 			try {
-				System.out.println("Error type not found:" + error.getClass().getName());
 				msg = error.toString();
 				XspOpenLogUtil.getXspOpenLogItem().logErrorEx((Throwable) error, msg, null, null);
 			} catch (Throwable t) {

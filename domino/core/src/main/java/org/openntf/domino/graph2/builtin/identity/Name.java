@@ -25,6 +25,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("org.openntf.domino.graph2.builtin.identity.Name")
 @JavaHandlerClass(Name.NameImpl.class)
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface Name extends DVertexFrame, Socializer {
 	public static enum Utils {
 		;
@@ -33,16 +34,17 @@ public interface Name extends DVertexFrame, Socializer {
 			Boolean processed = name.isTokenProcessed();
 			if (processed == null || !processed) {
 				String val = name.getName();
-				Scanner s = new Scanner(val);
-				s.useDelimiter(DocumentScanner.REGEX_NONALPHANUMERIC);
-				while (s.hasNext()) {
-					CharSequence token = DocumentScanner.scrubToken(s.next(), caseSensitive);
-					if (token != null && (token.length() > 2)) {
-						Term tokenV = (Term) graph.addVertex(token.toString().toLowerCase(), Term.class);
-						if (tokenV.getValue() == null || tokenV.getValue().length() == 0) {
-							tokenV.setValue(token.toString());
+				try(Scanner s = new Scanner(val)) {
+					s.useDelimiter(DocumentScanner.REGEX_NONALPHANUMERIC);
+					while (s.hasNext()) {
+						CharSequence token = DocumentScanner.scrubToken(s.next(), caseSensitive);
+						if (token != null && (token.length() > 2)) {
+							Term tokenV = (Term) graph.addVertex(token.toString().toLowerCase(), Term.class);
+							if (tokenV.getValue() == null || tokenV.getValue().length() == 0) {
+								tokenV.setValue(token.toString());
+							}
+							name.addPart(tokenV);
 						}
-						name.addPart(tokenV);
 					}
 				}
 				name.setTokenProcessed(true);

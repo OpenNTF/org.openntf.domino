@@ -60,6 +60,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.frames.modules.typedgraph.TypedGraphModuleBuilder;
 import com.tinkerpop.frames.util.Validate;
 
+@SuppressWarnings({ "rawtypes" })
 public class DConfiguration extends FramedGraphConfiguration implements org.openntf.domino.graph2.DConfiguration {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DConfiguration.class.getName());
@@ -1133,6 +1134,7 @@ public class DConfiguration extends FramedGraphConfiguration implements org.open
 	}
 
 	private Map<Class<?>, DKeyResolver> keyResolverMap_;
+	@SuppressWarnings("unused")
 	private DocumentScanner indexScanner_;
 
 	protected Map<Class<?>, DKeyResolver> getResolverMap() {

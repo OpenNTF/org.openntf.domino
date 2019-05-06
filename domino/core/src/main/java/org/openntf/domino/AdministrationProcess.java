@@ -38,7 +38,7 @@ import org.openntf.domino.types.SessionDescendant;
  * </p>
  */
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess,
-		org.openntf.domino.ext.AdministrationProcess, SessionDescendant {
+org.openntf.domino.ext.AdministrationProcess, SessionDescendant {
 
 	public static class Schema extends FactorySchema<AdministrationProcess, lotus.domino.AdministrationProcess, Session> {
 		@Override
@@ -376,7 +376,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * @param immediate
 	 *            true to delete all references to the group in the Domino Directory before issuing an administration process request, false
 	 *            to let the administration process make all deletions. Note: A true setting may impact performance.
-	 * @return
+	 * @return The note ID of an entry created in the Administration Requests database.
 	 */
 	@Override
 	public String deleteGroup(final String groupName, final boolean immediate);
@@ -395,7 +395,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 *            to let the administration process make all deletions. Note: A true setting may impact performance.
 	 * @param deleteWindowsGroup
 	 *            true to delete the corresponding Windows group, false to not delete the corresponding Windows group
-	 * @return
+	 * @return The note ID of an entry created in the Administration Requests database.
 	 */
 	@Override
 	public String deleteGroup(final String groupName, final boolean immediate, final boolean deleteWindowsGroup);
@@ -1000,7 +1000,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * This property applies when {@link #isUseCertificateAuthority()} is false and a certifier is required.
 	 * </p>
 	 *
-	 * @param fileSpec
+	 * @param fileSpec the file specification to set
 	 */
 	@Override
 	public void setCertifierFile(final String fileSpec);
@@ -1011,7 +1011,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * This property applies when {@link #isUseCertificateAuthority} is false and a certifier is required.
 	 * </p>
 	 *
-	 * @param password
+	 * @param password the password to set
 	 */
 	@Override
 	public void setCertifierPassword(final String password);
@@ -1151,28 +1151,29 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * Private Design Elements" administration process requests.
 	 * </p>
 	 *
-	 * @param arg0
+	 * @param dn
 	 *            The hierarchical name of the user in canonical or abbreviated form.
-	 * @param arg1
+	 * @param deleteReferences
 	 *            true to delete all references to the user in the Domino Directory before issuing an administration process request, false
 	 *            to let the administration process make all deletions. Note: A true setting may impact performance.
-	 * @param arg2
+	 * @param mailFileAction
 	 *            Indicates the disposition of the user's mail file:
 	 *            <ul>
 	 *            <li>AdministrationProcess.MAILFILE_DELETE_ALL deletes the mail file on the user's home server and all replicas.</li>
 	 *            <li>AdministrationProcess.MAILFILE_DELETE_HOME deletes the mail file on the user's home server.</li>
 	 *            <li>AdministrationProcess.MAILFILE_DELETE_NONE leaves the user's mail file.</li>
 	 *            </ul>
-	 * @param arg3
+	 * @param denyGroup
 	 *            The name of an existing group of type "Deny List Only" to which the name of the deleted user is added. The empty string
 	 *            means do not add the user name to any group.
-	 * @param arg4
+	 * @param deleteWindowsUser
 	 *            true to delete the corresponding Windows user
 	 * @param arg5
+	 *            Currently undocumented
 	 *
 	 * @return The note ID of an entry created in the Administration Requests database.
 	 */
 	@Override
-	public String deleteUser(String arg0, boolean arg1, int arg2, String arg3, boolean arg4, int arg5);
+	public String deleteUser(String dn, boolean deleteReferences, int mailFileAction, String denyGroup, boolean deleteWindowsUser, int arg5);
 
 }

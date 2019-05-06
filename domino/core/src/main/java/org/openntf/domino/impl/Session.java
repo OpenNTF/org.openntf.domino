@@ -138,6 +138,9 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
+	private String dateFormat_;
+	private String timeFormat_;
+
 	@Override
 	public boolean isFixEnabled(final Fixes fix) {
 		return fixes_.contains(fix);
@@ -1625,6 +1628,9 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	}
 
 	private org.openntf.domino.Session recreateSession() {
+		if (sessionType_ == null) {
+			sessionType_ = SessionType.CURRENT;
+		}
 		switch (sessionType_) {
 		case _NAMED_FULL_ACCESS_internal:
 			return Factory.getNamedSession(username_, true);
@@ -2262,5 +2268,34 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 			DominoUtils.handleException(ne);
 			return null;
 		}
+	}
+
+	@Override
+	public String getDateFormatForDateTimeFormatter() {
+		if (null == dateFormat_) {
+			International i = getInternational();
+			String sep = i.getDateSep();
+			if (i.isDateMDY()) {
+				dateFormat_ = "MM" + sep + "dd" + sep + "uuuu";
+			} else if (i.isDateDMY()) {
+				dateFormat_ = "dd" + sep + "MM" + sep + "uuuu";
+			} else {
+				dateFormat_ = "uuuu" + sep + "MM" + sep + "dd";
+			}
+		}
+		return dateFormat_;
+	}
+
+	@Override
+	public String getTimeFormatForDateTimeFormatter() {
+		if (null == timeFormat_) {
+			International i = getInternational();
+			if (i.isTime24Hour()) {
+				timeFormat_ = "HH:mm:ss";
+			} else {
+				timeFormat_ = "hh:mm:ss a";
+			}
+		}
+		return timeFormat_;
 	}
 }
