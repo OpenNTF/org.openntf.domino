@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.domino.dependencies.feature"
       label="OpenNTF Domino API Dependencies"
-      version="10.0.1.qualifier"
+      version="10.0.2.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
@@ -40,10 +40,34 @@
          version="0.0.0"
          unpack="false"/>
 
-	<plugin id="com.google.guava" version="19.0.0"/>
-	<plugin id="com.google.guava.source" version="19.0.0"/>
-	<plugin id="javassist" version="3.18.2.GA"/>
-	<plugin id="javassist.source" version="3.18.2.GA"/>
-	<plugin id="javolution" version="6.1.1"/>
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
+         version="19.0.0"/>
+
+   <plugin
+         id="com.google.guava.source"
+         download-size="0"
+         install-size="0"
+         version="19.0.0"/>
+
+   <plugin
+         id="javassist"
+         download-size="0"
+         install-size="0"
+         version="3.18.2.GA"/>
+
+   <plugin
+         id="javassist.source"
+         download-size="0"
+         install-size="0"
+         version="3.18.2.GA"/>
+
+   <plugin
+         id="javolution"
+         download-size="0"
+         install-size="0"
+         version="6.1.1"/>
 
 </feature>
