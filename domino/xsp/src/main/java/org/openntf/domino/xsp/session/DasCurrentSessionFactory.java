@@ -40,7 +40,7 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 	 */
 	@Override
 	public Session createSession() {
-		if (request_ == null) {
+		if (request_ == null || request_.getUserPrincipal() == null) {
 			lotus.domino.Session rawSession = ContextInfo.getUserSession();
 			if (rawSession == null) {
 				NativeSessionFactory nsf = new NativeSessionFactory(null);
@@ -63,7 +63,6 @@ public class DasCurrentSessionFactory extends AbstractXPageSessionFactory {
 			return wrapSession(rawSession, false);
 		} else {
 			String name = request_.getUserPrincipal().getName();
-			//			System.out.println("TEMP DEBUG getting session for " + name);
 			Session session = createSession(name);
 			Factory.setCurrentToSession(session);
 			return session;
