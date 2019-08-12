@@ -836,7 +836,13 @@ implements org.openntf.domino.Document {
 		checkMimeOpen(null);
 		// DONE - NTF markDirty() - RPr: no does not make the document dirty?
 		try {
-			return fromLotus(getDelegate().copyToDatabase(toLotus(db)), Document.SCHEMA, getParentDatabase());
+			Database odaDest;
+			if(db instanceof Database) {
+				odaDest = (Database)db;
+			} else {
+				odaDest = fromLotus(db, Database.SCHEMA, getAncestorSession());
+			}
+			return fromLotus(getDelegate().copyToDatabase(toLotus(db)), Document.SCHEMA, odaDest);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}

@@ -1,6 +1,7 @@
 package org.openntf.domino.tests.general;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Vector;
@@ -52,5 +53,23 @@ public class TestDocuments {
 			DocumentCollection children = doc.getResponses();
 			assertTrue("children parent should be a database", children.getParent() instanceof Database);
 		}
+	}
+	
+	/**
+	 * Tests for https://github.com/OpenNTF/org.openntf.domino/issues/152
+	 */
+	@Test
+	public void testCopyToDatabase() {
+		Session session = Factory.getSession();
+		Database source = session.getDatabase(AllTests.EMPTY_DB);
+		Document sourceDoc = source.createDocument();
+		sourceDoc.put("Foo", "Bar");
+		sourceDoc.save();
+		
+		Database dest = session.getDatabase(AllTests.EMPTY_DB_COPY);
+		Document destDoc = sourceDoc.copyToDatabase(dest);
+		assertEquals("Foo should match", "Bar", destDoc.getItemValueString("Foo"));
+		assertNotEquals("Dest Doc parent replica ID should not match source DB", source.getReplicaID(), destDoc.getParentDatabase().getReplicaID());
+		assertEquals("Dest Doc parent replica ID should match expected", dest.getReplicaID(), destDoc.getParentDatabase().getReplicaID());
 	}
 }

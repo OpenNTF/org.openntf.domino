@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openntf.domino.Session;
+import org.openntf.domino.tests.general.TestDatabase;
 import org.openntf.domino.tests.general.TestDocuments;
 import org.openntf.domino.tests.general.TestFactory;
 import org.openntf.domino.tests.general.TestName;
@@ -28,6 +29,7 @@ import lotus.domino.NotesThread;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 		TestWrapperFactory.class,
+		TestDatabase.class,
 		TestDatabasePropertyWrapper.class,
 		TestName.class,
 		TestFactory.class,
@@ -38,6 +40,7 @@ public class AllTests {
 	public static Session session; // Set by TestWrapperFactory
 	
 	public static String EMPTY_DB;
+	public static String EMPTY_DB_COPY; // Set by TestDatabase;
 
 	@BeforeClass
 	public static void init() throws Exception {
@@ -60,6 +63,7 @@ public class AllTests {
 		NotesThread.stermThread();
 		
 		deleteDb(EMPTY_DB);
+		deleteDb(EMPTY_DB_COPY);
 
 		System.out.println("Term " + AllTests.class.getName());
 	}
