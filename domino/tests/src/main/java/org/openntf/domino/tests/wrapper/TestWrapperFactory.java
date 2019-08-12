@@ -8,6 +8,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.tests.AllTests;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Factory.SessionType;
 
 public class TestWrapperFactory {
 
@@ -18,5 +19,7 @@ public class TestWrapperFactory {
 		System.out.println("Path is " + AllTests.EMPTY_DB);
 		Database db = AllTests.session.getDatabase(AllTests.EMPTY_DB);
 		assertNotNull(db);
+		
+		Factory.setSessionFactory(() -> AllTests.session, SessionType.CURRENT);
 	}
 }
