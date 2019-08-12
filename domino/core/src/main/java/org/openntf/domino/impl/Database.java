@@ -79,6 +79,7 @@ import org.openntf.domino.utils.CollectionUtils;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.enums.DominoEnumUtil;
 
+import com.ibm.commons.util.StringUtil;
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
 
@@ -1394,6 +1395,9 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	 */
 	@Override
 	public Form getForm(final String name) {
+		if(StringUtil.isEmpty(name)) {
+			return null;
+		}
 		try {
 			if (!getDelegate().isOpen()) {
 				getDelegate().open();

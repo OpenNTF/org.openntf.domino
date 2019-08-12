@@ -27,4 +27,16 @@ public class TestDatabase {
 		
 		AllTests.EMPTY_DB_COPY = tempPath.toString();
 	}
+	
+	/**
+	 * Test for https://github.com/OpenNTF/org.openntf.domino/issues/164
+	 */
+	@Test
+	public void testGetForm() {
+		Session session = Factory.getSession();
+		Database database = session.getDatabase(AllTests.EMPTY_DB);
+		database.getForm(null);
+		database.getForm("");
+		database.getForm("fakeform");
+	}
 }
