@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openntf.domino.Session;
+import org.openntf.domino.tests.general.TestDocuments;
 import org.openntf.domino.tests.general.TestFactory;
 import org.openntf.domino.tests.general.TestName;
 import org.openntf.domino.tests.wrapper.TestDatabasePropertyWrapper;
@@ -29,7 +30,8 @@ import lotus.domino.NotesThread;
 		TestWrapperFactory.class,
 		TestDatabasePropertyWrapper.class,
 		TestName.class,
-		TestFactory.class
+		TestFactory.class,
+		TestDocuments.class
 })
 public class AllTests {
 	public static lotus.domino.Session lotusSession;
