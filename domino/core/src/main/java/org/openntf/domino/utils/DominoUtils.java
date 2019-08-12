@@ -540,7 +540,11 @@ public enum DominoUtils {
 	}
 
 	public static boolean isHierarchicalName(final CharSequence name) {
-		return (Strings.isBlankString(name.toString())) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
+		String n = StringUtil.toString(name);
+		if(StringUtil.isEmpty(n)) {
+			return false;
+		}
+		return (Strings.isBlankString(n)) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
 
 	public static void parseNamesPartMap(final CharSequence name, final NamePartsMap map) {
