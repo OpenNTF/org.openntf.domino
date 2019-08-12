@@ -19,15 +19,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URL;
 import java.security.AccessControlException;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -368,7 +368,7 @@ public enum Factory {
 	 */
 	private static void loadEnvironment(final Scanner scanner) {
 		if (ENVIRONMENT == null) {
-			ENVIRONMENT = new HashMap<String, String>();
+			ENVIRONMENT = new HashMap<>();
 		}
 		if (scanner != null) {
 			while (scanner.hasNextLine()) {
@@ -382,50 +382,34 @@ public enum Factory {
 			}
 		}
 		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					try {
-						ClassLoader cl = Factory.class.getClassLoader();
-						// we MUST use the Factory-classloader to find the correct MANIFEST
-						Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
-						while (resources.hasMoreElements()) {
+			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+				try(InputStream is = Factory.class.getResourceAsStream("/META-INF/MANIFEST.MF")) {
+					Manifest manifest = new Manifest(is);
+					// check that this is your manifest and do what you need or get the next one
+					Attributes attrib = manifest.getMainAttributes();
 
-							Manifest manifest = new Manifest(resources.nextElement().openStream());
-							// check that this is your manifest and do what you need or get the next one
-							Attributes attrib = manifest.getMainAttributes();
-
-							String bundleName = attrib.getValue("Bundle-SymbolicName");
-							if (bundleName != null) {
-								int pos;
-								if ((pos = bundleName.indexOf(';')) != -1) {
-									bundleName = bundleName.substring(0, pos);
-								}
-								if ("org.openntf.domino".equals(bundleName)) {
-									ENVIRONMENT.put("version", attrib.getValue("Bundle-Version"));
-									ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
-									ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
-									return null;
-								}
-							}
-
+					String bundleName = attrib.getValue("Bundle-SymbolicName");
+					if (bundleName != null) {
+						int pos;
+						if ((pos = bundleName.indexOf(';')) != -1) {
+							bundleName = bundleName.substring(0, pos);
 						}
-
-					} catch (Exception e) {
-						e.printStackTrace();
+						if ("org.openntf.domino".equals(bundleName)) {
+							ENVIRONMENT.put("version", attrib.getValue("Bundle-Version"));
+							ENVIRONMENT.put("title", attrib.getValue("Bundle-Name"));
+							ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+							return null;
+						}
 					}
-					return null;
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				return null;
 			});
 		} catch (AccessControlException e) {
 			e.printStackTrace();
-		} catch (PrivilegedActionException e) {
-			e.printStackTrace();
 		}
-		if (!ENVIRONMENT.containsKey("version")) {
-			ENVIRONMENT.put("version", "0.0.0.unknown");
-		}
-
+		ENVIRONMENT.putIfAbsent("version", "0.0.0.unknown");
 	}
 
 	public static String getEnvironment(final String key) {
