@@ -152,7 +152,7 @@
 							<requirement>
 								<type>eclipse-plugin</type>
 								<id>com.ibm.notes.java.api.win32.linux</id>
-								<versionRange>[9.0.1,9.0.2)</versionRange>
+								<versionRange>9.0.1</versionRange>
 							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
