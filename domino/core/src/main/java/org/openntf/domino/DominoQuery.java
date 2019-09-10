@@ -1,7 +1,7 @@
 package org.openntf.domino;
 
-import lotus.domino.DocumentCollection;
 
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
 

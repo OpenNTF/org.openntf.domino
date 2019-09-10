@@ -2,10 +2,10 @@ package org.openntf.domino.impl;
 
 import java.util.ArrayList;
 
-import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
