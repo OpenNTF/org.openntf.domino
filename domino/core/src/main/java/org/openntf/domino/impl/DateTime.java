@@ -93,11 +93,11 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 
 	private static lotus.domino.DateTime generateWorker() {
 		try {
-			lotus.domino.Session rawsession = toLotus(Factory.getSession(SessionType.CURRENT));
+			lotus.domino.Session rawsession = toLotus(Factory.getSession(SessionType.NATIVE));
 			if (rawsession == null) {
 				// Then fall back to getting a native session
 				// This may occur in OSGi servlet contexts
-				rawsession = toLotus(Factory.getSession(SessionType.NATIVE));
+				rawsession = toLotus(Factory.getSession(SessionType.CURRENT));
 			}
 			return rawsession.createDateTime(new Date());
 		} catch (Exception e) {
