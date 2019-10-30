@@ -1680,4 +1680,26 @@ public class ViewColumn extends BaseThreadSafe<org.openntf.domino.ViewColumn, lo
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public boolean isValidDominoQueryColumn() {
+		try {
+			return getDelegate().isValidDominoQueryColumn();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isValidDominoQueryField() {
+		try {
+			return getDelegate().isValidDominoQueryField();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+	
+	
+
 }

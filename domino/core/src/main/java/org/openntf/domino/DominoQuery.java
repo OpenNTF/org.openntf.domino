@@ -1,6 +1,8 @@
 package org.openntf.domino;
 
 
+import lotus.domino.NotesException;
+
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
@@ -157,5 +159,69 @@ public interface DominoQuery extends lotus.domino.DominoQuery, Base<lotus.domino
 	 */
 	@Override
 	void setTimeoutSec(int timeoutSec);
+	
+	/**
+	 * Specifies to DQL processing to completely rebuild the Design Catalog before processing a query 
+	 * using Explain or Execute.
+	 * 
+	 * @return boolean
+	 * @since V11
+	 */
+	public boolean isRebuildDesignCatalog();
+	
+	/**
+	 * Specifies to DQL processing to completely rebuild the Design Catalog before processing a query 
+	 * using Explain or Execute.
+	 * 
+	 * While use of this property can be costly and contentious, it forces a 
+	 * complete rebuild of the Design Catalog prior to running a query.
+	 * 
+	 * @param boolean, whetgher or not to rebuild design catalog
+	 * @since V11
+	 */
+	public void setRebuildDesignCatalog(boolean rebuildCatalog);
+	
+	/**
+	 * Specifies to DQL processing to refresh the Design Catalog before processing a query using Explain 
+	 * or Execute.
+	 * 
+	 * @return boolean
+	 * @since V11
+	 */
+	public boolean isRefreshDesignCatalog();
+	
+	/**
+	 * Specifies to DQL processing to refresh the Design Catalog before processing a query using Explain 
+	 * or Execute.
+	 * 
+	 * While use of this property is not free in resource usage or time, it is less costly than 
+	 * RebuildDesignCatalog and it ensures the state of current database design is reflected accurately 
+	 * in the Design Catalog documents for the current database.
+	 * 
+	 * @param boolean
+	 * @since V11
+	 */
+	public void setRefreshDesignCatalog(boolean refreshCatalog);
+	
+	/**
+	 * Specifies to DQL processing to refresh the full text index for a database prior to query processing 
+	 * using Explain or Execute.
+	 * 
+	 * @return boolean
+	 * @since V11
+	 */
+	public boolean isRefreshFullText();
+	
+	/**
+	 * Specifies to DQL processing to refresh the full text index for a database prior to query processing 
+	 * using Explain or Execute.
+	 * 
+	 * While use of this property is not free in resource usage or time, it is only slightly contentious 
+	 * and guarantees the latest updates are full text indexed prior to query processing.
+	 * 
+	 * @param boolean
+	 * @since V11
+	 */
+	public void setRefreshFullText(boolean refresh);
 
 }

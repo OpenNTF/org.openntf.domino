@@ -904,4 +904,23 @@ public interface ViewColumn
 	 */
 	@Override
 	public void setWidth(final int width);
+	
+	/*
+	 * Indicates whether a view column can be used in DQL 'ViewName'.column <operator> <value> terms.
+	 * 
+	 * @return boolean
+	 * @since V11
+	 */
+	@Override
+	public boolean isValidDominoQueryColumn();
+
+
+	/*
+	 * Indicates whether a view column can be used in DQL <fieldname> <operator> <value> terms.
+	 * 
+	 * @return boolean
+	 * @since V11
+	 */
+	@Override
+	public boolean isValidDominoQueryField();
 }

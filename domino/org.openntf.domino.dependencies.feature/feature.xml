@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.domino.dependencies.feature"
       label="OpenNTF Domino API Dependencies"
-      version="10.0.2.qualifier"
+      version="11.0.0.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.example.com/description">
