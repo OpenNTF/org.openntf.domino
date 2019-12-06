@@ -85,6 +85,7 @@ import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 
+import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
 // TODO: Auto-generated Javadoc
@@ -1123,6 +1124,35 @@ implements org.openntf.domino.Document {
 			DominoUtils.handleException(e, this);
 		}
 		return null;
+	}
+
+	@Override
+	public List<String> getAttachmentNames() {
+		List<String> result = new ArrayList<String>();
+
+		lotus.domino.Session rawSession = toLotus(getAncestorSession());
+		try {
+			Vector<?> attachmentNames = rawSession.evaluate("@AttachmentNames", getDelegate());
+
+			for (Object attachmentName : attachmentNames) {
+				result.add((String) attachmentName);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+
+		//		result.addAll(getEmbeddedObjects());
+		//		for (Item item : getItems()) {
+		//			if (item instanceof RichTextItem) {
+		//				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
+		//				for (EmbeddedObject obj : objects) {
+		//					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
+		//						result.add(obj);
+		//					}
+		//				}
+		//			}
+		//		}
+		return result;
 	}
 
 	@Override
@@ -4256,16 +4286,19 @@ implements org.openntf.domino.Document {
 				//						jw.outProperty(key, abstractedText);
 				//					}
 				//				}
+				
+				// Now output attachments
+				jw.outProperty("@attachments", getAttachmentNames());
 			}
 			jw.endObject();
 			jw.flush();
 		} catch (IOException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-		} /*catch (JsonException e) {
+		} catch (JsonException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-			}*/
+		}
 		return sw.toString();
 	}
 
