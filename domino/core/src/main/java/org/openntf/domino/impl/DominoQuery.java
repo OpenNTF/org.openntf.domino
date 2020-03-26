@@ -1,6 +1,7 @@
 package org.openntf.domino.impl;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import lotus.domino.NotesException;
 
@@ -176,6 +177,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
 	public boolean isRebuildDesignCatalog() {
 		try {
 			return getDelegate().isRebuildDesignCatalog();
@@ -185,6 +187,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
 	public void setRebuildDesignCatalog(boolean rebuildCatalog) {
 		try {
 			getDelegate().setRebuildDesignCatalog(rebuildCatalog);
@@ -193,6 +196,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
 	public boolean isRefreshDesignCatalog() {
 		try {
 			return getDelegate().isRefreshDesignCatalog();
@@ -202,6 +206,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
 	public void setRefreshDesignCatalog(boolean refreshCatalog) {
 		try {
 			getDelegate().setRefreshDesignCatalog(refreshCatalog);
@@ -210,6 +215,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
 	public boolean isRefreshFullText() {
 		try {
 			return getDelegate().isRefreshFullText();
@@ -219,6 +225,7 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
 	public void setRefreshFullText(boolean refresh) {
 		try {
 			getDelegate().setRefreshFullText(refresh);
@@ -227,4 +234,60 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		}
 	}
 
+	@Override
+	public void createIndex(String name, String field) throws NotesException {
+		try {
+			getDelegate().createIndex(name, field);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields) throws NotesException {
+		try {
+			getDelegate().createIndex(name, fields);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, String field, boolean isVisible, boolean noBuild) throws NotesException {
+		try {
+			getDelegate().createIndex(name, field, isVisible, noBuild);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields, boolean isVisible, boolean noBuild) throws NotesException {
+		try {
+			getDelegate().createIndex(name, fields, isVisible, noBuild);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public String listIndexes() throws NotesException {
+		try {
+			return getDelegate().listIndexes();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public void removeIndex(String name) throws NotesException {
+		try {
+			getDelegate().removeIndex(name);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	
 }
