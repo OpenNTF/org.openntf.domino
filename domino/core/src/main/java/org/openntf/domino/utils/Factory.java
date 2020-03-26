@@ -64,7 +64,6 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
-import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -230,12 +229,7 @@ public enum Factory {
 		 * @return a counter for the class
 		 */
 		public Counter forClass(final Class<?> clazz) {
-			Counter ret = classes.get(clazz);
-			if (ret == null) {
-				ret = new Counter(countPerThread_);
-				classes.put(clazz, ret);
-			}
-			return ret;
+			return classes.computeIfAbsent(clazz, key -> new Counter(countPerThread_));
 		}
 
 		Counters(final boolean countPerThread) {
