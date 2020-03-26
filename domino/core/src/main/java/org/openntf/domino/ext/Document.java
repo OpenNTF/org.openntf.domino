@@ -66,6 +66,14 @@ public interface Document {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public Date getCreatedDate();
+	
+	/**
+	 * Gets a list of attachment names
+	 * 
+	 * @return List<String> all attachments, by running @AttachmentNames formula
+	 * @since ODA 11.0.0
+	 */
+	public List<String> getAttachmentNames();
 
 	/**
 	 *

@@ -15,15 +15,19 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -40,6 +44,9 @@ import org.openntf.domino.impl.View.DominoColumnInfo;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
+
+import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.util.JsonWriter;
 
 // TODO: Auto-generated Javadoc
 
@@ -677,6 +684,49 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 		} else {
 			return null;
 		}
+	}
+
+	public String toJson(boolean compact) {
+		StringWriter sw = new StringWriter();
+		JsonWriter jw = new JsonWriter(sw, compact);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		try {
+			jw.startObject();
+			jw.outStringProperty("@unid", getUniversalID());
+			jw.outStringProperty("@noteid", getNoteID());
+			jw.outStringProperty("@replicaid", getAncestorDatabase().getReplicaID());
+			jw.outStringProperty("@metaversalid", getMetaversalID());
+
+			boolean resetPreferDates = false;
+			if (!isPreferJavaDates()) {
+				setPreferJavaDates(true);
+				resetPreferDates = true;
+			}
+			Map<String, Object> colVals = getColumnValuesMap();
+			Set<String> keys = colVals.keySet();
+			for (String key : keys) {
+				Object colVal = colVals.get(key);
+				if (colVal instanceof java.util.Date) {
+					jw.outProperty(key, sdf.format((java.util.Date) colVal));
+				} else {
+					jw.outProperty(key, colVal.toString());
+				}
+			}
+			
+			if (resetPreferDates) {
+				setPreferJavaDates(false);
+			}
+
+			jw.endObject();
+			jw.flush();
+		} catch (IOException e) {
+			DominoUtils.handleException(e, this.getDocument());
+			return null;
+		} catch (JsonException e) {
+			DominoUtils.handleException(e, this.getDocument());
+			return null;
+		}
+		return sw.toString();
 	}
 
 }

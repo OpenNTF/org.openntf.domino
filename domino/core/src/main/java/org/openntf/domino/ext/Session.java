@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.ext;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 
@@ -580,16 +581,16 @@ public interface Session {
 	public void setViewExactMatch(boolean exactMatch);
 
 	/**
-	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. dd/MM/uuuu for D/M/Y
+	 * Gets the proper date time format from the International class for use in a DateTimeFormatterBuilder, e.g. HH:mm:ss for 24 hour
 	 *
-	 * @since 10.0.2
+	 * @since 11.0.0
 	 */
-	public String getDateFormatForDateTimeFormatter();
+	public DateTimeFormatter getGMTDateTimeFormatter();
 
 	/**
 	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. HH:mm:ss for 24 hour
 	 *
-	 * @since 10.0.2
+	 * @since 11.0.0
 	 */
-	public String getTimeFormatForDateTimeFormatter();
+	public DateTimeFormatter getGMTDateFormatter();
 }

@@ -235,4 +235,12 @@ public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ex
 	 */
 	@Override
 	public void setPreferJavaDates(final boolean flag);
+	
+	/**
+	 * Converts a ViewEntry to JSON
+	 * 
+	 * @param compact whether or not to output compact JSON
+	 * @return String of JSON
+	 */
+	public String toJson(boolean compact);
 }

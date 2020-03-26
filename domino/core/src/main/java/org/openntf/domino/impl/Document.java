@@ -85,6 +85,7 @@ import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 
+import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
 
 // TODO: Auto-generated Javadoc
@@ -1123,6 +1124,35 @@ implements org.openntf.domino.Document {
 			DominoUtils.handleException(e, this);
 		}
 		return null;
+	}
+
+	@Override
+	public List<String> getAttachmentNames() {
+		List<String> result = new ArrayList<String>();
+
+		lotus.domino.Session rawSession = toLotus(getAncestorSession());
+		try {
+			Vector<?> attachmentNames = rawSession.evaluate("@AttachmentNames", getDelegate());
+
+			for (Object attachmentName : attachmentNames) {
+				result.add((String) attachmentName);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+
+		//		result.addAll(getEmbeddedObjects());
+		//		for (Item item : getItems()) {
+		//			if (item instanceof RichTextItem) {
+		//				List<org.openntf.domino.EmbeddedObject> objects = ((RichTextItem) item).getEmbeddedObjects();
+		//				for (EmbeddedObject obj : objects) {
+		//					if (obj.getType() == EmbeddedObject.EMBED_ATTACHMENT) {
+		//						result.add(obj);
+		//					}
+		//				}
+		//			}
+		//		}
+		return result;
 	}
 
 	@Override
@@ -4200,47 +4230,50 @@ implements org.openntf.domino.Document {
 			for (String key : keys) {
 				Item currItem = getFirstItem(key);
 
-				Type itemType = currItem.getTypeEx();
+				// A beer to anyone who can work out how this could happen, except for the person who identified it!
+				if (null != currItem) {
+					Type itemType = currItem.getTypeEx();
 
-				try {
-					if (itemType == Type.ATTACHMENT) {
-						jw.outProperty(key, "ATTACHMENT");
-					} else if (itemType == Type.AUTHORS || itemType == Type.READERS || itemType == Type.NAMES || itemType == Type.TEXT
-							|| itemType == Type.NUMBERS) {
-						Vector<Object> values = currItem.getValues();
-						if (values.size() == 1) {
-							jw.outProperty(key, values.elementAt(0));
-						} else {
-							jw.outProperty(key, values);
-						}
-					} else if (itemType == Type.DATETIMES) {
-						Vector<DateTime> values = currItem.getValueDateTimeArray();
-						//						Vector<Date> valueDates = new Vector<Date>();
-						//						for (DateTime dt : values) {
-						//							valueDates.add(dt.toJavaDate());
-						//						}
+					try {
+						if (itemType == Type.ATTACHMENT) {
+							jw.outProperty(key, "ATTACHMENT");
+						} else if (itemType == Type.AUTHORS || itemType == Type.READERS || itemType == Type.NAMES || itemType == Type.TEXT
+								|| itemType == Type.NUMBERS) {
+							Vector<Object> values = currItem.getValues();
+							if (values.size() == 1) {
+								jw.outProperty(key, values.elementAt(0));
+							} else {
+								jw.outProperty(key, values);
+							}
+						} else if (itemType == Type.DATETIMES) {
+							Vector<DateTime> values = currItem.getValueDateTimeArray();
+							//						Vector<Date> valueDates = new Vector<Date>();
+							//						for (DateTime dt : values) {
+							//							valueDates.add(dt.toJavaDate());
+							//						}
 
-						if (values.size() == 1) {
-							jw.outProperty(key, values.get(0).toGMTISO());
-						} else {
-							jw.outProperty(key, TypeUtils.toStrings(values));
+							if (values.size() == 1) {
+								jw.outProperty(key, values.get(0).toGMTISO());
+							} else {
+								jw.outProperty(key, TypeUtils.toStrings(values));
+							}
+						} else if (itemType == Type.EMBEDDEDOBJECT) {
+							jw.outProperty(key, "EMBEDDED_OBJECT");
+						} else if (itemType == Type.RICHTEXT) {
+							RichTextItem rtItem = (RichTextItem) currItem;
+							jw.outProperty(key, rtItem.getUnformattedText());
+						} else if (itemType == Type.MIME_PART) {
+							MIMEEntity mimeEntity = currItem.getMIMEEntity();
+							if (mimeEntity != null) {
+								jw.outProperty(key, mimeEntity.getContentAsText());
+							} else {
+								jw.outProperty(key, "MIME_PART null");
+							}
 						}
-					} else if (itemType == Type.EMBEDDEDOBJECT) {
-						jw.outProperty(key, "EMBEDDED_OBJECT");
-					} else if (itemType == Type.RICHTEXT) {
-						RichTextItem rtItem = (RichTextItem) currItem;
-						jw.outProperty(key, rtItem.getUnformattedText());
-					} else if (itemType == Type.MIME_PART) {
-						MIMEEntity mimeEntity = currItem.getMIMEEntity();
-						if (mimeEntity != null) {
-							jw.outProperty(key, mimeEntity.getContentAsText());
-						} else {
-							jw.outProperty(key, "MIME_PART null");
-						}
+					} catch (Exception e) {
+						DominoUtils.handleException(e, this);
+						e.printStackTrace();	// NTF - temporary
 					}
-				} catch (Exception e) {
-					DominoUtils.handleException(e, this);
-					e.printStackTrace();	// NTF - temporary
 				}
 
 				//				if (currItem.getMIMEEntity() == null) {
@@ -4253,16 +4286,19 @@ implements org.openntf.domino.Document {
 				//						jw.outProperty(key, abstractedText);
 				//					}
 				//				}
+				
+				// Now output attachments
+				jw.outProperty("@attachments", getAttachmentNames());
 			}
 			jw.endObject();
 			jw.flush();
 		} catch (IOException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-		} /*catch (JsonException e) {
+		} catch (JsonException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-			}*/
+		}
 		return sw.toString();
 	}
 

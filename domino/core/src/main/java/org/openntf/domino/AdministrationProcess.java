@@ -1175,5 +1175,7 @@ org.openntf.domino.ext.AdministrationProcess, SessionDescendant {
 	 */
 	@Override
 	public String deleteUser(String dn, boolean deleteReferences, int mailFileAction, String denyGroup, boolean deleteWindowsUser, int arg5);
+	
+	public String approveRenamePersonCommonNameInDirectory(String arg0);
 
 }

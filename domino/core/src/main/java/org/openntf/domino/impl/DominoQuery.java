@@ -2,10 +2,10 @@ package org.openntf.domino.impl;
 
 import java.util.ArrayList;
 
-import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -174,6 +174,57 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 	@Override
 	protected WrapperFactory getFactory() {
 		return parent.getAncestorSession().getFactory();
+	}
+
+	public boolean isRebuildDesignCatalog() {
+		try {
+			return getDelegate().isRebuildDesignCatalog();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	public void setRebuildDesignCatalog(boolean rebuildCatalog) {
+		try {
+			getDelegate().setRebuildDesignCatalog(rebuildCatalog);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	public boolean isRefreshDesignCatalog() {
+		try {
+			return getDelegate().isRefreshDesignCatalog();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	public void setRefreshDesignCatalog(boolean refreshCatalog) {
+		try {
+			getDelegate().setRefreshDesignCatalog(refreshCatalog);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	public boolean isRefreshFullText() {
+		try {
+			return getDelegate().isRefreshFullText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	public void setRefreshFullText(boolean refresh) {
+		try {
+			getDelegate().setRefreshFullText(refresh);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }
