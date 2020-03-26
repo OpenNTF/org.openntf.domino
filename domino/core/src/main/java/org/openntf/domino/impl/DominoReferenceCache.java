@@ -17,19 +17,20 @@ package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lotus.domino.Base;
-
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.Factory;
+
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.Multiset;
+
+import lotus.domino.Base;
 
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
@@ -49,7 +50,7 @@ public class DominoReferenceCache {
 	/** The delegate map contains the value wrapped in phantomReferences) **/
 	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
 	private Map<lotus.domino.Base, DominoReference> map = new IdentityHashMap<lotus.domino.Base, DominoReference>(2048);
-	private Map<Long, AtomicInteger> cppMap = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>(2048));
+	private Multiset<Long> cppMap = ConcurrentHashMultiset.create();
 
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
@@ -133,13 +134,7 @@ public class DominoReferenceCache {
 		if (value instanceof SessionDescendant
 				&& ((SessionDescendant) value).getAncestorSession().isFixEnabled(Fixes.PEDANTIC_GC_TRACKING)) {
 			cppId = org.openntf.domino.impl.Base.GetCppObj(delegate);
-			synchronized (cppMap) {
-				if (!cppMap.containsKey(cppId)) {
-					cppMap.put(cppId, new AtomicInteger(1));
-				} else {
-					cppMap.get(cppId).incrementAndGet();
-				}
-			}
+			cppMap.add(cppId);
 		}
 
 		// create and enqueue a reference that tracks lifetime of value
@@ -214,10 +209,10 @@ public class DominoReferenceCache {
 			if (cppId != 0) {
 				// Then it must have had tracking enabled
 				synchronized (cppMap) {
-					if (cppMap.get(cppId).decrementAndGet() < 1) {
+					cppMap.remove(cppId);
+					if (cppMap.count(cppId) < 1) {
 						// Then this must have been the last ref for that CPP ID
 						recycle = true;
-						cppMap.remove(cppId);
 					}
 				}
 			} else {
@@ -303,7 +298,11 @@ public class DominoReferenceCache {
 			//		doc1 = null;
 
 			// So, these objects can be removed from the cache
-			map.remove(ref.getDelegate());
+			if(ref != null) {
+				map.remove(ref.getDelegate());
+				long cppId = ref.getCppId();
+				cppMap.remove(cppId);
+			}
 			return null;
 		} else {
 			return result; // the wrapper.
