@@ -40,6 +40,8 @@ Import-Package: com.ibm.domino.osgi.core.context,
  javax.ws.rs.core,
  javax.ws.rs.ext,
  lotus.domino,
+ lotus.notes,
+ lotus.notes.addins,
  org.apache.wink.common.internal.utils,
  org.apache.wink.server.internal.servlet
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
