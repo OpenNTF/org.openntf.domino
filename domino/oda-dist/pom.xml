@@ -63,13 +63,13 @@
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.updatesite</artifactId>
 			<version>${project.version}</version>
-			<type>eclipse-update-site</type>
+			<type>eclipse-repository</type>
 		</dependency>
 		<dependency>
 			<groupId>org.openntf.domino</groupId>
 			<artifactId>org.openntf.domino.nonxsp.updatesite</artifactId>
 			<version>${project.version}</version>
-			<type>eclipse-update-site</type>
+			<type>eclipse-repository</type>
 		</dependency>
 	</dependencies>
 	

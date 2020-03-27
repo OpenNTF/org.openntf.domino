@@ -73,7 +73,6 @@
 			</includes>
 			
 			<binaries>
-				<attachmentClassifier>assembly</attachmentClassifier>
 				<outputDirectory>UpdateSite</outputDirectory>
 				<unpack>true</unpack>
 				<includeDependencies>false</includeDependencies>
