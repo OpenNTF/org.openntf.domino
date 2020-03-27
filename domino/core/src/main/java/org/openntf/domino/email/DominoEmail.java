@@ -19,9 +19,11 @@
 package org.openntf.domino.email;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -417,7 +419,8 @@ public class DominoEmail implements IEmail {
 							is = eo.getInputStream();
 						}
 					} else if (attachmentType == Type.FILE) {
-						is = new FileInputStream(attach.getPath() + attach.getFileName());
+						Path path = Paths.get(attach.getPath()).resolve(attach.getFileName());
+						is = Files.newInputStream(path);
 					} else if (attachmentType == Type.STREAM) {
 						is = attach.getInputStream();
 					} else {

@@ -15,9 +15,9 @@
  */
 package org.openntf.domino.design;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
@@ -117,7 +117,7 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	//
 	//	public String getOnDiskPath();
 
-	public void writeOnDiskFile(File odsFile) throws IOException;
+	public void writeOnDiskFile(Path odsFile) throws IOException;
 
 	public Collection<String> getItemNames();
 

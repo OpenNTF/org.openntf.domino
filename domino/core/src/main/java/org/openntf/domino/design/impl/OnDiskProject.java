@@ -15,15 +15,17 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.ibm.commons.util.StringUtil;
 
 public class OnDiskProject {
-	private File root_;
+	private Path root_;
 
-	public OnDiskProject(final File root) {
+	public OnDiskProject(final Path root) {
 		root_ = root;
 	}
 
@@ -32,15 +34,14 @@ public class OnDiskProject {
 		AbstractDesignBase elem = (AbstractDesignBase) elem_;
 		String odp = elem.getOnDiskPath();
 		if (StringUtil.isEmpty(odp)) {
-			odp = elem.getNoteID() + ".note";
+			odp = elem.getNoteID() + ".note"; //$NON-NLS-1$
 		}
 		//elem.getLastModified();
-		File odsFile = new File(root_, odp);
-		System.out.println(elem.getClass().getName() + "\t\t\t" + odsFile + "\t" + elem.getNoteID());
-		odsFile.getParentFile().mkdirs(); // ensure the path exists
+		Path odsFile = root_.resolve(odp);
+		Files.createDirectories(odsFile.getParent());
 		elem.writeOnDiskFile(odsFile);
 		if (elem instanceof HasMetadata) {
-			File meta = new File(odsFile.getAbsolutePath() + ".metadata");
+			Path meta = Paths.get(odsFile.toString() + ".metadata"); //$NON-NLS-1$
 			((HasMetadata) elem).writeOnDiskMeta(meta);
 		}
 

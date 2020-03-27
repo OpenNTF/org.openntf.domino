@@ -15,9 +15,12 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
@@ -62,17 +65,17 @@ public class ScriptLibraryCSJS extends AbstractDesignFileResource implements org
 	//
 	//	@Override
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
+	public void writeOnDiskFile(final Path odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
 		String content;
 		if (enforceRawFormat()) {
 			content = ODSUtils.fromLMBCS(getFileData());
 		} else {
-			content = getDxl().selectSingleNode("//code/javascript").getText();
+			content = getDxl().selectSingleNode("//code/javascript").getText(); //$NON-NLS-1$
 		}
-		PrintWriter pw = new PrintWriter(odpFile);
-		pw.write(content);
-		pw.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
+		try(Writer pw = Files.newBufferedWriter(odpFile)) {
+			pw.write(content);
+		}
+		Files.setLastModifiedTime(odpFile, FileTime.from(Instant.ofEpochMilli(getDocLastModified().getTime())));
 	}
 }

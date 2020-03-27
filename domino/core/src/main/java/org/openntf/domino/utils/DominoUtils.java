@@ -17,7 +17,6 @@ package org.openntf.domino.utils;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -26,11 +25,15 @@ import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -80,8 +83,8 @@ public enum DominoUtils {
 	//		defaultLoader = loader;
 	//	}
 
-	public static final String VIEWNAME_VIM_PEOPLE_AND_GROUPS = "($VIMPeopleAndGroups)";
-	public static final String VIEWNAME_VIM_GROUPS = "($VIMGroups)";
+	public static final String VIEWNAME_VIM_PEOPLE_AND_GROUPS = "($VIMPeopleAndGroups)"; //$NON-NLS-1$
+	public static final String VIEWNAME_VIM_GROUPS = "($VIMGroups)"; //$NON-NLS-1$
 
 	public static final int LESS_THAN = -1;
 	public static final int EQUAL = 0;
@@ -90,14 +93,14 @@ public enum DominoUtils {
 	protected static AtomicInteger CLASS_ERROR_COUNT = new AtomicInteger(0);
 
 	/** The Constant log_. */
-	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
+	private final static Logger log_ = Logger.getLogger("org.openntf.domino"); //$NON-NLS-1$
 
 	/** The Constant logBackup_. */
-	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino"); //$NON-NLS-1$
 
 	public static void reportType(final Object o, final String name, final Class<?> expected) {
-		System.out.println("DEBUG " + name + " is not the expected type of " + expected.getName() + ". Instead its a "
-				+ (o == null ? "null" : o.getClass().getName()));
+		System.out.println(MessageFormat.format("DEBUG {0} is not the expected type of {1}. Instead it is a {2}", name, expected.getName(),
+				(o == null ? "null" : o.getClass().getName()))); //$NON-NLS-1$
 	}
 
 	public static Class<?> getClass(final CharSequence className) {
@@ -143,81 +146,78 @@ public enum DominoUtils {
 		if (result == null) {
 			//			Factory.println("TEMP DEBUG Default failed so therefore we're trying privileged versions...");
 			try {
-				result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
-					@Override
-					public Class<?> run() throws Exception {
-						Class<?> result = null;
-						ClassLoader cl = Thread.currentThread().getContextClassLoader();
-						String pname = null;
-						String sname = null;
-						String cname = className.toString();
-						Class<?> pclass = null;
-						try {
-							if (cname.startsWith("[L")) {
-								cname = cname.substring(2);
+				result = AccessController.doPrivileged((PrivilegedExceptionAction<Class<?>>) () -> {
+					Class<?> result1 = null;
+					ClassLoader cl = Thread.currentThread().getContextClassLoader();
+					String pname1 = null;
+					String sname1 = null;
+					String cname1 = className.toString();
+					Class<?> pclass1 = null;
+					try {
+						if (cname1.startsWith("[L")) {
+							cname1 = cname1.substring(2);
+						}
+						int pos = cname1.indexOf('$');
+						if (pos > -1) {
+							pname1 = cname1.substring(0, pos);
+							sname1 = cname1.substring(pos + 1);
+							pclass1 = Class.forName(pname1, false, cl);
+							for (Class<?> curClass1 : pclass1.getDeclaredClasses()) {
+								if (curClass1.getSimpleName().equals(sname1)) {
+									result1 = curClass1;
+								}
 							}
-							int pos = cname.indexOf('$');
-							if (pos > -1) {
-								pname = cname.substring(0, pos);
-								sname = cname.substring(pos + 1);
-								pclass = Class.forName(pname, false, cl);
-								for (Class<?> curClass : pclass.getDeclaredClasses()) {
-									if (curClass.getSimpleName().equals(sname)) {
-										result = curClass;
+						} else {
+							pname1 = cname1;
+							result1 = Class.forName(pname1, false, cl);
+						}
+					} catch (java.lang.ClassNotFoundException e) {
+						try {
+							if (cname1.contains("$")) { //$NON-NLS-1$
+								//									Factory.println("Failed to contextClassLoader load a class called " + cname + " by parsing to " + pname
+								//											+ " and " + sname + ". The pname resolved to " + (pclass == null ? "null" : pclass.getName()));
+							}
+							cl = DominoUtils.class.getClassLoader();
+							pclass1 = cl.loadClass(pname1);
+							if (sname1 != null) {
+								for (Class<?> curClass2 : pclass1.getDeclaredClasses()) {
+									if (curClass2.getSimpleName().equals(sname1)) {
+										result1 = curClass2;
 									}
 								}
 							} else {
-								pname = cname;
-								result = Class.forName(pname, false, cl);
+								result1 = pclass1;
 							}
-						} catch (java.lang.ClassNotFoundException e) {
+						} catch (Exception e1) {
+							if (cname1.contains("$")) {
+								//									Factory.println("Failed to DominoUtils.getClassLoader() load a class called " + cname
+								//											+ " by parsing to " + pname + " and " + sname + ". The pname resolved to "
+								//											+ (pclass == null ? "null" : pclass.getName()));
+							}
+							cl = ClassLoader.getSystemClassLoader();
 							try {
-								if (cname.contains("$")) {
-									//									Factory.println("Failed to contextClassLoader load a class called " + cname + " by parsing to " + pname
-									//											+ " and " + sname + ". The pname resolved to " + (pclass == null ? "null" : pclass.getName()));
-								}
-								cl = DominoUtils.class.getClassLoader();
-								pclass = cl.loadClass(pname);
-								if (sname != null) {
-									for (Class<?> curClass : pclass.getDeclaredClasses()) {
-										if (curClass.getSimpleName().equals(sname)) {
-											result = curClass;
+								pclass1 = cl.loadClass(pname1);
+								if (sname1 != null) {
+									for (Class<?> curClass3 : pclass1.getDeclaredClasses()) {
+										if (curClass3.getSimpleName().equals(sname1)) {
+											result1 = curClass3;
 										}
 									}
 								} else {
-									result = pclass;
+									result1 = pclass1;
 								}
-							} catch (Exception e1) {
-								if (cname.contains("$")) {
-									//									Factory.println("Failed to DominoUtils.getClassLoader() load a class called " + cname
-									//											+ " by parsing to " + pname + " and " + sname + ". The pname resolved to "
-									//											+ (pclass == null ? "null" : pclass.getName()));
-								}
-								cl = ClassLoader.getSystemClassLoader();
-								try {
-									pclass = cl.loadClass(pname);
-									if (sname != null) {
-										for (Class<?> curClass : pclass.getDeclaredClasses()) {
-											if (curClass.getSimpleName().equals(sname)) {
-												result = curClass;
-											}
-										}
-									} else {
-										result = pclass;
-									}
-								} catch (Exception e2) {
-									//									e2.printStackTrace();
-									//									DominoUtils.handleException(e2);
-									//									Factory.println("STILL couldn't get class " + pname + " using system classloader "
-									//											+ cl.getClass().getName());
-								}
+							} catch (Exception e2) {
+								//									e2.printStackTrace();
+								//									DominoUtils.handleException(e2);
+								//									Factory.println("STILL couldn't get class " + pname + " using system classloader "
+								//											+ cl.getClass().getName());
 							}
-						} catch (Throwable t) {
-							t.printStackTrace();
-							DominoUtils.handleException(t);
 						}
-						return result;
+					} catch (Throwable t) {
+						t.printStackTrace();
+						DominoUtils.handleException(t);
 					}
+					return result1;
 				});
 			} catch (AccessControlException e) {
 				e.printStackTrace();
@@ -1119,13 +1119,14 @@ public enum DominoUtils {
 				break;
 			case 2:
 				// File in file system at literal path
-				is = new FileInputStream(fileLoc);
+				is = Files.newInputStream(Paths.get(fileLoc));
 				returnStream = new BufferedInputStream(is);
 				break;
 			case 3:
 				// File in file system relative to data directory
-				String dirPath = getDominoIniVar("Directory", "");
-				is = new FileInputStream(dirPath + "/" + fileLoc);
+				String dirPath = getDominoIniVar("Directory", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				Path path = Paths.get(dirPath).resolve(fileLoc);
+				is = Files.newInputStream(path);
 				returnStream = new BufferedInputStream(is);
 				break;
 			// TODO Need to work out how to get from properties file in NSF

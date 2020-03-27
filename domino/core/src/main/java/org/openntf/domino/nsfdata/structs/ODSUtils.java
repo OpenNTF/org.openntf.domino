@@ -16,12 +16,13 @@
 package org.openntf.domino.nsfdata.structs;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javolution.io.Struct.Unsigned8;
 
@@ -31,7 +32,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 public enum ODSUtils {
 	;
-	private static String X_LMBCS_1 = "x-lmbcs-1";
+	private static String X_LMBCS_1 = "x-lmbcs-1"; //$NON-NLS-1$
 
 	public static String fromLMBCS(final byte[] data) {
 		return fromLMBCS(ByteBuffer.wrap(data));
@@ -53,15 +54,18 @@ public enum ODSUtils {
 		} else {
 			System.err.println(X_LMBCS_1 + " not supported by JVM - using a Stream ");
 			try {
-				File temp = File.createTempFile("lmbcs", "tmp");
-				Stream stream = Factory.getSession(SessionType.CURRENT).createStream();
-				stream.open(temp.getAbsolutePath(), "LMBCS");
-				stream.write(data.array());
-				stream.setPosition(0);
-				String ret = stream.readText();
-				stream.close();
-				temp.delete();
-				return ret;
+				Path temp = Files.createTempFile("lmbcs", ".tmp"); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					Stream stream = Factory.getSession(SessionType.CURRENT).createStream();
+					stream.open(temp.toString(), "LMBCS"); //$NON-NLS-1$
+					stream.write(data.array());
+					stream.setPosition(0);
+					String ret = stream.readText();
+					stream.close();
+					return ret;
+				} finally {
+					Files.delete(temp);
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 				return null;
@@ -76,15 +80,18 @@ public enum ODSUtils {
 		} else {
 			System.err.println(X_LMBCS_1 + " not supported by JVM - using a Stream ");
 			try {
-				File temp = File.createTempFile("lmbcs", "tmp");
-				Stream stream = Factory.getSession(SessionType.CURRENT).createStream();
-				stream.open(temp.getAbsolutePath(), "LMBCS");
-				stream.writeText(value);
-				stream.setPosition(0);
-				ByteBuffer ret = ByteBuffer.wrap(stream.read());
-				stream.close();
-				temp.delete();
-				return ret;
+				Path temp = Files.createTempFile("lmbcs", "tmp"); //$NON-NLS-1$ //$NON-NLS-2$
+				try {
+					Stream stream = Factory.getSession(SessionType.CURRENT).createStream();
+					stream.open(temp.toString(), "LMBCS"); //$NON-NLS-1$
+					stream.writeText(value);
+					stream.setPosition(0);
+					ByteBuffer ret = ByteBuffer.wrap(stream.read());
+					stream.close();
+					return ret;
+				} finally {
+					Files.delete(temp);
+				}
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 				return null;

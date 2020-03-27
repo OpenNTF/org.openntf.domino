@@ -15,8 +15,9 @@
  */
 package org.openntf.domino.tests.rpr;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -137,7 +138,7 @@ public class DesignClassTest {
 		//+ "& @contains($TITLE;{gadproxy}) ");
 		System.out.println("Count: " + elems.getCount());
 
-		File root = new File("D:/daten/temp/ods3");
+		Path root = Paths.get("D:/daten/temp/ods3");
 		OnDiskProject odp = new OnDiskProject(root);
 		//PrintWriter pw = new PrintWriter(oFile);
 		for (DesignBase elem : elems) {

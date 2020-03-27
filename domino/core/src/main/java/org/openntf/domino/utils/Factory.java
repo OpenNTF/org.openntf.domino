@@ -16,16 +16,18 @@
 package org.openntf.domino.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -1226,36 +1228,30 @@ public enum Factory {
 		}
 	}
 
-	private static File getConfigFileFallback() {
-		String progpath = System.getProperty("notes.binary");
-		File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-		if (!iniFile.exists()) {
-			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-			progpath = System.getProperty("user.dir");
-			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	private static Path getConfigFileFallback() {
+		Path progpath = Paths.get(System.getProperty("notes.binary")); //$NON-NLS-1$
+		Path iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
+		if (!Files.exists(iniFile)) {
+			progpath = Paths.get(System.getProperty("user.dir")); //$NON-NLS-1$
+			iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
 		}
-		if (!iniFile.exists()) {
-			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-			progpath = System.getProperty("java.home");
-			if (progpath.endsWith("jvm")) {
-				iniFile = new File(
-						progpath + System.getProperty("file.separator") + ".." + System.getProperty("file.separator") + "notes.ini");
+		if (!Files.exists(iniFile)) {
+			progpath = Paths.get(System.getProperty("java.home")); //$NON-NLS-1$
+			if (progpath.endsWith("jvm")) { //$NON-NLS-1$
+				iniFile = progpath.getParent().resolve("notes.ini"); //$NON-NLS-1$
 			} else {
-				iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-
+				iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
 			}
 		}
-		if (!iniFile.exists()) {
-			progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
-			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		if (!Files.exists(iniFile)) {
+			progpath = Paths.get(System.getProperty("java.library.path")); // Otherwise the tests will not work //$NON-NLS-1$
+			iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
 		}
-		if (!iniFile.exists()) {
-			//							System.out.println("Inifile still not found on user.dir path: " + progpath);
-			if (progpath.contains("framework")) {
-				String pp2 = progpath.replace("framework", "");
-				iniFile = new File(pp2 + "notes.ini");
-				//								System.out.println("Attempting to use path: " + pp2);
-				if (!iniFile.exists()) {
+		if (!Files.exists(iniFile)) {
+			if (progpath.toString().contains("framework")) { //$NON-NLS-1$
+				String pp2 = progpath.toString().replace("framework", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				iniFile = Paths.get(pp2).resolve("notes.ini"); //$NON-NLS-1$
+				if (!Files.exists(iniFile)) {
 					Factory.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
 					for (Object rawName : System.getProperties().keySet()) {
 						if (rawName instanceof String) {
@@ -1295,23 +1291,25 @@ public enum Factory {
 			Factory.println("OpenNTF Domino API is already started. Cannot start it again");
 		}
 
-		File iniFile;
+		Path iniFile;
 		try {
 			localServerName = session.getUserName();
-			iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
+			iniFile = Paths.get(session.evaluate("@ConfigFile").get(0).toString()); //$NON-NLS-1$
 		} catch (NotesException e) {
-			Factory.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
+			Factory.println(MessageFormat.format("WARNING: @ConfigFile returned {0} Using fallback to locate notes.ini", e.getMessage()));
 			iniFile = getConfigFileFallback();
 		}
 
 		Factory.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
 
 		try {
-			Scanner scanner = new Scanner(iniFile);
-			scanner.useDelimiter("\n|\r\n");
-			loadEnvironment(scanner);
-			scanner.close();
-		} catch (FileNotFoundException e) {
+			try(InputStream is = Files.newInputStream(iniFile)) {
+				Scanner scanner = new Scanner(iniFile);
+				scanner.useDelimiter("\n|\r\n"); //$NON-NLS-1$
+				loadEnvironment(scanner);
+				scanner.close();
+			}
+		} catch (IOException e) {
 			Factory.println("Cannot read notes.ini. Giving up");
 			e.printStackTrace();
 		}
@@ -1348,16 +1346,13 @@ public enum Factory {
 
 		started = true;
 
-		Factory.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+		Factory.println(MessageFormat.format("OpenNTF API Version {0} started", ENVIRONMENT.get("version")));
 
 		// Start up logging
 		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					Logging.getInstance().startUp();
-					return null;
-				}
+			AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+				Logging.getInstance().startUp();
+				return null;
 			});
 		} catch (AccessControlException e) {
 			e.printStackTrace();

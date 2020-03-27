@@ -20,26 +20,22 @@ package org.openntf.domino.xsp.readers;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import lotus.domino.NotesException;
-import lotus.notes.addins.DominoServer;
-import lotus.notes.addins.ServerAccess;
 
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
@@ -48,6 +44,10 @@ import com.ibm.commons.util.io.SharedByteArrayOutputStream;
 import com.ibm.commons.util.io.StreamUtil;
 import com.ibm.icu.text.DecimalFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+
+import lotus.domino.NotesException;
+import lotus.notes.addins.DominoServer;
+import lotus.notes.addins.ServerAccess;
 
 /**
  * @author Nathan T. Freeman
@@ -58,7 +58,7 @@ public class LogReader {
 	private static final Logger log_ = Logger.getLogger(LogReader.class.getName());
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
-	private String version = "1.3";
+	private String version = "1.3"; //$NON-NLS-1$
 	private static volatile Transformer XFORMER;
 
 	/**
@@ -66,10 +66,14 @@ public class LogReader {
 	 * 
 	 * @since org.openntf.domino.xsp 4.5.0
 	 */
-	public static class FileComparator implements Comparator<File> {
+	public static class FileComparator implements Comparator<Path> {
 		@Override
-		public int compare(final File arg0, final File arg1) {
-			return Long.valueOf(arg1.lastModified()).compareTo(arg0.lastModified());
+		public int compare(final Path a, final Path b) {
+			try {
+				return Files.getLastModifiedTime(a).compareTo(Files.getLastModifiedTime(b));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -80,8 +84,14 @@ public class LogReader {
 	 */
 	public static class FilePathComparator implements Comparator<String> {
 		@Override
-		public int compare(final String arg0, final String arg1) {
-			return Long.valueOf(new File(arg1).lastModified()).compareTo(new File(arg0).lastModified());
+		public int compare(final String a, final String b) {
+			Path pathA = Paths.get(a);
+			Path pathB = Paths.get(b);
+			try {
+				return Files.getLastModifiedTime(pathA).compareTo(Files.getLastModifiedTime(pathB));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -251,33 +261,21 @@ public class LogReader {
 	 * @return List<File> of files in the relevant folder matching the search
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
-	private List<File> getFiles(final String section, final String filter) {
-		List<File> result = new ArrayList<File>();
+	private List<Path> getFiles(final String section, final String filter) {
 		String folder = getFolder(section);
-		File dir = new File(folder);
-		String[] entries = dir.list(); // get the folder content
-
-		// convert to ArrayList and remove all directories from the list
-		// List<String> files = new ArrayList<String>();
-		for (int i = 0; i < entries.length; i++) {
-			File d = new File(folder + entries[i]);
-			if (d.isFile()) {
-				if (filter == null) {
-					result.add(d);
-					// files.add(entries[i]);
-				} else {
-					if (wildCardMatch(entries[i], filter)) {
-						result.add(d);
-						// files.add(entries[i]);
-					}
-				}
-			}
+		Path dir = Paths.get(folder);
+		
+		try {
+			return Files.list(dir)
+				.filter(Files::isRegularFile)
+				.filter(path -> {
+					return filter == null || wildCardMatch(path.getFileName().toString(), filter);
+				})
+				.sorted(new FileComparator())
+				.collect(Collectors.toList());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		Collections.sort(result, new FileComparator());
-		// sort the list
-		// Collections.sort(files, new FilePathComparator());
-
-		return result;
 	}
 
 	/**
@@ -288,7 +286,7 @@ public class LogReader {
 	 * @return List<File> of files in the relevant folder matching the search
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
-	private List<File> getFiles(final String section) {
+	private List<Path> getFiles(final String section) {
 		return getFiles(section, null);
 	}
 
@@ -305,9 +303,9 @@ public class LogReader {
 	public List<String> getFileNames(final lotus.domino.Session session, final String section) {
 		List<String> results = new LinkedList<String>();
 		if (canReadLogs(session)) {
-			List<File> files = getFiles(section);
-			for (File file : files) {
-				results.add(file.getName());
+			List<Path> files = getFiles(section);
+			for (Path file : files) {
+				results.add(file.getFileName().toString());
 			}
 		}
 		return results;
@@ -328,9 +326,9 @@ public class LogReader {
 	public List<String> getFileNames(final lotus.domino.Session session, final String section, final String filter) {
 		List<String> results = new LinkedList<String>();
 		if (canReadLogs(session)) {
-			List<File> files = getFiles(section, filter);
-			for (File file : files) {
-				results.add(file.getName());
+			List<Path> files = getFiles(section, filter);
+			for (Path file : files) {
+				results.add(file.getFileName().toString());
 			}
 		}
 		return results;
@@ -347,47 +345,29 @@ public class LogReader {
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readFileFast(final String filename, final String filter) {
-		if (filename == null || filename.length() < 1 || filename.equalsIgnoreCase("null")) {
-			return "";
+		if (filename == null || filename.length() < 1 || filename.equalsIgnoreCase("null")) { //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
 		}
-		File file = new File(filename);
-		if (file.isDirectory() || !file.exists()) {
-			return "";
+		Path file = Paths.get(filename);
+		if (Files.isDirectory(file) || !Files.exists(file)) {
+			return ""; //$NON-NLS-1$
 		}
 		StringBuilder result = new StringBuilder();
-		FileReader fileReader = null;
-		BufferedReader reader = null;
-		try {
-			fileReader = new FileReader(file);
-			reader = new BufferedReader(fileReader);
-
+		try(BufferedReader reader = Files.newBufferedReader(file)) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (filter == null) {
 					result.append(line);
-					result.append("\n");
+					result.append("\n"); //$NON-NLS-1$
 				} else {
 					if (line.indexOf(filter, 0) >= 0) {
 						result.append(line);
-						result.append("\n");
+						result.append("\n"); //$NON-NLS-1$
 					}
 				}
 			}
 		} catch (Exception e) {
 			log_.log(Level.WARNING, e.toString(), e);
-		} finally {
-			try {
-				if (fileReader != null)
-					fileReader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				if (reader != null)
-					reader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 
 		return result.toString();
@@ -645,10 +625,14 @@ public class LogReader {
 		String path = getFolder("xml");
 
 		// Get the number of bytes in the file
-		File file = new File(getFolder("xml") + filename);
-		if (file.length() == 0) {
-			log_.log(Level.FINE, "File is empty - return a blank page ...");
-			return "";
+		Path file = Paths.get(getFolder("xml")).resolve(filename); //$NON-NLS-1$
+		try {
+			if (Files.size(file) == 0) {
+				log_.log(Level.FINE, "File is empty - return a blank page ...");
+				return ""; //$NON-NLS-1$
+			}
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
 		}
 
 		// XSL transform
@@ -672,8 +656,8 @@ public class LogReader {
 			}
 		}
 		// If transformation fails - just display the xml file
-		String html = "";
-		filename = getFolder("xml") + filename;
+		String html = ""; //$NON-NLS-1$
+		filename = getFolder("xml") + filename; //$NON-NLS-1$
 		html = readFileFast(filename);
 		return html;
 

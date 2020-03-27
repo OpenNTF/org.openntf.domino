@@ -15,11 +15,11 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public interface HasMetadata {
 
-	void writeOnDiskMeta(File file) throws IOException;
+	void writeOnDiskMeta(Path file) throws IOException;
 
 }

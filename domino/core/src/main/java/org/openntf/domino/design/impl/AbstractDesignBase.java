@@ -15,9 +15,12 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -551,15 +554,15 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	// TODO
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
+	public void writeOnDiskFile(final Path odpFile) throws IOException {
 		getDxl().getXml(getOdpTransformer(), odpFile);
-		odpFile.setLastModified(getDocLastModified().getTime());
+		Files.setLastModifiedTime(odpFile, FileTime.from(Instant.ofEpochMilli(getDocLastModified().getTime())));
 	}
 
 	// TODO
-	public final void writeOnDiskMeta(final File odpFile) throws IOException {
+	public final void writeOnDiskMeta(final Path odpFile) throws IOException {
 		getDxl().getXml(getOdpMetaTransformer(), odpFile);
-		odpFile.setLastModified(getDocLastModified().getTime());
+		Files.setLastModifiedTime(odpFile, FileTime.from(Instant.ofEpochMilli(getDocLastModified().getTime())));
 	}
 
 	//------------------------------ ondisk end --------------------------------

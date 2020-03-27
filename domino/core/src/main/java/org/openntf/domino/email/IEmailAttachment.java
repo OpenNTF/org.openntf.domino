@@ -56,7 +56,7 @@ public interface IEmailAttachment {
 	public abstract void setAttachmentType(Type attachmentType);
 
 	/**
-	 * Gets the file name (not including the path) to load the attachment from, loaded via a FileInputStream
+	 * Gets the file name (not including the path) to load the attachment from, loaded via a file InputStream
 	 * 
 	 * @return String file name
 	 * @since org.openntf.domino 4.5.0
@@ -140,7 +140,7 @@ public interface IEmailAttachment {
 	public abstract void setInlineImage(boolean isInlineImage);
 
 	/**
-	 * Gets the folder in which to find a file attachment, loaded via a FileInputStream
+	 * Gets the folder in which to find a file attachment, loaded via a file InputStream
 	 * 
 	 * @return String filepath, not including file name
 	 * @since org.openntf.domino 4.5.0
@@ -148,7 +148,7 @@ public interface IEmailAttachment {
 	public abstract String getPath();
 
 	/**
-	 * Sets the folder in which to find a file attachment, loaded via a FileInputStream
+	 * Sets the folder in which to find a file attachment, loaded via a file InputStream
 	 * 
 	 * @param path
 	 *            String filepath, not including file name

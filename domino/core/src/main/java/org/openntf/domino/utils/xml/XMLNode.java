@@ -18,11 +18,11 @@
  */
 package org.openntf.domino.utils.xml;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -308,7 +308,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void getXml(Transformer transformer, final File out) throws IOException {
+	public void getXml(Transformer transformer, final Path out) throws IOException {
 		try {
 			if (transformer == null) {
 				transformer = DEFAULT_TRANSFORMER;
@@ -316,7 +316,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
 			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
-			StreamResult result = new StreamResult(out.toURI().toString());
+			StreamResult result = new StreamResult(out.toUri().toString());
 			DOMSource source = new DOMSource(this.node_);
 			transformer.transform(source, result);
 		} catch (Exception e) {

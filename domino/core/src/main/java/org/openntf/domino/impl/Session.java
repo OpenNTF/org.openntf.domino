@@ -16,13 +16,14 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.time.LocalDate;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Year;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -2219,9 +2220,13 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		if (Strings.isBlankString(filePath)) {
 			throw new OpenNTFNotesException("Cannot create a blank database without a filepath");
 		} else {
-			File temp = new File(getFolder(filePath));
-			if (!temp.exists()) {
-				temp.mkdir();
+			Path temp = Paths.get(getFolder(filePath));
+			if (!Files.exists(temp)) {
+				try {
+					Files.createDirectories(temp);
+				} catch (IOException e) {
+					DominoUtils.handleException(e);
+				}
 			}
 			return createBlankDatabase(filePath);
 		}
