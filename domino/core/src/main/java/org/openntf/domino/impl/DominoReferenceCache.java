@@ -32,6 +32,8 @@ import com.google.common.collect.Multiset;
 
 import lotus.domino.Base;
 
+import static java.text.MessageFormat.format;
+
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
  * the wrapper Object is GC. Then the delegate gets recycled.
@@ -48,7 +50,6 @@ public class DominoReferenceCache {
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCache.class.getName());
 
 	/** The delegate map contains the value wrapped in phantomReferences) **/
-	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
 	private Map<lotus.domino.Base, DominoReference> map = new IdentityHashMap<lotus.domino.Base, DominoReference>(2048);
 	private Multiset<Long> cppMap = ConcurrentHashMultiset.create();
 
@@ -63,14 +64,8 @@ public class DominoReferenceCache {
 
 	/**
 	 * Creates a new DominoReferencCache
-	 *
-	 * @param autorecycle
-	 *            true if the cache should recycle objects if they are weakly reachable
-	 *
 	 */
 	public DominoReferenceCache() {
-		super();
-		//autorecycle_ = autorecycle;
 	}
 
 	/**
@@ -98,7 +93,9 @@ public class DominoReferenceCache {
 		DominoReference ref = map.get(key);
 		if (ref == null) {
 			log_.log(Level.WARNING,
-					"Attemped to set noRecycle on a DominoReference id " + key + " that's not in the local reference cache");
+					format(
+							"Attemped to set noRecycle on a DominoReference id {0} that''s not in the local reference cache",
+							key));
 		} else {
 			ref.setNoRecycle(value);
 		}
@@ -225,14 +222,15 @@ public class DominoReferenceCache {
 					if (current != null && current == unrefLotus) {
 						if (log_.isLoggable(Level.SEVERE)) {
 							log_.log(Level.SEVERE,
-									"The " + current.getClass().getSimpleName() + " passed in to processQueue was recycled in the process");
+									format(
+											"The {0} passed in to processQueue was recycled in the process", current.getClass().getSimpleName()));
 						}
 					} else if (!died && current != null && unrefLotus != null && org.openntf.domino.impl.Base.isDead(current)) {
 						if (log_.isLoggable(Level.SEVERE)) {
 							log_.log(Level.SEVERE,
-									"The " + current.getClass().getSimpleName()
-											+ " passed in to processQueue was recycled as a side effect of recycling a "
-											+ unrefLotus.getClass().getSimpleName());
+									format(
+											"The {0} passed in to processQueue was recycled as a side effect of recycling a {1}",
+											current.getClass().getSimpleName(), unrefLotus.getClass().getSimpleName()));
 						}
 						died = true;
 					}
@@ -270,27 +268,9 @@ public class DominoReferenceCache {
 		}
 
 		org.openntf.domino.Base<?> result = ref.get();
-		//if (result == null) {
-		//	// this is the wrapper. If there is no wrapper inside (don't know how this should work) we do not return it
-		//	System.out.println("Wrapper lost! " + ref.isEnqueued());
-		//	return null;
-		//}
 
 		// check if the delegate is still alive. (not recycled or null)
 		if (result == null || ref.isEnqueued()) {
-
-			// For debug
-			//			if (result == null) {
-			//				System.out.println("NULL"); // happens, if there is no strong ref to this wrapper.
-			//			}
-			//			if (ref.isDead()) {
-			//				System.out.println("DEAD"); // happens, if you call recycle on the parent()
-			//			}
-			//			if (ref.isEnqueued()) {
-			//				// result is also NULL if the reference is enqueued (makes sense, because result (=wrapper) is no longer reachable
-			//				System.out.println("ENQUEUED");
-			//			}
-
 			// 	we get dead elements if we do this in a loop
 			//		d = s.getDatabase("", "names.nsf");
 			//		doc1 = d.getDocumentByID(id);
