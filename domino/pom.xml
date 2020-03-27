@@ -9,6 +9,8 @@
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
+	
+	<inceptionYear>2013</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -163,6 +165,31 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-versions-plugin</artifactId>
 				<version>${tycho-version}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<header>license.txt</header>
+					<excludes>
+						<exclude>**/pom.xml</exclude>
+			            <exclude>src/test/resources/**</exclude>
+			            <exclude>src/main/resources/**</exclude>
+						<exclude>**/build.properties</exclude>
+						<exclude>**/odp/AppProperties/database.properties</exclude>
+						<exclude>**/org/openntf/arpa/**</exclude>
+						<exclude>**/org/openntf/calendars/**</exclude>
+						<exclude>**/org/openntf/formula/**</exclude>
+						<exclude>**/com/tinkerpop/**</exclude>
+					</excludes>
+					<properties>
+						<owner>The OpenNTF Domino API Team</owner>
+						<copyrightYear>2020</copyrightYear>
+					</properties>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
