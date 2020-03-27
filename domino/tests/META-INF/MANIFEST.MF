@@ -10,3 +10,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.openntf.domino.junit;bundle-version="10.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.openntf.domino.tests
+Import-Package: com.ibm.commons.util.io

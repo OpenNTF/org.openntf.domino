@@ -409,9 +409,10 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 			return new UsingDocument(doc);
 		} else if (create) {
 			try {
-				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpusingdocument.xml");
-				String dxl = StreamUtil.readString(is);
-				is.close();
+				String dxl;
+				try(InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpusingdocument.xml")) { //$NON-NLS-1$
+					dxl = StreamUtil.readString(is);
+				}
 				DxlImporter importer = getAncestorSession().createDxlImporter();
 				importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
 				importer.setReplicaRequiredForReplaceOrUpdate(false);

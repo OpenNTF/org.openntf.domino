@@ -18,9 +18,11 @@ package org.openntf.domino.tests;
 import static com.ibm.commons.util.StringUtil.format;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -88,15 +90,12 @@ public class AllTests {
 	 ********************************************************************************/
 
 	public static String instantiateDb(final String basename) throws IOException {
-		File dbFile = File.createTempFile(basename, ".nsf"); //$NON-NLS-1$
-		System.out.println(format("{0} location is {1}", basename, dbFile.getAbsolutePath())); //$NON-NLS-1$
-		FileOutputStream fos = new FileOutputStream(dbFile);
-		InputStream is = AllTests.class.getResourceAsStream("/" + basename + ".nsf"); //$NON-NLS-1$ //$NON-NLS-2$
-		StreamUtil.copyStream(is, fos);
-		fos.flush();
-		StreamUtil.close(fos);
-		StreamUtil.close(is);
-		return dbFile.getAbsolutePath();
+		Path dbFile = Files.createTempFile(basename, ".nsf"); //$NON-NLS-1$
+		System.out.println(format("{0} location is {1}", basename, dbFile.toString())); //$NON-NLS-1$
+		try(InputStream is = AllTests.class.getResourceAsStream("/" + basename + ".nsf")) { //$NON-NLS-1$ //$NON-NLS-2$
+			Files.copy(is, dbFile, StandardCopyOption.REPLACE_EXISTING);
+		}
+		return dbFile.toString();
 	}
 
 	public static void deleteDb(final String dbName) {

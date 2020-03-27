@@ -68,12 +68,12 @@ public abstract class BaseImpl<D extends lotus.domino.Base> implements Base<D> {
 		if (!hasListeners())
 			return Collections.emptyList();
 
-		if (listenerCache_ == null)
+		if (listenerCache_ == null) {
 			listenerCache_ = new FastMap<EnumEvent, List<IDominoListener>>();
+		}
 
-		List<IDominoListener> result = listenerCache_.get(event);
-		if (result == null) {
-			result = new ArrayList<IDominoListener>();
+		return listenerCache_.computeIfAbsent(event, e -> {
+			List<IDominoListener> result = new ArrayList<>();
 			for (IDominoListener listener : getListeners()) {
 				for (EnumEvent curEvent : listener.getEventTypes()) {
 					if (curEvent.equals(event)) {
@@ -82,9 +82,8 @@ public abstract class BaseImpl<D extends lotus.domino.Base> implements Base<D> {
 					}
 				}
 			}
-			listenerCache_.put(event, result);
-		}
-		return result;
+			return result;
+		});
 	}
 
 	@Override
