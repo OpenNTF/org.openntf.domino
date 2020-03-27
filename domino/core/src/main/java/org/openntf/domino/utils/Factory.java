@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
-import lotus.notes.NotesThread;
+import lotus.domino.NotesThread;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
