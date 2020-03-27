@@ -37,8 +37,6 @@ import org.openntf.domino.tests.wrapper.TestDatabasePropertyWrapper;
 import org.openntf.domino.tests.wrapper.TestWrapperFactory;
 import org.openntf.domino.utils.Factory;
 
-import com.ibm.commons.util.io.StreamUtil;
-
 import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 
