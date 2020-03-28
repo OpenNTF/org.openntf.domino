@@ -20,10 +20,16 @@
    <description name="OpenNTF Domino API">
       OpenNTF Domino API
    </description>
-   <feature id="org.openntf.domino.feature">
+   <feature id="org.openntf.domino.nonxsp.feature">
+      <category name="OpenNTF Domino API"/>
+   </feature>
+   <feature id="org.openntf.domino.nonxsp.feature.source">
       <category name="OpenNTF Domino API"/>
    </feature>
    <feature id="org.openntf.domino.dependencies.feature">
+      <category name="OpenNTF Domino API"/>
+   </feature>
+   <feature id="org.openntf.domino.dependencies.feature.source">
       <category name="OpenNTF Domino API"/>
    </feature>
    <category-def name="OpenNTF Domino API" label="OpenNTF Domino API"/>

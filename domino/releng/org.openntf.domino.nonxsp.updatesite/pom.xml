@@ -5,9 +5,15 @@
 		<groupId>org.openntf.domino</groupId>
 		<artifactId>domino</artifactId>
 		<version>11.0.0-SNAPSHOT</version>
+		<relativePath>../..</relativePath>
 	</parent>
 	<artifactId>org.openntf.domino.nonxsp.updatesite</artifactId>
 	<packaging>eclipse-repository</packaging>
+	
+	<properties>
+		<!-- This will be re-computed per-project, hence the extra two layers -->
+		<osgi-deps-path>${project.baseUri}../../../dependencies</osgi-deps-path>
+	</properties>
 
 	<build>
 		<plugins>

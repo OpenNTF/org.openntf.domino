@@ -24,7 +24,6 @@ import org.openntf.domino.config.Configuration;
 import org.openntf.domino.config.ServerConfiguration;
 import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.session.INamedSessionFactory;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.ThreadConfig;
@@ -89,7 +88,7 @@ public enum ODAPlatform {
 					} catch (Throwable e) {
 						e.printStackTrace();
 					}
-					List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet");
+					List<?> tasklets = ExtensionManager.findServices(null, ODAPlatform.class, "org.openntf.domino.xots.tasklet"); //$NON-NLS-1$
 
 					for (Object tasklet : tasklets) {
 						if (tasklet instanceof Callable<?> || tasklet instanceof Runnable) {

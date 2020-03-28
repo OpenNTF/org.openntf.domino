@@ -51,32 +51,13 @@
          unpack="false"/>
 
    <plugin
-         id="com.tinkerpop.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.google.guava"
          download-size="0"
          install-size="0"
          version="19.0.0"/>
 
    <plugin
-         id="com.google.guava.source"
-         download-size="0"
-         install-size="0"
-         version="19.0.0"/>
-
-   <plugin
          id="javassist"
-         download-size="0"
-         install-size="0"
-         version="3.18.2.GA"/>
-
-   <plugin
-         id="javassist.source"
          download-size="0"
          install-size="0"
          version="3.18.2.GA"/>

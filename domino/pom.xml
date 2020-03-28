@@ -55,11 +55,13 @@
         <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
 		<module>tests</module>
-		<module>org.openntf.domino.dependencies.feature</module>
-		<module>org.openntf.domino.feature</module>
-		<module>org.openntf.domino.nonxsp.feature</module>
-		<module>org.openntf.domino.updatesite</module>
-		<module>org.openntf.domino.nonxsp.updatesite</module>
+		
+		<module>features/org.openntf.domino.dependencies.feature</module>
+		<module>features/org.openntf.domino.feature</module>
+		<module>features/org.openntf.domino.nonxsp.feature</module>
+		
+		<module>releng/org.openntf.domino.updatesite</module>
+		<module>releng/org.openntf.domino.nonxsp.updatesite</module>
 	</modules>
 
 	<build>
@@ -112,6 +114,41 @@
 						<id>plugin-source</id>
 						<goals>
 							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-version}</version>
+		
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includeBinaryFeature>false</includeBinaryFeature>
+					<excludes>
+						<plugin id="javolution"/>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attached-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -291,7 +328,7 @@
 			<id>distribution</id>
 			
 			<modules>
-				<module>oda-dist</module>
+				<module>releng/oda-dist</module>
 			</modules>
 			
 			<build>
