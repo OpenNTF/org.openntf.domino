@@ -1,8 +1,25 @@
+/**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openntf.domino.logging;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -28,12 +45,7 @@ import org.openntf.domino.utils.Factory;
  */
 public class Logging {
 
-	private static ThreadLocal<SimpleDateFormat> sdfISO = new ThreadLocal<SimpleDateFormat>() {
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		}
-	};
+	private static ThreadLocal<SimpleDateFormat> sdfISO = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")); //$NON-NLS-1$
 
 	public static String dateToString(final Date value) {
 		return sdfISO.get().format(value);
@@ -75,7 +87,7 @@ public class Logging {
 		//			}
 		//		}, _supervisorInterval, TimeUnit.MILLISECONDS);
 
-		_supervisor = new Timer("LoggingSupervisor", true);
+		_supervisor = new Timer("LoggingSupervisor", true); //$NON-NLS-1$
 		_supervisor.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -115,16 +127,16 @@ public class Logging {
 	 * @return LogConfig instance if the configuration file exists and has no syntax errors or null
 	 */
 	private LogConfig loadCfgFromPropFile() {
-		File logConfigFile = logCfgFilePrecheck();
+		Path logConfigFile = logCfgFilePrecheck();
 		if (logConfigFile == null) {
 			return null;
 		}
 		Properties props;
 		try {
-			FileInputStream fis = new FileInputStream(logConfigFile);
 			props = new Properties();
-			props.load(fis);
-			fis.close();
+			try(InputStream fis = Files.newInputStream(logConfigFile)) {
+				props.load(fis);
+			}
 		} catch (Exception e) {
 			System.err.println("Logging.loadFromPropFile: Exception " + e.getClass().getName() + ":");
 			e.printStackTrace();
@@ -139,15 +151,15 @@ public class Logging {
 	 *
 	 * @return configuration file as an instance of a File or null if the file does not exist.
 	 */
-	private File logCfgFilePrecheck() {
+	private Path logCfgFilePrecheck() {
 		if (_logConfigPropFile == null) {
 			_logConfigPropFile = Factory.getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.domino.logging.logconfig.properties";
 		}
-		File ret = new File(_logConfigPropFile);
+		Path ret = Paths.get(_logConfigPropFile);
 		String errMsg = null;
-		if (!ret.exists()) {
+		if (!Files.exists(ret)) {
 			errMsg = "not found";
-		} else if (!ret.isFile()) {
+		} else if (!Files.isRegularFile(ret)) {
 			errMsg = "isn't a normal file";
 		}
 		if (errMsg == null) {
@@ -232,20 +244,20 @@ public class Logging {
 	private boolean getCfgPropFileNumbers() {
 		long fileLh = 0;
 		long fileCRC = 0;
-		File f = logCfgFilePrecheck();
+		Path f = logCfgFilePrecheck();
 		if (f == null) {
 			return false;
 		}
 		try {
-			FileInputStream fis = new FileInputStream(f);
 			CRC32 crc = new CRC32();
-			byte[] buff = new byte[16384];
-			int got;
-			while ((got = fis.read(buff)) > 0) {
-				fileLh += got;
-				crc.update(buff, 0, got);
+			try(InputStream fis = Files.newInputStream(f)) {
+				byte[] buff = new byte[16384];
+				int got;
+				while ((got = fis.read(buff)) > 0) {
+					fileLh += got;
+					crc.update(buff, 0, got);
+				}
 			}
-			fis.close();
 			fileCRC = crc.getValue();
 		} catch (Exception e) {
 			System.err.println("Logging.getCfgPropFileNumbers: " + "Exception " + e.getClass().getName() + ": " + e.getMessage());

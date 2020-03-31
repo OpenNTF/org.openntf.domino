@@ -1,11 +1,27 @@
+/**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
-import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -176,4 +192,117 @@ public class DominoQuery extends BaseThreadSafe<org.openntf.domino.DominoQuery, 
 		return parent.getAncestorSession().getFactory();
 	}
 
+	@Override
+	public boolean isRebuildDesignCatalog() {
+		try {
+			return getDelegate().isRebuildDesignCatalog();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
+	public void setRebuildDesignCatalog(boolean rebuildCatalog) {
+		try {
+			getDelegate().setRebuildDesignCatalog(rebuildCatalog);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public boolean isRefreshDesignCatalog() {
+		try {
+			return getDelegate().isRefreshDesignCatalog();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
+	public void setRefreshDesignCatalog(boolean refreshCatalog) {
+		try {
+			getDelegate().setRefreshDesignCatalog(refreshCatalog);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public boolean isRefreshFullText() {
+		try {
+			return getDelegate().isRefreshFullText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
+	public void setRefreshFullText(boolean refresh) {
+		try {
+			getDelegate().setRefreshFullText(refresh);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, String field) throws NotesException {
+		try {
+			getDelegate().createIndex(name, field);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields) throws NotesException {
+		try {
+			getDelegate().createIndex(name, fields);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, String field, boolean isVisible, boolean noBuild) throws NotesException {
+		try {
+			getDelegate().createIndex(name, field, isVisible, noBuild);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void createIndex(String name, @SuppressWarnings("rawtypes") Vector fields, boolean isVisible, boolean noBuild) throws NotesException {
+		try {
+			getDelegate().createIndex(name, fields, isVisible, noBuild);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public String listIndexes() throws NotesException {
+		try {
+			return getDelegate().listIndexes();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public void removeIndex(String name) throws NotesException {
+		try {
+			getDelegate().removeIndex(name);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	
 }

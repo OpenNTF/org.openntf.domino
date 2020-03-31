@@ -5,14 +5,16 @@
 
 	<groupId>org.openntf.domino</groupId>
 	<artifactId>domino</artifactId>
-	<version>10.0.1</version>
+	<version>11.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>OpenNTF Domino API</name>
+	
+	<inceptionYear>2013</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho-version>1.1.0</tycho-version>
+		<tycho-version>1.6.0</tycho-version>
 		<compiler>1.8</compiler>
 		<manifest-location>META-INF</manifest-location>
 		
@@ -53,11 +55,13 @@
         <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
 		<module>tests</module>
-		<module>org.openntf.domino.dependencies.feature</module>
-		<module>org.openntf.domino.feature</module>
-		<module>org.openntf.domino.nonxsp.feature</module>
-		<module>org.openntf.domino.updatesite</module>
-		<module>org.openntf.domino.nonxsp.updatesite</module>
+		
+		<module>features/org.openntf.domino.dependencies.feature</module>
+		<module>features/org.openntf.domino.feature</module>
+		<module>features/org.openntf.domino.nonxsp.feature</module>
+		
+		<module>releng/org.openntf.domino.updatesite</module>
+		<module>releng/org.openntf.domino.nonxsp.updatesite</module>
 	</modules>
 
 	<build>
@@ -115,6 +119,41 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-version}</version>
+		
+				<executions>
+					<execution>
+						<id>source-feature</id>
+						<phase>package</phase>
+						<goals>
+							<goal>source-feature</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<includeBinaryFeature>false</includeBinaryFeature>
+					<excludes>
+						<plugin id="javolution"/>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>attached-p2-metadata</id>
+						<phase>package</phase>
+						<goals>
+							<goal>p2-metadata</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
@@ -152,7 +191,7 @@
 							<requirement>
 								<type>eclipse-plugin</type>
 								<id>com.ibm.notes.java.api.win32.linux</id>
-								<versionRange>[9.0.1,9.0.2)</versionRange>
+								<versionRange>0.0.0</versionRange>
 							</requirement>
 						</extraRequirements>
 					</dependency-resolution>
@@ -163,6 +202,31 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-versions-plugin</artifactId>
 				<version>${tycho-version}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<aggregate>true</aggregate>
+					<header>license.txt</header>
+					<excludes>
+						<exclude>**/pom.xml</exclude>
+			            <exclude>src/test/resources/**</exclude>
+			            <exclude>src/main/resources/**</exclude>
+						<exclude>**/build.properties</exclude>
+						<exclude>**/odp/AppProperties/database.properties</exclude>
+						<exclude>**/org/openntf/arpa/**</exclude>
+						<exclude>**/org/openntf/calendars/**</exclude>
+						<exclude>**/org/openntf/formula/**</exclude>
+						<exclude>**/com/tinkerpop/**</exclude>
+					</excludes>
+					<properties>
+						<owner>The OpenNTF Domino API Team</owner>
+						<copyrightYear>2020</copyrightYear>
+					</properties>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -233,6 +297,11 @@
 						<providerHint>junit4</providerHint>
 					</configuration>
 				</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho-version}</version>
+			</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -259,7 +328,7 @@
 			<id>distribution</id>
 			
 			<modules>
-				<module>oda-dist</module>
+				<module>releng/oda-dist</module>
 			</modules>
 			
 			<build>

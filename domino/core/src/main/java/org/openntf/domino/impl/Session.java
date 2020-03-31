@@ -1,32 +1,42 @@
-/*
- * Copyright 2013
+/**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Year;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -138,8 +148,9 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
-	private String dateFormat_;
 	private String timeFormat_;
+	private DateTimeFormatter dateFormatter_;
+	private DateTimeFormatter dateTimeFormatter_;
 
 	@Override
 	public boolean isFixEnabled(final Fixes fix) {
@@ -2209,9 +2220,13 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		if (Strings.isBlankString(filePath)) {
 			throw new OpenNTFNotesException("Cannot create a blank database without a filepath");
 		} else {
-			File temp = new File(getFolder(filePath));
-			if (!temp.exists()) {
-				temp.mkdir();
+			Path temp = Paths.get(getFolder(filePath));
+			if (!Files.exists(temp)) {
+				try {
+					Files.createDirectories(temp);
+				} catch (IOException e) {
+					DominoUtils.handleException(e);
+				}
 			}
 			return createBlankDatabase(filePath);
 		}
@@ -2269,25 +2284,62 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 			return null;
 		}
 	}
-
+	
 	@Override
-	public String getDateFormatForDateTimeFormatter() {
-		if (null == dateFormat_) {
+	public DateTimeFormatter getGMTDateTimeFormatter() {
+		if (null == dateTimeFormatter_) {
+			DateTimeFormatterBuilder dfb1 = new DateTimeFormatterBuilder();
+			DateTimeFormatterBuilder dfb2 = new DateTimeFormatterBuilder();
 			International i = getInternational();
 			String sep = i.getDateSep();
 			if (i.isDateMDY()) {
-				dateFormat_ = "MM" + sep + "dd" + sep + "uuuu";
+				dfb1.appendPattern("MM" + sep + "dd" + sep + "uuuu");
+				dfb2.appendPattern("MM" + sep + "dd" + sep).appendValueReduced(ChronoField.YEAR, 2, 2, Year.now().getValue() - 80);
 			} else if (i.isDateDMY()) {
-				dateFormat_ = "dd" + sep + "MM" + sep + "uuuu";
+				dfb1.appendPattern("dd" + sep + "MM" + sep + "uuuu");
+				dfb2.appendPattern("dd" + sep + "MM" + sep).appendValueReduced(ChronoField.YEAR, 2, 2, Year.now().getValue() - 80);
 			} else {
-				dateFormat_ = "uuuu" + sep + "MM" + sep + "dd";
+				dfb1.appendPattern("uuuu" + sep + "MM" + sep + "dd");
+				dfb2.appendValueReduced(ChronoField.YEAR, 2, 2, Year.now().getValue() - 80).appendPattern(sep + "MM" + sep + "dd");
 			}
+			dfb1.appendPattern(" " + getTimeFormatForDateTimeFormatter());
+			dfb2.appendPattern(" " + getTimeFormatForDateTimeFormatter());
+			DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder();
+			dfb.appendOptional(dfb1.parseCaseInsensitive().toFormatter(Locale.ENGLISH))
+				.appendOptional(dfb2.parseCaseInsensitive().toFormatter(Locale.ENGLISH));
+			dateTimeFormatter_ = dfb.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+				.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
 		}
-		return dateFormat_;
+		return dateTimeFormatter_;
+	}
+	
+	@Override
+	public DateTimeFormatter getGMTDateFormatter() {
+		if (null == dateTimeFormatter_) {
+			DateTimeFormatterBuilder dfb1 = new DateTimeFormatterBuilder();
+			DateTimeFormatterBuilder dfb2 = new DateTimeFormatterBuilder();
+			International i = getInternational();
+			String sep = i.getDateSep();
+			if (i.isDateMDY()) {
+				dfb1.appendPattern("MM" + sep + "dd" + sep + "uuuu");
+				dfb2.appendPattern("MM" + sep + "dd" + sep).appendValueReduced(ChronoField.YEAR, 2, 2, Year.now().getValue() - 80);
+			} else if (i.isDateDMY()) {
+				dfb1.appendPattern("dd" + sep + "MM" + sep + "uuuu");
+				dfb2.appendPattern("dd" + sep + "MM" + sep).appendValueReduced(ChronoField.YEAR, 2, 2, Year.now().getValue() - 80);
+			} else {
+				dfb1.appendPattern("uuuu" + sep + "MM" + sep + "dd");
+				dfb2.appendValueReduced(ChronoField.YEAR, 2, 2, Year.now().getValue() - 80).appendPattern(sep + "MM" + sep + "dd");
+			}
+			DateTimeFormatterBuilder dfb = new DateTimeFormatterBuilder();
+			dfb.appendOptional(dfb1.parseCaseInsensitive().toFormatter(Locale.ENGLISH))
+				.appendOptional(dfb2.parseCaseInsensitive().toFormatter(Locale.ENGLISH));
+			dateTimeFormatter_ = dfb.parseCaseInsensitive().toFormatter(Locale.ENGLISH).withResolverStyle(ResolverStyle.LENIENT)
+				.withZone(ZoneId.ofOffset("GMT", ZoneOffset.UTC));
+		}
+		return dateTimeFormatter_;
 	}
 
-	@Override
-	public String getTimeFormatForDateTimeFormatter() {
+	private String getTimeFormatForDateTimeFormatter() {
 		if (null == timeFormat_) {
 			International i = getInternational();
 			if (i.isTime24Hour()) {

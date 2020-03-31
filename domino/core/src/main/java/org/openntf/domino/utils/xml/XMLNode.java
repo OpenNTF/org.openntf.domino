@@ -1,13 +1,28 @@
 /**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
  *
  */
 package org.openntf.domino.utils.xml;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -293,7 +308,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void getXml(Transformer transformer, final File out) throws IOException {
+	public void getXml(Transformer transformer, final Path out) throws IOException {
 		try {
 			if (transformer == null) {
 				transformer = DEFAULT_TRANSFORMER;
@@ -301,7 +316,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 			// StreamResult xResult = new StreamResult(out); - This constructor has problems with german umlauts
 			// See: http://comments.gmane.org/gmane.text.xml.saxon.help/6790
-			StreamResult result = new StreamResult(out.toURI().toString());
+			StreamResult result = new StreamResult(out.toUri().toString());
 			DOMSource source = new DOMSource(this.node_);
 			transformer.transform(source, result);
 		} catch (Exception e) {

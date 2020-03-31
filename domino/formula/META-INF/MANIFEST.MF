@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Formula Engine
 Bundle-SymbolicName: org.openntf.formula;singleton:=true
 Automatic-Module-Name: org.openntf.formula
-Bundle-Version: 10.0.1.qualifier
+Bundle-Version: 11.0.0.qualifier
 Bundle-Vendor: OpenNTF
 Export-Package: org.openntf.formula,
  org.openntf.formula.annotation,
@@ -13,5 +13,6 @@ Export-Package: org.openntf.formula,
  org.openntf.formula.parse,
  org.openntf.service
 Bundle-ClassPath: .
-Require-Bundle: com.ibm.icu.base;bundle-version="3.8.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Import-Package: com.ibm.icu.text,
+ com.ibm.icu.util

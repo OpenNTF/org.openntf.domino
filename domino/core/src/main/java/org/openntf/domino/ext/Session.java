@@ -1,8 +1,24 @@
 /**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
  *
  */
 package org.openntf.domino.ext;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Date;
 
@@ -580,16 +596,16 @@ public interface Session {
 	public void setViewExactMatch(boolean exactMatch);
 
 	/**
-	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. dd/MM/uuuu for D/M/Y
+	 * Gets the proper date time format from the International class for use in a DateTimeFormatterBuilder, e.g. HH:mm:ss for 24 hour
 	 *
-	 * @since 10.0.2
+	 * @since 11.0.0
 	 */
-	public String getDateFormatForDateTimeFormatter();
+	public DateTimeFormatter getGMTDateTimeFormatter();
 
 	/**
 	 * Gets the proper date format from the International class for use in a DateTimeFormatterBuilder, e.g. HH:mm:ss for 24 hour
 	 *
-	 * @since 10.0.2
+	 * @since 11.0.0
 	 */
-	public String getTimeFormatForDateTimeFormatter();
+	public DateTimeFormatter getGMTDateFormatter();
 }

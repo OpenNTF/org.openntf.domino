@@ -1,35 +1,38 @@
-/*
- * Copyright 2013
+/**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.openntf.domino.impl;
 
 import java.lang.ref.ReferenceQueue;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lotus.domino.Base;
-
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.domino.utils.Factory;
+
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.Multiset;
+
+import lotus.domino.Base;
+
+import static java.text.MessageFormat.format;
 
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
@@ -47,9 +50,8 @@ public class DominoReferenceCache {
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCache.class.getName());
 
 	/** The delegate map contains the value wrapped in phantomReferences) **/
-	//	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
 	private Map<lotus.domino.Base, DominoReference> map = new IdentityHashMap<lotus.domino.Base, DominoReference>(2048);
-	private Map<Long, AtomicInteger> cppMap = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>(2048));
+	private Multiset<Long> cppMap = ConcurrentHashMultiset.create();
 
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
@@ -62,14 +64,8 @@ public class DominoReferenceCache {
 
 	/**
 	 * Creates a new DominoReferencCache
-	 *
-	 * @param autorecycle
-	 *            true if the cache should recycle objects if they are weakly reachable
-	 *
 	 */
 	public DominoReferenceCache() {
-		super();
-		//autorecycle_ = autorecycle;
 	}
 
 	/**
@@ -97,7 +93,9 @@ public class DominoReferenceCache {
 		DominoReference ref = map.get(key);
 		if (ref == null) {
 			log_.log(Level.WARNING,
-					"Attemped to set noRecycle on a DominoReference id " + key + " that's not in the local reference cache");
+					format(
+							"Attemped to set noRecycle on a DominoReference id {0} that''s not in the local reference cache",
+							key));
 		} else {
 			ref.setNoRecycle(value);
 		}
@@ -133,13 +131,7 @@ public class DominoReferenceCache {
 		if (value instanceof SessionDescendant
 				&& ((SessionDescendant) value).getAncestorSession().isFixEnabled(Fixes.PEDANTIC_GC_TRACKING)) {
 			cppId = org.openntf.domino.impl.Base.GetCppObj(delegate);
-			synchronized (cppMap) {
-				if (!cppMap.containsKey(cppId)) {
-					cppMap.put(cppId, new AtomicInteger(1));
-				} else {
-					cppMap.get(cppId).incrementAndGet();
-				}
-			}
+			cppMap.add(cppId);
 		}
 
 		// create and enqueue a reference that tracks lifetime of value
@@ -214,10 +206,10 @@ public class DominoReferenceCache {
 			if (cppId != 0) {
 				// Then it must have had tracking enabled
 				synchronized (cppMap) {
-					if (cppMap.get(cppId).decrementAndGet() < 1) {
+					cppMap.remove(cppId);
+					if (cppMap.count(cppId) < 1) {
 						// Then this must have been the last ref for that CPP ID
 						recycle = true;
-						cppMap.remove(cppId);
 					}
 				}
 			} else {
@@ -230,14 +222,15 @@ public class DominoReferenceCache {
 					if (current != null && current == unrefLotus) {
 						if (log_.isLoggable(Level.SEVERE)) {
 							log_.log(Level.SEVERE,
-									"The " + current.getClass().getSimpleName() + " passed in to processQueue was recycled in the process");
+									format(
+											"The {0} passed in to processQueue was recycled in the process", current.getClass().getSimpleName()));
 						}
 					} else if (!died && current != null && unrefLotus != null && org.openntf.domino.impl.Base.isDead(current)) {
 						if (log_.isLoggable(Level.SEVERE)) {
 							log_.log(Level.SEVERE,
-									"The " + current.getClass().getSimpleName()
-											+ " passed in to processQueue was recycled as a side effect of recycling a "
-											+ unrefLotus.getClass().getSimpleName());
+									format(
+											"The {0} passed in to processQueue was recycled as a side effect of recycling a {1}",
+											current.getClass().getSimpleName(), unrefLotus.getClass().getSimpleName()));
 						}
 						died = true;
 					}
@@ -275,27 +268,9 @@ public class DominoReferenceCache {
 		}
 
 		org.openntf.domino.Base<?> result = ref.get();
-		//if (result == null) {
-		//	// this is the wrapper. If there is no wrapper inside (don't know how this should work) we do not return it
-		//	System.out.println("Wrapper lost! " + ref.isEnqueued());
-		//	return null;
-		//}
 
 		// check if the delegate is still alive. (not recycled or null)
 		if (result == null || ref.isEnqueued()) {
-
-			// For debug
-			//			if (result == null) {
-			//				System.out.println("NULL"); // happens, if there is no strong ref to this wrapper.
-			//			}
-			//			if (ref.isDead()) {
-			//				System.out.println("DEAD"); // happens, if you call recycle on the parent()
-			//			}
-			//			if (ref.isEnqueued()) {
-			//				// result is also NULL if the reference is enqueued (makes sense, because result (=wrapper) is no longer reachable
-			//				System.out.println("ENQUEUED");
-			//			}
-
 			// 	we get dead elements if we do this in a loop
 			//		d = s.getDatabase("", "names.nsf");
 			//		doc1 = d.getDocumentByID(id);
@@ -303,7 +278,11 @@ public class DominoReferenceCache {
 			//		doc1 = null;
 
 			// So, these objects can be removed from the cache
-			map.remove(ref.getDelegate());
+			if(ref != null) {
+				map.remove(ref.getDelegate());
+				long cppId = ref.getCppId();
+				cppMap.remove(cppId);
+			}
 			return null;
 		} else {
 			return result; // the wrapper.

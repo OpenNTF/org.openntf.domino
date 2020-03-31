@@ -1,33 +1,35 @@
-/*
- * Copyright 2013
+/**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * permissions and limitations under the License.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.openntf.domino.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AccessControlException;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
-import lotus.notes.NotesThread;
+import lotus.domino.NotesThread;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
@@ -64,7 +66,6 @@ import org.openntf.domino.session.SessionFullAccessFactory;
 import org.openntf.domino.session.TrustedSessionFactory;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
-import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
 
@@ -230,12 +231,7 @@ public enum Factory {
 		 * @return a counter for the class
 		 */
 		public Counter forClass(final Class<?> clazz) {
-			Counter ret = classes.get(clazz);
-			if (ret == null) {
-				ret = new Counter(countPerThread_);
-				classes.put(clazz, ret);
-			}
-			return ret;
+			return classes.computeIfAbsent(clazz, key -> new Counter(countPerThread_));
 		}
 
 		Counters(final boolean countPerThread) {
@@ -368,7 +364,7 @@ public enum Factory {
 	 */
 	private static void loadEnvironment(final Scanner scanner) {
 		if (ENVIRONMENT == null) {
-			ENVIRONMENT = new HashMap<String, String>();
+			ENVIRONMENT = new HashMap<>();
 		}
 		if (scanner != null) {
 			while (scanner.hasNextLine()) {
@@ -382,50 +378,34 @@ public enum Factory {
 			}
 		}
 		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					try {
-						ClassLoader cl = Factory.class.getClassLoader();
-						// we MUST use the Factory-classloader to find the correct MANIFEST
-						Enumeration<URL> resources = cl.getResources("META-INF/MANIFEST.MF");
-						while (resources.hasMoreElements()) {
+			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+				try(InputStream is = Factory.class.getResourceAsStream("/META-INF/MANIFEST.MF")) {
+					Manifest manifest = new Manifest(is);
+					// check that this is your manifest and do what you need or get the next one
+					Attributes attrib = manifest.getMainAttributes();
 
-							Manifest manifest = new Manifest(resources.nextElement().openStream());
-							// check that this is your manifest and do what you need or get the next one
-							Attributes attrib = manifest.getMainAttributes();
-
-							String bundleName = attrib.getValue("Bundle-SymbolicName");
-							if (bundleName != null) {
-								int pos;
-								if ((pos = bundleName.indexOf(';')) != -1) {
-									bundleName = bundleName.substring(0, pos);
-								}
-								if ("org.openntf.domino".equals(bundleName)) {
-									ENVIRONMENT.put("version", attrib.getValue("Bundle-Version"));
-									ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
-									ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
-									return null;
-								}
-							}
-
+					String bundleName = attrib.getValue("Bundle-SymbolicName");
+					if (bundleName != null) {
+						int pos;
+						if ((pos = bundleName.indexOf(';')) != -1) {
+							bundleName = bundleName.substring(0, pos);
 						}
-
-					} catch (Exception e) {
-						e.printStackTrace();
+						if ("org.openntf.domino".equals(bundleName)) {
+							ENVIRONMENT.put("version", attrib.getValue("Bundle-Version"));
+							ENVIRONMENT.put("title", attrib.getValue("Bundle-Name"));
+							ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+							return null;
+						}
 					}
-					return null;
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				return null;
 			});
 		} catch (AccessControlException e) {
 			e.printStackTrace();
-		} catch (PrivilegedActionException e) {
-			e.printStackTrace();
 		}
-		if (!ENVIRONMENT.containsKey("version")) {
-			ENVIRONMENT.put("version", "0.0.0.unknown");
-		}
-
+		ENVIRONMENT.putIfAbsent("version", "0.0.0.unknown");
 	}
 
 	public static String getEnvironment(final String key) {
@@ -1248,36 +1228,30 @@ public enum Factory {
 		}
 	}
 
-	private static File getConfigFileFallback() {
-		String progpath = System.getProperty("notes.binary");
-		File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-		if (!iniFile.exists()) {
-			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-			progpath = System.getProperty("user.dir");
-			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+	private static Path getConfigFileFallback() {
+		Path progpath = Paths.get(System.getProperty("notes.binary")); //$NON-NLS-1$
+		Path iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
+		if (!Files.exists(iniFile)) {
+			progpath = Paths.get(System.getProperty("user.dir")); //$NON-NLS-1$
+			iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
 		}
-		if (!iniFile.exists()) {
-			//							System.out.println("Inifile not found on notes.binary path: " + progpath);
-			progpath = System.getProperty("java.home");
-			if (progpath.endsWith("jvm")) {
-				iniFile = new File(
-						progpath + System.getProperty("file.separator") + ".." + System.getProperty("file.separator") + "notes.ini");
+		if (!Files.exists(iniFile)) {
+			progpath = Paths.get(System.getProperty("java.home")); //$NON-NLS-1$
+			if (progpath.endsWith("jvm")) { //$NON-NLS-1$
+				iniFile = progpath.getParent().resolve("notes.ini"); //$NON-NLS-1$
 			} else {
-				iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-
+				iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
 			}
 		}
-		if (!iniFile.exists()) {
-			progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
-			iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+		if (!Files.exists(iniFile)) {
+			progpath = Paths.get(System.getProperty("java.library.path")); // Otherwise the tests will not work //$NON-NLS-1$
+			iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
 		}
-		if (!iniFile.exists()) {
-			//							System.out.println("Inifile still not found on user.dir path: " + progpath);
-			if (progpath.contains("framework")) {
-				String pp2 = progpath.replace("framework", "");
-				iniFile = new File(pp2 + "notes.ini");
-				//								System.out.println("Attempting to use path: " + pp2);
-				if (!iniFile.exists()) {
+		if (!Files.exists(iniFile)) {
+			if (progpath.toString().contains("framework")) { //$NON-NLS-1$
+				String pp2 = progpath.toString().replace("framework", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				iniFile = Paths.get(pp2).resolve("notes.ini"); //$NON-NLS-1$
+				if (!Files.exists(iniFile)) {
 					Factory.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
 					for (Object rawName : System.getProperties().keySet()) {
 						if (rawName instanceof String) {
@@ -1317,23 +1291,25 @@ public enum Factory {
 			Factory.println("OpenNTF Domino API is already started. Cannot start it again");
 		}
 
-		File iniFile;
+		Path iniFile;
 		try {
 			localServerName = session.getUserName();
-			iniFile = new File(session.evaluate("@ConfigFile").get(0).toString());
+			iniFile = Paths.get(session.evaluate("@ConfigFile").get(0).toString()); //$NON-NLS-1$
 		} catch (NotesException e) {
-			Factory.println("WARNING: @ConfigFile returned " + e.getMessage() + " Using fallback to locate notes.ini");
+			Factory.println(MessageFormat.format("WARNING: @ConfigFile returned {0} Using fallback to locate notes.ini", e.getMessage()));
 			iniFile = getConfigFileFallback();
 		}
 
 		Factory.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
 
 		try {
-			Scanner scanner = new Scanner(iniFile);
-			scanner.useDelimiter("\n|\r\n");
-			loadEnvironment(scanner);
-			scanner.close();
-		} catch (FileNotFoundException e) {
+			try(InputStream is = Files.newInputStream(iniFile)) {
+				Scanner scanner = new Scanner(iniFile);
+				scanner.useDelimiter("\n|\r\n"); //$NON-NLS-1$
+				loadEnvironment(scanner);
+				scanner.close();
+			}
+		} catch (IOException e) {
 			Factory.println("Cannot read notes.ini. Giving up");
 			e.printStackTrace();
 		}
@@ -1370,16 +1346,13 @@ public enum Factory {
 
 		started = true;
 
-		Factory.println("OpenNTF API Version " + ENVIRONMENT.get("version") + " started");
+		Factory.println(MessageFormat.format("OpenNTF API Version {0} started", ENVIRONMENT.get("version")));
 
 		// Start up logging
 		try {
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					Logging.getInstance().startUp();
-					return null;
-				}
+			AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () -> {
+				Logging.getInstance().startUp();
+				return null;
 			});
 		} catch (AccessControlException e) {
 			e.printStackTrace();

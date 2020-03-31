@@ -1,8 +1,26 @@
+/**
+ * Copyright © 2013-2020 The OpenNTF Domino API Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openntf.domino.design.impl;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -53,14 +71,14 @@ public final class ScriptLibraryLS extends AbstractDesignFileResource implements
 	}
 
 	@Override
-	public void writeOnDiskFile(final File odpFile) throws IOException {
+	public void writeOnDiskFile(final Path odpFile) throws IOException {
 		// TODO Check for $Scriptlib_error => throw exception if item exists
-		PrintWriter pw = new PrintWriter(odpFile);
-		for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) {
-			pw.write(rawitemdata.getText());
+		try(Writer pw = Files.newBufferedWriter(odpFile)) {
+			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$ScriptLib']/text")) { //$NON-NLS-1$
+				pw.write(rawitemdata.getText());
+			}
 		}
-		pw.close();
-		odpFile.setLastModified(getDocLastModified().getTime());
+		Files.setLastModifiedTime(odpFile, FileTime.from(Instant.ofEpochMilli(getDocLastModified().getTime())));
 	}
 
 }
