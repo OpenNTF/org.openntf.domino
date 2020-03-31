@@ -1670,8 +1670,13 @@ public class Registration extends BaseThreadSafe<org.openntf.domino.Registration
 	 * @since 11.0.1
 	 */
 	@Override
-	public String getContactNoteID() throws NotesException {
-		return getDelegate().getContactNoteID();
+	public String getContactNoteID() {
+		try {
+			return getDelegate().getContactNoteID();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/**
@@ -1679,8 +1684,12 @@ public class Registration extends BaseThreadSafe<org.openntf.domino.Registration
 	 * @since 11.0.1
 	 */
 	@Override
-	public void setContactNoteID(String noteId) throws NotesException {
-		getDelegate().setContactNoteID(noteId);
+	public void setContactNoteID(String noteId) {
+		try {
+			getDelegate().setContactNoteID(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }

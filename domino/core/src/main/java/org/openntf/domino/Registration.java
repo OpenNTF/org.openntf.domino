@@ -2379,4 +2379,25 @@ public interface Registration
 	 */
 	@Override
 	public String switchToID(final String idFile, final String userPassword);
+	
+	/**
+	 * Represents the Note ID of an existing Person document to use when registering a user.
+	 * 
+	 * @return the ID of an existing Person document, if set
+	 * @since Notes/Domino 11.0.1
+	 * @since 11.0.1
+	 */
+	@Override
+	String getContactNoteID();
+	
+	/**
+	 * Represents the Note ID of an existing Person document to use when registering a user,
+	 * such as a note created by Active Directory sync.
+	 * 
+	 * @param contactNoteId the ID of an existing Person document
+	 * @since Notes/Domino 11.0.1
+	 * @since 11.0.1
+	 */
+	@Override
+	void setContactNoteID(String contactNoteId);
 }
