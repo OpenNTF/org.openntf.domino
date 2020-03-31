@@ -1665,4 +1665,22 @@ public class Registration extends BaseThreadSafe<org.openntf.domino.Registration
 		return parent.getFactory();
 	}
 
+	/**
+	 * @since Notes/Domino 11.0.1
+	 * @since 11.0.1
+	 */
+	@Override
+	public String getContactNoteID() throws NotesException {
+		return getDelegate().getContactNoteID();
+	}
+
+	/**
+	 * @since Notes/Domino 11.0.1
+	 * @since 11.0.1
+	 */
+	@Override
+	public void setContactNoteID(String noteId) throws NotesException {
+		getDelegate().setContactNoteID(noteId);
+	}
+
 }
