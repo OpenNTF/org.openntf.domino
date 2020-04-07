@@ -17,8 +17,8 @@
 
 -->
 <feature
-      id="org.openntf.domino.nonxsp.feature"
-      label="OpenNTF Domino API Non-XSP"
+      id="org.openntf.domino.graph.feature"
+      label="OpenNTF Domino API Graph REST Services"
       version="11.0.1.qualifier"
       provider-name="OpenNTF">
 
@@ -44,23 +44,13 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="com.ibm.icu.base"/>
-      <import plugin="com.ibm.commons" version="9.0.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.notes.java.api"/>
-      <import plugin="com.tinkerpop" version="2.6.0" match="greaterOrEqual"/>
-      <import plugin="org.openntf.domino" version="1.5.0" match="greaterOrEqual"/>
-      <import plugin="org.openntf.formula" version="1.5.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.designer.runtime" version="9.0.1" match="greaterOrEqual"/>
-      <import plugin="com.ibm.domino.napi"/>
-      <import plugin="com.ibm.icu"/>
-      <import plugin="com.ibm.jscript"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="com.ibm.icu.base" version="3.8.1" match="greaterOrEqual"/>
+      <import feature="org.openntf.domino.feature"/>
    </requires>
 
-   <plugin id="org.openntf.domino" version="0.0.0"/>
-   <plugin id="org.openntf.formula" version="0.0.0"/>
+   <plugin
+         id="org.openntf.domino.rest"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

@@ -58,6 +58,7 @@
 		
 		<module>features/org.openntf.domino.dependencies.feature</module>
 		<module>features/org.openntf.domino.feature</module>
+		<module>features/org.openntf.domino.graph.feature</module>
 		<module>features/org.openntf.domino.nonxsp.feature</module>
 		
 		<module>releng/org.openntf.domino.updatesite</module>

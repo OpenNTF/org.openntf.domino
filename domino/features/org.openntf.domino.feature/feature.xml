@@ -64,32 +64,8 @@
       <import plugin="com.ibm.icu.base" version="3.8.1" match="greaterOrEqual"/>
    </requires>
 
-   <plugin
-         id="org.openntf.domino"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openntf.domino.xsp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openntf.formula"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openntf.domino.rest"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin id="org.openntf.domino" version="0.0.0"/>
+   <plugin id="org.openntf.domino.xsp" version="0.0.0"/>
+   <plugin id="org.openntf.formula" version="0.0.0"/>
 
 </feature>

@@ -32,5 +32,11 @@
    <feature id="org.openntf.domino.dependencies.feature.source">
       <category name="OpenNTF Domino API"/>
    </feature>
+   <feature id="org.openntf.domino.graph.feature">
+      <category name="OpenNTF Domino API"/>
+   </feature>
+   <feature id="org.openntf.domino.graph.feature.source">
+      <category name="OpenNTF Domino API"/>
+   </feature>
    <category-def name="OpenNTF Domino API" label="OpenNTF Domino API"/>
 </site>
