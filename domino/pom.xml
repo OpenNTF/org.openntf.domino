@@ -187,7 +187,6 @@
 						</environment>
 					</environments>
 					<dependency-resolution>
-						<optionalDependencies>ignore</optionalDependencies>
 						<extraRequirements>
 							<requirement>
 								<type>eclipse-plugin</type>
