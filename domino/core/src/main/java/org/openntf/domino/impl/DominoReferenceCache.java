@@ -220,14 +220,14 @@ public class DominoReferenceCache {
 				if (ref.recycle()) {
 
 					if (current != null && current == unrefLotus) {
-						if (log_.isLoggable(Level.SEVERE)) {
-							log_.log(Level.SEVERE,
+						if (log_.isLoggable(Level.FINE)) {
+							log_.log(Level.FINE,
 									format(
 											"The {0} passed in to processQueue was recycled in the process", current.getClass().getSimpleName()));
 						}
 					} else if (!died && current != null && unrefLotus != null && org.openntf.domino.impl.Base.isDead(current)) {
-						if (log_.isLoggable(Level.SEVERE)) {
-							log_.log(Level.SEVERE,
+						if (log_.isLoggable(Level.FINE)) {
+							log_.log(Level.FINE,
 									format(
 											"The {0} passed in to processQueue was recycled as a side effect of recycling a {1}",
 											current.getClass().getSimpleName(), unrefLotus.getClass().getSimpleName()));
