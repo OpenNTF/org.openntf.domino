@@ -280,6 +280,7 @@
 						<inputEncoding>UTF-8</inputEncoding>
 						<outputEncoding>UTF-8</outputEncoding>
 						<argLine>-ea -Dfile.encoding=UTF-8</argLine>
+						<trimStackTrace>false</trimStackTrace>
 					</configuration>
 				</plugin>
 				<!-- This is to enable test execution only on supported platforms below -->
