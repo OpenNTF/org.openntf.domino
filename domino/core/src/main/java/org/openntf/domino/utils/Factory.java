@@ -19,9 +19,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -35,16 +32,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import lotus.domino.NotesException;
-import lotus.domino.NotesThread;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.Base;
@@ -68,6 +62,10 @@ import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 import org.openntf.service.IServiceLocator;
 import org.openntf.service.ServiceLocatorFinder;
+
+import lotus.domino.NotesException;
+import lotus.domino.NotesFactory;
+import lotus.domino.NotesThread;
 
 /**
  * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
@@ -111,14 +109,14 @@ public enum Factory {
 		 * <b>The Method will fail, if you are running in a wrongly set up Thread</b><br>
 		 * (But there should be only XPage-Threads or XOTS-Threads. TODO RPr: and maybe DominoTheads)
 		 */
-		CURRENT(0, "CURRENT"),
+		CURRENT(0, "CURRENT"), //$NON-NLS-1$
 
 		/**
 		 * Returns a session with full access. This is a named session (name is equal to {@link #CURRENT}s session name) but with full
 		 * access rights. {@link #FULL_ACCESS} may provide the same session as {@link #CURRENT} if the Runnable was annotated with a
 		 * *_FULL_ACCESS {@link XotsSessionType}
 		 */
-		CURRENT_FULL_ACCESS(1, "CURRENT_FULL_ACCESS"),
+		CURRENT_FULL_ACCESS(1, "CURRENT_FULL_ACCESS"), //$NON-NLS-1$
 
 		/**
 		 * Returns a named session as signer. The code-signer is either the server (if the runnable is not inside an NSF) or the signer of
@@ -127,42 +125,42 @@ public enum Factory {
 		 * users! <br/>
 		 * <b>Note 2:</b> Due a bug, we return always SessionAsSigner (@see http://www.mydominolab.com/2011/10/xpages-sessionassigner.html)
 		 */
-		SIGNER(2, "SIGNER"),
+		SIGNER(2, "SIGNER"), //$NON-NLS-1$
 
 		/**
 		 * This is currently the SAME session as {@link #SIGNER} due a Bug in XPages.
 		 */
-		SIGNER_FULL_ACCESS(3, "SIGNER_FULL_ACCESS"),
+		SIGNER_FULL_ACCESS(3, "SIGNER_FULL_ACCESS"), //$NON-NLS-1$
 
 		/**
 		 * Returns a NATIVE session
 		 */
-		NATIVE(4, "NATIVE"),
+		NATIVE(4, "NATIVE"), //$NON-NLS-1$
 
 		/**
 		 * Returns a TRUSTED session (This does not yet work!)
 		 */
-		TRUSTED(5, "TRUSTED"),
+		TRUSTED(5, "TRUSTED"), //$NON-NLS-1$
 
 		/**
 		 * Returns a Session with full access.
 		 */
-		FULL_ACCESS(6, "FULL_ACCESS"),
+		FULL_ACCESS(6, "FULL_ACCESS"), //$NON-NLS-1$
 
 		/**
 		 * Returns a Session with full access.
 		 */
-		PASSWORD(7, "PASSWORD"),
+		PASSWORD(7, "PASSWORD"), //$NON-NLS-1$
 
 		/**
 		 * for internal use only!
 		 */
-		_NAMED_internal(-1, "NAMED"),
+		_NAMED_internal(-1, "NAMED"), //$NON-NLS-1$
 
 		/**
 		 * for internal use only!
 		 */
-		_NAMED_FULL_ACCESS_internal(-1, "NAMED_FULL_ACCESS"),
+		_NAMED_FULL_ACCESS_internal(-1, "NAMED_FULL_ACCESS"), //$NON-NLS-1$
 
 		;
 
@@ -352,7 +350,8 @@ public enum Factory {
 		return tv.threadConfig;
 	}
 
-	private static Map<String, String> ENVIRONMENT;
+	private static Map<String, String> ENVIRONMENT = null;
+	private static final Map<String, String> NOTESENV = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 	//private static boolean session_init = false;
 	//private static boolean jar_init = false;
@@ -362,38 +361,27 @@ public enum Factory {
 	 * load the configuration
 	 *
 	 */
-	private static void loadEnvironment(final Scanner scanner) {
+	private static void loadEnvironment() {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<>();
 		}
-		if (scanner != null) {
-			while (scanner.hasNextLine()) {
-				String nextLine = scanner.nextLine();
-				int i = nextLine.indexOf('=');
-				if (i > 0) {
-					String key = nextLine.substring(0, i).toLowerCase();
-					String value = nextLine.substring(i + 1);
-					ENVIRONMENT.put(key, value);
-				}
-			}
-		}
 		try {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-				try(InputStream is = Factory.class.getResourceAsStream("/META-INF/MANIFEST.MF")) {
+				try(InputStream is = Factory.class.getResourceAsStream("/META-INF/MANIFEST.MF")) { //$NON-NLS-1$
 					Manifest manifest = new Manifest(is);
 					// check that this is your manifest and do what you need or get the next one
 					Attributes attrib = manifest.getMainAttributes();
 
-					String bundleName = attrib.getValue("Bundle-SymbolicName");
+					String bundleName = attrib.getValue("Bundle-SymbolicName"); //$NON-NLS-1$
 					if (bundleName != null) {
 						int pos;
 						if ((pos = bundleName.indexOf(';')) != -1) {
 							bundleName = bundleName.substring(0, pos);
 						}
-						if ("org.openntf.domino".equals(bundleName)) {
-							ENVIRONMENT.put("version", attrib.getValue("Bundle-Version"));
-							ENVIRONMENT.put("title", attrib.getValue("Bundle-Name"));
-							ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+						if ("org.openntf.domino".equals(bundleName)) { //$NON-NLS-1$
+							ENVIRONMENT.put("version", attrib.getValue("Bundle-Version")); //$NON-NLS-1$ //$NON-NLS-2$
+							ENVIRONMENT.put("title", attrib.getValue("Bundle-Name")); //$NON-NLS-1$ //$NON-NLS-2$
+							ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL")); //$NON-NLS-1$ //$NON-NLS-2$
 							return null;
 						}
 					}
@@ -405,38 +393,51 @@ public enum Factory {
 		} catch (AccessControlException e) {
 			e.printStackTrace();
 		}
-		ENVIRONMENT.putIfAbsent("version", "0.0.0.unknown");
+		ENVIRONMENT.putIfAbsent("version", "0.0.0.unknown"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static String getEnvironment(final String key) {
 		if (ENVIRONMENT == null) {
-			loadEnvironment(null);
+			loadEnvironment();
 		}
 		return ENVIRONMENT.get(key);
 	}
 
 	public static String getTitle() {
-		return getEnvironment("title");
+		return getEnvironment("title"); //$NON-NLS-1$
 	}
 
 	public static String getUrl() {
-		return getEnvironment("url");
+		return getEnvironment("url"); //$NON-NLS-1$
 	}
 
 	public static String getVersion() {
-		return getEnvironment("version");
+		return getEnvironment("version"); //$NON-NLS-1$
 	}
 
 	public static String getDataPath() {
-		return getEnvironment("directory");
+		return NOTESENV.computeIfAbsent("directory", Factory::_getEnv); //$NON-NLS-1$
 	}
 
 	public static String getProgramPath() {
-		return getEnvironment("notesprogram");
+		return NOTESENV.computeIfAbsent("notesprogram", Factory::_getEnv); //$NON-NLS-1$
 	}
 
 	public static String getHTTPJVMHeapSize() {
-		return getEnvironment("httpjvmheapsize");
+		return NOTESENV.computeIfAbsent("httpjvmheapsize", Factory::_getEnv); //$NON-NLS-1$
+	}
+	
+	private static String _getEnv(String key) {
+		try {
+			lotus.domino.Session s = NotesFactory.createSession();
+			try {
+				return s.getEnvironmentString(key, true);
+			} finally {
+				s.recycle();
+			}
+		} catch(NotesException e) {
+			return e.getLocalizedMessage();
+		}
 	}
 
 	/** The Constant log_. */
@@ -1228,42 +1229,6 @@ public enum Factory {
 		}
 	}
 
-	private static Path getConfigFileFallback() {
-		Path progpath = Paths.get(System.getProperty("notes.binary")); //$NON-NLS-1$
-		Path iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
-		if (!Files.exists(iniFile)) {
-			progpath = Paths.get(System.getProperty("user.dir")); //$NON-NLS-1$
-			iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
-		}
-		if (!Files.exists(iniFile)) {
-			progpath = Paths.get(System.getProperty("java.home")); //$NON-NLS-1$
-			if (progpath.endsWith("jvm")) { //$NON-NLS-1$
-				iniFile = progpath.getParent().resolve("notes.ini"); //$NON-NLS-1$
-			} else {
-				iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
-			}
-		}
-		if (!Files.exists(iniFile)) {
-			progpath = Paths.get(System.getProperty("java.library.path")); // Otherwise the tests will not work //$NON-NLS-1$
-			iniFile = progpath.resolve("notes.ini"); //$NON-NLS-1$
-		}
-		if (!Files.exists(iniFile)) {
-			if (progpath.toString().contains("framework")) { //$NON-NLS-1$
-				String pp2 = progpath.toString().replace("framework", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				iniFile = Paths.get(pp2).resolve("notes.ini"); //$NON-NLS-1$
-				if (!Files.exists(iniFile)) {
-					Factory.println("WARNING: Unable to read environment for log setup. Please look at the following properties...");
-					for (Object rawName : System.getProperties().keySet()) {
-						if (rawName instanceof String) {
-							Factory.println((String) rawName + " = " + System.getProperty((String) rawName));
-						}
-					}
-				}
-			}
-		}
-		return iniFile;
-	}
-
 	public static void startup() {
 		synchronized (Factory.class) {
 
@@ -1285,34 +1250,21 @@ public enum Factory {
 
 	public static synchronized void startup(final lotus.domino.Session session) {
 		if (session instanceof org.openntf.domino.Session) {
-			throw new UnsupportedOperationException("Initialization must be done on the raw session! How did you get that session?");
+			throw new UnsupportedOperationException("Initialization must be done on the raw session");
 		}
 		if (started) {
 			Factory.println("OpenNTF Domino API is already started. Cannot start it again");
 		}
 
-		Path iniFile;
 		try {
 			localServerName = session.getUserName();
-			iniFile = Paths.get(session.evaluate("@ConfigFile").get(0).toString()); //$NON-NLS-1$
 		} catch (NotesException e) {
-			Factory.println(MessageFormat.format("WARNING: @ConfigFile returned {0} Using fallback to locate notes.ini", e.getMessage()));
-			iniFile = getConfigFileFallback();
+			Factory.println(MessageFormat.format("Exception determining the current user name", e.getMessage()));
 		}
 
-		Factory.println("Starting the OpenNTF Domino API... Using notes.ini: " + iniFile);
+		Factory.println("Starting the OpenNTF Domino API");
 
-		try {
-			try(InputStream is = Files.newInputStream(iniFile)) {
-				Scanner scanner = new Scanner(iniFile);
-				scanner.useDelimiter("\n|\r\n"); //$NON-NLS-1$
-				loadEnvironment(scanner);
-				scanner.close();
-			}
-		} catch (IOException e) {
-			Factory.println("Cannot read notes.ini. Giving up");
-			e.printStackTrace();
-		}
+		loadEnvironment();
 
 		// There is NO(!) Default SessionFactory for the current session. you have to set it!
 		defaultSessionFactories[SessionType.CURRENT.index] = null;
@@ -1346,7 +1298,7 @@ public enum Factory {
 
 		started = true;
 
-		Factory.println(MessageFormat.format("OpenNTF API Version {0} started", ENVIRONMENT.get("version")));
+		Factory.println(MessageFormat.format("OpenNTF API Version {0} started", ENVIRONMENT.get("version"))); //$NON-NLS-2$
 
 		// Start up logging
 		try {
