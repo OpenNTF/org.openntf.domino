@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenNTF Domino API Tinkerpop Graph API
+Bundle-SymbolicName: org.openntf.domino.graph;singleton:=true
+Automatic-Module-Name: org.openntf.domino.graph
+Fragment-Host: org.openntf.domino
+Bundle-Version: 11.0.1.qualifier
+Bundle-Vendor: OpenNTF
+Export-Package: org.openntf.domino.graph,
+ org.openntf.domino.graph2,
+ org.openntf.domino.graph2.annotations,
+ org.openntf.domino.graph2.builtin,
+ org.openntf.domino.graph2.builtin.identity,
+ org.openntf.domino.graph2.builtin.search,
+ org.openntf.domino.graph2.builtin.social,
+ org.openntf.domino.graph2.builtin.workflow,
+ org.openntf.domino.graph2.builtin.workflow.definition,
+ org.openntf.domino.graph2.exception,
+ org.openntf.domino.graph2.impl
+Require-Bundle: com.tinkerpop;bundle-version="2.6.1";visibility:=reexport,
+ javassist;bundle-version="3.18.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

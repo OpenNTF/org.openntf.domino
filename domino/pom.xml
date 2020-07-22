@@ -49,6 +49,7 @@
 		<module>externals</module>
 		<module>formula</module>
 		<module>core</module>
+		<module>org.openntf.domino.graph</module>
 		<module>org.openntf.domino.junit</module>
 		<module>org.openntf.domino.samples</module>
 		<module>xsp</module>
