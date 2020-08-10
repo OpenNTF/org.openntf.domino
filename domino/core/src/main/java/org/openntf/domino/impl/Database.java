@@ -25,9 +25,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -79,8 +81,6 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.enums.DominoEnumUtil;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.util.Calendar;
-import com.ibm.icu.util.GregorianCalendar;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -3417,17 +3417,17 @@ public class Database extends BaseResurrectable<org.openntf.domino.Database, lot
 	protected static final int DAILY_ARRAY_LIMIT = 31;
 
 	public int[] getDailyModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
-		Date now = new Date();
+		Calendar now = Calendar.getInstance();
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(since);
-		int diffDays = cal.fieldDifference(now, Calendar.DAY_OF_YEAR);
+		int diffDays = cal.get(Calendar.DAY_OF_YEAR) - now.get(Calendar.DAY_OF_YEAR);
 		int[] result = null;
 		if (diffDays > DAILY_ARRAY_LIMIT) {
 			result = new int[DAILY_ARRAY_LIMIT];
 		} else {
 			result = new int[diffDays];
 		}
-		cal.setTime(now);
+		cal.setTime(now.getTime());
 		for (int i = 0; i < result.length; i++) {
 			if (i == 0) {
 				cal.set(Calendar.HOUR_OF_DAY, 0);
