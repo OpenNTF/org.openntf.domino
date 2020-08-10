@@ -55,7 +55,7 @@
 		<module>xsp</module>
         <module>org.openntf.domino.xsp.test</module>
 		<module>rest</module>
-		<module>tests</module>
+<!-- 		<module>tests</module> -->
 		
 		<module>features/org.openntf.domino.dependencies.feature</module>
 		<module>features/org.openntf.domino.feature</module>
