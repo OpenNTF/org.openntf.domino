@@ -16,10 +16,9 @@
  */
 package org.openntf.formula;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-
-import com.ibm.icu.util.Calendar;
 
 /**
  * This is the DateTime interface that is used in formulas. It is very similar to the org.opennft.domino.DateTime interface but this has no

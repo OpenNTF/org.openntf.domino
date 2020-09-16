@@ -20,6 +20,7 @@ package org.openntf.formula.function;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -33,8 +34,6 @@ import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.ValueHolder.DataType;
 import org.openntf.formula.annotation.ParamCount;
-
-import com.ibm.icu.util.Calendar;
 
 /*----------------------------------------------------------------------------*/
 public enum FocFunctions {

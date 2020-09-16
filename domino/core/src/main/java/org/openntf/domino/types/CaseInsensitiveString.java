@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.ibm.icu.lang.UCharacter;
-
 /**
  * @author Nathan T. Freeman Much source code shamelessly stolen from com.ibm.icu.util.CaseInsensitiveString. We would have properly
  *         extended it, but folded is private in IBM's implementation :-/
@@ -79,14 +77,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		return result;
 	}
 
-	protected static String foldCase(final String foldee) {
-		return UCharacter.foldCase(foldee, true);
-	}
-
 	public String getFolded() {
-		if (folded == null) {
-			folded = foldCase(string);
-		}
 		return folded;
 	}
 
@@ -98,6 +89,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 	 */
 	public CaseInsensitiveString(final CharSequence s) {
 		string = String.valueOf(s);
+		folded = string.toLowerCase();
 	}
 
 	public CaseInsensitiveString() {	//used for Externalization
@@ -184,7 +176,7 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		} catch (ClassCastException e) {
 			try {
 				String s = o.toString();
-				return folded.compareTo(foldCase(s));
+				return folded.compareTo(s.toLowerCase());
 			} catch (ClassCastException e2) {
 				throw new IllegalArgumentException("Cannot compare an object of type " + (o == null ? "null" : o.getClass().getName()));
 
@@ -196,9 +188,9 @@ public class CaseInsensitiveString implements CharSequence, Comparable<CharSeque
 		if (arg0 instanceof CaseInsensitiveString) {
 			return getFolded().startsWith(((CaseInsensitiveString) arg0).getFolded());
 		} else if (arg0 instanceof String) {
-			return getFolded().startsWith(foldCase((String) arg0));
+			return getFolded().startsWith(arg0.toString().toLowerCase());
 		} else {
-			return getFolded().startsWith(foldCase(String.valueOf(arg0)));
+			return getFolded().startsWith(String.valueOf(arg0).toLowerCase());
 		}
 	}
 

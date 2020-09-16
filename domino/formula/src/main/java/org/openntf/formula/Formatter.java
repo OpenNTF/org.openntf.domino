@@ -16,10 +16,9 @@
  */
 package org.openntf.formula;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import com.ibm.icu.util.Calendar;
 
 // TODO RPr Needs a lot of comments
 public interface Formatter {

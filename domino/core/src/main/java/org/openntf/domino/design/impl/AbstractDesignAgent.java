@@ -16,6 +16,7 @@
 package org.openntf.domino.design.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.openntf.domino.DateTime;
@@ -29,7 +30,6 @@ import org.openntf.domino.utils.Strings;
 import org.openntf.domino.utils.xml.XMLNode;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.util.Calendar;
 
 public abstract class AbstractDesignAgent extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignAgent {
 	private static final long serialVersionUID = 1L;

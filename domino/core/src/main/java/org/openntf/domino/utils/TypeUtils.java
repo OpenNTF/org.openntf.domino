@@ -21,7 +21,9 @@ package org.openntf.domino.utils;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -62,9 +64,6 @@ import org.openntf.domino.types.ReadersList;
 
 import com.google.common.collect.ImmutableList;
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.math.BigDecimal;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * @author nfreeman
@@ -77,12 +76,7 @@ public enum TypeUtils {
 	protected static final List<CustomConverter> converterList_ = new ArrayList<CustomConverter>();
 	//	protected static final List<Class<?>> converterFromList_ = new ArrayList<Class<?>>();
 
-	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-		@Override
-		protected SimpleDateFormat initialValue() {
-			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		}
-	};
+	private static final ThreadLocal<SimpleDateFormat> DEFAULT_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")); //$NON-NLS-1$
 
 	public static SimpleDateFormat getDefaultDateFormat() {
 		return DEFAULT_FORMAT.get();
@@ -879,14 +873,6 @@ public enum TypeUtils {
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
 			}
-		} else if (type == BigDecimal.class) {
-			if (localValue instanceof String) {
-				result = (T) new BigDecimal((String) localValue);
-			} else if (localValue instanceof Double) {
-				result = (T) new BigDecimal((Double) localValue);
-			} else {
-				throw new DataNotCompatibleException("Cannot create a " + type.getName() + " from a " + localValue.getClass().getName());
-			}
 		} else if (type == BigInteger.class) {
 			if (localValue instanceof String) {
 				result = (T) new BigInteger((String) localValue);
@@ -1060,9 +1046,6 @@ public enum TypeUtils {
 			if (ctype == Character.TYPE) {
 				throw new UnimplementedException("Primitive conversion for char not yet defined");
 			}
-			if (ctype == com.ibm.icu.lang.UCharacter.class) {
-				throw new UnimplementedException("Primitive conversion for char not yet defined");
-			}
 			throw new DataNotCompatibleException("");
 
 		}
@@ -1101,9 +1084,6 @@ public enum TypeUtils {
 			throw new UnimplementedException("Primitive conversion for byte not yet defined");
 		}
 		if (ctype == Character.TYPE) {
-			throw new UnimplementedException("Primitive conversion for char not yet defined");
-		}
-		if (ctype == com.ibm.icu.lang.UCharacter.class) {
 			throw new UnimplementedException("Primitive conversion for char not yet defined");
 		}
 		throw new DataNotCompatibleException("");

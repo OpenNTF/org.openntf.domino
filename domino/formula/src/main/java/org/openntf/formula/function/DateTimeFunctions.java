@@ -16,6 +16,7 @@
  */
 package org.openntf.formula.function;
 
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
@@ -28,8 +29,6 @@ import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
-
-import com.ibm.icu.util.Calendar;
 
 public enum DateTimeFunctions {
 	;

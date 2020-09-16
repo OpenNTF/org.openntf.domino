@@ -20,8 +20,6 @@ package org.openntf.domino.ext;
 
 import java.time.temporal.Temporal;
 
-import com.ibm.icu.util.Calendar;
-
 /**
  * OpenNTF extensions to DateTime class
  *
@@ -136,23 +134,6 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	 * @since org.openntf.domino 2.0.1
 	 */
 	public boolean isBeforeIgnoreTime(final org.openntf.domino.DateTime compareDate);
-
-	/**
-	 * Returns a Java Calendar object for the DateTime object, same as used internally by org.openntf.domino.DateTime class
-	 *
-	 * @return Java Calendar object representing the DateTime object
-	 * @since org.openntf.domino 1.0.0
-	 */
-	public Calendar toJavaCal();
-
-	/**
-	 * Sets the date and time to the value of a specific Java Calendar instance
-	 *
-	 * @param calendar
-	 *            Java calendar instance with relevant date and time
-	 * @since org.openntf.domino 1.0.0
-	 */
-	public void setLocalTime(Calendar calendar);
 
 	public org.openntf.domino.DateTime clone();
 

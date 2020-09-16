@@ -35,6 +35,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
@@ -42,6 +43,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -65,8 +67,6 @@ import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Factory.ThreadConfig;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.icu.util.Calendar;
-import com.ibm.icu.util.ULocale;
 
 /**
  * The Enum DominoUtils.
@@ -1020,7 +1020,7 @@ public enum DominoUtils {
 	 */
 	public static Calendar toJavaCalendarSafe(final lotus.domino.DateTime dt) {
 		Date d = DominoUtils.toJavaDateSafe(dt);
-		Calendar c = Calendar.getInstance(ULocale.getDefault());
+		Calendar c = Calendar.getInstance(Locale.getDefault());
 		c.setTime(d);
 		return c;
 	}

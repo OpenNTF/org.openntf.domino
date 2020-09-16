@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -83,8 +84,6 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 import org.openntf.domino.utils.Strings;
-
-import com.ibm.icu.util.Calendar;
 
 // TODO: Auto-generated Javadoc
 //import lotus.domino.Name;
@@ -300,18 +299,6 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 		DateRange ret = getFactory().create(DateRange.SCHEMA, this, null);
 		ret.setStartDateTime(startTime);
 		ret.setEndDateTime(endTime);
-		return ret;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
-	 */
-	@Override
-	public DateTime createDateTime(final java.util.Calendar date) {
-		DateTime ret = getFactory().create(DateTime.SCHEMA, this, null);
-		ret.setLocalTime(date);
 		return ret;
 	}
 

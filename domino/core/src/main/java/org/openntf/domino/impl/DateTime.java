@@ -15,27 +15,19 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
-import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
@@ -43,8 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-import com.ibm.icu.util.Calendar;
-import com.ibm.icu.util.GregorianCalendar;
+import lotus.domino.NotesException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -67,15 +58,7 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 	}
 
 	/** The calendar */
-	private static ThreadLocal<Calendar> calendar = new ThreadLocal<Calendar>() {
-		@Override
-		public Calendar get() {
-			if (super.get() == null) {
-				set(GregorianCalendar.getInstance());
-			}
-			return super.get();
-		};
-	};
+	private static ThreadLocal<Calendar> calendar = ThreadLocal.withInitial(Calendar::getInstance);
 
 	private Date date_;
 
@@ -812,27 +795,6 @@ public class DateTime extends BaseThreadSafe<org.openntf.domino.DateTime, lotus.
 	@Override
 	public void setLocalDate(final int year, final int month, final int day) {
 		setLocalDate(year, month, day, false);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Calendar)
-	 */
-	@Override
-	public void setLocalTime(final java.util.Calendar calendar) {
-		date_ = calendar.getTime();
-		//FIXME NTF this is incorrect. The notesZone_ is the timezone according to the legacy Notes API. The Java calendar API cannot replace it.
-		//		java.util.TimeZone localTimeZone = calendar.getTimeZone();
-		//		notesZone_ = calendar.get(Calendar.ZONE_OFFSET);
-		//		if (localTimeZone.useDaylightTime() == true) {
-		//			dst_ = localTimeZone.inDaylightTime(date_);
-		//		} else {
-		//			dst_ = false;
-		//		}
-		isDateOnly_ = false;
-		isTimeOnly_ = false;
-		//setLocalTime(calendar.getTime());
 	}
 
 	/*

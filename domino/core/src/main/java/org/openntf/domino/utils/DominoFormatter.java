@@ -16,15 +16,14 @@
 package org.openntf.domino.utils;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.ULocale;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -101,21 +100,21 @@ public class DominoFormatter extends ThreadLocal<Object> implements Serializable
 
 	private DateFormat getTimeOnlyFormat() {
 		if (tdf_ == null) {
-			tdf_ = new SimpleDateFormat(timeOnlyFormat_, ULocale.getDefault());
+			tdf_ = new SimpleDateFormat(timeOnlyFormat_, Locale.getDefault());
 		}
 		return tdf_;
 	}
 
 	private DateFormat getDateOnlyFormat() {
 		if (ddf_ == null) {
-			ddf_ = new SimpleDateFormat(dateOnlyFormat_, ULocale.getDefault());
+			ddf_ = new SimpleDateFormat(dateOnlyFormat_, Locale.getDefault());
 		}
 		return ddf_;
 	}
 
 	private DateFormat getDateTimeFormat() {
 		if (dtdf_ == null) {
-			dtdf_ = new SimpleDateFormat(dateTimeFormat_, ULocale.getDefault());
+			dtdf_ = new SimpleDateFormat(dateTimeFormat_, Locale.getDefault());
 		}
 		return dtdf_;
 	}

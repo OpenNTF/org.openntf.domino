@@ -14,5 +14,3 @@ Export-Package: org.openntf.formula,
  org.openntf.service
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.ibm.icu.text,
- com.ibm.icu.util

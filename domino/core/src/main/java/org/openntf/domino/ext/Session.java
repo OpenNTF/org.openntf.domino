@@ -26,15 +26,12 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
-import org.openntf.domino.DateTime;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.Factory.SessionType;
-
-import com.ibm.icu.util.Calendar;
 
 /**
  * @author Paul Withers
@@ -263,17 +260,6 @@ public interface Session {
 	 * @since openntf.domino 2.0.1
 	 */
 	public org.openntf.domino.Name getEffectiveUserNameObject();
-
-	/**
-	 * Creates a DateTime object that represents a specified date and time.
-	 *
-	 * @param date
-	 *            The date, time, and time zone you want the object to represent using a {@link com.ibm.icu.util.Calendar} object.
-	 *
-	 * @return The newly created {@link DateTime} object.
-	 * @since lotus.domino 4.5.0
-	 */
-	public DateTime createDateTime(Calendar date);
 
 	/**
 	 * Creates a Name object using a standard lotus.domino.Session, in case the fix is not enabled
