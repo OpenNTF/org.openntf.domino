@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperVertexQuery;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes" })
 public class IdVertex extends IdElement implements Vertex {
 
     protected IdVertex(final Vertex baseVertex,

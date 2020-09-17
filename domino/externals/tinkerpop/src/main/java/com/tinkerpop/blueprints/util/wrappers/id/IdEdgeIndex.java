@@ -7,13 +7,14 @@ import com.tinkerpop.blueprints.Index;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes" })
 public class IdEdgeIndex implements Index<Edge> {
     private final Index<Edge> baseIndex;
     private final IdGraph idGraph;
 
     public IdEdgeIndex(final Index<Edge> baseIndex, final IdGraph idGraph) {
         if (null == baseIndex) {
-            throw new IllegalArgumentException("null base index");
+            throw new IllegalArgumentException("null base index"); //$NON-NLS-1$
         }
         this.idGraph = idGraph;
         this.baseIndex = baseIndex;

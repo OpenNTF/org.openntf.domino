@@ -46,6 +46,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings({ "rawtypes", "nls", "unused" })
 public class JsonGraphWriter extends JsonWriter {
 	protected DFramedTransactionalGraph<?> graph_;
 	protected ParamMap parameters_;
@@ -261,7 +262,6 @@ public class JsonGraphWriter extends JsonWriter {
 		outObject(result);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public void outDominoValue(final Object paramObject) throws IOException {
 		try {
 			if (paramObject == null) {
@@ -351,7 +351,6 @@ public class JsonGraphWriter extends JsonWriter {
 		super.outArrayLiteral(arg0);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	protected void outLiteral(Object paramObject, final boolean paramBoolean) throws IOException, JsonException {
 		// System.out.println("TEMP DEBUG outputting a literal of "

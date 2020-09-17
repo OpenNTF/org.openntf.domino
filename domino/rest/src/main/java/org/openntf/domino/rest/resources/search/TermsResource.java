@@ -51,6 +51,7 @@ import org.openntf.domino.utils.DominoUtils;
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.domino.das.utils.ErrorHelper;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 @Path(Routes.ROOT + "/" + Routes.TERMS + "/" + Routes.NAMESPACE_PATH_PARAM)
 public class TermsResource extends AbstractResource {
 
@@ -58,12 +59,10 @@ public class TermsResource extends AbstractResource {
 		super(service);
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getTermsObject(@Context final UriInfo uriInfo, @PathParam(Routes.NAMESPACE) final String namespace,
 			@Context final Request request) throws JsonException, IOException {
-		@SuppressWarnings("rawtypes")
 		DFramedTransactionalGraph graph = this.getGraph(namespace);
 		ParamMap pm = Parameters.toParamMap(uriInfo);
 		StringWriter sw = new StringWriter();

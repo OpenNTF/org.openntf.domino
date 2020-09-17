@@ -7,6 +7,7 @@ package com.tinkerpop.blueprints;
  * @author Daniel Kuppitz (daniel.kuppitz@shoproach.com)
  */
 
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public interface Query {
 
     /**

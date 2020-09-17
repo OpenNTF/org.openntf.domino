@@ -18,6 +18,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class PartitionGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 
     protected T baseGraph;

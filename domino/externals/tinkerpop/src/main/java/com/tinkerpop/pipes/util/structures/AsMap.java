@@ -15,6 +15,7 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class AsMap {
 
     private final MetaPipe metaPipe;

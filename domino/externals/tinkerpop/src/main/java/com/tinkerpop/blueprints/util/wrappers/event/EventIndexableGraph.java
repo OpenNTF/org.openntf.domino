@@ -15,6 +15,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class EventIndexableGraph<T extends IndexableGraph> extends EventGraph<T> implements IndexableGraph, WrapperGraph<T> {
 
     public EventIndexableGraph(final T baseIndexableGraph) {
@@ -25,11 +26,13 @@ public class EventIndexableGraph<T extends IndexableGraph> extends EventGraph<T>
         this.getBaseGraph().dropIndex(name);
     }
 
-    public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters) {
         return new EventIndex<T>(this.getBaseGraph().createIndex(indexName, indexClass, indexParameters), this);
     }
 
-    public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass) {
         final Index<T> index = this.baseGraph.getIndex(indexName, indexClass);
         if (null == index)
             return null;

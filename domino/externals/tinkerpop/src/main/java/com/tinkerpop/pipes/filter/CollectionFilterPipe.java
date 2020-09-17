@@ -39,16 +39,19 @@ public abstract class CollectionFilterPipe<S> extends AbstractPipe<S, S> impleme
         }
     }
 
-    public String toString() {
+    @SuppressWarnings("rawtypes")
+	public String toString() {
         if (this.storedCollection instanceof DynamicList)
             return PipeHelper.makePipeString(this, this.contains, ((DynamicList) this.storedCollection).toString());
         else
             return PipeHelper.makePipeString(this, this.contains);
     }
 
-    private class DynamicList<S> extends ArrayList<S> {
-
-        private final AsMap asMap;
+    @SuppressWarnings("hiding")
+	private class DynamicList<S> extends ArrayList<S> {
+		private static final long serialVersionUID = 1L;
+		
+		private final AsMap asMap;
         private final String[] namedSteps;
 
         public DynamicList(final AsMap asMap, final String... namedSteps) {

@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MultiIterable<S> implements CloseableIterable<S> {
 
     private final List<Iterable<S>> iterables;

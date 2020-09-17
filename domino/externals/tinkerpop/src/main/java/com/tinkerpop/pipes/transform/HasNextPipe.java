@@ -13,6 +13,7 @@ import java.util.List;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  * @author Darrick Wiebe (http://ofallpossibleworlds.wordpress.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class HasNextPipe<S> extends AbstractMetaPipe<S, Boolean> implements MetaPipe, TransformPipe<S, Boolean> {
 
     private Pipe<S, ?> pipe;

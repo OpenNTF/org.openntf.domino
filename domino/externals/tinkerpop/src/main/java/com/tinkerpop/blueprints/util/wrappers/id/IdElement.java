@@ -11,6 +11,7 @@ import java.util.Set;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes", "nls" })
 public abstract class IdElement implements Element {
     protected final Element baseElement;
 

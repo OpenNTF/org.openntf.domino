@@ -12,6 +12,7 @@ import com.tinkerpop.blueprints.Vertex;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "nls" })
 public class StringFactory {
 
     public static final String V = "v";

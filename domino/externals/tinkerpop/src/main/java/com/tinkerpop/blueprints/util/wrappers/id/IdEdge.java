@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.util.StringFactory;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes" })
 public class IdEdge extends IdElement implements Edge {
 
     protected IdEdge(final Edge base, final IdGraph idGraph) {

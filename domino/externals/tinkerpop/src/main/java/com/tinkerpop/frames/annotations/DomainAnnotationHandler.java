@@ -8,6 +8,7 @@ import com.tinkerpop.frames.FramedGraph;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class DomainAnnotationHandler implements AnnotationHandler<Domain> {
 
     @Override

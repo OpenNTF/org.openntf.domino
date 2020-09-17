@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class OrderMapPipe<S> extends AbstractPipe<Map<S, ?>, S> implements TransformPipe<Map<S, ?>, S> {
 
     private Pipe pipe = new StartPipe(EmptyIterator.INSTANCE);

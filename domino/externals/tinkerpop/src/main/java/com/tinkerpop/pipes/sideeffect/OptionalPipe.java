@@ -18,6 +18,7 @@ import java.util.NoSuchElementException;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class OptionalPipe<S> extends AbstractMetaPipe<S, S> implements SideEffectPipe.LazySideEffectPipe<S, Object>, MetaPipe {
 
     private final Pipe<S, ?> pipe;

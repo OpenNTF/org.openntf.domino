@@ -6,6 +6,7 @@ package com.tinkerpop.blueprints.util;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "nls" })
 public class ExceptionFactory {
 
     // Graph related exceptions

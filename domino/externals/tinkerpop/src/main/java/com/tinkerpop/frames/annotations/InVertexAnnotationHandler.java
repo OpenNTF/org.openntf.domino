@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.InVertex;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class InVertexAnnotationHandler implements AnnotationHandler<InVertex> {
     @Override
     public Class<InVertex> getAnnotationType() {

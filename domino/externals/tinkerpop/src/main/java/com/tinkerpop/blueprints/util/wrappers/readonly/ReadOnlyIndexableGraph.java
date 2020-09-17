@@ -12,6 +12,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked", "hiding" })
 public class ReadOnlyIndexableGraph<T extends IndexableGraph> extends ReadOnlyGraph<T> implements IndexableGraph, WrapperGraph<T> {
 
     public ReadOnlyIndexableGraph(final T baseIndexableGraph) {

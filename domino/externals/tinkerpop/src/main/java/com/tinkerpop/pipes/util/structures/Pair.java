@@ -5,6 +5,7 @@ package com.tinkerpop.pipes.util.structures;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class Pair<A, B> {
 
     private final A a;

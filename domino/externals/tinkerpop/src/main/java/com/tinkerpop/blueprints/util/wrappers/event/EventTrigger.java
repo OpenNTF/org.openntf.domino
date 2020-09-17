@@ -5,6 +5,7 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.Event;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class EventTrigger {
 
     /**

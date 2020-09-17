@@ -10,6 +10,7 @@ import java.util.Set;
  *
  * @author Stephen Mallette (http://stephen.genoprime.com)
  */
+@SuppressWarnings({ "rawtypes", "nls" })
 public interface TransactionRetryStrategy<T> {
 
     /**

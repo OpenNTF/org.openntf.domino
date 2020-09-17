@@ -34,6 +34,7 @@ import java.util.Map;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 public class EventGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 
     protected EventTrigger trigger;

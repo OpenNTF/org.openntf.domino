@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.Vertex;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 public class EventEdge extends EventElement implements Edge {
 
     public EventEdge(final Edge rawEdge, final EventGraph eventGraph) {

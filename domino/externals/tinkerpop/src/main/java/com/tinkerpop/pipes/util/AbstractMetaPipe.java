@@ -6,6 +6,7 @@ import com.tinkerpop.pipes.Pipe;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public abstract class AbstractMetaPipe<S, E> extends AbstractPipe<S, E> implements MetaPipe {
 
     public void enablePath(final boolean enable) {

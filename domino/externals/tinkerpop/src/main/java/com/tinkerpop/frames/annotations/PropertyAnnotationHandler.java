@@ -8,6 +8,7 @@ import com.tinkerpop.frames.Property;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class PropertyAnnotationHandler implements AnnotationHandler<Property> {
 
     @Override

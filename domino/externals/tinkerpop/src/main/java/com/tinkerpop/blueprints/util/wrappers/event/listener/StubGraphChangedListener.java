@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class StubGraphChangedListener implements GraphChangedListener {
     private final AtomicLong addEdgeEvent = new AtomicLong(0);
     private final AtomicLong addVertexEvent = new AtomicLong(0);

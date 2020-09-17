@@ -30,6 +30,7 @@ import org.openntf.domino.utils.Factory.SessionType;
 
 import com.tinkerpop.frames.FramedGraph;
 
+@SuppressWarnings({ "rawtypes", "nls" })
 public class UserProvider implements IInfoProvider {
 	private final List<String> namespaces_ = new ArrayList<String>();
 

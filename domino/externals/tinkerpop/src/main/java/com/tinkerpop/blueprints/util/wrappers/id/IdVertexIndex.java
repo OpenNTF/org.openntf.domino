@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.Vertex;
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
+@SuppressWarnings({ "rawtypes", "nls" })
 public class IdVertexIndex implements Index<Vertex> {
     private final Index<Vertex> baseIndex;
     private final IdGraph idGraph;

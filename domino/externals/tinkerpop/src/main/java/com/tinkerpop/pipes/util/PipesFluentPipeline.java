@@ -17,6 +17,7 @@ import java.util.Map;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
 @Deprecated
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface PipesFluentPipeline<S, E> {
 
     /**

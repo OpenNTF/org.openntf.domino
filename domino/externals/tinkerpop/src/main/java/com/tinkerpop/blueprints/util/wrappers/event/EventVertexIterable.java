@@ -10,6 +10,7 @@ import java.util.Iterator;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 public class EventVertexIterable implements CloseableIterable<Vertex> {
 
     private final Iterable<Vertex> iterable;

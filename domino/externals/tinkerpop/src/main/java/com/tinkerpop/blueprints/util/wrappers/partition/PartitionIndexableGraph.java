@@ -11,6 +11,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PartitionIndexableGraph<T extends IndexableGraph> extends PartitionGraph<T> implements IndexableGraph, WrapperGraph<T> {
 
     public PartitionIndexableGraph(final T baseIndexableGraph, final String writeGraphKey, final String writeGraph, final Set<String> readGraphs) {
@@ -29,7 +30,8 @@ public class PartitionIndexableGraph<T extends IndexableGraph> extends Partition
         return new PartitionIndexIterable(baseGraph.getIndices(), this);
     }
 
-    public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass) {
         final Index<T> index = baseGraph.getIndex(indexName, indexClass);
         if (null == index)
             return null;
@@ -38,7 +40,8 @@ public class PartitionIndexableGraph<T extends IndexableGraph> extends Partition
         }
     }
 
-    public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters) {
         return new PartitionIndex<T>(baseGraph.createIndex(indexName, indexClass, indexParameters), this);
     }
 

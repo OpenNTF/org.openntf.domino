@@ -12,6 +12,7 @@ import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.structures.FramedEdgeIterable;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class IncidenceAnnotationHandler implements AnnotationHandler<Incidence> {
 
     @Override
@@ -39,7 +40,7 @@ public class IncidenceAnnotationHandler implements AnnotationHandler<Incidence> 
             case IN:
                 return framedGraph.addEdge(null, ((VertexFrame) arguments[0]).asVertex(), element, incidence.label(), Direction.IN, method.getReturnType());
             case BOTH:
-                throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
+                throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods"); //$NON-NLS-1$
             }
                 
         } else if (ClassUtilities.isRemoveMethod(method)) {

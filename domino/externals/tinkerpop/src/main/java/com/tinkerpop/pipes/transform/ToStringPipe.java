@@ -13,10 +13,11 @@ import java.util.NoSuchElementException;
  *
  * @author Pieter Martin
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ToStringPipe<S> extends AbstractPipe<S, String> implements TransformPipe<S, String> {
 
     private Iterator<Object> tempIterator = PipeHelper.emptyIterator();
-    private static final String NULL = "null";
+    private static final String NULL = "null"; //$NON-NLS-1$
 
     @Override
     protected String processNextStart() throws NoSuchElementException {

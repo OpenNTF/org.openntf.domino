@@ -15,8 +15,10 @@ import com.tinkerpop.pipes.PipeFunction;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class Table extends ArrayList<Row> {
-
+	private static final long serialVersionUID = 1L;
+	
 	private List<String> columnNames;
 	private int tableWidth = -1;
 

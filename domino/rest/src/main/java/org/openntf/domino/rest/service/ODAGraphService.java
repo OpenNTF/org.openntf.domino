@@ -53,6 +53,7 @@ import com.ibm.domino.das.service.IRestServiceExt;
 import com.ibm.domino.das.service.RestService;
 import com.tinkerpop.frames.FramedGraph;
 
+@SuppressWarnings({ "rawtypes", "nls", "unused" })
 public class ODAGraphService extends RestService implements IRestServiceExt {
 	private static ThreadLocal<HttpServletRequest> REQUEST_CTX = new ThreadLocal<HttpServletRequest>();
 
@@ -212,7 +213,6 @@ public class ODAGraphService extends RestService implements IRestServiceExt {
 		return getFactoryMap().get(name);
 	}
 
-	@SuppressWarnings("rawtypes")
 	public DFramedTransactionalGraph getGraph(final String name) {
 		return (DFramedTransactionalGraph) getGraphMap().get(name);
 	}

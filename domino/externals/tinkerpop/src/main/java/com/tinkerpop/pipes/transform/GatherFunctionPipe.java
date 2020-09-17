@@ -16,6 +16,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GatherFunctionPipe<S, E> extends AbstractPipe<S, E> implements TransformPipe<S, E> {
 
     private List<List> listPaths = new ArrayList<List>();

@@ -12,6 +12,7 @@ import java.util.Iterator;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class StartPipe<S> extends IdentityPipe<S> {
 
     public StartPipe(final Object start) {

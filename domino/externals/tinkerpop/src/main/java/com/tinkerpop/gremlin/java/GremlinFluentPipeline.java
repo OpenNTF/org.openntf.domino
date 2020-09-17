@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface GremlinFluentPipeline<S, E> {
 
     /**

@@ -8,6 +8,7 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.OutVertex;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class OutVertexAnnotationHandler implements AnnotationHandler<OutVertex> {
     @Override
     public Class<OutVertex> getAnnotationType() {

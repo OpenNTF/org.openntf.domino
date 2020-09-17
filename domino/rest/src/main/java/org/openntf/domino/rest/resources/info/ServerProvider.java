@@ -30,6 +30,7 @@ import com.tinkerpop.frames.FramedGraph;
 
 import lotus.notes.addins.DominoServer;
 
+@SuppressWarnings({ "rawtypes", "nls" })
 public class ServerProvider implements IInfoProvider {
 	private final List<String> namespaces_ = new ArrayList<String>();
 

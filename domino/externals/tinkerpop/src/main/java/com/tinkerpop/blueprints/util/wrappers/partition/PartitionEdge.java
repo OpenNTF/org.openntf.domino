@@ -7,6 +7,7 @@ import com.tinkerpop.blueprints.Vertex;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public class PartitionEdge extends PartitionElement implements Edge {
 
     protected PartitionEdge(final Edge baseEdge, final PartitionGraph graph) {

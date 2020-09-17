@@ -18,6 +18,7 @@ import com.tinkerpop.pipes.util.FluentUtility;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GremlinFluentUtility extends FluentUtility {
 
     public static GremlinPipeline optimizePipelineForQuery(final GremlinPipeline pipeline, final Pipe pipe) {

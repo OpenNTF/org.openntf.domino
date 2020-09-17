@@ -57,8 +57,8 @@ public class Activator implements BundleActivator {
 	public static Map<String, String> getManifestInfo() {
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		Bundle bundle = getContext().getBundle();
-		Dictionary headers = bundle.getHeaders();
-		Enumeration enumer = headers.keys();
+		Dictionary<String, String> headers = bundle.getHeaders();
+		Enumeration<String> enumer = headers.keys();
 		while (enumer.hasMoreElements()) {
 			Object elem = enumer.nextElement();
 			result.put(String.valueOf(elem), String.valueOf(headers.get(elem)));

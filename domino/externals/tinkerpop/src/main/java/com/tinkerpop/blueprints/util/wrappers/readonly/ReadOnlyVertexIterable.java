@@ -37,7 +37,7 @@ class ReadOnlyVertexIterable implements CloseableIterable<Vertex> {
 
     public void close() {
         if (this.iterable instanceof CloseableIterable) {
-            ((CloseableIterable) this.iterable).close();
+            ((CloseableIterable<?>) this.iterable).close();
         }
     }
 }

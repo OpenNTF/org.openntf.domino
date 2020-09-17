@@ -12,6 +12,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperVertexQuery;
  *
  * @author Stephen Mallette
  */
+@SuppressWarnings({ "rawtypes" })
 public class EventVertex extends EventElement implements Vertex {
     public EventVertex(final Vertex rawVertex, final EventGraph eventGraph) {
         super(rawVertex, eventGraph);

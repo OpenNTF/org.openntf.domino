@@ -60,6 +60,7 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Deprecated
 public class PipesPipeline<S, E> extends Pipeline<S, E> implements PipesFluentPipeline<S, E> {
 

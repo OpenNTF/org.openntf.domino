@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 class PartitionEdgeIterable implements CloseableIterable<Edge> {
 
     private final Iterable<Edge> iterable;

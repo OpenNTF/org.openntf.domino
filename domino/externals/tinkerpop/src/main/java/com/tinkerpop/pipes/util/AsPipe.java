@@ -11,6 +11,7 @@ import java.util.List;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class AsPipe<S, E> extends AbstractMetaPipe<S, E> implements MetaPipe {
 
     private final String name;

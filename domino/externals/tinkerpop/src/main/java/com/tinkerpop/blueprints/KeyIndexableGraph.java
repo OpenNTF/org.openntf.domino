@@ -9,6 +9,7 @@ import java.util.Set;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes" })
 public interface KeyIndexableGraph extends Graph {
 
     /**

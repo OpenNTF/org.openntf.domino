@@ -9,6 +9,7 @@ import com.tinkerpop.blueprints.util.wrappers.WrapperGraph;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class WrappedIndexableGraph<T extends IndexableGraph> extends WrappedGraph<T> implements IndexableGraph, WrapperGraph<T> {
 
     public WrappedIndexableGraph(final T baseIndexableGraph) {
@@ -23,7 +24,8 @@ public class WrappedIndexableGraph<T extends IndexableGraph> extends WrappedGrap
         return new WrappedIndexIterable(baseGraph.getIndices());
     }
 
-    public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass) {
         final Index<T> index = baseGraph.getIndex(indexName, indexClass);
         if (null == index)
             return null;
@@ -32,7 +34,8 @@ public class WrappedIndexableGraph<T extends IndexableGraph> extends WrappedGrap
         }
     }
 
-    public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters) {
+    @SuppressWarnings("hiding")
+	public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters) {
         return new WrappedIndex<T>(baseGraph.createIndex(indexName, indexClass, indexParameters));
     }
 }

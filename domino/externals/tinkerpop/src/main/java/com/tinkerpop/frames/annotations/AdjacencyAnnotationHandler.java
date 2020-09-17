@@ -12,6 +12,7 @@ import com.tinkerpop.frames.structures.FramedVertexIterable;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 public class AdjacencyAnnotationHandler implements AnnotationHandler<Adjacency> {
 
     @Override
@@ -90,7 +91,7 @@ public class AdjacencyAnnotationHandler implements AnnotationHandler<Adjacency> 
             framedGraph.addEdge(null, newVertex, vertex, adjacency.label());
             break;
         case BOTH:
-            throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods");
+            throw new UnsupportedOperationException("Direction.BOTH it not supported on 'add' or 'set' methods"); //$NON-NLS-1$
         }
     }
 

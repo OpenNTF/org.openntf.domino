@@ -64,6 +64,7 @@ import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings({ "rawtypes", "unchecked", "nls" })
 public class JsonSearchAdapter implements JsonObject {
 	private final static List<String> EMPTY_STRINGS = new ArrayList<String>();
 	protected final boolean isCollectionRoute_;
@@ -85,7 +86,6 @@ public class JsonSearchAdapter implements JsonObject {
 	}
 
 	protected Object frame_;
-	@SuppressWarnings("rawtypes")
 	protected DFramedTransactionalGraph graph_;
 	protected Class<?> type_;
 	protected Map<CaseInsensitiveString, Method> getters_;
@@ -95,7 +95,6 @@ public class JsonSearchAdapter implements JsonObject {
 	protected Map<CaseInsensitiveString, Method> setters_;
 	protected ParamMap parameters_;
 
-	@SuppressWarnings("rawtypes")
 	public JsonSearchAdapter(final DFramedTransactionalGraph graph, final EdgeFrame frame, final ParamMap pm, final boolean isCollectionRoute) {
 		graph_ = graph;
 		frame_ = frame;
@@ -104,7 +103,6 @@ public class JsonSearchAdapter implements JsonObject {
 		isCollectionRoute_ = isCollectionRoute;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public JsonSearchAdapter(final DFramedTransactionalGraph graph, final Term term, final ParamMap pm,
 			final boolean isCollectionRoute) {
 		graph_ = graph;
@@ -114,7 +112,6 @@ public class JsonSearchAdapter implements JsonObject {
 		isCollectionRoute_ = isCollectionRoute;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public JsonSearchAdapter(final DFramedTransactionalGraph graph, final Value value, final ParamMap pm,
 			final boolean isCollectionRoute) {
 		graph_ = graph;
@@ -124,7 +121,6 @@ public class JsonSearchAdapter implements JsonObject {
 		isCollectionRoute_ = isCollectionRoute;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public JsonSearchAdapter(final DFramedTransactionalGraph graph, final RichTextReference reference, final ParamMap pm,
 			final boolean isCollectionRoute) {
 		graph_ = graph;
@@ -138,7 +134,6 @@ public class JsonSearchAdapter implements JsonObject {
 		return frame_;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public DFramedTransactionalGraph getGraph() {
 		return graph_;
 	}
