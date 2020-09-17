@@ -42,14 +42,6 @@ public class SMTPMessageAcceptEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param sessionID
-	 *            the sessionID to set
-	 */
-	private void setSessionID(final long sessionID) {
-		this.sessionID = sessionID;
-	}
-
-	/**
 	 * @return the sMTPReply
 	 */
 	public String getSMTPReply() {
@@ -57,26 +49,10 @@ public class SMTPMessageAcceptEvent extends AbstractEMBridgeEvent {
 	}
 
 	/**
-	 * @param sMTPReply
-	 *            the sMTPReply to set
-	 */
-	private void setSMTPReply(final String sMTPReply) {
-		SMTPReply = sMTPReply;
-	}
-
-	/**
 	 * @return the sMTPReplyLength
 	 */
 	public long getSMTPReplyLength() {
 		return SMTPReplyLength;
-	}
-
-	/**
-	 * @param sMTPReplyLength
-	 *            the sMTPReplyLength to set
-	 */
-	private void setSMTPReplyLength(final long sMTPReplyLength) {
-		SMTPReplyLength = sMTPReplyLength;
 	}
 
 }

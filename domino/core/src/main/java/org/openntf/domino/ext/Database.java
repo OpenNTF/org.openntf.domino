@@ -51,7 +51,6 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
-import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 

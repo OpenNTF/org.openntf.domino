@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "nls", "deprecation" })
 public class Imports {
 
     private static final List<String> imports = new ArrayList<String>();

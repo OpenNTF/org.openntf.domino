@@ -17,6 +17,7 @@ package org.openntf.domino.graph2.annotations;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Vector;
 
@@ -41,6 +42,7 @@ public abstract class AbstractPropertyHandler {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private Object processFormula(final Formula formula, final Element element) {
 		Object result = null;
 		if (element instanceof DElement) {
@@ -58,11 +60,12 @@ public abstract class AbstractPropertyHandler {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object processElementProperty(final Object frame, final Method method, final Object[] arguments, final Annotation annotation,
 			final FramedGraph framedGraph, final Element element) {
 		boolean isDerived = false;
-		String value = "";
+		String value = ""; //$NON-NLS-1$
+		@SuppressWarnings("unused")
 		Class<?> converter = null;
 		String defaultValue = null;
 		String computation = null;
@@ -84,7 +87,7 @@ public abstract class AbstractPropertyHandler {
 		}
 
 		if (ClassUtilities.isSetMethod(method) && isDerived) {
-			throw new DerivedPropertySetException("Setting on a derived property " + value + " is not permitted.");
+			throw new DerivedPropertySetException(MessageFormat.format("Setting on a derived property {0} is not permitted.", value)); //$NON-NLS-1$
 		}
 		Class<?> type = method.getReturnType();
 		if (ClassUtilities.isSetMethod(method)) {
@@ -138,7 +141,7 @@ public abstract class AbstractPropertyHandler {
 				Object value = element.getProperty(annotationValue);
 				if (value instanceof java.util.Vector) {
 					if (((java.util.Vector) value).isEmpty()) {
-						value = "";
+						value = ""; //$NON-NLS-1$
 					}
 				}
 				return value;

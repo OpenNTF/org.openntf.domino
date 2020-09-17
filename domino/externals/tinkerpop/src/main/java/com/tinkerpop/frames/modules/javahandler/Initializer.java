@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.tinkerpop.frames.FrameInitializer;
-
 /**
  * Allows methods in a java handler implementation to be called when a vertex or an edge is added to the graph.
  * This effectively has the same function as a {@link FrameInitializer}.

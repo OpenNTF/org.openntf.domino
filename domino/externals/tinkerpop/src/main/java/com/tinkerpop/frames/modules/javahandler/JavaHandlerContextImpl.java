@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
  * @author Bryn Cooke
  * 
  */
+@SuppressWarnings({ "deprecation", "unchecked" })
 class JavaHandlerContextImpl<C extends Element> implements JavaHandlerContext<C> {
 
 	private final FramedGraph<?> graph;

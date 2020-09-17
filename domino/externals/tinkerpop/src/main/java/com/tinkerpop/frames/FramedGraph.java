@@ -1,5 +1,11 @@
 package com.tinkerpop.frames;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Features;
@@ -16,16 +22,9 @@ import com.tinkerpop.frames.annotations.OutVertexAnnotationHandler;
 import com.tinkerpop.frames.annotations.PropertyAnnotationHandler;
 import com.tinkerpop.frames.annotations.RangeAnnotationHandler;
 import com.tinkerpop.frames.core.FramedGraphQueryImpl;
-import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.structures.FramedEdgeIterable;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
  * The primary class for interpreting/framing elements of a graph in terms of
@@ -36,6 +35,7 @@ import java.util.LinkedHashSet;
  * 
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings("deprecation")
 public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 
 	protected final T baseGraph;
@@ -126,6 +126,7 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 	 *         perspective of the annotate interface or null if the vertex
 	 *         parameter was null
 	 */
+	@SuppressWarnings("unchecked")
 	public <F> F frame(final Vertex vertex, final Class<F> kind) {
 		if (vertex == null) {
 			return null;
@@ -164,6 +165,7 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 	 * @deprecated Use {@link #frame(Edge, Class)}, in combination with
 	 *             {@link InVertex} and {@link OutVertex}.
 	 */
+	@SuppressWarnings("unchecked")
 	@Deprecated
 	public <F> F frame(final Edge edge, final Direction direction, final Class<F> kind) {
 
@@ -585,7 +587,7 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 
 	private void checkFactoryConfig() {
 		if (configViaFactory) {
-			throw new UnsupportedOperationException("Unsupported for FramedGraph configured by factory");
+			throw new UnsupportedOperationException("Unsupported for FramedGraph configured by factory"); //$NON-NLS-1$
 		}
 	}
 

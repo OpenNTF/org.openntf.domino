@@ -15,8 +15,6 @@
  */
 package org.openntf.domino.design;
 
-import org.openntf.domino.design.DatabaseDesign.DbProperties;
-
 /**
  * @author jgallagher
  * @author Paul Withers

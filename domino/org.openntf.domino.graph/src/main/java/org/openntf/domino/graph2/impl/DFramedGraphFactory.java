@@ -26,7 +26,6 @@ import org.openntf.domino.graph2.annotations.TypedPropertyHandler;
 
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.TransactionalGraph;
-import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.annotations.DomainAnnotationHandler;
@@ -74,6 +73,7 @@ public class DFramedGraphFactory {
 	 *            The base graph to get a configuration for.
 	 * @return The configuration.
 	 */
+	@SuppressWarnings("nls")
 	protected <T extends Graph> FramedGraphConfiguration getConfiguration(final Class<T> requiredType, final T baseGraph) {
 		Graph configuredGraph = baseGraph;
 		DConfiguration config;

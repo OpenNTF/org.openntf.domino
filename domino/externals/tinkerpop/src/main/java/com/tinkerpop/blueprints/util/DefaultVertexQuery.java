@@ -51,7 +51,8 @@ public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
         return this;
     }
 
-    public <T extends Comparable<T>> VertexQuery has(final String key, final T value, final Compare compare) {
+    @SuppressWarnings("deprecation")
+	public <T extends Comparable<T>> VertexQuery has(final String key, final T value, final Compare compare) {
         super.has(key, compare, value);
         return this;
     }
@@ -86,7 +87,7 @@ public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
 
     public long count() {
         long count = 0;
-        for (final Edge edge : this.edges()) {
+        for (@SuppressWarnings("unused") final Edge edge : this.edges()) {
             count++;
         }
         return count;
@@ -124,7 +125,8 @@ public class DefaultVertexQuery extends DefaultQuery implements VertexQuery {
                     }
                 }
 
-                public T next() {
+                @SuppressWarnings("unchecked")
+				public T next() {
                     while (true) {
                         if (this.nextEdge != null) {
                             final Edge temp = this.nextEdge;

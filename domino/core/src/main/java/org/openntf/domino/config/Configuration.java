@@ -166,6 +166,7 @@ public enum Configuration {
 	 *            The string to hash
 	 * @return The MD5 sum of the string
 	 */
+	@SuppressWarnings("deprecation")
 	public static String MD5(final String input) {
 		String ret = md5Cache_.get(input);
 		if (ret == null) {

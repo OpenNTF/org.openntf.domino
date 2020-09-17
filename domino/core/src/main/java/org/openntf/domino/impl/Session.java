@@ -95,11 +95,13 @@ import org.openntf.domino.utils.Strings;
  * @author Paul Withers
  */
 
+@SuppressWarnings("nls")
 public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus.domino.Session, WrapperFactory>
 		implements org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
+	@SuppressWarnings("unused")
 	private static final String BLANK_DB_REPID = "802581A000512F49";
 
 	/** The formatter_. */
@@ -148,6 +150,7 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
 	private String timeFormat_;
+	@SuppressWarnings("unused")
 	private DateTimeFormatter dateFormatter_;
 	private DateTimeFormatter dateTimeFormatter_;
 
@@ -2228,18 +2231,6 @@ public class Session extends BaseResurrectable<org.openntf.domino.Session, lotus
 			return Strings.leftBack(filePath, "\\");
 		} else {
 			return "";
-		}
-	}
-
-	private String getFileName(final String filePath) {
-		if (filePath.contains(File.separator)) {
-			return Strings.rightBack(filePath, File.separator);
-		} else if (filePath.contains("/")) {
-			return Strings.rightBack(filePath, "/");
-		} else if (filePath.contains("\\")) {
-			return Strings.rightBack(filePath, "\\");
-		} else {
-			return filePath;
 		}
 	}
 

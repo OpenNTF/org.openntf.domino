@@ -56,8 +56,8 @@ import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.MultiIterable;
 
+@SuppressWarnings({ "nls", "unused" })
 public class DGraph implements org.openntf.domino.graph2.DGraph {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DGraph.class.getName());
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
 	private DConfiguration configuration_;
@@ -587,6 +587,7 @@ public class DGraph implements org.openntf.domino.graph2.DGraph {
 		return getConfiguration().getDefaultElementStore();
 	}
 
+	@SuppressWarnings("deprecation")
 	public org.openntf.domino.graph2.DEdgeList getEdgesFromIds(final Vertex source, final NoteList list) {
 		org.openntf.domino.graph2.DEdgeList result = new DFastEdgeList((DVertex) source, this, list);
 		return result;

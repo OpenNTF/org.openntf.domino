@@ -6,7 +6,6 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.InVertex;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -47,7 +46,8 @@ public class FramedEdgeIterable<T> implements Iterable<T> {
                 return this.iterator.hasNext();
             }
 
-            public T next() {
+            @SuppressWarnings("deprecation")
+			public T next() {
                 return framedGraph.frame(this.iterator.next(), direction, kind);
             }
         };

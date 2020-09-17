@@ -18,7 +18,6 @@ package org.openntf.domino.rest.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,6 +31,7 @@ import com.ibm.domino.napi.c.BackendBridge;
 import com.ibm.domino.napi.c.html.HtmlConverter;
 import com.ibm.domino.napi.c.html.HtmlReferenceData;
 
+@SuppressWarnings("nls")
 public class RTtoHTMLUtil {
 	// private IMimeMultipart newValue;
 	public static class AttachmentHolder {
@@ -245,6 +245,7 @@ public class RTtoHTMLUtil {
 		localStringBuilder1.append(str1.substring(j + 1, i).replace('.', '-'));
 		localStringBuilder2.append('/');
 
+		@SuppressWarnings("unused")
 		String str2 = localStringBuilder1.toString();
 
 		String str3 = "FieldElemFormat=";
@@ -280,26 +281,5 @@ public class RTtoHTMLUtil {
 		// String str5 = encodeHRef(localFacesContext,
 		// localAttachmentValueHolder.getHref());
 		// paramHtmlReferenceData.setNewReferenceUrl(str5);
-	}
-
-	private String computeUniqueAttachmentName(final Collection<AttachmentHolder> holders, String paramString) {
-		if (holders == null) {
-			return paramString;
-		}
-		String str1 = null;
-		int i = paramString.indexOf(46);
-		if (i >= 0) {
-			str1 = paramString.substring(i);
-			paramString = paramString.substring(0, i);
-		}
-		String str2 = (str1 != null) ? paramString + str1 : paramString;
-		int j = 2;
-		for (AttachmentHolder holder : holders) {
-			if ((holder.getState() != 2) && (holder.getState() != 3) && (StringUtil.equals(holder.getName(), str2))) {
-				str2 = paramString + "-" + ++j + ((str1 != null) ? str1 : "");
-				break;
-			}
-		}
-		return str2;
 	}
 }

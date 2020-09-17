@@ -1616,7 +1616,8 @@ public class GremlinPipeline<S, E> extends Pipeline<S, E> implements GremlinFlue
      *
      * @return returns the current pipeline with the new end type.
      */
-    @Override
+    @SuppressWarnings("hiding")
+	@Override
     public <E> GremlinPipeline<S, E> cast(Class<E> end) {
         return (GremlinPipeline<S, E>) this;
     }

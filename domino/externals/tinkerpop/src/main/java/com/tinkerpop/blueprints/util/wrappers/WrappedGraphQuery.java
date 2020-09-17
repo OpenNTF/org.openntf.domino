@@ -41,7 +41,8 @@ public abstract class WrappedGraphQuery implements GraphQuery {
         return this;
     }
 
-    public <T extends Comparable<T>> GraphQuery has(final String key, final T value, final Compare compare) {
+    @SuppressWarnings("deprecation")
+	public <T extends Comparable<T>> GraphQuery has(final String key, final T value, final Compare compare) {
         return this.has(key, compare, value);
     }
 

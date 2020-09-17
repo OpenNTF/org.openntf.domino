@@ -204,6 +204,7 @@ public class DEdgeEntryList implements DEdgeList {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void filterEntryList(final List<CharSequence> list) {
 		ViewEntryCollection coll = null;
 		if (org.openntf.domino.View.class.equals(source_.getDelegateType())) {

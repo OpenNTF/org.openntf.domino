@@ -3,8 +3,6 @@ package com.tinkerpop.frames.modules.typedgraph;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.util.Validate;
 
 /**
@@ -17,6 +15,7 @@ import com.tinkerpop.frames.util.Validate;
  * @see TypeValue
  * @see FramedGraph
  */
+@SuppressWarnings("nls")
 public class TypeRegistry {
 	protected Map<Class<?>, Class<?>> typeFields = new HashMap<Class<?>, Class<?>>();
 	protected Map<TypeDiscriminator, Class<?>> typeDiscriminators = new HashMap<TypeDiscriminator, Class<?>>();

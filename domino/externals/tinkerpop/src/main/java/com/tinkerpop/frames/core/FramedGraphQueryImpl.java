@@ -50,6 +50,7 @@ public class FramedGraphQueryImpl implements FramedGraphQuery {
 		return this;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public <T extends Comparable<T>> FramedGraphQuery has(final String key, final T value, final Compare compare) {
 		graphQuery = graphQuery.has(key, value, compare);

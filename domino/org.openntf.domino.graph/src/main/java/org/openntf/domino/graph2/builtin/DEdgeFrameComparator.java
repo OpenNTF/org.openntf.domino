@@ -29,6 +29,7 @@ import org.openntf.domino.graph.ElementComparator;
  * @author withersp
  *
  */
+@SuppressWarnings("deprecation")
 public class DEdgeFrameComparator implements Comparator<DEdgeFrame>, Serializable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ElementComparator.class.getName());

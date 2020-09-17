@@ -27,12 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.Vector;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -47,6 +43,8 @@ import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
+
+import lotus.domino.NotesException;
 
 // TODO: Auto-generated Javadoc
 
@@ -154,6 +152,7 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 
 			if (columnValues_ == null) {
 				// cache the columnValues and rely that the caller will NOT modify the objects inside
+				@SuppressWarnings("unchecked")
 				Vector<Object> raw = getDelegate().getColumnValues();
 				columnValues_ = wrapColumnValues(raw, this.getAncestorSession());
 			}
@@ -659,8 +658,6 @@ public class ViewEntry extends BaseThreadSafe<org.openntf.domino.ViewEntry, lotu
 		}
 		return metaversalid_;
 	}
-
-	private static Pattern posSplit = Pattern.compile("\\.");
 
 	@Override
 	public Object getCategoryValue() {

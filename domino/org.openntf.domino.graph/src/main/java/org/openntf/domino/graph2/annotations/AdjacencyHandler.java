@@ -24,6 +24,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 
+@SuppressWarnings("deprecation")
 public class AdjacencyHandler extends AbstractIncidenceHandler implements AnnotationHandler<Adjacency> {
 
 	@Override

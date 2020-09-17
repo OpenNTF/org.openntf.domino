@@ -45,8 +45,10 @@ implements org.openntf.domino.ViewNavigator {
 	private int[] collapsedNoteIds_ = null;
 	private int[] expandedNoteIds_ = null;
 	private String curPosition_ = null;
+	@SuppressWarnings("unused")
 	private String curNoteid_ = null;
 	private String startingPosition_ = null;
+	@SuppressWarnings("unused")
 	private String startingNoteid_ = null;
 	private String startingCategory_ = null;
 	private String unreadUsername_;
@@ -1320,6 +1322,10 @@ implements org.openntf.domino.ViewNavigator {
 				} else {
 					newDelegate = rawView.createViewNavMaxLevel(maxLevel_);
 				}
+			case KEYS:
+				break;
+			default:
+				break;
 			}
 			if (entryOptions_ > -1) {
 				newDelegate.setEntryOptions(entryOptions_);

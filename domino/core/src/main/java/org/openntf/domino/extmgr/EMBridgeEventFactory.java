@@ -42,11 +42,13 @@ import org.openntf.domino.extmgr.events.TerminateNSFEvent;
  * @author nfreeman
  *
  */
+@SuppressWarnings("nls")
 public enum EMBridgeEventFactory {
 	INSTANCE;
 
 	private static final String EM_EVENT_PREFIX = "[[event:"; // $NON-NLS-1$
 	private static final int EM_EVENT_PREFIX_LEN = EM_EVENT_PREFIX.length();
+	@SuppressWarnings("unused")
 	private static final String EM_NSFHOOKEVENT_PREFIX = "[[dbhookevent:"; // $NON-NLS-1$
 	private static final String EM_EVENT_POSTFIX = "]];";
 
@@ -160,18 +162,6 @@ public enum EMBridgeEventFactory {
 
 	public static void recycleEvent(final EMBridgeEvent event) {
 		INSTANCE._recycleEvent(event);
-	}
-
-	private EMBridgeEvent _getEvent() {
-		EMBridgeEvent result = null;
-		synchronized (recycleBin_) {
-			if (recycleBin_.isEmpty()) {
-				recycleBin_.add(new EMBridgeEvent(EMBridgeEvent.TYPE.TRIGGERED));
-			}
-			result = recycleBin_.poll();
-		}
-
-		return result;
 	}
 
 	public static int toInt(final char c) {

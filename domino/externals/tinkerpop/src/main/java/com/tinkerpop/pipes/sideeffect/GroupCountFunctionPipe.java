@@ -14,6 +14,7 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings("unchecked")
 public class GroupCountFunctionPipe<S, K> extends AbstractPipe<S, S> implements SideEffectPipe.GreedySideEffectPipe<S, Map<K, Number>> {
 
     private Map<K, Number> countMap;
@@ -41,7 +42,7 @@ public class GroupCountFunctionPipe<S, K> extends AbstractPipe<S, S> implements 
         return this.countMap;
     }
 
-    public void reset() {
+	public void reset() {
         try {
             this.countMap = this.countMap.getClass().getConstructor().newInstance();
         } catch (Exception e) {

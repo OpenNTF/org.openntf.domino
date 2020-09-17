@@ -27,8 +27,10 @@ import org.openntf.domino.graph2.DGraph;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 
+@SuppressWarnings("nls")
 public class DEntryEdge extends DEdge {
 	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private DElementStore store_;
 
 	public DEntryEdge(final DGraph parent, final ViewEntry delegate, final ViewEntryCoordinate id, final DElementStore store) {

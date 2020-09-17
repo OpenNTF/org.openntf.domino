@@ -18,6 +18,7 @@ import java.util.Set;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked" })
 public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
 
     protected final Graph graph;
@@ -51,7 +52,8 @@ public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
         return this;
     }
 
-    public <T extends Comparable<T>> GraphQuery has(final String key, final T value, final Compare compare) {
+    @SuppressWarnings("deprecation")
+	public <T extends Comparable<T>> GraphQuery has(final String key, final T value, final Compare compare) {
         super.has(key, compare, value);
         return this;
     }

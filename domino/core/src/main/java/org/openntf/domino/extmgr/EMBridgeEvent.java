@@ -36,6 +36,7 @@ public class EMBridgeEvent implements Runnable {
 
 	private final TYPE type_;
 	private final Date when_;
+	@SuppressWarnings("unused")
 	private IEMBridgeEvent refEvent_;
 	private final EnumMap<EMBridgeEventParams, Object> params_ = new EnumMap<EMBridgeEventParams, Object>(EMBridgeEventParams.class);
 	private Object tasklet_;
@@ -66,7 +67,7 @@ public class EMBridgeEvent implements Runnable {
 				t.printStackTrace();
 			}
 		} else {
-			System.out.println("No task or method defined!!!");
+			
 		}
 
 		EMBridgeEventFactory.recycleEvent(this); // return event object to pool for future runs

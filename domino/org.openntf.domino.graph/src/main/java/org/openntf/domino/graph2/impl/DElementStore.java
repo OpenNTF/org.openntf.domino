@@ -59,8 +59,8 @@ import com.tinkerpop.blueprints.Vertex;
 
 import javolution.util.FastTable;
 
+@SuppressWarnings({ "nls", "unused" })
 public class DElementStore implements org.openntf.domino.graph2.DElementStore {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DElementStore.class.getName());
 
 	public static class ElementStoreCacheLoader extends CacheLoader<NoteCoordinate, Element> {
@@ -1063,6 +1063,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected DProxyVertex setupProxy(final Object proxy, final Serializable originalKey) {
 		//		System.out.println("TEMP DEBUG Setting up proxy vertex");
 		DProxyVertex result = new DProxyVertex(getConfiguration().getGraph(), (Map<String, Object>) proxy);
@@ -1264,6 +1265,7 @@ public class DElementStore implements org.openntf.domino.graph2.DElementStore {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void setTypeProperty(final Object result, final Class<?> type, final Object delegateKey) {
 		if (type.equals(Element.class)) {
 			return;

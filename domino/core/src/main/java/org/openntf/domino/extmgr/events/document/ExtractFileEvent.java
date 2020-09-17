@@ -43,26 +43,10 @@ public class ExtractFileEvent extends AbstractDocumentEvent {
 	}
 
 	/**
-	 * @param itemName
-	 *            the itemName to set
-	 */
-	private void setItemName(final String itemName) {
-		this.itemName = itemName;
-	}
-
-	/**
 	 * @return the fileName
 	 */
 	public String getFileName() {
 		return fileName;
-	}
-
-	/**
-	 * @param fileName
-	 *            the fileName to set
-	 */
-	private void setFileName(final String fileName) {
-		this.fileName = fileName;
 	}
 
 }

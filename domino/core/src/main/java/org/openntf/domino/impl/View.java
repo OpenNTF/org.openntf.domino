@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInput;
@@ -37,8 +36,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lotus.domino.NotesException;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
@@ -55,10 +52,12 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-// TODO: Auto-generated Javadoc
+import lotus.domino.NotesException;
+
 /**
  * The Class View.
  */
+@SuppressWarnings({ "deprecation", "nls" })
 public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 	private static final Logger log_ = Logger.getLogger(View.class.getName());
 	private transient List<DominoColumnInfo> columnInfo_;
@@ -1336,7 +1335,8 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		try {
 			try {
 				lotus.domino.View raw = getDelegate();
-				Vector rawColumns = raw.getColumns();
+				@SuppressWarnings("unchecked")
+				Vector<ViewColumn> rawColumns = raw.getColumns();
 				return fromLotusAsVector(rawColumns, org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
 				throw new RuntimeException(
@@ -3198,6 +3198,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		return getAncestorDatabase().getReplicaID() + getUniversalID();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewNavigator createViewNavFromKey(final Vector arg0, final boolean arg1) {
 		try {
@@ -3218,6 +3219,7 @@ public class View extends BaseResurrectable<org.openntf.domino.View, lotus.domin
 		}
 		Map<Object, Object> result = new LinkedHashMap<Object, Object>();
 		Vector<ViewColumn> columns = getColumns();
+		@SuppressWarnings("unused")
 		int categoryCount = 0;
 		for (ViewColumn column : columns) {
 			if (column.isCategory()) {

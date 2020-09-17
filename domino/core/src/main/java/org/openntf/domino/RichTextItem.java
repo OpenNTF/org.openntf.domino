@@ -376,6 +376,7 @@ public interface RichTextItem
 	 * @return converted HTML as a string
 	 * @since Domino V10
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String convertToHTML(Vector options);
 

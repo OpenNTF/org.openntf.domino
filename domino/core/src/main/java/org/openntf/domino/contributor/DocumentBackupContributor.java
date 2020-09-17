@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.Dates;
 
 /**
  * Represents a contributed service that can provide access to time-based backups of documents.

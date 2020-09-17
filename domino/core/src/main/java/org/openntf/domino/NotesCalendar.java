@@ -17,8 +17,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.NotesError;
-
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 

@@ -19,7 +19,8 @@ public class EventTransactionalIndexableGraph<T extends IndexableGraph & Transac
     }
 
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void stopTransaction(Conclusion conclusion) {
         if (Conclusion.SUCCESS == conclusion)
             commit();

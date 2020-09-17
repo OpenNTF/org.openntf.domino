@@ -12,13 +12,15 @@ import java.util.Map;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings("unchecked")
 public class Tree<T> extends HashMap<T, Tree<T>> {
+	private static final long serialVersionUID = 1L;
 
-    public Tree() {
+	public Tree() {
         super();
     }
 
-    public Tree(final T... children) {
+	public Tree(final T... children) {
         this();
         for (final T t : children) {
             this.put(t, new Tree<T>());

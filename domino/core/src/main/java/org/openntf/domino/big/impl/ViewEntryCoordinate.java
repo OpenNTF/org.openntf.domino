@@ -34,6 +34,7 @@ public class ViewEntryCoordinate implements org.openntf.domino.big.ViewEntryCoor
 	private String position_;
 	private String entryType_;
 	private transient ViewNavigator sourceNav_;
+	@SuppressWarnings("unused")
 	private transient ViewEntryCollection sourceColl_;
 
 	//	private transient ViewEntry sourceEntry_;

@@ -17,7 +17,7 @@ package org.openntf.domino.xsp.xots;
 
 import org.openntf.domino.xots.AbstractXotsCallable;
 
-public abstract class AbstractXotsXspCallable extends AbstractXotsCallable<Object> {
+public abstract class AbstractXotsXspCallable extends AbstractXotsCallable {
 
 	private XotsXspContext context_;
 

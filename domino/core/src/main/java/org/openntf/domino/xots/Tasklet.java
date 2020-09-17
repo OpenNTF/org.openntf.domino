@@ -23,7 +23,6 @@ import java.lang.annotation.Target;
 
 import org.openntf.domino.session.ISessionFactory;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Factory.SessionType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })

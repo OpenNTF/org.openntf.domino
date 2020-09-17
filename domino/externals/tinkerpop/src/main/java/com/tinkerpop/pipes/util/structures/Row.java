@@ -9,8 +9,8 @@ import java.util.List;
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
 public class Row<T> extends ArrayList<T> {
-
-    private List<String> columnNames;
+	private static final long serialVersionUID = 1L;
+	private List<String> columnNames;
 
     public Row(final List<T> row, final List<String> columnNames) {
         super(row);

@@ -8,6 +8,7 @@ import java.util.Set;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked" })
 abstract class ReadOnlyElement implements Element {
 
     protected final Element baseElement;

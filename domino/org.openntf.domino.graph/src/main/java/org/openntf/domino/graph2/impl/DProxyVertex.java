@@ -28,6 +28,7 @@ import org.openntf.domino.types.CaseInsensitiveString;
 
 import javolution.util.FastSet;
 
+@SuppressWarnings("nls")
 public class DProxyVertex extends DVertex {
 	private static final long serialVersionUID = 1L;
 
@@ -138,7 +139,7 @@ public class DProxyVertex extends DVertex {
 		if (proxyId_ == null) {
 			Object raw = super.getProperty(PROXY_ITEM);
 			if (raw instanceof Vector) {
-				if (((Vector) raw).isEmpty()) {
+				if (((Vector<?>) raw).isEmpty()) {
 					return null;
 				}
 			}
@@ -230,6 +231,7 @@ public class DProxyVertex extends DVertex {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<T> type) {
 		//		System.out.println("TEMP DEBUG: getting property from proxy vertex");
@@ -238,6 +240,7 @@ public class DProxyVertex extends DVertex {
 		} else if (isProxiedProperty(propertyName)) {
 			return super.getProperty(propertyName, type);
 		} else if ("form".equalsIgnoreCase(propertyName)) {
+			@SuppressWarnings("unused")
 			org.openntf.domino.graph2.DVertex delVertex = getProxyDelegate();
 			Object localChk = super.getProperty(propertyName, type);
 			if (localChk == null || String.valueOf(localChk).length() == 0) {

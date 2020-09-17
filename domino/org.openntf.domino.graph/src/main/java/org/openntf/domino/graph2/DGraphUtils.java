@@ -33,6 +33,7 @@ import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings({ "unchecked", "nls" })
 public enum DGraphUtils {
 	;
 
@@ -74,7 +75,7 @@ public enum DGraphUtils {
 		}
 
 		@Override
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings({ "rawtypes" })
 		public int compare(final Vertex e1, final Vertex e2) {
 			int result = 0;
 			ListIterator<CharSequence> li = keys_.listIterator(keys_.size());
@@ -164,7 +165,7 @@ public enum DGraphUtils {
 			super(graph, key, desc);
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings({ "rawtypes" })
 		@Override
 		public int compare(final EdgeFrame e1, final EdgeFrame e2) {
 			int result = 0;
@@ -224,7 +225,7 @@ public enum DGraphUtils {
 		}
 
 		@Override
-		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@SuppressWarnings({ "rawtypes" })
 		public int compare(final VertexFrame e1, final VertexFrame e2) {
 			int result = 0;
 			ListIterator<CharSequence> li = keys_.listIterator(keys_.size());

@@ -13,6 +13,7 @@ import java.util.Iterator;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked" })
 public class IfThenElsePipe<S, E> extends AbstractPipe<S, E> {
 
     private final PipeFunction<S, Boolean> ifFunction;

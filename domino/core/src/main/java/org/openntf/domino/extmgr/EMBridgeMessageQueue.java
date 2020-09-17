@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.extmgr;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumMap;
@@ -33,7 +34,7 @@ import org.openntf.domino.xots.Xots;
 public enum EMBridgeMessageQueue {
 	INSTANCE;
 
-	public static final String QUEUE_NAME = "MQ$DOTS";
+	public static final String QUEUE_NAME = "MQ$DOTS"; //$NON-NLS-1$
 	private static AtomicBoolean isStarted = new AtomicBoolean(false);
 	public static final int MQ_TIMEOUT = 1119;
 	public static final int MESSAGE_SIZE = 256;
@@ -139,7 +140,7 @@ public enum EMBridgeMessageQueue {
 	protected MessageQueue getQueue() {
 		if (queue_ == null) {
 			queue_ = new MessageQueue();
-			int c = queue_.create(QUEUE_NAME, MQ_SIZE, 0);
+			queue_.create(QUEUE_NAME, MQ_SIZE, 0);
 			int i = queue_.open(QUEUE_NAME, 0);
 			if (i != 0) {
 				//TODO report error
@@ -174,14 +175,16 @@ public enum EMBridgeMessageQueue {
 		INSTANCE.stopOrdered_ = true;
 	}
 
+	@SuppressWarnings("nls")
 	public void reportStats(final long eventCount) throws InterruptedException {
 		if (statReport_) {
 			if (eventCount > priorMaxEventCount_) {
 				priorMaxEventCount_ = eventCount;
 			}
 			long msSinceLastTimeout = (new Date().getTime() - lastTimeoutTime_);
-			System.out.println("STAT: EMBridgeMessageQueue has processed " + eventCount + " events since starting and "
-					+ (eventCount - priorMaxEventCount_) + " events since last queue timeout " + msSinceLastTimeout + "ms ago.");
+			System.out.println(MessageFormat.format(
+					"STAT: EMBridgeMessageQueue has processed {0} events since starting and {1} events since last queue timeout {2}ms ago.",
+					eventCount, (eventCount - priorMaxEventCount_), msSinceLastTimeout));
 			priorMaxEventCount_ = eventCount;
 			lastTimeoutTime_ = new Date().getTime();
 		}
@@ -195,7 +198,6 @@ public enum EMBridgeMessageQueue {
 				INSTANCE.subscribers_.put(id, list);
 			}
 			list.add(subscriber);
-			System.out.println("TEMP DEBUG registered a new subscriber for event " + id.toString());
 		}
 	}
 

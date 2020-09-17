@@ -25,9 +25,6 @@ public class MailSendNoteEvent extends AbstractEMBridgeEvent {
 		return params;
 	}
 
-	private String from;
-	private int flags;
-
 	public MailSendNoteEvent() {
 		super(EMEventIds.EM_MAILSENDNOTE.getId());
 	}

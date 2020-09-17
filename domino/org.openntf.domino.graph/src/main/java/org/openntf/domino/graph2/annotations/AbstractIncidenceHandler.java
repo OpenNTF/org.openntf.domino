@@ -39,10 +39,10 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.VertexFrame;
 
+@SuppressWarnings("nls")
 public abstract class AbstractIncidenceHandler {
 
 	public AbstractIncidenceHandler() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -250,7 +250,7 @@ public abstract class AbstractIncidenceHandler {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unused" })
 	private int countEdges(final Annotation annotation, final Vertex vertex) {
 		int result = 0;
 		Direction dir = Direction.BOTH;

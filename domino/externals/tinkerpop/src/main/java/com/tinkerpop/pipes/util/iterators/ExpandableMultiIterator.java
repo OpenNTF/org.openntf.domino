@@ -14,7 +14,7 @@ public class ExpandableMultiIterator<T> implements Iterator<T> {
     private final ExpandableIterator<Iterator<T>> iterators = new ExpandableIterator<Iterator<T>>();
     private Iterator<T> currentIterator = null;
 
-    public ExpandableMultiIterator(final Iterator<T>... iterators) {
+    public ExpandableMultiIterator(@SuppressWarnings("unchecked") final Iterator<T>... iterators) {
         this(Arrays.asList(iterators));
     }
 

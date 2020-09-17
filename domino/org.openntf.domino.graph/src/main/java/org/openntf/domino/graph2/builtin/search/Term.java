@@ -155,6 +155,7 @@ public interface Term extends DVertexFrame {
 			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean removeDocument(final Document document) {
 			boolean result = false;
@@ -188,8 +189,8 @@ public interface Term extends DVertexFrame {
 			return result;
 		}
 
+		@SuppressWarnings("nls")
 		@Override
-		@SuppressWarnings("rawtypes")
 		public Map getHits(final Map<CharSequence, Set<CharSequence>> filterMap) {
 			Map<CharSequence, Map<CharSequence, List<CharSequence>>> result = new LinkedHashMap<CharSequence, Map<CharSequence, List<CharSequence>>>();
 			Set<CharSequence> replicas = null;

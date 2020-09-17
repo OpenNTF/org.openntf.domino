@@ -24,6 +24,7 @@ import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 
+@SuppressWarnings("deprecation")
 public class IncidenceHandler extends AbstractIncidenceHandler implements AnnotationHandler<Incidence> {
 	@Override
 	public Class<Incidence> getAnnotationType() {

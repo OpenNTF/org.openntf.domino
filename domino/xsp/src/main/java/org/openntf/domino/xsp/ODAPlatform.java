@@ -169,6 +169,7 @@ public enum ODAPlatform {
 	 * <li>Throwing an exception does not generate a return value that will be forced in a ViewEntry</li>
 	 * </ul>
 	 */
+	@SuppressWarnings("unused")
 	private static void verifyIGetEntryByKey() {
 		@SuppressWarnings("deprecation")
 		View dummyView = new org.openntf.domino.impl.View();

@@ -54,6 +54,7 @@ import javassist.util.proxy.ProxyFactory;
  * 
  * @author Bryn Cooke
  */
+@SuppressWarnings({ "unchecked", "nls" })
 public class JavaHandlerModule implements Module {
 
 	// We don't want to use the global class cache. Instead we cache the classes

@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -26,8 +25,6 @@ import java.util.GregorianCalendar;
 //import java.util.GregorianCalendar;
 import java.util.List;
 
-import lotus.domino.NotesException;
-
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
@@ -35,7 +32,8 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Factory.SessionType;
 
-// TODO: Auto-generated Javadoc
+import lotus.domino.NotesException;
+
 /**
  * The Class DateRange.
  */
@@ -182,9 +180,9 @@ public class DateRange extends BaseThreadSafe<org.openntf.domino.DateRange, lotu
 	@Override
 	public String getText() {
 		if (startDateTime_ == null || endDateTime_ == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
-		return startDateTime_.getLocalTime() + " - " + endDateTime_.getLocalTime();
+		return startDateTime_.getLocalTime() + " - " + endDateTime_.getLocalTime(); //$NON-NLS-1$
 	}
 
 	/**

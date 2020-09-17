@@ -568,7 +568,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            adds the delegate to the list, if it has to be recycled.
 	 * @return the delegate
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	protected static <T extends lotus.domino.Base> T toLotus(final T wrapper, final Collection recycleThis) {
 		return TypeUtils.toLotus(wrapper, recycleThis);
 		/*if (wrapper instanceof org.openntf.domino.impl.Base) {
@@ -589,7 +589,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	//
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected static <T extends lotus.domino.Base> T toLotus(final T wrapper) {
 		return TypeUtils.toLotus(wrapper);
 		/*if (wrapper instanceof org.openntf.domino.impl.Base) {
@@ -628,7 +627,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             When the object is not convertible.
 	 */
-	@SuppressWarnings("rawtypes")
 	protected static Object toDominoFriendly(final Object value, final Session session, final Collection<lotus.domino.Base> recycleThis)
 			throws IllegalArgumentException {
 		return TypeUtils.toDominoFriendly(value, session, recycleThis);

@@ -29,6 +29,7 @@ import org.openntf.domino.graph.ElementComparator;
  * @author withersp
  *
  */
+@SuppressWarnings("deprecation")
 public class DVertexFrameComparator implements Comparator<DVertexFrame>, Serializable {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ElementComparator.class.getName());
@@ -84,10 +85,10 @@ public class DVertexFrameComparator implements Comparator<DVertexFrame>, Seriali
 				// Try get + key
 				Method[] meths = arg0.getClass().getDeclaredMethods();
 				for (Method crystal : meths) {
-					if (crystal.getName().equalsIgnoreCase("get" + key)) {
+					if (crystal.getName().equalsIgnoreCase("get" + key)) { //$NON-NLS-1$
 						try {
-							java.lang.Object v0 = crystal.invoke(arg0, null);
-							java.lang.Object v1 = crystal.invoke(arg1, null);
+							java.lang.Object v0 = crystal.invoke(arg0);
+							java.lang.Object v1 = crystal.invoke(arg1);
 							result = compareObjects(v0, v1);
 						} catch (IllegalAccessException e) {
 							// TODO: handle exception

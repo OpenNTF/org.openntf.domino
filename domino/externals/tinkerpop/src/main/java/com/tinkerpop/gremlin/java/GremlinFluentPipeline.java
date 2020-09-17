@@ -1174,5 +1174,6 @@ public interface GremlinFluentPipeline<S, E> {
      *
      * @return returns the current pipeline with the new end type.
      */
-    public <E> GremlinFluentPipeline<S, E> cast(Class<E> end);
+    @SuppressWarnings("hiding")
+	public <E> GremlinFluentPipeline<S, E> cast(Class<E> end);
 }

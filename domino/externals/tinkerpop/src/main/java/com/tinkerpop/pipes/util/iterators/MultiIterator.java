@@ -17,7 +17,7 @@ public class MultiIterator<T> implements Iterator<T> {
     private final Iterator<Iterator<T>> iterators;
     private Iterator<T> currentIterator = null;
 
-    public MultiIterator(final Iterator<T>... iterators) {
+    public MultiIterator(@SuppressWarnings("unchecked") final Iterator<T>... iterators) {
         this(Arrays.asList(iterators));
     }
 

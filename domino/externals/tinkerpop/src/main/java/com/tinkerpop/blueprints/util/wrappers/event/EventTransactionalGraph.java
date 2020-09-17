@@ -16,7 +16,8 @@ public class EventTransactionalGraph<T extends TransactionalGraph> extends Event
         this.trigger = new EventTrigger(this, true);
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void stopTransaction(Conclusion conclusion) {
         if (Conclusion.SUCCESS == conclusion)
             commit();

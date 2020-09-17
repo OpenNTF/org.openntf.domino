@@ -16,6 +16,7 @@
 package org.openntf.domino.types;
 
 public class AuthorsList extends NamesList {
+	private static final long serialVersionUID = 1L;
 
 	public AuthorsList() {
 		// TODO Auto-generated constructor stub

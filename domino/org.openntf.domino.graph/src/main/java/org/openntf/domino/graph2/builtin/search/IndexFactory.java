@@ -25,6 +25,7 @@ import org.openntf.domino.graph2.impl.DGraph;
  * @author Nathan T. Freeman
  */
 
+@SuppressWarnings("nls")
 public class IndexFactory {
 
 	public IndexFactory() {
@@ -45,6 +46,7 @@ public class IndexFactory {
 		namesStore.addType(Name.class);
 
 		DConfiguration config = new DConfiguration();
+		@SuppressWarnings("unused")
 		DGraph graph = new DGraph(config);
 		config.addElementStore(termsStore);
 		config.addElementStore(valuesStore);

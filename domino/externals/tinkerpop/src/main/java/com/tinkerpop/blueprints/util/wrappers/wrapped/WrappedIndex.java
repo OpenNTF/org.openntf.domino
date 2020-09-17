@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.util.StringFactory;
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked" })
 class WrappedIndex<T extends Element> implements Index<T> {
 
     protected Index<T> rawIndex;

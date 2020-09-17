@@ -14,6 +14,7 @@ import java.util.Iterator;
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
+@SuppressWarnings({ "unchecked" })
 public class GraphQueryPipe<E extends Element> extends QueryPipe<Graph, E> {
 
     public GraphQueryPipe(final Class<E> elementClass) {

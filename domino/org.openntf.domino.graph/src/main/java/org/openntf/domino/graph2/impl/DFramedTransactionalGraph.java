@@ -72,7 +72,7 @@ import com.tinkerpop.frames.FramedTransactionalGraph;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.javahandler.JavaFrameInitializer;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"unchecked", "rawtypes", "nls"})
 public class DFramedTransactionalGraph<T extends TransactionalGraph> extends FramedTransactionalGraph<T> {
 	private Cache<Object, Object> framedElementCache_;
 	private IndexScanner indexScanner_;
@@ -873,7 +873,7 @@ public class DFramedTransactionalGraph<T extends TransactionalGraph> extends Fra
 		if (result instanceof Eventable) {
 			if (((Eventable) result).isNew()) {
 				try {
-					Method crystal = result.getClass().getMethod("create", null);
+					Method crystal = result.getClass().getMethod("create"); //$NON-NLS-1$
 					if (crystal != null) {
 						((Eventable) result).create();
 					}

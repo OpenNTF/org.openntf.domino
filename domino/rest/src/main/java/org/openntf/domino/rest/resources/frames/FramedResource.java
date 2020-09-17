@@ -413,6 +413,7 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private void processJsonUpdate(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final ParamMap pm, final boolean isPut) throws JsonException, IOException {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();
@@ -572,7 +573,6 @@ public class FramedResource extends AbstractResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@SuppressWarnings("rawtypes")
 	public Response createFramedObject(final String requestEntity, @Context final UriInfo uriInfo,
 			@PathParam(Routes.NAMESPACE) final String namespace, @Context final Request request)
 					throws JsonException, IOException {
@@ -639,7 +639,7 @@ public class FramedResource extends AbstractResource {
 		return response;
 	}
 
-	@SuppressWarnings("resource")
+	@SuppressWarnings({ "resource", "unlikely-arg-type" })
 	private void processJsonObject(final JsonJavaObject jsonItems, final DFramedTransactionalGraph graph, final JsonGraphWriter writer,
 			final ParamMap pm/* , Map<Object, Object> resultMap */) {
 		Map<CaseInsensitiveString, Object> cisMap = new HashMap<CaseInsensitiveString, Object>();

@@ -21,7 +21,9 @@ import java.util.Set;
 
 import org.openntf.domino.Document;
 
+@SuppressWarnings("nls")
 public class TemplateBuildSharedFieldNote extends SharedField implements org.openntf.domino.design.TemplateBuildSharedFieldNote {
+	private static final long serialVersionUID = 1L;
 
 	protected TemplateBuildSharedFieldNote(final Document document) {
 		super(document);

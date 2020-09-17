@@ -840,6 +840,7 @@ public interface PipesFluentPipeline<S, E> {
      *
      * @return returns the current pipeline with the new end type.
      */
-    public <E> PipesFluentPipeline<S, E> cast(Class<E> end);
+    @SuppressWarnings("hiding")
+	public <E> PipesFluentPipeline<S, E> cast(Class<E> end);
 
 }

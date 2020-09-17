@@ -11,8 +11,8 @@ import java.util.Queue;
  * @author Matthias Broecheler
  */
 public class ArrayQueue<T> extends ArrayList<T> implements Queue<T> {
-
-    private int current = 0;
+	private static final long serialVersionUID = 1L;
+	private int current = 0;
 
     public T remove() {
         if (this.current >= this.size())
