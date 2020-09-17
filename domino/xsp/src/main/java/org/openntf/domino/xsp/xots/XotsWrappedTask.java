@@ -18,6 +18,7 @@ package org.openntf.domino.xsp.xots;
 import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.text.MessageFormat;
 import java.util.concurrent.Callable;
 
 import org.openntf.domino.config.Configuration;
@@ -52,7 +53,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 		if (module != null) {
 			codeModule = module.getTemplateModule() == null ? module : module.getTemplateModule();
 			if (module.isDestroyed() || codeModule.isDestroyed()) {
-				throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run");
+				throw new IllegalArgumentException("Module was destroyed in the meantime. Cannot run"); //$NON-NLS-1$
 			}
 			module.updateLastModuleAccess();
 			codeModule.updateLastModuleAccess();
@@ -88,7 +89,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("null")
+	@SuppressWarnings({ "restriction" })
 	protected Object invokeTasklet(final NotesContext ctx, final NSFComponentModule module) throws Exception {
 
 		ClassLoader mcl = null;
@@ -103,7 +104,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 				codeModule = module;
 
 			mcl = codeModule.getModuleClassLoader();
-			if (ODAPlatform.isAppFlagSet("LOCKXOTS", codeModule.getNotesApplication())) {
+			if (ODAPlatform.isAppFlagSet("LOCKXOTS", codeModule.getNotesApplication())) { //$NON-NLS-1$
 				readLock = XotsDominoExecutor.getLockManager(codeModule).getReadLock();
 			}
 		}
@@ -194,7 +195,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 		// sanity check if this is a public tasklet
 		Tasklet annot = clazz.getAnnotation(Tasklet.class);
 		if (annot == null) {
-			throw new IllegalStateException("Cannot run " + clazz.getName() + ", because it does not annotate @Tasklet.");
+			throw new IllegalStateException(MessageFormat.format("Cannot run {0}, because it does not annotate @Tasklet.", clazz.getName())); //$NON-NLS-1$
 		}
 
 		//		if (!(Callable.class.isAssignableFrom(clazz)) && !(Runnable.class.isAssignableFrom(clazz))) {
@@ -222,7 +223,7 @@ public class XotsWrappedTask extends AbstractWrappedTask {
 			}
 		}
 		if (cTor == null) {
-			throw new IllegalStateException("Cannot run " + clazz.getName() + ", because it has no constructor for Arguments: " + ctorArgs);
+			throw new IllegalStateException(MessageFormat.format("Cannot run {0}, because it has no constructor for Arguments: {1}", clazz.getName(), ctorArgs)); //$NON-NLS-1$
 		}
 		return cTor;
 	}
