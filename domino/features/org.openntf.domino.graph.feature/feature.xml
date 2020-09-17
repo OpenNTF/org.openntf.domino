@@ -51,7 +51,8 @@
          id="org.openntf.domino.graph"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         fragment="true"/>
    <plugin
          id="org.openntf.domino.rest"
          download-size="0"
