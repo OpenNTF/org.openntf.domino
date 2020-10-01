@@ -607,7 +607,7 @@ implements org.openntf.domino.Document {
 		if (containMimes_ == null) {
 			lotus.domino.Document del = getDelegate();
 			try {
-				containMimes_ = del.hasItem("$MimeTrack") || del.hasItem("$NoteHasNativeMIME");
+				containMimes_ = del.hasItem("$MimeTrack") || del.hasItem("$NoteHasNativeMIME") || del.hasItem("MIME_Version");
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
