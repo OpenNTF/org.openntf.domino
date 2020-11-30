@@ -169,7 +169,7 @@ public interface DVertexFrame extends Editable {
 				CharSequence key = entry.getKey();
 				Method crystal = entry.getValue();
 				try {
-					crystal.invoke(frame, null);
+					crystal.invoke(frame);
 				} catch (Exception e) {
 					System.err.println("ALERT Exception encountered attempting to update computed property: " + key
 							+ " using a method called " + crystal.getName() + " in a frame of type " + type.getName()

@@ -381,7 +381,7 @@ public interface GremlinFluentPipeline<S, E> {
      *
      * @return the extended Pipeline
      */
-    public GremlinFluentPipeline<S, E> _();
+    public GremlinFluentPipeline<S, E> identity();
 
     /**
      * Add a MemoizePipe to the end of the Pipeline.

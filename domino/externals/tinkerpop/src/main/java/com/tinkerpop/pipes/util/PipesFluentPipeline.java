@@ -597,7 +597,7 @@ public interface PipesFluentPipeline<S, E> {
      *
      * @return the extended Pipeline
      */
-    public PipesFluentPipeline<S, E> _();
+    public PipesFluentPipeline<S, E> identity();
 
     /**
      * Add a MemoizePipe to the end of the Pipeline.

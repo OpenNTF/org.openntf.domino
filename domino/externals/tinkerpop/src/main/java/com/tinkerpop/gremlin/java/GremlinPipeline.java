@@ -1265,7 +1265,7 @@ public class GremlinPipeline<S, E> extends Pipeline<S, E> implements GremlinFlue
      *
      * @return the extended Pipeline
      */
-    public GremlinPipeline<S, E> _() {
+    public GremlinPipeline<S, E> identity() {
         return this.add(new IdentityPipe());
     }
 

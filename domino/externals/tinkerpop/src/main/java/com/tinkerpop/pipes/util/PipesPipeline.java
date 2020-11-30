@@ -313,7 +313,7 @@ public class PipesPipeline<S, E> extends Pipeline<S, E> implements PipesFluentPi
         return this.add(new GatherFunctionPipe(FluentUtility.prepareFunction(this.asMap, function)));
     }
 
-    public PipesPipeline<S, E> _() {
+    public PipesPipeline<S, E> identity() {
         return this.add(new IdentityPipe<E>());
     }
 
