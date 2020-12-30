@@ -41,6 +41,7 @@ import org.openntf.domino.utils.Factory.SessionType;
  * @author Devin S. Olson (dolson@czarnowski.com)
  *
  */
+@SuppressWarnings("nls")
 public enum Strings {
 	;
 
@@ -407,7 +408,7 @@ public enum Strings {
 	 *
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
-	@SuppressWarnings({ "rawtypes", "cast" })
+	@SuppressWarnings({ "rawtypes" })
 	public static String join(final Collection source, final String delimiter) {
 		if ((null != source) && (source.size() > 0)) {
 			final StringBuilder stringbuilder = new StringBuilder();
@@ -860,7 +861,7 @@ public enum Strings {
 	 *
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
-	@SuppressWarnings({ "rawtypes", "cast" })
+	@SuppressWarnings({ "rawtypes" })
 	public static List<String> wrapStringElements(final AbstractCollection collection, final String prefix, final String suffix) {
 		try {
 			final String prepend = Strings.isBlankString(prefix) ? "" : prefix;

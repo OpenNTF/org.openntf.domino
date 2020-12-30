@@ -153,7 +153,7 @@ public enum CollectionUtils {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
-	@SuppressWarnings({ "rawtypes", "cast" })
+	@SuppressWarnings({ "rawtypes" })
 	public static List<String> getListStrings(final AbstractCollection collection) {
 		if ((null != collection) && (collection.size() > 0)) {
 			final List<String> result = new ArrayList<String>();
